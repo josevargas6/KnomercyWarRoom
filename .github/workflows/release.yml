@@ -1,0 +1,40 @@
+name: KWR Tagged Prerelease
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Lua test runtime
+        run: npm install --global fengari-node-cli
+
+      - name: Build and certify packages
+        shell: pwsh
+        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts"
+
+      - name: Create GitHub prerelease
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}"
+          artifacts/*
+          --prerelease
+          --generate-notes
+          --title "Knomercy War Room ${{ github.ref_name }}"

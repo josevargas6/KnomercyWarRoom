@@ -1,0 +1,22 @@
+# Generated packages and local dependencies
+artifacts/
+builds/
+node_modules/
+*.zip
+*.log
+
+# Local editor and operating-system state
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# World of Warcraft account data must never enter source control
+WTF/
+SavedVariables/
+*.lua.bak
+
+# Temporary test and extraction directories
+tmp/
+temp/
+coverage/

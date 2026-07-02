@@ -1,0 +1,53 @@
+name: Battleground field-test report
+description: Record one complete KWR battleground test.
+title: "[BG] "
+labels:
+  - field-test
+body:
+  - type: input
+    id: version
+    attributes:
+      label: KWR version
+      placeholder: 6.1.0-alpha.12
+    validations:
+      required: true
+  - type: input
+    id: map
+    attributes:
+      label: Battleground and bracket
+      placeholder: Arathi Basin - Standard
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Victory
+        - Defeat
+        - Draw
+        - Match incomplete
+    validations:
+      required: true
+  - type: textarea
+    id: truth
+    attributes:
+      label: Truth agreement
+      description: Compare Blizzard score/objectives with HUD, Tactical, Assignments, and AAR.
+    validations:
+      required: true
+  - type: textarea
+    id: commands
+    attributes:
+      label: Command and assignment quality
+      description: Include opening, reassessment, pivot, movers, stayers, success, and abort.
+  - type: textarea
+    id: safety
+    attributes:
+      label: Errors, taint, performance, and UI
+      description: Include BugSack, FPS, CPU, memory, clipping, and overlap observations.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Attach screenshots and paste `/kwr bug`, `/kwr verify`, or AAR excerpts with private data removed.

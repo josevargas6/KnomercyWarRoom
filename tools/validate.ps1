@@ -1,0 +1,199 @@
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = "Stop"
+$root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+$tocPath = Join-Path $root "KnomercyWarRoom.toc"
+$errors = [System.Collections.Generic.List[string]]::new()
+$warnings = [System.Collections.Generic.List[string]]::new()
+
+function Add-ValidationError {
+    param([string]$Message)
+    $script:errors.Add($Message)
+}
+
+if (-not (Test-Path -LiteralPath $tocPath)) {
+    Add-ValidationError "KnomercyWarRoom.toc is missing."
+} else {
+    $toc = Get-Content -LiteralPath $tocPath
+    $entries = @(
+        $toc |
+            Where-Object { $_ -and $_ -notmatch "^\s*#" } |
+            ForEach-Object { $_.Trim().Replace("/", "\") }
+    )
+
+    foreach ($entry in $entries) {
+        if (-not (Test-Path -LiteralPath (Join-Path $root $entry))) {
+            Add-ValidationError "TOC entry is missing: $entry"
+        }
+    }
+
+    $duplicates = @($entries | Group-Object | Where-Object Count -gt 1)
+    foreach ($duplicate in $duplicates) {
+        Add-ValidationError "Duplicate TOC entry: $($duplicate.Name)"
+    }
+
+    $runtimeDirectories = @("Core", "Data", "Runtime", "Features", "UI")
+    $runtimeLua = foreach ($directory in $runtimeDirectories) {
+        $path = Join-Path $root $directory
+        if (Test-Path -LiteralPath $path) {
+            Get-ChildItem -LiteralPath $path -Recurse -File -Filter "*.lua"
+        }
+    }
+    foreach ($file in $runtimeLua) {
+        $relative = $file.FullName.Substring($root.Length + 1)
+        if ($entries -notcontains $relative) {
+            Add-ValidationError "Runtime Lua file is not loaded by the TOC: $relative"
+        }
+    }
+
+    $tocVersion = ($toc | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", ""
+    $addonSource = Get-Content -LiteralPath (Join-Path $root "Core\Addon.lua") -Raw
+    if ($addonSource -notmatch [regex]::Escape('KWR.version = "' + $tocVersion + '"')) {
+        Add-ValidationError "TOC and Core/Addon.lua versions do not match."
+    }
+}
+
+$luaFiles = @(Get-ChildItem -LiteralPath $root -Recurse -File -Filter "*.lua")
+
+$nonAsciiHits = @($luaFiles | Select-String -Pattern "[^\x00-\x7F]")
+foreach ($hit in $nonAsciiHits) {
+    Add-ValidationError "Unsupported non-ASCII runtime glyph: $($hit.Path):$($hit.LineNumber)"
+}
+
+$legacyPattern = "KWR_520|RC2|RC4|CommanderUI|SensorManager|release-ready-candidate"
+$legacyHits = @($luaFiles | Select-String -Pattern $legacyPattern)
+foreach ($hit in $legacyHits) {
+    Add-ValidationError "Legacy patch marker: $($hit.Path):$($hit.LineNumber)"
+}
+
+$forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-z]*\s*\(|\bSaveBindings\s*\(|\bTargetUnit\s*\(|\bFocusUnit\s*\(|\bCastSpell[A-Za-z]*\s*\(|\bRunMacroText\s*\(|\bCombatLogGetCurrentEventInfo\s*\("
+$forbiddenHits = @($luaFiles | Select-String -Pattern $forbiddenPattern)
+foreach ($hit in $forbiddenHits) {
+    Add-ValidationError "Forbidden protected/communication API: $($hit.Path):$($hit.LineNumber)"
+}
+
+$midnightBlockedEvents = @($runtimeLua | Select-String -Pattern '"COMBAT_LOG_EVENT_UNFILTERED"')
+foreach ($hit in $midnightBlockedEvents) {
+    Add-ValidationError "Midnight-blocked combat-log subscription: $($hit.Path):$($hit.LineNumber)"
+}
+
+$removedRetailEvents = @($runtimeLua | Select-String -Pattern '"UNIT_HEALTH_FREQUENT"')
+foreach ($hit in $removedRetailEvents) {
+    Add-ValidationError "Removed Retail event subscription: $($hit.Path):$($hit.LineNumber)"
+}
+
+$secretHealthTextReads = @($runtimeLua | Select-String -Pattern '\bhealthText:GetText\s*\(')
+foreach ($hit in $secretHealthTextReads) {
+    Add-ValidationError "Secret-backed health text must be write-only: $($hit.Path):$($hit.LineNumber)"
+}
+
+$secureMacroHits = @(
+    $luaFiles |
+        Where-Object {
+            $_.FullName -notlike "*\UI\CombatRoster.lua" -and
+            $_.FullName -notlike "*\UI\QuickCalls.lua"
+        } |
+        Select-String -Pattern 'SetAttribute\s*\(\s*"macrotext'
+)
+foreach ($hit in $secureMacroHits) {
+    Add-ValidationError "Secure macro exists outside its reviewed UI owners: $($hit.Path):$($hit.LineNumber)"
+}
+
+$quickCallsPath = Join-Path $root "UI\QuickCalls.lua"
+if (Test-Path -LiteralPath $quickCallsPath) {
+    $quickCallsSource = Get-Content -LiteralPath $quickCallsPath -Raw
+    foreach ($phrase in @(
+        "INC PRIMARY",
+        "HELP HOME",
+        "STOP FLAG",
+        "PEEL CARRIER",
+        "ROTATE NOW",
+        "HOLD POSITION"
+    )) {
+        if ($quickCallsSource -notmatch [regex]::Escape('"' + $phrase + '"')) {
+            Add-ValidationError "Reviewed Quick Call phrase is missing: $phrase"
+        }
+    }
+    if ($quickCallsSource -notmatch 'if\s+not\s+APPROVED\[callText\]') {
+        Add-ValidationError "Quick Calls do not reject phrases outside the reviewed allowlist."
+    }
+    $quickMacroCount = ([regex]::Matches(
+        $quickCallsSource,
+        'SetAttribute\s*\(\s*"macrotext1"'
+    )).Count
+    if ($quickMacroCount -ne 1) {
+        Add-ValidationError "Expected one reviewed Quick Call macro binding; found $quickMacroCount."
+    }
+}
+
+$tickerHits = @(
+    $luaFiles |
+        Where-Object { $_.FullName -notlike "*\Runtime\MatchRuntime.lua" } |
+        Select-String -Pattern "C_Timer\.NewTicker"
+)
+foreach ($hit in $tickerHits) {
+    Add-ValidationError "Ticker exists outside MatchRuntime: $($hit.Path):$($hit.LineNumber)"
+}
+
+$matchRuntimePath = Join-Path $root "Runtime\MatchRuntime.lua"
+if (Test-Path -LiteralPath $matchRuntimePath) {
+    $matchRuntimeSource = Get-Content -LiteralPath $matchRuntimePath -Raw
+    if ($matchRuntimeSource -match "\bUnregisterEvent\s*\(") {
+        Add-ValidationError "MatchRuntime must keep event subscriptions stable after initialization."
+    }
+    if ($matchRuntimeSource -match "\bSetActiveEvents\b") {
+        Add-ValidationError "Legacy dynamic MatchRuntime event switching was reintroduced."
+    }
+}
+
+$uiFiles = @(Get-ChildItem -LiteralPath (Join-Path $root "UI") -Recurse -File -Filter "*.lua")
+$uiSensorHits = @($uiFiles | Select-String -Pattern "KWR\.Sensors|C_UIWidgetManager|C_AreaPoiInfo|C_PvP\.")
+foreach ($hit in $uiSensorHits) {
+    Add-ValidationError "UI directly reads battlefield APIs: $($hit.Path):$($hit.LineNumber)"
+}
+
+$slashCount = @($luaFiles | Select-String -Pattern "SLASH_KWR1\s*=").Count
+if ($slashCount -ne 1) {
+    Add-ValidationError "Expected exactly one primary /kwr slash registration; found $slashCount."
+}
+
+$requiredDocs = @(
+    "README.md",
+    "CHANGELOG.md",
+    "ARCHITECTURE.md",
+    "DEVELOPMENT.md",
+    "QA_CHECKLIST.md",
+    "CURSEFORGE_DESCRIPTION.md",
+    "THIRD_PARTY_NOTICES.md",
+    "META_SOURCES.md",
+    "DESIGN_CONTRACT.md",
+    "RELEASE_READINESS.md",
+    "BATTLEGROUND_VERIFICATION.md",
+    "LICENSE"
+)
+foreach ($document in $requiredDocs) {
+    if (-not (Test-Path -LiteralPath (Join-Path $root $document))) {
+        Add-ValidationError "Required release document is missing: $document"
+    }
+}
+
+Write-Output "KWR 6.0 validation"
+Write-Output "Root: $root"
+Write-Output "Lua files: $($luaFiles.Count)"
+Write-Output "Errors: $($errors.Count)"
+Write-Output "Warnings: $($warnings.Count)"
+
+foreach ($warning in $warnings) {
+    Write-Warning $warning
+}
+foreach ($validationError in $errors) {
+    Write-Error $validationError -ErrorAction Continue
+}
+
+if ($errors.Count -gt 0) {
+    exit 1
+}
+
+Write-Output "VALIDATION PASSED"
+exit 0

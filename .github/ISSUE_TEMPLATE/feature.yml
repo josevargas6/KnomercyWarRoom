@@ -1,0 +1,30 @@
+name: Product enhancement
+description: Propose a decision-quality or cognitive-load improvement.
+title: "[ENHANCEMENT] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Battlefield problem
+      description: What decision is currently late, unclear, or unsupported?
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Winning impact
+      description: How does this improve win probability without increasing cognitive load?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Safe evidence sources
+      description: List observable, derived, likely, possible, and unavailable inputs.
+  - type: textarea
+    id: presentation
+    attributes:
+      label: Minimal presentation
+      description: Explain when this should remain silent and where detail belongs.

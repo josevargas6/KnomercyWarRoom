@@ -1,0 +1,19 @@
+{
+  "patch": "REPLACE",
+  "interface": 0,
+  "season": "REPLACE",
+  "captured": "YYYY-MM-DD",
+  "reviewed": false,
+  "apiChanges": [],
+  "gameplayChanges": [],
+  "cooldownOverrides": {},
+  "capabilityOverrides": {},
+  "capabilityCategoryReview": {
+    "minimumSignals": 3,
+    "minimumBattlefieldEffects": 3,
+    "objectiveProfilesReviewed": false
+  },
+  "disabledPlans": [],
+  "sources": [],
+  "notes": []
+}

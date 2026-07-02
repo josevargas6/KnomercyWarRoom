@@ -1,0 +1,43 @@
+name: Addon defect
+description: Report a reproducible KWR error or incorrect behavior.
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: input
+    id: version
+    attributes:
+      label: KWR version
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Error and diagnostic evidence
+      description: Paste BugSack and `/kwr bug` output after removing private data.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety classification
+      options:
+        - label: Protected-action or taint warning occurred
+        - label: Secret-value error occurred
+        - label: Loading or FPS degradation occurred

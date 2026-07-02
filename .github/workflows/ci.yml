@@ -1,0 +1,53 @@
+name: KWR CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Lua test runtime
+        run: npm install --global fengari-node-cli
+
+      - name: Validate architecture and release files
+        shell: pwsh
+        run: ./tools/validate.ps1
+
+      - name: Audit knowledge data
+        shell: pwsh
+        run: ./tools/knowledge-audit.ps1
+
+      - name: Run deterministic diagnostics
+        run: fengari tests/smoke.lua
+
+      - name: Run bounded-state soak
+        run: fengari tests/soak.lua
+
+      - name: Build and extract-audit packages
+        shell: pwsh
+        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts"
+
+      - name: Upload certified packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: kwr-${{ github.ref_name }}-${{ github.sha }}
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,63 @@
+## Interface: 120007
+## Title: |cff33aaffKnomercy War Room|r
+## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
+## Author: Jose / Knomercy War Room Project
+## Version: 6.1.0-alpha.9
+## SavedVariables: KWR_DB
+## IconTexture: Interface\Icons\Achievement_BG_winWSG
+## Category: PvP
+## X-Category: Battlegrounds
+## X-License: MIT
+## X-Website: https://www.curseforge.com/wow/addons/knomercy-war-room
+## X-Compatible-With: Retail
+
+Core\Addon.lua
+Core\Util.lua
+Core\Store.lua
+
+Data\Maps.lua
+Data\Doctrine.lua
+Data\MetaSnapshot.lua
+Data\SourceRegistry.lua
+Data\PatchData.lua
+Data\CombatSpells.lua
+Data\Capabilities.lua
+Data\Compositions.lua
+Data\BattlePlans.lua
+Data\ScenarioLibrary.lua
+Data\Counters.lua
+Data\KnowledgeManifest.lua
+
+Runtime\TeamResolver.lua
+Runtime\EncounterHistory.lua
+Runtime\Sensors.lua
+Runtime\RosterInspector.lua
+Runtime\EnemyIntel.lua
+Runtime\ObjectiveIntel.lua
+Runtime\FormationAdvisor.lua
+Runtime\CombatIntel.lua
+Runtime\Preview.lua
+Runtime\Reporter.lua
+Runtime\Predictor.lua
+Runtime\Strategist.lua
+Runtime\Assignments.lua
+Runtime\Commander.lua
+Runtime\Learning.lua
+Runtime\AAR.lua
+Runtime\Verification.lua
+Runtime\MatchRuntime.lua
+
+Features\CursorRing.lua
+
+UI\Theme.lua
+UI\CopyDialog.lua
+UI\QuickCalls.lua
+UI\TacticalMap.lua
+UI\ReporterMap.lua
+UI\CombatRoster.lua
+UI\HUD.lua
+UI\MainWindow.lua
+UI\AARWindow.lua
+UI\Options.lua
+
+Core\Diagnostics.lua
