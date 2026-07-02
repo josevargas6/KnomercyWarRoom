@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.9
+# Release Readiness - 6.1.0-alpha.12
 
 ## Current decision
 
@@ -22,7 +22,7 @@
 - Local kill-target selection, roster-validated assigned-team normalization,
   and explicit unknown handling for Midnight-blocked combat evidence.
 - Dated Murlok RBG specialization snapshot with an explicit advisory boundary.
-- Two hundred fifteen deterministic diagnostics plus a 500-refresh bounded-state soak
+- Two hundred thirty-two deterministic diagnostics plus a 500-refresh bounded-state soak
   and knowledge audit.
 - All ten supported battlegrounds exercise lead, deficit, tie, assignment
   family, valid-location, and map-specific node-priority fixtures.
@@ -55,6 +55,21 @@
   self-modify battlefield doctrine.
 - Manual AAR export reuses the existing AAR subscriber and copy dialog, records
   bounded evidence only, has no automatic chat behavior, and can be disabled.
+- The existing Strategist now derives bounded commitment, reinforcement,
+  pressure, rotation-economy, collapse, recovery, organization, and
+  single-action assessments from already-sanitized state.
+- Execution assessments are review evidence only in this candidate; they do
+  not add HUD lines, automatic actions, or a second decision owner.
+- The optional target spotlight and priority-cast accents are precreated with
+  the compact roster and update from fixed target/event evidence.
+- Observed swap-class protection suppresses automatic kill-candidate ranking;
+  KWR never changes the player's target or claims interruptibility.
+- Qualified execution evidence produces one shared response package containing
+  movers, stayers, success, and abort; all command and review surfaces consume
+  that same package.
+- Assignment audits reject non-roster identities, invalid priorities, and
+  incompatible flag carriers.
+- Repeated execution assessments and carrier aura reads use bounded caches.
 - Export sections explicitly separate recommendations, evidence, execution,
   known outcomes, enemy observations, and unavailable facts.
 - Live performance telemetry and enforced strategic refresh budgeting.

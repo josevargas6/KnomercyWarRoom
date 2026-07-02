@@ -1,6 +1,6 @@
-﻿# KWR 6.1 Alpha 9 QA Checklist
+﻿# KWR 6.1 Alpha 12 QA Checklist
 
-## Alpha 9 intelligence checks
+## Alpha 12 intelligence checks
 
 - [ ] Own and friendly health bars render immediately when a legal unit token exists.
 - [ ] Friendly specializations are verified during formation and remain cached.
@@ -23,12 +23,30 @@
 - [ ] `/kwr aar clear` clears completed history but refuses during a live recording.
 - [ ] Disabling "Record manual AAR evidence exports" prevents match collection.
 - [ ] Unavailable scoreboard statistics, rating, locations, and specs export as Unknown.
+- [ ] `/kwr explain` reports one execution action and its commitment,
+  pressure, reinforcement, rotation, collapse, recovery, and organization evidence.
+- [ ] Low-evidence execution assessments remain `UNKNOWN` or conservative.
+- [ ] Execution assessment adds no line to the three-line combat HUD.
+- [ ] Current enemy target remains visible in the enlarged spotlight through
+  target changes, nameplate churn, and combat.
+- [ ] Direct target health updates without a secret-value comparison error.
+- [ ] Reviewed must-stop casts show `STOP`; ordinary rotational casts do not.
+- [ ] KWR never labels a cast interruptible from incomplete evidence.
+- [ ] Divine Shield, Ice Block, Turtle, Burrow, and similar observed protection
+  remove kill glow and show an advisory response without changing targets.
+- [ ] Disabling target/cast combat visuals restores the original compact layout.
+- [ ] Cursor Ring uses only one color state and does not flicker between states.
+- [ ] A qualified response names movers, stayers, success, and abort.
+- [ ] A low-confidence or sub-85 response cannot override the ordinary command.
+- [ ] `REASSESS` prefixes the command and lists changed players and jobs.
+- [ ] Tactical, Assignments, HUD, Why, Verify, and AAR agree on the response.
+- [ ] Composition counter directives appear only on relevant assignments.
 
 ## Automated gates
 
 - [x] `tools/validate.ps1` passes.
 - [x] All runtime Lua parses as Lua 5.1.
-- [x] Offline boot and pipeline smoke test passes 215 checks.
+- [x] Offline boot and pipeline smoke test passes 232 checks.
 - [x] Knowledge audit passes.
 - [x] Runtime Lua contains no unsupported non-ASCII UI glyphs.
 - [x] Distribution ZIP contains one `KnomercyWarRoom` root and round-trips without mismatch.

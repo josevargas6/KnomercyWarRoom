@@ -16,6 +16,7 @@ local function newRecord()
         defensives = {},
         abilities = {},
         trinket = nil,
+        currentCast = nil,
         lastObservedAt = 0,
     }
 end
@@ -92,7 +93,50 @@ function CombatIntel:ObserveUnitSpell(unit, spellID)
     end
     local name = KWR.Util:UnitName(unit)
     local guid = KWR.Util:Text(KWR.Util:Call(UnitGUID, unit), "", 80)
+    local record = self:GetRecord(guid, name, false)
+    if record and record.currentCast
+        and record.currentCast.spellID == KWR.Util:Number(spellID, nil) then
+        record.currentCast = nil
+    end
     return self:ObserveSpell(guid, name, spellID, "SPELL_CAST_SUCCESS")
+end
+
+function CombatIntel:ObserveUnitCast(unit, spellID, active, eventType)
+    if not unit or not KWR.Util:Boolean(KWR.Util:Call(UnitExists, unit), false)
+        or not KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, unit), false)
+        or not KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", unit), false) then
+        return false
+    end
+    local name = KWR.Util:UnitName(unit)
+    local guid = KWR.Util:Text(KWR.Util:Call(UnitGUID, unit), "", 80)
+    local numericSpellID = KWR.Util:Number(spellID, nil)
+    local record = self:GetRecord(guid, name, active == true)
+    if not record then return false end
+    if active ~= true then
+        if record.currentCast and (not numericSpellID
+            or record.currentCast.spellID == numericSpellID) then
+            record.currentCast = nil
+            return true
+        end
+        return false
+    end
+    local cast = KWR.CombatSpells:GetCast(numericSpellID)
+    if not cast then return false end
+    local now = KWR.Util:Now()
+    record.lastObservedAt = now
+    record.name = KWR.Util:Text(name, record.name or "Unknown", 64)
+    record.guid = guid
+    record.currentCast = {
+        spellID = cast.spellID,
+        name = cast.name,
+        priority = cast.priority,
+        response = cast.response,
+        eventType = KWR.Util:Text(eventType, "CAST", 32),
+        observedAt = now,
+        expiresAt = now + KWR.Util:Clamp(cast.duration or 2, 0.5, 8) + 1,
+    }
+    self.observed = self.observed + 1
+    return true
 end
 
 function CombatIntel:EvidenceFor(enemy)
@@ -104,6 +148,7 @@ function CombatIntel:EvidenceFor(enemy)
         trinketState = "UNKNOWN",
         trinketRemaining = nil,
         recentAbilities = {},
+        priorityCast = nil,
         threatScore = 0,
         observed = record ~= nil,
     }
@@ -131,6 +176,15 @@ function CombatIntel:EvidenceFor(enemy)
                 evidence.threatScore, KWR.Util:Number(copy.importance, 0))
         else
             record.abilities[spellID] = nil
+        end
+    end
+    if record.currentCast then
+        if (record.currentCast.expiresAt or 0) > now then
+            evidence.priorityCast = KWR.Util:Copy(record.currentCast)
+            evidence.priorityCast.remaining =
+                math.max((record.currentCast.expiresAt or 0) - now, 0)
+        else
+            record.currentCast = nil
         end
     end
     table.sort(evidence.defensivesActive, function(a, b) return a.remaining < b.remaining end)
@@ -165,6 +219,11 @@ function CombatIntel:Score(enemy, evidence)
         reasons[#reasons + 1] = "trinket used"
     end
     if #evidence.defensivesActive > 0 then
+        local response = evidence.defensivesActive[1].response
+        if response and response:find("SWAP", 1, true) then
+            reasons[#reasons + 1] = "protected target"
+            return nil, reasons, role
+        end
         score = score - 50
         reasons[#reasons + 1] = "defensive active"
     elseif #evidence.defensivesOnCooldown > 0 then
@@ -223,7 +282,7 @@ function CombatIntel:Analyze(snapshot)
             self:ObserveSpell(snapshot.enemies[2].guid, snapshot.enemies[2].name, 33206, "SPELL_AURA_REMOVED")
         end
     end
-    local best, localCount = nil, 0
+    local best, localCount, topPriorityCast = nil, 0, nil
     local resource = {
         observed = 0,
         activeDefensives = 0,
@@ -231,6 +290,7 @@ function CombatIntel:Analyze(snapshot)
         trinketsUsed = 0,
         deadHealers = 0,
         isolatedCarriers = 0,
+        priorityCasts = 0,
     }
     for _, enemy in ipairs(snapshot.enemies or {}) do
         local evidence = self:EvidenceFor(enemy)
@@ -244,11 +304,21 @@ function CombatIntel:Analyze(snapshot)
         enemy.defensivesActive = evidence.defensivesActive
         enemy.defensivesOnCooldown = evidence.defensivesOnCooldown
         enemy.recentAbilities = evidence.recentAbilities
+        enemy.priorityCast = evidence.priorityCast
+        if evidence.priorityCast and (not topPriorityCast
+            or (evidence.priorityCast.priority == "MUST_STOP"
+                and topPriorityCast.priority ~= "MUST_STOP")) then
+            topPriorityCast = KWR.Util:Copy(evidence.priorityCast)
+            topPriorityCast.source = enemy.shortName or enemy.name
+        end
         enemy.threatScore = evidence.threatScore
         enemy.trinketState = evidence.trinketState
         enemy.trinketRemaining = evidence.trinketRemaining
         if evidence.observed then resource.observed = resource.observed + 1 end
         resource.activeDefensives = resource.activeDefensives + #evidence.defensivesActive
+        if evidence.priorityCast then
+            resource.priorityCasts = resource.priorityCasts + 1
+        end
         resource.defensivesUsed = resource.defensivesUsed + #evidence.defensivesOnCooldown
         if evidence.trinketState == "ON_COOLDOWN" then
             resource.trinketsUsed = resource.trinketsUsed + 1
@@ -278,8 +348,10 @@ function CombatIntel:Analyze(snapshot)
         local score, reasons, role = self:Score(enemy, evidence)
         enemy.killScore = score
         enemy.role = role or enemy.role
-        if score then
+        if not enemy.dead and enemy.visible and enemy.localEngaged then
             localCount = localCount + 1
+        end
+        if score then
             if not best or score > best.score or (score == best.score and enemy.name < best.enemy.name) then
                 best = { enemy = enemy, score = score, reasons = reasons }
             end
@@ -300,6 +372,7 @@ function CombatIntel:Analyze(snapshot)
         killTarget = best and KWR.Util:Copy(best.enemy) or nil,
         killScore = best and math.floor(best.score + 0.5) or nil,
         killReason = best and table.concat(best.reasons, ", ") or "No safely observed enemy in local fight range.",
+        priorityCast = topPriorityCast,
         updatedAt = KWR.Util:Now(),
         resourceEconomy = {
             confidence = resourceConfidence,

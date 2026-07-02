@@ -13,6 +13,12 @@ evaluation, candidate simulation, and manual structured AAR export.
 Do not rebuild these systems or create parallel advisor products. The next
 work strengthens their inputs, calculations, arbitration, and presentation.
 
+The current S-tier refinement candidate is **KWR 6.1.0-alpha.12**. It retains
+Alpha 11's target/cast clarity and adds one complete response package shared by
+Commander, reassessment, Tactical, Assignments, Why, Verify, and AAR. Alpha 9
+remains the rollback authority until the newer candidates pass live Retail
+testing.
+
 ## Product test
 
 Every proposed change must answer:
@@ -236,4 +242,3 @@ No slice advances until:
 5. false-positive examples are reviewed through AAR;
 6. the feature demonstrably changes a useful decision without persistent
    visual load.
-

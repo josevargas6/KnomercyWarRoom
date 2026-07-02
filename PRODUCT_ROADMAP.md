@@ -3,20 +3,18 @@
 ## Current handoff and next release
 
 `PROJECT_HANDOFF.md` is the authoritative no-drift plan following
-6.1.0-alpha.9. Alpha 9 remains the certified runtime baseline. Alpha 10 is an
-additive combat-clarity and decision-quality program, not an architecture
-rewrite.
+6.1.0-alpha.9. Alpha 9 remains the certified rollback baseline. Alpha 12 is
+the current additive refinement candidate, not an architecture rewrite. It
+retains target/cast clarity and adds one complete response package while the
+three-line combat HUD remains unchanged.
 
 The immediate order is:
 
-1. reversible Combat Clarity controls;
-2. pre-created current-target spotlight;
-3. reviewed must-stop and advantage-swing cast accents;
-4. one bounded cursor/player advisory state;
-5. kill-zone `FORMING`/`ACTIVE`/`RECOVERY`;
-6. Contain-and-Trade counterplay;
-7. objective commitment, rotation economy, pressure forecast, collapse,
-   recovery, and organization refinements.
+1. live-test Alpha 12 response packages and target/cast visuals;
+2. reversible Combat Clarity controls;
+3. kill-zone `FORMING`/`ACTIVE`/`RECOVERY`;
+4. Contain-and-Trade counterplay;
+5. refine the single bounded player advisory from field evidence.
 
 The seventeen-feature suggestion package is dispositioned in the handoff.
 Concept names do not authorize seventeen new runtime engines or UI surfaces.

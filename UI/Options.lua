@@ -21,7 +21,7 @@ end
 function Options:Create()
     if self.frame then return self.frame end
     local frame = CreateFrame("Frame", "KWR_OptionsWindow", UIParent, "BackdropTemplate")
-    frame:SetSize(460, 560)
+    frame:SetSize(460, 620)
     frame:SetPoint("CENTER", UIParent, "CENTER", 360, 20)
     frame:SetFrameStrata("FULLSCREEN_DIALOG")
     frame:SetToplevel(true)
@@ -92,7 +92,17 @@ function Options:Create()
         function() return KWR.db.profile.combatRoster.locked end,
         function(value) KWR.db.profile.combatRoster.locked = value end)
 
-    createCheck(frame, "Show learning explanations in command views", -404,
+    createCheck(frame, "Show target spotlight and priority-cast accents", -404,
+        function() return KWR.db.profile.combatRoster.combatVisuals ~= false end,
+        function(value)
+            KWR.db.profile.combatRoster.combatVisuals = value
+            if KWR.CombatRoster.frame then
+                KWR.CombatRoster:Layout(
+                    KWR.db.profile.combatRoster.mode or "BOTH")
+            end
+        end)
+
+    createCheck(frame, "Show learning explanations in command views", -436,
         function() return KWR.db.profile.guidanceMode == "LEARNING" end,
         function(value)
             KWR.db.profile.guidanceMode = value and "LEARNING" or "COMMAND"
@@ -128,11 +138,11 @@ function Options:Create()
             KWR.CombatRoster.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 140)
         end
     end)
-    reset:SetPoint("TOPLEFT", 18, -456)
+    reset:SetPoint("TOPLEFT", 18, -488)
 
     frame.note = KWR.Theme:Font(frame, 10, "muted")
-    frame.note:SetPoint("TOPLEFT", 18, -504)
-    frame.note:SetPoint("TOPRIGHT", -18, -504)
+    frame.note:SetPoint("TOPLEFT", 18, -536)
+    frame.note:SetPoint("TOPRIGHT", -18, -536)
     frame.note:SetText("KWR never sends chat, changes keybinds, or invents combat facts. Compact row clicks use Blizzard secure buttons and require your hardware click. Preview is always marked NOT LIVE.")
 
     self.frame = frame

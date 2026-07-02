@@ -921,7 +921,8 @@ function MainWindow:UpdateTactical(state)
                 .. ": " .. (formation.archetype and formation.archetype.description
                     or "Build a complete roster.")))
         or (prediction.condition or "Waiting for battlefield truth."))
-        .. "\n|cffffd05a" .. (strategy.action or prediction.action or "") .. "|r"
+        .. "\n|cffffd05a" .. (command.action
+            or strategy.action or prediction.action or "") .. "|r"
         .. (KWR.db.profile.guidanceMode == "LEARNING" and strategy.switchIf
             and ("\n|cff8ea3bbSWITCH: " .. KWR.Util:Text(strategy.switchIf, "", 80) .. "|r") or ""))
     local changes = snapshot.reassessment and snapshot.reassessment.changes
@@ -931,7 +932,13 @@ function MainWindow:UpdateTactical(state)
         local change = changes and changes[index]
         local assignment = state.assignments[index]
         row:SetText(change and ("|cff4f8cff" .. change.name .. "|r  "
-                .. change.fromLocation .. " -> |cffffd05a" .. change.toLocation .. "|r")
+                .. KWR.Assignments:CompactRole(change.fromRole)
+                .. "@" .. KWR.Maps:AbbreviateLocation(
+                    snapshot.context.mapKey, change.fromLocation)
+                .. " -> |cffffd05a"
+                .. KWR.Assignments:CompactRole(change.toRole)
+                .. "@" .. KWR.Maps:AbbreviateLocation(
+                    snapshot.context.mapKey, change.toLocation) .. "|r")
             or (assignment and ("|cff4f8cff" .. assignment.shortName .. "|r  "
                 .. assignment.role .. "  ->  |cffffd05a" .. assignment.location .. "|r") or ""))
     end
@@ -1031,6 +1038,16 @@ function MainWindow:Explain()
     local resources = state.snapshot.combat
         and state.snapshot.combat.resourceEconomy or {}
     local integrity = state.snapshot.assignmentIntegrity or {}
+    local execution = strategy.executionAssessment or {}
+    local executionAction = execution.actionOpportunity or {}
+    local commitment = execution.commitment or {}
+    local pressureForecast = execution.pressureForecast or {}
+    local reinforcement = execution.reinforcement or {}
+    local rotationEconomy = execution.rotationEconomy or {}
+    local collapse = execution.collapse or {}
+    local recovery = execution.recovery or {}
+    local organization = execution.organization or {}
+    local response = state.snapshot.responsePackage or {}
     local integrityLines = {}
     for _, row in ipairs(integrity.reassignments or {}) do
         integrityLines[#integrityLines + 1] = row.name .. " " .. row.status
@@ -1089,6 +1106,50 @@ function MainWindow:Explain()
             resources.enemy and resources.enemy.defensivesUsed or 0,
             resources.enemy and resources.enemy.activeDefensives or 0),
         "",
+        "EXECUTION ASSESSMENT:",
+        string.format("Best action: %s @ %s | score %d | confidence %s/%d",
+            tostring(executionAction.action or "UNKNOWN"),
+            tostring(executionAction.target or commitment.objective or "Unknown"),
+            executionAction.score or 0,
+            tostring(execution.confidence or "NONE"),
+            execution.confidenceScore or 0),
+        "Reason: " .. tostring(executionAction.reason
+            or "No qualified execution veto."),
+        string.format("Commitment: %s @ %s | excess %d",
+            tostring(commitment.state or "UNKNOWN"),
+            tostring(commitment.objective or "Unknown"),
+            commitment.excess or 0),
+        string.format("Pressure: %s @ %s | score %d | enemy ETA %s",
+            tostring(pressureForecast.state or "UNKNOWN"),
+            tostring(pressureForecast.target or "Unknown"),
+            pressureForecast.score or 0,
+            pressureForecast.eta and (tostring(pressureForecast.eta) .. "s")
+                or "Unknown"),
+        string.format("Reinforcement: %s | friendly %s | enemy %s | edge %s",
+            tostring(reinforcement.side or "UNKNOWN"),
+            reinforcement.friendlyETA
+                and (tostring(reinforcement.friendlyETA) .. "s") or "Unknown",
+            reinforcement.enemyETA
+                and (tostring(reinforcement.enemyETA) .. "s") or "Unknown",
+            reinforcement.advantage
+                and (tostring(reinforcement.advantage) .. "s") or "Unknown"),
+        string.format("Rotation: %s | value %d | leaving cost %s",
+            tostring(rotationEconomy.state or "UNKNOWN"),
+            rotationEconomy.value or 0,
+            tostring(rotationEconomy.leavingCost or "Unknown")),
+        string.format("Collapse: %s %d | response %s | Recovery: %s %d",
+            tostring(collapse.state or "UNKNOWN"), collapse.score or 0,
+            tostring(collapse.response or "HOLD_PLAN"),
+            recovery.open and "OPEN" or "CLOSED", recovery.score or 0),
+        string.format("Organization: %s | entropy %d",
+            tostring(organization.state or "UNKNOWN"),
+            organization.entropy or 0),
+        string.format("Response package: %s | qualified %s",
+            tostring(response.action or "HOLD CURRENT PLAN"),
+            response.qualified and "YES" or "NO"),
+        "MOVE: " .. tostring(response.moverText or "Team"),
+        "STAY: " .. tostring(response.stayerText or "Assigned defenders"),
+        "",
         "ASSIGNMENT INTEGRITY:",
         string.format("on station %d | moving %d | unknown %d | abandoned %d | impossible %d",
             integrity.onStation or 0, integrity.moving or 0,
@@ -1141,6 +1202,9 @@ function MainWindow:ShowPerformance()
             capabilityCache.entries or 0),
         string.format("Decision cache: %d hits / %d misses",
             decisionCache.hits or 0, decisionCache.misses or 0),
+        string.format("Execution cache: %d hits / %d misses",
+            decisionCache.executionHits or 0,
+            decisionCache.executionMisses or 0),
         string.format("HUD renders skipped: %d / updated: %d",
             KWR.HUD.renderSkips or 0, KWR.HUD.renderUpdates or 0),
         string.format("Roster row renders skipped: %d / updated: %d",
@@ -1396,6 +1460,7 @@ function MainWindow:UpdateAssignments(state)
     local decision = strategy.objectiveDecision or {}
     local counterSteps = counter.sequence and table.concat(counter.sequence, " -> ") or nil
     local audit = KWR.Assignments:Audit(state.snapshot, state.assignments)
+    local response = state.snapshot.responsePackage or {}
     page.logicCard.value:SetText(table.concat({
         "Map family: " .. (definition and definition.kind or "FORMATION"),
         "Plan: " .. KWR.Util:Text(strategy.planID, strategy.state or "FORMATION", 38),
@@ -1408,6 +1473,16 @@ function MainWindow:UpdateAssignments(state)
         "Weighted focus: " .. weightedFocusText(strategy),
         "Success: " .. KWR.Util:Text(decision.success, "Confirm the objective state changes.", 120),
         "Abort: " .. KWR.Util:Text(decision.abort, "Reassess when the scoring path changes.", 120),
+        "",
+        "RESPONSE PACKAGE: " .. KWR.Util:Text(
+            response.action, "Hold current plan.", 100),
+        "MOVE: " .. KWR.Util:Text(response.moverText, "Team", 90),
+        "STAY: " .. KWR.Util:Text(
+            response.stayerText, "Assigned defenders", 90),
+        string.format("QUALIFIED: %s | confidence %s | score %d",
+            response.qualified and "YES" or "NO",
+            tostring(response.confidence or "NONE"),
+            response.score or 0),
         "",
         "COUNTER: " .. KWR.Util:Text(counter.emphasis, "Collecting enemy composition.", 130),
         counterSteps and ("SEQUENCE: " .. KWR.Util:Text(counterSteps, "", 170)) or "",

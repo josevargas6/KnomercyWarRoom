@@ -160,6 +160,8 @@ function Verification:BuildEntry(state)
         projectedWinProbability = strategy.projectedWinProbability,
         expectedOutcome = strategy.expectedOutcome,
         opportunity = strategy.opportunity,
+        executionAssessment = strategy.executionAssessment,
+        responsePackage = snapshot.responsePackage,
         simulations = strategy.simulations,
         switchIf = strategy.switchIf,
         stop = strategy.stop,
@@ -193,6 +195,7 @@ function Verification:BuildEntry(state)
         enemyIntent = reporter.enemyIntent,
         momentum = reporter.momentum,
         resourceEconomy = snapshot.combat and snapshot.combat.resourceEconomy,
+        priorityCast = snapshot.combat and snapshot.combat.priorityCast,
         assignmentIntegrity = snapshot.assignmentIntegrity,
         refreshReason = diagnostics.lastReason,
         refreshMs = diagnostics.lastDurationMs or 0,
@@ -311,10 +314,55 @@ function Verification:Format(entry)
             entry.momentum and entry.momentum.value or 0,
             entry.resourceEconomy and entry.resourceEconomy.advantage or 0,
             value(entry.resourceEconomy and entry.resourceEconomy.confidence, "NONE")),
+        string.format("Priority cast: %s by %s / %s / response %s",
+            value(entry.priorityCast and entry.priorityCast.name, "none"),
+            value(entry.priorityCast and entry.priorityCast.source, "unknown"),
+            value(entry.priorityCast and entry.priorityCast.priority, "NONE"),
+            value(entry.priorityCast and entry.priorityCast.response, "UNKNOWN")),
         string.format("Opportunity: %s / score %d / duration %ds",
             entry.opportunity and entry.opportunity.open and "OPEN" or "CLOSED",
             entry.opportunity and entry.opportunity.score or 0,
             entry.opportunity and entry.opportunity.duration or 0),
+        string.format("Execution: %s (%d) / commitment %s @ %s / pressure %s / rotation %s / collapse %s / organization %s %d",
+            value(entry.executionAssessment
+                and entry.executionAssessment.actionOpportunity
+                and entry.executionAssessment.actionOpportunity.action, "UNKNOWN"),
+            entry.executionAssessment
+                and entry.executionAssessment.actionOpportunity
+                and entry.executionAssessment.actionOpportunity.score or 0,
+            value(entry.executionAssessment
+                and entry.executionAssessment.commitment
+                and entry.executionAssessment.commitment.state, "UNKNOWN"),
+            value(entry.executionAssessment
+                and entry.executionAssessment.commitment
+                and entry.executionAssessment.commitment.objective, "unknown"),
+            value(entry.executionAssessment
+                and entry.executionAssessment.pressureForecast
+                and entry.executionAssessment.pressureForecast.state, "UNKNOWN"),
+            value(entry.executionAssessment
+                and entry.executionAssessment.rotationEconomy
+                and entry.executionAssessment.rotationEconomy.state, "UNKNOWN"),
+            value(entry.executionAssessment
+                and entry.executionAssessment.collapse
+                and entry.executionAssessment.collapse.state, "UNKNOWN"),
+            value(entry.executionAssessment
+                and entry.executionAssessment.organization
+                and entry.executionAssessment.organization.state, "UNKNOWN"),
+            entry.executionAssessment
+                and entry.executionAssessment.organization
+                and entry.executionAssessment.organization.entropy or 0),
+        string.format("Response package: %s / qualified %s / move %s / stay %s / confidence %s score %d",
+            value(entry.responsePackage and entry.responsePackage.action,
+                "HOLD CURRENT PLAN"),
+            entry.responsePackage and entry.responsePackage.qualified
+                and "YES" or "NO",
+            value(entry.responsePackage and entry.responsePackage.moverText,
+                "Team"),
+            value(entry.responsePackage and entry.responsePackage.stayerText,
+                "Assigned defenders"),
+            value(entry.responsePackage and entry.responsePackage.confidence,
+                "NONE"),
+            entry.responsePackage and entry.responsePackage.score or 0),
         string.format("Performance: last %.3f ms / p95 %.3f ms / memory %.1f KB",
             entry.refreshMs or 0, entry.p95Ms or 0, entry.memoryKB or 0),
         string.format("Transitions: last %.3f ms / addon initialize %.3f ms",

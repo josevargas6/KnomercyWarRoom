@@ -55,6 +55,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local doctrine = KWR.Doctrine:Get(snapshot.context.mapKey)
     local doctrineRecommendation = KWR.Doctrine:Recommend(snapshot.context.mapKey, status, prediction.urgency)
     local strategy = snapshot.strategy or {}
+    local response = snapshot.responsePackage or {}
     local action = not snapshot.context.inPvP and formation.action
         or strategy.action or prediction.action or doctrineRecommendation
     if snapshot.context.inPvP then action = addPriorityTarget(action, definition, prediction) end
@@ -64,6 +65,9 @@ function Commander:Compose(snapshot, prediction, assignments)
     end
     if (prediction.urgency or 0) >= 90 and not strategy.action then
         action = prediction.emergency or doctrineRecommendation
+    end
+    if snapshot.context.inPvP and response.qualified then
+        action = response.action
     end
     local integrity = snapshot.assignmentIntegrity or {}
     local urgentReassignment = integrity.reassignments and integrity.reassignments[1]
@@ -75,6 +79,9 @@ function Commander:Compose(snapshot, prediction, assignments)
     action = KWR.Util:Text(action, "Play objective.", 82)
 
     local who = KWR.Assignments:SelectForCommand(assignments, prediction)
+    if snapshot.context.inPvP and response.qualified then
+        who = response.moverText or who
+    end
     if urgentReassignment and urgentReassignment.replacement then
         who = urgentReassignment.replacement
     end
@@ -85,6 +92,17 @@ function Commander:Compose(snapshot, prediction, assignments)
         end
         who = "Recruit " .. table.concat(names, " / ")
     end
+    if snapshot.reassessment then
+        action = "REASSESS: " .. action
+        local changed = {}
+        for index = 1, math.min(3,
+            #(snapshot.reassessment.changes or {})) do
+            changed[#changed + 1] =
+                snapshot.reassessment.changes[index].name
+        end
+        if #changed > 0 then who = table.concat(changed, " + ") end
+    end
+    action = KWR.Util:Text(action, "Play objective.", 96)
     local stabilized = false
     if snapshot.context.inPvP and not snapshot.reassessment and self.lastCommand
         and self.lastCommand.mapKey == snapshot.context.mapKey
@@ -128,6 +146,9 @@ function Commander:Compose(snapshot, prediction, assignments)
                 and (" SUCCESS: " .. strategy.objectiveDecision.success) or "")
             .. (strategy.objectiveDecision and strategy.objectiveDecision.abort
                 and (" ABORT: " .. strategy.objectiveDecision.abort) or "")
+            .. (response.qualified and (" STAY: " .. response.stayerText) or "")
+            .. (snapshot.reassessment and snapshot.reassessment.summary
+                and (" CHANGES: " .. snapshot.reassessment.summary) or "")
             .. " STOP: " .. (strategy.stop or doctrine.stop or "Avoid low-value fights."),
         "Waiting for battlefield truth.",
         220
@@ -178,6 +199,8 @@ function Commander:Compose(snapshot, prediction, assignments)
         recommendationMode = strategy.recommendationMode,
         simulations = KWR.Util:Copy(strategy.simulations),
         opportunity = KWR.Util:Copy(strategy.opportunity),
+        executionAssessment = KWR.Util:Copy(strategy.executionAssessment),
+        responsePackage = KWR.Util:Copy(response),
         assignmentIntegrity = KWR.Util:Copy(integrity),
         formation = not snapshot.context.inPvP and KWR.Util:Copy(formation) or nil,
         signature = signature,

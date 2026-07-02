@@ -328,6 +328,7 @@ function AAR:Record(state)
         reporterRisk = reporter.risk,
         hotspot = reporter.hotspot and reporter.hotspot.label or nil,
         killTarget = combat.killTarget and combat.killTarget.shortName or nil,
+        priorityCast = combat.priorityCast and combat.priorityCast.name or nil,
         commandSignature = state.command and state.command.signature or nil,
     }
     self:CaptureTeams(active, state.snapshot)
@@ -369,6 +370,10 @@ function AAR:Record(state)
             recommendationMode = state.command.recommendationMode,
             evidence = KWR.Util:Copy(state.command.evidence),
             simulations = KWR.Util:Copy(state.command.simulations),
+            executionAssessment = KWR.Util:Copy(
+                state.command.executionAssessment),
+            responsePackage = KWR.Util:Copy(
+                state.command.responsePackage),
             mapState = {
                 phase = clean(state.snapshot.context.phase, "UNKNOWN", 20),
                 friendlyScore = KWR.Util:Number(state.snapshot.score.friendly, nil),
@@ -559,6 +564,27 @@ function AAR:Export(entry)
                 and joinClean(command.evidence, "; ") or "Unknown")
         lines[#lines + 1] = "  Abort/Pivot: "
             .. clean(command.abortCondition, "Unknown", 180)
+        local execution = command.executionAssessment or {}
+        local commitment = execution.commitment or {}
+        local collapse = execution.collapse or {}
+        local organization = execution.organization or {}
+        local nextAction = execution.actionOpportunity or {}
+        lines[#lines + 1] = string.format(
+            "  Execution: %s (%s) | commitment %s @ %s | collapse %s | organization %s/%s",
+            clean(nextAction.action, "Unknown", 32),
+            unknown(nextAction.score),
+            clean(commitment.state, "Unknown", 32),
+            clean(commitment.objective, "Unknown", 48),
+            clean(collapse.state, "Unknown", 24),
+            clean(organization.state, "Unknown", 24),
+            unknown(organization.entropy))
+        local response = command.responsePackage or {}
+        lines[#lines + 1] = string.format(
+            "  Response: %s | move %s | stay %s | qualified %s",
+            clean(response.action, "Hold current plan", 120),
+            clean(response.moverText, "Team", 100),
+            clean(response.stayerText, "Assigned defenders", 100),
+            response.qualified and "YES" or "NO")
         lines[#lines + 1] = "  Outcome: " .. clean(command.outcome, "Unknown", 80)
     end
     lines[#lines + 1] = ""

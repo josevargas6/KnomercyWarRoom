@@ -37,7 +37,9 @@ facts remain unknown, and dynamic calls remain manual.
 
 ## Alpha status
 
-Version 6.1.0-alpha.9 adds structured manual post-match evidence export,
+Version 6.1.0-alpha.12 adds complete response packages, optional target/cast
+clarity, bounded execution assessment, and retains structured
+manual post-match evidence export,
 stale-evidence rejection, assignment validation, richer field-test reports,
 one-click fixed battlefield calls with visible confirmation and a compact fallback,
 aligned decision tables, commander-focused
@@ -47,5 +49,7 @@ learning, provenance, bounded specialization capability ratings, battlefield
 job preferences, observed tactical ability windows, sourced visible/last-seen
 locations, explicit objective success/abort criteria, and reduced repeat
 runtime/UI work. It passes offline
-validation, live enemy-token binding, reassessment feedback, and final-score AAR handling. Live Retail 12.0.7 field testing, including secure-row taint checks,
+validation, 232 deterministic checks, live enemy-token binding, reassessment
+feedback, and final-score AAR handling. Live Retail 12.0.7 field testing,
+including secure-row taint checks,
 is still required before stable release.

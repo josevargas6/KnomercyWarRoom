@@ -4,6 +4,9 @@ local Strategist = {
     cache = nil,
     cacheHits = 0,
     cacheMisses = 0,
+    executionCache = nil,
+    executionCacheHits = 0,
+    executionCacheMisses = 0,
 }
 KWR.Strategist = Strategist
 
@@ -515,7 +518,316 @@ function Strategist:CacheStats()
         hits = self.cacheHits or 0,
         misses = self.cacheMisses or 0,
         active = self.cache ~= nil,
+        executionHits = self.executionCacheHits or 0,
+        executionMisses = self.executionCacheMisses or 0,
+        executionActive = self.executionCache ~= nil,
     }
+end
+
+local function executionLabel(score)
+    if score >= 75 then return "HIGH" end
+    if score >= 50 then return "MEDIUM" end
+    if score >= 25 then return "LOW" end
+    return "NONE"
+end
+
+local function findETA(reporter, target)
+    if not target then return nil end
+    for _, row in ipairs(reporter.etas or {}) do
+        if row.label == target then return row end
+    end
+end
+
+function Strategist:AssessExecution(snapshot, prediction, assignments)
+    if not snapshot.context or not snapshot.context.inPvP then
+        return {
+            active = false,
+            confidence = "NONE",
+            actionOpportunity = { action = "NONE", score = 0 },
+        }
+    end
+
+    local integrity = snapshot.assignmentIntegrity or {}
+    local signatureParts = {
+        decisionSignature(snapshot, prediction),
+        integrity.onStation or 0,
+        integrity.moving or 0,
+        integrity.unverified or 0,
+        integrity.abandoned or 0,
+        integrity.impossible or 0,
+    }
+    for _, assignment in ipairs(assignments or {}) do
+        signatureParts[#signatureParts + 1] = table.concat({
+            assignment.guid or assignment.name or "?",
+            assignment.role or "?",
+            assignment.location or "?",
+        }, ":")
+    end
+    local executionSignature = table.concat(signatureParts, "\030")
+    local executionNow = KWR.Util:Now()
+    if self.executionCache
+        and self.executionCache.signature == executionSignature
+        and executionNow - self.executionCache.at <= 1.0 then
+        self.executionCacheHits = self.executionCacheHits + 1
+        return KWR.Util:Copy(self.executionCache.result)
+    end
+    self.executionCacheMisses = self.executionCacheMisses + 1
+
+    local reporter = snapshot.reporter or {}
+    local momentum = reporter.momentum or {}
+    local intent = reporter.enemyIntent or {}
+    local resources = snapshot.combat and snapshot.combat.resourceEconomy or {}
+    local resourceEnemy = resources.enemy or {}
+    local evidenceCount = 0
+    if #(reporter.pressure or {}) > 0 then evidenceCount = evidenceCount + 1 end
+    if #(reporter.etas or {}) > 0 then evidenceCount = evidenceCount + 1 end
+    if intent.target then evidenceCount = evidenceCount + 1 end
+    if momentum.confidence and momentum.confidence ~= "NONE" then
+        evidenceCount = evidenceCount + 1
+    end
+    if #(integrity.rows or {}) > 0 then evidenceCount = evidenceCount + 1 end
+    if (resources.coverage or 0) > 0 then evidenceCount = evidenceCount + 1 end
+    local confidenceScore = KWR.Util:Clamp(
+        (snapshot.strategy and snapshot.strategy.confidenceBudget
+            and snapshot.strategy.confidenceBudget.score or 0) * 0.65
+            + evidenceCount * 6,
+        0, 100)
+
+    local commitment = {
+        state = "UNKNOWN",
+        score = 0,
+        objective = nil,
+        excess = 0,
+        evidence = {},
+    }
+    for _, row in ipairs(reporter.pressure or {}) do
+        local state, score, excess
+        if row.owner == "FRIENDLY" and row.enemy >= 2 and row.friendly <= 1 then
+            state = "UNDERDEFENDED"
+            score = 78 + math.min(18, (row.enemy - row.friendly) * 6)
+        elseif row.owner == "FRIENDLY" and row.friendly >= 5 and row.enemy <= 1 then
+            state = "FRIENDLY_OVERCOMMITTED"
+            excess = math.max(1, row.friendly - math.max(2, row.enemy + 1))
+            score = 62 + math.min(25, excess * 6)
+        elseif row.owner == "ENEMY" and row.enemy >= 5 and row.friendly <= 2 then
+            state = "ENEMY_OVERCOMMITTED"
+            excess = math.max(1, row.enemy - math.max(2, row.friendly + 1))
+            score = 68 + math.min(25, excess * 5)
+        elseif row.enemy > 0 and row.friendly >= 3 then
+            state = "CAP_BLOCKED"
+            score = 45 + math.min(20, row.enemy * 5)
+        end
+        if state and score > commitment.score then
+            commitment.state = state
+            commitment.score = KWR.Util:Clamp(score, 0, 100)
+            commitment.objective = row.label
+            commitment.excess = excess or 0
+            commitment.evidence = {
+                tostring(row.friendly) .. " friendly observed",
+                tostring(row.enemy) .. " enemy observed",
+                "owner " .. tostring(row.owner),
+            }
+        end
+    end
+
+    local forecastTarget = intent.target
+        or (reporter.hotspot and reporter.hotspot.label)
+    local eta = findETA(reporter, forecastTarget)
+    local reinforcement = {
+        target = forecastTarget,
+        friendlyETA = eta and eta.friendlyETA or nil,
+        enemyETA = eta and eta.enemyETA or nil,
+        advantage = eta and eta.advantage or nil,
+        confidence = eta and eta.confidence or "NONE",
+        side = "UNKNOWN",
+    }
+    if reinforcement.advantage then
+        reinforcement.side = reinforcement.advantage >= 3 and "FRIENDLY"
+            or (reinforcement.advantage <= -3 and "ENEMY" or "EVEN")
+    end
+
+    local pressureScore = 0
+    local pressureEvidence = {}
+    if reporter.hotspot and reporter.hotspot.risk then
+        pressureScore = pressureScore + reporter.hotspot.risk * 0.55
+        pressureEvidence[#pressureEvidence + 1] =
+            tostring(reporter.hotspot.risk) .. " hotspot risk"
+    end
+    if intent.target then
+        pressureScore = pressureScore + (intent.confidenceScore or 0) * 0.35
+        pressureEvidence[#pressureEvidence + 1] =
+            tostring(intent.confidence or "LOW") .. " enemy intent"
+    end
+    if reinforcement.side == "ENEMY" then
+        pressureScore = pressureScore + 15
+        pressureEvidence[#pressureEvidence + 1] = "enemy reinforcements first"
+    end
+    pressureScore = KWR.Util:Clamp(pressureScore, 0, 100)
+    local pressureForecast = {
+        target = forecastTarget,
+        score = pressureScore,
+        state = not forecastTarget and "UNKNOWN"
+            or (pressureScore >= 65 and "RISING"
+            or (pressureScore >= 40 and "WATCH" or "STABLE")),
+        eta = reinforcement.enemyETA,
+        confidence = executionLabel(math.min(confidenceScore, pressureScore)),
+        evidence = pressureEvidence,
+    }
+
+    local rotationEconomy = {
+        target = forecastTarget,
+        state = "UNKNOWN",
+        value = 0,
+        arrivalEdge = reinforcement.advantage,
+        leavingCost = commitment.state == "UNDERDEFENDED" and "HIGH"
+            or (commitment.state == "FRIENDLY_OVERCOMMITTED" and "LOW" or "MEDIUM"),
+        evidence = {},
+    }
+    if reinforcement.advantage then
+        rotationEconomy.value = KWR.Util:Clamp(
+            50 + reinforcement.advantage * 3
+                + (commitment.state == "FRIENDLY_OVERCOMMITTED" and 18 or 0)
+                - (commitment.state == "UNDERDEFENDED" and 30 or 0),
+            0, 100)
+        rotationEconomy.state = rotationEconomy.value >= 65 and "WORTH_IT"
+            or (rotationEconomy.value <= 35 and "NOT_WORTH_IT" or "MARGINAL")
+        rotationEconomy.evidence = {
+            "arrival edge " .. tostring(reinforcement.advantage) .. "s",
+            "leaving cost " .. rotationEconomy.leavingCost,
+        }
+    end
+
+    local friendlyDead = momentum.friendlyDead or 0
+    local enemyDead = momentum.enemyDead or 0
+    local collapseScore = math.max(0, -(momentum.value or 0)) * 0.55
+        + math.max(0, friendlyDead - enemyDead) * 14
+        + ((momentum.friendlyHealers or 0) == 0 and friendlyDead > 0 and 18 or 0)
+        + (reporter.hotspot and math.max(0, reporter.hotspot.delta or 0) * 8 or 0)
+        + math.max(0, -(resources.advantage or 0)) * 0.25
+    collapseScore = KWR.Util:Clamp(collapseScore, 0, 100)
+    local collapse = {
+        score = collapseScore,
+        state = collapseScore >= 70 and "CRITICAL"
+            or (collapseScore >= 45 and "AT_RISK" or "STABLE"),
+        response = collapseScore >= 70
+            and ((prediction.urgency or 0) >= 85 and "STALL_OR_TRADE"
+                or "DISENGAGE_RESET")
+            or (collapseScore >= 45 and "PREPARE_EXIT" or "HOLD_PLAN"),
+        confidence = executionLabel(math.min(confidenceScore, collapseScore + 20)),
+        evidence = {
+            tostring(friendlyDead) .. " friendly dead",
+            tostring(enemyDead) .. " enemy dead",
+            tostring(momentum.value or 0) .. " momentum",
+        },
+    }
+
+    local recoveryScore = math.max(0, momentum.value or 0) * 0.45
+        + enemyDead * 14 - friendlyDead * 8
+        + (commitment.state == "FRIENDLY_OVERCOMMITTED" and 12 or 0)
+        + ((resourceEnemy.deadHealers or 0) > 0 and 15 or 0)
+    recoveryScore = KWR.Util:Clamp(recoveryScore, 0, 100)
+    local recovery = {
+        open = recoveryScore >= 45 and collapse.state == "STABLE",
+        score = recoveryScore,
+        response = recoveryScore >= 45 and "RESET_REASSIGN" or "CONTINUE",
+        confidence = executionLabel(math.min(confidenceScore, recoveryScore + 20)),
+    }
+
+    local assignmentCount = #(assignments or {})
+    local organizationScore = (integrity.abandoned or 0) * 24
+        + (integrity.impossible or 0) * 14
+        + (integrity.moving or 0) * 4
+        + math.min(20, (integrity.unverified or 0) * 2)
+        + (commitment.state == "FRIENDLY_OVERCOMMITTED" and 12 or 0)
+        + (commitment.state == "UNDERDEFENDED" and 18 or 0)
+    if assignmentCount == 0 then organizationScore = 0 end
+    organizationScore = KWR.Util:Clamp(organizationScore, 0, 100)
+    local organization = {
+        entropy = organizationScore,
+        state = assignmentCount == 0 and "UNKNOWN"
+            or (organizationScore >= 70 and "CRITICAL"
+            or (organizationScore >= 45 and "DISRUPTED"
+            or (organizationScore >= 20 and "STRAINED" or "ORDERED"))),
+        abandoned = integrity.abandoned or 0,
+        impossible = integrity.impossible or 0,
+        moving = integrity.moving or 0,
+        unverified = integrity.unverified or 0,
+        confidence = assignmentCount > 0 and executionLabel(confidenceScore) or "NONE",
+    }
+
+    local actions = {
+        { action = "HOLD_PLAN", score = 45, reason = "No stronger execution veto." },
+    }
+    if collapse.state == "CRITICAL" then
+        actions[#actions + 1] = {
+            action = collapse.response, score = 95,
+            reason = "Fight collapse risk is critical.",
+        }
+    end
+    if commitment.state == "UNDERDEFENDED" then
+        actions[#actions + 1] = {
+            action = "REINFORCE", score = 90,
+            target = commitment.objective,
+            reason = "A friendly objective is underdefended.",
+        }
+    elseif commitment.state == "ENEMY_OVERCOMMITTED" then
+        actions[#actions + 1] = {
+            action = "CONTAIN_TRADE", score = 86,
+            target = commitment.objective,
+            reason = "Enemy commitment exposes another objective.",
+        }
+    elseif commitment.state == "FRIENDLY_OVERCOMMITTED" then
+        actions[#actions + 1] = {
+            action = "REALLOCATE", score = 80,
+            target = commitment.objective,
+            reason = "Friendly manpower exceeds observed need.",
+        }
+    end
+    if pressureForecast.state == "RISING" then
+        actions[#actions + 1] = {
+            action = "PREPARE_PRESSURE", score = 78,
+            target = pressureForecast.target,
+            reason = "Pressure forecast is rising.",
+        }
+    end
+    if rotationEconomy.state == "WORTH_IT" then
+        actions[#actions + 1] = {
+            action = "ROTATE", score = 74,
+            target = rotationEconomy.target,
+            reason = "Arrival advantage exceeds leaving cost.",
+        }
+    end
+    if recovery.open then
+        actions[#actions + 1] = {
+            action = "RESET_REASSIGN", score = 68,
+            reason = "A bounded recovery window is open.",
+        }
+    end
+    table.sort(actions, function(a, b)
+        if a.score ~= b.score then return a.score > b.score end
+        return a.action < b.action
+    end)
+
+    local result = {
+        active = true,
+        confidenceScore = math.floor(confidenceScore + 0.5),
+        confidence = executionLabel(confidenceScore),
+        commitment = commitment,
+        pressureForecast = pressureForecast,
+        reinforcement = reinforcement,
+        rotationEconomy = rotationEconomy,
+        collapse = collapse,
+        recovery = recovery,
+        organization = organization,
+        actionOpportunity = actions[1],
+        alternatives = actions,
+    }
+    self.executionCache = {
+        signature = executionSignature,
+        at = executionNow,
+        result = KWR.Util:Copy(result),
+    }
+    return result
 end
 
 KWR:RegisterModule("Strategist", Strategist)

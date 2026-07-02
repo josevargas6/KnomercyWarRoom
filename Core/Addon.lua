@@ -4,8 +4,8 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.9"
-KWR.schemaVersion = 60109
+KWR.version = "6.1.0-alpha.12"
+KWR.schemaVersion = 60112
 KWR.modules = {}
 KWR.moduleOrder = {}
 KWR.ready = false
@@ -61,6 +61,7 @@ local DEFAULTS = {
             shown = false,
             mode = "BOTH",
             autoShowInPvP = true,
+            combatVisuals = true,
         },
         showLoadMessage = true,
         preview = false,
@@ -205,7 +206,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
     elseif event == "PLAYER_LOGIN" then
         KWR:EnableModules()
         if KWR.db.profile.showLoadMessage ~= false then
-        KWR:Print("6.1 Alpha 9 loaded. Predictive command intelligence and manual AAR export are active.", true)
+        KWR:Print("6.1 Alpha 12 loaded. Complete response packages and target clarity are active.", true)
         end
     elseif event == "PLAYER_LOGOUT" then
         KWR:DisableModules()

@@ -52,6 +52,11 @@ local ACTIVE_EVENTS = {
     "UNIT_MAXHEALTH",
     "UNIT_AURA",
     "ARENA_OPPONENT_UPDATE",
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
     "UNIT_SPELLCAST_SUCCEEDED",
     "CHAT_MSG_BG_SYSTEM_ALLIANCE",
     "CHAT_MSG_BG_SYSTEM_HORDE",
@@ -130,11 +135,19 @@ function Runtime:Refresh(reason)
         snapshot.strategy = KWR.Strategist:Evaluate(snapshot, prediction)
         local assignments = KWR.Assignments:Build(snapshot, prediction)
         snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
+        snapshot.strategy.executionAssessment =
+            KWR.Strategist:AssessExecution(snapshot, prediction, assignments)
+        snapshot.responsePackage =
+            KWR.Assignments:ResponsePackage(snapshot, assignments)
         if self.reassessRequested then
             local previous = KWR.Store:Get()
+            local changes = KWR.Assignments:Diff(
+                previous and previous.assignments, assignments)
             snapshot.reassessment = {
                 at = KWR.Util:Now(),
-                changes = KWR.Assignments:Diff(previous and previous.assignments, assignments),
+                changes = changes,
+                summary = KWR.Assignments:SummarizeChanges(
+                    changes, snapshot.context.mapKey),
                 reason = "Manual battlefield reassessment",
             }
             self.lastReassessment = KWR.Util:Copy(snapshot.reassessment)
@@ -251,7 +264,16 @@ function Runtime:HandleEvent(event, ...)
     if event == "UPDATE_UI_WIDGET" and KWR.Sensors then
         KWR.Sensors:ObserveWidget((...))
     end
-    if event == "UNIT_SPELLCAST_SUCCEEDED" and KWR.CombatIntel then
+    if (event == "UNIT_SPELLCAST_START"
+        or event == "UNIT_SPELLCAST_CHANNEL_START") and KWR.CombatIntel then
+        local unit, _, spellID = ...
+        KWR.CombatIntel:ObserveUnitCast(unit, spellID, true, event)
+    elseif (event == "UNIT_SPELLCAST_STOP"
+        or event == "UNIT_SPELLCAST_INTERRUPTED"
+        or event == "UNIT_SPELLCAST_CHANNEL_STOP") and KWR.CombatIntel then
+        local unit, _, spellID = ...
+        KWR.CombatIntel:ObserveUnitCast(unit, spellID, false, event)
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and KWR.CombatIntel then
         local unit, _, spellID = ...
         KWR.CombatIntel:ObserveUnitSpell(unit, spellID)
     end

@@ -4,6 +4,7 @@ local ObjectiveIntel = {
     events = {},
     carriers = {},
     timers = {},
+    auraCache = {},
     maxEvents = 50,
 }
 KWR.ObjectiveIntel = ObjectiveIntel
@@ -32,6 +33,7 @@ function ObjectiveIntel:Reset(sessionKey)
     self.events = {}
     self.carriers = {}
     self.timers = {}
+    self.auraCache = {}
 end
 
 function ObjectiveIntel:ObserveMessage(message, mapKey)
@@ -127,8 +129,16 @@ local function findEntity(snapshot, playerKey)
     end
 end
 
-local function observeCarrierAuras(carrier, unit)
+local function observeCarrierAuras(self, carrier, unit)
     if not unit or not C_UnitAuras or type(C_UnitAuras.GetAuraDataByIndex) ~= "function" then return end
+    local cacheKey = carrier.playerKey or carrier.player or unit
+    local now = KWR.Util:Now()
+    local cached = self.auraCache[cacheKey]
+    if cached and now - cached.at < 0.5 then
+        carrier.stacks = cached.stacks
+        carrier.auras = KWR.Util:Copy(cached.auras)
+        return
+    end
     local bestStacks = 0
     local observed = {}
     for _, filter in ipairs({ "HELPFUL", "HARMFUL" }) do
@@ -148,6 +158,11 @@ local function observeCarrierAuras(carrier, unit)
     end
     carrier.stacks = bestStacks
     carrier.auras = observed
+    self.auraCache[cacheKey] = {
+        at = now,
+        stacks = bestStacks,
+        auras = KWR.Util:Copy(observed),
+    }
 end
 
 function ObjectiveIntel:Apply(snapshot)
@@ -166,7 +181,7 @@ function ObjectiveIntel:Apply(snapshot)
             carrier.x, carrier.y = entity.x, entity.y
             carrier.dead = entity.dead
             carrier.visible = entity.visible == true or owner == "FRIENDLY"
-            observeCarrierAuras(carrier, entity.unit)
+            observeCarrierAuras(self, carrier, entity.unit)
             entity.carrier = true
             entity.carriedObjective = objective
             entity.carrierStacks = carrier.stacks
@@ -209,6 +224,14 @@ function ObjectiveIntel:Apply(snapshot)
             self.timers[node] = nil
         end
     end
+    snapshot.objectives.truthQuality = {
+        source = snapshot.objectives.source or "unknown",
+        carriers = #carriers,
+        timers = #snapshot.objectives.timers,
+        observedEvents = #self.events,
+        qualified = snapshot.objectives.source == "ui_widget"
+            or #carriers > 0 or #snapshot.objectives.timers > 0,
+    }
     return snapshot
 end
 

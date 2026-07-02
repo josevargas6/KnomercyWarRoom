@@ -97,6 +97,15 @@ local function defaults()
                     duration = 0,
                     evidence = {},
                 },
+                executionAssessment = {
+                    active = false,
+                    confidence = "NONE",
+                    confidenceScore = 0,
+                    actionOpportunity = {
+                        action = "NONE",
+                        score = 0,
+                    },
+                },
                 simulations = {},
             },
             assignmentIntegrity = {
@@ -107,6 +116,16 @@ local function defaults()
                 unknown = 0,
                 reassignmentRequired = false,
                 reassignments = {},
+            },
+            responsePackage = {
+                active = false,
+                qualified = false,
+                actionID = "HOLD_PLAN",
+                action = "HOLD CURRENT PLAN",
+                movers = {},
+                stayers = {},
+                confidence = "NONE",
+                score = 0,
             },
         },
         prediction = {

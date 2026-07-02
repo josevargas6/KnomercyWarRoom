@@ -204,6 +204,48 @@ function Diagnostics:Run()
         end
     end
 
+    local stealthSnapshot = fixture("ARATHI",
+        { friendly = 0, enemy = 0, max = 1500 },
+        { friendly = 0, enemy = 0 })
+    stealthSnapshot.roster = KWR.Util:Copy(assignmentRoster)
+    stealthSnapshot.strategy = {
+        state = "OPENING",
+        enemyComposition = { id = "STEALTH" },
+    }
+    local stealthAssignments = KWR.Assignments:Build(stealthSnapshot)
+    local foundStealthDirective = false
+    for _, assignment in ipairs(stealthAssignments) do
+        if assignment.counterDirective
+            and assignment.counterDirective:find(
+                "missing stealth", 1, true) then
+            foundStealthDirective = true
+            break
+        end
+    end
+    check("Enemy composition counterplay reaches relevant player assignments",
+        foundStealthDirective == true)
+
+    local invalidAssignmentSnapshot = fixture("WSG",
+        { friendly = 0, enemy = 0, max = 3 },
+        { friendly = 0, enemy = 0 })
+    invalidAssignmentSnapshot.roster = {
+        {
+            guid = "DPS-1", name = "Damage-Realm", shortName = "Damage",
+            classFile = "MAGE", spec = "Frost", role = "DAMAGER",
+        },
+    }
+    local invalidAssignmentAudit = KWR.Assignments:Audit(
+        invalidAssignmentSnapshot, {
+            {
+                guid = "Other-1", name = "Other-Realm",
+                shortName = "Other", groupRole = "DAMAGER",
+                role = "Flag Carrier", location = "Home", priority = 100,
+            },
+        })
+    check("Assignment audit rejects non-roster identities and incompatible flag carriers",
+        invalidAssignmentAudit.ok == false
+            and #invalidAssignmentAudit.issues >= 2)
+
     local freshEvidence = fixture(
         "ARATHI",
         { friendly = 900, enemy = 700, max = 1500 },
@@ -605,6 +647,13 @@ function Diagnostics:Run()
         smokeBomb and smokeBomb.kind == "ABILITY"
             and smokeBomb.tags.objectiveThreat == true
             and cyclone and cyclone.tags.captureDenial == true)
+    local priorityCyclone = KWR.CombatSpells:GetCast(33786)
+    check("Priority-cast catalog accents reviewed control without claiming interruptibility",
+        priorityCyclone and priorityCyclone.priority == "MUST_STOP"
+            and priorityCyclone.response == "STOP")
+    check("Defensive catalog publishes an advisory response for verified immunities",
+        KWR.CombatSpells:Get(642).defensiveClass == "IMMUNITY"
+            and KWR.CombatSpells:Get(642).response == "SWAP")
     KWR.CombatIntel:Reset()
     KWR.CombatIntel:ObserveSpell(
         "Creature-Test", "Threat-Realm", 212182, "SPELL_CAST_SUCCESS")
@@ -615,6 +664,35 @@ function Diagnostics:Run()
         threatEvidence.recentAbilities[1]
             and threatEvidence.recentAbilities[1].name == "Smoke Bomb"
             and threatEvidence.threatScore == 36)
+    local castRecord = KWR.CombatIntel:GetRecord(
+        "Player-Caster", "Caster-Realm", true)
+    castRecord.currentCast = {
+        spellID = 33786, name = "Cyclone", priority = "MUST_STOP",
+        response = "STOP", observedAt = KWR.Util:Now(),
+        expiresAt = KWR.Util:Now() + 3,
+    }
+    local castEvidence = KWR.CombatIntel:EvidenceFor({
+        guid = "Player-Caster", name = "Caster-Realm",
+    })
+    check("Observed priority casts expire through the existing combat evidence record",
+        castEvidence.priorityCast
+            and castEvidence.priorityCast.name == "Cyclone"
+            and castEvidence.priorityCast.remaining > 0)
+    local protectedScore = KWR.CombatIntel:Score({
+        guid = "Protected-1", name = "Protected-Realm",
+        classFile = "PALADIN", spec = "Retribution", role = "DAMAGER",
+        visible = true, localEngaged = true, dead = false,
+    }, {
+        defensivesActive = {
+            { name = "Divine Shield", response = "SWAP" },
+        },
+        defensivesOnCooldown = {},
+        recentAbilities = {},
+        trinketState = "UNKNOWN",
+        threatScore = 0,
+    })
+    check("Verified immunity removes a protected enemy from automatic kill-candidate ranking",
+        protectedScore == nil)
     KWR.CombatIntel:Reset()
     check("Capability preferences refine assignment value without replacing role safety",
         KWR.Assignments:BattleValue({
@@ -789,6 +867,150 @@ function Diagnostics:Run()
     KWR.Strategist:Evaluate(decisionSnapshot, decisionPrediction)
     check("Decision engine reuses an unchanged bounded evaluation",
         KWR.Strategist:CacheStats().hits > cacheHitsBefore)
+
+    local executionSnapshot = KWR.Util:Copy(decisionSnapshot)
+    executionSnapshot.strategy = KWR.Util:Copy(decisionStrategy)
+    executionSnapshot.reporter = {
+        pressure = {
+            {
+                label = "Farm", owner = "FRIENDLY",
+                friendly = 1, enemy = 4, delta = 3, risk = 92,
+            },
+        },
+        hotspot = {
+            label = "Farm", owner = "FRIENDLY",
+            friendly = 1, enemy = 4, delta = 3, risk = 92,
+        },
+        etas = {
+            {
+                label = "Farm", friendlyETA = 14, enemyETA = 5,
+                advantage = -9, confidence = "MEDIUM",
+            },
+        },
+        enemyIntent = {
+            target = "Farm", confidence = "HIGH", confidenceScore = 78,
+        },
+        momentum = {
+            value = -46, state = "ENEMY", confidence = "MEDIUM",
+            friendlyDead = 3, enemyDead = 0, friendlyHealers = 0,
+        },
+    }
+    executionSnapshot.assignmentIntegrity = {
+        rows = {
+            { name = "Defender", status = "ABANDONED" },
+            { name = "Floater", status = "MOVING" },
+        },
+        onStation = 0,
+        moving = 1,
+        unverified = 0,
+        abandoned = 1,
+        impossible = 0,
+    }
+    executionSnapshot.combat.resourceEconomy.advantage = -35
+    local executionAssignments = {
+        { name = "Defender", role = "Node Defender", location = "Farm" },
+        { name = "Floater", role = "Floater", location = "Blacksmith" },
+    }
+    local executionAssessment = KWR.Strategist:AssessExecution(
+        executionSnapshot, { urgency = 72 }, executionAssignments)
+    check("Execution assessment detects an underdefended friendly objective",
+        executionAssessment.commitment.state == "UNDERDEFENDED"
+            and executionAssessment.commitment.objective == "Farm")
+    check("Execution assessment forecasts enemy reinforcement advantage without inventing coordinates",
+        executionAssessment.reinforcement.side == "ENEMY"
+            and executionAssessment.reinforcement.advantage == -9
+            and executionAssessment.pressureForecast.state == "RISING")
+    check("Rotation economy rejects a rotation whose leaving cost exceeds its arrival value",
+        executionAssessment.rotationEconomy.state == "NOT_WORTH_IT"
+            and executionAssessment.rotationEconomy.leavingCost == "HIGH")
+    check("Collapse assessment promotes a bounded disengage or stall response",
+        executionAssessment.collapse.state == "CRITICAL"
+            and (executionAssessment.collapse.response == "DISENGAGE_RESET"
+                or executionAssessment.collapse.response == "STALL_OR_TRADE"))
+    check("Organization assessment exposes assignment breakdown as bounded entropy",
+        executionAssessment.organization.entropy >= 20
+            and executionAssessment.organization.entropy <= 100
+            and executionAssessment.organization.state ~= "ORDERED")
+    check("Action opportunity selects one highest-value execution response",
+        executionAssessment.actionOpportunity.action == "DISENGAGE_RESET"
+            or executionAssessment.actionOpportunity.action == "STALL_OR_TRADE")
+    executionSnapshot.strategy.executionAssessment = executionAssessment
+    executionSnapshot.strategy.objectiveDecision = {
+        target = "Farm",
+        success = "Farm stabilizes.",
+        abort = "Farm is unrecoverable.",
+    }
+    local responseAssignments = {
+        {
+            guid = "Mover-1", name = "Mover-Realm", shortName = "Mover",
+            role = "Strike Team", location = "Blacksmith",
+            connected = true, dead = false,
+        },
+        {
+            guid = "Stay-1", name = "Stay-Realm", shortName = "Stay",
+            role = "Node Defender", location = "Farm",
+            connected = true, dead = false,
+        },
+    }
+    local responsePackage = KWR.Assignments:ResponsePackage(
+        executionSnapshot, responseAssignments)
+    check("Response package converts a qualified assessment into movers, stayers, success, and abort",
+        responsePackage.qualified == true
+            and responsePackage.moverText == "Mover"
+            and responsePackage.stayerText == "Stay"
+            and responsePackage.success == "Farm stabilizes."
+            and responsePackage.abort == "Farm is unrecoverable.")
+    executionSnapshot.responsePackage = responsePackage
+    local responseCommand = KWR.Commander:Compose(
+        executionSnapshot, { status = "LOSE", urgency = 72,
+            condition = "Diagnostic pressure.", confidence = "HIGH" },
+        responseAssignments)
+    check("Commander arbitration publishes a qualified response package through the one command path",
+        responseCommand.responsePackage.qualified == true
+            and responseCommand.who == "Mover"
+            and responseCommand.action == responsePackage.action)
+    local changeSummary = KWR.Assignments:SummarizeChanges({
+        {
+            name = "Mover", toRole = "Strike Team",
+            toLocation = "Blacksmith",
+        },
+    }, "ARATHI")
+    check("Reassessment summary abbreviates one complete changed assignment",
+        changeSummary:find("Mover", 1, true) ~= nil
+            and changeSummary:find("ATK@BS", 1, true) ~= nil)
+    local executionHitsBefore =
+        KWR.Strategist:CacheStats().executionHits
+    KWR.Strategist:AssessExecution(
+        executionSnapshot, { urgency = 72 }, executionAssignments)
+    check("Execution assessment reuses unchanged bounded evidence",
+        KWR.Strategist:CacheStats().executionHits > executionHitsBefore)
+
+    local recoverySnapshot = KWR.Util:Copy(executionSnapshot)
+    recoverySnapshot.reporter.pressure = {
+        {
+            label = "Blacksmith", owner = "FRIENDLY",
+            friendly = 6, enemy = 0, delta = -6, risk = 5,
+        },
+    }
+    recoverySnapshot.reporter.hotspot =
+        recoverySnapshot.reporter.pressure[1]
+    recoverySnapshot.reporter.etas = {}
+    recoverySnapshot.reporter.enemyIntent = {}
+    recoverySnapshot.reporter.momentum = {
+        value = 55, state = "FRIENDLY", confidence = "MEDIUM",
+        friendlyDead = 0, enemyDead = 3, friendlyHealers = 2,
+    }
+    recoverySnapshot.assignmentIntegrity = {
+        rows = { { name = "Defender", status = "ON_STATION" } },
+        onStation = 1, moving = 0, unverified = 0,
+        abandoned = 0, impossible = 0,
+    }
+    recoverySnapshot.combat.resourceEconomy.advantage = 40
+    local recoveryAssessment = KWR.Strategist:AssessExecution(
+        recoverySnapshot, { urgency = 20 }, executionAssignments)
+    check("Recovery window opens only from a stable verified advantage",
+        recoveryAssessment.recovery.open == true
+            and recoveryAssessment.collapse.state == "STABLE")
 
     KWR.Reporter.sessionKey = oldReporterState.sessionKey
     KWR.Reporter.tracks = oldReporterState.tracks
@@ -1081,7 +1303,7 @@ end
 function Diagnostics:Report()
     local result = self:Run()
     local lines = {
-        "KNOMERCY WAR ROOM 6.1 ALPHA 9 DIAGNOSTICS",
+        "KNOMERCY WAR ROOM 6.1 ALPHA 12 DIAGNOSTICS",
         "Passed: " .. tostring(result.passed) .. "   Failed: " .. tostring(result.failed),
         "",
     }

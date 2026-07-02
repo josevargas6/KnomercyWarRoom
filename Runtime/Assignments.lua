@@ -177,6 +177,51 @@ local function remaining(roster, used, result, role, location, priority)
     end
 end
 
+local function applyCounterDirectives(assignments, strategy)
+    local enemyShape = strategy and strategy.enemyComposition
+        and strategy.enemyComposition.id or "BALANCED"
+    for _, assignment in ipairs(assignments or {}) do
+        local role = assignment.role or ""
+        local directive
+        if enemyShape == "STEALTH" then
+            if role:find("Defender", 1, true)
+                or role:find("Float", 1, true) then
+                directive = "Pair isolated coverage and report missing stealth."
+            end
+        elseif enemyShape == "ROT" then
+            if role == "Main Fight" or role == "Strike Team" then
+                directive = "Commit one short kill window; rotate if it closes."
+            end
+        elseif enemyShape == "MELEE" then
+            if assignment.groupRole == "HEALER"
+                or role:find("Peel", 1, true) then
+                directive = "Maintain a spread support line and peel first contact."
+            end
+        elseif enemyShape == "RANGED" then
+            if role == "Main Fight" or role == "Strike Team" then
+                directive = "Approach through cover as one timed wave."
+            end
+        elseif enemyShape == "ROTATION" then
+            if role:find("Defender", 1, true) then
+                directive = "Hold the scoring requirement; do not chase roads."
+            elseif role:find("Strike", 1, true)
+                or role:find("Float", 1, true) then
+                directive = "Trade into the lightly held lane."
+            end
+        elseif enemyShape == "BUNKER" then
+            if role:find("Strike", 1, true)
+                or role:find("Float", 1, true) then
+                directive = "Threaten a second lane before committing."
+            end
+        end
+        if directive then
+            assignment.counterDirective = directive
+            assignment.handoff = assignment.handoff
+                and (assignment.handoff .. " " .. directive) or directive
+        end
+    end
+end
+
 local function assignBest(roster, used, result, job, role, location, priority, detail, predicate, allowFallback)
     if allowFallback == nil then allowFallback = true end
     local _, player, score = selectBest(roster, used, job, predicate, allowFallback)
@@ -558,6 +603,7 @@ function Assignments:Build(snapshot)
             end
         end
     end
+    applyCounterDirectives(result, snapshot.strategy)
     return result
 end
 
@@ -569,13 +615,21 @@ function Assignments:Audit(snapshot, assignments)
     local definition = KWR.Maps:Get(context.mapKey)
     local allowed = allowedLocations(definition, context)
     local issues, assigned = {}, {}
+    local rosterKeys = {}
+    for _, player in ipairs(roster) do
+        if player.guid then rosterKeys[player.guid] = true end
+        if player.name then rosterKeys[player.name] = true end
+        if player.shortName then rosterKeys[player.shortName] = true end
+    end
 
     if #assignments ~= #roster then
         issues[#issues + 1] = string.format(
             "Assignment coverage %d/%d", #assignments, #roster)
     end
     for _, assignment in ipairs(assignments) do
-        local key = KWR.Util:Text(assignment.name or assignment.shortName, "", 80)
+        local identity = assignment.guid or assignment.name
+            or assignment.shortName
+        local key = KWR.Util:Text(identity, "", 80)
         if key == "" then
             issues[#issues + 1] = "Assignment has no player identity"
         elseif assigned[key] then
@@ -583,12 +637,28 @@ function Assignments:Audit(snapshot, assignments)
         else
             assigned[key] = true
         end
+        if key ~= "" and not rosterKeys[identity]
+            and not rosterKeys[assignment.name]
+            and not rosterKeys[assignment.shortName] then
+            issues[#issues + 1] = "Assignment references non-roster player "
+                .. key
+        end
         if KWR.Util:Text(assignment.role, "", 48) == "" then
             issues[#issues + 1] = "Assignment has no job for " .. (key ~= "" and key or "unknown")
         end
         if KWR.Util:Text(assignment.role, "", 48):find("Healer", 1, true)
             and assignment.groupRole ~= "HEALER" then
             issues[#issues + 1] = "Role-incompatible healer assignment for "
+                .. (key ~= "" and key or "unknown")
+        end
+        if assignment.role == "Flag Carrier"
+            and assignment.groupRole ~= "TANK" then
+            issues[#issues + 1] = "Flag Carrier is not assigned to a tank: "
+                .. (key ~= "" and key or "unknown")
+        end
+        local priority = KWR.Util:Number(assignment.priority, nil)
+        if not priority or priority < 0 or priority > 100 then
+            issues[#issues + 1] = "Invalid assignment priority for "
                 .. (key ~= "" and key or "unknown")
         end
         local location = KWR.Util:Text(assignment.location, "", 48)
@@ -827,6 +897,96 @@ function Assignments:Diff(previous, current)
         end
     end
     return changes
+end
+
+function Assignments:SummarizeChanges(changes, mapKey)
+    if #(changes or {}) == 0 then return "Assignments confirmed; no changes." end
+    local parts = {}
+    for index = 1, math.min(4, #changes) do
+        local change = changes[index]
+        parts[#parts + 1] = KWR.Util:Text(change.name, "Player", 16)
+            .. " -> " .. self:CompactRole(change.toRole)
+            .. "@" .. KWR.Maps:AbbreviateLocation(
+                mapKey, change.toLocation)
+    end
+    local extra = #changes - #parts
+    return table.concat(parts, "; ")
+        .. (extra > 0 and ("; +" .. tostring(extra) .. " more") or "")
+end
+
+function Assignments:ResponsePackage(snapshot, assignments)
+    local strategy = snapshot.strategy or {}
+    local execution = strategy.executionAssessment or {}
+    local opportunity = execution.actionOpportunity or {}
+    local decision = strategy.objectiveDecision or {}
+    local actionID = KWR.Util:Text(opportunity.action, "HOLD_PLAN", 32)
+    local target = KWR.Util:Text(opportunity.target
+        or decision.target, "current objective", 48)
+    local mapKey = snapshot.context and snapshot.context.mapKey
+    local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
+    local movers, stayers = {}, {}
+    local moverRoles = {
+        ["Strike Team"] = true, ["Main Fight"] = true,
+        ["Tower Strike"] = true, ["Defense Floater"] = true,
+        ["Response Floater"] = true, ["Cart Floater"] = true,
+        ["Outer Cap / Float"] = true, ["Capture Team"] = true,
+        ["Return Team"] = true, ["Carrier Hunter"] = true,
+    }
+    for _, assignment in ipairs(assignments or {}) do
+        if assignment.connected ~= false and not assignment.dead then
+            local name = assignment.shortName or assignment.name
+            local role = assignment.role or ""
+            if role:find("Defender", 1, true)
+                or role == "Tower Sitter" or role == "Cart Anchor" then
+                if #stayers < 3 then stayers[#stayers + 1] = name end
+            elseif moverRoles[role] and #movers < 4 then
+                movers[#movers + 1] = name
+            end
+        end
+    end
+    if #movers == 0 then
+        for _, assignment in ipairs(assignments or {}) do
+            if assignment.connected ~= false and not assignment.dead
+                and #movers < 3 then
+                movers[#movers + 1] =
+                    assignment.shortName or assignment.name
+            end
+        end
+    end
+
+    local actionText = {
+        REINFORCE = "REINFORCE " .. shortTarget,
+        REALLOCATE = "PEEL EXCESS FROM " .. shortTarget,
+        CONTAIN_TRADE = "CONTAIN " .. shortTarget .. "; TAKE EXPOSED OBJECTIVE",
+        PREPARE_PRESSURE = "PREPARE DEFENSE AT " .. shortTarget,
+        ROTATE = "ROTATE TO " .. shortTarget,
+        DISENGAGE_RESET = "DISENGAGE, RESET, AND REGROUP",
+        STALL_OR_TRADE = "STALL; TRADE THE EXPOSED OBJECTIVE",
+        RESET_REASSIGN = "RESET POSITIONS AND CONFIRM ASSIGNMENTS",
+        HOLD_PLAN = "HOLD CURRENT PLAN",
+    }
+    local confidence = KWR.Util:Text(execution.confidence, "NONE", 12)
+    local qualified = opportunity.score
+        and opportunity.score >= 85
+        and (confidence == "MEDIUM" or confidence == "HIGH")
+    return {
+        active = execution.active == true,
+        qualified = qualified == true,
+        actionID = actionID,
+        action = actionText[actionID] or "HOLD CURRENT PLAN",
+        target = target,
+        shortTarget = shortTarget,
+        movers = movers,
+        stayers = stayers,
+        moverText = #movers > 0 and table.concat(movers, " + ") or "Team",
+        stayerText = #stayers > 0 and table.concat(stayers, " + ")
+            or "Assigned defenders",
+        confidence = confidence,
+        score = opportunity.score or 0,
+        reason = opportunity.reason or "No stronger execution veto.",
+        success = decision.success or "Objective state changes as called.",
+        abort = decision.abort or "Scoring path or manpower changes.",
+    }
 end
 
 KWR:RegisterModule("Assignments", Assignments)

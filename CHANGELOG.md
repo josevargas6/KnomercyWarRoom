@@ -1,5 +1,62 @@
 # Changelog
 
+## 6.1.0-alpha.12
+
+- Added one complete response package derived from the existing execution
+  assessment: action, target, movers, stayers, success, abort, confidence, and
+  evidence score.
+- Allowed only high-confidence, score-85+ execution responses to arbitrate the
+  existing Commander action. No parallel command owner was introduced.
+- Made manual reassessment publish a compact changed-assignment summary and
+  identify the affected players directly in the command.
+- Added response-package agreement across Tactical, Assignments, `/kwr
+  explain`, `/kwr verify`, and structured AAR export.
+- Propagated reviewed enemy-composition counter directives to relevant
+  individual assignments.
+- Strengthened assignment audits with roster-identity, priority-range, and
+  flag-carrier role validation.
+- Added a one-second dirty-state cache for execution assessment and exposed its
+  telemetry in `/kwr perf`.
+- Throttled carrier-aura scans and added objective truth-quality provenance.
+- Expanded deterministic diagnostics from 226 to 232 checks and retained the
+  500-refresh bounded-state soak.
+
+## 6.1.0-alpha.11
+
+- Added an optional, always-precreated current-target spotlight to the existing
+  compact combat roster. It displays direct target health without storing or
+  comparing secret health values.
+- Added a small reviewed priority-cast catalog and event-fed `STOP` accents for
+  selected must-stop and advantage-swing casts. KWR never claims a cast is
+  interruptible and never interrupts automatically.
+- Added explicit advisory responses for observed immunity, absorb, and major
+  defensive windows. Verified swap-class protection removes that enemy from
+  automated kill-candidate ranking but never changes the player's target.
+- Added priority-cast and defensive accents to existing enemy rows.
+- Extended the optional Cursor Ring with one evidence-driven color state:
+  danger, caution, rotation, recovery, uncertainty, or neutral.
+- Added an Options toggle for target/cast combat visuals.
+- Added priority-cast evidence to live verification and compact AAR state.
+- Expanded deterministic diagnostics from 222 to 226 checks and retained the
+  500-refresh bounded-state soak.
+
+## 6.1.0-alpha.10
+
+- Added one bounded execution-assessment layer inside the existing Strategist;
+  no parallel command brain, timer, or combat window was introduced.
+- Added objective commitment, reinforcement advantage, pressure forecast,
+  rotation economy, fight-collapse, recovery-window, and organization-entropy
+  assessments using already-sanitized Reporter, assignment, resource, and
+  confidence evidence.
+- Added one ranked action opportunity for explanation and review. It does not
+  replace the live three-line command HUD or perform actions automatically.
+- Expanded `/kwr explain`, `/kwr verify`, and manual AAR export with the
+  assessment evidence so field decisions can be audited.
+- Added seven deterministic assessment checks, bringing the suite to 222, and
+  retained the 500-refresh bounded-state soak.
+- Preserved Alpha 9 as the rollback baseline. Target spotlight, cast accents,
+  Combat Clarity controls, and visual rings remain gated for live testing.
+
 ## 6.1.0-alpha.9
 
 - Added a bounded manual match-evidence exporter to the existing AAR journal.
