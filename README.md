@@ -1,6 +1,27 @@
-# Knomercy War Room 6.1 Alpha 9
+# Knomercy War Room
+
+[![KWR CI](https://github.com/josevargas6/KnomercyWarRoom/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/josevargas6/KnomercyWarRoom/actions/workflows/ci.yml)
 
 Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail.
+
+## Project status
+
+| Track | Version | Purpose |
+| --- | --- | --- |
+| `main` | 6.1.0-alpha.9 | Certified rollback baseline |
+| `develop` | Rolling | Integration branch for the next promotion candidate |
+| Current field candidate | [6.1.0-alpha.13](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.13) | Battlefield-truth and decision-quality testing |
+
+- [Alpha 13 implementation review](https://github.com/josevargas6/KnomercyWarRoom/pull/3)
+- [Alpha 13 field-test checklist](https://github.com/josevargas6/KnomercyWarRoom/issues/4)
+- [Latest certified prerelease packages](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.13)
+
+`main` intentionally remains on the last rollback baseline until the current
+field candidate passes live Retail testing. The status table above is the
+authoritative release pointer; branch documentation describes the code present
+on that branch.
+
+## Product overview
 
 The expanded Tactical Command Board is the primary interface and its compact
 view is the Scout HUD. Reporter, team intelligence, enemy intelligence, and
@@ -11,6 +32,8 @@ Outside a battleground, the board becomes the Formation Advisor: it evaluates
 the current group against a 10-player RBG roster, identifies missing roles,
 recommends best-fit specializations, explains the emerging composition
 archetype, and presents leadership, ready-check, and positioning guidance.
+
+## Certified baseline capabilities
 
 Alpha 9 includes the enhanced compact Team/Enemy combat roster specified by the endgame
 design: class-colored health bars, role symbols, secure click targeting/focus,
