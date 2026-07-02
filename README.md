@@ -1,4 +1,4 @@
-# Knomercy War Room 6.1 Alpha 12
+﻿# Knomercy War Room 6.1 Alpha 13
 
 Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail.
 
@@ -12,13 +12,13 @@ the current group against a 10-player RBG roster, identifies missing roles,
 recommends best-fit specializations, explains the emerging composition
 archetype, and presents leadership, ready-check, and positioning guidance.
 
-Alpha 12 includes the enhanced compact Team/Enemy combat roster specified by the endgame
+Alpha 13 includes the enhanced compact Team/Enemy combat roster specified by the endgame
 design: class-colored health bars, role symbols, secure click targeting/focus,
 and a local kill-target glow driven only by safely available evidence and
 manual priority. Retail 12 blocks addon combat-log subscriptions, so live
 trinket and defensive state is updated only from safely observed unit events.
 
-The Alpha 12 strategy layer contains forty deterministic scenario combinations
+The Alpha 13 strategy layer contains forty deterministic scenario combinations
 per supported battleground. It evaluates opening, stabilization, pressure,
 recovery, and endgame phases against objective pressure and composition shape.
 Encounter history may supply a current-season likely specialization, but it is
@@ -30,7 +30,7 @@ a shell exact only when all ten specializations match. Eight or more matching
 verified/likely specializations may produce a clearly labeled likely match;
 otherwise the generic capability archetype remains authoritative.
 
-Alpha 12 strengthens that archetype with fourteen bounded specialization
+Alpha 13 strengthens that archetype with fourteen bounded specialization
 ratings, nine preferred battlefield jobs, optional advisory Hero talent
 modifiers, and a small reviewed catalog of battlefield-defining abilities.
 These are inputs to the existing assignment and combat-intelligence engines,
@@ -42,30 +42,38 @@ hold, escort, return, deny, or cap; what success looks like; and what observable
 condition should abort the play. Visible and last-seen locations retain their
 source even when Blizzard does not expose coordinates.
 
-Alpha 12 retains manual structured AAR export in the existing match journal. It
+Alpha 13 retains manual structured AAR export in the existing match journal. It
 records bounded factual evidence and does not generate prose, send chat, or
 alter command decisions. After a completed match use `/kwr aar` to open the
 Intel/AAR page, `/kwr aar copy` to open the existing manual copy box, or
 `/kwr aar clear` to delete completed exports. A live recording cannot be
 cleared. Recording can be disabled in KWR Options.
 
-Alpha 12 retains the internal execution assessment in the existing Strategist.
+Alpha 13 retains the internal execution assessment in the existing Strategist.
 It evaluates objective commitment, reinforcement advantage, pressure forecast,
 rotation cost, collapse risk, recovery windows, and assignment organization.
 The combat HUD remains three lines. Detailed evidence appears in
 `/kwr explain`, `/kwr verify`, and the manual AAR export.
 
-Alpha 12 retains the optional current-target spotlight in the compact roster,
+Alpha 13 retains the optional current-target spotlight in the compact roster,
 reviewed accents for selected high-value casts, and explicit responses to
 observed immunity or major defensive windows. These visuals never interrupt,
 swap targets, or claim an unavailable fact. The optional Cursor Ring now uses
 one evidence-driven color state instead of adding another alert window.
 
-Alpha 12 converts qualified execution evidence into one complete response
+Alpha 13 converts qualified execution evidence into one complete response
 package: what to do, who moves, who stays, the target, success condition, and
 abort condition. Only medium/high-confidence responses scoring at least 85 may
 override the ordinary command. Reassessment, Tactical, Assignments,
 explanation, verification, and AAR all consume the same package.
+
+Alpha 13 adds a normalized truth contract to every decision cycle and records
+source, age, expiration, confidence, and verification state. Assignments now
+carry expected arrival, success, abort, and replacement semantics, while the
+coverage ledger protects friendly objectives from accidental abandonment.
+Candidate actions name a target and compare opportunity cost, reversibility,
+arrival evidence, and objective impact. Their 0-100 values are heuristic
+decision scores, not fabricated statistical win probabilities.
 
 ## Install
 
@@ -136,6 +144,6 @@ after live evidence. See `META_SOURCES.md`.
 
 Arathi Basin, Battle for Gilneas, Deepwind Gorge, Eye of the Storm, Warsong Gulch, Twin Peaks, Temple of Kotmogu, Silvershard Mines, Deephaul Ravine, and Seething Shore.
 
-Alpha 12 passes 232 offline architecture, syntax, movement, combat-intelligence,
+Alpha 13 passes 240 offline architecture, syntax, movement, combat-intelligence,
 cross-faction, preview, journal, and packaging tests. It still requires live
 Retail 12.0.7 field validation before stable release.

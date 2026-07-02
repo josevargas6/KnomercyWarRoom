@@ -843,6 +843,36 @@ function Diagnostics:Run()
     KWR.Strategist.cache = nil
     local decisionStrategy = KWR.Strategist:Evaluate(
         decisionSnapshot, decisionPrediction)
+    local freshEvidence = KWR.Util:Evidence(
+        "known", "diagnostic", KWR.Util:Now(), 5, "HIGH", true)
+    local staleEvidence = KWR.Util:Evidence(
+        "known", "diagnostic", KWR.Util:Now() - 20, 5, "HIGH", true)
+    check("Evidence contract distinguishes fresh verified truth from stale observations",
+        freshEvidence.state == "VERIFIED"
+            and KWR.Util:EvidenceUsable(freshEvidence, "HIGH")
+            and staleEvidence.state == "STALE"
+            and not KWR.Util:EvidenceUsable(staleEvidence, "LOW"))
+    local truthSnapshot = KWR.Util:Copy(decisionSnapshot)
+    truthSnapshot.context.capturedAt = KWR.Util:Now()
+    truthSnapshot.context.team = {
+        faction = "Alliance", side = "left", source = "scoreboard",
+    }
+    truthSnapshot.score.observedAt = KWR.Util:Now()
+    truthSnapshot.objectives.observedAt = KWR.Util:Now()
+    truthSnapshot.reporter.updatedAt = KWR.Util:Now()
+    local truthContract = KWR.Verification:Contract(truthSnapshot)
+    check("Battlefield truth contract qualifies fresh match, faction, score, and objective evidence",
+        truthContract.coreFresh == true
+            and truthContract.aggressiveCommitAllowed == true
+            and truthContract.summary.coverage >= 65)
+    local routeEstimate = KWR.Maps:TravelEstimate(
+        "ARATHI", "Farm", "Blacksmith", {
+            mobility = 3, inCombat = false,
+        })
+    check("Static map route model produces a bounded tactical travel band without coordinates",
+        routeEstimate and routeEstimate.seconds > 0
+            and routeEstimate.band ~= nil
+            and routeEstimate.source == "MAP_ROUTE_ESTIMATE")
     check("Recommendation confidence budget is bounded and cites multiple evidence sources",
         decisionStrategy.confidenceBudget
             and decisionStrategy.confidenceBudget.score >= 0
@@ -863,6 +893,21 @@ function Diagnostics:Run()
         simulationsValid == true
             and decisionStrategy.projectedWinProbability
                 == decisionStrategy.simulations[1].probability)
+    check("Candidate actions include objective, opportunity cost, reversibility, success, and abort semantics",
+        decisionStrategy.selectedAction
+            and decisionStrategy.selectedAction.target ~= nil
+            and decisionStrategy.selectedAction.decisionScore
+                == decisionStrategy.selectedAction.probability
+            and decisionStrategy.selectedAction.opportunityCost ~= nil
+            and type(decisionStrategy.selectedAction.reversible) == "boolean"
+            and decisionStrategy.selectedAction.success ~= nil
+            and decisionStrategy.selectedAction.abort ~= nil)
+    check("Map scenario supplies an execution contract with counter and recovery behavior",
+        decisionStrategy.responseContract
+            and decisionStrategy.responseContract.playersNeeded >= 2
+            and #decisionStrategy.responseContract.requiredEvidence >= 3
+            and decisionStrategy.responseContract.likelyCounter ~= nil
+            and decisionStrategy.responseContract.counterResponse ~= nil)
     local cacheHitsBefore = KWR.Strategist:CacheStats().hits
     KWR.Strategist:Evaluate(decisionSnapshot, decisionPrediction)
     check("Decision engine reuses an unchanged bounded evaluation",
@@ -934,6 +979,11 @@ function Diagnostics:Run()
     check("Action opportunity selects one highest-value execution response",
         executionAssessment.actionOpportunity.action == "DISENGAGE_RESET"
             or executionAssessment.actionOpportunity.action == "STALL_OR_TRADE")
+    check("Prediction exposes immediate, engagement, and strategic decision horizons",
+        executionAssessment.horizons
+            and executionAssessment.horizons.immediate.seconds == 5
+            and executionAssessment.horizons.engagement.seconds == 15
+            and executionAssessment.horizons.strategic.seconds == 30)
     executionSnapshot.strategy.executionAssessment = executionAssessment
     executionSnapshot.strategy.objectiveDecision = {
         target = "Farm",
@@ -1033,6 +1083,12 @@ function Diagnostics:Run()
             classFile = "DRUID", spec = "Guardian", role = "TANK",
             location = "Blacksmith", connected = true },
     }
+    integritySnapshot.objectives.rows = {
+        { label = "Farm", owner = "FRIENDLY", state = "CONTROLLED",
+            x = 0.68, y = 0.72 },
+        { label = "Blacksmith", owner = "ENEMY", state = "CONTROLLED",
+            x = 0.50, y = 0.50 },
+    }
     local integrityAssignments = {
         { guid = "Assigned-1", name = "Assigned-Realm", shortName = "Assigned",
             classFile = "HUNTER", spec = "Marksmanship", groupRole = "DAMAGER",
@@ -1048,6 +1104,17 @@ function Diagnostics:Run()
         integrityResult.abandoned == 1
             and integrityResult.reassignmentRequired == true
             and integrityResult.reassignments[1].replacement == "Replacement")
+    check("Assignment contract records timing, evidence, success, and abort conditions",
+        integrityResult.rows[1].issuedAt ~= nil
+            and integrityResult.rows[1].expectedBy
+                > integrityResult.rows[1].issuedAt
+            and integrityResult.rows[1].evidenceSource ~= nil
+            and integrityResult.rows[1].successCondition ~= nil
+            and integrityResult.rows[1].abortCondition ~= nil)
+    check("Coverage ledger detects a friendly objective without a named defender",
+        integrityResult.uncovered == 1
+            and integrityResult.coverageLedger[1].location == "Farm"
+            and integrityResult.coverageLedger[1].state == "UNCOVERED")
     KWR.Assignments.integrity = oldIntegrity
 
     KWR.CombatIntel:Reset()
@@ -1303,7 +1370,7 @@ end
 function Diagnostics:Report()
     local result = self:Run()
     local lines = {
-        "KNOMERCY WAR ROOM 6.1 ALPHA 12 DIAGNOSTICS",
+        "KNOMERCY WAR ROOM 6.1 ALPHA 13 DIAGNOSTICS",
         "Passed: " .. tostring(result.passed) .. "   Failed: " .. tostring(result.failed),
         "",
     }

@@ -245,6 +245,61 @@ function Maps:All()
     return self.byKey
 end
 
+function Maps:OperationalProfile(mapKey)
+    local definition = self:Get(mapKey)
+    if not definition then
+        return {
+            stableMinimum = 0,
+            defenderMinimum = 0,
+            responseReserve = 0,
+            planningHorizon = 15,
+        }
+    end
+    local byKind = {
+        NODE = { stableMinimum = math.max(2,
+            math.ceil((definition.maxObjectives or 3) / 2)),
+            defenderMinimum = 1, responseReserve = 1, planningHorizon = 18 },
+        HYBRID = { stableMinimum = 2, defenderMinimum = 1,
+            responseReserve = 1, planningHorizon = 18 },
+        FLAG = { stableMinimum = 1, defenderMinimum = 2,
+            responseReserve = 1, planningHorizon = 15 },
+        ORB = { stableMinimum = 2, defenderMinimum = 1,
+            responseReserve = 1, planningHorizon = 12 },
+        CART = { stableMinimum = 1, defenderMinimum = 1,
+            responseReserve = 1, planningHorizon = 16 },
+        RESOURCE = { stableMinimum = 1, defenderMinimum = 1,
+            responseReserve = 2, planningHorizon = 14 },
+    }
+    return KWR.Util:Copy(byKind[definition.kind] or {
+        stableMinimum = 1, defenderMinimum = 1,
+        responseReserve = 1, planningHorizon = 15,
+    })
+end
+
+function Maps:TravelEstimate(mapKey, fromLocation, toLocation, options)
+    local definition = self:Get(mapKey)
+    options = options or {}
+    if not definition or not definition.positions then return nil end
+    local from = definition.positions[fromLocation]
+    local target = definition.positions[toLocation]
+    if not from or not target then return nil end
+    local dx, dy = target[1] - from[1], target[2] - from[2]
+    local normalizedDistance = math.sqrt(dx * dx + dy * dy)
+    local mobility = KWR.Util:Clamp(options.mobility or 2, 1, 5)
+    local secondsPerMap = options.inCombat and 78 or (options.mounted and 38 or 54)
+    secondsPerMap = secondsPerMap * (1 - ((mobility - 2) * 0.055))
+    local seconds = math.max(2, math.ceil(normalizedDistance * secondsPerMap))
+    return {
+        seconds = seconds,
+        band = seconds <= 6 and "IMMEDIATE"
+            or (seconds <= 12 and "NEAR"
+            or (seconds <= 20 and "ROTATION" or "LONG")),
+        source = "MAP_ROUTE_ESTIMATE",
+        confidence = options.observed and "MEDIUM" or "LOW",
+        distance = normalizedDistance,
+    }
+end
+
 function Maps:AbbreviateLocation(mapKey, location)
     location = KWR.Util:Text(location, "", 48)
     local definition = self:Get(mapKey)

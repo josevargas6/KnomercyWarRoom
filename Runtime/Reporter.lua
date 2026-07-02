@@ -94,6 +94,13 @@ function Reporter:Track(team, entity, observedAt, now)
     track.observedAt = at
     track.age = math.max(0, (now or KWR.Util:Now()) - at)
     track.visible = entity.visible == true or team == "friendly"
+    track.ttl = team == "friendly" and 10 or (track.visible and 8 or 20)
+    track.expiresAt = at + track.ttl
+    track.evidenceState = track.age <= track.ttl
+        and (track.visible and "VISIBLE" or "RECENT") or "STALE"
+    track.confidence = track.visible and "HIGH"
+        or (track.age <= 10 and "MEDIUM"
+        or (track.age <= track.ttl and "LOW" or "NONE"))
     track.location = KWR.Util:Text(entity.location, track.location or "Unknown", 48)
     track.locationSource = KWR.Util:Text(
         entity.locationSource, track.locationSource or "Observed Unit", 32)
@@ -133,6 +140,7 @@ end
 
 function Reporter:ObjectiveETAs(snapshot)
     local result = {}
+    local mapKey = snapshot.context and snapshot.context.mapKey
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
         if x and y then
@@ -148,11 +156,27 @@ function Reporter:ObjectiveETAs(snapshot)
             for team, tracks in pairs(self.tracks) do
                 for _, track in pairs(tracks) do
                     local maxAge = team == "friendly" and 10 or 30
-                    if track.x and track.y and not track.dead
-                        and (track.age or 999) <= maxAge then
-                        local range = distance(track.x, track.y, x, y)
+                    if not track.dead and (track.age or 999) <= maxAge then
+                        local range = track.x and track.y
+                            and distance(track.x, track.y, x, y) or nil
                         local speed, source = travelSpeed(track)
                         local eta = range and math.ceil(range / math.max(speed, 0.001)) or nil
+                        if not eta and track.location
+                            and track.location ~= "Unknown" then
+                            local capability = KWR.Capabilities:Resolve(
+                                track.classFile, track.spec)
+                            local route = KWR.Maps:TravelEstimate(
+                                mapKey, track.location, objective.label, {
+                                    mobility = capability and capability.ratings
+                                        and capability.ratings.mobility or 2,
+                                    inCombat = track.inCombat,
+                                    observed = false,
+                                })
+                            if route then
+                                eta = route.seconds
+                                source = route.source
+                            end
+                        end
                         if eta then
                             local field = team == "friendly" and "friendlyETA" or "enemyETA"
                             local countField = team == "friendly" and "friendlyCount" or "enemyCount"
@@ -160,6 +184,10 @@ function Reporter:ObjectiveETAs(snapshot)
                             row[countField] = row[countField] + 1
                             if source == "OBSERVED" then
                                 row.observedSpeeds = row.observedSpeeds + 1
+                            end
+                            if source == "MAP_ROUTE_ESTIMATE" then
+                                row.routeEstimates =
+                                    (row.routeEstimates or 0) + 1
                             end
                         end
                     end
@@ -171,6 +199,8 @@ function Reporter:ObjectiveETAs(snapshot)
                 local coverage = row.friendlyCount + row.enemyCount
                 row.confidence = row.observedSpeeds >= 2 and "HIGH"
                     or (coverage >= 3 and "MEDIUM" or "LOW")
+                row.observedAt = KWR.Util:Now()
+                row.expiresAt = row.observedAt + 8
                 result[#result + 1] = row
             end
         end
@@ -233,6 +263,8 @@ function Reporter:PredictIntent(snapshot, etas)
     best.confidenceScore = KWR.Util:Clamp(20 + best.score, 0, 90)
     best.confidence = best.confidenceScore >= 70 and "HIGH"
         or (best.confidenceScore >= 45 and "MEDIUM" or "LOW")
+    best.observedAt = KWR.Util:Now()
+    best.expiresAt = best.observedAt + 10
     return best
 end
 
@@ -303,6 +335,10 @@ function Reporter:ObjectivePressure(snapshot)
             end
             row.delta = row.enemy - row.friendly
             row.total = row.enemy + row.friendly
+            row.observedAt = KWR.Util:Now()
+            row.expiresAt = row.observedAt + 8
+            row.confidence = row.total >= 4 and "MEDIUM"
+                or (row.total > 0 and "LOW" or "NONE")
             row.risk = KWR.Util:Clamp(
                 35 + (row.delta * 18) + (row.enemy * 7)
                     + (row.enemyCombat * 6) + (row.friendlyCombat * 2),

@@ -1,6 +1,6 @@
-﻿# KWR 6.1 Alpha 12 QA Checklist
+﻿# KWR 6.1 Alpha 13 QA Checklist
 
-## Alpha 12 intelligence checks
+## Alpha 13 intelligence checks
 
 - [ ] Own and friendly health bars render immediately when a legal unit token exists.
 - [ ] Friendly specializations are verified during formation and remain cached.
@@ -46,7 +46,7 @@
 
 - [x] `tools/validate.ps1` passes.
 - [x] All runtime Lua parses as Lua 5.1.
-- [x] Offline boot and pipeline smoke test passes 232 checks.
+- [x] Offline boot and pipeline smoke test passes 240 checks.
 - [x] Knowledge audit passes.
 - [x] Runtime Lua contains no unsupported non-ASCII UI glyphs.
 - [x] Distribution ZIP contains one `KnomercyWarRoom` root and round-trips without mismatch.

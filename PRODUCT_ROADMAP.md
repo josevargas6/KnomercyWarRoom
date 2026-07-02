@@ -3,14 +3,15 @@
 ## Current handoff and next release
 
 `PROJECT_HANDOFF.md` is the authoritative no-drift plan following
-6.1.0-alpha.9. Alpha 9 remains the certified rollback baseline. Alpha 12 is
-the current additive refinement candidate, not an architecture rewrite. It
-retains target/cast clarity and adds one complete response package while the
-three-line combat HUD remains unchanged.
+6.1.0-alpha.9. Alpha 9 remains the certified rollback baseline. Alpha 13 is
+the current additive trust and decision-quality candidate, not an architecture
+rewrite. It retains target/cast clarity and complete response packages while
+adding evidence contracts, coverage integrity, route estimates, and
+objective-aware action comparison. The three-line combat HUD remains unchanged.
 
 The immediate order is:
 
-1. live-test Alpha 12 response packages and target/cast visuals;
+1. live-test Alpha 13 truth, assignment, response, and decision contracts;
 2. reversible Combat Clarity controls;
 3. kill-zone `FORMING`/`ACTIVE`/`RECOVERY`;
 4. Contain-and-Trade counterplay;

@@ -8,7 +8,7 @@ body:
     id: version
     attributes:
       label: KWR version
-      placeholder: 6.1.0-alpha.12
+      placeholder: 6.1.0-alpha.13
     validations:
       required: true
   - type: input

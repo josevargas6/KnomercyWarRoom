@@ -13,11 +13,14 @@ evaluation, candidate simulation, and manual structured AAR export.
 Do not rebuild these systems or create parallel advisor products. The next
 work strengthens their inputs, calculations, arbitration, and presentation.
 
-The current S-tier refinement candidate is **KWR 6.1.0-alpha.12**. It retains
-Alpha 11's target/cast clarity and adds one complete response package shared by
-Commander, reassessment, Tactical, Assignments, Why, Verify, and AAR. Alpha 9
-remains the rollback authority until the newer candidates pass live Retail
-testing.
+The current S-tier trust candidate is **KWR 6.1.0-alpha.13**. It retains
+Alpha 12's target/cast clarity and complete response package while adding one
+normalized battlefield truth contract, monitored assignment/coverage
+contracts, route-based ETA fallback, objective-aware candidate scoring, and
+map-specific counter responses. Commander, reassessment, Tactical,
+Assignments, Why, Verify, and AAR still consume the same authoritative state.
+Alpha 9 remains the rollback authority until the newer candidates pass live
+Retail testing.
 
 ## Product test
 

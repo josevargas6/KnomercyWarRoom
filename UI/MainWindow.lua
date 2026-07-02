@@ -1015,8 +1015,11 @@ function MainWindow:Explain()
     local simulations = {}
     for _, candidate in ipairs(strategy.simulations or {}) do
         simulations[#simulations + 1] = string.format(
-            "%s %d%% - %s RISK: %s",
-            candidate.id, candidate.probability or 0,
+            "%s score %d [%s] @ %s - %s RISK: %s",
+            candidate.id, candidate.decisionScore
+                or candidate.probability or 0,
+            candidate.projection or "UNKNOWN",
+            candidate.target or "unverified",
             candidate.outcome or "Unknown",
             candidate.risk or "Unknown")
     end
@@ -1048,11 +1051,23 @@ function MainWindow:Explain()
     local recovery = execution.recovery or {}
     local organization = execution.organization or {}
     local response = state.snapshot.responsePackage or {}
+    local truth = state.snapshot.truth or {}
+    local truthSummary = truth.summary or {}
+    local responseContract = strategy.responseContract or {}
+    local horizons = execution.horizons or {}
     local integrityLines = {}
     for _, row in ipairs(integrity.reassignments or {}) do
         integrityLines[#integrityLines + 1] = row.name .. " " .. row.status
             .. " @ " .. row.actual .. " -> " .. row.expected
             .. " | replace: " .. tostring(row.replacement or "nearest floater")
+    end
+    local coverageLines = {}
+    for _, row in ipairs(integrity.coverageLedger or {}) do
+        coverageLines[#coverageLines + 1] = string.format(
+            "%s %s | %d/%d | backup %s | enemy-known %d",
+            row.location or "Unknown", row.state or "UNKNOWN",
+            row.assigned or 0, row.required or 0,
+            row.backup or "none", row.enemyKnown or 0)
     end
     KWR.CopyDialog:ShowText("KWR Decision Explanation", table.concat({
         command.line1,
@@ -1063,9 +1078,10 @@ function MainWindow:Explain()
         "OUR COMPOSITION: " .. tostring(command.ourComposition or "Unknown"),
         "ENEMY COMPOSITION: " .. tostring(command.enemyComposition or "Unknown"),
         "WHY: " .. tostring(command.reason),
-        string.format("DECISION: %s | %s%% projected | confidence %s/100 %s | risk %s",
+        string.format("DECISION: %s | score %s/100 [%s; heuristic] | confidence %s/100 %s | risk %s",
             tostring(strategy.recommendationMode or "HOLD"),
-            tostring(strategy.projectedWinProbability or 0),
+            tostring(strategy.decisionScore or 0),
+            tostring(strategy.projection or "UNKNOWN"),
             tostring(strategy.confidenceBudget and strategy.confidenceBudget.score or 0),
             tostring(strategy.confidence or "NONE"),
             tostring(strategy.risk or "HIGH")),
@@ -1078,6 +1094,16 @@ function MainWindow:Explain()
             and table.concat(counter.sequence, " -> ") or "No reviewed sequence available."),
         "SWITCH IF: " .. tostring(command.switchIf or "Authoritative state changes."),
         "DO NOT: " .. tostring(command.avoid or "Take low-value fights."),
+        string.format("TRUTH: %d%% usable | verified %d | stale %d | aggressive commit %s",
+            truthSummary.coverage or 0, truthSummary.verified or 0,
+            truthSummary.stale or 0,
+            truth.aggressiveCommitAllowed and "ALLOWED" or "GATED"),
+        "SCENARIO TRIGGER: " .. tostring(
+            responseContract.trigger or "Unverified"),
+        "LIKELY COUNTER: " .. tostring(
+            responseContract.likelyCounter or "Unknown"),
+        "COUNTER RESPONSE: " .. tostring(
+            responseContract.counterResponse or "Verify then reassess."),
         "",
         "CONFIDENCE EVIDENCE:",
         #confidenceEvidence > 0 and table.concat(confidenceEvidence, "\n")
@@ -1147,6 +1173,11 @@ function MainWindow:Explain()
         string.format("Response package: %s | qualified %s",
             tostring(response.action or "HOLD CURRENT PLAN"),
             response.qualified and "YES" or "NO"),
+        string.format("Horizons: 5s %s | 15s %s @ %s | 30s %s",
+            horizons.immediate and horizons.immediate.state or "UNKNOWN",
+            horizons.engagement and horizons.engagement.state or "UNKNOWN",
+            horizons.engagement and horizons.engagement.target or "Unknown",
+            horizons.strategic and horizons.strategic.state or "UNKNOWN"),
         "MOVE: " .. tostring(response.moverText or "Team"),
         "STAY: " .. tostring(response.stayerText or "Assigned defenders"),
         "",
@@ -1157,6 +1188,8 @@ function MainWindow:Explain()
             integrity.impossible or 0),
         #integrityLines > 0 and table.concat(integrityLines, "\n")
             or "No reassignment required.",
+        #coverageLines > 0 and table.concat(coverageLines, "\n")
+            or "No verified objective coverage ledger.",
         "",
         "ALTERNATIVES:",
         #alternatives > 0 and table.concat(alternatives, "\n") or "None",

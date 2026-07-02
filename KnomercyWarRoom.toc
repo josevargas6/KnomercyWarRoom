@@ -2,7 +2,7 @@
 ## Title: |cff33aaffKnomercy War Room|r
 ## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
 ## Author: Jose / Knomercy War Room Project
-## Version: 6.1.0-alpha.12
+## Version: 6.1.0-alpha.13
 ## SavedVariables: KWR_DB
 ## IconTexture: Interface\Icons\Achievement_BG_winWSG
 ## Category: PvP

@@ -96,6 +96,38 @@ function Util:Age(seconds)
     return tostring(math.floor(seconds / 3600)) .. "h"
 end
 
+function Util:Evidence(value, source, observedAt, ttl, confidence, verified)
+    local now = self:Now()
+    observedAt = self:Number(observedAt, nil)
+    ttl = math.max(0, self:Number(ttl, 0) or 0)
+    local known = value ~= nil and not self:IsSecret(value)
+    local age = observedAt and math.max(0, now - observedAt) or nil
+    local fresh = known and observedAt ~= nil and (ttl == 0 or age <= ttl)
+    return {
+        value = known and self:Copy(value) or nil,
+        source = self:Text(source, "unknown", 40),
+        observedAt = observedAt,
+        age = age,
+        ttl = ttl,
+        expiresAt = observedAt and ttl > 0 and (observedAt + ttl) or nil,
+        confidence = self:Upper(confidence,
+            fresh and "MEDIUM" or "NONE", 12),
+        verified = verified == true,
+        state = not known and "UNKNOWN"
+            or (not observedAt and "UNVERIFIED"
+            or (fresh and (verified and "VERIFIED" or "OBSERVED") or "STALE")),
+        fresh = fresh == true,
+    }
+end
+
+function Util:EvidenceUsable(record, minimumConfidence)
+    if type(record) ~= "table" or record.fresh ~= true then return false end
+    local rank = { NONE = 0, LOW = 1, MEDIUM = 2, HIGH = 3 }
+    local actual = rank[self:Upper(record.confidence, "NONE", 12)] or 0
+    local required = rank[self:Upper(minimumConfidence, "LOW", 12)] or 1
+    return actual >= required
+end
+
 function Util:Copy(source)
     if type(source) ~= "table" then
         return source

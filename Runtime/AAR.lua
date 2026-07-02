@@ -367,6 +367,8 @@ function AAR:Record(state)
             risk = state.command.risk,
             expectedOutcome = state.command.expectedOutcome,
             projectedWinProbability = state.command.projectedWinProbability,
+            decisionScore = state.command.decisionScore,
+            projection = state.command.projection,
             recommendationMode = state.command.recommendationMode,
             evidence = KWR.Util:Copy(state.command.evidence),
             simulations = KWR.Util:Copy(state.command.simulations),
@@ -438,13 +440,17 @@ function AAR:BuildDecisionReviews(commands, result)
             recommendationMode = command.recommendationMode,
             expectedOutcome = command.expectedOutcome,
             projectedWinProbability = command.projectedWinProbability,
+            decisionScore = command.decisionScore
+                or command.projectedWinProbability,
             confidence = command.confidence,
             risk = command.risk,
             actualResult = result,
             outcomeAligned = (result == "VICTORY" and
-                (command.projectedWinProbability or 0) >= 50)
+                (command.decisionScore
+                    or command.projectedWinProbability or 0) >= 50)
                 or (result == "DEFEAT" and
-                    (command.projectedWinProbability or 100) < 50),
+                    (command.decisionScore
+                        or command.projectedWinProbability or 100) < 50),
             competingOption = alternative and alternative.id,
             competingProbability = alternative and alternative.probability,
             evidenceReview = "DEVELOPER_REVIEW_REQUIRED",

@@ -163,6 +163,9 @@ local function add(result, player, role, location, priority, detail)
         reason = detail and detail.reason,
         handoff = detail and detail.handoff,
         abandonIf = detail and detail.abandonIf,
+        successCondition = detail and detail.successCondition,
+        abortCondition = detail and (detail.abortCondition
+            or detail.abandonIf),
         dead = player.dead,
         connected = player.connected,
     }
@@ -688,6 +691,36 @@ local function integrityJob(role)
     return "fight"
 end
 
+local function assignmentObjective(snapshot, location)
+    for _, objective in ipairs(snapshot.objectives
+        and snapshot.objectives.rows or {}) do
+        if objective.label == location then return objective end
+    end
+end
+
+local function pressureAt(snapshot, location)
+    for _, pressure in ipairs(snapshot.reporter
+        and snapshot.reporter.pressure or {}) do
+        if pressure.label == location then return pressure end
+    end
+end
+
+local function assignmentTravel(snapshot, player, expected)
+    local actual = KWR.Util:Text(player.location, "", 48)
+    if actual == "" or actual == "Unknown"
+        or actual == "Position restricted" then return nil end
+    local capability = KWR.Capabilities:Resolve(
+        player.classFile, player.spec)
+    return KWR.Maps:TravelEstimate(
+        snapshot.context and snapshot.context.mapKey,
+        actual, expected, {
+            mobility = capability and capability.ratings
+                and capability.ratings.mobility or 2,
+            inCombat = player.inCombat,
+            observed = player.locationSource == "Friendly Map Position",
+        })
+end
+
 function Assignments:Integrity(snapshot, assignments)
     local context = snapshot.context or {}
     local sessionKey = tostring(context.mapID or context.mapKey)
@@ -701,15 +734,29 @@ function Assignments:Integrity(snapshot, assignments)
         players[player.guid or player.name] = player
         players[player.name] = player
     end
+    local assignmentByPlayer, assignedByLocation = {}, {}
+    for _, assignment in ipairs(assignments or {}) do
+        local identity = assignment.guid or assignment.name
+        assignmentByPlayer[identity] = assignment
+        assignmentByPlayer[assignment.name] = assignment
+        local location = assignment.location
+        assignedByLocation[location] = assignedByLocation[location] or {}
+        assignedByLocation[location][#assignedByLocation[location] + 1] =
+            assignment
+    end
     local result = {
         checkedAt = now,
         onStation = 0,
         moving = 0,
+        completed = 0,
         unverified = 0,
         abandoned = 0,
         impossible = 0,
         reassignments = {},
         rows = {},
+        coverageLedger = {},
+        uncovered = 0,
+        overcommitted = 0,
     }
     for _, assignment in ipairs(assignments or {}) do
         local key = assignment.guid or assignment.name
@@ -727,25 +774,40 @@ function Assignments:Integrity(snapshot, assignments)
         local age = math.max(0, now - (record.issuedAt or now))
         local actual = KWR.Util:Text(player.location, "", 48)
         local expected = KWR.Util:Text(assignment.location, "", 48)
+        local job = integrityJob(assignment.role)
+        local route = assignmentTravel(snapshot, player, expected)
+        local expectedTravel = route and route.seconds or 12
+        record.expectedBy = (record.issuedAt or now) + expectedTravel + 5
+        record.routeSource = route and route.source or "UNVERIFIED"
         local comparable = actual ~= "" and actual ~= "Unknown"
             and actual ~= "Position restricted"
         local matches = comparable and (actual:lower():find(expected:lower(), 1, true)
             or expected:lower():find(actual:lower(), 1, true))
+        local objective = assignmentObjective(snapshot, expected)
+        local completed = matches and objective
+            and objective.owner == "FRIENDLY"
+            and (job == "assault" or job == "carry")
         local status
         if player.dead or player.connected == false then
             status = "IMPOSSIBLE"
             result.impossible = result.impossible + 1
+        elseif completed then
+            status = "COMPLETED"
+            result.completed = result.completed + 1
+            record.lastConfirmedAt = now
         elseif matches then
             status = "ON_STATION"
             result.onStation = result.onStation + 1
+            record.lastConfirmedAt = now
         elseif not comparable then
             status = "UNVERIFIED"
             result.unverified = result.unverified + 1
-        elseif age >= 20 then
+        elseif now >= (record.expectedBy or now + 1)
+            and age >= math.max(20, expectedTravel + 8) then
             status = "ABANDONED"
             result.abandoned = result.abandoned + 1
         else
-            status = "MOVING"
+            status = "EN_ROUTE"
             result.moving = result.moving + 1
         end
         assignment.integrityStatus = status
@@ -758,26 +820,108 @@ function Assignments:Integrity(snapshot, assignments)
             actual = comparable and actual or "UNKNOWN",
             age = age,
             status = status,
+            issuedAt = record.issuedAt,
+            expectedBy = record.expectedBy,
+            lastConfirmedAt = record.lastConfirmedAt,
+            travelSeconds = route and route.seconds or nil,
+            travelBand = route and route.band or "UNKNOWN",
+            evidenceSource = comparable
+                and (player.locationSource or "group_unit") or "unknown",
+            evidenceConfidence = matches and "HIGH"
+                or (comparable and "MEDIUM" or "NONE"),
+            successCondition = assignment.successCondition
+                or (job == "defend"
+                    and (expected .. " remains covered and scoring.")
+                    or (job == "assault"
+                        and ("Secure " .. expected .. " with coverage intact.")
+                        or ("Complete " .. assignment.role .. " at " .. expected .. "."))),
+            abortCondition = assignment.abortCondition
+                or assignment.abandonIf
+                or ("Abort if " .. expected
+                    .. " becomes unreachable or required coverage breaks."),
         }
         if status == "ABANDONED" or status == "IMPOSSIBLE" then
             local replacement, replacementScore
-            local job = integrityJob(assignment.role)
             for _, candidate in ipairs(snapshot.roster or {}) do
                 if candidate.connected ~= false and not candidate.dead
                     and (candidate.guid or candidate.name) ~= key then
-                    local score = value(candidate, job)
-                    if candidate.location == expected then score = score + 40 end
-                    if not replacementScore or score > replacementScore then
-                        replacement, replacementScore = candidate, score
+                    local current = assignmentByPlayer[
+                        candidate.guid or candidate.name]
+                    local currentJob = current
+                        and integrityJob(current.role) or nil
+                    local stripsOnlyDefender = currentJob == "defend"
+                        and current.location ~= expected
+                        and #(assignedByLocation[current.location] or {}) <= 1
+                    if not stripsOnlyDefender then
+                        local score = value(candidate, job)
+                        if candidate.location == expected then score = score + 40 end
+                        if currentJob == "float" then score = score + 18 end
+                        if candidate.inCombat then score = score - 12 end
+                        if currentJob == "assault" then
+                            score = score - math.max(0,
+                                (current.battleWeight or 50) - 65) * 0.35
+                        end
+                        if not replacementScore or score > replacementScore then
+                            replacement, replacementScore = candidate, score
+                        end
                     end
                 end
             end
             row.replacement = replacement and (replacement.shortName or replacement.name)
+            row.replacementScore = replacementScore
             result.reassignments[#result.reassignments + 1] = row
         end
         result.rows[#result.rows + 1] = row
     end
+    local profile = KWR.Maps:OperationalProfile(
+        snapshot.context and snapshot.context.mapKey)
+    for _, objective in ipairs(snapshot.objectives
+        and snapshot.objectives.rows or {}) do
+        if objective.owner == "FRIENDLY" then
+            local locationAssignments = assignedByLocation[objective.label] or {}
+            local available, names = 0, {}
+            for _, assignment in ipairs(locationAssignments) do
+                local player = players[assignment.guid or assignment.name]
+                    or players[assignment.name] or {}
+                if player.connected ~= false and not player.dead then
+                    available = available + 1
+                    names[#names + 1] =
+                        assignment.shortName or assignment.name
+                end
+            end
+            local pressure = pressureAt(snapshot, objective.label) or {}
+            local required = profile.defenderMinimum or 1
+            if (pressure.enemy or 0) >= 2 then required = required + 1 end
+            local reserve
+            for _, assignment in ipairs(assignments or {}) do
+                local reserveJob = integrityJob(assignment.role)
+                if reserveJob == "float"
+                    and assignment.location ~= objective.label then
+                    reserve = assignment.shortName or assignment.name
+                    break
+                end
+            end
+            local ledger = {
+                location = objective.label,
+                required = required,
+                assigned = available,
+                defenders = names,
+                backup = reserve,
+                enemyKnown = pressure.enemy or 0,
+                state = available < required and "UNCOVERED"
+                    or (available > required + 2 and "OVERCOMMITTED"
+                    or "COVERED"),
+            }
+            if ledger.state == "UNCOVERED" then
+                result.uncovered = result.uncovered + 1
+            elseif ledger.state == "OVERCOMMITTED" then
+                result.overcommitted = result.overcommitted + 1
+            end
+            result.coverageLedger[#result.coverageLedger + 1] = ledger
+        end
+    end
     result.reassignmentRequired = #result.reassignments > 0
+        or result.uncovered > 0
     return result
 end
 

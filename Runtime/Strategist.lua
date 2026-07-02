@@ -261,57 +261,182 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
     local resources = snapshot.combat and snapshot.combat.resourceEconomy or {}
     local resourceAdvantage = resources.advantage or 0
     local ratings, enemyRatings = ourSummary.ratings or {}, enemySummary.ratings or {}
-    local etaEdge = 0
-    for _, eta in ipairs(reporter.etas or {}) do
-        if eta.advantage then etaEdge = math.max(etaEdge, eta.advantage) end
+    local truth = snapshot.truth or {}
+    local definition = KWR.Maps:Get(snapshot.context and snapshot.context.mapKey)
+    local profile = KWR.Maps:OperationalProfile(
+        snapshot.context and snapshot.context.mapKey)
+    local friendly, enemy, available = {}, {}, {}
+    for _, objective in ipairs(snapshot.objectives
+        and snapshot.objectives.rows or {}) do
+        if objective.owner == "FRIENDLY" then
+            friendly[#friendly + 1] = objective.label
+        elseif objective.owner == "ENEMY" then
+            enemy[#enemy + 1] = objective.label
+        else
+            available[#available + 1] = objective.label
+        end
     end
+    local function priorityTarget(candidates)
+        local present = {}
+        for _, target in ipairs(candidates or {}) do present[target] = true end
+        for _, target in ipairs(definition and definition.priorities or {}) do
+            if present[target] then return target end
+        end
+        return candidates and candidates[1]
+    end
+    local assaultTarget = priorityTarget(enemy)
+        or priorityTarget(available)
+        or (definition and definition.priorities
+            and definition.priorities[1])
+    local threatenedTarget = reporter.hotspot
+        and reporter.hotspot.owner == "FRIENDLY"
+        and reporter.hotspot.label or friendly[1]
+    local function etaFor(target)
+        for _, eta in ipairs(reporter.etas or {}) do
+            if eta.label == target then return eta end
+        end
+    end
+    local assaultETA = etaFor(assaultTarget)
+    local reinforceETA = etaFor(threatenedTarget)
+    local etaEdge = assaultETA and assaultETA.advantage or 0
+    local uncertaintyPenalty = truth.aggressiveCommitAllowed == false
+        and 14 or (budget.score < 55 and 8 or 0)
+    local objectiveUrgency = KWR.Util:Clamp(
+        prediction.urgency or 0, 0, 100)
+    local holdValue = prediction.status == "WIN" and 24
+        or (#friendly >= (profile.stableMinimum or 1) and 8 or -12)
+    local threatenedRisk = reporter.hotspot
+        and reporter.hotspot.owner == "FRIENDLY"
+        and reporter.hotspot.risk or 0
     local candidates = {
         {
             id = "HOLD",
-            probability = 48 + (prediction.status == "WIN" and 20 or -5)
+            target = #friendly > 0 and table.concat(friendly, " + ")
+                or "current scoring requirement",
+            probability = 48 + holdValue
                 + ((ratings.nodeDefense or 1) - 2) * 4
-                + (budget.score < 50 and 10 or 0),
+                + (budget.score < 50 and 10 or 0)
+                - math.max(0, threatenedRisk - 70) * 0.18,
             outcome = "Preserve the current scoring requirement.",
             risk = "May surrender initiative if the enemy has a free weak-side objective.",
+            opportunityCost = 8,
+            reversible = true,
+            success = "Required objectives remain controlled through the next scoring window.",
+            abort = "Coverage breaks or the current score path stops winning.",
+            evidence = {
+                tostring(#friendly) .. " friendly objectives",
+                tostring(threatenedRisk) .. " highest friendly risk",
+            },
         },
         {
             id = "ROTATE",
-            probability = 45 + ((ratings.mobility or 1) - 2) * 5
-                + KWR.Util:Clamp(etaEdge, -12, 12)
-                + (reporter.enemyIntent and reporter.enemyIntent.target and 6 or 0),
+            target = threatenedTarget or assaultTarget,
+            probability = 43 + ((ratings.mobility or 1) - 2) * 5
+                + KWR.Util:Clamp(reinforceETA
+                    and reinforceETA.advantage or etaEdge, -12, 12)
+                + (reporter.enemyIntent
+                    and reporter.enemyIntent.target == threatenedTarget
+                    and 10 or 0)
+                + threatenedRisk * 0.12
+                - (truth.coreFresh == false and 8 or 0),
             outcome = "Arrive before the enemy commitment and stabilize the next objective.",
             risk = "A late or unverified rotation can expose the objective being left.",
+            opportunityCost = 20,
+            reversible = true,
+            success = "Reinforcements restore minimum coverage before objective loss.",
+            abort = "Enemy arrives first or the departure exposes another scoring objective.",
+            evidence = {
+                tostring(reinforceETA and reinforceETA.advantage
+                    or "unknown") .. "s arrival edge",
+                tostring(threatenedRisk) .. " pressure risk",
+            },
         },
         {
             id = "TRADE",
+            target = assaultTarget,
             probability = 40 + ((ratings.splitPush or 1) - 2) * 6
-                + (prediction.status == "LOSE" and 12 or 0)
-                - (budget.score < 50 and 10 or 0),
+                + (prediction.status == "LOSE" and 14 or 0)
+                + objectiveUrgency * 0.08
+                - uncertaintyPenalty,
             outcome = "Exchange the least valuable exposed objective for a better scoring lane.",
             risk = "The trade fails if defenders leave before the capture is secured.",
+            opportunityCost = 30,
+            reversible = false,
+            success = assaultTarget and ("Secure " .. assaultTarget
+                .. " before the threatened objective is lost.")
+                or "Complete the objective trade.",
+            abort = "The assault is reinforced or the protected score floor becomes uncovered.",
+            evidence = {
+                tostring(assaultTarget or "no target") .. " trade target",
+                tostring(objectiveUrgency) .. " urgency",
+            },
         },
         {
             id = "TEAMFIGHT",
+            target = reporter.hotspot and reporter.hotspot.label
+                or assaultTarget,
             probability = 44 + ((ratings.teamfight or 1)
                 - (enemyRatings.teamfight or 1)) * 7
                 + opportunity.score * 0.18 + momentum * 0.08
-                + resourceAdvantage * 0.10,
+                + resourceAdvantage * 0.10
+                - (reporter.hotspot and reporter.hotspot.owner == "UNKNOWN"
+                    and 8 or 0),
             outcome = "Convert the temporary combat advantage into objective control.",
             risk = "The fight has no value if it occurs away from the scoring requirement.",
+            opportunityCost = 24,
+            reversible = false,
+            success = "The fight creates immediate objective control or carrier progress.",
+            abort = "The opportunity window closes or the fight loses objective value.",
+            evidence = {
+                tostring(opportunity.score) .. " opportunity",
+                tostring(momentum) .. " momentum",
+                tostring(resourceAdvantage) .. " resource edge",
+            },
         },
         {
             id = "SPLIT",
+            target = assaultTarget,
             probability = 41 + ((ratings.splitPush or 1)
                 - (enemyRatings.mobility or 1)) * 6
-                + (reporter.enemyIntent and reporter.enemyIntent.groupSize or 0) * 2
-                - (budget.score < 55 and 8 or 0),
+                + (reporter.enemyIntent
+                    and reporter.enemyIntent.groupSize or 0) * 2
+                + (reporter.hotspot
+                    and (reporter.hotspot.enemy or 0) >= 5 and 12 or 0)
+                - uncertaintyPenalty,
             outcome = "Force the enemy composition to defend separate scoring threats.",
             risk = "Split pressure becomes two losing fights without confirmed timing.",
+            opportunityCost = 35,
+            reversible = false,
+            success = "Enemy releases enough players to weaken its primary win condition.",
+            abort = "Both groups lose local parity or healer coverage disconnects.",
+            evidence = {
+                tostring(reporter.enemyIntent
+                    and reporter.enemyIntent.groupSize or 0)
+                    .. " enemies in predicted commitment",
+                tostring(budget.score) .. " evidence score",
+            },
         },
     }
     for _, candidate in ipairs(candidates) do
+        if candidate.target == nil then
+            candidate.probability = candidate.probability - 18
+            candidate.evidence[#candidate.evidence + 1] =
+                "no verified objective target"
+        end
+        if not candidate.reversible
+            and truth.aggressiveCommitAllowed == false then
+            candidate.probability = candidate.probability - 12
+            candidate.evidence[#candidate.evidence + 1] =
+                "aggressive commitment gated by truth coverage"
+        end
+        candidate.probability = candidate.probability
+            - candidate.opportunityCost * 0.08
         candidate.probability = math.floor(KWR.Util:Clamp(
             candidate.probability, 5, 95) + 0.5)
+        candidate.decisionScore = candidate.probability
+        candidate.projection = candidate.probability >= 70 and "FAVORABLE"
+            or (candidate.probability >= 50 and "VIABLE" or "WEAK")
+        candidate.heuristic = true
     end
     table.sort(candidates, function(a, b)
         if a.probability ~= b.probability then return a.probability > b.probability end
@@ -439,9 +564,13 @@ function Strategist:Evaluate(snapshot, prediction)
     result.risk = budget.risk
     result.opportunity = opportunity
     result.simulations = simulations
+    result.selectedAction = simulations[1]
+        and KWR.Util:Copy(simulations[1]) or nil
     result.expectedOutcome = simulations[1] and simulations[1].outcome
     result.recommendationMode = simulations[1] and simulations[1].id
     result.projectedWinProbability = simulations[1] and simulations[1].probability
+    result.decisionScore = simulations[1] and simulations[1].decisionScore
+    result.projection = simulations[1] and simulations[1].projection
     result.alternatives = {}
     for _, candidate in ipairs(result.candidates) do
         if candidate.plan.id ~= result.planID and #result.alternatives < 2 then
@@ -461,6 +590,7 @@ function Strategist:Evaluate(snapshot, prediction)
         result.fightShape = scenario.shape
         result.action = scenario.action
         result.objectiveDecision = KWR.Util:Copy(scenario.objectiveDecision)
+        result.responseContract = KWR.Util:Copy(scenario.responseContract)
     end
     local carriers = snapshot.objectives and snapshot.objectives.carriers or {}
     if snapshot.context.kind == "FLAG" then
@@ -494,12 +624,18 @@ function Strategist:Evaluate(snapshot, prediction)
             result.reason = "A low-health orb carrier needs an intentional handoff or immediate peel, not an unplanned loss."
         end
     end
-    if budget.score < 40 and currentState ~= "OPENING" then
+    local truth = snapshot.truth or {}
+    if (budget.score < 40 or truth.coreFresh == false)
+        and currentState ~= "OPENING" then
         result.action = "Protect the current scoring requirement, verify enemy movement, then reassess."
-        result.reason = "Evidence coverage is too low for an aggressive commitment."
+        result.reason = truth.conservativeReason
+            or "Evidence coverage is too low for an aggressive commitment."
         result.stop = "Do not commit a split or long rotation from unverified information."
         result.recommendationMode = "HOLD"
         result.expectedOutcome = "Preserve score while rebuilding battlefield confidence."
+        result.projectedWinProbability = nil
+        result.decisionScore = simulations[1]
+            and simulations[1].decisionScore or nil
     elseif opportunity.open and budget.score >= 55
         and result.recommendationMode == "TEAMFIGHT" then
         result.reason = result.reason .. " WINDOW: "
@@ -592,6 +728,9 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
             and snapshot.strategy.confidenceBudget.score or 0) * 0.65
             + evidenceCount * 6,
         0, 100)
+    if snapshot.truth and snapshot.truth.coreFresh == false then
+        confidenceScore = math.min(confidenceScore, 38)
+    end
 
     local commitment = {
         state = "UNKNOWN",
@@ -626,6 +765,30 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
                 tostring(row.friendly) .. " friendly observed",
                 tostring(row.enemy) .. " enemy observed",
                 "owner " .. tostring(row.owner),
+            }
+        end
+    end
+    for _, coverage in ipairs(integrity.coverageLedger or {}) do
+        if coverage.state == "UNCOVERED" and commitment.score < 88 then
+            commitment.state = "UNDERDEFENDED"
+            commitment.score = 88
+            commitment.objective = coverage.location
+            commitment.excess = 0
+            commitment.evidence = {
+                tostring(coverage.assigned or 0) .. " assigned",
+                tostring(coverage.required or 1) .. " required",
+                tostring(coverage.enemyKnown or 0) .. " enemy known",
+            }
+        elseif coverage.state == "OVERCOMMITTED"
+            and commitment.score < 72 then
+            commitment.state = "FRIENDLY_OVERCOMMITTED"
+            commitment.score = 72
+            commitment.objective = coverage.location
+            commitment.excess = math.max(1,
+                (coverage.assigned or 0) - (coverage.required or 1))
+            commitment.evidence = {
+                tostring(coverage.assigned or 0) .. " assigned",
+                tostring(coverage.required or 1) .. " required",
             }
         end
     end
@@ -740,6 +903,8 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
         + math.min(20, (integrity.unverified or 0) * 2)
         + (commitment.state == "FRIENDLY_OVERCOMMITTED" and 12 or 0)
         + (commitment.state == "UNDERDEFENDED" and 18 or 0)
+        + (integrity.uncovered or 0) * 16
+        + (integrity.overcommitted or 0) * 8
     if assignmentCount == 0 then organizationScore = 0 end
     organizationScore = KWR.Util:Clamp(organizationScore, 0, 100)
     local organization = {
@@ -752,6 +917,8 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
         impossible = integrity.impossible or 0,
         moving = integrity.moving or 0,
         unverified = integrity.unverified or 0,
+        uncovered = integrity.uncovered or 0,
+        overcommitted = integrity.overcommitted or 0,
         confidence = assignmentCount > 0 and executionLabel(confidenceScore) or "NONE",
     }
 
@@ -821,6 +988,28 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
         organization = organization,
         actionOpportunity = actions[1],
         alternatives = actions,
+        horizons = {
+            immediate = {
+                seconds = 5,
+                state = collapse.state == "CRITICAL"
+                    and collapse.response
+                    or actions[1].action,
+                target = actions[1].target,
+            },
+            engagement = {
+                seconds = 15,
+                state = pressureForecast.state,
+                target = pressureForecast.target,
+                reinforcement = reinforcement.side,
+            },
+            strategic = {
+                seconds = 30,
+                state = prediction.status or "WAITING",
+                target = snapshot.strategy
+                    and snapshot.strategy.objectiveDecision
+                    and snapshot.strategy.objectiveDecision.target,
+            },
+        },
     }
     self.executionCache = {
         signature = executionSignature,

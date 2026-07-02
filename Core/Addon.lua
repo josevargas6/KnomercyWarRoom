@@ -4,8 +4,8 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.12"
-KWR.schemaVersion = 60112
+KWR.version = "6.1.0-alpha.13"
+KWR.schemaVersion = 60113
 KWR.modules = {}
 KWR.moduleOrder = {}
 KWR.ready = false
@@ -206,7 +206,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
     elseif event == "PLAYER_LOGIN" then
         KWR:EnableModules()
         if KWR.db.profile.showLoadMessage ~= false then
-        KWR:Print("6.1 Alpha 12 loaded. Complete response packages and target clarity are active.", true)
+        KWR:Print("6.1 Alpha 13 loaded. Battlefield truth and monitored command contracts are active.", true)
         end
     elseif event == "PLAYER_LOGOUT" then
         KWR:DisableModules()

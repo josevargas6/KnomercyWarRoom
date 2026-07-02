@@ -1,5 +1,30 @@
 # Changelog
 
+## 6.1.0-alpha.13
+
+- Added one normalized battlefield truth contract with source, observation
+  time, expiration, confidence, verification state, and conservative gating.
+- Added static map-route ETA fallback when exact legal coordinates are not
+  available; observed movement remains higher confidence.
+- Upgraded every assignment into a monitored contract with issue time,
+  expected arrival, evidence source, success condition, abort condition,
+  completion state, and value-aware replacement.
+- Added an objective coverage ledger that identifies uncovered and
+  overcommitted friendly objectives without stripping the sole defender from
+  another node.
+- Reworked the existing five candidate actions into objective-aware heuristic
+  scores with named targets, opportunity cost, reversibility, evidence,
+  success, and abort semantics. Scores are explicitly not statistical win
+  probabilities.
+- Added map-specific reviewed enemy counter and response doctrine to all ten
+  supported battleground scenario families.
+- Added immediate (5 second), engagement (15 second), and strategic (30 second)
+  decision horizons to the existing execution assessment.
+- Expanded `/kwr explain`, Commander, Verification, and AAR evidence without
+  adding combat HUD lines or a parallel decision engine.
+- Expanded deterministic diagnostics from 232 to 240 checks and retained the
+  500-refresh bounded-state soak.
+
 ## 6.1.0-alpha.12
 
 - Added one complete response package derived from the existing execution
