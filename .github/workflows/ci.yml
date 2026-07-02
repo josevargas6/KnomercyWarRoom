@@ -47,7 +47,7 @@ jobs:
       - name: Upload certified packages
         uses: actions/upload-artifact@v4
         with:
-          name: kwr-${{ github.ref_name }}-${{ github.sha }}
+          name: kwr-${{ github.run_id }}-${{ github.sha }}
           path: artifacts/*
           if-no-files-found: error
           retention-days: 30
