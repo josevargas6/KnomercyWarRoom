@@ -416,11 +416,38 @@ end
 local function captureRoster(mapID)
     local roster = {}
     local units = {}
+    local raidNames = {}
+    local raidLocalizedClasses = {}
+    local raidClasses = {}
+    local raidRoles = {}
+    local raidConnected = {}
+    local raidDead = {}
     local definition = mapID and KWR.Maps:Resolve(mapID, "") or nil
     local observedAt = Util:Now()
     if type(IsInRaid) == "function" and IsInRaid() then
         local count = math.min(number(Util:Call(GetNumGroupMembers), 0), 40)
-        for index = 1, count do units[#units + 1] = "raid" .. index end
+        for index = 1, count do
+            units[#units + 1] = "raid" .. index
+            if type(GetRaidRosterInfo) == "function" then
+                local rosterName, _, _, _, localizedClass, classFile, _,
+                    online, isDead, rosterRole =
+                    Util:Call(GetRaidRosterInfo, index)
+                rosterName = text(rosterName, "", 64)
+                if rosterName ~= "" then raidNames[index] = rosterName end
+                localizedClass = text(localizedClass, "", 24)
+                if localizedClass ~= "" then
+                    raidLocalizedClasses[index] = localizedClass
+                end
+                classFile = text(classFile, "", 24)
+                if classFile ~= "" then raidClasses[index] = classFile:upper() end
+                if type(online) == "boolean" then raidConnected[index] = online end
+                if type(isDead) == "boolean" then raidDead[index] = isDead end
+                rosterRole = text(rosterRole, "", 12)
+                if rosterRole ~= "" and rosterRole ~= "NONE" then
+                    raidRoles[index] = rosterRole
+                end
+            end
+        end
     elseif type(IsInGroup) == "function" and IsInGroup() then
         units[#units + 1] = "player"
         local count = math.min(number(Util:Call(GetNumSubgroupMembers), 0), 4)
@@ -429,13 +456,39 @@ local function captureRoster(mapID)
         units[1] = "player"
     end
 
-    for _, unit in ipairs(units) do
-        local name = Util:UnitName(unit)
+    local seenIdentity, seenName = {}, {}
+    for unitIndex, unit in ipairs(units) do
+        local unitName = Util:UnitName(unit)
+        local name = raidNames[unitIndex] or unitName
         if name then
             local localizedClass, classFile = Util:UnitClass(unit)
+            if raidLocalizedClasses[unitIndex] then
+                localizedClass = raidLocalizedClasses[unitIndex]
+            end
+            if raidClasses[unitIndex] then
+                classFile = raidClasses[unitIndex]
+            end
             local guid = text(Util:Call(UnitGUID, unit), "", 80)
-            local role = text(Util:Call(UnitGroupRolesAssigned, unit), "NONE", 12)
-            local specID, specName, specRole, specSource = resolveSpecialization(unit)
+            local role = raidRoles[unitIndex]
+                or text(Util:Call(UnitGroupRolesAssigned, unit), "NONE", 12)
+            local identity = guid ~= "" and guid or name:lower()
+            local normalizedName = name:lower()
+            local duplicate = seenIdentity[identity] == true
+                or seenName[normalizedName] == true
+            local unitStable = not raidNames[unitIndex]
+                or (unitName
+                    and Util:ShortName(unitName):lower()
+                        == Util:ShortName(raidNames[unitIndex]):lower())
+            if not duplicate then
+                seenIdentity[identity] = true
+                seenName[normalizedName] = true
+            end
+            if not duplicate then
+            local specID, specName, specRole, specSource
+            if unitStable then
+                specID, specName, specRole, specSource =
+                    resolveSpecialization(unit)
+            end
             if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             local cacheKey = guid ~= "" and guid or name:lower()
             local cacheRecord
@@ -459,18 +512,28 @@ local function captureRoster(mapID)
                 Sensors.specCache[cacheKey] = cacheRecord
                 Sensors.specCache[name:lower()] = cacheRecord
             end
-            local dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
-            local connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
-            local health = number(Util:Call(UnitHealth, unit), nil)
-            local healthMax = number(Util:Call(UnitHealthMax, unit), nil)
+            local dead = raidDead[unitIndex]
+            if dead == nil and unitStable then
+                dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
+            end
+            dead = dead == true
+            local connected = raidConnected[unitIndex]
+            if connected == nil and unitStable then
+                connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
+            end
+            if connected == nil then connected = true end
+            local health = unitStable
+                and number(Util:Call(UnitHealth, unit), nil) or nil
+            local healthMax = unitStable
+                and number(Util:Call(UnitHealthMax, unit), nil) or nil
             local x, y
-            if mapID and C_Map and C_Map.GetPlayerMapPosition then
+            if unitStable and mapID and C_Map and C_Map.GetPlayerMapPosition then
                 local position = Util:Call(C_Map.GetPlayerMapPosition, mapID, unit)
                 x, y = readPosition(position)
             end
             local location = x and y and nearestDefinedLocation(definition, x, y) or nil
             roster[#roster + 1] = {
-                unit = unit,
+                unit = unitStable and unit or nil,
                 guid = guid,
                 name = name,
                 shortName = Util:ShortName(name),
@@ -482,7 +545,9 @@ local function captureRoster(mapID)
                 role = role,
                 dead = dead,
                 connected = connected,
-                inCombat = Util:Boolean(Util:Call(UnitAffectingCombat, unit), false),
+                inCombat = unitStable
+                    and Util:Boolean(Util:Call(UnitAffectingCombat, unit), false)
+                    or false,
                 health = health,
                 healthMax = healthMax,
                 healthPercent = health and healthMax and healthMax > 0
@@ -493,7 +558,9 @@ local function captureRoster(mapID)
                 lastSeenAt = observedAt,
                 location = location or (mapID and "Position restricted" or "Formation"),
                 locationSource = location and "Friendly Map Position" or "Group Unit",
+                unitStable = unitStable,
             }
+            end
         end
     end
     table.sort(roster, function(a, b)

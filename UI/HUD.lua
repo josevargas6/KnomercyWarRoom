@@ -22,7 +22,7 @@ function HUD:Create()
     if self.frame then return self.frame end
     local profile = KWR.db.profile.hud
     local frame = CreateFrame("Frame", "KWR_CommandHUD", UIParent, "BackdropTemplate")
-    frame:SetSize(350, 408)
+    frame:SetSize(390, 484)
     frame:SetPoint(profile.point, UIParent, profile.relativePoint, profile.x, profile.y)
     frame:SetFrameStrata("HIGH")
     frame:SetToplevel(true)
@@ -44,10 +44,10 @@ function HUD:Create()
     frame.status:SetPoint("TOPRIGHT", -10, -64)
 
     addSection(frame, "win", "WIN CONDITION", -84, 58)
-    addSection(frame, "next", "NEXT OBJECTIVE", -148, 58)
-    addSection(frame, "mine", "MY ASSIGNMENT", -212, 58)
-    addSection(frame, "caller", "TARGET CALLER", -276, 58)
-    addSection(frame, "kill", "KILL TARGET", -340, 58)
+    addSection(frame, "next", "NEXT OBJECTIVE - FULL CALL", -148, 116)
+    addSection(frame, "mine", "MY ASSIGNMENT", -270, 58)
+    addSection(frame, "caller", "COMMAND MOVERS", -334, 72)
+    addSection(frame, "kill", "KILL TARGET", -412, 62)
 
     frame:SetScript("OnMouseUp", function(_, button)
         if button == "RightButton" then KWR.MainWindow:Show("TACTICAL") end
@@ -105,15 +105,20 @@ function HUD:Update(state)
         .. tostring(command.confidence) .. " CONFIDENCE")
     frame.win.value:SetText(state.prediction.condition or "Waiting for battlefield truth.")
     local learning = KWR.db.profile.guidanceMode == "LEARNING"
-    frame.next.heading:SetText(command.reassessment and "REASSESS RESULT" or "NEXT OBJECTIVE")
-    frame.next.value:SetText((command.action or "Queue or join your team.")
+    frame.next.heading:SetText(command.reassessment
+        and "REASSESS RESULT" or "NEXT OBJECTIVE - FULL CALL")
+    frame.next.value:SetText((command.spokenCall
+        or command.action or "Queue or join your team.")
         .. (learning and command.switchIf and ("\n|cff8ea3bbSWITCH: " .. KWR.Util:Text(command.switchIf, "", 52) .. "|r") or ""))
 
     frame.mine.value:SetText(mine and KWR.Assignments:CompactLabel(
         mine, snapshot.context.mapKey) or "Formation role pending.")
-    frame.caller.value:SetText(command.who .. (learning and command.ourComposition
-        and ("\n" .. KWR.Util:Text(command.ourComposition, "", 42)) or
-        ("\nCurrent call: " .. KWR.Util:Text(command.action, "", 55))))
+    frame.caller.heading:SetText(snapshot.context.inPvP
+        and "COMMAND MOVERS" or "FORMATION CHECK")
+    frame.caller.value:SetText((command.callVerb or "SEND") .. ": "
+        .. (command.callMovers or command.who or "Team")
+        .. "\nWHEN: " .. tostring(command.when or "NOW")
+        .. " | " .. tostring(command.confidence or "NONE"))
 
     if enemy then
         frame.kill.value:SetText(enemy.shortName .. "  |  " .. enemy.spec

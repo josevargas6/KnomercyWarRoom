@@ -949,7 +949,11 @@ function MainWindow:UpdateTactical(state)
         page.callerCard.value:SetText("Assign target caller + backup\nAssign base/route lead\nConfirm voice discipline")
         page.focusCard.value:SetText("Voice | PvP talents | gear\nConsumables | queue leader")
     else
-        page.callerCard.value:SetText(command.who .. "\n|cffb7bdc7Call role: Command movers|r\nCurrent: " .. KWR.Util:Text(command.action, "", 58))
+        page.callerCard.value:SetText((command.callVerb or "SEND") .. ": "
+            .. (command.callMovers or command.who or "Team")
+            .. "\n|cffb7bdc7WHEN: " .. tostring(command.when or "NOW")
+            .. " | " .. tostring(command.confidence or "NONE") .. "|r"
+            .. "\nCALL: " .. KWR.Util:Text(command.action, "", 110))
         page.focusCard.value:SetText(enemy and (enemy.shortName .. "\nFocus CC / kill pressure") or "No focus target selected.")
     end
 

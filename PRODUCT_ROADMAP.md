@@ -3,7 +3,7 @@
 ## Current handoff and next release
 
 `PROJECT_HANDOFF.md` is the authoritative no-drift plan following
-6.1.0-alpha.9. Alpha 9 remains the certified rollback baseline. Alpha 14 is
+6.1.0-alpha.9. Alpha 9 remains the certified rollback baseline. Alpha 15 is
 the current additive trust and decision-quality candidate, not an architecture
 rewrite. It retains target/cast clarity and complete response packages while
 adding evidence contracts, coverage integrity, route estimates, and
@@ -11,7 +11,7 @@ objective-aware action comparison. The three-line combat HUD remains unchanged.
 
 The immediate order is:
 
-1. live-test Alpha 14 truth, assignment, response, transition, and decision contracts;
+1. live-test Alpha 15 truth, assignment, response, transition, and decision contracts;
 2. reversible Combat Clarity controls;
 3. kill-zone `FORMING`/`ACTIVE`/`RECOVERY`;
 4. Contain-and-Trade counterplay;

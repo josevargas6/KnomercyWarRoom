@@ -210,17 +210,38 @@ C_PvP = {
 }
 
 function IsInInstance() return mockPvP, mockPvP and "pvp" or "none" end
-function IsInRaid() return false end
-function IsInGroup() return false end
-function GetNumGroupMembers() return 1 end
+local mockRaid = false
+local mockRaidTokensStable = false
+local mockRaidNames = { "Alpha", "Bravo", "Charlie" }
+function IsInRaid() return mockRaid end
+function IsInGroup() return mockRaid end
+function GetNumGroupMembers() return mockRaid and 3 or 1 end
 function GetNumSubgroupMembers() return 0 end
+function GetRaidRosterInfo(index)
+    if not mockRaid then return nil end
+    return mockRaidNames[index], 0, 1, 90, "Warrior", "WARRIOR",
+        "Stormwind City", true, false, "DAMAGER"
+end
 function GetNumBattlefieldScores() return mockPvP and 2 or 0 end
 function RequestBattlefieldScoreData() scoreRequests = scoreRequests + 1 end
 local mockLiveEnemy = false
-function UnitExists(unit) return unit == "player" or (mockLiveEnemy and unit == "nameplate7") end
-function UnitName(unit) if unit == "player" then return "TestPlayer", "TestRealm" end end
+function UnitExists(unit)
+    return unit == "player"
+        or (mockRaid and unit and unit:find("^raid%d+$") ~= nil)
+        or (mockLiveEnemy and unit == "nameplate7")
+end
+function UnitName(unit)
+    if unit == "player" then return "TestPlayer", "TestRealm" end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        local index = tonumber(unit:match("%d+"))
+        return mockRaidTokensStable and mockRaidNames[index] or "Alpha", "TestRealm"
+    end
+end
 function UnitClass(unit)
     if unit == "player" then return "Warrior", "WARRIOR", 1 end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        return "Warrior", "WARRIOR", 1
+    end
     if mockLiveEnemy and unit == "nameplate7" then return "Priest", "PRIEST", 5 end
 end
 function UnitClassBase(unit)
@@ -238,7 +259,12 @@ function UnitIsDeadOrGhost() return false end
 function UnitIsConnected() return true end
 function UnitAffectingCombat(unit) return mockLiveEnemy and unit == "nameplate7" or false end
 function UnitFactionGroup() return "Alliance" end
-function UnitGUID(unit) if unit == "player" then return "Player-1-SELF" end end
+function UnitGUID(unit)
+    if unit == "player" then return "Player-1-SELF" end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        return "Player-1-RAID" .. tostring(unit:match("%d+"))
+    end
+end
 local mockDirectPlayerSpec = false
 function GetSpecialization() if mockDirectPlayerSpec then return 1 end end
 function GetSpecializationInfo(index)
@@ -328,6 +354,32 @@ local worldRefreshes = KWR.MatchRuntime.diagnostics.refreshes
 KWR.MatchRuntime:HandleEvent("UPDATE_UI_WIDGET")
 assert(KWR.MatchRuntime.diagnostics.refreshes == worldRefreshes,
     "Inactive runtime processed a battleground-only event.")
+
+mockRaid = true
+assert(KWR.MatchRuntime:ForceRefresh("smoke-raid-resolving"),
+    "Resolving raid capture failed.")
+local resolvingRoster = KWR.Store:Get().snapshot.roster
+assert(#resolvingRoster == 3
+    and resolvingRoster[1].shortName ~= resolvingRoster[2].shortName
+    and resolvingRoster[2].shortName ~= resolvingRoster[3].shortName,
+    "Raid-roster identity did not prevent duplicate loading-screen names.")
+local resolvingBindings = 0
+for _, player in ipairs(resolvingRoster) do
+    if player.unit then resolvingBindings = resolvingBindings + 1 end
+end
+assert(resolvingBindings == 1,
+    "Mismatched raid identities retained unsafe loading-screen bindings.")
+mockRaidTokensStable = true
+assert(KWR.MatchRuntime:ForceRefresh("smoke-raid-stable"),
+    "Stable raid capture failed.")
+for _, player in ipairs(KWR.Store:Get().snapshot.roster) do
+    assert(player.unit ~= nil and player.unitStable == true,
+        "Resolved raid identity did not restore its unit binding.")
+end
+mockRaid = false
+mockRaidTokensStable = false
+assert(KWR.MatchRuntime:ForceRefresh("smoke-solo-reset"),
+    "Solo roster reset failed.")
 
 mockPvP = true
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp"), "PvP pipeline refresh failed.")
@@ -577,6 +629,11 @@ scheduled[2].callback()
 assert(KWR.MatchRuntime.pending == false
     and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 2,
     "Runtime queue did not complete its bounded follow-up refresh.")
+scheduled = {}
+KWR.MatchRuntime:ScheduleTransitionSweep("transition-test", false)
+assert(#scheduled == 4,
+    "Zone transition did not schedule four bounded truth-settle passes.")
+KWR.MatchRuntime.transitionToken = KWR.MatchRuntime.transitionToken + 1
 C_Timer.After = originalAfter
 
 local result = KWR.Diagnostics:Run()

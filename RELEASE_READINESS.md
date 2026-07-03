@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.14
+# Release Readiness - 6.1.0-alpha.15
 
 ## Current decision
 
@@ -17,6 +17,10 @@ not get hidden by the aggregate score.
 ## Proven offline
 
 - One authoritative Store and one MatchRuntime ticker.
+- Four finite zone-transition confirmations and three finite roster
+  confirmations repair loading-screen truth without adding another ticker.
+- Full spoken command calls list every named mover and defender; numeric
+  shorthand is not used on the Scout HUD.
 - Complete TOC and version consistency.
 - No legacy patch markers.
 - No automatic chat, addon messages, targeting/focus, macro execution, spell
@@ -32,7 +36,7 @@ not get hidden by the aggregate score.
 - Local kill-target selection, roster-validated assigned-team normalization,
   and explicit unknown handling for Midnight-blocked combat evidence.
 - Dated Murlok RBG specialization snapshot with an explicit advisory boundary.
-- Two hundred forty-two deterministic diagnostics plus a 500-refresh bounded-state soak
+- Two hundred forty-three deterministic diagnostics plus a 500-refresh bounded-state soak
   and knowledge audit.
 - All ten supported battlegrounds exercise lead, deficit, tie, assignment
   family, valid-location, and map-specific node-priority fixtures.

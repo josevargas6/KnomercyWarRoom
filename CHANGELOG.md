@@ -1,5 +1,26 @@
 # Changelog
 
+## 6.1.0-alpha.15
+
+- Replaced abbreviated mover counts with complete spoken command rosters.
+  Scout HUD objective calls now list every named mover and any named defenders
+  by compact objective, without `+3` or other numeric shorthand.
+- Enlarged the Scout HUD command area and separated the full call, personal
+  assignment, mover roster, timing, confidence, and kill target into readable
+  sections suitable for voice leadership.
+- Made qualified execution responses bypass the short command-stability hold
+  so an evidence-supported emergency pivot is displayed immediately.
+- Added four bounded post-zone transition truth confirmations and three
+  bounded group-roster confirmations. These are finite event responses and do
+  not add a polling loop or permanent ticker.
+- Added `UNIT_NAME_UPDATE` and `PLAYER_ROLES_ASSIGNED` refreshes so raid names,
+  roles, health bindings, and secure roster rows converge after loading.
+- Cross-checked raid unit identities against Blizzard's raid-roster records,
+  suppressed duplicate identities, and withheld unstable unit bindings until
+  the corresponding unit token resolves.
+- Expanded deterministic diagnostics to 243 checks and added regression
+  coverage for complete spoken commands and bounded transition settling.
+
 ## 6.1.0-alpha.14
 
 - Replaced the lossy refresh flag with one bounded, preemptible dirty-state

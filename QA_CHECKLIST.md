@@ -1,6 +1,6 @@
-﻿# KWR 6.1 Alpha 14 QA Checklist
+# KWR 6.1 Alpha 15 QA Checklist
 
-## Alpha 14 intelligence checks
+## Alpha 15 intelligence checks
 
 - [ ] Own and friendly health bars render immediately when a legal unit token exists.
 - [ ] Friendly specializations are verified during formation and remain cached.
@@ -45,12 +45,15 @@
 - [ ] `REASSESS` prefixes the command and lists changed players and jobs.
 - [ ] Tactical, Assignments, HUD, Why, Verify, and AAR agree on the response.
 - [ ] Composition counter directives appear only on relevant assignments.
+- [ ] `NEXT OBJECTIVE - FULL CALL` shows every mover by name and uses no
+  numeric shorthand such as `+3`.
+- [ ] Named defenders appear under `STAY` with their compact objective.
 
 ## Automated gates
 
 - [x] `tools/validate.ps1` passes.
 - [x] All runtime Lua parses as Lua 5.1.
-- [x] Offline boot and pipeline smoke test passes 242 checks.
+- [x] Offline boot and pipeline smoke test passes 243 checks.
 - [x] Knowledge audit passes.
 - [x] Runtime Lua contains no unsupported non-ASCII UI glyphs.
 - [x] Distribution ZIP contains one `KnomercyWarRoom` root and round-trips without mismatch.
@@ -67,6 +70,10 @@
   roster identities without `/reload` or stale players.
 - [ ] Entering and leaving a battleground completes the settling refresh
   without a frozen score, roster, or old enemy session.
+- [ ] The post-match world view replaces battleground score and assignments
+  within three seconds without `/reload`.
+- [ ] Loading-screen raid rows contain no duplicate names and settle to all
+  current members before the gate opens.
 - [ ] Window positions, notes, options, history, and AAR feedback persist.
 - [ ] `/kwr test` reports zero failures.
 

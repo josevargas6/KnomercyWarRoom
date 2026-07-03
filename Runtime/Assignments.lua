@@ -941,18 +941,16 @@ function Assignments:SelectForCommand(assignments, prediction)
     for _, assignment in ipairs(assignments or {}) do
         if wanted[assignment.role] and not assignment.dead and assignment.connected ~= false then
             names[#names + 1] = assignment.shortName
-            if #names >= 3 then break end
         end
     end
     if #names == 0 then
         for _, assignment in ipairs(assignments or {}) do
             if not assignment.dead and assignment.connected ~= false then
                 names[#names + 1] = assignment.shortName
-                if #names >= 3 then break end
             end
         end
     end
-    return #names > 0 and table.concat(names, " + ") or "Team"
+    return #names > 0 and table.concat(names, ", ") or "Team"
 end
 
 local compactRoles = {
@@ -1057,16 +1055,14 @@ end
 function Assignments:SummarizeChanges(changes, mapKey)
     if #(changes or {}) == 0 then return "Assignments confirmed; no changes." end
     local parts = {}
-    for index = 1, math.min(4, #changes) do
+    for index = 1, #changes do
         local change = changes[index]
         parts[#parts + 1] = KWR.Util:Text(change.name, "Player", 16)
             .. " -> " .. self:CompactRole(change.toRole)
             .. "@" .. KWR.Maps:AbbreviateLocation(
                 mapKey, change.toLocation)
     end
-    local extra = #changes - #parts
     return table.concat(parts, "; ")
-        .. (extra > 0 and ("; +" .. tostring(extra) .. " more") or "")
 end
 
 function Assignments:ResponsePackage(snapshot, assignments)
@@ -1080,6 +1076,7 @@ function Assignments:ResponsePackage(snapshot, assignments)
     local mapKey = snapshot.context and snapshot.context.mapKey
     local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
     local movers, stayers = {}, {}
+    local stayerGroups, stayerOrder = {}, {}
     local moverRoles = {
         ["Strike Team"] = true, ["Main Fight"] = true,
         ["Tower Strike"] = true, ["Defense Floater"] = true,
@@ -1093,20 +1090,31 @@ function Assignments:ResponsePackage(snapshot, assignments)
             local role = assignment.role or ""
             if role:find("Defender", 1, true)
                 or role == "Tower Sitter" or role == "Cart Anchor" then
-                if #stayers < 3 then stayers[#stayers + 1] = name end
-            elseif moverRoles[role] and #movers < 4 then
+                stayers[#stayers + 1] = name
+                local location = KWR.Maps:AbbreviateLocation(
+                    mapKey, assignment.location)
+                if not stayerGroups[location] then
+                    stayerGroups[location] = {}
+                    stayerOrder[#stayerOrder + 1] = location
+                end
+                stayerGroups[location][#stayerGroups[location] + 1] = name
+            elseif moverRoles[role] then
                 movers[#movers + 1] = name
             end
         end
     end
     if #movers == 0 then
         for _, assignment in ipairs(assignments or {}) do
-            if assignment.connected ~= false and not assignment.dead
-                and #movers < 3 then
+            if assignment.connected ~= false and not assignment.dead then
                 movers[#movers + 1] =
                     assignment.shortName or assignment.name
             end
         end
+    end
+    local stayerCalls = {}
+    for _, location in ipairs(stayerOrder) do
+        stayerCalls[#stayerCalls + 1] = location .. ": "
+            .. table.concat(stayerGroups[location], ", ")
     end
 
     local actionText = {
@@ -1133,8 +1141,8 @@ function Assignments:ResponsePackage(snapshot, assignments)
         shortTarget = shortTarget,
         movers = movers,
         stayers = stayers,
-        moverText = #movers > 0 and table.concat(movers, " + ") or "Team",
-        stayerText = #stayers > 0 and table.concat(stayers, " + ")
+        moverText = #movers > 0 and table.concat(movers, ", ") or "Team",
+        stayerText = #stayerCalls > 0 and table.concat(stayerCalls, "; ")
             or "Assigned defenders",
         confidence = confidence,
         score = opportunity.score or 0,

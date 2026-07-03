@@ -37,7 +37,7 @@ facts remain unknown, and dynamic calls remain manual.
 
 ## Alpha status
 
-Version 6.1.0-alpha.14 adds battlefield truth contracts, monitored assignments,
+Version 6.1.0-alpha.15 adds battlefield truth contracts, monitored assignments,
 objective-aware candidate decisions, complete response packages, and optional target/cast
 clarity, bounded execution assessment, and retains structured
 manual post-match evidence export,
@@ -50,7 +50,7 @@ learning, provenance, bounded specialization capability ratings, battlefield
 job preferences, observed tactical ability windows, sourced visible/last-seen
 locations, explicit objective success/abort criteria, and reduced repeat
 runtime/UI work. It passes offline
-validation, 242 deterministic checks, live enemy-token binding, reassessment
+validation, 243 deterministic checks, live enemy-token binding, reassessment
 feedback, and final-score AAR handling. Live Retail 12.0.7 field testing,
 including secure-row taint checks,
 is still required before stable release.

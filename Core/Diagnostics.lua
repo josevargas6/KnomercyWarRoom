@@ -1010,6 +1010,21 @@ function Diagnostics:Run()
             connected = true, dead = false,
         },
         {
+            guid = "Mover-2", name = "Max-Realm", shortName = "Max",
+            role = "Strike Team", location = "Blacksmith",
+            connected = true, dead = false,
+        },
+        {
+            guid = "Mover-3", name = "Steve-Realm", shortName = "Steve",
+            role = "Strike Team", location = "Blacksmith",
+            connected = true, dead = false,
+        },
+        {
+            guid = "Mover-4", name = "Bob-Realm", shortName = "Bob",
+            role = "Strike Team", location = "Blacksmith",
+            connected = true, dead = false,
+        },
+        {
             guid = "Stay-1", name = "Stay-Realm", shortName = "Stay",
             role = "Node Defender", location = "Farm",
             connected = true, dead = false,
@@ -1019,8 +1034,8 @@ function Diagnostics:Run()
         executionSnapshot, responseAssignments)
     check("Response package converts a qualified assessment into movers, stayers, success, and abort",
         responsePackage.qualified == true
-            and responsePackage.moverText == "Mover"
-            and responsePackage.stayerText == "Stay"
+            and responsePackage.moverText == "Mover, Max, Steve, Bob"
+            and responsePackage.stayerText == "FARM: Stay"
             and responsePackage.success == "Farm stabilizes."
             and responsePackage.abort == "Farm is unrecoverable.")
     executionSnapshot.responsePackage = responsePackage
@@ -1030,8 +1045,13 @@ function Diagnostics:Run()
         responseAssignments)
     check("Commander arbitration publishes a qualified response package through the one command path",
         responseCommand.responsePackage.qualified == true
-            and responseCommand.who == "Mover"
-            and responseCommand.action == responsePackage.action)
+            and responseCommand.who == "Mover, Max, Steve, Bob"
+            and responseCommand.action:find(responsePackage.action, 1, true) ~= nil)
+    check("Spoken command publishes every named mover without numeric shorthand",
+        responseCommand.spokenCall
+            and responseCommand.spokenCall:find("Mover, Max, Steve, Bob", 1, true) ~= nil
+            and responseCommand.spokenCall:find("+", 1, true) == nil,
+        responseCommand.spokenCall)
     local changeSummary = KWR.Assignments:SummarizeChanges({
         {
             name = "Mover", toRole = "Strike Team",

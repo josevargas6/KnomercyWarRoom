@@ -1,4 +1,4 @@
-﻿# Knomercy War Room 6.1 Alpha 14
+# Knomercy War Room 6.1 Alpha 15
 
 Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail.
 
@@ -12,20 +12,21 @@ the current group against a 10-player RBG roster, identifies missing roles,
 recommends best-fit specializations, explains the emerging composition
 archetype, and presents leadership, ready-check, and positioning guidance.
 
-Alpha 14 is a contained live-truth and interface refinement. It prevents rapid
-score, roster, and load-screen events from being discarded; keeps each map's
-reviewed score widget authoritative; guarantees a bounded post-transition
-settling refresh; and unifies assignments and enemy engagement locations into
+Alpha 15 is a contained live-truth and command-presentation refinement. It
+prevents rapid score, roster, and load-screen events from being discarded;
+cross-checks raid identities while unit tokens settle; performs finite
+post-transition confirmations; and publishes every named mover and defender
+in a readable spoken call. It retains each map's reviewed score authority and
 compact objective language such as `STRIKE -> LM`. It adds no second command
 brain, polling loop, combat window, or automatic action.
 
-Alpha 14 includes the enhanced compact Team/Enemy combat roster specified by the endgame
+Alpha 15 includes the enhanced compact Team/Enemy combat roster specified by the endgame
 design: class-colored health bars, role symbols, secure click targeting/focus,
 and a local kill-target glow driven only by safely available evidence and
 manual priority. Retail 12 blocks addon combat-log subscriptions, so live
 trinket and defensive state is updated only from safely observed unit events.
 
-The Alpha 14 strategy layer contains forty deterministic scenario combinations
+The Alpha 15 strategy layer contains forty deterministic scenario combinations
 per supported battleground. It evaluates opening, stabilization, pressure,
 recovery, and endgame phases against objective pressure and composition shape.
 Encounter history may supply a current-season likely specialization, but it is
@@ -37,7 +38,7 @@ a shell exact only when all ten specializations match. Eight or more matching
 verified/likely specializations may produce a clearly labeled likely match;
 otherwise the generic capability archetype remains authoritative.
 
-Alpha 14 strengthens that archetype with fourteen bounded specialization
+Alpha 15 strengthens that archetype with fourteen bounded specialization
 ratings, nine preferred battlefield jobs, optional advisory Hero talent
 modifiers, and a small reviewed catalog of battlefield-defining abilities.
 These are inputs to the existing assignment and combat-intelligence engines,
@@ -49,32 +50,32 @@ hold, escort, return, deny, or cap; what success looks like; and what observable
 condition should abort the play. Visible and last-seen locations retain their
 source even when Blizzard does not expose coordinates.
 
-Alpha 14 retains manual structured AAR export in the existing match journal. It
+Alpha 15 retains manual structured AAR export in the existing match journal. It
 records bounded factual evidence and does not generate prose, send chat, or
 alter command decisions. After a completed match use `/kwr aar` to open the
 Intel/AAR page, `/kwr aar copy` to open the existing manual copy box, or
 `/kwr aar clear` to delete completed exports. A live recording cannot be
 cleared. Recording can be disabled in KWR Options.
 
-Alpha 14 retains the internal execution assessment in the existing Strategist.
+Alpha 15 retains the internal execution assessment in the existing Strategist.
 It evaluates objective commitment, reinforcement advantage, pressure forecast,
 rotation cost, collapse risk, recovery windows, and assignment organization.
 The combat HUD remains three lines. Detailed evidence appears in
 `/kwr explain`, `/kwr verify`, and the manual AAR export.
 
-Alpha 14 retains the optional current-target spotlight in the compact roster,
+Alpha 15 retains the optional current-target spotlight in the compact roster,
 reviewed accents for selected high-value casts, and explicit responses to
 observed immunity or major defensive windows. These visuals never interrupt,
 swap targets, or claim an unavailable fact. The optional Cursor Ring now uses
 one evidence-driven color state instead of adding another alert window.
 
-Alpha 14 converts qualified execution evidence into one complete response
+Alpha 15 converts qualified execution evidence into one complete response
 package: what to do, who moves, who stays, the target, success condition, and
 abort condition. Only medium/high-confidence responses scoring at least 85 may
 override the ordinary command. Reassessment, Tactical, Assignments,
 explanation, verification, and AAR all consume the same package.
 
-Alpha 14 adds a normalized truth contract to every decision cycle and records
+Alpha 15 adds a normalized truth contract to every decision cycle and records
 source, age, expiration, confidence, and verification state. Assignments now
 carry expected arrival, success, abort, and replacement semantics, while the
 coverage ledger protects friendly objectives from accidental abandonment.
@@ -151,6 +152,6 @@ after live evidence. See `META_SOURCES.md`.
 
 Arathi Basin, Battle for Gilneas, Deepwind Gorge, Eye of the Storm, Warsong Gulch, Twin Peaks, Temple of Kotmogu, Silvershard Mines, Deephaul Ravine, and Seething Shore.
 
-Alpha 14 passes 242 offline architecture, syntax, movement, combat-intelligence,
+Alpha 15 passes 243 offline architecture, syntax, movement, combat-intelligence,
 cross-faction, preview, journal, and packaging tests. It still requires live
 Retail 12.0.7 field validation before stable release.

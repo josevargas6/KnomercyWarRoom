@@ -8,6 +8,7 @@ local Runtime = {
     queueRevision = 0,
     timerToken = 0,
     requiredSettleAt = nil,
+    transitionToken = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -38,6 +39,8 @@ local PERSISTENT_EVENTS = {
     "PLAYER_ENTERING_WORLD",
     "ZONE_CHANGED_NEW_AREA",
     "GROUP_ROSTER_UPDATE",
+    "UNIT_NAME_UPDATE",
+    "PLAYER_ROLES_ASSIGNED",
 }
 
 local ACTIVE_EVENTS = {
@@ -121,6 +124,25 @@ end
 
 function Runtime:UpdateLifecycle()
     if isPvP() then self:Start() else self:Stop() end
+end
+
+function Runtime:ScheduleTransitionSweep(reason, rosterOnly)
+    self.transitionToken = (self.transitionToken or 0) + 1
+    local token = self.transitionToken
+    local delays = rosterOnly and { 0.20, 0.80, 2.00 }
+        or { 0.15, 0.65, 1.50, 3.00 }
+    for _, delay in ipairs(delays) do
+        local settleDelay = delay
+        local function settle()
+            if token ~= Runtime.transitionToken then return end
+            Runtime:Queue((reason or "transition") .. "-settle", 0.02)
+        end
+        if C_Timer and C_Timer.After then
+            C_Timer.After(settleDelay, settle)
+        else
+            settle()
+        end
+    end
 end
 
 function Runtime:Refresh(reason)
@@ -313,11 +335,17 @@ end
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
     if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
-        self:Queue(event, 0.10, 1.0)
+        self:Queue(event, 0.05)
+        self:ScheduleTransitionSweep(event, false)
         return
     end
     if event == "GROUP_ROSTER_UPDATE" then
-        self:Queue(event, 0.08, 0.60)
+        self:Queue(event, 0.05)
+        self:ScheduleTransitionSweep(event, true)
+        return
+    end
+    if event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED" then
+        self:Queue(event, 0.05)
         return
     end
     -- Active events are registered once during addon initialization. Midnight

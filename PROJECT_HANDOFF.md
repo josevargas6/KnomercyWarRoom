@@ -13,11 +13,11 @@ evaluation, candidate simulation, and manual structured AAR export.
 Do not rebuild these systems or create parallel advisor products. The next
 work strengthens their inputs, calculations, arbitration, and presentation.
 
-The current S-tier trust candidate is **KWR 6.1.0-alpha.14**. It retains
+The current S-tier trust candidate is **KWR 6.1.0-alpha.15**. It retains
 Alpha 12's target/cast clarity and complete response package while adding one
 normalized battlefield truth contract, monitored assignment/coverage
 contracts, route-based ETA fallback, objective-aware candidate scoring, and
-map-specific counter responses. Alpha 14 also repairs score/roster convergence,
+map-specific counter responses. Alpha 15 also repairs score/roster convergence,
 transition settling, engagement-location presentation, table alignment, and
 the minimap launcher without adding a second timer or state owner. Commander,
 reassessment, Tactical,

@@ -18,7 +18,7 @@ local function addPriorityTarget(action, definition, prediction)
 end
 
 local function nodeRecoveryCall(assignments, mapKey)
-    local assaultLocation, assaultNames, assaultCount
+    local assaultLocation, assaultNames
     local defenders = {}
     for _, assignment in ipairs(assignments or {}) do
         local role = assignment.role or ""
@@ -29,19 +29,15 @@ local function nodeRecoveryCall(assignments, mapKey)
             or role == "Tower Strike" or role == "Cap / Float" then
             assaultLocation = assaultLocation or assignment.location
             if assignment.location == assaultLocation then
-                assaultCount = (assaultCount or 0) + 1
-                if #(assaultNames or {}) < 3 then
-                    assaultNames = assaultNames or {}
-                    assaultNames[#assaultNames + 1] = assignment.shortName
-                end
+                assaultNames = assaultNames or {}
+                assaultNames[#assaultNames + 1] = assignment.shortName
             end
         end
     end
     if not assaultLocation or not assaultNames or #assaultNames == 0 then return nil end
-    local extra = math.max(0, (assaultCount or #assaultNames) - #assaultNames)
-    local assault = table.concat(assaultNames, " + ") .. (extra > 0 and (" +" .. extra) or "")
+    local assault = table.concat(assaultNames, ", ")
     local hold = {}
-    for index = 1, math.min(2, #defenders) do hold[#hold + 1] = defenders[index] end
+    for index = 1, #defenders do hold[#hold + 1] = defenders[index] end
     return "TAKE " .. KWR.Maps:AbbreviateLocation(mapKey, assaultLocation) .. ": " .. assault
         .. (#hold > 0 and (". HOLD " .. table.concat(hold, "; ")) or "")
 end
@@ -71,6 +67,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     end
     if snapshot.context.inPvP and response.qualified then
         action = response.action
+        action = addPriorityTarget(action, definition, prediction)
     end
     local integrity = snapshot.assignmentIntegrity or {}
     local urgentReassignment = integrity.reassignments and integrity.reassignments[1]
@@ -79,7 +76,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         action = "COVER " .. urgentReassignment.expected .. ": " .. replacement
             .. ". " .. action
     end
-    action = KWR.Util:Text(action, "Play objective.", 82)
+    action = KWR.Util:Text(action, "Play objective.", 180)
 
     local who = KWR.Assignments:SelectForCommand(assignments, prediction)
     if snapshot.context.inPvP and response.qualified then
@@ -88,26 +85,30 @@ function Commander:Compose(snapshot, prediction, assignments)
     if urgentReassignment and urgentReassignment.replacement then
         who = urgentReassignment.replacement
     end
-    if not snapshot.context.inPvP and formation.recommendations and formation.recommendations[1] then
-        local names = {}
-        for index = 1, math.min(3, #formation.recommendations) do
-            names[#names + 1] = formation.recommendations[index].label
+    if not snapshot.context.inPvP then
+        if formation.recommendations and formation.recommendations[1] then
+            local names = {}
+            for index = 1, math.min(3, #formation.recommendations) do
+                names[#names + 1] = formation.recommendations[index].label
+            end
+            who = "Recruit " .. table.concat(names, " / ")
+        else
+            who = "Full team"
         end
-        who = "Recruit " .. table.concat(names, " / ")
     end
     if snapshot.reassessment then
         action = "REASSESS: " .. action
         local changed = {}
-        for index = 1, math.min(3,
-            #(snapshot.reassessment.changes or {})) do
+        for index = 1, #(snapshot.reassessment.changes or {}) do
             changed[#changed + 1] =
                 snapshot.reassessment.changes[index].name
         end
-        if #changed > 0 then who = table.concat(changed, " + ") end
+        if #changed > 0 then who = table.concat(changed, ", ") end
     end
-    action = KWR.Util:Text(action, "Play objective.", 96)
+    action = KWR.Util:Text(action, "Play objective.", 220)
     local stabilized = false
-    if snapshot.context.inPvP and not snapshot.reassessment and self.lastCommand
+    if snapshot.context.inPvP and not snapshot.reassessment
+        and not response.qualified and self.lastCommand
         and self.lastCommand.mapKey == snapshot.context.mapKey
         and self.lastCommand.status == status
         and (KWR.Util:Now() - (self.lastCommand.decisionAt or 0)) < 2.5
@@ -136,8 +137,21 @@ function Commander:Compose(snapshot, prediction, assignments)
         or "NO SCORE"
     local modePrefix = snapshot.context.preview and "PREVIEW " or ""
     local line1 = KWR.Util:Text(modePrefix .. shortMap .. " " .. scoreText .. " " .. status, "KWR READY", 64)
-    local line2 = KWR.Util:Text("NEXT: " .. action, "NEXT: PLAY OBJECTIVE", 132)
-    local line3 = KWR.Util:Text("WHO: " .. who .. " | WHEN: " .. when, "WHO: TEAM | WHEN: NOW", 112)
+    local line2 = KWR.Util:Text("NEXT: " .. action, "NEXT: PLAY OBJECTIVE", 260)
+    local line3 = KWR.Util:Text("WHO: " .. who .. " | WHEN: " .. when, "WHO: TEAM | WHEN: NOW", 320)
+    local callVerb = not snapshot.context.inPvP and "CONFIRM"
+        or (status == "WIN" and "HOLD" or "SEND")
+    local callMovers = KWR.Util:Text(who, "Team", 240)
+    local callStayers = response.qualified
+        and response.stayerText ~= "Assigned defenders"
+        and KWR.Util:Text(response.stayerText, "", 180) or nil
+    local firstMover = callMovers:match("^[^,]+")
+    local actionNamesMovers = firstMover and firstMover ~= "Team"
+        and action:find(firstMover, 1, true) ~= nil
+    local spokenCall = action
+        .. (not snapshot.context.inPvP and ""
+        or (actionNamesMovers and "" or ("\n" .. callVerb .. ": " .. callMovers)))
+        .. (callStayers and ("\nSTAY: " .. callStayers) or "")
     local movementReason = prediction.movementEvidence and prediction.movementEvidence ~= ""
         and (" FIELD: " .. prediction.movementEvidence) or ""
     local reason = KWR.Util:Text(
@@ -168,6 +182,10 @@ function Commander:Compose(snapshot, prediction, assignments)
         line3 = line3,
         action = action,
         who = who,
+        spokenCall = spokenCall,
+        callVerb = callVerb,
+        callMovers = callMovers,
+        callStayers = callStayers,
         when = when,
         reason = reason,
         doctrine = doctrineRecommendation,
