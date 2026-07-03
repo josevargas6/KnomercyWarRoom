@@ -16,6 +16,7 @@ local mockPvP = false
 local mockCombat = false
 local mockInspectSpec
 local mockLeftScore, mockRightScore = 900, 1000
+local mockWidgetOverrides = {}
 local scoreRequests = 0
 function GetTime() return currentTime end
 function debugprofilestop() return currentTime * 1000 end
@@ -59,6 +60,17 @@ Object.__index = function(tableValue, key)
         return function(self) return self.value end
     elseif key == "SetShown" then
         return function(self, shown) self.shown = shown == true end
+    elseif key == "SetPoint" then
+        return function(self, ...)
+            local points = rawget(self, "points")
+            if type(points) ~= "table" then
+                points = {}
+                rawset(self, "points", points)
+            end
+            points[#points + 1] = { ... }
+        end
+    elseif key == "ClearAllPoints" then
+        return function(self) rawset(self, "points", {}) end
     elseif key == "Show" then
         return function(self) self.shown = true end
     elseif key == "Hide" then
@@ -70,7 +82,12 @@ Object.__index = function(tableValue, key)
     elseif key == "GetChecked" then
         return function(self) return self.checked == true end
     elseif key == "GetPoint" then
-        return function() return "CENTER", UIParent, "CENTER", 0, 0 end
+        return function(self, index)
+            local points = rawget(self, "points")
+            local point = points and points[index or 1]
+            if point then return unpack(point) end
+            return "CENTER", UIParent, "CENTER", 0, 0
+        end
     elseif key == "GetEffectiveScale" then
         return function() return 1 end
     elseif key == "GetChildren" then
@@ -97,6 +114,10 @@ Object.__index = function(tableValue, key)
         return function(self, width, height)
             self.width, self.height = width, height
         end
+    elseif key == "GetWidth" then
+        return function(self) return rawget(self, "width") or 0 end
+    elseif key == "GetHeight" then
+        return function(self) return rawget(self, "height") or 0 end
     elseif key == "SetMultiLine" then
         return function(self, enabled)
             self.multiLine = enabled == true
@@ -127,8 +148,17 @@ C_Map = {
     GetPlayerMapPosition = function() return nil end,
 }
 C_UIWidgetManager = {
-    GetDoubleStatusBarWidgetVisualizationInfo = function()
+    GetDoubleStatusBarWidgetVisualizationInfo = function(widgetID)
         if not mockPvP then return nil end
+        local override = mockWidgetOverrides[widgetID]
+        if override then
+            return {
+                leftBarValue = override.left,
+                rightBarValue = override.right,
+                leftBarMax = override.max,
+                rightBarMax = override.max,
+            }
+        end
         return {
             leftBarValue = mockLeftScore,
             rightBarValue = mockRightScore,
@@ -303,6 +333,16 @@ mockPvP = true
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp"), "PvP pipeline refresh failed.")
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp-team-confirm"), "PvP team confirmation refresh failed.")
 assert(scoreRequests >= 1, "PvP capture did not request fresh scoreboard identity data.")
+mockWidgetOverrides[9999] = { left = 210, right = 20, max = 1500 }
+KWR.Sensors:ObserveWidget({ widgetID = 9999 })
+mockLeftScore, mockRightScore = 250, 34
+assert(KWR.MatchRuntime:ForceRefresh("smoke-score-authority"),
+    "Verified score widget refresh failed.")
+assert(KWR.Store:Get().snapshot.score.rawLeft == 250
+    and KWR.Store:Get().snapshot.score.rawRight == 34
+    and KWR.Store:Get().snapshot.score.widgetID == KWR.Maps:Get("ARATHI").scoreWidget,
+    "A dynamic widget displaced the map's verified score source.")
+mockLeftScore, mockRightScore = 900, 1000
 assert(KWR.MatchRuntime:Reassess(), "Manual battlefield reassessment failed.")
 assert(type(KWR.Store:Get().snapshot.reassessment) == "table"
     and type(KWR.Store:Get().snapshot.reassessment.changes) == "table",
@@ -448,6 +488,26 @@ assert(KWR.CombatRoster.frame:IsShown() and KWR.HUD.frame:IsShown(),
 KWR.MainWindow:Show("TEAM")
 assert(not KWR.CombatRoster.frame:IsShown() and not KWR.HUD.frame:IsShown(),
     "Expanded mode did not suppress compact surfaces.")
+Minimap = CreateFrame("Frame", "Minimap")
+Minimap:SetSize(140, 140)
+KWR.MainWindow:PositionLauncher()
+local launcherPoint = KWR.MainWindow.launcher.points
+    and KWR.MainWindow.launcher.points[1]
+assert(KWR.MainWindow.launcher.width == 32
+    and launcherPoint
+    and math.floor(math.sqrt((launcherPoint[4] * launcherPoint[4])
+        + (launcherPoint[5] * launcherPoint[5])) + 0.5) == 82,
+    "Minimap launcher is not compact or positioned outside the map ring.")
+local teamCard = KWR.MainWindow.pages.TEAM.rosterCard
+for index, rowField in ipairs({ "player", "spec", "role", "health", "life", "position" }) do
+    local headerPoint = teamCard.headers[index].points
+        and teamCard.headers[index].points[1]
+    local rowPoint = teamCard.rows[1][rowField].points
+        and teamCard.rows[1][rowField].points[1]
+    assert(headerPoint and rowPoint
+        and headerPoint[2] == rowPoint[2] + 8,
+        "Team header and row field are not aligned: " .. rowField)
+end
 local quickCall = KWR.MainWindow.pages.OBJECTIVES.callsCard.buttons[1]
 assert(quickCall.quickCallSecure == true
     and quickCall:GetAttribute("type1") == "macro"
@@ -492,6 +552,32 @@ KWR.MainWindow:RestoreCompactSurfaces()
 assert(KWR.CombatRoster.frame:IsShown() and KWR.HUD.frame:IsShown(),
     "Compact surfaces were not restored after expanded mode.")
 KWR.MainWindow.frame:Hide()
+
+local originalAfter = C_Timer.After
+local scheduled = {}
+C_Timer.After = function(delay, callback)
+    scheduled[#scheduled + 1] = { delay = delay, callback = callback }
+end
+KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+KWR.MatchRuntime.pending = false
+KWR.MatchRuntime.pendingDueAt = nil
+KWR.MatchRuntime.requiredSettleAt = nil
+local queueRefreshes = KWR.MatchRuntime.diagnostics.refreshes
+KWR.MatchRuntime:Queue("queue-first", 0.02)
+KWR.MatchRuntime:Queue("queue-newest", 0.02)
+assert(#scheduled == 1 and KWR.MatchRuntime.pending == true,
+    "Runtime queue did not coalesce simultaneous refresh requests.")
+currentTime = currentTime + 1
+scheduled[1].callback()
+assert(#scheduled == 2
+    and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 1,
+    "Runtime queue discarded the newest coalesced truth update.")
+currentTime = currentTime + 1
+scheduled[2].callback()
+assert(KWR.MatchRuntime.pending == false
+    and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 2,
+    "Runtime queue did not complete its bounded follow-up refresh.")
+C_Timer.After = originalAfter
 
 local result = KWR.Diagnostics:Run()
 if result.failed > 0 then

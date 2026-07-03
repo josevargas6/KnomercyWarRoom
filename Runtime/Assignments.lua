@@ -959,18 +959,18 @@ local compactRoles = {
     ["Tank"] = "T",
     ["Healer"] = "H",
     ["Damage"] = "DPS",
-    ["Anchor Defender"] = "DEF",
-    ["Node Defender"] = "DEF",
+    ["Anchor Defender"] = "DEFEND",
+    ["Node Defender"] = "DEFEND",
     ["Defense Floater"] = "FLOAT",
-    ["Tower Sitter"] = "DEF",
-    ["Tower Strike"] = "ATK",
+    ["Tower Sitter"] = "DEFEND",
+    ["Tower Strike"] = "STRIKE",
     ["Blacksmith Spinner"] = "SPIN",
     ["Outer Cap / Float"] = "CAP",
     ["Enemy-Home Scout"] = "SCOUT",
-    ["Flank Defender"] = "DEF",
+    ["Flank Defender"] = "DEFEND",
     ["Response Floater"] = "FLOAT",
-    ["Main Fight"] = "TEAM",
-    ["Strike Team"] = "ATK",
+    ["Main Fight"] = "MAIN",
+    ["Strike Team"] = "STRIKE",
     ["Flag Carrier"] = "FC",
     ["Carrier Healer"] = "FC-H",
     ["Return Healer"] = "EFC-H",
@@ -996,6 +996,17 @@ local compactRoles = {
 function Assignments:CompactRole(role)
     role = KWR.Util:Text(role, "JOB", 48)
     return compactRoles[role] or KWR.Util:Text(role, "JOB", 12)
+end
+
+function Assignments:CompactLabel(assignment, mapKey)
+    if not assignment then return "UNASSIGNED" end
+    local role = self:CompactRole(assignment.role)
+    local location = KWR.Maps:AbbreviateLocation(
+        mapKey, assignment.location)
+    if location == "" or location == "Formation" or location == "FORM" then
+        return role
+    end
+    return role .. " -> " .. location
 end
 
 function Assignments:CompactExport(assignments, mapKey)

@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-Knomercy War Room 6.1 Alpha 13 contains no embedded third-party libraries or
+Knomercy War Room 6.1 Alpha 14 contains no embedded third-party libraries or
 copied third-party addon source.
 
 During design review, the project studied the observable architecture and

@@ -15,6 +15,16 @@ local PAGE_ORDER = {
     { key = "INTEL", label = "INTEL / AAR" },
 }
 
+local LIST_ROW_INSET = 8
+local TEAM_COLUMNS = {
+    { key = "player", label = "PLAYER", x = 34, width = 202 },
+    { key = "spec", label = "SPEC", x = 246, width = 146 },
+    { key = "role", label = "ROLE", x = 402, width = 82 },
+    { key = "health", label = "HEALTH", x = 494, width = 128 },
+    { key = "life", label = "STATE", x = 632, width = 70 },
+    { key = "position", label = "ASSIGNMENT", x = 712, width = 120 },
+}
+
 local function createPage(parent)
     local page = CreateFrame("Frame", nil, parent)
     page:SetAllPoints()
@@ -446,19 +456,12 @@ function MainWindow:BuildTeamPage(page)
 
     local roster = placeCard(page, "TEAM ROSTER", 0, -100, 850, 532)
     roster.headers = {}
-    for _, definition in ipairs({
-        { "PLAYER", 34, 220 },
-        { "SPEC", 264, 170 },
-        { "ROLE", 444, 82 },
-        { "HEALTH", 530, 132 },
-        { "STATE", 670, 72 },
-        { "LOCATION", 748, 80 },
-    }) do
+    for _, definition in ipairs(TEAM_COLUMNS) do
         local header = KWR.Theme:Font(roster, 9, "muted")
-        header:SetPoint("TOPLEFT", definition[2], -36)
-        header:SetWidth(definition[3])
+        header:SetPoint("TOPLEFT", LIST_ROW_INSET + definition.x, -36)
+        header:SetWidth(definition.width)
         header:SetHeight(14)
-        header:SetText(definition[1])
+        header:SetText(definition.label)
         roster.headers[#roster.headers + 1] = header
     end
     roster.rows = {}
@@ -468,28 +471,28 @@ function MainWindow:BuildTeamPage(page)
         row.icon:SetPoint("LEFT", 7, 0)
         row.icon:SetSize(20, 20)
         row.player = KWR.Theme:Font(row, 10, "white")
-        row.player:SetPoint("LEFT", 34, 0)
-        row.player:SetWidth(220)
+        row.player:SetPoint("LEFT", TEAM_COLUMNS[1].x, 0)
+        row.player:SetWidth(TEAM_COLUMNS[1].width)
         row.spec = KWR.Theme:Font(row, 10, "soft")
-        row.spec:SetPoint("LEFT", 264, 0)
-        row.spec:SetWidth(170)
+        row.spec:SetPoint("LEFT", TEAM_COLUMNS[2].x, 0)
+        row.spec:SetWidth(TEAM_COLUMNS[2].width)
         row.role = KWR.Theme:Font(row, 9, "gold")
-        row.role:SetPoint("LEFT", 444, 0)
-        row.role:SetWidth(82)
+        row.role:SetPoint("LEFT", TEAM_COLUMNS[3].x, 0)
+        row.role:SetWidth(TEAM_COLUMNS[3].width)
         row.health = CreateFrame("StatusBar", nil, row, "BackdropTemplate")
-        row.health:SetPoint("LEFT", 530, 0)
-        row.health:SetSize(132, 18)
+        row.health:SetPoint("LEFT", TEAM_COLUMNS[4].x, 0)
+        row.health:SetSize(TEAM_COLUMNS[4].width, 18)
         row.health:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
         row.health:SetMinMaxValues(0, 100)
         KWR.Theme:Style(row.health, "background", "border")
         row.healthText = KWR.Theme:Font(row.health, 8, "white", "CENTER", "OUTLINE")
         row.healthText:SetAllPoints()
         row.life = KWR.Theme:Font(row, 9, "green")
-        row.life:SetPoint("LEFT", 670, 0)
-        row.life:SetWidth(72)
+        row.life:SetPoint("LEFT", TEAM_COLUMNS[5].x, 0)
+        row.life:SetWidth(TEAM_COLUMNS[5].width)
         row.position = KWR.Theme:Font(row, 9, "blue")
-        row.position:SetPoint("LEFT", 748, 0)
-        row.position:SetWidth(80)
+        row.position:SetPoint("LEFT", TEAM_COLUMNS[6].x, 0)
+        row.position:SetWidth(TEAM_COLUMNS[6].width)
         roster.rows[index] = row
     end
 
@@ -1225,6 +1228,12 @@ function MainWindow:ShowPerformance()
         "Refreshes: " .. tostring(diagnostics.refreshes or 0),
         "Events: " .. tostring(diagnostics.events or 0),
         "Coalesced events: " .. tostring(diagnostics.coalesced or 0),
+        "Newest-truth followups: " .. tostring(
+            diagnostics.queueFollowups or 0),
+        "Earlier refresh preemptions: " .. tostring(
+            diagnostics.queuePreemptions or 0),
+        "Load/widget settle refreshes: " .. tostring(
+            diagnostics.settleRefreshes or 0),
         string.format("Last: %.3f ms", diagnostics.lastDurationMs or 0),
         string.format("Average: %.3f ms", diagnostics.averageDurationMs or 0),
         string.format("P95: %.3f ms", diagnostics.p95DurationMs or 0),
@@ -1325,6 +1334,7 @@ function MainWindow:UpdateTeam(state)
         if player.dead then dead = dead + 1 end
     end
     local formation = state.snapshot.formation or {}
+    local mapKey = state.snapshot.context.mapKey
     local assignmentByName = {}
     for _, assignment in ipairs(state.assignments or {}) do
         assignmentByName[assignment.name] = assignment
@@ -1360,8 +1370,9 @@ function MainWindow:UpdateTeam(state)
             row.life:SetTextColor(KWR.Theme:Color(player.dead and "red"
                 or (critical and "orange" or "green")))
             local assignment = assignmentByName[player.name] or assignmentByName[player.shortName]
-            row.position:SetText(assignment and KWR.Util:Text(assignment.location, "Unassigned", 18)
-                or "Unassigned")
+            row.position:SetText(assignment
+                and KWR.Assignments:CompactLabel(assignment, mapKey)
+                or "UNASSIGNED")
         end
     end
     local definition = KWR.Maps:Get(state.snapshot.context.mapKey)
@@ -1415,6 +1426,7 @@ function MainWindow:UpdateEnemies(state)
     page.toolbar.mode:SetText(state.snapshot.context.preview and "DESIGN PREVIEW - NOT LIVE"
         or (state.snapshot.context.inPvP and "LIVE BATTLEFIELD INTEL" or "FORMATION / NO FEED"))
     page.trackerCard.empty:SetShown(#enemies == 0)
+    local mapKey = state.snapshot.context.mapKey
     for index, row in ipairs(page.trackerCard.rows) do
         local enemy = enemies[index]
         row:SetShown(enemy ~= nil)
@@ -1436,22 +1448,24 @@ function MainWindow:UpdateEnemies(state)
                 row.spec:SetText(row.spec:GetText() .. " | RBG #" .. tostring(enemy.metaRank))
             end
             local health = enemy.healthPercent
+            local lastHealth = KWR.Util:Number(enemy.lastHealthPercent, nil)
+            local displayHealth = health or lastHealth
             row.health:SetMinMaxValues(0, 100)
-            row.health:SetValue(health or 0)
-            local healthColor = not health and "dim" or (health > 70 and "green" or (health > 35 and "yellow" or "red"))
+            row.health:SetValue(displayHealth or 0)
+            local healthColor = not health and "dim"
+                or (health > 70 and "green" or (health > 35 and "yellow" or "red"))
             row.health:SetStatusBarColor(KWR.Theme:Color(healthColor))
             local direct = not health and applyDirectHealth(row.health, enemy.unit, row.healthText)
             if health then
                 row.healthText:SetText(tostring(math.floor(health + 0.5)) .. "%")
+            elseif lastHealth and not direct then
+                row.healthText:SetText("LAST " .. tostring(
+                    math.floor(lastHealth + 0.5)) .. "%")
             elseif not direct then
                 row.healthText:SetText("NOT VISIBLE")
             end
-            local locationState = enemy.visible and "VISIBLE"
-                or (enemy.age and ("LAST " .. KWR.Util:Age(enemy.age)) or "ROSTER")
-            row.location:SetText((enemy.inCombat and "ENGAGED | " or "")
-                .. locationState .. " @ "
-                .. (enemy.location or enemy.source or "Unknown")
-                .. (enemy.locationSource and (" [" .. enemy.locationSource .. "]") or ""))
+            row.location:SetText(KWR.EnemyIntel:DescribeLocation(
+                enemy, mapKey, false))
             row.trinket:SetText(enemy.trinket or "UNKNOWN")
             row.cooldown:SetText(enemy.cooldownText or "NO SAFE FEED")
             row.note:SetText(enemy.note and enemy.note ~= "" and KWR.Util:Text(enemy.note, "", 18) or "ADD NOTE")
@@ -1685,26 +1699,63 @@ function MainWindow:Toggle(page)
     end
 end
 
+function MainWindow:PositionLauncher()
+    local button = self.launcher
+    if not button then return end
+    local profile = KWR.db.profile.launcher
+    button:ClearAllPoints()
+    if Minimap then
+        local angle = math.rad(profile.angle or 225)
+        local width = KWR.Util:Number(KWR.Util:Call(
+            Minimap.GetWidth, Minimap), 140)
+        local height = KWR.Util:Number(KWR.Util:Call(
+            Minimap.GetHeight, Minimap), width)
+        local radius = (math.max(width or 140, height or 140) * 0.5) + 12
+        button:SetPoint("CENTER", Minimap, "CENTER",
+            math.cos(angle) * radius, math.sin(angle) * radius)
+        if type(Minimap.GetFrameLevel) == "function" then
+            button:SetFrameLevel((KWR.Util:Number(KWR.Util:Call(
+                Minimap.GetFrameLevel, Minimap), 0) or 0) + 8)
+        end
+    else
+        button:SetPoint(profile.point, UIParent, profile.relativePoint,
+            profile.x, profile.y)
+    end
+end
+
 function MainWindow:CreateLauncher()
     if self.launcher then return end
     local profile = KWR.db.profile.launcher
-    local button = CreateFrame("Button", "KWR_Launcher", UIParent, "BackdropTemplate")
-    button:SetSize(46, 46)
-    local function positionOnMinimap()
-        button:ClearAllPoints()
-        if Minimap then
-            local angle = math.rad(profile.angle or 225)
-            button:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * 78, math.sin(angle) * 78)
-        else
-            button:SetPoint(profile.point, UIParent, profile.relativePoint, profile.x, profile.y)
+    local button = CreateFrame("Button", "KWR_Launcher", UIParent)
+    button:SetSize(32, 32)
+    button:SetFrameStrata("HIGH")
+    button.disc = button:CreateTexture(nil, "BACKGROUND")
+    button.disc:SetPoint("CENTER")
+    button.disc:SetSize(26, 26)
+    button.disc:SetColorTexture(0.015, 0.018, 0.022, 0.96)
+    if type(button.CreateMaskTexture) == "function" then
+        local mask = button:CreateMaskTexture()
+        if mask then
+            mask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+            mask:SetAllPoints(button.disc)
+            button.disc:AddMaskTexture(mask)
+            button.mask = mask
         end
     end
-    positionOnMinimap()
-    button:SetFrameStrata("HIGH")
-    KWR.Theme:Style(button, "background", "borderHi")
-    button.text = KWR.Theme:Title(button, 12, "CENTER")
+    button.border = button:CreateTexture(nil, "OVERLAY")
+    button.border:SetPoint("CENTER")
+    button.border:SetSize(42, 42)
+    button.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+    button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
+    button.highlight:SetPoint("CENTER")
+    button.highlight:SetSize(28, 28)
+    button.highlight:SetColorTexture(1, 0.72, 0.08, 0.18)
+    if button.mask then button.highlight:AddMaskTexture(button.mask) end
+    button.text = KWR.Theme:Title(button, 8, "CENTER")
     button.text:SetPoint("CENTER")
     button.text:SetText("KWR")
+    self.launcher = button
+    self:PositionLauncher()
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     button:RegisterForDrag("LeftButton")
     button:SetMovable(true)
@@ -1736,7 +1787,7 @@ function MainWindow:CreateLauncher()
                     if dx < 0 then angle = angle + 180 end
                 end
                 profile.angle = angle
-                positionOnMinimap()
+                MainWindow:PositionLauncher()
             end)
         else
             self:StartMoving()
@@ -1761,7 +1812,6 @@ function MainWindow:CreateLauncher()
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    self.launcher = button
 end
 
 function MainWindow:CreateLauncherMenu()

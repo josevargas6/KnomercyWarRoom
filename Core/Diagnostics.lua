@@ -756,6 +756,19 @@ function Diagnostics:Run()
         lastSeenRows[1] and lastSeenRows[1].locationState == "LAST SEEN"
             and lastSeenRows[1].location == "Blacksmith"
             and lastSeenRows[1].locationSource == "Team Engagement")
+    local engagementText = KWR.EnemyIntel:DescribeLocation({
+        age = 4,
+        location = "Lumber Mill",
+        locationSource = "Team Assignment",
+        locationInferred = true,
+        engagementRole = "Strike Team",
+    }, "ARATHI", true)
+    check("Team engagement evidence uses assignment terminology and a compact objective",
+        engagementText == "LAST 4s WITH STRIKE -> LM", engagementText)
+    check("Compact team assignment labels share command terminology",
+        KWR.Assignments:CompactLabel({
+            role = "Strike Team", location = "Blacksmith",
+        }, "ARATHI") == "STRIKE -> BS")
     KWR.EnemyIntel.records = oldEnemyRecords
     KWR.EnemyIntel.sessionKey = oldEnemySession
     KWR.EnemyIntel.observedTokens = oldEnemyTokens
@@ -1027,7 +1040,7 @@ function Diagnostics:Run()
     }, "ARATHI")
     check("Reassessment summary abbreviates one complete changed assignment",
         changeSummary:find("Mover", 1, true) ~= nil
-            and changeSummary:find("ATK@BS", 1, true) ~= nil)
+            and changeSummary:find("STRIKE@BS", 1, true) ~= nil)
     local executionHitsBefore =
         KWR.Strategist:CacheStats().executionHits
     KWR.Strategist:AssessExecution(
@@ -1370,7 +1383,8 @@ end
 function Diagnostics:Report()
     local result = self:Run()
     local lines = {
-        "KNOMERCY WAR ROOM 6.1 ALPHA 13 DIAGNOSTICS",
+        "KNOMERCY WAR ROOM " .. KWR.Util:Upper(
+            KWR.version, "CURRENT") .. " DIAGNOSTICS",
         "Passed: " .. tostring(result.passed) .. "   Failed: " .. tostring(result.failed),
         "",
     }

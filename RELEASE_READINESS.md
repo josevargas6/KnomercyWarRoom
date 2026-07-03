@@ -1,8 +1,18 @@
-# Release Readiness - 6.1.0-alpha.13
+# Release Readiness - 6.1.0-alpha.14
 
 ## Current decision
 
 **Ready for focused in-client alpha validation. Not ready for stable public promotion.**
+
+## Alpha engineering gate
+
+The implementation is above the 8.5 pre-field gate in architecture, safety,
+performance design, map knowledge, deterministic decision behavior, UI
+consistency, packaging, and diagnostics. Team/enemy tracking, score
+convergence, transition repainting, and complete-match trust remain
+provisional at 8.5 until repeated Retail matches confirm the public APIs behave
+as modeled. A field failure lowers that category and blocks promotion; it does
+not get hidden by the aggregate score.
 
 ## Proven offline
 
@@ -22,7 +32,7 @@
 - Local kill-target selection, roster-validated assigned-team normalization,
   and explicit unknown handling for Midnight-blocked combat evidence.
 - Dated Murlok RBG specialization snapshot with an explicit advisory boundary.
-- Two hundred thirty-two deterministic diagnostics plus a 500-refresh bounded-state soak
+- Two hundred forty-two deterministic diagnostics plus a 500-refresh bounded-state soak
   and knowledge audit.
 - All ten supported battlegrounds exercise lead, deficit, tie, assignment
   family, valid-location, and map-specific node-priority fixtures.

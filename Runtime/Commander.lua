@@ -65,6 +65,9 @@ function Commander:Compose(snapshot, prediction, assignments)
     end
     if (prediction.urgency or 0) >= 90 and not strategy.action then
         action = prediction.emergency or doctrineRecommendation
+        if snapshot.context.inPvP then
+            action = addPriorityTarget(action, definition, prediction)
+        end
     end
     if snapshot.context.inPvP and response.qualified then
         action = response.action

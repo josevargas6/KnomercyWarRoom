@@ -37,6 +37,18 @@ local function readDoubleStatus(widgetID)
     }
 end
 
+local function validScoreWidget(widget, definition)
+    if not widget or not definition then return false end
+    if widget.left < 0 or widget.right < 0 then return false end
+    local expected = number(definition.maxScore, 0)
+    local maximum = number(widget.max, 0)
+    if expected > 0 then
+        if widget.left > expected or widget.right > expected then return false end
+        if maximum > 0 and maximum ~= expected then return false end
+    end
+    return true
+end
+
 local function safeArrayLength(array)
     if type(array) ~= "table" then return 0 end
     local ok, count = pcall(function() return #array end)
@@ -514,7 +526,15 @@ function Sensors:ObserveWidget(widgetInfo)
     local mapKey = state and state.snapshot and state.snapshot.context
         and state.snapshot.context.mapKey
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
-        if readDoubleStatus(widgetID) then self.scoreWidgetByMap[mapKey] = widgetID end
+        local definition = KWR.Maps:Get(mapKey)
+        local widget = readDoubleStatus(widgetID)
+        if validScoreWidget(widget, definition) then
+            local verifiedID = definition and definition.scoreWidget
+            if widgetID == verifiedID
+                or not validScoreWidget(readDoubleStatus(verifiedID), definition) then
+                self.scoreWidgetByMap[mapKey] = widgetID
+            end
+        end
         if C_UIWidgetManager and type(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo) == "function" then
             local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, widgetID)
             if type(info) == "table"
@@ -531,23 +551,42 @@ function Sensors:TrackScore(context, score)
         return
     end
     if score.source ~= "ui_widget" then return end
+    local now = Util:Now()
     if not self.scoreSession or self.scoreSession.mapKey ~= context.mapKey then
         self.scoreSession = {
             mapKey = context.mapKey,
             friendly = score.friendly,
             enemy = score.enemy,
             lastCapture = nil,
+            observedAt = score.observedAt,
+            changedAt = now,
         }
     else
+        if score.friendly < (self.scoreSession.friendly or 0)
+            or score.enemy < (self.scoreSession.enemy or 0) then
+            score.regressionRejected = true
+            score.friendly = self.scoreSession.friendly or score.friendly
+            score.enemy = self.scoreSession.enemy or score.enemy
+            score.observedAt = self.scoreSession.observedAt
+            score.changedAt = self.scoreSession.changedAt
+            score.lastCapture = self.scoreSession.lastCapture
+            return
+        end
         if score.friendly > (self.scoreSession.friendly or 0) then
             self.scoreSession.lastCapture = "FRIENDLY"
         elseif score.enemy > (self.scoreSession.enemy or 0) then
             self.scoreSession.lastCapture = "ENEMY"
         end
+        if score.friendly ~= self.scoreSession.friendly
+            or score.enemy ~= self.scoreSession.enemy then
+            self.scoreSession.changedAt = now
+        end
         self.scoreSession.friendly = score.friendly
         self.scoreSession.enemy = score.enemy
+        self.scoreSession.observedAt = score.observedAt
     end
     score.lastCapture = self.scoreSession.lastCapture
+    score.changedAt = self.scoreSession.changedAt
 end
 
 function Sensors:Capture(lastMessage)
@@ -582,14 +621,14 @@ function Sensors:Capture(lastMessage)
         source = "none",
     }
     if inPvP and definition then
-        local discoveredWidget = self.scoreWidgetByMap[definition.key]
-        local scoreWidgetID = discoveredWidget or definition.scoreWidget
+        local scoreWidgetID = definition.scoreWidget
         local widget = readDoubleStatus(scoreWidgetID)
-        if not widget and discoveredWidget and discoveredWidget ~= definition.scoreWidget then
-            scoreWidgetID = definition.scoreWidget
-            widget = readDoubleStatus(definition.scoreWidget)
+        if not validScoreWidget(widget, definition) then
+            local discoveredWidget = self.scoreWidgetByMap[definition.key]
+            scoreWidgetID = discoveredWidget
+            widget = readDoubleStatus(discoveredWidget)
         end
-        if widget then
+        if validScoreWidget(widget, definition) then
             score.friendly = KWR.TeamResolver:Value(widget.left, widget.right, "friendly", assigned) or 0
             score.enemy = KWR.TeamResolver:Value(widget.left, widget.right, "enemy", assigned) or 0
             score.rawLeft = widget.left
@@ -598,11 +637,13 @@ function Sensors:Capture(lastMessage)
             score.max = widget.max > 0 and widget.max or definition.maxScore
             score.source = assigned and assigned.side and "ui_widget" or "team_unresolved"
             score.observedAt = Util:Now()
+            score.widgetAuthority = scoreWidgetID == definition.scoreWidget
+                and "verified_map_widget" or "validated_fallback_widget"
         end
     end
+    self:TrackScore(context, score)
     score.friendlyNeeded = math.max((score.max or 0) - score.friendly, 0)
     score.enemyNeeded = math.max((score.max or 0) - score.enemy, 0)
-    self:TrackScore(context, score)
 
     local objectiveWidget = definition and (self.objectiveWidgetByMap[definition.key]
         or definition.objectiveWidget)

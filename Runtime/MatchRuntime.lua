@@ -3,6 +3,11 @@ local _, KWR = ...
 local Runtime = {
     active = false,
     pending = false,
+    pendingDueAt = nil,
+    pendingReason = nil,
+    queueRevision = 0,
+    timerToken = 0,
+    requiredSettleAt = nil,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -15,6 +20,9 @@ local Runtime = {
         memoryKB = 0,
         events = 0,
         coalesced = 0,
+        queueFollowups = 0,
+        queuePreemptions = 0,
+        settleRefreshes = 0,
         errors = 0,
         transitionRefreshes = 0,
         lastTransitionDurationMs = 0,
@@ -98,7 +106,7 @@ function Runtime:Start()
     self.active = true
     if C_Timer and C_Timer.NewTicker then
         self.ticker = C_Timer.NewTicker(1, function()
-            if Runtime.active then Runtime:Refresh("active-pulse") end
+            if Runtime.active then Runtime:Queue("active-pulse", 0.02) end
         end)
     end
 end
@@ -197,18 +205,45 @@ function Runtime:Refresh(reason)
     return ok
 end
 
-function Runtime:Queue(reason, delay)
-    if self.pending then
-        self.diagnostics.coalesced = (self.diagnostics.coalesced or 0) + 1
-        return
-    end
-    self.pending = true
+function Runtime:EffectiveDelay(delay)
     local elapsed = KWR.Util:Now() - (self.lastRefreshAt or 0)
-    delay = math.max(delay or 0.10, math.max(0, MIN_REFRESH_INTERVAL - elapsed))
+    return math.max(delay or 0.10, math.max(0, MIN_REFRESH_INTERVAL - elapsed))
+end
+
+function Runtime:Schedule(reason, delay, revision)
+    self.pending = true
+    self.pendingReason = reason or "queued"
+    delay = self:EffectiveDelay(delay)
+    self.pendingDueAt = KWR.Util:Now() + delay
+    self.timerToken = (self.timerToken or 0) + 1
+    local token = self.timerToken
     local function run()
+        if token ~= Runtime.timerToken then return end
+        local dueAt = Runtime.pendingDueAt or KWR.Util:Now()
         Runtime.pending = false
+        Runtime.pendingDueAt = nil
+        Runtime.pendingReason = nil
         Runtime:UpdateLifecycle()
         Runtime:Refresh(reason or "queued")
+        local now = KWR.Util:Now()
+        local timerMatured = now + 0.001 >= dueAt
+        if timerMatured
+            and (Runtime.queueRevision or 0) > (revision or 0) then
+            Runtime.diagnostics.queueFollowups =
+                (Runtime.diagnostics.queueFollowups or 0) + 1
+            Runtime:Schedule("coalesced-followup", 0.02,
+                Runtime.queueRevision)
+        elseif timerMatured and Runtime.requiredSettleAt then
+            if now + 0.001 < Runtime.requiredSettleAt then
+                Runtime:Schedule("settle-refresh",
+                    Runtime.requiredSettleAt - now,
+                    Runtime.queueRevision)
+            else
+                Runtime.requiredSettleAt = nil
+                Runtime.diagnostics.settleRefreshes =
+                    (Runtime.diagnostics.settleRefreshes or 0) + 1
+            end
+        end
     end
     if C_Timer and C_Timer.After then
         C_Timer.After(delay, run)
@@ -217,10 +252,49 @@ function Runtime:Queue(reason, delay)
     end
 end
 
+function Runtime:Queue(reason, delay, settleDelay)
+    self.queueRevision = (self.queueRevision or 0) + 1
+    local revision = self.queueRevision
+    local now = KWR.Util:Now()
+    if settleDelay and settleDelay > 0 then
+        self.requiredSettleAt = math.max(
+            self.requiredSettleAt or 0, now + settleDelay)
+    end
+    if self.pending then
+        self.diagnostics.coalesced = (self.diagnostics.coalesced or 0) + 1
+        local requestedDueAt = now + self:EffectiveDelay(delay)
+        if self.pendingDueAt and requestedDueAt + 0.001 < self.pendingDueAt then
+            self.diagnostics.queuePreemptions =
+                (self.diagnostics.queuePreemptions or 0) + 1
+            self.timerToken = (self.timerToken or 0) + 1
+            self.pending = false
+            self.pendingDueAt = nil
+            self.pendingReason = nil
+            self:Schedule(reason, delay, revision)
+        end
+        return
+    end
+    self:Schedule(reason, delay, revision)
+end
+
 function Runtime:ForceRefresh(reason)
+    self.timerToken = (self.timerToken or 0) + 1
     self.pending = false
+    self.pendingDueAt = nil
+    self.pendingReason = nil
+    self.queueRevision = (self.queueRevision or 0) + 1
     self:UpdateLifecycle()
-    return self:Refresh(reason or "manual")
+    local ok = self:Refresh(reason or "manual")
+    local now = KWR.Util:Now()
+    if self.requiredSettleAt then
+        if now + 0.001 < self.requiredSettleAt then
+            self:Schedule("settle-refresh",
+                self.requiredSettleAt - now, self.queueRevision)
+        else
+            self.requiredSettleAt = nil
+        end
+    end
+    return ok
 end
 
 function Runtime:Reassess()
@@ -239,11 +313,11 @@ end
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
     if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
-        self:Queue(event, 1.0)
+        self:Queue(event, 0.10, 1.0)
         return
     end
     if event == "GROUP_ROSTER_UPDATE" then
-        self:Queue(event, 0.15)
+        self:Queue(event, 0.08, 0.60)
         return
     end
     -- Active events are registered once during addon initialization. Midnight
@@ -319,7 +393,14 @@ function Runtime:HandleEvent(event, ...)
         self:Queue("PVP_MATCH_COMPLETE_FINAL", 0.35)
         return
     end
-    self:Queue(event, event == "UPDATE_UI_WIDGET" and 0.05 or 0.12)
+    local fast = event == "UPDATE_UI_WIDGET"
+        or event == "UPDATE_BATTLEFIELD_SCORE"
+        or event == "PVP_MATCH_ACTIVE"
+    local settle = event == "UPDATE_UI_WIDGET" and 0.35
+        or (event == "UPDATE_BATTLEFIELD_SCORE" and 0.45)
+        or (event == "PVP_MATCH_ACTIVE" and 0.75)
+        or nil
+    self:Queue(event, fast and 0.05 or 0.12, settle)
 end
 
 function Runtime:OnInitialize()
@@ -337,7 +418,7 @@ end
 
 function Runtime:OnEnable()
     self:UpdateLifecycle()
-    self:Queue("login", 1.0)
+    self:Queue("login", 0.10, 1.0)
 end
 
 function Runtime:OnDisable()

@@ -6,7 +6,7 @@ prediction, command, assignment, presentation, and match result must all agree.
 
 ## Automated coverage
 
-The Alpha 13 `/kwr test` and `tests/smoke.lua` suite contains 240 deterministic
+The Alpha 14 `/kwr test` and `tests/smoke.lua` suite contains 242 deterministic
 checks and must prove:
 
 1. the map resolves to the correct key and mechanic family;
@@ -63,7 +63,7 @@ Evidence: screenshots + /kwr verify + /kwr evidence
 | Deephaul Ravine | Escort our cart, turn theirs, conditional Crystal value | Enemy-cart turn plus missing-telemetry truth fixture | Required |
 | Seething Shore | Spawn timing, channel denial, exhausted-node exit | Next-spawn recovery fixture | Required |
 
-Build-time rule references retained for Alpha 13:
+Build-time rule references retained for Alpha 14:
 
 - https://warcraft.wiki.gg/wiki/Arathi_Basin_(original)
 - https://warcraft.wiki.gg/wiki/Eye_of_the_Storm

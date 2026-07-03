@@ -116,6 +116,56 @@ local function sourceUnitForTarget(unit)
     if partyPet then return "party" .. partyPet end
 end
 
+local function usableLocation(location)
+    location = KWR.Util:Text(location, "", 48)
+    return location ~= "" and location ~= "Formation"
+        and location ~= "Position restricted"
+        and location ~= "Unknown"
+        and location ~= "Unassigned"
+end
+
+local function engagementContext(sourceUnit, mapID)
+    if not sourceUnit then return nil end
+    local sourceName = KWR.Util:UnitName(sourceUnit)
+    local state = KWR.Store and KWR.Store:Get()
+    local definition = KWR.Maps:Resolve(mapID, "")
+    local context = state and state.snapshot and state.snapshot.context
+    if not state or not context or not definition
+        or context.mapKey ~= definition.key then return nil end
+    local result = {
+        unit = sourceUnit,
+        name = sourceName,
+    }
+    for _, player in ipairs(state.snapshot.roster or {}) do
+        if player.unit == sourceUnit
+            or (sourceName and (player.name == sourceName
+                or player.shortName == KWR.Util:ShortName(sourceName))) then
+            if usableLocation(player.location)
+                and player.locationSource == "Friendly Map Position" then
+                result.location = player.location
+                result.locationSource = "Team Position"
+                result.inferred = true
+            end
+            break
+        end
+    end
+    for _, assignment in ipairs(state.assignments or {}) do
+        if sourceName and (assignment.name == sourceName
+            or assignment.shortName == KWR.Util:ShortName(sourceName)) then
+            result.role = assignment.role
+            result.assignmentLocation = usableLocation(assignment.location)
+                and assignment.location or nil
+            if not result.location and result.assignmentLocation then
+                result.location = result.assignmentLocation
+                result.locationSource = "Team Assignment"
+                result.inferred = true
+            end
+            break
+        end
+    end
+    return result
+end
+
 local function mapPosition(mapID, unit)
     if not mapID or not unit or not C_Map
         or type(C_Map.GetPlayerMapPosition) ~= "function" then return nil, nil end
@@ -211,12 +261,26 @@ function EnemyIntel:Upsert(data, visible)
         record.visible = true
         record.health = KWR.Util:Number(data.health, record.health)
         record.healthMax = KWR.Util:Number(data.healthMax, record.healthMax)
+        if record.health and record.healthMax and record.healthMax > 0 then
+            record.lastHealthPercent = KWR.Util:Clamp(
+                (record.health / record.healthMax) * 100, 0, 100)
+        end
         record.x = KWR.Util:Number(data.x, record.x)
         record.y = KWR.Util:Number(data.y, record.y)
-        record.location = KWR.Util:Text(data.location, record.location or data.source, 40)
+        record.location = KWR.Util:Text(data.location, "", 40)
         record.locationSource = KWR.Util:Text(data.locationSource, record.locationSource or data.source, 32)
+        record.locationInferred = data.locationInferred == true
+        record.engagementUnit = KWR.Util:Text(
+            data.engagementUnit, record.engagementUnit, 24)
+        record.engagementPlayer = KWR.Util:Text(
+            data.engagementPlayer, record.engagementPlayer, 64)
+        record.engagementRole = KWR.Util:Text(
+            data.engagementRole, record.engagementRole, 48)
         record.lastSeenLocation = record.location
         record.lastSeenLocationSource = record.locationSource
+        record.lastSeenLocationInferred = record.locationInferred
+        record.lastSeenEngagementPlayer = record.engagementPlayer
+        record.lastSeenEngagementRole = record.engagementRole
         record.lastSeenX = record.x
         record.lastSeenY = record.y
         record.unit = KWR.Util:Text(data.unit, record.unit or "", 24)
@@ -274,16 +338,32 @@ function EnemyIntel:ScanUnit(unit, mapID, source)
     end
     local x, y = mapPosition(mapID, unit)
     local locationSource = source
+    local locationInferred = false
+    local engagement
     if not x or not y then
         local sourceUnit = sourceUnitForTarget(unit)
+        if not sourceUnit and (source == "Target" or source == "Focus"
+            or source == "Mouseover" or source == "Soft Target"
+            or source == "Nameplate" or unit:find("^nameplate")) then
+            sourceUnit = "player"
+        end
         if sourceUnit then
+            engagement = engagementContext(sourceUnit, mapID)
             x, y = mapPosition(mapID, sourceUnit)
-            if x and y then locationSource = "Team Engagement" end
+            if x and y then
+                locationSource = "Team Position"
+                locationInferred = true
+            elseif engagement and engagement.location then
+                locationSource = engagement.locationSource
+                locationInferred = engagement.inferred == true
+            else
+                locationSource = "Team Engagement"
+            end
         end
     end
     local location = nearestLocation(mapID, x, y)
-    if location and locationSource == "Team Engagement" then
-        location = location .. " (team engagement)"
+    if not location and engagement and engagement.location then
+        location = engagement.location
     end
     self:Upsert({
         name = name,
@@ -291,8 +371,12 @@ function EnemyIntel:ScanUnit(unit, mapID, source)
         class = localizedClass,
         classFile = classFile,
         source = source,
-        location = location or source,
+        location = location,
         locationSource = locationSource,
+        locationInferred = locationInferred,
+        engagementUnit = engagement and engagement.unit,
+        engagementPlayer = engagement and engagement.name,
+        engagementRole = engagement and engagement.role,
         health = health,
         healthMax = healthMax,
         dead = KWR.Util:Call(UnitIsDeadOrGhost, unit),
@@ -324,6 +408,11 @@ function EnemyIntel:Rows()
             copy.locationState = "LAST SEEN"
             copy.location = copy.lastSeenLocation or copy.location
             copy.locationSource = copy.lastSeenLocationSource or copy.locationSource
+            copy.locationInferred = copy.lastSeenLocationInferred == true
+            copy.engagementPlayer = copy.lastSeenEngagementPlayer
+                or copy.engagementPlayer
+            copy.engagementRole = copy.lastSeenEngagementRole
+                or copy.engagementRole
             copy.x = copy.lastSeenX or copy.x
             copy.y = copy.lastSeenY or copy.y
         else
@@ -333,6 +422,8 @@ function EnemyIntel:Rows()
             .. (copy.location and (" @ " .. copy.location) or "")
         copy.healthPercent = copy.visible and copy.health and copy.healthMax and copy.healthMax > 0
             and KWR.Util:Clamp((copy.health / copy.healthMax) * 100, 0, 100) or nil
+        copy.healthEvidence = copy.healthPercent and "LIVE"
+            or (copy.lastHealthPercent and "LAST_SEEN" or "UNAVAILABLE")
         result[#result + 1] = copy
     end
     table.sort(result, function(a, b)
@@ -341,6 +432,37 @@ function EnemyIntel:Rows()
         return (a.lastSeenAt or 0) > (b.lastSeenAt or 0)
     end)
     return result
+end
+
+function EnemyIntel:DescribeLocation(record, mapKey, compact)
+    if not record then return "ROSTER" end
+    local prefix
+    if record.visible and record.inCombat then
+        prefix = "ENGAGED"
+    elseif record.visible then
+        prefix = "VISIBLE"
+    elseif record.age then
+        prefix = "LAST " .. KWR.Util:Age(record.age)
+    else
+        prefix = "ROSTER"
+    end
+    local location = usableLocation(record.location)
+        and KWR.Maps:AbbreviateLocation(mapKey, record.location) or nil
+    local teamEvidence = record.locationInferred == true
+        or record.locationSource == "Team Engagement"
+        or record.locationSource == "Team Position"
+        or record.locationSource == "Team Assignment"
+    if teamEvidence then
+        local role = KWR.Util:Text(record.engagementRole, "Team", 48)
+        if compact and KWR.Assignments then
+            role = KWR.Assignments:CompactRole(role)
+        else
+            role = role:upper()
+        end
+        return prefix .. " WITH " .. role
+            .. (location and (" -> " .. location) or "")
+    end
+    return prefix .. (location and (" @ " .. location) or "")
 end
 
 function EnemyIntel:Capture(mapID, inPvP, roster, assigned, scoreboardRows)

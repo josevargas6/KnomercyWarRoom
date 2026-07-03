@@ -90,6 +90,7 @@ function HUD:Update(state)
         mine and mine.role, mine and mine.location,
         enemy and enemy.key, enemy and math.floor((enemy.age or 0) / 2),
         enemy and enemy.locationState, enemy and enemy.location,
+        enemy and enemy.locationSource, enemy and enemy.engagementRole,
     })
     if self.lastRenderSignature == signature and frame:IsShown() then
         self.renderSkips = (self.renderSkips or 0) + 1
@@ -108,16 +109,16 @@ function HUD:Update(state)
     frame.next.value:SetText((command.action or "Queue or join your team.")
         .. (learning and command.switchIf and ("\n|cff8ea3bbSWITCH: " .. KWR.Util:Text(command.switchIf, "", 52) .. "|r") or ""))
 
-    frame.mine.value:SetText(mine and (mine.role .. "  |  " .. mine.location) or "Formation role pending.")
+    frame.mine.value:SetText(mine and KWR.Assignments:CompactLabel(
+        mine, snapshot.context.mapKey) or "Formation role pending.")
     frame.caller.value:SetText(command.who .. (learning and command.ourComposition
         and ("\n" .. KWR.Util:Text(command.ourComposition, "", 42)) or
         ("\nCurrent call: " .. KWR.Util:Text(command.action, "", 55))))
 
     if enemy then
-        local seen = enemy.age and (KWR.Util:Age(enemy.age) .. " ago") or "roster known"
-        local location = enemy.location and (" @ " .. enemy.location) or ""
         frame.kill.value:SetText(enemy.shortName .. "  |  " .. enemy.spec
-            .. "\n" .. seen .. location)
+            .. "\n" .. KWR.EnemyIntel:DescribeLocation(
+                enemy, snapshot.context.mapKey, true))
     else
         frame.kill.value:SetText("No enemy intelligence acquired.")
     end

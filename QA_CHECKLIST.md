@@ -1,6 +1,6 @@
-﻿# KWR 6.1 Alpha 13 QA Checklist
+﻿# KWR 6.1 Alpha 14 QA Checklist
 
-## Alpha 13 intelligence checks
+## Alpha 14 intelligence checks
 
 - [ ] Own and friendly health bars render immediately when a legal unit token exists.
 - [ ] Friendly specializations are verified during formation and remain cached.
@@ -15,6 +15,10 @@
 - [ ] Capability confidence changes from historical likely evidence to confirmed live evidence.
 - [ ] Visible enemies show current location and source; hidden enemies retain
   last-seen location, source, and age without receiving a fabricated dot.
+- [ ] Team-target sightings use `WITH <job> -> <objective>` when assignment
+  evidence is the only available location and never repeat `Team Engagement`.
+- [ ] Scout HUD score converges to Blizzard's public score within 0.5 seconds
+  of a widget event and `/kwr verify` names the verified map widget.
 - [ ] `/kwr explain` states objective success and abort conditions.
 - [ ] `/kwr perf` reports capability-cache hits and skipped compact renders.
 - [ ] Completing a battleground prints one local "AAR evidence ready" notice.
@@ -46,7 +50,7 @@
 
 - [x] `tools/validate.ps1` passes.
 - [x] All runtime Lua parses as Lua 5.1.
-- [x] Offline boot and pipeline smoke test passes 240 checks.
+- [x] Offline boot and pipeline smoke test passes 242 checks.
 - [x] Knowledge audit passes.
 - [x] Runtime Lua contains no unsupported non-ASCII UI glyphs.
 - [x] Distribution ZIP contains one `KnomercyWarRoom` root and round-trips without mismatch.
@@ -59,6 +63,10 @@
 - [ ] Fresh install loads without enabling Load out of date AddOns.
 - [ ] Existing Beta 1 database migrates to Tactical navigation without error.
 - [ ] Login, `/reload`, logout, and login produce no Lua error.
+- [ ] Joining, replacing, and leaving a party or raid repaints Team and compact
+  roster identities without `/reload` or stale players.
+- [ ] Entering and leaving a battleground completes the settling refresh
+  without a frozen score, roster, or old enemy session.
 - [ ] Window positions, notes, options, history, and AAR feedback persist.
 - [ ] `/kwr test` reports zero failures.
 
@@ -67,6 +75,8 @@
 - [ ] `/kwr preview` is visibly labeled DESIGN PREVIEW - NOT LIVE.
 - [ ] Scout HUD presents score, win condition, next objective, assignment, caller, and kill target.
 - [ ] Tactical page is map-centered and remains readable at supported UI scales.
+- [ ] Circular KWR launcher remains outside the minimap content at supported UI
+  scales and Shift-drag preserves its ring angle.
 - [ ] Objective, friendly, enemy, and flag markers align with map coordinates.
 - [ ] Objective markers change ownership from live widgets during combat.
 - [ ] Restricted instanced-player coordinates remain explicitly unavailable

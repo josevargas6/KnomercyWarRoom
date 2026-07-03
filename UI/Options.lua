@@ -120,10 +120,8 @@ function Options:Create()
         KWR.HUD.frame:SetPoint("CENTER", UIParent, "CENTER", -440, 0)
         local launcher = KWR.db.profile.launcher
         launcher.angle = 225
-        if KWR.MainWindow.launcher and Minimap then
-            KWR.MainWindow.launcher:ClearAllPoints()
-            local angle = math.rad(launcher.angle)
-            KWR.MainWindow.launcher:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * 78, math.sin(angle) * 78)
+        if KWR.MainWindow.launcher then
+            KWR.MainWindow:PositionLauncher()
         end
         local reporter = KWR.db.profile.reporter
         reporter.point, reporter.relativePoint, reporter.x, reporter.y = "CENTER", "CENTER", 430, 0

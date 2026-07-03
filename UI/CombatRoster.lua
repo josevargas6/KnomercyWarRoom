@@ -261,7 +261,20 @@ function CombatRoster:UpdateSpotlight(enemies, combat)
             break
         end
     end
+    local currentTarget = target ~= nil
+    if target then
+        self.lastSpotlightKey = target.key
+    elseif self.lastSpotlightKey then
+        for _, enemy in ipairs(enemies or {}) do
+            if enemy.key == self.lastSpotlightKey
+                and enemy.age and enemy.age <= 5 then
+                target = enemy
+                break
+            end
+        end
+    end
     if not target then
+        self.lastSpotlightKey = nil
         spotlight.nameText:SetText("NO ENEMY TARGET")
         spotlight.nameText:SetTextColor(KWR.Theme:Color("soft"))
         spotlight.detailText:SetText("Select an enemy to establish local target truth.")
@@ -288,7 +301,12 @@ function CombatRoster:UpdateSpotlight(enemies, combat)
         and target.defensivesActive[1] or nil
     local kill = combat and combat.killTarget
         and combat.killTarget.key == target.key
-    if cast then
+    if not currentTarget then
+        spotlight.actionText:SetText("LAST LOCAL  "
+            .. KWR.Util:Age(target.age or 0))
+        spotlight.actionText:SetTextColor(KWR.Theme:Color("muted"))
+        spotlight:SetBackdropBorderColor(KWR.Theme:Color("borderHi"))
+    elseif cast then
         spotlight.actionText:SetText(
             KWR.Util:Text(cast.response, "STOP", 16)
                 .. ": " .. KWR.Util:Text(cast.name, "HIGH-VALUE CAST", 36))
@@ -317,7 +335,17 @@ function CombatRoster:UpdateSpotlight(enemies, combat)
         spotlight.actionText:SetTextColor(KWR.Theme:Color("gold"))
         spotlight:SetBackdropBorderColor(KWR.Theme:Color("gold"))
     end
-    self:DirectSpotlightHealth(target)
+    if currentTarget then
+        self:DirectSpotlightHealth(target)
+    else
+        local lastHealth = KWR.Util:Number(target.lastHealthPercent, nil)
+        spotlight.health:SetMinMaxValues(0, 100)
+        spotlight.health:SetValue(lastHealth or 0)
+        spotlight.healthText:SetText(lastHealth
+            and ("~" .. tostring(math.floor(lastHealth + 0.5)) .. "%")
+            or "--")
+        spotlight.health:SetStatusBarColor(0.26, 0.28, 0.31, 0.62)
+    end
 end
 
 function CombatRoster:UpdateHealthForUnit(unit)
@@ -375,7 +403,8 @@ function CombatRoster:Visual(row, data, team, combat, assignment)
     local focused = sameUnitOrName(data.unit, data.name, "focus")
     local signature = KWR.Util:Signature({
         data.key, data.name, data.classFile, data.role or data.groupRole,
-        data.spec, data.specSource, data.healthPercent, data.dead, data.connected,
+        data.spec, data.specSource, data.healthPercent, data.lastHealthPercent,
+        data.dead, data.connected,
         data.visible, data.localRange, data.age and math.floor(data.age / 2),
         data.locationState, data.location, data.locationSource,
         data.carrier, data.carrierStacks, data.cooldownText, data.trinketState,
@@ -404,11 +433,15 @@ function CombatRoster:Visual(row, data, team, combat, assignment)
     self:ApplyRole(row, data.role or data.groupRole)
 
     local percent = KWR.Util:Number(data.healthPercent, nil)
-    row.health:SetValue(percent or 0)
+    local lastPercent = KWR.Util:Number(data.lastHealthPercent, nil)
+    local displayPercent = percent or lastPercent
+    row.health:SetValue(displayPercent or 0)
     local hr, hg, hb = healthColor(percent)
     row.health:SetStatusBarColor(hr, hg, hb, 0.72)
     row.healthText:SetText(percent and (tostring(math.floor(percent + 0.5)) .. "%")
-        or (data.unit and "LIVE" or "--"))
+        or (data.unit and "LIVE"
+        or (lastPercent and ("~" .. tostring(math.floor(lastPercent + 0.5)) .. "%")
+        or "--")))
     row.healthText:SetTextColor(hr, hg, hb, 1)
     row.danger:SetShown(percent ~= nil and percent <= 35 and not data.dead)
     if data.unit then self:DirectHealth(row, data.unit) end
@@ -421,8 +454,11 @@ function CombatRoster:Visual(row, data, team, combat, assignment)
     end
     row.detailText:SetText(role .. " | " .. spec)
     row.tooltipDetail = role .. " | " .. spec
-    row.tooltipHealth = percent and ("Observed health: " .. tostring(math.floor(percent + 0.5)) .. "%")
-        or "Health percentage unavailable"
+    row.tooltipHealth = percent and ("Observed health: "
+        .. tostring(math.floor(percent + 0.5)) .. "%")
+        or (lastPercent and ("Last safely observed health: "
+            .. tostring(math.floor(lastPercent + 0.5)) .. "%")
+        or "Health percentage unavailable")
     row.tooltipState = nil
 
     if team == "ENEMY" then
@@ -431,10 +467,15 @@ function CombatRoster:Visual(row, data, team, combat, assignment)
         local cast = data.priorityCast
         local trinket = data.trinketState == "ON_COOLDOWN"
         local kill = combat and combat.killTarget and combat.killTarget.key == data.key
-        local location = data.location and (" @ " .. KWR.Util:Text(data.location, "", 12)) or ""
-        local observed = data.localRange and ("LOCAL" .. location)
-            or (data.visible and ("VISIBLE" .. location)
-            or (data.age and ("SEEN " .. KWR.Util:Age(data.age) .. location) or "ROSTER"))
+        local mapKey = self.lastState and self.lastState.snapshot
+            and self.lastState.snapshot.context.mapKey
+        local observed = KWR.EnemyIntel:DescribeLocation(
+            data, mapKey, true)
+        if data.localRange and not data.locationInferred then
+            observed = "LOCAL" .. (data.location
+                and (" @ " .. KWR.Maps:AbbreviateLocation(
+                    mapKey, data.location)) or "")
+        end
         local stateText = observed
         if trinket then stateText = "TRINKET USED" end
         if active then stateText = "DEF ACTIVE" end
@@ -469,13 +510,17 @@ function CombatRoster:Visual(row, data, team, combat, assignment)
         end
         row:SetBackdropBorderColor(KWR.Theme:Color(border))
     else
-        local assignmentText = assignment and KWR.Util:Text(assignment.location, "", 22) or ""
+        local mapKey = self.lastState and self.lastState.snapshot
+            and self.lastState.snapshot.context.mapKey
+        local assignmentText = assignment
+            and KWR.Assignments:CompactLabel(assignment, mapKey) or ""
         row.stateText:SetText(data.carrier and ("CARRIER"
             .. ((data.carrierStacks or 0) > 0 and (" x" .. tostring(data.carrierStacks)) or ""))
             or (data.dead and "DEAD"
             or (data.connected == false and "OFFLINE"
             or (assignmentText ~= "" and assignmentText or "READY"))))
-        row.tooltipState = assignment and ("Assignment: " .. assignment.role .. " at " .. assignment.location)
+        row.tooltipState = assignment and ("Assignment: "
+            .. KWR.Assignments:CompactLabel(assignment, mapKey))
             or (data.dead and "Player is dead" or (data.connected == false and "Player is offline" or "Ready"))
         if data.location then
             row.tooltipState = row.tooltipState .. "\nObserved: " .. data.location

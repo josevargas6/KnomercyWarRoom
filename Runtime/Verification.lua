@@ -255,7 +255,10 @@ function Verification:BuildEntry(state)
         maxScore = score.max or 0,
         scoreSource = score.source,
         scoreWidget = score.widgetID,
+        scoreWidgetAuthority = score.widgetAuthority,
+        scoreRegressionRejected = score.regressionRejected == true,
         scoreAge = age(score.observedAt, now),
+        scoreChangedAge = age(score.changedAt, now),
         objectiveSource = objectives.source,
         objectiveWidget = objectives.widgetID,
         objectiveAge = age(objectives.observedAt, now),
@@ -315,6 +318,10 @@ function Verification:BuildEntry(state)
         p95Ms = diagnostics.p95DurationMs or 0,
         memoryKB = diagnostics.memoryKB or 0,
         transitionMs = diagnostics.lastTransitionDurationMs or 0,
+        queueCoalesced = diagnostics.coalesced or 0,
+        queueFollowups = diagnostics.queueFollowups or 0,
+        queuePreemptions = diagnostics.queuePreemptions or 0,
+        settleRefreshes = diagnostics.settleRefreshes or 0,
         bootMs = KWR.bootDiagnostics and KWR.bootDiagnostics.initializeMs or 0,
         errors = diagnostics.errors or 0,
         audit = audit,
@@ -363,7 +370,13 @@ function Verification:Format(entry)
             .. " / " .. tostring(entry.maxScore or 0),
         "Score source: " .. value(entry.scoreSource)
             .. " / widget " .. tostring(entry.scoreWidget or "unknown")
+            .. " / " .. value(entry.scoreWidgetAuthority, "unverified")
             .. " / age " .. (entry.scoreAge and string.format("%.2f sec", entry.scoreAge) or "unknown"),
+        "Score change age: "
+            .. (entry.scoreChangedAge and string.format("%.2f sec",
+                entry.scoreChangedAge) or "unknown")
+            .. " / regression rejected "
+            .. (entry.scoreRegressionRejected and "YES" or "NO"),
         "Objectives: " .. value(entry.objectiveSummary),
         "Objective source: " .. value(entry.objectiveSource)
             .. " / age " .. (entry.objectiveAge and string.format("%.2f sec", entry.objectiveAge) or "unknown"),
@@ -480,6 +493,11 @@ function Verification:Format(entry)
             entry.refreshMs or 0, entry.p95Ms or 0, entry.memoryKB or 0),
         string.format("Transitions: last %.3f ms / addon initialize %.3f ms",
             entry.transitionMs or 0, entry.bootMs or 0),
+        string.format("Refresh queue: coalesced %d / followups %d / preemptions %d / settles %d",
+            entry.queueCoalesced or 0,
+            entry.queueFollowups or 0,
+            entry.queuePreemptions or 0,
+            entry.settleRefreshes or 0),
         "Runtime errors: " .. tostring(entry.errors or 0),
     }
     for _, assignment in ipairs(entry.assignmentDetails or {}) do

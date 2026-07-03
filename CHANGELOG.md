@@ -1,5 +1,35 @@
 # Changelog
 
+## 6.1.0-alpha.14
+
+- Replaced the lossy refresh flag with one bounded, preemptible dirty-state
+  scheduler. Simultaneous score, roster, and transition events now produce one
+  primary refresh plus at most one newest-truth follow-up.
+- Added guaranteed settling refreshes after login, world/zone transitions,
+  group roster changes, score-table changes, match activation, and public
+  widget updates without adding another ticker.
+- Made each map's reviewed score widget authoritative. Dynamically discovered
+  widgets are validated fallbacks and cannot silently displace the configured
+  source; within-match score regressions are rejected.
+- Added widget authority, score-change age, regression state, queue
+  coalescing, follow-up, preemption, and settle telemetry to `/kwr verify` and
+  `/kwr perf`.
+- Replaced duplicate `Team Engagement` location text with source-aware
+  descriptions such as `ENGAGED WITH STRIKE -> LM`. Direct positions remain
+  authoritative; assignment-derived destinations remain explicitly inferred.
+- Kept enemy identities and safely numeric last-observed health visible after
+  live tokens disappear, and retained the last local target spotlight for five
+  clearly labeled seconds.
+- Unified compact assignment terminology across Team, HUD, combat roster, and
+  command copy surfaces.
+- Corrected the Team table's eight-pixel header/row offset and widened its
+  assignment column.
+- Replaced the fixed 46-pixel square minimap launcher with a 32-pixel circular
+  launcher positioned from the current minimap radius.
+- Expanded deterministic diagnostics from 240 to 242 checks, added scheduler,
+  score-authority, launcher, and table-alignment regression assertions, and
+  retained the 500-refresh bounded-state soak.
+
 ## 6.1.0-alpha.13
 
 - Added one normalized battlefield truth contract with source, observation
