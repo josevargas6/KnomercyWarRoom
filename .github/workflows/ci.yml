@@ -30,6 +30,10 @@ jobs:
         shell: pwsh
         run: ./tools/validate.ps1
 
+      - name: Scan workspace for committed credentials
+        shell: pwsh
+        run: ./tools/security-audit.ps1
+
       - name: Audit knowledge data
         shell: pwsh
         run: ./tools/knowledge-audit.ps1
