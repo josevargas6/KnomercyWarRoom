@@ -3,6 +3,11 @@ name: KWR Automated Maintenance Schedule
 on:
   schedule:
     - cron: "17 15,21 * * *"
+    - cron: "30 21 * * 1"
+    - cron: "47 13 * * 2"
+    - cron: "7,22,37,52 14-19 * * 2"
+    - cron: "17 20-23 * * 2"
+    - cron: "17 0-17 * * 3"
     - cron: "17 18 * * 3"
     - cron: "17 15 * * 4"
     - cron: "47 14 1 * *"
@@ -17,13 +22,17 @@ on:
           - auto
           - status
           - daily
+          - patch-preflight
+          - patch-baseline
+          - patch-watch
+          - extended-reconciliation
           - weekly-reconciliation
           - biweekly-trends
           - monthly-maintenance
           - release-dry-run
           - full-dry-run
       mode:
-        description: dry-run keeps external writes disabled.
+        description: dry-run keeps all external writes disabled.
         required: true
         default: dry-run
         type: choice
@@ -110,8 +119,12 @@ jobs:
               "-ConfirmExternalWrites", $confirm,
               "-OutputDirectory", "artifacts\scheduled-maintenance"
           )
-          if ($postDiscord) { $args += "-PostDiscord" }
-          if ($notifyBot) { $args += "-NotifyBot" }
+          if ($postDiscord) {
+              $args += "-PostDiscord"
+          }
+          if ($notifyBot) {
+              $args += "-NotifyBot"
+          }
 
           ./tools/kwr-maintenance-schedule.ps1 @args
 
