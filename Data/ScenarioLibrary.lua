@@ -80,6 +80,49 @@ local MAP_ACTIONS = {
     },
 }
 
+local MAP_COUNTERPLAY = {
+    ARATHI = {
+        counter = "Enemy stacks Blacksmith while stealth pressure attacks an outer node.",
+        response = "Spin Blacksmith with minimum durable presence; keep one outer defender and send the compact strike team to the exposed lane.",
+    },
+    GILNEAS = {
+        counter = "Enemy overloads Waterworks and tries to isolate the home defender.",
+        response = "Preserve home coverage, contest Waterworks only with synchronized numbers, and pressure the abandoned third base.",
+    },
+    DEEPWIND = {
+        counter = "Enemy creates simultaneous outer-node pressure around a central anchor.",
+        response = "Maintain a three-node response triangle and trade the farthest exposed node instead of scattering five ways.",
+    },
+    EOTS = {
+        counter = "Enemy uses mid pressure to pull both tower defenders.",
+        response = "Keep tower sitters planted, value the flag by tower count, and send only the named strike group to the weak enemy tower.",
+    },
+    WSG = {
+        counter = "Enemy bunkers its carrier and sends staggered control into our escort.",
+        response = "Stop trickling, rebuild one return wave, preserve our carrier peel, and commit on a real stack or resource window.",
+    },
+    TWINPEAKS = {
+        counter = "Enemy controls the carrier choke and splits healers between bunker and intercept.",
+        response = "Choose one route, deny the intercept group, and push a synchronized return only after peel coverage is confirmed.",
+    },
+    TEMPLE = {
+        counter = "Enemy stacks center pressure while rotating fresh orb replacements.",
+        response = "Spread friendly carriers, delete one actionable enemy carrier, and pre-position the replacement pickup before committing.",
+    },
+    SILVERSHARD = {
+        counter = "Enemy abandons a low-value cart to create numbers on the next junction.",
+        response = "Leave completed or unrecoverable routes early and reinforce only carts that can still change the projected score.",
+    },
+    DEEPHAUL = {
+        counter = "Enemy escorts with a bunker group while feeding delay into our cart.",
+        response = "Keep the delay team grouped, preserve friendly cart presence, and contest Crystal only when both cart obligations are covered.",
+    },
+    SEETHING = {
+        counter = "Enemy channels one node while pre-rotating mobile players to the next spawn.",
+        response = "Do not feed a completed node; preserve the main group and contest the next public spawn with an arrival advantage.",
+    },
+}
+
 local function modifier(pressure, shape, hotspot)
     local location = hotspot and hotspot.label or "the scoring objective"
     if pressure == "WIPE" then
@@ -174,6 +217,66 @@ local function objectiveDecision(snapshot, prediction, phase)
     return decision, prefix
 end
 
+local function responseContract(snapshot, phase, pressure, shape, decision, strategy)
+    local kind = snapshot.context.kind
+    local mode = strategy.recommendationMode or "HOLD"
+    local selected = strategy.selectedAction or {}
+    local playersNeeded = mode == "HOLD" and 2
+        or (mode == "ROTATE" and 3
+        or (mode == "TEAMFIGHT" and 6
+        or (mode == "SPLIT" and 3 or 4)))
+    local rolesNeeded = kind == "FLAG"
+        and { "carrier support", "return control", "healer" }
+        or (kind == "ORB"
+            and { "carrier", "pickup replacement", "healer" }
+        or (kind == "CART"
+            and { "cart presence", "delay", "healer" }
+        or (kind == "RESOURCE"
+            and { "channel control", "mobile scout", "healer" }
+        or { "defender", "floater", "strike pressure" })))
+    local reviewed = MAP_COUNTERPLAY[snapshot.context.mapKey]
+    local likelyCounter = reviewed and reviewed.counter
+        or (pressure == "SPLIT"
+        and "Enemy trades the opposite objective."
+        or (shape == "UNFAVORABLE"
+            and "Enemy commits its preferred full-team fight."
+        or (mode == "HOLD"
+            and "Enemy creates simultaneous pressure."
+        or "Enemy reinforces the called objective.")))
+    local counterResponse = reviewed and reviewed.response
+        or (pressure == "SPLIT"
+        and "Preserve the scoring minimum and release only the named reserve."
+        or (shape == "UNFAVORABLE"
+            and "Refuse the full-team shape; widen pressure and use route timing."
+        or (mode == "HOLD"
+            and "Keep primary defenders planted and send the response reserve."
+        or "Abort on reinforcement disadvantage and take the exposed lane.")))
+    return {
+        trigger = table.concat({ phase, pressure, shape }, " / "),
+        requiredEvidence = {
+            "current score and win path",
+            "objective ownership",
+            "friendly coverage",
+            mode == "HOLD" and "defender confirmation"
+                or "arrival or pressure advantage",
+        },
+        playersNeeded = playersNeeded,
+        rolesNeeded = rolesNeeded,
+        playersWhoStay = {
+            kind == "NODE" or kind == "HYBRID"
+                and "minimum objective defenders"
+                or "objective protection group",
+            "one response reserve when available",
+        },
+        success = selected.success or decision.success,
+        abort = selected.abort or decision.abort,
+        likelyCounter = likelyCounter,
+        counterResponse = counterResponse,
+        confidenceGate = selected.reversible and "LOW"
+            or "MEDIUM",
+    }
+end
+
 function ScenarioLibrary:Count(mapKey)
     if mapKey then return MAP_ACTIONS[mapKey] and 40 or 0 end
     local count = 0
@@ -210,6 +313,25 @@ function ScenarioLibrary:Select(snapshot, prediction, strategy)
     local enemyFight = strategy.enemySummary and strategy.enemySummary.tags.teamfight or 0
     local shape = enemyFight > ourFight and "UNFAVORABLE" or "FAVORABLE"
     local decision, directive = objectiveDecision(snapshot, prediction, phase)
+    local selected = strategy.selectedAction or {}
+    if selected.target then decision.target = selected.target end
+    if selected.success then decision.success = selected.success end
+    if selected.abort then decision.abort = selected.abort end
+    if strategy.recommendationMode == "HOLD" then
+        decision.verb = "HOLD"
+    elseif strategy.recommendationMode == "ROTATE" then
+        decision.verb = "REINFORCE"
+    elseif strategy.recommendationMode == "TRADE" then
+        decision.verb = "TRADE FOR"
+    elseif strategy.recommendationMode == "TEAMFIGHT" then
+        decision.verb = "COLLAPSE"
+    elseif strategy.recommendationMode == "SPLIT" then
+        decision.verb = "SPLIT PRESSURE"
+    end
+    directive = decision.verb and decision.target
+        and (decision.verb .. " " .. decision.target .. ". ") or ""
+    local contract = responseContract(
+        snapshot, phase, pressure, shape, decision, strategy)
     return {
         id = table.concat({ mapKey, phase, pressure, shape }, "_"),
         phase = phase,
@@ -217,6 +339,7 @@ function ScenarioLibrary:Select(snapshot, prediction, strategy)
         shape = shape,
         action = directive .. actions[phase] .. modifier(pressure, shape, reporter.hotspot),
         objectiveDecision = decision,
+        responseContract = contract,
         reviewed = true,
         coverage = coverage,
     }

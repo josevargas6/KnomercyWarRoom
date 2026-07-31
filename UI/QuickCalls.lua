@@ -12,6 +12,33 @@ local DEFINITIONS = {
     "HOLD POSITION",
 }
 
+local META = {
+    ["INC PRIMARY"] = {
+        group = "PRESSURE",
+        hint = "Collapse on the current best supported kill lane.",
+    },
+    ["HELP HOME"] = {
+        group = "STABILIZE",
+        hint = "Reinforce the threatened home base before the loss is confirmed.",
+    },
+    ["STOP FLAG"] = {
+        group = "PRESSURE",
+        hint = "Commit local control to stop the enemy carrier or flag touch.",
+    },
+    ["PEEL CARRIER"] = {
+        group = "STABILIZE",
+        hint = "Bodyguard the friendly carrier and deny enemy reach.",
+    },
+    ["ROTATE NOW"] = {
+        group = "TEMPO",
+        hint = "Shift lanes immediately while momentum still exists.",
+    },
+    ["HOLD POSITION"] = {
+        group = "TEMPO",
+        hint = "Stop drift and preserve the current assignment structure.",
+    },
+}
+
 local APPROVED = {}
 for _, phrase in ipairs(DEFINITIONS) do
     APPROVED[phrase] = true
@@ -25,11 +52,59 @@ local function isBattleground()
     return inside == true and instanceType == "pvp"
 end
 
-local function setStatus(status, message, color)
+local function statusTagTone(color)
+    if color == "red" then return "BLOCKED" end
+    if color == "green" then return "SENT" end
+    if color == "yellow" then return "SETUP" end
+    return "READY"
+end
+
+local function statusTextFrame(status)
+    return status and (status.message or status)
+end
+
+local function setStatus(status, tag, message, color)
     if not status then return end
-    status:SetText(message or "")
-    if status.SetTextColor then
-        status:SetTextColor(KWR.Theme:Color(color or "muted"))
+    local label = statusTextFrame(status)
+    if not label or type(label.SetText) ~= "function" then return end
+    local now = (KWR.Util and type(KWR.Util.Now) == "function")
+        and KWR.Util:Now() or 0
+    local previousToken = rawget(status, "quickCallStatusToken") or 0
+    local token = previousToken + 1
+    rawset(status, "quickCallStatusToken", token)
+    rawset(status, "quickCallResetAt", now + 3)
+    rawset(status, "quickCallDefault", rawget(status, "quickCallDefault")
+        or KWR.Util:Text(label:GetText(), "", 120)
+    )
+    rawset(status, "quickCallDefaultTag", rawget(status, "quickCallDefaultTag")
+        or (status.badge and KWR.Util:Text(status.badge.text and status.badge.text:GetText(),
+            "READY", 24) or nil)
+    )
+    label:SetText(tag and (tag .. ": " .. KWR.Util:Text(message, "", 120))
+        or (message or ""))
+    if label.SetTextColor then
+        label:SetTextColor(KWR.Theme:Color(color or "muted"))
+    end
+    if status.badge then
+        status.badge:SetTone(color or "muted")
+        status.badge:SetText(tag or statusTagTone(color))
+    end
+    if not message or message == "" then return end
+    if C_Timer and C_Timer.After then
+        C_Timer.After(3.0, function()
+            if rawget(status, "quickCallStatusToken") ~= token then return end
+            local current = (KWR.Util and type(KWR.Util.Now) == "function")
+                and KWR.Util:Now() or 0
+            if current < (rawget(status, "quickCallResetAt") or 0) then return end
+            label:SetText(rawget(status, "quickCallDefault") or "")
+            if label.SetTextColor then
+                label:SetTextColor(KWR.Theme:Color("muted"))
+            end
+            if status.badge then
+                status.badge:SetTone("muted")
+                status.badge:SetText(rawget(status, "quickCallDefaultTag") or "READY")
+            end
+        end)
     end
 end
 
@@ -37,6 +112,12 @@ local function showTooltip(button)
     if not GameTooltip or not GameTooltip.SetOwner then return end
     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
     GameTooltip:SetText(button.callText or "KWR Quick Call")
+    if button.callMeta and button.callMeta.group then
+        GameTooltip:AddLine("Intent: " .. button.callMeta.group, 1.00, 0.82, 0.24)
+    end
+    if button.callMeta and button.callMeta.hint then
+        GameTooltip:AddLine(button.callMeta.hint, 0.78, 0.82, 0.88, true)
+    end
     GameTooltip:AddLine("Left-click: send to Instance Chat.", 0.85, 0.85, 0.85)
     GameTooltip:AddLine("Right-click: open a compact copy field.", 0.65, 0.65, 0.65)
     GameTooltip:Show()
@@ -49,12 +130,13 @@ local function hideTooltip()
 end
 
 local function decorate(button, label, width, height)
-    button:SetSize(width or 132, height or 25)
+    button:SetSize(width or 132, height or 38)
     KWR.Theme:Style(button, "card", "border")
-    button.label = KWR.Theme:Font(button, 10, "soft", "CENTER")
+    button.label = KWR.Theme:Font(button, 11, "soft", "CENTER")
     button.label:SetAllPoints()
     button.label:SetText(label)
     button.callText = label
+    button.callMeta = META[label]
     button:SetScript("OnEnter", function(self)
         KWR.Theme:Style(self, "raised", "borderHi")
         self.label:SetTextColor(KWR.Theme:Color("gold"))
@@ -71,7 +153,7 @@ function QuickCalls:CreateButton(parent, label, width, height, status)
     local callText = tostring(label or "")
     if not APPROVED[callText] then
         local rejected = KWR.Theme:Button(parent, "UNAVAILABLE", width, height, function()
-            setStatus(status, "BLOCKED - UNREVIEWED QUICK CALL", "red")
+            setStatus(status, "BLOCKED", "UNREVIEWED QUICK CALL", "red")
         end)
         rejected.quickCallRejected = true
         return rejected
@@ -83,7 +165,8 @@ function QuickCalls:CreateButton(parent, label, width, height, status)
     if type(InCombatLockdown) == "function" and InCombatLockdown() then
         local fallback = KWR.Theme:Button(parent, callText, width, height, function()
             KWR.CopyDialog:ShowCompact("KWR Quick Call", callText)
-            setStatus(status, "COPY FALLBACK - OPEN BOARD OUT OF COMBAT TO ARM ONE-CLICK CALLS", "gold")
+            setStatus(status, "COPY READY",
+                "OPEN BOARD OUT OF COMBAT FOR ONE-CLICK SEND", "gold")
         end)
         fallback.quickCallFallback = true
         return fallback
@@ -91,17 +174,28 @@ function QuickCalls:CreateButton(parent, label, width, height, status)
 
     local button = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     decorate(button, callText, width, height)
+    if button.callMeta and button.callMeta.group then
+        button.groupText = KWR.Theme:Font(button, 7, "muted", "LEFT", "OUTLINE")
+        button.groupText:SetPoint("TOPLEFT", 7, -4)
+        button.groupText:SetWidth((width or 132) - 12)
+        button.groupText:SetHeight(10)
+        button.groupText:SetText(KWR.Util:Text(button.callMeta.group, "", 14))
+        button.label:ClearAllPoints()
+        button.label:SetPoint("BOTTOMLEFT", 6, 4)
+        button.label:SetPoint("BOTTOMRIGHT", -6, 4)
+        button.label:SetHeight(16)
+    end
     button:RegisterForClicks("AnyUp")
     button:SetAttribute("type1", "macro")
     button:SetAttribute("macrotext1", "/instance " .. callText)
     button:SetScript("PostClick", function(self, mouseButton)
         if mouseButton == "RightButton" then
             KWR.CopyDialog:ShowCompact("KWR Quick Call", self.callText)
-            setStatus(status, "READY TO COPY: " .. self.callText, "gold")
+            setStatus(status, "COPY READY", self.callText, "gold")
         elseif isBattleground() then
-            setStatus(status, "CALL ACTIVATED: " .. self.callText, "green")
+            setStatus(status, "SENT", self.callText, "green")
         else
-            setStatus(status, "NOT SENT - INSTANCE CHAT IS AVAILABLE IN A BATTLEGROUND", "gold")
+            setStatus(status, "NOT SENT", "INSTANCE CHAT REQUIRES A BATTLEGROUND", "gold")
         end
     end)
     button.quickCallSecure = true
@@ -110,6 +204,10 @@ end
 
 function QuickCalls:Definitions()
     return KWR.Util:Copy(DEFINITIONS)
+end
+
+function QuickCalls:GetMeta(callText)
+    return META[tostring(callText or "")]
 end
 
 function QuickCalls:IsApproved(callText)

@@ -4,16 +4,141 @@ local ObjectiveIntel = {
     events = {},
     carriers = {},
     timers = {},
-    maxEvents = 50,
+    auraCache = {},
+    maxEvents = 24,
 }
 KWR.ObjectiveIntel = ObjectiveIntel
 
-local ORB_COLORS = {
-    Green = true, Blue = true, Orange = true, Purple = true,
+local MESSAGE_GRAMMARS = {
+    enUS = {
+        orbPickup = {
+            "^(.+) has taken the Green orb!$",
+            "^(.+) has taken the Blue orb!$",
+            "^(.+) has taken the Orange orb!$",
+            "^(.+) has taken the Purple orb!$",
+        },
+        orbReturn = {
+            "^The Green orb has been returned!$",
+            "^The Blue orb has been returned!$",
+            "^The Orange orb has been returned!$",
+            "^The Purple orb has been returned!$",
+        },
+        flagPickup = {
+            "^(.+) has picked up the Alliance flag!$",
+            "^(.+) has picked up the Horde flag!$",
+            "^(.+) picked up the Alliance flag!$",
+            "^(.+) picked up the Horde flag!$",
+        },
+        flagReturn = {
+            "^The Alliance flag was returned to its base!$",
+            "^The Horde flag was returned to its base!$",
+        },
+        flagCapture = {
+            "^(.+) captured the Alliance flag!$",
+            "^(.+) captured the Horde flag!$",
+        },
+        globalFlagReset = {
+            "^The flags are now placed at their bases%.?$",
+            "^Both flags returned%.?$",
+        },
+        assault = {
+            "^(.+) has assaulted the (.+)!$",
+        },
+        teamMap = {
+            Alliance = "Alliance",
+            Horde = "Horde",
+        },
+        colorMap = {
+            Green = "Green",
+            Blue = "Blue",
+            Orange = "Orange",
+            Purple = "Purple",
+        },
+    },
+    deDE = {
+        orbPickup = {
+            "^(.+) hat die Gruene Kugel genommen!$",
+            "^(.+) hat die Blaue Kugel genommen!$",
+            "^(.+) hat die Orangefarbene Kugel genommen!$",
+            "^(.+) hat die Violette Kugel genommen!$",
+        },
+        orbReturn = {
+            "^Die Gruene Kugel wurde zurueckgebracht!$",
+            "^Die Blaue Kugel wurde zurueckgebracht!$",
+            "^Die Orangefarbene Kugel wurde zurueckgebracht!$",
+            "^Die Violette Kugel wurde zurueckgebracht!$",
+        },
+        flagPickup = {
+            "^(.+) hat die Flagge der Allianz aufgenommen!$",
+            "^(.+) hat die Flagge der Horde aufgenommen!$",
+        },
+        flagReturn = {
+            "^Die Flagge der Allianz wurde zu ihrem Stuetzpunkt zurueckgebracht!$",
+            "^Die Flagge der Horde wurde zu ihrem Stuetzpunkt zurueckgebracht!$",
+        },
+        flagCapture = {
+            "^(.+) hat die Flagge der Allianz erobert!$",
+            "^(.+) hat die Flagge der Horde erobert!$",
+        },
+        globalFlagReset = {
+            "^Die Flaggen befinden sich wieder an ihren Basen%.?$",
+        },
+        assault = {
+            "^(.+) hat (.+) angegriffen!$",
+        },
+        teamMap = {
+            Allianz = "Alliance",
+            Horde = "Horde",
+        },
+        colorMap = {
+            Gruene = "Green",
+            Blaue = "Blue",
+            Orangefarbene = "Orange",
+            Violette = "Purple",
+        },
+        normalize = true,
+    },
 }
 
 local function normalizeName(name)
     return KWR.Util:ShortName(KWR.Util:Text(name, "", 80)):lower()
+end
+
+local function sessionMapKey(sessionKey)
+    return KWR.Util:Text(sessionKey, "", 96):match("^([^:]+)")
+end
+
+local function sessionPhase(sessionKey)
+    local normalized = KWR.Util:Upper(sessionKey, "", 96)
+    if normalized:find(":PVP:", 1, true) then return "PVP" end
+    if normalized:find(":WORLD:", 1, true) then return "WORLD" end
+    if normalized:find(":TRUE", 1, true) or normalized:find(":LIVE", 1, true) then
+        return "PVP"
+    end
+    if normalized:find(":FALSE", 1, true) then return "WORLD" end
+    return nil
+end
+
+local function sessionMode(sessionKey)
+    local normalized = KWR.Util:Upper(sessionKey, "", 96)
+    if normalized:find(":PREVIEW", 1, true) then return "PREVIEW" end
+    if normalized ~= "" then return "LIVE" end
+    return nil
+end
+
+local function sameSession(stored, desired)
+    if stored == desired then return true end
+    local storedMap = sessionMapKey(stored)
+    local desiredMap = sessionMapKey(desired)
+    if not storedMap or not desiredMap or storedMap ~= desiredMap then
+        return false
+    end
+    local storedPhase = sessionPhase(stored)
+    local desiredPhase = sessionPhase(desired)
+    local storedMode = sessionMode(stored)
+    local desiredMode = sessionMode(desired)
+    return (storedPhase == nil or desiredPhase == nil or storedPhase == desiredPhase)
+        and (storedMode == nil or desiredMode == nil or storedMode == desiredMode)
 end
 
 local function addEvent(self, kind, text, objective, player)
@@ -27,28 +152,131 @@ local function addEvent(self, kind, text, objective, player)
     while #self.events > self.maxEvents do table.remove(self.events, 1) end
 end
 
+local function clearCarrier(self, objective)
+    objective = KWR.Util:Text(objective, "", 48)
+    if objective == "" then
+        return false
+    end
+    if self.carriers[objective] ~= nil then
+        self.carriers[objective] = nil
+        return true
+    end
+    return false
+end
+
+local function clearFlagCarriers(self, objective)
+    if objective then
+        return clearCarrier(self, objective)
+    end
+    local cleared = false
+    for key, carrier in pairs(self.carriers) do
+        if carrier.kind == "FLAG" then
+            self.carriers[key] = nil
+            cleared = true
+        end
+    end
+    return cleared
+end
+
+local function flagObjectiveFromMessage(message)
+    for _, team in ipairs({ "Alliance", "Horde" }) do
+        if message:find(team .. " flag", 1, true) then
+            return team .. " Flag"
+        end
+    end
+end
+
+local function activeGrammar()
+    local locale = type(GetLocale) == "function" and tostring(GetLocale() or "") or "enUS"
+    if locale == "enGB" then locale = "enUS" end
+    return MESSAGE_GRAMMARS[locale] or MESSAGE_GRAMMARS.enUS
+end
+
+local function normalizeLocaleMessage(message)
+    return tostring(message or "")
+        :gsub("\195\188", "ue")
+        :gsub("\195\156", "Ue")
+        :gsub("\195\164", "ae")
+        :gsub("\195\132", "Ae")
+        :gsub("\195\182", "oe")
+        :gsub("\195\150", "Oe")
+        :gsub("\195\159", "ss")
+end
+
+local function matchFirst(message, patterns)
+    for _, pattern in ipairs(patterns or {}) do
+        local first, second = message:match(pattern)
+        if first ~= nil then
+            return first, second
+        end
+    end
+end
+
+local function localizedFlagObjective(grammar, teamToken)
+    local teamMap = grammar and grammar.teamMap or nil
+    local team = teamMap and teamMap[teamToken] or nil
+    if team then
+        return team .. " Flag"
+    end
+end
+
+local function localizedOrbColor(grammar, colorToken)
+    local colorMap = grammar and grammar.colorMap or nil
+    return colorMap and colorMap[colorToken] or nil
+end
+
+local function localizedToken(message, tokenMap)
+    for token in pairs(tokenMap or {}) do
+        if message:find(token, 1, true) then
+            return token
+        end
+    end
+end
+
+local function normalizeObjectiveLabel(label)
+    label = KWR.Util:Text(label, "", 80)
+    return (label
+        :gsub("^the%s+", "")
+        :gsub("^den%s+", "")
+        :gsub("^die%s+", "")
+        :gsub("^das%s+", "")
+        :gsub("^der%s+", ""))
+end
+
+local function isGlobalFlagReset(message)
+    local lower = message:lower()
+    return lower:find("flags are now placed at their bases", 1, true) ~= nil
+        or lower:find("both flags returned", 1, true) ~= nil
+end
+
 function ObjectiveIntel:Reset(sessionKey)
     self.sessionKey = sessionKey
     self.events = {}
     self.carriers = {}
     self.timers = {}
+    self.auraCache = {}
+end
+
+function ObjectiveIntel:OnInitialize()
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "ObjectiveIntel")
+    end
 end
 
 function ObjectiveIntel:ObserveMessage(message, mapKey)
     message = KWR.Util:Text(message, "", 160)
     if message == "" then return end
+    local grammar = activeGrammar()
+    local matchMessage = grammar.normalize and normalizeLocaleMessage(message) or message
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
         local desired = tostring(mapKey) .. ":true"
-        if self.sessionKey ~= desired then self:Reset(desired) end
-    end
-    local player, color = message:match("^(.+) has taken the (Green|Blue|Orange|Purple) orb!$")
-    if not player then
-        for candidate in pairs(ORB_COLORS) do
-            local pattern = "^(.+) has taken the " .. candidate .. " orb!$"
-            player = message:match(pattern)
-            if player then color = candidate break end
+        if not sameSession(self.sessionKey, desired) then
+            self:Reset(desired)
         end
     end
+
+    local player = matchFirst(matchMessage, grammar.orbPickup)
+    local color = localizedOrbColor(grammar, localizedToken(matchMessage, grammar.colorMap))
     if player and color then
         local objective = color .. " Orb"
         self.carriers[objective] = {
@@ -63,27 +291,23 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
         addEvent(self, "PICKUP", message, objective, player)
         return
     end
-    for candidate in pairs(ORB_COLORS) do
-        if message:find("The " .. candidate .. " orb has been returned!", 1, true) then
-            local objective = candidate .. " Orb"
-            self.carriers[objective] = nil
-            addEvent(self, "RETURN", message, objective)
-            return
-        end
+
+    local returnedColor = localizedOrbColor(grammar, localizedToken(matchMessage, grammar.colorMap))
+    if returnedColor then
+        local objective = returnedColor .. " Orb"
+        self.carriers[objective] = nil
+        addEvent(self, "RETURN", message, objective)
+        return
     end
 
-    local flagPlayer, flagTeam
-    for _, candidate in ipairs({ "Alliance", "Horde" }) do
-        flagPlayer = message:match("^(.+) has picked up the " .. candidate .. " flag!$")
-            or message:match("^(.+) picked up the " .. candidate .. " flag!$")
-        if flagPlayer then flagTeam = candidate break end
-    end
+    local flagPlayer = matchFirst(matchMessage, grammar.flagPickup)
+    local flagTeam = localizedFlagObjective(grammar, localizedToken(matchMessage, grammar.teamMap))
     if flagPlayer and flagTeam then
-        local objective = flagTeam .. " Flag"
+        local objective = flagTeam
         self.carriers[objective] = {
             objective = objective,
             kind = "FLAG",
-            color = flagTeam,
+            color = objective:gsub(" Flag$", ""),
             player = flagPlayer,
             playerKey = normalizeName(flagPlayer),
             observedAt = KWR.Util:Now(),
@@ -92,18 +316,48 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
         addEvent(self, "PICKUP", message, objective, flagPlayer)
         return
     end
-    if message:lower():find("flag", 1, true)
-        and (message:lower():find("returned", 1, true)
-            or message:lower():find("captured", 1, true)) then
-        for objective, carrier in pairs(self.carriers) do
-            if carrier.kind == "FLAG" then self.carriers[objective] = nil end
-        end
+
+    local returnedFlag = localizedFlagObjective(grammar,
+        localizedToken(matchMessage, grammar.teamMap))
+    if returnedFlag then
+        clearFlagCarriers(self, returnedFlag)
+        addEvent(self, "FLAG_STATE", message, returnedFlag)
+        return
+    end
+
+    local capturedBy = matchFirst(matchMessage, grammar.flagCapture)
+    local capturedFlag = capturedBy and localizedFlagObjective(grammar,
+        localizedToken(matchMessage, grammar.teamMap)) or nil
+    if capturedFlag then
+        clearFlagCarriers(self, capturedFlag)
+        addEvent(self, "FLAG_STATE", message, capturedFlag)
+        return
+    end
+
+    if matchFirst(matchMessage, grammar.globalFlagReset) or isGlobalFlagReset(message) then
+        clearFlagCarriers(self)
         addEvent(self, "FLAG_STATE", message)
         return
     end
 
-    local assaulter, node = message:match("^(.+) has assaulted the (.+)!$")
+    local lowerMessage = message:lower()
+    if lowerMessage:find("flag", 1, true)
+        and (lowerMessage:find("returned", 1, true)
+            or lowerMessage:find("captured", 1, true)
+            or isGlobalFlagReset(message)) then
+        local objective = flagObjectiveFromMessage(message)
+        if objective then
+            clearFlagCarriers(self, objective)
+            addEvent(self, "FLAG_STATE", message, objective)
+            return
+        end
+        addEvent(self, "SYSTEM", message)
+        return
+    end
+
+    local assaulter, node = matchFirst(matchMessage, grammar.assault)
     if assaulter and node then
+        node = normalizeObjectiveLabel(node)
         local definition = KWR.Maps:Get(mapKey)
         self.timers[node] = {
             objective = node,
@@ -127,14 +381,64 @@ local function findEntity(snapshot, playerKey)
     end
 end
 
-local function observeCarrierAuras(carrier, unit)
-    if not unit or not C_UnitAuras or type(C_UnitAuras.GetAuraDataByIndex) ~= "function" then return end
+local function findObjectiveRow(rows, objective)
+    for _, row in ipairs(rows or {}) do
+        if row.label == objective then return row end
+    end
+end
+
+local function decorateTimerRow(snapshot, timer)
+    local objectives = snapshot.objectives or {}
+    objectives.rows = objectives.rows or {}
+    local row = findObjectiveRow(objectives.rows, timer.objective)
+    if not row then
+        row = {
+            label = timer.objective,
+            kind = "OBJECTIVE",
+            owner = "UNKNOWN",
+            state = "INCOMING",
+            source = "bg_system",
+        }
+        objectives.rows[#objectives.rows + 1] = row
+    end
+    local _, assaulterOwner = findEntity(snapshot,
+        normalizeName(KWR.Util:Text(timer.assaulter, "", 80)))
+    row.contested = true
+    row.pendingState = "INCOMING"
+    row.pendingSource = "bg_system"
+    row.pendingBy = timer.assaulter
+    row.pendingOwner = assaulterOwner
+    row.timerRemaining = timer.remaining
+    if objectives.source ~= "ui_widget"
+        or row.state == nil or row.state == "AVAILABLE" or row.state == "MAP" then
+        row.state = "INCOMING"
+        row.source = "bg_system"
+    end
+    if objectives.source ~= "ui_widget" then
+        if assaulterOwner == "FRIENDLY" then
+            objectives.friendlyIncoming = (objectives.friendlyIncoming or 0) + 1
+        elseif assaulterOwner == "ENEMY" then
+            objectives.enemyIncoming = (objectives.enemyIncoming or 0) + 1
+        end
+    end
+end
+
+local function observeCarrierAuras(self, carrier, unit)
+    if not unit or not KWR.SafeAuraAdapter then return end
+    local cacheKey = carrier.playerKey or carrier.player or unit
+    local now = KWR.Util:Now()
+    local cached = self.auraCache[cacheKey]
+    if cached and now - cached.at < 0.5 then
+        carrier.stacks = cached.stacks
+        carrier.auras = KWR.Util:Copy(cached.auras)
+        return
+    end
     local bestStacks = 0
     local observed = {}
     for _, filter in ipairs({ "HELPFUL", "HARMFUL" }) do
         for index = 1, 40 do
-            local aura = KWR.Util:Call(C_UnitAuras.GetAuraDataByIndex, unit, index, filter)
-            if type(aura) ~= "table" or KWR.Util:IsSecret(aura) then break end
+            local aura = KWR.SafeAuraAdapter:GetAura(unit, index, filter)
+            if type(aura) ~= "table" then break end
             local name = KWR.Util:Text(aura.name, "", 80)
             local lower = name:lower()
             if lower:find("focused assault", 1, true)
@@ -148,12 +452,20 @@ local function observeCarrierAuras(carrier, unit)
     end
     carrier.stacks = bestStacks
     carrier.auras = observed
+    self.auraCache[cacheKey] = {
+        at = now,
+        stacks = bestStacks,
+        auras = KWR.Util:Copy(observed),
+    }
 end
 
 function ObjectiveIntel:Apply(snapshot)
-    local sessionKey = tostring(snapshot.context.mapKey or "WORLD") .. ":"
-        .. tostring(snapshot.context.inPvP == true)
-    if self.sessionKey ~= sessionKey then self:Reset(sessionKey) end
+    local sessionKey = KWR.Util:BattlefieldSessionKey(snapshot.context)
+    if not sameSession(self.sessionKey, sessionKey) then
+        self:Reset(sessionKey)
+    elseif self.sessionKey ~= sessionKey then
+        self.sessionKey = sessionKey
+    end
 
     local carriers = {}
     for objective, stored in pairs(self.carriers) do
@@ -166,7 +478,7 @@ function ObjectiveIntel:Apply(snapshot)
             carrier.x, carrier.y = entity.x, entity.y
             carrier.dead = entity.dead
             carrier.visible = entity.visible == true or owner == "FRIENDLY"
-            observeCarrierAuras(carrier, entity.unit)
+            observeCarrierAuras(self, carrier, entity.unit)
             entity.carrier = true
             entity.carriedObjective = objective
             entity.carrierStacks = carrier.stacks
@@ -205,10 +517,22 @@ function ObjectiveIntel:Apply(snapshot)
         copy.remaining = math.max(0, (copy.endsAt or now) - now)
         if copy.remaining > 0 then
             snapshot.objectives.timers[#snapshot.objectives.timers + 1] = copy
+            decorateTimerRow(snapshot, copy)
         else
             self.timers[node] = nil
         end
     end
+    table.sort(snapshot.objectives.timers, function(a, b)
+        return KWR.Util:Text(a.objective, "", 48) < KWR.Util:Text(b.objective, "", 48)
+    end)
+    snapshot.objectives.truthQuality = {
+        source = snapshot.objectives.source or "unknown",
+        carriers = #carriers,
+        timers = #snapshot.objectives.timers,
+        observedEvents = #self.events,
+        qualified = snapshot.objectives.source == "ui_widget"
+            or #carriers > 0 or #snapshot.objectives.timers > 0,
+    }
     return snapshot
 end
 

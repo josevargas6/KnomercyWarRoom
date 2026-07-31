@@ -1,12 +1,77 @@
-# Release Readiness - 6.1.0-alpha.9
+# Release Readiness - 6.1.0-alpha.29
+
+Suite scope and release sequencing are defined by `RELEASE_VISION.md`. This
+file records the current Commander gate decision only.
 
 ## Current decision
 
-**Ready for focused in-client alpha validation. Not ready for stable public promotion.**
+**Ready for focused field validation, bounded defect repair, and continued
+evidence capture. Not ready for broader field promotion or stable public
+promotion.**
+
+The first preserved Twin Peaks screenshot pass is now recorded at
+`docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
+Horde-relative score direction, native-map coexistence, roster/assignment
+population, conservative unknown handling, enemy observation aging, and a live
+lose-state command transition. It also confirms two P1 trust blockers:
+
+- expanded Team health is empty/dim while compact legal health is visible;
+- expanded Team specialization labels drop historical `(HIST)` provenance.
+
+Twin Peaks therefore remains partial. The candidate must repair and reverify
+`KWR-032` before the Team truth portion of the map gate can pass.
+
+Supplemental match-end evidence confirms the final Horde-relative `0-3`
+defeat agrees with the AAR and captures flag pickup/drop/return/capture events.
+It also adds two P1 command blockers:
+
+- `KWR-033`: 58 published-command replacements produced `STABILITY REVIEW`
+  with an average lifetime displayed as `0:00`;
+- `KWR-034`: raw flag-event prose became a tactical `REINFORCE` target.
+
+The Commander is now a field defect-repair candidate. Additional random-map
+testing remains useful for evidence collection, but broader promotion is
+blocked until KWR-032 through KWR-034 are repaired and reverified.
+
+Current repo state:
+
+- the offline winning-state execution pass is closed by repo evidence;
+- the expert scenario corpus and bounded enemy-response planner are integrated
+  into the strategist and verified offline;
+- the current offline candidate passes validation, knowledge audit, smoke,
+  soak, and replay as of 2026-07-30;
+- the interrupted local-fight HUD slice is closed by deterministic evidence;
+- synchronized personal routing now preserves protected objective assignments;
+- package certification requires explicit smoke and soak pass markers;
+- the recovered distribution and developer package audits pass, with exact
+  evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
+- the default release package now excludes the optional Sentinel bundle unless
+  `tools/build.ps1 -IncludeSentinel` is used intentionally;
+- remaining blockers are Retail-only gates: live stability, taint/safety,
+  field-performance proof, screenshot matrix, supported-map certification, and
+  release-presentation proof;
+- `KWR-032` remains an evidenced offline/live repair gate for Team health and
+  specialization provenance;
+- `KWR-033` and `KWR-034` are evidenced command-stability and flag-target
+  quality gates.
+
+## Alpha engineering gate
+
+The implementation is above the 8.5 pre-field gate in architecture, safety,
+performance design, map knowledge, deterministic decision behavior, UI
+consistency, packaging, and diagnostics. Team/enemy tracking, score
+convergence, transition repainting, and complete-match trust remain
+provisional at 8.5 until repeated Retail matches confirm the public APIs behave
+as modeled. A field failure lowers that category and blocks promotion; it does
+not get hidden by the aggregate score.
 
 ## Proven offline
 
 - One authoritative Store and one MatchRuntime ticker.
+- Four finite zone-transition confirmations and three finite roster
+  confirmations repair loading-screen truth without adding another ticker.
+- Full spoken command calls list every named mover and defender; numeric
+  shorthand is not used on the Scout HUD.
 - Complete TOC and version consistency.
 - No legacy patch markers.
 - No automatic chat, addon messages, targeting/focus, macro execution, spell
@@ -18,12 +83,21 @@
   and retain a compact right-click copy fallback.
 - Lua 5.1 syntax for all runtime and test files.
 - World, Arathi prediction, assignment, commander, preview, journal, and AAR pipeline smoke coverage.
-- Reporter objective state, bounded permitted movement evidence, and minimized-view integration.
+- Internal Reporter objective state and bounded permitted movement evidence.
 - Local kill-target selection, roster-validated assigned-team normalization,
   and explicit unknown handling for Midnight-blocked combat evidence.
 - Dated Murlok RBG specialization snapshot with an explicit advisory boundary.
-- Two hundred fifteen deterministic diagnostics plus a 500-refresh bounded-state soak
+- Two hundred seventy-five deterministic diagnostics plus a 500-refresh bounded-state soak
   and knowledge audit.
+- Reviewed expert scenario labels now inform preferred line, fallback line,
+  safest counter, expected enemy answer, and review confidence on live
+  strategist output.
+- A bounded enemy-response planner now classifies likely punish patterns and
+  adjusts candidate consequence scoring before the final recommendation is
+  selected.
+- Reviewed doctrine depth now includes comp-threat models, enemy-defense models,
+  per-map opener branches, per-map recovery branches, per-map endgame branches,
+  deterministic doctrine fixtures, and verification-surface doctrine reporting.
 - All ten supported battlegrounds exercise lead, deficit, tie, assignment
   family, valid-location, and map-specific node-priority fixtures.
 - Forty deterministic scenario combinations per map cover opening,
@@ -51,22 +125,48 @@
   simulation all feed the existing Strategist and Commander path.
 - Low-confidence calls become conservative; unknown information remains
   unknown and cannot inflate the confidence budget.
+- Knowledge freshness gating now scores patch alignment, reviewed-data age,
+  live enemy specialization certainty, and historical-spec dependence before
+  composition-specific or meta-assisted calls are allowed to influence the
+  command path.
+- Stale or unaligned meta data can no longer silently bias kill-target scoring
+  or composition-driven strategic commits.
 - Counterfactual decision reviews are bounded developer logs and never
   self-modify battlefield doctrine.
 - Manual AAR export reuses the existing AAR subscriber and copy dialog, records
   bounded evidence only, has no automatic chat behavior, and can be disabled.
+- The existing Strategist now derives bounded commitment, reinforcement,
+  pressure, rotation-economy, collapse, recovery, organization, and
+  single-action assessments from already-sanitized state.
+- Execution assessments are review evidence only in this candidate; they do
+  not add HUD lines, automatic actions, or a second decision owner.
+- The optional target spotlight and priority-cast accents are precreated with
+  the compact roster and update from fixed target/event evidence.
+- Observed swap-class protection suppresses automatic kill-candidate ranking;
+  KWR never changes the player's target or claims interruptibility.
+- Tactical telemetry remains on the expanded command board, the compact HUD
+  reserves one persistent local-fight card, the combat roster spotlight uses a
+  dedicated readability lane, and native `Shift-M` owns battlefield-map display.
+- Qualified execution evidence produces one shared response package containing
+  movers, stayers, success, and abort; all command and review surfaces consume
+  that same package.
+- Assignment audits reject non-roster identities, invalid priorities, and
+  incompatible flag carriers.
+- Repeated execution assessments and carrier aura reads use bounded caches.
 - Export sections explicitly separate recommendations, evidence, execution,
   known outcomes, enemy observations, and unavailable facts.
 - Live performance telemetry and enforced strategic refresh budgeting.
+- Field distribution packaging now excludes developer preview and deterministic diagnostics paths.
 
 ## Requires Retail proof
 
-- Actual map-art dimensions and marker alignment on all ten maps.
+- Native `Shift-M` coexistence across battleground transitions and combat.
 - PvP scoreboard fields under Retail 12.0.7 secret-value behavior.
 - Event-fed teammate-target/nameplate last-seen behavior.
 - Live objective-marker changes; instanced player coordinates are unavailable
   through the public map-position API.
 - Reporter pressure/hotspot quality across objective families.
+- Compact local-fight card readability with zero, one, two, and three healers.
 - UI clipping and scaling at common resolutions.
 - Match-complete and instance-exit journal behavior.
 - Taint, blocked-action, CPU, and memory checks.
@@ -74,6 +174,8 @@
 - Enemy/friendly secure row click behavior through a complete combat cycle.
 - Fixed Quick Call behavior and taint through a complete battleground cycle.
 - Kill-target quality across melee and ranged local-fight conditions.
+- Knowledge-status thresholds across real inspected, partially observed, and
+  fully unknown enemy lobbies.
 
 ## Intentionally incomplete
 
@@ -84,7 +186,12 @@
   client permits it, but secret health cannot be used in target scoring.
 - External meta data is release-dated and cannot reveal an individual enemy's
   actual talents, gear, enchants, or PvP build.
+- KWR can identify when composition certainty is too weak for an advanced
+  commit, but it still cannot discover hidden enemy builds that Blizzard does
+  not safely expose.
 - Reporter cannot plot an enemy whose map position Blizzard does not safely expose; roster knowledge alone never becomes a fabricated dot.
 - Predictions for public widgets not exposed by Blizzard remain low-confidence or unknown.
 
 Promotion requires the live sections of `QA_CHECKLIST.md` to pass with captured evidence.
+Use `WINNING_STATE_RELEASE_GATES.md` as the current gate board for what is
+already proven offline versus what still requires Retail field proof.

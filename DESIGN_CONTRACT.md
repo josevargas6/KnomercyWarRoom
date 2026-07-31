@@ -10,7 +10,7 @@ The approved endgame mockups define the product direction. They are not diagnost
 4. **Enemy Tracker** - a dense all-in-one intelligence table with priority, seen age, identity, health when visible, location evidence, readiness fields, and notes.
 5. **Compact combat roster** - Team and Enemy minimize into clean clickable
    class-colored health bars with role symbols and a local kill-target glow.
-6. **Reporter intelligence** - an always-running movement knowledge base used for calls, exposed on demand as a minimized dot map or the expanded map-centric report.
+6. **Reporter intelligence** - an always-running movement knowledge base used for calls, exposed on demand as the compact Support View with an optional READ/NEXT/FEED drawer or the expanded map-centric report.
 7. **Learning loop** - match history, doctrine, evidence-based insights, and an After Action Review form.
 
 ## Non-negotiable principles
@@ -25,15 +25,15 @@ The approved endgame mockups define the product direction. They are not diagnost
   compact-roster target/focus and Objectives quick-call buttons.
 - New capability belongs in a named domain module, not a patch file or duplicate page.
 
-## Alpha 9 mapping
+## Alpha 25 mapping
 
-| Mockup surface | Alpha 9 implementation |
+| Mockup surface | Alpha 25 implementation |
 | --- | --- |
 | Scout workflow mockup | Product flow reference; no duplicate page |
 | Expanded Tactical Command Board | Primary interface in `UI/MainWindow.lua` |
 | Compact Scout HUD | `UI/HUD.lua` |
 | Reporter background intelligence | `Runtime/Reporter.lua` in the live pipeline |
-| Reporter minimized dot map | `UI/ReporterMap.lua` |
+| Reporter minimized dot map | `UI/ReporterMap.lua` compact Support View |
 | Reporter expanded report | Tactical page plus Objectives page |
 | Enemy Tracker | Enemies page plus `Runtime/EnemyIntel.lua` |
 | Team/Enemy minimized bars | `UI/CombatRoster.lua` |
@@ -45,4 +45,4 @@ The approved endgame mockups define the product direction. They are not diagnost
 
 Reporter, Team, Enemy, and combat processing do not depend on page visibility.
 The remaining gap to stable is live in-client validation, not another
-architectural rewrite.
+architectural rewrite. Sentinel remains an optional separately packaged path.

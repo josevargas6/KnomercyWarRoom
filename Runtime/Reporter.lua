@@ -5,8 +5,9 @@ local Reporter = {
     tracks = { friendly = {}, enemy = {} },
     events = {},
     sequence = 0,
-    maxPoints = 12,
-    maxEvents = 40,
+    maxPoints = 8,
+    maxEvents = 20,
+    exportPoints = 4,
     memory = { rotations = {}, routes = {}, revision = 0 },
 }
 KWR.Reporter = Reporter
@@ -28,6 +29,132 @@ end
 
 local function entityKey(entity, fallback)
     return KWR.Util:Text(entity.key or entity.guid or entity.name, fallback, 80)
+end
+
+local function locationPosition(mapKey, label)
+    local definition = KWR.Maps:Get(mapKey)
+    local canonical = KWR.Maps:CanonicalLocation(mapKey, label)
+    local position = definition and definition.positions and definition.positions[canonical]
+    if position then
+        return KWR.Util:Number(position[1], nil), KWR.Util:Number(position[2], nil), "map_location"
+    end
+    return nil, nil, nil
+end
+
+local function objectivePosition(snapshot, label)
+    local mapKey = snapshot and snapshot.context and snapshot.context.mapKey
+    local wanted = KWR.Maps:CanonicalLocation(mapKey, label)
+    for _, objective in ipairs(snapshot and snapshot.objectives and snapshot.objectives.rows or {}) do
+        if KWR.Maps:CanonicalLocation(mapKey, objective.label) == wanted then
+            return KWR.Util:Number(objective.x, nil),
+                KWR.Util:Number(objective.y, nil),
+                "objective_row"
+        end
+    end
+    return nil, nil, nil
+end
+
+local function confidenceValue(label)
+    if label == "HIGH" then return 3 end
+    if label == "MEDIUM" then return 2 end
+    if label == "LOW" then return 1 end
+    return 0
+end
+
+local function topCounts(values, limit)
+    local rows = {}
+    for key, count in pairs(values or {}) do
+        rows[#rows + 1] = { key = key, count = count }
+    end
+    table.sort(rows, function(a, b)
+        if a.count ~= b.count then return a.count > b.count end
+        return a.key < b.key
+    end)
+    local result = {}
+    for index = 1, math.min(limit or 3, #rows) do
+        result[#result + 1] = {
+            key = rows[index].key,
+            count = rows[index].count,
+        }
+    end
+    return result
+end
+
+local function freshnessWeight(track)
+    if not track then return 0 end
+    if track.visible == true then return 1 end
+    local age = KWR.Util:Number(track.age, 999) or 999
+    if age <= 5 then return 0.8 end
+    if age <= 10 then return 0.6 end
+    if age <= 20 then return 0.35 end
+    return 0.1
+end
+
+local function copyRecentPoints(points, maximum)
+    if type(points) ~= "table" or #points == 0 then return nil end
+    local startIndex = math.max(1, #points - math.max(maximum or 0, 1) + 1)
+    local result = {}
+    for index = startIndex, #points do
+        local point = points[index]
+        result[#result + 1] = {
+            x = point.x,
+            y = point.y,
+            at = point.at,
+        }
+    end
+    return result
+end
+
+local function projectTrack(track, includePoints, pointLimit)
+    if type(track) ~= "table" then return nil end
+    local projected = {
+        key = track.key,
+        team = track.team,
+        name = track.name,
+        shortName = track.shortName,
+        classFile = track.classFile,
+        x = track.x,
+        y = track.y,
+        age = track.age,
+        visible = track.visible,
+        ttl = track.ttl,
+        evidenceState = track.evidenceState,
+        confidence = track.confidence,
+        location = track.location,
+        locationSource = track.locationSource,
+        mapSource = track.mapSource,
+        locationState = track.locationState,
+        located = track.located,
+        dead = track.dead,
+        inCombat = track.inCombat,
+        role = track.role,
+        healthPercent = track.healthPercent,
+        carrier = track.carrier,
+        carrierStacks = track.carrierStacks,
+        direction = track.direction,
+        distance = track.distance,
+        speed = track.speed,
+    }
+    projected.points = includePoints and (copyRecentPoints(track.points, pointLimit) or {}) or {}
+    return projected
+end
+
+local function copyRecentEvents(events, maximum)
+    if type(events) ~= "table" or #events == 0 then return {} end
+    local startIndex = math.max(1, #events - math.max(maximum or 1, 1) + 1)
+    local result = {}
+    for index = startIndex, #events do
+        local event = events[index]
+        result[#result + 1] = {
+            id = event.id,
+            at = event.at,
+            kind = event.kind,
+            text = event.text,
+            x = event.x,
+            y = event.y,
+        }
+    end
+    return result
 end
 
 function Reporter:Reset(sessionKey)
@@ -94,6 +221,13 @@ function Reporter:Track(team, entity, observedAt, now)
     track.observedAt = at
     track.age = math.max(0, (now or KWR.Util:Now()) - at)
     track.visible = entity.visible == true or team == "friendly"
+    track.ttl = team == "friendly" and 10 or (track.visible and 8 or 20)
+    track.expiresAt = at + track.ttl
+    track.evidenceState = track.age <= track.ttl
+        and (track.visible and "VISIBLE" or "RECENT") or "STALE"
+    track.confidence = track.visible and "HIGH"
+        or (track.age <= 10 and "MEDIUM"
+        or (track.age <= track.ttl and "LOW" or "NONE"))
     track.location = KWR.Util:Text(entity.location, track.location or "Unknown", 48)
     track.locationSource = KWR.Util:Text(
         entity.locationSource, track.locationSource or "Observed Unit", 32)
@@ -119,6 +253,45 @@ function Reporter:Track(team, entity, observedAt, now)
     return track
 end
 
+function Reporter:FallbackTrackPositions(snapshot)
+    local mapKey = snapshot and snapshot.context and snapshot.context.mapKey
+    if not mapKey then return end
+    -- A track may be observed without exact coordinates (for example, from
+    -- roster/spec data). Resolve both teams to the best known objective or
+    -- map location so the tactical map can still show the player. This is an
+    -- estimate, never fabricated positioning: unknown locations remain hidden.
+    for _, team in ipairs({ "friendly", "enemy" }) do
+        for _, track in pairs(self.tracks[team] or {}) do
+            if not track.x or not track.y then
+                local px, py, source = objectivePosition(snapshot, track.location)
+                if not px or not py then
+                    px, py, source = locationPosition(mapKey, track.location)
+                end
+                if px and py then
+                    track.x, track.y = px, py
+                    track.located = true
+                    track.mapSource = source or "location_fallback"
+                end
+            end
+        end
+    end
+end
+
+function Reporter:PruneTracks(snapshot, now)
+    local roster = snapshot and snapshot.roster or {}
+    local presentFriendly = {}
+    for _, player in ipairs(roster) do
+        presentFriendly[entityKey(player, "friendly:unknown")] = true
+    end
+    if #roster > 0 then
+        for key in pairs(self.tracks.friendly or {}) do
+            if presentFriendly[key] ~= true then
+                self.tracks.friendly[key] = nil
+            end
+        end
+    end
+end
+
 local function travelSpeed(track)
     if track.speed and track.speed >= 0.003 then
         return KWR.Util:Clamp(track.speed, 0.008, 0.08), "OBSERVED"
@@ -133,6 +306,7 @@ end
 
 function Reporter:ObjectiveETAs(snapshot)
     local result = {}
+    local mapKey = snapshot.context and snapshot.context.mapKey
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
         if x and y then
@@ -148,11 +322,27 @@ function Reporter:ObjectiveETAs(snapshot)
             for team, tracks in pairs(self.tracks) do
                 for _, track in pairs(tracks) do
                     local maxAge = team == "friendly" and 10 or 30
-                    if track.x and track.y and not track.dead
-                        and (track.age or 999) <= maxAge then
-                        local range = distance(track.x, track.y, x, y)
+                    if not track.dead and (track.age or 999) <= maxAge then
+                        local range = track.x and track.y
+                            and distance(track.x, track.y, x, y) or nil
                         local speed, source = travelSpeed(track)
                         local eta = range and math.ceil(range / math.max(speed, 0.001)) or nil
+                        if not eta and track.location
+                            and track.location ~= "Unknown" then
+                            local capability = KWR.Capabilities:Resolve(
+                                track.classFile, track.spec)
+                            local route = KWR.Maps:TravelEstimate(
+                                mapKey, track.location, objective.label, {
+                                    mobility = capability and capability.ratings
+                                        and capability.ratings.mobility or 2,
+                                    inCombat = track.inCombat,
+                                    observed = false,
+                                })
+                            if route then
+                                eta = route.seconds
+                                source = route.source
+                            end
+                        end
                         if eta then
                             local field = team == "friendly" and "friendlyETA" or "enemyETA"
                             local countField = team == "friendly" and "friendlyCount" or "enemyCount"
@@ -160,6 +350,10 @@ function Reporter:ObjectiveETAs(snapshot)
                             row[countField] = row[countField] + 1
                             if source == "OBSERVED" then
                                 row.observedSpeeds = row.observedSpeeds + 1
+                            end
+                            if source == "MAP_ROUTE_ESTIMATE" then
+                                row.routeEstimates =
+                                    (row.routeEstimates or 0) + 1
                             end
                         end
                     end
@@ -171,6 +365,8 @@ function Reporter:ObjectiveETAs(snapshot)
                 local coverage = row.friendlyCount + row.enemyCount
                 row.confidence = row.observedSpeeds >= 2 and "HIGH"
                     or (coverage >= 3 and "MEDIUM" or "LOW")
+                row.observedAt = KWR.Util:Now()
+                row.expiresAt = row.observedAt + 8
                 result[#result + 1] = row
             end
         end
@@ -185,23 +381,38 @@ function Reporter:ObjectiveETAs(snapshot)
 end
 
 function Reporter:PredictIntent(snapshot, etas)
-    local best
+    local ranked = {}
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
         if x and y then
             local score, group, eta, evidence = 0, 0, nil, {}
+            local commitment, approachWeight, stalePenalty = 0, 0, 0
+            local anchored, visibleTracks = 0, 0
             for _, track in pairs(self.tracks.enemy) do
                 if track.x and track.y and not track.dead and (track.age or 999) <= 20 then
+                    local freshness = freshnessWeight(track)
                     local current = distance(track.x, track.y, x, y)
                     local projected = track.velocityX and distance(
                         track.x + track.velocityX * 5,
                         track.y + track.velocityY * 5, x, y) or current
                     if current and current <= 0.24 then
                         group = group + 1
-                        score = score + 8
+                        score = score + math.floor((6 * freshness) + 0.5)
+                        if track.visible then visibleTracks = visibleTracks + 1 end
+                        if current <= 0.12 then
+                            commitment = commitment + freshness
+                        end
+                        if current <= 0.08 and (track.inCombat or track.direction == "HOLDING") then
+                            anchored = anchored + 1
+                            score = score + math.floor((5 * freshness) + 0.5)
+                        end
+                        if freshness < 0.5 then
+                            stalePenalty = stalePenalty + math.floor((1 - freshness) * 8)
+                        end
                     end
                     if current and projected and projected < current - 0.004 then
-                        score = score + 14
+                        score = score + math.floor((14 * freshness) + 0.5)
+                        approachWeight = approachWeight + freshness
                         evidence[#evidence + 1] = track.name .. " moving toward"
                     end
                     local speed = travelSpeed(track)
@@ -216,23 +427,89 @@ function Reporter:PredictIntent(snapshot, etas)
             score = score + math.min(12, repeated * 3)
             if repeated > 0 then evidence[#evidence + 1] = "match pattern x" .. repeated end
             if group > 0 then evidence[#evidence + 1] = tostring(group) .. " nearby" end
-            if not best or score > best.score then
-                best = {
-                    target = objective.label,
-                    score = score,
-                    groupSize = group,
-                    eta = eta,
-                    evidence = evidence,
-                }
+            if commitment >= 2 then
+                score = score + 8
+                evidence[#evidence + 1] = "multiple committed tracks"
             end
+            if anchored >= 2 then
+                score = score + 6
+                evidence[#evidence + 1] = "enemy anchored"
+            end
+            local etaRow
+            for _, row in ipairs(etas or {}) do
+                if row.label == objective.label then
+                    etaRow = row
+                    break
+                end
+            end
+            if etaRow and etaRow.enemyETA and etaRow.enemyETA <= 12 then
+                score = score + 6
+                evidence[#evidence + 1] = "fast enemy ETA"
+            end
+            ranked[#ranked + 1] = {
+                target = objective.label,
+                score = score,
+                groupSize = group,
+                eta = eta,
+                evidence = evidence,
+                commitmentScore = KWR.Util:Clamp(
+                    math.floor((commitment * 22)
+                        + (approachWeight * 8)
+                        + (visibleTracks * 3)
+                        - stalePenalty + 0.5),
+                    0, 100),
+                commitment = commitment,
+                anchored = anchored,
+                visibleTracks = visibleTracks,
+                stalePenalty = stalePenalty,
+            }
         end
     end
-    if not best or best.score < 12 then
-        return { target = nil, confidence = "NONE", score = best and best.score or 0 }
+    table.sort(ranked, function(a, b)
+        if a.score ~= b.score then return a.score > b.score end
+        return a.target < b.target
+    end)
+    local best = ranked[1]
+    local second = ranked[2]
+    local candidateSummary = {}
+    for index = 1, math.min(3, #ranked) do
+        candidateSummary[#candidateSummary + 1] = {
+            target = ranked[index].target,
+            score = ranked[index].score,
+            eta = ranked[index].eta,
+            groupSize = ranked[index].groupSize,
+        }
     end
-    best.confidenceScore = KWR.Util:Clamp(20 + best.score, 0, 90)
+    if not best or best.score < 12 then
+        return {
+            target = nil,
+            confidence = "NONE",
+            score = best and best.score or 0,
+            candidates = candidateSummary,
+        }
+    end
+    local separation = best.score - (second and second.score or 0)
+    best.confidenceScore = KWR.Util:Clamp(20 + best.score + math.min(10, separation), 0, 90)
+    if (best.commitmentScore or 0) < 35 then
+        best.confidenceScore = math.max(15, best.confidenceScore - 10)
+        best.evidence[#best.evidence + 1] = "commitment still soft"
+    end
+    if (best.stalePenalty or 0) >= 8 then
+        best.confidenceScore = math.max(15, best.confidenceScore - 8)
+        best.evidence[#best.evidence + 1] = "stale movement evidence"
+    end
+    if second and separation <= 6 then
+        best.confidenceScore = math.max(20, best.confidenceScore - 14)
+        best.evidence[#best.evidence + 1] = "split enemy options"
+        best.decoyTarget = second.target
+        best.decoyScore = second.score
+    end
     best.confidence = best.confidenceScore >= 70 and "HIGH"
         or (best.confidenceScore >= 45 and "MEDIUM" or "LOW")
+    best.observedAt = KWR.Util:Now()
+    best.expiresAt = best.observedAt + 10
+    best.separation = separation
+    best.candidates = candidateSummary
     return best
 end
 
@@ -303,6 +580,16 @@ function Reporter:ObjectivePressure(snapshot)
             end
             row.delta = row.enemy - row.friendly
             row.total = row.enemy + row.friendly
+            row.observedAt = KWR.Util:Now()
+            row.expiresAt = row.observedAt + 8
+            row.confidence = row.total >= 4 and "MEDIUM"
+                or (row.total > 0 and "LOW" or "NONE")
+            row.state = row.owner == "FRIENDLY" and row.delta >= 2 and "UNDERDEFENDED"
+                or (row.owner == "FRIENDLY" and row.friendly >= row.enemy + 3 and row.enemy <= 1
+                    and "STABLE")
+                or (row.owner == "ENEMY" and row.enemy >= row.friendly + 3 and "ENEMY_STACKED")
+                or (row.total >= 3 and "CONTESTED")
+                or "QUIET"
             row.risk = KWR.Util:Clamp(
                 35 + (row.delta * 18) + (row.enemy * 7)
                     + (row.enemyCombat * 6) + (row.friendlyCombat * 2),
@@ -317,17 +604,129 @@ function Reporter:ObjectivePressure(snapshot)
     return pressure
 end
 
+function Reporter:TrustProfile(snapshot, pressure, etas, intent)
+    local coverage = { friendly = 0, enemy = 0, friendlyLocated = 0, enemyLocated = 0 }
+    local staleEnemy = 0
+    for _, track in pairs(self.tracks.friendly) do
+        coverage.friendly = coverage.friendly + 1
+        if track.located then coverage.friendlyLocated = coverage.friendlyLocated + 1 end
+    end
+    for _, track in pairs(self.tracks.enemy) do
+        coverage.enemy = coverage.enemy + 1
+        if track.located then coverage.enemyLocated = coverage.enemyLocated + 1 end
+        if track.visible ~= true and (track.age or 999) > 10 then
+            staleEnemy = staleEnemy + 1
+        end
+    end
+    local coverageScore = coverage.friendlyLocated + coverage.enemyLocated
+    local topPressure = pressure and pressure[1] or nil
+    local etaConfidence = etas and etas[1] and confidenceValue(etas[1].confidence) or 0
+    local intentConfidence = confidenceValue(intent and intent.confidence)
+    local commitmentScore = KWR.Util:Number(intent and intent.commitmentScore, 0) or 0
+    local hiddenRisk = math.max(0,
+        math.max(0, coverage.enemy - coverage.enemyLocated) * 8
+            + (staleEnemy * 4)
+            + ((topPressure and topPressure.enemy or 0) >= 3 and 10 or 0)
+            + (intent and intent.decoyTarget and 14 or 0)
+            + (intent and intent.target and commitmentScore < 35 and 8 or 0))
+    local score = KWR.Util:Clamp(
+        coverageScore * 8
+            + etaConfidence * 8
+            + intentConfidence * 10
+            + math.min(12, math.floor(commitmentScore / 10))
+            - hiddenRisk,
+        0, 100)
+    local label = score >= 75 and "HIGH"
+        or (score >= 50 and "MEDIUM" or (score >= 30 and "LOW" or "NONE"))
+    local pace = label == "HIGH" and "COMMIT_OK"
+        or (label == "MEDIUM" and "PROBE_OK" or "VERIFY_FIRST")
+    local reasons = {}
+    reasons[#reasons + 1] = string.format("%dF/%dE located",
+        coverage.friendlyLocated or 0, coverage.enemyLocated or 0)
+    if intent and intent.target then
+        reasons[#reasons + 1] = tostring(intent.confidence or "LOW")
+            .. " intent on " .. tostring(intent.target)
+    end
+    if intent and intent.target then
+        reasons[#reasons + 1] = "commit " .. tostring(intent.commitmentScore or 0)
+    end
+    if intent and intent.decoyTarget then
+        reasons[#reasons + 1] = "decoy risk " .. tostring(intent.decoyTarget)
+    end
+    if staleEnemy > 0 then
+        reasons[#reasons + 1] = tostring(staleEnemy) .. " stale enemy tracks"
+    end
+    if topPressure and topPressure.state ~= "QUIET" then
+        reasons[#reasons + 1] = topPressure.label .. " " .. topPressure.state
+    end
+    return {
+        score = score,
+        label = label,
+        pace = pace,
+        hiddenRisk = hiddenRisk,
+        reason = table.concat(reasons, ", "),
+        commitAuthorized = pace == "COMMIT_OK",
+        decoyTarget = intent and intent.decoyTarget or nil,
+    }
+end
+
+function Reporter:BattlefieldRead(summary, callHint, trust, hotspot, intent)
+    local confidence = KWR.Util:Text(trust and trust.label, "NONE", 16)
+    local status = "Needs eyes"
+    if intent and intent.target and intent.confidence == "HIGH" then
+        status = "Likely rotation"
+    elseif hotspot and hotspot.enemy and hotspot.enemy >= 2 and hotspot.delta > 0 then
+        status = "Observed pressure"
+    elseif hotspot and hotspot.total and hotspot.total > 0 then
+        status = "Active cluster"
+    elseif confidence == "LOW" or confidence == "NONE" then
+        status = "Needs eyes"
+    end
+    local action = KWR.Util:Text(callHint, "", 140)
+    if action == "" then
+        if status == "Needs eyes" then
+            action = "Hold current assignment and gather safe observations."
+        elseif hotspot and hotspot.label then
+            action = "Keep assignments aligned around " .. hotspot.label .. "."
+        else
+            action = "Hold the current call."
+        end
+    end
+    return {
+        status = status,
+        confidence = confidence,
+        headline = KWR.Util:Text(summary, "Reporter is waiting for safe battlefield facts.", 180),
+        action = action,
+        hotspot = hotspot and hotspot.label or nil,
+        intent = intent and intent.target or nil,
+        risk = hotspot and hotspot.risk or 0,
+        source = (intent and intent.target and "intent")
+            or (hotspot and hotspot.label and "hotspot")
+            or "coverage",
+    }
+end
+
 function Reporter:Snapshot(snapshot)
     local now = KWR.Util:Now()
+    local includeMapDetail = snapshot.context and (snapshot.context.preview == true
+        or snapshot.context.inPvP ~= true)
+        or (KWR.MainWindow and KWR.MainWindow.frame
+            and KWR.MainWindow.frame:IsShown()
+            and KWR.MainWindow.activePage == "TACTICAL")
     local friendly, enemy = {}, {}
-    for _, track in pairs(self.tracks.friendly) do friendly[#friendly + 1] = KWR.Util:Copy(track) end
-    for _, track in pairs(self.tracks.enemy) do enemy[#enemy + 1] = KWR.Util:Copy(track) end
+    for _, track in pairs(self.tracks.friendly) do
+        friendly[#friendly + 1] = projectTrack(track, includeMapDetail, self.exportPoints)
+    end
+    for _, track in pairs(self.tracks.enemy) do
+        enemy[#enemy + 1] = projectTrack(track, includeMapDetail, self.exportPoints)
+    end
     table.sort(friendly, function(a, b) return a.name < b.name end)
     table.sort(enemy, function(a, b)
         if (a.age or 999) ~= (b.age or 999) then return (a.age or 999) < (b.age or 999) end
         return a.name < b.name
     end)
     local friendlyCombat, enemyCombat = 0, 0
+    local enemyVisible, enemyRecent, enemyStale = 0, 0, 0
     for _, track in ipairs(friendly) do
         if track.inCombat and not track.dead then friendlyCombat = friendlyCombat + 1 end
     end
@@ -335,16 +734,33 @@ function Reporter:Snapshot(snapshot)
         if track.inCombat and not track.dead and (track.age or 999) <= 10 then
             enemyCombat = enemyCombat + 1
         end
+        if track.visible == true then
+            enemyVisible = enemyVisible + 1
+        elseif (track.age or 999) <= 10 then
+            enemyRecent = enemyRecent + 1
+        else
+            enemyStale = enemyStale + 1
+        end
     end
 
     local pressure = self:ObjectivePressure(snapshot)
     local etas = self:ObjectiveETAs(snapshot)
     local intent = self:PredictIntent(snapshot, etas)
     local momentum = self:Momentum(snapshot, pressure)
+    local trust = self:TrustProfile(snapshot, pressure, etas, intent)
     local hotspot = pressure[1]
     local risk = hotspot and hotspot.risk or 0
+    local routes = topCounts(self.memory and self.memory.routes, 3)
     local summary, callHint
-    if hotspot and hotspot.enemy >= 2 and hotspot.delta > 0 then
+    if trust.pace == "VERIFY_FIRST" and hotspot and hotspot.total > 0 then
+        summary = string.format("%s is active but confidence is %s: verify before a full commit.",
+            hotspot.label, trust.label)
+        callHint = "Hold the score floor and verify " .. hotspot.label .. " before over-rotating."
+    elseif intent and intent.target and intent.confidence == "HIGH" then
+        summary = string.format("High-confidence enemy hit likely %s in %ss.",
+            intent.target, intent.eta or 0)
+        callHint = "Pre-position for " .. intent.target .. " and keep the score floor intact."
+    elseif hotspot and hotspot.enemy >= 2 and hotspot.delta > 0 then
         summary = string.format("%s under observed pressure: %d friendly / %d enemy-known / %d engaged.",
             hotspot.label, hotspot.friendly, hotspot.enemy,
             (hotspot.friendlyCombat or 0) + (hotspot.enemyCombat or 0))
@@ -365,6 +781,7 @@ function Reporter:Snapshot(snapshot)
         self.hotspotKey = hotspot.key
         self:AddEvent("HOTSPOT", summary, hotspot.x, hotspot.y)
     end
+    local battlefieldRead = self:BattlefieldRead(summary, callHint, trust, hotspot, intent)
 
     return {
         active = snapshot.context.inPvP == true,
@@ -377,16 +794,35 @@ function Reporter:Snapshot(snapshot)
         etas = etas,
         enemyIntent = intent,
         momentum = momentum,
-        matchMemory = KWR.Util:Copy(self.memory),
-        hotspot = hotspot and KWR.Util:Copy(hotspot) or nil,
+        trust = trust,
+        matchMemory = {
+            revision = self.memory and self.memory.revision or 0,
+        },
+        hotspot = hotspot and {
+            key = hotspot.key,
+            label = hotspot.label,
+            x = hotspot.x,
+            y = hotspot.y,
+            risk = hotspot.risk,
+            total = hotspot.total,
+            state = hotspot.state,
+            friendly = hotspot.friendly,
+            enemy = hotspot.enemy,
+            delta = hotspot.delta,
+        } or nil,
         risk = risk,
         summary = summary,
         callHint = callHint,
+        battlefieldRead = battlefieldRead,
+        routes = routes,
         coverage = {
             friendly = #friendly,
             enemy = #enemy,
             friendlyCombat = friendlyCombat,
             enemyCombat = enemyCombat,
+            enemyVisible = enemyVisible,
+            enemyRecent = enemyRecent,
+            enemyStale = enemyStale,
             friendlyLocated = (function()
                 local count = 0
                 for _, track in ipairs(friendly) do if track.located then count = count + 1 end end
@@ -398,7 +834,7 @@ function Reporter:Snapshot(snapshot)
                 return count
             end)(),
         },
-        events = KWR.Util:Copy(self.events),
+        events = copyRecentEvents(self.events, includeMapDetail and 6 or 1),
     }
 end
 
@@ -417,8 +853,7 @@ function Reporter:Observe(snapshot)
         }
     end
 
-    local sessionKey = tostring(snapshot.context.mapID or snapshot.context.mapKey)
-        .. (snapshot.context.preview and ":preview" or ":live")
+    local sessionKey = KWR.Util:BattlefieldSessionKey(snapshot.context)
     if self.sessionKey ~= sessionKey then
         self:Reset(sessionKey)
         self:AddEvent("SESSION", "Reporter movement session started.")
@@ -434,11 +869,19 @@ function Reporter:Observe(snapshot)
         if enemy.visible and not observedAt then observedAt = capturedAt end
         if observedAt then self:Track("enemy", enemy, observedAt, now) end
     end
+    self:PruneTracks(snapshot, now)
+    self:FallbackTrackPositions(snapshot)
     return self:Snapshot(snapshot)
 end
 
 function Reporter:Distance(x1, y1, x2, y2)
     return distance(x1, y1, x2, y2)
+end
+
+function Reporter:OnInitialize()
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "Reporter")
+    end
 end
 
 KWR:RegisterModule("Reporter", Reporter)

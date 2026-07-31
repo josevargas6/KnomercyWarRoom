@@ -1,7 +1,7 @@
 local _, KWR = ...
 
 local EncounterHistory = {
-    maxPlayers = 500,
+    maxPlayers = 240,
     sessionSeen = {},
 }
 KWR.EncounterHistory = EncounterHistory
@@ -29,6 +29,9 @@ local function knownSpec(spec)
 end
 
 function EncounterHistory:OnInitialize()
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "EncounterHistory")
+    end
     KWR.db.encounters = type(KWR.db.encounters) == "table" and KWR.db.encounters or {}
     KWR.db.encounters.players = type(KWR.db.encounters.players) == "table"
         and KWR.db.encounters.players or {}
@@ -100,8 +103,7 @@ function EncounterHistory:Apply(entity)
 end
 
 function EncounterHistory:Enrich(snapshot)
-    local sessionKey = tostring(snapshot.context.inPvP == true) .. ":"
-        .. tostring(snapshot.context.mapKey or "WORLD")
+    local sessionKey = KWR.Util:BattlefieldSessionKey(snapshot.context)
     if self.sessionKey ~= sessionKey then
         self.sessionKey = sessionKey
         self.sessionSeen = {}

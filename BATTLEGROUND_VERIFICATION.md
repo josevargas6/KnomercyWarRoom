@@ -6,8 +6,8 @@ prediction, command, assignment, presentation, and match result must all agree.
 
 ## Automated coverage
 
-The Alpha 9 `/kwr test` and `tests/smoke.lua` suite contains 215 deterministic
-checks and must prove:
+The Alpha 28 `/kwr test` and `tests/smoke.lua` suite contains 275 deterministic
+diagnostics and must prove:
 
 1. the map resolves to the correct key and mechanic family;
 2. public score and objective values are normalized to the assigned battlefield team;
@@ -57,13 +57,13 @@ Evidence: screenshots + /kwr verify + /kwr evidence
 | Deepwind Gorge | Five nodes using score widget 2074; wide response rotations | Verified widget ID, 3-2 fixture, and Blitz rules | Standard and Blitz retest required |
 | Eye of the Storm | Tower tick race plus tower-scaled flag value | Standard and Blitz tower/flag-value fixtures | Standard and Blitz required |
 | Warsong Gulch | Flag possession, return-and-cap synchronization | Lead/deficit and both-carrier fixtures | Required |
-| Twin Peaks | Flag possession plus route/return pressure | Deficit return-and-cap fixture | Required |
+| Twin Peaks | Flag possession plus route/return pressure | Deficit return-and-cap fixture | Partial 2026-07-28 evidence includes `0-3` final/AAR and flag events; Team health/provenance, command stability, flag-target grammar, diagnostics, exact carrier truth, history count, and exit remain open |
 | Temple of Kotmogu | Orb-count pressure and carrier deletion | 1-3 urgency plus missing-telemetry truth fixture | Required |
 | Silvershard Mines | Active cart control, delay, route abandonment | Cart delay/recovery fixture | Required |
 | Deephaul Ravine | Escort our cart, turn theirs, conditional Crystal value | Enemy-cart turn plus missing-telemetry truth fixture | Required |
 | Seething Shore | Spawn timing, channel denial, exhausted-node exit | Next-spawn recovery fixture | Required |
 
-Build-time rule references reviewed for Alpha 9:
+Build-time rule references retained for Alpha 28:
 
 - https://warcraft.wiki.gg/wiki/Arathi_Basin_(original)
 - https://warcraft.wiki.gg/wiki/Eye_of_the_Storm
@@ -83,8 +83,9 @@ public in-game score and objective widgets remain authoritative during a match.
 - Objectives: exactly one row per objective, with current owner/state and map position.
 - Widget discovery: `/kwr verify` records the score and objective widget IDs
   actually observed in that match; changed IDs must not silently become zero state.
-- Reporter map: objective markers update live. Instanced player coordinates are
-  restricted by Blizzard and must not be fabricated.
+- Native battlefield map: opening and closing `Shift-M` does not suppress or
+  desynchronize KWR commands. Instanced player coordinates remain restricted
+  and must not be fabricated by internal Reporter intelligence.
 - Team roster: observed specializations persist for the group session after
   another player is inspected.
 - Formation verification: safe inspect results replace historical estimates,
@@ -94,6 +95,10 @@ public in-game score and objective widgets remain authoritative during a match.
   health bars, stacks, and map markers update without converting hidden values.
 - Reassessment: `REASSESS` publishes an explicit old-to-new assignment delta
   and does not silently distribute or execute the change.
+- Knowledge status: `/kwr verify` and `/kwr explain` must show when enemy
+  specialization certainty is too weak for composition-specific commits, and
+  the live call must fall back to map fundamentals instead of pretending to
+  know hidden builds.
 - AAR: selected choices remain highlighted, saved choices restore, and the
   recorded result follows the assigned team's final score.
 - Quick Calls: each left-click sends exactly one fixed phrase to Instance Chat,

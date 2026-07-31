@@ -2,14 +2,19 @@ local _, KWR = ...
 
 local Learning = {}
 KWR.Learning = Learning
+Learning.maxBuckets = 120
 
 local function bucketKey(mapKey, planID)
     return KWR.Util:Text(mapKey, "WORLD", 24) .. ":" .. KWR.Util:Text(planID, "NONE", 64)
 end
 
 function Learning:OnInitialize()
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "Learning")
+    end
     KWR.db.learning = type(KWR.db.learning) == "table" and KWR.db.learning or {}
     KWR.db.learning.plans = type(KWR.db.learning.plans) == "table" and KWR.db.learning.plans or {}
+    self:Prune()
 end
 
 function Learning:RecordReviewed(entry)
@@ -36,8 +41,28 @@ function Learning:RecordReviewed(entry)
     else bucket.losses = bucket.losses + 1 end
     bucket.updatedAt = entry.endedAt
     KWR.db.learning.plans[key] = bucket
+    self:Prune()
     entry.learned = true
     return true
+end
+
+function Learning:Prune()
+    local rows = {}
+    for key, bucket in pairs(KWR.db.learning.plans or {}) do
+        rows[#rows + 1] = {
+            key = key,
+            at = KWR.Util:Number(bucket.updatedAt, 0) or 0,
+            samples = KWR.Util:Number(bucket.samples, 0) or 0,
+        }
+    end
+    table.sort(rows, function(a, b)
+        if a.samples ~= b.samples then return a.samples > b.samples end
+        if a.at ~= b.at then return a.at > b.at end
+        return a.key < b.key
+    end)
+    for index = self.maxBuckets + 1, #rows do
+        KWR.db.learning.plans[rows[index].key] = nil
+    end
 end
 
 function Learning:Adjustment(mapKey, planID)
