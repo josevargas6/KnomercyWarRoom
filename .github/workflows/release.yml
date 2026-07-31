@@ -38,7 +38,7 @@ jobs:
       - name: Run complete release gate
         shell: pwsh
         run: |
-          ./tools/validate.ps1 -Channel production
+          ./tools/validate.ps1
           ./tools/security-audit.ps1
           ./tools/knowledge-audit.ps1
           fengari tests/smoke.lua
