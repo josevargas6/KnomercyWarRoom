@@ -12,7 +12,8 @@ into existing owners rather than implemented as parallel engines.
 
 - PowerShell 5.1 or newer for validation and packaging.
 - World of Warcraft Retail 12.0.7 for field testing.
-- A Lua 5.1 parser/runtime for optional offline syntax and smoke tests.
+- A Lua 5.1+ runtime or Node.js/Fengari for offline tests. The repository test
+  runner also discovers the standard Codex and local Fengari caches.
 - BugSack/BugGrabber or equivalent Lua error capture is strongly recommended.
 
 ## Validate
@@ -28,11 +29,26 @@ documents.
 
 ## Offline pipeline test
 
-Run `tests/smoke.lua` with Lua 5.1+ or `fengari-node-cli`. It loads the entire TOC dependency graph, boots the addon, exercises world, live-Arathi, preview, assignment, commander, journal, and diagnostic flows.
+Run all deterministic offline Lua gates from the addon root:
 
-Run `tests/soak.lua` to execute 500 complete pipeline refreshes and prove that
-runtime samples, command history, Reporter tracks, verification evidence, and
-AAR history remain bounded.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\test-lua.ps1
+```
+
+The runner discovers explicit environment overrides, commands on `PATH`, and
+the standard local Node/Fengari caches. It runs `tests/smoke.lua`,
+`tests/soak.lua`, and one strict default replay, and requires each pass marker
+even if the underlying runtime returns a misleading zero exit code.
+
+Use `-Suite Smoke`, `-Suite Soak`, or `-Suite Replay` for one gate. Supply a
+different replay with `-ReplayPath`; optional `-ReplayLabelPath` and
+`-ReplayOutputPath` arguments pass through to the replay runner.
+
+The smoke test loads the entire TOC dependency graph, boots the addon, and
+exercises world, live-Arathi, preview, assignment, commander, journal, and
+diagnostic flows. The soak test executes 500 complete pipeline refreshes and
+proves that runtime samples, command history, Reporter tracks, verification
+evidence, and AAR history remain bounded.
 
 ## Build packages
 
