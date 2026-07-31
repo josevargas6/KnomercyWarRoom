@@ -1,11 +1,11 @@
 # Third-Party Notices
 
-Knomercy War Room 6.1 Alpha 9 contains no embedded third-party libraries or
+Knomercy War Room 6.1 Alpha 28 contains no embedded third-party libraries or
 copied third-party addon source.
 
 During design review, the project studied the observable architecture and
 behavior of BattleGroundEnemiesFixed, BattlegroundWinConditions, CursorRing,
-DBM-PvP, GladPushCC, Plater, PVPTabTarget, and REPorter. The 6.0 implementation
+DBM-PvP, GladPushCC, Plater, and PVPTabTarget. The 6.0 implementation
 is KWR-native.
 
 `Data/MetaSnapshot.lua` contains a small factual snapshot transcribed from
