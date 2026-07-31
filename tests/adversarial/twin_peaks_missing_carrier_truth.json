@@ -1,0 +1,100 @@
+{
+  "schema": "kwr-replay-schema",
+  "schemaVersion": 1,
+  "kind": "timeline_replay",
+  "replayId": "tp-standard-adversarial-missing-carrier-001",
+  "source": {
+    "type": "synthetic_mutation",
+    "consent": "n/a",
+    "provenance": "developer_fixture",
+    "verified": true
+  },
+  "capturedAt": "2026-07-29T00:00:00Z",
+  "patch": {
+    "interface": 120007,
+    "build": "6.1.0-alpha.28"
+  },
+  "ruleset": {
+    "apiMode": "Retail_Current",
+    "bracket": "STANDARD"
+  },
+  "map": {
+    "key": "TWINPEAKS",
+    "mode": "STANDARD",
+    "kind": "FLAG",
+    "profile": "tp_standard"
+  },
+  "side": "HORDE",
+  "redaction": {
+    "status": "SYNTHETIC",
+    "identityMode": "ROLE_LABELS",
+    "secretValuesRemoved": true
+  },
+  "initialState": {
+    "friendlyRoster": [
+      { "slot": "fc", "class": "Druid", "spec": "Guardian", "role": "TANK" }
+    ],
+    "enemyRoster": [
+      { "slot": "enemy_fc", "class": "Druid", "spec": "Guardian", "role": "TANK" }
+    ],
+    "score": {
+      "friendly": 0,
+      "enemy": 1
+    },
+    "objectives": {
+      "friendlyCarrier": null,
+      "enemyCarrier": null
+    },
+    "evidenceQuality": "LOW"
+  },
+  "timeline": [
+    {
+      "t": 0,
+      "event": "missing_truth",
+      "facts": {
+        "friendlyScore": 0,
+        "enemyScore": 1,
+        "friendlyCarrierActive": false,
+        "enemyCarrierActive": false
+      }
+    }
+  ],
+  "expectedLabels": {
+    "primaryActions": [
+      "PLAN:RECOVERY"
+    ],
+    "fallbackActions": [
+      "CALL:HOLD",
+      "WHERE:FIELD"
+    ],
+    "forbiddenActions": [
+      "PLAN:OPENING",
+      "TARGET:EFC"
+    ],
+    "mustStay": [],
+    "requiredCapabilities": [],
+    "successConditions": [
+      "verify_carrier_truth"
+    ],
+    "abortConditions": [
+      "carrier_truth_missing"
+    ],
+    "maxDelaySeconds": 4,
+    "rationale": "Missing carrier truth must not authorize a fabricated enemy-carrier collapse."
+  },
+  "outcome": {
+    "result": "UNKNOWN",
+    "finalScore": {
+      "friendly": 0,
+      "enemy": 1
+    },
+    "reviewStatus": "OPEN",
+    "checkpoints": [
+      {
+        "offsetSeconds": 0,
+        "classification": "SUCCESS",
+        "summary": "Fixture exists to verify fail-closed behavior under missing carrier truth."
+      }
+    ]
+  }
+}
