@@ -1,0 +1,258 @@
+{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "dhr-endgame-deny-last-checkpoint-adversarial-001",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_adversarial_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "DEEPHAUL",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "dhr_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1320,
+                                       "enemy":  1185,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+
+                                        },
+                         "evidenceQuality":  "LOW"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "dhr_endgame_deny_last_checkpoint_adversarial_state",
+                         "facts":  {
+                                       "phase":  "ENDGAME",
+                                       "summary":  "Anchor the enemy\u0027s final checkpoint route and force every last-second fight onto cart truth.",
+                                       "truth":  "LOW",
+                                       "objectiveKnowledge":  "PARTIAL"
+                                   }
+                     },
+                     {
+                         "t":  9,
+                         "event":  "dhr_endgame_deny_last_checkpoint_adversarial_conflict",
+                         "facts":  {
+                                       "pressure":  "AMBIGUOUS",
+                                       "carrierTruth":  "UNKNOWN",
+                                       "movementTruth":  "PARTIAL"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:FULL_COMMIT"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "discipline",
+                                                        "coverage"
+                                                    ],
+                           "successConditions":  [
+                                                     "close_match_cleanly"
+                                                 ],
+                           "abortConditions":  [
+                                                   "final_state_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Anchor the enemy\u0027s final checkpoint route and force every last-second fight onto cart truth. adversarial truth case: maintain the safest check path when battlefield truth is incomplete.",
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "late_game_score_protection",
+                                                                     "escort",
+                                                                     "deny"
+                                                                 ],
+                                                  "preferredComparison":  "preserve the winning path before optional pressure.",
+                                                  "safestCounter":  "preserve the safer path until battlefield truth improves.",
+                                                  "primaryComparisonId":  "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                                  "primaryResponseId":  "DEEPHAUL_RESP_LATE_GREED",
+                                                  "doctrineComparisonIds":  [
+                                                                                "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                                                                "DEEPHAUL_DENY_VS_TRADE",
+                                                                                "DEEPHAUL_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "DEEPHAUL_RESP_LATE_GREED",
+                                                                              "DEEPHAUL_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the protected path still wins the game",
+                                                                    "the enemy desperation route is still denyable",
+                                                                    "optional pressure is weaker than direct score protection"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the winning path no longer wins",
+                                                                        "the enemy last-score route cannot be denied in time"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ],
+                                                  "truthStress":  "ADVERSARIAL"
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "UNKNOWN",
+                    "finalScore":  {
+                                       "friendly":  1320,
+                                       "enemy":  1185
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  5,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Initial truth review: battlefield facts are too incomplete for expansion."
+                                        },
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded; the safe requirement is uncertainty discipline."
+                                        },
+                                        {
+                                            "offsetSeconds":  18,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Lesson: keep the move reversible until battlefield truth improves."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "late_game_score_protection",
+                                                              "escort",
+                                                              "deny"
+                                                          ],
+                                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                           "primaryComparisonId":  "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                           "primaryResponseId":  "DEEPHAUL_RESP_LATE_GREED",
+                                           "doctrineComparisonIds":  [
+                                                                         "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                                                         "DEEPHAUL_DENY_VS_TRADE",
+                                                                         "DEEPHAUL_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "DEEPHAUL_RESP_LATE_GREED",
+                                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the protected path still wins the game",
+                                                             "the enemy desperation route is still denyable",
+                                                             "optional pressure is weaker than direct score protection"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the winning path no longer wins",
+                                                                 "the enemy last-score route cannot be denied in time"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ],
+                                           "truthStress":  "ADVERSARIAL",
+                                           "variantClassification":  "UNRESOLVED"
+                                       },
+                    "classifications":  {
+                                            "primary":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded and the safe line remains unresolved.",
+                                            "secondary":  [
+
+                                                          ]
+                                        },
+                    "attribution":  {
+                                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                                        "decisionQuality":  "CAUTIOUS",
+                                        "executionQuality":  "HELD_BACK",
+                                        "truthQuality":  "DEGRADED",
+                                        "recommendedLesson":  "Protect the score floor and refuse full-commit calls from partial truth."
+                                    }
+                }
+}
