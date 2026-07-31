@@ -1,0 +1,122 @@
+{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "ab-midgame-reset-shell-001-label",
+    "replayId":  "ab-midgame-reset-shell-001",
+    "mapProfile":  "ab_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:RECOVERY"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:OPENING"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "regroup",
+                                                  "deny"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "rebuild_score_path"
+                                           ],
+                     "abortConditions":  [
+                                             "regroup_fails"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "BASE_UNDER_THREAT"
+                                      ],
+                     "phase":  "RECOVERY",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "recover",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "ARATHI_RECOVER_VS_TRICKLE",
+                                            "primaryResponseId":  "ARATHI_RESP_RECOVER_REBAIT",
+                                            "doctrineComparisonIds":  [
+                                                                          "ARATHI_RECOVER_VS_TRICKLE",
+                                                                          "ARATHI_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "ARATHI_RESP_RECOVER_REBAIT",
+                                                                        "ARATHI_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "a regroup wave can still arrive before resolution",
+                                                              "the enemy winning lane can still be denied",
+                                                              "the rebuild does not expose a worse immediate loss"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the regroup wave arrives too late",
+                                                                  "the denial lane is already gone"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Call a full shell reset after staggered road deaths before re-entering the node game. Restore defender timing and stop feeding broken lanes.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "ARATHI_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "ARATHI_RESP_RECOVER_REBAIT",
+                           "doctrineComparisonIds":  [
+                                                         "ARATHI_RECOVER_VS_TRICKLE",
+                                                         "ARATHI_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "ARATHI_RESP_RECOVER_REBAIT",
+                                                       "ARATHI_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}
