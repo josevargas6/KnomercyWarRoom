@@ -1,0 +1,256 @@
+{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "ab-stabilize-three-base-adversarial-001",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_adversarial_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "ARATHI",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "ab_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1125,
+                                       "enemy":  900,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+
+                                        },
+                         "evidenceQuality":  "LOW"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "ab_stabilize_three_base_adversarial_state",
+                         "facts":  {
+                                       "phase":  "STABILIZE",
+                                       "summary":  "Protect a 3-2 lead with a reserve route.",
+                                       "truth":  "LOW",
+                                       "objectiveKnowledge":  "PARTIAL"
+                                   }
+                     },
+                     {
+                         "t":  9,
+                         "event":  "ab_stabilize_three_base_adversarial_conflict",
+                         "facts":  {
+                                       "pressure":  "AMBIGUOUS",
+                                       "carrierTruth":  "UNKNOWN",
+                                       "movementTruth":  "PARTIAL"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:FULL_COMMIT"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "rotation"
+                                                    ],
+                           "successConditions":  [
+                                                     "preserve_winning_state"
+                                                 ],
+                           "abortConditions":  [
+                                                   "coverage_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Protect a 3-2 lead with a reserve route. adversarial truth case: maintain the safest check path when battlefield truth is incomplete.",
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "hold",
+                                                                     "deny",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "protect current score floor before expanding.",
+                                                  "safestCounter":  "preserve the safer path until battlefield truth improves.",
+                                                  "primaryComparisonId":  "ARATHI_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "ARATHI_RESP_BAIT_SHOW",
+                                                  "doctrineComparisonIds":  [
+                                                                                "ARATHI_HOLD_VS_ROTATE",
+                                                                                "ARATHI_DENY_VS_TRADE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "ARATHI_RESP_BAIT_SHOW",
+                                                                              "ARATHI_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the current shell still wins the score path",
+                                                                    "reserve timing remains intact",
+                                                                    "friendly defenders stay planted on the score floor"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the shell loses its planted defender",
+                                                                        "the reserve route is consumed by a higher-value emergency"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ],
+                                                  "truthStress":  "ADVERSARIAL"
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "UNKNOWN",
+                    "finalScore":  {
+                                       "friendly":  1125,
+                                       "enemy":  900
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  5,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Initial truth review: battlefield facts are too incomplete for expansion."
+                                        },
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded; the safe requirement is uncertainty discipline."
+                                        },
+                                        {
+                                            "offsetSeconds":  18,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Lesson: keep the move reversible until battlefield truth improves."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "hold",
+                                                              "deny",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "protect current score floor before expanding.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "ARATHI_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "ARATHI_RESP_BAIT_SHOW",
+                                           "doctrineComparisonIds":  [
+                                                                         "ARATHI_HOLD_VS_ROTATE",
+                                                                         "ARATHI_DENY_VS_TRADE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "ARATHI_RESP_BAIT_SHOW",
+                                                                       "ARATHI_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the current shell still wins the score path",
+                                                             "reserve timing remains intact",
+                                                             "friendly defenders stay planted on the score floor"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the shell loses its planted defender",
+                                                                 "the reserve route is consumed by a higher-value emergency"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ],
+                                           "truthStress":  "ADVERSARIAL",
+                                           "variantClassification":  "UNRESOLVED"
+                                       },
+                    "classifications":  {
+                                            "primary":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded and the safe line remains unresolved.",
+                                            "secondary":  [
+
+                                                          ]
+                                        },
+                    "attribution":  {
+                                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                                        "decisionQuality":  "CAUTIOUS",
+                                        "executionQuality":  "HELD_BACK",
+                                        "truthQuality":  "DEGRADED",
+                                        "recommendedLesson":  "Protect the score floor and refuse full-commit calls from partial truth."
+                                    }
+                }
+}
