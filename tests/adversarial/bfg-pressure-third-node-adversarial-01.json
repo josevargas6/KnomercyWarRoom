@@ -1,0 +1,260 @@
+{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "bfg-pressure-third-node-adversarial-001",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_adversarial_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "GILNEAS",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "bfg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  825,
+                                       "enemy":  780,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+
+                                        },
+                         "evidenceQuality":  "LOW"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "bfg_pressure_third_node_adversarial_state",
+                         "facts":  {
+                                       "phase":  "PRESSURE",
+                                       "summary":  "Punish the weak third node after showing at Waterworks.",
+                                       "truth":  "LOW",
+                                       "objectiveKnowledge":  "PARTIAL"
+                                   }
+                     },
+                     {
+                         "t":  9,
+                         "event":  "bfg_pressure_third_node_adversarial_conflict",
+                         "facts":  {
+                                       "pressure":  "AMBIGUOUS",
+                                       "carrierTruth":  "UNKNOWN",
+                                       "movementTruth":  "PARTIAL"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:FULL_COMMIT"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "pressure",
+                                                        "control"
+                                                    ],
+                           "successConditions":  [
+                                                     "convert_pressure_window"
+                                                 ],
+                           "abortConditions":  [
+                                                   "target_reinforced_early"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Punish the weak third node after showing at Waterworks. adversarial truth case: maintain the safest check path when battlefield truth is incomplete.",
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "collapse",
+                                                                     "split",
+                                                                     "bait"
+                                                                 ],
+                                                  "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                                  "safestCounter":  "preserve the safer path until battlefield truth improves.",
+                                                  "primaryComparisonId":  "GILNEAS_COLLAPSE_VS_SPLIT",
+                                                  "primaryResponseId":  "GILNEAS_RESP_SPLIT_PRESSURE",
+                                                  "doctrineComparisonIds":  [
+                                                                                "GILNEAS_COLLAPSE_VS_SPLIT",
+                                                                                "GILNEAS_BAIT_VS_FRONTDOOR",
+                                                                                "GILNEAS_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "GILNEAS_RESP_SPLIT_PRESSURE",
+                                                                              "GILNEAS_RESP_COLLAPSE_CONNECT",
+                                                                              "GILNEAS_RESP_ESCORT_SHELL"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the target lane is still live before reinforcement lands",
+                                                                    "the pressure package arrives together",
+                                                                    "the current score floor remains protected during the strike"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the target reinforces before arrival",
+                                                                        "the pressure package splits into equal weak contacts"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ],
+                                                  "truthStress":  "ADVERSARIAL"
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "UNKNOWN",
+                    "finalScore":  {
+                                       "friendly":  825,
+                                       "enemy":  780
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  5,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Initial truth review: battlefield facts are too incomplete for expansion."
+                                        },
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded; the safe requirement is uncertainty discipline."
+                                        },
+                                        {
+                                            "offsetSeconds":  18,
+                                            "classification":  "UNRESOLVED",
+                                            "summary":  "Lesson: keep the move reversible until battlefield truth improves."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "collapse",
+                                                              "split",
+                                                              "bait"
+                                                          ],
+                                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                           "primaryComparisonId":  "GILNEAS_COLLAPSE_VS_SPLIT",
+                                           "primaryResponseId":  "GILNEAS_RESP_SPLIT_PRESSURE",
+                                           "doctrineComparisonIds":  [
+                                                                         "GILNEAS_COLLAPSE_VS_SPLIT",
+                                                                         "GILNEAS_BAIT_VS_FRONTDOOR",
+                                                                         "GILNEAS_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "GILNEAS_RESP_SPLIT_PRESSURE",
+                                                                       "GILNEAS_RESP_COLLAPSE_CONNECT",
+                                                                       "GILNEAS_RESP_ESCORT_SHELL"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the target lane is still live before reinforcement lands",
+                                                             "the pressure package arrives together",
+                                                             "the current score floor remains protected during the strike"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the target reinforces before arrival",
+                                                                 "the pressure package splits into equal weak contacts"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ],
+                                           "truthStress":  "ADVERSARIAL",
+                                           "variantClassification":  "UNRESOLVED"
+                                       },
+                    "classifications":  {
+                                            "primary":  "UNRESOLVED",
+                                            "summary":  "Truth is intentionally degraded and the safe line remains unresolved.",
+                                            "secondary":  [
+
+                                                          ]
+                                        },
+                    "attribution":  {
+                                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                                        "decisionQuality":  "CAUTIOUS",
+                                        "executionQuality":  "HELD_BACK",
+                                        "truthQuality":  "DEGRADED",
+                                        "recommendedLesson":  "Protect the score floor and refuse full-commit calls from partial truth."
+                                    }
+                }
+}
