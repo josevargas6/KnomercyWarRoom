@@ -3,7 +3,13 @@ local _, KWR = ...
 local AAR = {
     active = nil,
     lastCompleted = nil,
-    maxHistory = 30,
+    maxHistory = 8,
+    maxCommands = 18,
+    maxEvents = 32,
+    maxObjectiveTimeline = 48,
+    maxDecisionReviews = 12,
+    maxPlayerLocations = 8,
+    maxPlayerNotes = 6,
 }
 KWR.AAR = AAR
 
@@ -35,6 +41,53 @@ local function displayEntity(entity)
     }
 end
 
+local function canonicalEntityName(entity)
+    return KWR.Util:CanonicalName(
+        entity and (entity.name or entity.shortName) or "")
+end
+
+local function claimEntityRecord(collection, entity, prefix, factory)
+    local preferredKey = entityKey(entity, prefix)
+    local record = collection[preferredKey]
+    if record then return record, preferredKey end
+
+    local canonicalName = canonicalEntityName(entity)
+    if canonicalName ~= "" then
+        for existingKey, existing in pairs(collection) do
+            if canonicalEntityName(existing) == canonicalName then
+                local hasGUID = clean(entity and entity.guid, "", 80) ~= ""
+                if hasGUID and existingKey ~= preferredKey then
+                    collection[existingKey] = nil
+                    collection[preferredKey] = existing
+                    return existing, preferredKey
+                end
+                return existing, existingKey
+            end
+        end
+    end
+
+    record = factory(entity)
+    collection[preferredKey] = record
+    return record, preferredKey
+end
+
+local function mergeEntity(record, entity)
+    local current = displayEntity(entity)
+    for _, field in ipairs({
+        "guid", "name", "shortName", "class", "classFile", "spec", "role", "specSource",
+    }) do
+        local value = current[field]
+        local unknown = record[field] == nil or record[field] == ""
+            or record[field] == "Unknown" or record[field] == "UNKNOWN"
+            or record[field] == "unknown"
+        if value ~= nil and value ~= "" and value ~= "Unknown"
+            and value ~= "UNKNOWN" and value ~= "unknown" and unknown then
+            record[field] = value
+        end
+    end
+    return record
+end
+
 local function assignmentByKey(assignments)
     local result = {}
     for _, assignment in ipairs(assignments or {}) do
@@ -45,9 +98,74 @@ local function assignmentByKey(assignments)
     return result
 end
 
+local function trimList(list, maximum)
+    if type(list) ~= "table" then return {} end
+    maximum = KWR.Util:Number(maximum, 0) or 0
+    if maximum <= 0 then
+        return {}
+    end
+    local count = #list
+    if count <= maximum then
+        return list
+    end
+    local startIndex = count - maximum + 1
+    local trimmed = {}
+    for index = startIndex, count do
+        trimmed[#trimmed + 1] = list[index]
+    end
+    return trimmed
+end
+
 local function appendBounded(list, value, maximum)
     list[#list + 1] = value
-    while #list > maximum do table.remove(list, 1) end
+    return trimList(list, maximum)
+end
+
+local function compactPlayerEvidence(evidence, maxLocations, maxNotes)
+    evidence = type(evidence) == "table" and evidence or {}
+    evidence.locations = trimList(evidence.locations or {}, maxLocations or 8)
+    evidence.notes = trimList(evidence.notes or {}, maxNotes or 6)
+    return evidence
+end
+
+local function compactThreats(threats)
+    local result = {}
+    for key, threat in pairs(threats or {}) do
+        result[key] = {
+            guid = clean(threat.guid, "", 80),
+            name = clean(threat.name, "Unknown", 64),
+            class = clean(threat.class, "Unknown", 32),
+            spec = clean(threat.spec, "Unknown", 32),
+            role = clean(threat.role, "Unknown", 16),
+            sightings = KWR.Util:Number(threat.sightings, 0) or 0,
+            flags = KWR.Util:Copy(threat.flags or {}),
+            lastSeenLocation = clean(threat.lastSeenLocation, "Unknown", 48),
+            lastSeenAt = KWR.Util:Number(threat.lastSeenAt, nil),
+            lastSeenAge = KWR.Util:Number(threat.lastSeenAge, nil),
+        }
+    end
+    return result
+end
+
+local function copyEntry(entry)
+    return KWR.Util:Copy(entry)
+end
+
+local function commandReviewRecord(state)
+    return KWR.CommandReview:BuildRecord(
+        state and state.command,
+        state and state.snapshot,
+        state and state.assignments,
+        state and state.prediction)
+end
+
+local function activePlayOutcomeText(outcome)
+    outcome = type(outcome) == "table" and outcome or {}
+    local status = clean(outcome.status, "LIVE", 24)
+    local phase = clean(outcome.phase, "UNKNOWN", 24)
+    local bucket = clean(outcome.bucket, "PRE_ARRIVAL", 24)
+    local reason = clean(outcome.reason, "No outcome reason recorded.", 120)
+    return string.format("%s | %s | %s | %s", status, phase, bucket, reason)
 end
 
 local function relativeClock(entry, at)
@@ -72,6 +190,130 @@ local function joinClean(values, separator)
         result[#result + 1] = clean(value, "Unknown", 180)
     end
     return table.concat(result, separator or "; ")
+end
+
+local function average(list)
+    local total, count = 0, 0
+    for _, value in ipairs(list or {}) do
+        value = KWR.Util:Number(value, nil)
+        if value ~= nil then
+            total = total + value
+            count = count + 1
+        end
+    end
+    if count == 0 then return nil end
+    return total / count
+end
+
+local function pickHighestKey(counts)
+    local winner
+    local winnerCount
+    for key, count in pairs(counts or {}) do
+        local value = KWR.Util:Number(count, 0) or 0
+        if not winnerCount or value > winnerCount
+            or (value == winnerCount and tostring(key) < tostring(winner)) then
+            winner = tostring(key)
+            winnerCount = value
+        end
+    end
+    return winner
+end
+
+local function classifyDecisionReview(command, result)
+    command = type(command) == "table" and command or {}
+    local score = KWR.Util:Number(command.decisionScore
+        or command.projectedWinProbability, nil)
+    local confidenceScore = KWR.Util:Number(command.confidenceScore, nil)
+    local activeOutcome = command.activePlayOutcome or {}
+    local execution = command.executionAssessment or {}
+    local organization = execution.organization or {}
+    local trustMode = clean(command.trustMode, "UNKNOWN", 24)
+    local enemyResponse = command.enemyResponsePlan or {}
+    local commandResult = clean(result, "UNKNOWN", 24)
+
+    local decisionQuality = "PLAYABLE"
+    if commandResult == "VICTORY" then
+        decisionQuality = (score or 0) >= 65 and "STRONG" or "PLAYABLE"
+    elseif commandResult == "DEFEAT" then
+        if trustMode == "CONSERVATIVE" or trustMode == "VERIFY" then
+            decisionQuality = "THIN_READ"
+        elseif (score or 0) >= 70 or (confidenceScore or 0) >= 70 then
+            decisionQuality = "GOOD_CALL_LOST"
+        elseif (score or 0) < 45 then
+            decisionQuality = "BAD_CALL"
+        else
+            decisionQuality = "PLAYABLE"
+        end
+    end
+
+    local executionQuality = "CLEAN"
+    if organization.state == "DISORDERED" or organization.state == "SCATTERED" then
+        executionQuality = "BROKEN"
+    elseif activeOutcome.bucket == "PRE_ARRIVAL"
+        or activeOutcome.bucket == "LATE_ARRIVAL" then
+        executionQuality = "LATE"
+    elseif activeOutcome.status == "FAILED" then
+        executionQuality = "BROKEN"
+    end
+
+    local truthQuality = "STABLE"
+    if trustMode == "CONSERVATIVE" or trustMode == "VERIFY" then
+        truthQuality = "THIN"
+    elseif trustMode == "LOCKED" then
+        truthQuality = "STABLE"
+    elseif trustMode ~= "UNKNOWN" then
+        truthQuality = "PARTIAL"
+    end
+
+    local enemyReadQuality = "READY"
+    if clean(enemyResponse.attributionHint, "UNKNOWN", 24) == "ENEMY_COUNTER_WINDOW"
+        or clean(enemyResponse.responsePressure, "UNKNOWN", 24) == "HIGH" then
+        enemyReadQuality = "OUTPLAYED"
+    elseif clean(enemyResponse.confidence, "LOW", 16) == "LOW" then
+        enemyReadQuality = "UNCLEAR"
+    end
+
+    local failureMode = "NONE"
+    if commandResult == "DEFEAT" then
+        if decisionQuality == "BAD_CALL" then
+            failureMode = "CALL"
+        elseif truthQuality == "THIN" then
+            failureMode = "READ"
+        elseif executionQuality == "LATE" or executionQuality == "BROKEN" then
+            failureMode = "EXECUTION"
+        elseif enemyReadQuality == "OUTPLAYED" then
+            failureMode = "COUNTER"
+        else
+            failureMode = "CONTESTED"
+        end
+    end
+
+    local recommendedLesson = "Stay on the reviewed line while battlefield truth remains intact."
+    if failureMode == "READ" then
+        recommendedLesson = "Keep the call reversible until objective and movement truth improve."
+    elseif failureMode == "EXECUTION" then
+        recommendedLesson = "The branch was playable, but the team must arrive together and hold the timing."
+    elseif failureMode == "COUNTER" then
+        recommendedLesson = clean(enemyResponse.safestReply,
+            "Respect the enemy counter window and answer it before re-committing.", 140)
+    elseif failureMode == "CALL" then
+        recommendedLesson = "Protect the score floor first and refuse low-value side pressure."
+    end
+
+    local outcomeDriver = clean(command.outcomeDriver, "", 48)
+    if outcomeDriver == "" then
+        outcomeDriver = clean(enemyResponse.attributionHint, "UNKNOWN", 48)
+    end
+
+    return {
+        decisionQuality = decisionQuality,
+        executionQuality = executionQuality,
+        truthQuality = truthQuality,
+        enemyReadQuality = enemyReadQuality,
+        failureMode = failureMode,
+        outcomeDriver = outcomeDriver,
+        recommendedLesson = recommendedLesson,
+    }
 end
 
 local function sortedValues(records)
@@ -110,33 +352,19 @@ function AAR:Start(state)
         lastSignature = nil,
         matchComplete = false,
     }
+    self:PersistActive()
 end
 
 function AAR:CaptureTeams(active, snapshot)
     for _, player in ipairs(snapshot.roster or {}) do
-        local key = entityKey(player, "friendly")
-        active.friendlyTeam[key] = active.friendlyTeam[key]
-            or displayEntity(player)
-        local stored = active.friendlyTeam[key]
-        if stored.spec == "Unknown" and clean(player.spec, "Unknown", 32) ~= "Unknown" then
-            stored.spec = clean(player.spec, "Unknown", 32)
-            stored.specSource = clean(player.specSource, "observed", 24)
-        end
-        if stored.role == "Unknown" and player.role then
-            stored.role = clean(player.role, "Unknown", 16)
-        end
+        local stored = claimEntityRecord(
+            active.friendlyTeam, player, "friendly", displayEntity)
+        mergeEntity(stored, player)
     end
     for _, enemy in ipairs(snapshot.enemies or {}) do
-        local key = entityKey(enemy, "enemy")
-        active.enemyTeam[key] = active.enemyTeam[key] or displayEntity(enemy)
-        local stored = active.enemyTeam[key]
-        if stored.spec == "Unknown" and clean(enemy.spec, "Unknown", 32) ~= "Unknown" then
-            stored.spec = clean(enemy.spec, "Unknown", 32)
-            stored.specSource = clean(enemy.specSource or enemy.evidence, "observed", 24)
-        end
-        if stored.role == "Unknown" and enemy.role then
-            stored.role = clean(enemy.role, "Unknown", 16)
-        end
+        local stored = claimEntityRecord(
+            active.enemyTeam, enemy, "enemy", displayEntity)
+        mergeEntity(stored, enemy)
     end
 end
 
@@ -155,10 +383,10 @@ function AAR:CaptureScoreboard(active, snapshot)
         local rowFaction = KWR.Util:Number(row.faction, nil)
         if rowFaction ~= nil then
             local friendly = rowFaction == friendlyFaction
-            local key = entityKey(row, friendly and "friendly" or "enemy")
             local collection = friendly and active.friendlyTeam or active.enemyTeam
-            collection[key] = collection[key] or displayEntity(row)
-            local stored = collection[key]
+            local stored = claimEntityRecord(collection, row,
+                friendly and "friendly" or "enemy", displayEntity)
+            mergeEntity(stored, row)
             for _, field in ipairs({
                 "killingBlows", "honorableKills", "deaths", "damageDone",
                 "healingDone", "rating", "ratingChange",
@@ -186,14 +414,16 @@ function AAR:CapturePlayerEvidence(active, state)
         if name ~= "" then integrityByName[name] = row end
     end
     for _, player in ipairs(state.snapshot.roster or {}) do
-        local key = entityKey(player, "friendly")
-        local evidence = active.playerEvidence[key] or {
-            guid = clean(player.guid, "", 80),
-            name = clean(player.name or player.shortName, "Unknown", 64),
-            locations = {},
-            notes = {},
-            deathsObserved = 0,
-        }
+        local evidence, key = claimEntityRecord(
+            active.playerEvidence, player, "friendly", function(entity)
+                return {
+                    guid = clean(entity.guid, "", 80),
+                    name = clean(entity.name or entity.shortName, "Unknown", 64),
+                    locations = {},
+                    notes = {},
+                    deathsObserved = 0,
+                }
+            end)
         local assignment = assignments[key]
             or assignments["name:" .. clean(player.name, "", 64):lower()]
         if assignment then
@@ -211,11 +441,11 @@ function AAR:CapturePlayerEvidence(active, state)
         local location = clean(player.location, "Unknown", 48)
         if location ~= "Unknown" and location ~= "Position restricted"
             and location ~= evidence.lastLocation then
-            appendBounded(evidence.locations, {
-                at = now,
-                location = location,
-                source = clean(player.locationSource, "Observed", 32),
-            }, 20)
+                appendBounded(evidence.locations, {
+                    at = now,
+                    location = location,
+                    source = clean(player.locationSource, "Observed", 32),
+            }, self.maxPlayerLocations)
             evidence.lastLocation = location
         end
         local dead = KWR.Util:Boolean(player.dead, false)
@@ -232,7 +462,7 @@ function AAR:CapturePlayerEvidence(active, state)
                 .. clean(integrityRow.expected, "Unknown", 48) .. " | observed "
                 .. clean(integrityRow.actual, "Unknown", 48)
             if note ~= evidence.lastIntegrityNote then
-                appendBounded(evidence.notes, { at = now, text = note }, 12)
+                appendBounded(evidence.notes, { at = now, text = note }, self.maxPlayerNotes)
                 evidence.lastIntegrityNote = note
             end
         end
@@ -255,7 +485,7 @@ function AAR:CaptureObjectives(active, snapshot)
                 text = label .. ": " .. previous.owner .. "/" .. previous.state
                     .. " -> " .. owner .. "/" .. state,
                 source = clean(row.source, snapshot.objectives.source or "unknown", 24),
-            }, 120)
+            }, self.maxObjectiveTimeline)
         end
         active.objectiveStates[label] = { owner = owner, state = state }
     end
@@ -272,7 +502,7 @@ function AAR:CaptureObjectives(active, snapshot)
                 player = clean(event.player, "Unknown", 64),
                 text = clean(event.text, "Objective event observed.", 160),
                 source = "BG_SYSTEM",
-            }, 120)
+            }, self.maxObjectiveTimeline)
         end
     end
 end
@@ -289,225 +519,7 @@ function AAR:CaptureThreats(active, snapshot)
             class = clean(enemy.class or enemy.classFile, "Unknown", 32),
             spec = clean(enemy.spec, "Unknown", 32),
             role = clean(enemy.role, "Unknown", 16),
-            sightings = 0,
-            flags = {},
-        }
-        if enemy.visible == true then threat.sightings = threat.sightings + 1 end
-        threat.lastSeenLocation = clean(enemy.location, threat.lastSeenLocation or "Unknown", 48)
-        threat.lastSeenAt = KWR.Util:Number(enemy.lastSeenAt, threat.lastSeenAt)
-        threat.lastSeenAge = KWR.Util:Number(enemy.lastSeenAge, enemy.age or threat.lastSeenAge)
-        if enemy.role == "HEALER" then threat.flags.healer = true end
-        if enemy.classFile == "ROGUE" or enemy.spec == "Feral" then
-            threat.flags.stealth = true
-        end
-        if enemy.carrier then threat.flags.carrier = true end
-        if key == killKey or enemy.localEngaged then threat.flags.highPressure = true end
-        active.enemyThreats[key] = threat
-    end
-end
-
-function AAR:Record(state)
-    if not self.active then self:Start(state) end
-    local active = self.active
-    active.scoreEnd = KWR.Util:Copy(state.snapshot.score)
-    active.team = KWR.Util:Copy(state.snapshot.context.team or active.team)
-    active.matchComplete = active.matchComplete
-        or state.snapshot.context.matchComplete == true
-    active.truthQualified = state.snapshot.score.source == "ui_widget"
-        and state.snapshot.context.team
-        and state.snapshot.context.team.side ~= nil
-    local reporter = state.snapshot.reporter or {}
-    local combat = state.snapshot.combat or {}
-    active.lastFeatures = {
-        at = epoch(),
-        phase = state.snapshot.context.phase,
-        friendlyScore = state.snapshot.score.friendly,
-        enemyScore = state.snapshot.score.enemy,
-        friendlyObjectives = state.snapshot.objectives.friendly,
-        enemyObjectives = state.snapshot.objectives.enemy,
-        reporterRisk = reporter.risk,
-        hotspot = reporter.hotspot and reporter.hotspot.label or nil,
-        killTarget = combat.killTarget and combat.killTarget.shortName or nil,
-        commandSignature = state.command and state.command.signature or nil,
-    }
-    self:CaptureTeams(active, state.snapshot)
-    self:CaptureScoreboard(active, state.snapshot)
-    self:CapturePlayerEvidence(active, state)
-    self:CaptureObjectives(active, state.snapshot)
-    self:CaptureThreats(active, state.snapshot)
-    local planID = state.snapshot.strategy and state.snapshot.strategy.planID
-    if planID then
-        active.planUsage[planID] = (active.planUsage[planID] or 0) + 1
-    end
-    local signature = state.command and state.command.signature
-    if signature and signature ~= active.lastSignature then
-        local previousCommand = active.commands[#active.commands]
-        if previousCommand and previousCommand.outcome == "Unknown" then
-            local target = clean(previousCommand.objectiveTarget, "Unknown", 64)
-            for _, objective in ipairs(state.snapshot.objectives
-                and state.snapshot.objectives.rows or {}) do
-                if clean(objective.label, "", 64) == target then
-                    previousCommand.outcome = "Observed when next command issued: "
-                        .. target .. " "
-                        .. clean(objective.owner, "UNKNOWN", 16) .. "/"
-                        .. clean(objective.state, "UNKNOWN", 20)
-                    break
-                end
-            end
-        end
-        active.commands[#active.commands + 1] = {
-            at = epoch(),
-            status = state.command.status,
-            action = state.command.action,
-            who = state.command.who,
-            reason = state.command.reason,
-            confidence = state.command.confidence,
-            confidenceScore = state.command.confidenceScore,
-            risk = state.command.risk,
-            expectedOutcome = state.command.expectedOutcome,
-            projectedWinProbability = state.command.projectedWinProbability,
-            recommendationMode = state.command.recommendationMode,
-            evidence = KWR.Util:Copy(state.command.evidence),
-            simulations = KWR.Util:Copy(state.command.simulations),
-            mapState = {
-                phase = clean(state.snapshot.context.phase, "UNKNOWN", 20),
-                friendlyScore = KWR.Util:Number(state.snapshot.score.friendly, nil),
-                enemyScore = KWR.Util:Number(state.snapshot.score.enemy, nil),
-                friendlyObjectives = KWR.Util:Number(state.snapshot.objectives.friendly, nil),
-                enemyObjectives = KWR.Util:Number(state.snapshot.objectives.enemy, nil),
-            },
-            objectiveTarget = state.command.objectiveDecision
-                and clean(state.command.objectiveDecision.target, "Unknown", 64) or "Unknown",
-            assigned = clean(state.command.who, "Unknown", 120),
-            abortCondition = state.command.objectiveDecision
-                and clean(state.command.objectiveDecision.abort, "Unknown", 160)
-                or clean(state.command.switchIf, "Unknown", 160),
-            outcome = "Unknown",
-        }
-        while #active.commands > 40 do table.remove(active.commands, 1) end
-        active.lastSignature = signature
-    end
-    local message = KWR.Util:Text(state.snapshot.lastMessage, "", 160)
-    if message ~= "" and message ~= active.lastMessage then
-        active.events[#active.events + 1] = { at = epoch(), text = message }
-        while #active.events > 80 do table.remove(active.events, 1) end
-        active.lastMessage = message
-    end
-    local reporterEvents = state.snapshot.reporter and state.snapshot.reporter.events or {}
-    local reporterEvent = reporterEvents[#reporterEvents]
-    if reporterEvent and reporterEvent.id ~= active.lastReporterEventID then
-        active.events[#active.events + 1] = {
-            at = epoch(),
-            text = "Reporter: " .. KWR.Util:Text(reporterEvent.text, "Movement update", 140),
-        }
-        while #active.events > 80 do table.remove(active.events, 1) end
-        active.lastReporterEventID = reporterEvent.id
-    end
-end
-
-function AAR:DetermineResult(entry)
-    local score = entry.scoreEnd or {}
-    if entry.matchComplete and (score.max or 0) > 0 then
-        if (score.friendly or 0) > (score.enemy or 0) then return "VICTORY" end
-        if (score.friendly or 0) < (score.enemy or 0) then return "DEFEAT" end
-        return "DRAW"
-    end
-    if (score.max or 0) > 0 then
-        if (score.friendly or 0) >= score.max then return "VICTORY" end
-        if (score.enemy or 0) >= score.max then return "DEFEAT" end
-        if (score.friendly or 0) > (score.enemy or 0) then return "AHEAD" end
-        if (score.friendly or 0) < (score.enemy or 0) then return "BEHIND" end
-    end
-    return "UNKNOWN"
-end
-
-function AAR:BuildDecisionReviews(commands, result)
-    local reviews = {}
-    local startIndex = math.max(1, #(commands or {}) - 19)
-    for index = startIndex, #(commands or {}) do
-        local command = commands[index]
-        local alternative = command.simulations and command.simulations[2]
-        reviews[#reviews + 1] = {
-            at = command.at,
-            recommendation = command.action,
-            recommendationMode = command.recommendationMode,
-            expectedOutcome = command.expectedOutcome,
-            projectedWinProbability = command.projectedWinProbability,
-            confidence = command.confidence,
-            risk = command.risk,
-            actualResult = result,
-            outcomeAligned = (result == "VICTORY" and
-                (command.projectedWinProbability or 0) >= 50)
-                or (result == "DEFEAT" and
-                    (command.projectedWinProbability or 100) < 50),
-            competingOption = alternative and alternative.id,
-            competingProbability = alternative and alternative.probability,
-            evidenceReview = "DEVELOPER_REVIEW_REQUIRED",
-        }
-    end
-    return reviews
-end
-
-function AAR:Finish(state)
-    if not self.active then return end
-    self:Record(state)
-    local entry = self.active
-    entry.endedAt = epoch()
-    entry.duration = math.max(0, entry.endedAt - (entry.startedAt or entry.endedAt))
-    entry.result = self:DetermineResult(entry)
-    entry.finalCommand = entry.commands[#entry.commands]
-    if entry.finalCommand then
-        entry.finalCommand.outcome = "Match ended: " .. entry.result
-    end
-    local primaryPlanID, primaryCount
-    for planID, count in pairs(entry.planUsage or {}) do
-        if not primaryCount or count > primaryCount then
-            primaryPlanID, primaryCount = planID, count
-        end
-    end
-    entry.primaryPlanID = primaryPlanID
-    entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
-    KWR.db.journal.history[#KWR.db.journal.history + 1] = entry
-    while #KWR.db.journal.history > self.maxHistory do
-        table.remove(KWR.db.journal.history, 1)
-    end
-    self.lastCompleted = entry
-    self.active = nil
-    KWR:Print("AAR evidence ready: use /kwr aar copy.", true)
-    if KWR.db.profile.aar.autoOpen and KWR.AARWindow and C_Timer and C_Timer.After then
-        C_Timer.After(1.0, function() KWR.AARWindow:Show(entry.id) end)
-    end
-end
-
-function AAR:Update(state, previous)
-    if not KWR.db.profile.aar.enabled then
-        self.active = nil
-        return
-    end
-    local live = state.snapshot.context.inPvP and not state.snapshot.context.preview
-    local wasLive = previous and previous.snapshot.context.inPvP and not previous.snapshot.context.preview
-    if live then
-        self:Record(state)
-    elseif wasLive then
-        self:Finish(previous)
-    end
-end
-
-function AAR:GetLatest()
-    local history = self:GetHistory()
-    return history[#history] or self.lastCompleted
-end
-
-local function unknown(value)
-    if value == nil or value == "" then return "Unknown" end
-    return tostring(value)
-end
-
-function AAR:Export(entry)
-    entry = entry or self:GetLatest()
-    if not entry then return nil, "No completed KWR match evidence is available." end
-    local lines = {
-        "========== KWR MATCH EXPORT ==========",
+            sightings…5627 tokens truncated…======",
         "Version: " .. clean(KWR.version, "Unknown", 32),
         "Map: " .. clean(entry.mapName or entry.mapKey, "Unknown", 80),
         "Result: " .. clean(entry.result, "Unknown", 20),
@@ -519,6 +531,8 @@ function AAR:Export(entry)
         "End: " .. formatEpoch(entry.endedAt),
         "Rating Change: " .. unknown(entry.ratingChange),
         "Team Faction: " .. clean(entry.team and entry.team.faction, "Unknown", 16),
+        "Review Context: " .. unknown(entry.feedback and sessionType(entry.feedback.sessionType) or ""),
+        sessionInterpretation(sessionType(entry.feedback and entry.feedback.sessionType)),
         "",
         "Friendly Team:",
     }
@@ -559,7 +573,164 @@ function AAR:Export(entry)
                 and joinClean(command.evidence, "; ") or "Unknown")
         lines[#lines + 1] = "  Abort/Pivot: "
             .. clean(command.abortCondition, "Unknown", 180)
+        local execution = command.executionAssessment or {}
+        local commitment = execution.commitment or {}
+        local collapse = execution.collapse or {}
+        local organization = execution.organization or {}
+        local nextAction = execution.actionOpportunity or {}
+        lines[#lines + 1] = string.format(
+            "  Execution: %s (%s) | commitment %s @ %s | collapse %s | organization %s/%s",
+            clean(nextAction.action, "Unknown", 32),
+            unknown(nextAction.score),
+            clean(commitment.state, "Unknown", 32),
+            clean(commitment.objective, "Unknown", 48),
+            clean(collapse.state, "Unknown", 24),
+            clean(organization.state, "Unknown", 24),
+            unknown(organization.entropy))
+        local activePlay = command.activePlay or {}
+        local activeDecision = command.activePlayDecision or {}
+        local activeOutcome = command.activePlayOutcome or {}
+        local activeTransition = command.activePlayTransition or {}
+        local replacementScore = activeDecision.replacementScore or {}
+        lines[#lines + 1] = string.format(
+            "  Active play: %s | %s | phase %s | milestone %s | commit %.1fs travel %.1fs interaction %.1fs",
+            clean(activePlay.family, "WORLD", 24),
+            clean(activePlay.objective, "current lane", 48),
+            clean(activePlay.phase, "UNKNOWN", 24),
+            clean(activePlay.milestone, "NONE", 32),
+            KWR.Util:Number(activePlay.commitmentSeconds, 0) or 0,
+            KWR.Util:Number(activePlay.travelSeconds, 0) or 0,
+            KWR.Util:Number(activePlay.interactionSeconds, 0) or 0)
+        lines[#lines + 1] = string.format(
+            "  Persistence gate: observed %.1fs | required %.1fs | retained %s | replace %s",
+            KWR.Util:Number(replacementScore.observedDuration, 0) or 0,
+            KWR.Util:Number(replacementScore.requiredDuration, 0) or 0,
+            activeDecision.retained and "YES" or "NO",
+            activeDecision.replacementAllowed and "YES" or "NO")
+        lines[#lines + 1] = string.format(
+            "  Gate class: %s | invalidation family %s",
+            clean(activeDecision.gateClass, "STEADY", 24),
+            clean(activeDecision.invalidationFamily, "NONE", 24))
+        lines[#lines + 1] = string.format(
+            "  Transition: %s | %s -> %s | rule %s | age %.1fs",
+            clean(activeTransition.trigger, "STEADY", 24),
+            clean(activeTransition.fromPhase, "NONE", 24),
+            clean(activeTransition.toPhase, "UNKNOWN", 24),
+            clean(activeTransition.rule, "none", 48),
+            KWR.Util:Number(activeTransition.age, 0) or 0)
+        lines[#lines + 1] = "  Play outcome: " .. activePlayOutcomeText(activeOutcome)
+        local response = command.responsePackage or {}
+        lines[#lines + 1] = string.format(
+            "  Response: %s | move %s | stay %s | qualified %s",
+            clean(response.action, "Hold current plan", 120),
+            clean(response.moverText, "Team", 100),
+            clean(response.stayerText, "Assigned defenders", 100),
+            response.qualified and "YES" or "NO")
+        if #(command.manualOverrides or {}) > 0 then
+            lines[#lines + 1] = "  Commander overrides: "
+                .. joinClean(command.manualOverrides, " ; ")
+        end
         lines[#lines + 1] = "  Outcome: " .. clean(command.outcome, "Unknown", 80)
+    end
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = "Command Stability:"
+    local stability = entry.commandStability or {}
+    lines[#lines + 1] = string.format(
+        "- Issued %s | replacements %s | stabilized %s | reversals %s | retained %s | suppressed %s",
+        unknown(stability.issued), unknown(stability.replacements),
+        unknown(stability.stabilized), unknown(stability.reversals),
+        unknown(stability.activePlayRetains), unknown(stability.suppressedAlternatives))
+    lines[#lines + 1] = string.format("- Stability budget: %s | %s",
+        clean(stability.commandHealth, "UNKNOWN", 16),
+        clean(stability.commandHealthReason, "No stability budget reason.", 120))
+    lines[#lines + 1] = string.format("- Field certification: %s | %s",
+        clean(stability.certificationStatus, "INSUFFICIENT_SAMPLE", 32),
+        clean(stability.certificationReason, "Collect more command samples.", 120))
+    lines[#lines + 1] = string.format(
+        "- Overrides %s | invalidations %s | pre-move invalidations %s | avg lifetime %s | median %s",
+        unknown(stability.overrides), unknown(stability.invalidations),
+        unknown(stability.preMoveInvalidations),
+        stability.averageLifetime and KWR.Util:Clock(stability.averageLifetime) or "Unknown",
+        stability.medianLifetime and KWR.Util:Clock(stability.medianLifetime) or "Unknown")
+    lines[#lines + 1] = string.format(
+        "- Churn detail: suppress persistence %s | suppress superiority %s | overrides pre-arrival %s / committed %s | invalidations pre-arrival %s / committed %s",
+        unknown(stability.suppressedByPersistence),
+        unknown(stability.suppressedBySuperiority),
+        unknown(stability.overridesBeforeArrival),
+        unknown(stability.overridesAfterCommitment),
+        unknown(stability.invalidationsBeforeArrival),
+        unknown(stability.invalidationsAfterCommitment))
+    lines[#lines + 1] = string.format(
+        "- Bypass detail: response %s | reassessment %s | emergency %s | candidate %s",
+        unknown(stability.responseBypasses),
+        unknown(stability.reassessmentBypasses),
+        unknown(stability.emergencyBypasses),
+        unknown(stability.candidateBypasses))
+    lines[#lines + 1] = string.format(
+        "- Result quality: successes %s | success rate %.1f%% | average switch advantage %.1f",
+        unknown(stability.successfulPlays),
+        (KWR.Util:Number(stability.successRate, 0) or 0) * 100,
+        KWR.Util:Number(stability.averageSwitchAdvantage, 0) or 0)
+    local attribution = entry.outcomeAttribution or {}
+    lines[#lines + 1] = string.format(
+        "- Outcome attribution: call %s | execution %s | truth %s | enemy %s | failure %s",
+        clean(attribution.decisionQuality, "UNKNOWN", 24),
+        clean(attribution.executionQuality, "UNKNOWN", 24),
+        clean(attribution.truthQuality, "UNKNOWN", 24),
+        clean(attribution.enemyReadQuality, "UNKNOWN", 24),
+        clean(attribution.failureMode, "NONE", 24))
+    lines[#lines + 1] = string.format(
+        "- Recommended lesson: %s",
+        clean(attribution.recommendedLesson, "Review the decisive swing.", 180))
+    local latestCommand = entry.commands and entry.commands[#entry.commands] or nil
+    local latestActivePlay = latestCommand and latestCommand.activePlay or {}
+    local latestDecision = latestCommand and latestCommand.activePlayDecision or {}
+    local latestReplacementScore = latestDecision.replacementScore or {}
+    lines[#lines + 1] = string.format(
+        "- Latest active play: %s | %s | phase %s | commit %.1fs | travel %.1fs | interaction %.1fs",
+        clean(latestActivePlay.family, "WORLD", 24),
+        clean(latestActivePlay.objective, "current lane", 48),
+        clean(latestActivePlay.phase, "UNKNOWN", 24),
+        KWR.Util:Number(latestActivePlay.commitmentSeconds, 0) or 0,
+        KWR.Util:Number(latestActivePlay.travelSeconds, 0) or 0,
+        KWR.Util:Number(latestActivePlay.interactionSeconds, 0) or 0)
+    lines[#lines + 1] = string.format(
+        "- Latest persistence gate: observed %.1fs | required %.1fs | retained %s | replace %s",
+        KWR.Util:Number(latestReplacementScore.observedDuration, 0) or 0,
+        KWR.Util:Number(latestReplacementScore.requiredDuration, 0) or 0,
+        latestDecision.retained and "YES" or "NO",
+        latestDecision.replacementAllowed and "YES" or "NO")
+    local latestOverride = stability.latestOverride
+    if latestOverride then
+        lines[#lines + 1] = string.format(
+            "- Latest override: %s -> %s | phase %s (%s) | invalidation %s [%s] | gate %s | reason %s | lost commitment %s | observed %.1fs / required %.1fs",
+            clean(latestOverride.currentObjective, "Unknown", 48),
+            clean(latestOverride.candidateObjective, "Unknown", 48),
+            clean(latestOverride.phase, "Unknown", 24),
+            clean(latestOverride.phaseBucket, "unknown", 24),
+            clean(latestOverride.invalidation, "none", 48),
+            clean(latestOverride.invalidationFamily, "NONE", 24),
+            clean(latestOverride.gateClass, "STEADY", 24),
+            clean(latestOverride.replacementReason, "Unknown", 64),
+            latestOverride.lostCommitmentTime
+                and KWR.Util:Clock(latestOverride.lostCommitmentTime) or "Unknown",
+            KWR.Util:Number(latestOverride.observedDuration, 0) or 0,
+            KWR.Util:Number(latestOverride.requiredDuration, 0) or 0)
+    end
+    local latestSuppression = stability.latestSuppression
+    if latestSuppression then
+        lines[#lines + 1] = string.format(
+            "- Latest suppression: %s -> %s | phase %s (%s) | invalidation %s [%s] | gate %s | reason %s | observed %.1fs / required %.1fs",
+            clean(latestSuppression.currentObjective, "Unknown", 48),
+            clean(latestSuppression.candidateObjective, "Unknown", 48),
+            clean(latestSuppression.phase, "Unknown", 24),
+            clean(latestSuppression.phaseBucket, "unknown", 24),
+            clean(latestSuppression.invalidation, "none", 48),
+            clean(latestSuppression.invalidationFamily, "NONE", 24),
+            clean(latestSuppression.gateClass, "STEADY", 24),
+            clean(latestSuppression.replacementReason, "Unknown", 64),
+            KWR.Util:Number(latestSuppression.observedDuration, 0) or 0,
+            KWR.Util:Number(latestSuppression.requiredDuration, 0) or 0)
     end
     lines[#lines + 1] = ""
     lines[#lines + 1] = "Objective Timeline:"
@@ -629,7 +800,10 @@ function AAR:ClearCompleted()
     if self.active then
         return false, "A live match is being recorded; completed AAR history was not cleared."
     end
-    if KWR.db and KWR.db.journal then KWR.db.journal.history = {} end
+    if KWR.db and KWR.db.journal then
+        KWR.db.journal.history = {}
+        KWR.db.journal.interrupted = nil
+    end
     self.lastCompleted = nil
     return true
 end
@@ -639,8 +813,14 @@ function AAR:GetHistory()
 end
 
 function AAR:GetByID(id)
+    if self.active and self.active.id == id then
+        return self.active
+    end
     for _, entry in ipairs(self:GetHistory()) do
         if entry.id == id then return entry end
+    end
+    if self.lastCompleted and self.lastCompleted.id == id then
+        return self.lastCompleted
     end
 end
 
@@ -648,6 +828,7 @@ function AAR:SaveFeedback(id, feedback)
     local entry = self:GetByID(id)
     if not entry then return false end
     entry.feedback = {
+        sessionType = sessionType(feedback.sessionType),
         wonBy = KWR.Util:Text(feedback.wonBy, "", 40),
         strength = KWR.Util:Text(feedback.strength, "", 40),
         heldBack = KWR.Util:Text(feedback.heldBack, "", 40),
@@ -662,10 +843,15 @@ function AAR:GetInsights()
     local history = self:GetHistory()
     local wins, losses, reviewed = 0, 0, 0
     local maps = {}
+    local commander, spectator, diagnostic = 0, 0, 0
     for _, entry in ipairs(history) do
         if entry.result == "VICTORY" then wins = wins + 1 end
         if entry.result == "DEFEAT" then losses = losses + 1 end
         if entry.feedback and next(entry.feedback) then reviewed = reviewed + 1 end
+        local mode = sessionType(entry.feedback and entry.feedback.sessionType)
+        if mode == "Commander" then commander = commander + 1 end
+        if mode == "Spectator" then spectator = spectator + 1 end
+        if mode == "Diagnostic" then diagnostic = diagnostic + 1 end
         maps[entry.mapKey] = (maps[entry.mapKey] or 0) + 1
     end
     local topMap, topCount = "None", 0
@@ -681,15 +867,30 @@ function AAR:GetInsights()
         winRate = decided > 0 and math.floor((wins / decided) * 100 + 0.5) or 0,
         topMap = topMap,
         topMapCount = topCount,
+        commander = commander,
+        spectator = spectator,
+        diagnostic = diagnostic,
     }
 end
 
 function AAR:OnInitialize()
-    KWR.Store:Subscribe(self, self.Update)
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "AAR")
+    end
+    self:TrimHistory()
+    if KWR.db and KWR.db.journal and KWR.db.journal.interrupted then
+        self.lastCompleted = self:CompactEntry(KWR.db.journal.interrupted)
+    end
+    if KWR.Store and KWR.Store.Subscribe then
+        KWR.Store:Subscribe(self, self.Update)
+    end
 end
 
 function AAR:OnDisable()
-    KWR.Store:Unsubscribe(self)
+    self:CommitInterrupted("Reload, relog, or addon disable interrupted the live match journal.")
+    if KWR.Store and KWR.Store.Unsubscribe then
+        KWR.Store:Unsubscribe(self)
+    end
 end
 
 KWR:RegisterModule("AAR", AAR)
