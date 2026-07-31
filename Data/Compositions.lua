@@ -225,6 +225,14 @@ local TIER_COMPS = {
         { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING" }),
 }
 
+local TIER_ORDER = {
+    ["S+"] = 5,
+    ["S"] = 4,
+    ["S-"] = 3,
+    ["A+ / S-"] = 2,
+    ["A+"] = 1,
+}
+
 local function amount(summary, tag)
     return summary and summary.tags and summary.tags[tag] or 0
 end
@@ -289,6 +297,14 @@ local function containsMap(comp, mapKey)
     return false
 end
 
+local function tierWeight(tier)
+    return TIER_ORDER[tier] or 0
+end
+
+local function worldContext(mapKey)
+    return mapKey == nil or mapKey == "" or mapKey == "WORLD"
+end
+
 function Compositions:MatchTier(roster, mapKey)
     local actual = countSpecs(roster)
     local known = 0
@@ -339,6 +355,34 @@ end
 
 function Compositions:TierAll()
     return TIER_COMPS
+end
+
+function Compositions:FindTier(id)
+    for _, comp in ipairs(TIER_COMPS) do
+        if comp.id == id then
+            return KWR.Util:Copy(comp)
+        end
+    end
+end
+
+function Compositions:BuildTargets(mapKey)
+    local targets = {}
+    local useWorldContext = worldContext(mapKey)
+    for _, comp in ipairs(TIER_COMPS) do
+        local candidate = KWR.Util:Copy(comp)
+        candidate.mapFit = useWorldContext or containsMap(comp, mapKey)
+        candidate.mapCount = #(comp.maps or {})
+        targets[#targets + 1] = candidate
+    end
+    table.sort(targets, function(a, b)
+        if a.mapFit ~= b.mapFit then return a.mapFit end
+        if tierWeight(a.tier) ~= tierWeight(b.tier) then
+            return tierWeight(a.tier) > tierWeight(b.tier)
+        end
+        if a.mapCount ~= b.mapCount then return a.mapCount > b.mapCount end
+        return a.id < b.id
+    end)
+    return targets
 end
 
 function Compositions:Get(id)
