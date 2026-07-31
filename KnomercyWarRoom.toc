@@ -1,10 +1,11 @@
+
 ## Interface: 120007
 ## Title: |cff33aaffKnomercy War Room|r
 ## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
 ## Author: Jose / Knomercy War Room Project
-## Version: 6.1.0-alpha.9
+## Version: 6.1.0-alpha.29
 ## SavedVariables: KWR_DB
-## IconTexture: Interface\Icons\Achievement_BG_winWSG
+## IconTexture: Interface\AddOns\KnomercyWarRoom\Assets\Brand\Minimap\kwr_micro_icon_16.png
 ## Category: PvP
 ## X-Category: Battlegrounds
 ## X-License: MIT
@@ -12,52 +13,129 @@
 ## X-Compatible-With: Retail
 
 Core\Addon.lua
+Core\BuildInfo.lua
+Core\CommandView.lua
 Core\Util.lua
+Core\CommandReview.lua
 Core\Store.lua
 
 Data\Maps.lua
+Data\RBGMapProfiles.lua
+Data\ObjectiveRules.lua
+Data\AssignmentDoctrine.lua
 Data\Doctrine.lua
 Data\MetaSnapshot.lua
 Data\SourceRegistry.lua
 Data\PatchData.lua
 Data\CombatSpells.lua
+Data\SpellTags.lua
+Data\CommandVocabulary.lua
+Data\PlayerControlProfiles.lua
+Data\EnemyProblemTypes.lua
+Data\ProblemSignalRegistry.lua
+Data\CounterplayMatrix.lua
+Data\ObjectiveWeights.lua
 Data\Capabilities.lua
 Data\Compositions.lua
 Data\BattlePlans.lua
 Data\ScenarioLibrary.lua
+Data\ScenarioCalibration.lua
+Data\ScenarioAdversarialCalibration.lua
+Data\ScenarioExpertCorpus.lua
+Data\CompThreats.lua
+Data\EnemyDefenseModels.lua
+Data\OpenerDoctrine.lua
+Data\RecoveryDoctrine.lua
+Data\EndgameDoctrine.lua
+Data\DoctrineComparisons.lua
+Data\ScenarioFixtures.lua
 Data\Counters.lua
 Data\KnowledgeManifest.lua
 
+Rulesets\Retail_Current.lua
+Rulesets\PTR_12_1.lua
+Rulesets\Strict_Future.lua
+Rulesets\RulesetLoader.lua
+
+Compliance\ApiMode.lua
+Compliance\ComplianceGate.lua
+
+Adapters\SafeAuraAdapter.lua
+Adapters\SafeCombatLogAdapter.lua
+Adapters\SafeUnitAdapter.lua
+Adapters\SafeBattlegroundAdapter.lua
+Adapters\SafeSpeechAdapter.lua
+
+State\FactStore.lua
+State\BoardStateTypes.lua
+State\BoardStateBuilder.lua
+State\BoardState.lua
+State\LocalTeamfightState.lua
+State\EnemyProblemState.lua
+State\FriendlyRoleState.lua
+State\AssignmentState.lua
+State\CountdownState.lua
+State\PlayerTargetState.lua
+State\DRTracker.lua
+
+Intelligence\EnemyProblemDetector.lua
+Intelligence\AssignmentScorer.lua
+Intelligence\AssignmentOptimizer.lua
+Intelligence\KillTargetSelector.lua
+Intelligence\CommandReasonBuilder.lua
+Intelligence\TeamfightCommandPlanner.lua
+Intelligence\ExecutionCommandBuilder.lua
+
 Runtime\TeamResolver.lua
 Runtime\EncounterHistory.lua
+Runtime\OpponentModels.lua
 Runtime\Sensors.lua
 Runtime\RosterInspector.lua
 Runtime\EnemyIntel.lua
 Runtime\ObjectiveIntel.lua
 Runtime\FormationAdvisor.lua
 Runtime\CombatIntel.lua
-Runtime\Preview.lua
 Runtime\Reporter.lua
 Runtime\Predictor.lua
+Runtime\Preview.lua
+Runtime\EnemyResponsePlanner.lua
 Runtime\Strategist.lua
+Runtime\AssignmentOverrides.lua
 Runtime\Assignments.lua
 Runtime\Commander.lua
 Runtime\Learning.lua
 Runtime\AAR.lua
+Runtime\MemoryBudget.lua
 Runtime\Verification.lua
+Runtime\SentinelBridge.lua
+Runtime\CommandAudio.lua
 Runtime\MatchRuntime.lua
+
+UI\Theme.lua
+UI\IconRegistry.lua
 
 Features\CursorRing.lua
 
-UI\Theme.lua
 UI\CopyDialog.lua
 UI\QuickCalls.lua
+UI\TeamfightCommandCard.lua
+UI\PersonalAssignmentCard.lua
+UI\CrosshairPresenter.lua
+UI\TargetAssistFrame.lua
+UI\CountdownFrame.lua
+UI\DebugReasonPanel.lua
 UI\TacticalMap.lua
-UI\ReporterMap.lua
+UI\RosterPresentation.lua
+UI\CombatRosterVisuals.lua
+UI\CombatRosterState.lua
 UI\CombatRoster.lua
 UI\HUD.lua
+UI\Presentation.lua
+UI\MainWindowReports.lua
+UI\MainWindowShell.lua
+UI\MainWindowLauncher.lua
+UI\MainWindowCommands.lua
+UI\MainWindowPages.lua
 UI\MainWindow.lua
 UI\AARWindow.lua
 UI\Options.lua
-
-Core\Diagnostics.lua
