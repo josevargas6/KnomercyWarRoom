@@ -3,6 +3,12 @@ local _, KWR = ...
 local Runtime = {
     active = false,
     pending = false,
+    pendingDueAt = nil,
+    pendingReason = nil,
+    queueRevision = 0,
+    timerToken = 0,
+    requiredSettleAt = nil,
+    transitionToken = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -15,21 +21,71 @@ local Runtime = {
         memoryKB = 0,
         events = 0,
         coalesced = 0,
+        queueFollowups = 0,
+        queuePreemptions = 0,
+        settleRefreshes = 0,
         errors = 0,
         transitionRefreshes = 0,
         lastTransitionDurationMs = 0,
     },
     durationSamples = {},
+    maxDurationSamples = 120,
 }
 KWR.MatchRuntime = Runtime
 
-local MIN_REFRESH_INTERVAL = 0.25
-local MAX_DURATION_SAMPLES = 120
+local MIN_REFRESH_INTERVAL = 0.40
+local MAX_CHAINED_FOLLOWUPS = 1
+
+local function firstLine(value)
+    local text = tostring(value or "unknown runtime refresh error")
+    return text:match("([^\r\n]+)") or text
+end
+
+local function runtimeErrorHandler(err)
+    local message = tostring(err or "unknown runtime refresh error")
+    local stack
+    if type(debugstack) == "function" then
+        local ok, value = pcall(debugstack, 3, 8, 8)
+        if ok and type(value) == "string" and value ~= "" then
+            stack = value
+        end
+    elseif debug and type(debug.traceback) == "function" then
+        local ok, value = pcall(debug.traceback, message, 3)
+        if ok and type(value) == "string" and value ~= "" then
+            stack = value
+        end
+    end
+    local formatted = stack and (message .. "\n" .. stack) or message
+    if type(geterrorhandler) == "function" then
+        local ok, handler = pcall(geterrorhandler)
+        if ok and type(handler) == "function" then
+            pcall(handler, formatted)
+        end
+    end
+    return formatted
+end
+
+local function previewAvailable()
+    return KWR.Preview and type(KWR.Preview.Build) == "function"
+end
+
+local function clearQueueState(runtime)
+    runtime.pending = false
+    runtime.pendingDueAt = nil
+    runtime.pendingReason = nil
+    runtime.pendingRevision = nil
+    runtime.pendingSettle = nil
+end
 
 local PERSISTENT_EVENTS = {
     "PLAYER_ENTERING_WORLD",
+    "PLAYER_LEAVING_WORLD",
     "ZONE_CHANGED_NEW_AREA",
     "GROUP_ROSTER_UPDATE",
+    "UNIT_NAME_UPDATE",
+    "PLAYER_ROLES_ASSIGNED",
+    "PLAYER_SPECIALIZATION_CHANGED",
+    "UPDATE_BATTLEFIELD_STATUS",
 }
 
 local ACTIVE_EVENTS = {
@@ -52,6 +108,11 @@ local ACTIVE_EVENTS = {
     "UNIT_MAXHEALTH",
     "UNIT_AURA",
     "ARENA_OPPONENT_UPDATE",
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
     "UNIT_SPELLCAST_SUCCEEDED",
     "CHAT_MSG_BG_SYSTEM_ALLIANCE",
     "CHAT_MSG_BG_SYSTEM_HORDE",
@@ -87,13 +148,166 @@ local function isFriendlyObjectiveCarrier(unit)
     return false
 end
 
+local function stableIdentityCount(rows)
+    if type(rows) ~= "table" or #rows == 0 then return 0, false end
+    local seen, count = {}, 0
+    for _, row in ipairs(rows) do
+        local key = KWR.Util:CanonicalPlayerKey(
+            row and (row.name or row.shortName), row and row.guid)
+        if not key or seen[key] then return count, false end
+        seen[key] = true
+        count = count + 1
+    end
+    return count, count == #rows
+end
+
+function Runtime:ResetTransientTruth()
+    self.lastFriendlyHealthSyncAt = nil
+    self.postMatchTruth = nil
+    if KWR.Sensors then
+        KWR.Sensors.scoreSession = nil
+    end
+    if KWR.TeamResolver and KWR.TeamResolver.Reset then
+        KWR.TeamResolver:Reset()
+    end
+    if KWR.Reporter and KWR.Reporter.Reset then
+        KWR.Reporter:Reset(nil)
+    end
+    if KWR.EnemyIntel and KWR.EnemyIntel.Reset then
+        KWR.EnemyIntel:Reset(nil)
+    end
+    if KWR.ObjectiveIntel and KWR.ObjectiveIntel.Reset then
+        KWR.ObjectiveIntel:Reset(nil)
+    end
+    if KWR.CombatIntel and KWR.CombatIntel.Reset then
+        KWR.CombatIntel:Reset()
+    end
+    if KWR.Commander and KWR.Commander.ResetSession then
+        KWR.Commander:ResetSession()
+    end
+    if KWR.EncounterHistory then
+        KWR.EncounterHistory.sessionKey = nil
+        KWR.EncounterHistory.sessionSeen = {}
+    end
+    if KWR.OpponentModels and KWR.OpponentModels.ResetSession then
+        KWR.OpponentModels:ResetSession(nil)
+    end
+    if KWR.Assignments and KWR.Assignments.integrity then
+        KWR.Assignments.integrity = { sessionKey = nil, records = {} }
+    end
+end
+
+function Runtime:RememberQualifiedTruth(snapshot)
+    if not snapshot or not snapshot.context or not snapshot.context.inPvP
+        or snapshot.context.preview then
+        return
+    end
+    local sessionKey = KWR.Util:Text(snapshot.context.sessionKey,
+        KWR.Util:BattlefieldSessionKey(snapshot.context), 96)
+    if not self.postMatchTruth
+        or self.postMatchTruth.sessionKey ~= sessionKey then
+        self.postMatchTruth = { sessionKey = sessionKey }
+    end
+    local cached = self.postMatchTruth
+    local team = snapshot.context.team or {}
+    local sourceRank = {
+        scoreboard_self = 4,
+        scoreboard_roster = 3,
+        native_lock = 2,
+        native_fallback = 1,
+    }
+    local teamSource = KWR.Util:Text(team.source, "unresolved", 24)
+    local currentRank = sourceRank[teamSource] or 0
+    local cachedRank = cached.team and (sourceRank[
+        KWR.Util:Text(cached.team.source, "unresolved", 24)] or 0) or 0
+    if team.side ~= nil
+        and KWR.Util:Text(team.faction, "Unknown", 16) ~= "Unknown"
+        and currentRank >= cachedRank then
+        cached.team = KWR.Util:Copy(team)
+    end
+    if snapshot.score and snapshot.score.source == "ui_widget" then
+        cached.score = KWR.Util:Copy(snapshot.score)
+    end
+    if snapshot.objectives and snapshot.objectives.source == "ui_widget" then
+        cached.objectives = KWR.Util:Copy(snapshot.objectives)
+    end
+    if snapshot.context.isBlitz == true then
+        cached.isBlitz = true
+        cached.blitzSource = KWR.Util:Text(
+            snapshot.context.blitzSource, "confirmed", 32)
+    end
+    local rosterCount, rosterStable = stableIdentityCount(snapshot.roster)
+    if rosterStable and rosterCount > 1
+        and rosterCount >= (cached.rosterCount or 0) then
+        cached.roster = KWR.Util:Copy(snapshot.roster)
+        cached.rosterCount = rosterCount
+    end
+    local enemyCount, enemiesStable = stableIdentityCount(snapshot.enemies)
+    if enemiesStable and enemyCount > 1
+        and enemyCount >= (cached.enemyCount or 0) then
+        cached.enemies = KWR.Util:Copy(snapshot.enemies)
+        cached.enemyCount = enemyCount
+    end
+end
+
+function Runtime:ApplyMatchCompleteFallback(snapshot)
+    if not snapshot or not snapshot.context or not snapshot.context.inPvP then
+        return snapshot
+    end
+    self:RememberQualifiedTruth(snapshot)
+    if self.matchComplete ~= true then
+        return snapshot
+    end
+    snapshot.context.matchComplete = true
+    snapshot.context.phase = "COMPLETE"
+    local sessionKey = KWR.Util:Text(snapshot.context.sessionKey,
+        KWR.Util:BattlefieldSessionKey(snapshot.context), 96)
+    local cached = self.postMatchTruth
+    if not cached or cached.sessionKey ~= sessionKey then
+        return snapshot
+    end
+    local team = snapshot.context.team or {}
+    if cached.team and (team.side == nil
+        or team.source == "scoreboard_pending"
+        or team.source == "native_fallback"
+        or team.source == "native_lock") then
+        snapshot.context.team = KWR.Util:Copy(cached.team)
+        snapshot.context.team.postMatchFrozen = true
+    end
+    if cached.score and snapshot.score
+        and snapshot.score.source ~= "ui_widget" then
+        snapshot.score = KWR.Util:Copy(cached.score)
+        snapshot.score.postMatchFrozen = true
+    end
+    if cached.objectives and snapshot.objectives
+        and snapshot.objectives.source ~= "ui_widget" then
+        snapshot.objectives = KWR.Util:Copy(cached.objectives)
+        snapshot.objectives.postMatchFrozen = true
+    end
+    if cached.isBlitz then
+        snapshot.context.isBlitz = true
+        snapshot.context.blitzSource = cached.blitzSource or "confirmed"
+    end
+    local rosterCount = stableIdentityCount(snapshot.roster)
+    if cached.roster and rosterCount < (cached.rosterCount or 0) then
+        snapshot.roster = KWR.Util:Copy(cached.roster)
+        snapshot.context.rosterPostMatchFrozen = true
+    end
+    local enemyCount = stableIdentityCount(snapshot.enemies)
+    if cached.enemies and enemyCount < (cached.enemyCount or 0) then
+        snapshot.enemies = KWR.Util:Copy(cached.enemies)
+        snapshot.context.enemiesPostMatchFrozen = true
+    end
+    return snapshot
+end
+
 function Runtime:Start()
     if self.active then return end
     self.matchComplete = false
     self.active = true
     if C_Timer and C_Timer.NewTicker then
         self.ticker = C_Timer.NewTicker(1, function()
-            if Runtime.active then Runtime:Refresh("active-pulse") end
+            if Runtime.active then Runtime:Queue("active-pulse", 0.02) end
         end)
     end
 end
@@ -110,31 +324,87 @@ function Runtime:UpdateLifecycle()
     if isPvP() then self:Start() else self:Stop() end
 end
 
+function Runtime:ScheduleTransitionSweep(reason, rosterOnly)
+    self.transitionToken = (self.transitionToken or 0) + 1
+    local token = self.transitionToken
+    local delays = rosterOnly and { 0.20, 0.80, 2.00, 5.00 }
+        or { 0.15, 0.65, 1.50, 3.00, 6.00, 10.00 }
+    for _, delay in ipairs(delays) do
+        local settleDelay = delay
+        local function settle()
+            if token ~= Runtime.transitionToken then return end
+            Runtime:Queue((reason or "transition") .. "-settle", 0.02)
+        end
+        if C_Timer and C_Timer.After then
+            C_Timer.After(settleDelay, settle)
+        else
+            settle()
+        end
+    end
+end
+
+function Runtime:ScheduleFinalSweep(reason)
+    self.finalSweepToken = (self.finalSweepToken or 0) + 1
+    local token = self.finalSweepToken
+    local delays = { 0.35, 1.00, 2.25 }
+    for index, delay in ipairs(delays) do
+        local function settle()
+            if token ~= Runtime.finalSweepToken then return end
+            Runtime:Queue((reason or "match-complete") .. "-" .. tostring(index), 0.02)
+        end
+        if C_Timer and C_Timer.After then
+            C_Timer.After(delay, settle)
+        else
+            settle()
+        end
+    end
+end
+
 function Runtime:Refresh(reason)
     local started = type(debugprofilestop) == "function" and debugprofilestop() or 0
     local ok, message = xpcall(function()
         local snapshot
-        if KWR.db.profile.preview and not isPvP() then
+        if KWR.db.profile.preview and not isPvP() and previewAvailable() then
             snapshot = KWR.Preview:Build()
         else
+            if KWR.db.profile.preview and not previewAvailable() then
+                KWR.db.profile.preview = false
+            end
             snapshot = KWR.Sensors:Capture(self.lastMessage)
         end
         snapshot.context.matchComplete = self.matchComplete == true
+        snapshot = self:ApplyMatchCompleteFallback(snapshot)
         snapshot = KWR.EncounterHistory:Enrich(snapshot)
+        if KWR.KnowledgeManifest and KWR.KnowledgeManifest.Status then
+            snapshot.knowledgeStatus = KWR.KnowledgeManifest:Status(snapshot)
+        end
         KWR.RosterInspector:RequestNext(snapshot.roster)
         snapshot = KWR.ObjectiveIntel:Apply(snapshot)
         snapshot.formation = KWR.FormationAdvisor:Evaluate(snapshot)
         snapshot.combat = KWR.CombatIntel:Analyze(snapshot)
+        snapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(snapshot)
         snapshot.reporter = KWR.Reporter:Observe(snapshot)
+        if KWR.OpponentModels and KWR.OpponentModels.Observe then
+            snapshot.opponentModels = KWR.OpponentModels:Observe(snapshot)
+        end
+        snapshot.truth = KWR.Verification:Contract(snapshot)
         local prediction = KWR.Predictor:Evaluate(snapshot)
         snapshot.strategy = KWR.Strategist:Evaluate(snapshot, prediction)
         local assignments = KWR.Assignments:Build(snapshot, prediction)
         snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
+        snapshot.strategy.executionAssessment =
+            KWR.Strategist:AssessExecution(snapshot, prediction, assignments)
+        snapshot.responsePackage =
+            KWR.Assignments:ResponsePackage(snapshot, assignments)
         if self.reassessRequested then
-            local previous = KWR.Store:Get()
+            local previous = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
+            local changes = KWR.Assignments:Diff(
+                previous and previous.assignments, assignments)
             snapshot.reassessment = {
                 at = KWR.Util:Now(),
-                changes = KWR.Assignments:Diff(previous and previous.assignments, assignments),
+                changes = changes,
+                summary = KWR.Assignments:SummarizeChanges(
+                    changes, snapshot.context.mapKey),
                 reason = "Manual battlefield reassessment",
             }
             self.lastReassessment = KWR.Util:Copy(snapshot.reassessment)
@@ -144,6 +414,8 @@ function Runtime:Refresh(reason)
             snapshot.reassessment = KWR.Util:Copy(self.lastReassessment)
         end
         local command = KWR.Commander:Compose(snapshot, prediction, assignments)
+        snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
+            snapshot, prediction, assignments, command)
         self.diagnostics.refreshes = self.diagnostics.refreshes + 1
         self.diagnostics.lastReason = reason or "refresh"
         if started > 0 and type(debugprofilestop) == "function" then
@@ -156,7 +428,9 @@ function Runtime:Refresh(reason)
                 self.diagnostics.transitionRefreshes = (self.diagnostics.transitionRefreshes or 0) + 1
                 self.diagnostics.lastTransitionDurationMs = duration
             end
-            while #self.durationSamples > MAX_DURATION_SAMPLES do table.remove(self.durationSamples, 1) end
+            while #self.durationSamples > (self.maxDurationSamples or 120) do
+                table.remove(self.durationSamples, 1)
+            end
             if self.diagnostics.refreshes % 10 == 0 then
                 local ordered, total = {}, 0
                 for index, sample in ipairs(self.durationSamples) do
@@ -174,27 +448,74 @@ function Runtime:Refresh(reason)
             end
         end
         self.lastRefreshAt = KWR.Util:Now()
-        KWR.Store:Publish(snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
-    end, geterrorhandler())
+        if KWR.Store and KWR.Store.Publish then
+            local published = KWR.Store:Publish(
+                snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
+            if KWR.CommandAudio then KWR.CommandAudio:Observe(published) end
+        end
+    end, runtimeErrorHandler)
     if not ok then
         self.diagnostics.errors = self.diagnostics.errors + 1
-        KWR:Print("Runtime refresh failed: " .. tostring(message), true)
+        self.diagnostics.lastError = tostring(message or "unknown runtime refresh error")
+        self.diagnostics.lastErrorAt = KWR.Util and KWR.Util.Now and KWR.Util:Now() or 0
+        self.diagnostics.lastErrorReason = reason or "refresh"
+        KWR:Print("Runtime refresh failed: " .. firstLine(message), true)
     end
     return ok
 end
 
-function Runtime:Queue(reason, delay)
-    if self.pending then
-        self.diagnostics.coalesced = (self.diagnostics.coalesced or 0) + 1
-        return
-    end
-    self.pending = true
+function Runtime:EffectiveDelay(delay)
     local elapsed = KWR.Util:Now() - (self.lastRefreshAt or 0)
-    delay = math.max(delay or 0.10, math.max(0, MIN_REFRESH_INTERVAL - elapsed))
+    return math.max(delay or 0.10, math.max(0, MIN_REFRESH_INTERVAL - elapsed))
+end
+
+function Runtime:Schedule(reason, delay, revision)
+    self.pending = true
+    self.pendingReason = reason or "queued"
+    self.pendingRevision = revision or self.queueRevision or 0
+    self.pendingSettle = self.pendingReason == "settle-refresh"
+    delay = self:EffectiveDelay(delay)
+    self.pendingDueAt = KWR.Util:Now() + delay
+    self.timerToken = (self.timerToken or 0) + 1
+    local token = self.timerToken
     local function run()
-        Runtime.pending = false
+        if token ~= Runtime.timerToken then return end
+        local dueAt = Runtime.pendingDueAt or KWR.Util:Now()
+        local completedReason = Runtime.pendingReason or reason or "queued"
+        local completedRevision = Runtime.pendingRevision or revision or 0
+        local completedSettle = Runtime.pendingSettle == true
+        clearQueueState(Runtime)
         Runtime:UpdateLifecycle()
-        Runtime:Refresh(reason or "queued")
+        Runtime:Refresh(completedReason)
+        local now = KWR.Util:Now()
+        local timerMatured = now + 0.001 >= dueAt
+        local latestRevision = Runtime.queueRevision or 0
+        local hasNewRevision = latestRevision > completedRevision
+        local settleStillPending = Runtime.requiredSettleAt
+            and now + 0.001 < Runtime.requiredSettleAt
+        local canChainFollowup = completedSettle ~= true
+            and (Runtime.followupChainCount or 0) < MAX_CHAINED_FOLLOWUPS
+        if timerMatured and hasNewRevision and canChainFollowup then
+            Runtime.diagnostics.queueFollowups =
+                (Runtime.diagnostics.queueFollowups or 0) + 1
+            Runtime.followupChainCount = (Runtime.followupChainCount or 0) + 1
+            Runtime:Schedule("coalesced-followup", 0.02,
+                latestRevision)
+        elseif timerMatured and settleStillPending then
+            Runtime.followupChainCount = 0
+            if not Runtime.pending then
+                Runtime:Schedule("settle-refresh",
+                    Runtime.requiredSettleAt - now,
+                    latestRevision)
+            end
+        else
+            Runtime.followupChainCount = 0
+        end
+        if Runtime.requiredSettleAt and now + 0.001 >= Runtime.requiredSettleAt then
+            Runtime.requiredSettleAt = nil
+            Runtime.diagnostics.settleRefreshes =
+                (Runtime.diagnostics.settleRefreshes or 0) + 1
+        end
     end
     if C_Timer and C_Timer.After then
         C_Timer.After(delay, run)
@@ -203,16 +524,52 @@ function Runtime:Queue(reason, delay)
     end
 end
 
+function Runtime:Queue(reason, delay, settleDelay)
+    self.queueRevision = (self.queueRevision or 0) + 1
+    local revision = self.queueRevision
+    local now = KWR.Util:Now()
+    if settleDelay and settleDelay > 0 then
+        self.requiredSettleAt = math.max(
+            self.requiredSettleAt or 0, now + settleDelay)
+    end
+    if self.pending then
+        self.diagnostics.coalesced = (self.diagnostics.coalesced or 0) + 1
+        local requestedDueAt = now + self:EffectiveDelay(delay)
+        if self.pendingDueAt and requestedDueAt + 0.001 < self.pendingDueAt then
+            self.diagnostics.queuePreemptions =
+                (self.diagnostics.queuePreemptions or 0) + 1
+            self.timerToken = (self.timerToken or 0) + 1
+            clearQueueState(self)
+            self:Schedule(reason, delay, revision)
+        end
+        return
+    end
+    self:Schedule(reason, delay, revision)
+end
+
 function Runtime:ForceRefresh(reason)
-    self.pending = false
+    self.timerToken = (self.timerToken or 0) + 1
+    clearQueueState(self)
+    self.followupChainCount = 0
+    self.queueRevision = (self.queueRevision or 0) + 1
     self:UpdateLifecycle()
-    return self:Refresh(reason or "manual")
+    local ok = self:Refresh(reason or "manual")
+    local now = KWR.Util:Now()
+    if self.requiredSettleAt then
+        if now + 0.001 < self.requiredSettleAt then
+            self:Schedule("settle-refresh",
+                self.requiredSettleAt - now, self.queueRevision)
+        else
+            self.requiredSettleAt = nil
+        end
+    end
+    return ok
 end
 
 function Runtime:Reassess()
     self.reassessRequested = true
     local ok = self:ForceRefresh("manual-reassess")
-    local state = KWR.Store:Get()
+    local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
     if ok and state and state.command then
         KWR:Print("Reassessed: " .. KWR.Util:Text(state.command.action,
             "Current plan confirmed.", 120), true)
@@ -222,14 +579,57 @@ function Runtime:Reassess()
     return ok
 end
 
+function Runtime:RescanRoster()
+    local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
+    local roster = state and state.snapshot and state.snapshot.roster or nil
+    local queued = 0
+    if KWR.RosterInspector and type(KWR.RosterInspector.BeginFullRescan) == "function" then
+        queued = KWR.RosterInspector:BeginFullRescan(roster)
+    end
+    local ok = self:ForceRefresh("manual-roster-rescan")
+    self:ScheduleTransitionSweep("manual-roster-rescan", true)
+    if ok then
+        if queued > 0 then
+            KWR:Print("Roster rescan started for " .. tostring(queued)
+                .. " teammates. KWR will rebuild comp as fresh specs verify.", true)
+        else
+            KWR:Print("Roster rescan complete. No inspectable teammates needed a forced recheck.", true)
+        end
+    else
+        KWR:Print("Roster rescan failed. Open /kwr verify and capture the warning.", true)
+    end
+    return ok
+end
+
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
-    if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
-        self:Queue(event, 1.0)
+    if event == "PLAYER_ENTERING_WORLD"
+        or event == "PLAYER_LEAVING_WORLD"
+        or event == "ZONE_CHANGED_NEW_AREA"
+        or event == "UPDATE_BATTLEFIELD_STATUS" then
+        local inPvP = isPvP()
+        if not inPvP then
+            self:ResetTransientTruth()
+            self.matchComplete = false
+            self.reassessRequested = false
+            self.lastReassessment = nil
+            self.lastMessage = ""
+            self.finalSweepToken = (self.finalSweepToken or 0) + 1
+            self:UpdateLifecycle()
+            self:Refresh(event .. "-world")
+        end
+        self:Queue(event, 0.05)
+        self:ScheduleTransitionSweep(event, false)
         return
     end
     if event == "GROUP_ROSTER_UPDATE" then
-        self:Queue(event, 0.15)
+        self:Queue(event, 0.05)
+        self:ScheduleTransitionSweep(event, true)
+        return
+    end
+    if event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED"
+        or event == "PLAYER_SPECIALIZATION_CHANGED" then
+        self:Queue(event, 0.05)
         return
     end
     -- Active events are registered once during addon initialization. Midnight
@@ -242,7 +642,7 @@ function Runtime:HandleEvent(event, ...)
     if event:find("CHAT_MSG_BG_SYSTEM", 1, true) then
         self.lastMessage = KWR.Util:Text((...), "", 160)
         if KWR.ObjectiveIntel then
-            local state = KWR.Store:Get()
+            local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
             local mapKey = state and state.snapshot and state.snapshot.context
                 and state.snapshot.context.mapKey
             KWR.ObjectiveIntel:ObserveMessage(self.lastMessage, mapKey)
@@ -251,7 +651,16 @@ function Runtime:HandleEvent(event, ...)
     if event == "UPDATE_UI_WIDGET" and KWR.Sensors then
         KWR.Sensors:ObserveWidget((...))
     end
-    if event == "UNIT_SPELLCAST_SUCCEEDED" and KWR.CombatIntel then
+    if (event == "UNIT_SPELLCAST_START"
+        or event == "UNIT_SPELLCAST_CHANNEL_START") and KWR.CombatIntel then
+        local unit, _, spellID = ...
+        KWR.CombatIntel:ObserveUnitCast(unit, spellID, true, event)
+    elseif (event == "UNIT_SPELLCAST_STOP"
+        or event == "UNIT_SPELLCAST_INTERRUPTED"
+        or event == "UNIT_SPELLCAST_CHANNEL_STOP") and KWR.CombatIntel then
+        local unit, _, spellID = ...
+        KWR.CombatIntel:ObserveUnitCast(unit, spellID, false, event)
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and KWR.CombatIntel then
         local unit, _, spellID = ...
         KWR.CombatIntel:ObserveUnitSpell(unit, spellID)
     end
@@ -263,6 +672,12 @@ function Runtime:HandleEvent(event, ...)
             -- Friendly bars update directly in CombatRoster. A full strategy
             -- rebuild is only needed when the friendly unit carries an
             -- objective whose health or stacks can alter the call.
+            if KWR.CombatRoster then
+                KWR.CombatRoster:UpdateHealthForUnit(unit)
+            end
+            if KWR.MainWindow then
+                KWR.MainWindow:UpdateHealthForUnit(unit)
+            end
             self.diagnostics.lightweightEvents =
                 (self.diagnostics.lightweightEvents or 0) + 1
             return
@@ -292,14 +707,29 @@ function Runtime:HandleEvent(event, ...)
     end
     if event == "PVP_MATCH_COMPLETE" then
         self.matchComplete = true
+        if KWR.Sensors and KWR.Sensors.RequestScoreboard then
+            KWR.Sensors:RequestScoreboard(true)
+        elseif type(RequestBattlefieldScoreData) == "function" then
+            KWR.Util:Call(RequestBattlefieldScoreData)
+        end
         self:Refresh(event)
-        self:Queue("PVP_MATCH_COMPLETE_FINAL", 0.35)
+        self:ScheduleFinalSweep("PVP_MATCH_COMPLETE")
         return
     end
-    self:Queue(event, event == "UPDATE_UI_WIDGET" and 0.05 or 0.12)
+    local fast = event == "UPDATE_UI_WIDGET"
+        or event == "UPDATE_BATTLEFIELD_SCORE"
+        or event == "PVP_MATCH_ACTIVE"
+    local settle = event == "UPDATE_UI_WIDGET" and 0.35
+        or (event == "UPDATE_BATTLEFIELD_SCORE" and 0.45)
+        or (event == "PVP_MATCH_ACTIVE" and 0.75)
+        or nil
+    self:Queue(event, fast and 0.05 or 0.12, settle)
 end
 
 function Runtime:OnInitialize()
+    if KWR.MemoryBudget then
+        KWR.MemoryBudget:Bind(self, "RuntimeDiagnostics")
+    end
     self.frame = CreateFrame("Frame", "KWR_MatchRuntimeFrame")
     for _, event in ipairs(PERSISTENT_EVENTS) do
         self.frame:RegisterEvent(event)
@@ -314,7 +744,7 @@ end
 
 function Runtime:OnEnable()
     self:UpdateLifecycle()
-    self:Queue("login", 1.0)
+    self:Queue("login", 0.10, 1.0)
 end
 
 function Runtime:OnDisable()
