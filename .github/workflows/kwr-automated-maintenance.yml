@@ -91,10 +91,10 @@ jobs:
           CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
           $lane = "auto"
-          $mode = "dry-run"
-          $confirm = ""
-          $postDiscord = $false
-          $notifyBot = $false
+          $mode = "external"
+          $confirm = "PUBLISH"
+          $postDiscord = $true
+          $notifyBot = $true
 
           if ("${{ github.event_name }}" -eq "workflow_dispatch") {
               $lane = "${{ inputs.lane }}"
