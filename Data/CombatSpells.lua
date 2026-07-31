@@ -16,7 +16,8 @@ local DEFENSIVES = {
     -- Demon Hunter
     [196718] = { name = "Darkness", active = 8, cooldown = 180, weight = 36 },
     [198589] = { name = "Blur", active = 10, cooldown = 60, weight = 24 },
-    [196555] = { name = "Netherwalk (Devourer)", active = 2.5, cooldown = 60, weight = 42 },
+    [196555] = { name = "Netherwalk (Devourer)", active = 2.5, cooldown = 60, weight = 42,
+        defensiveClass = "IMMUNITY", response = "SWAP" },
 
     -- Druid
     [22812] = { name = "Barkskin", active = 12, cooldown = 60, weight = 18 },
@@ -28,12 +29,14 @@ local DEFENSIVES = {
     [374227] = { name = "Zephyr", active = 8, cooldown = 120, weight = 20 },
 
     -- Hunter
-    [186265] = { name = "Aspect of the Turtle", active = 8, cooldown = 150, weight = 42 },
+    [186265] = { name = "Aspect of the Turtle", active = 8, cooldown = 150, weight = 42,
+        defensiveClass = "IMMUNITY", response = "SWAP" },
     [109304] = { name = "Exhilaration", active = 0, cooldown = 120, weight = 16 },
     [264735] = { name = "Survival of the Fittest", active = 6, cooldown = 90, weight = 28 },
 
     -- Mage
-    [45438] = { name = "Ice Block", active = 10, cooldown = 180, weight = 46 },
+    [45438] = { name = "Ice Block", active = 10, cooldown = 180, weight = 46,
+        defensiveClass = "IMMUNITY", response = "SWAP" },
     [342245] = { name = "Alter Time", active = 10, cooldown = 50, weight = 24 },
     [110959] = { name = "Greater Invisibility", active = 3, cooldown = 120, weight = 28 },
     [414658] = { name = "Ice Cold", active = 6, cooldown = 240, weight = 38 },
@@ -41,12 +44,16 @@ local DEFENSIVES = {
     -- Monk
     [115203] = { name = "Fortifying Brew", active = 15, cooldown = 90, weight = 36 },
     [122470] = { name = "Touch of Karma", active = 10, cooldown = 90, weight = 34 },
-    [116849] = { name = "Life Cocoon", active = 12, cooldown = 75, weight = 38 },
+    [116849] = { name = "Life Cocoon", active = 12, cooldown = 75, weight = 38,
+        defensiveClass = "ABSORB", response = "HOLD_DAMAGE" },
 
     -- Paladin
-    [642] = { name = "Divine Shield", active = 8, cooldown = 210, weight = 50 },
-    [1022] = { name = "Blessing of Protection", active = 10, cooldown = 240, weight = 38 },
-    [204018] = { name = "Blessing of Spellwarding", active = 6, cooldown = 240, weight = 38 },
+    [642] = { name = "Divine Shield", active = 8, cooldown = 210, weight = 50,
+        defensiveClass = "IMMUNITY", response = "SWAP" },
+    [1022] = { name = "Blessing of Protection", active = 10, cooldown = 240, weight = 38,
+        defensiveClass = "PHYSICAL_IMMUNITY", response = "SWAP_OR_MAGIC" },
+    [204018] = { name = "Blessing of Spellwarding", active = 6, cooldown = 240, weight = 38,
+        defensiveClass = "MAGIC_IMMUNITY", response = "SWAP_OR_PHYSICAL" },
     [633] = { name = "Lay on Hands", active = 0, cooldown = 420, weight = 36 },
     [6940] = { name = "Blessing of Sacrifice", active = 12, cooldown = 60, weight = 24 },
     [498] = { name = "Divine Protection", active = 8, cooldown = 60, weight = 20 },
@@ -56,7 +63,8 @@ local DEFENSIVES = {
     -- Priest
     [19236] = { name = "Desperate Prayer", active = 0, cooldown = 70, weight = 16 },
     [586] = { name = "Fade", active = 1, cooldown = 20, weight = 12 },
-    [47585] = { name = "Dispersion", active = 6, cooldown = 90, weight = 40 },
+    [47585] = { name = "Dispersion", active = 6, cooldown = 90, weight = 40,
+        defensiveClass = "MAJOR_MITIGATION", response = "SWAP" },
     [33206] = { name = "Pain Suppression", active = 8, cooldown = 180, weight = 36 },
     [47788] = { name = "Guardian Spirit", active = 10, cooldown = 180, weight = 38 },
 
@@ -68,7 +76,8 @@ local DEFENSIVES = {
     -- Shaman
     [108271] = { name = "Astral Shift", active = 12, cooldown = 90, weight = 26 },
     [204336] = { name = "Grounding Totem", active = 3, cooldown = 24, weight = 16 },
-    [409293] = { name = "Burrow", active = 5, cooldown = 120, weight = 42 },
+    [409293] = { name = "Burrow", active = 5, cooldown = 120, weight = 42,
+        defensiveClass = "IMMUNITY", response = "SWAP" },
     [98008] = { name = "Spirit Link Totem", active = 6, cooldown = 174, weight = 34 },
 
     -- Warlock
@@ -122,6 +131,26 @@ local ABILITIES = {
     },
 }
 
+-- Reviewed casts are presentation hints only. A row is accented only after
+-- Blizzard emits a cast/channel event for an attackable player unit. KWR does
+-- not infer interruptibility, cooldown readiness, or an unobserved cast.
+local PRIORITY_CASTS = {
+    [118] = { name = "Polymorph", priority = "MUST_STOP", response = "STOP", duration = 2 },
+    [605] = { name = "Mind Control", priority = "MUST_STOP", response = "STOP", duration = 2 },
+    [5782] = { name = "Fear", priority = "MUST_STOP", response = "STOP", duration = 1.7 },
+    [20066] = { name = "Repentance", priority = "MUST_STOP", response = "STOP", duration = 1.7 },
+    [33786] = { name = "Cyclone", priority = "MUST_STOP", response = "STOP", duration = 1.7 },
+    [51514] = { name = "Hex", priority = "MUST_STOP", response = "STOP", duration = 1.7 },
+    [32375] = { name = "Mass Dispel", priority = "ADVANTAGE", response = "STOP", duration = 1.5 },
+    [116858] = { name = "Chaos Bolt", priority = "ADVANTAGE", response = "STOP", duration = 2.5 },
+    [198898] = { name = "Song of Chi-Ji", priority = "MUST_STOP", response = "STOP", duration = 1.8 },
+    [263165] = { name = "Void Torrent", priority = "ADVANTAGE", response = "STOP", duration = 3 },
+    [305483] = { name = "Lightning Lasso", priority = "MUST_STOP", response = "STOP", duration = 5 },
+    [360806] = { name = "Sleep Walk", priority = "MUST_STOP", response = "STOP", duration = 1.7 },
+    [391528] = { name = "Convoke the Spirits", priority = "ADVANTAGE", response = "STOP", duration = 4 },
+    [421453] = { name = "Ultimate Penitence", priority = "ADVANTAGE", response = "STOP", duration = 4 },
+}
+
 local HEALER_SPECS = {
     ["discipline"] = true, ["holy"] = true, ["restoration"] = true,
     ["mistweaver"] = true, ["preservation"] = true,
@@ -171,12 +200,25 @@ function CombatSpells:Role(spec, assigned)
     return spec ~= "" and "DAMAGER" or "NONE"
 end
 
+function CombatSpells:GetCast(spellID)
+    spellID = KWR.Util:Number(spellID, nil)
+    local cast = spellID and PRIORITY_CASTS[spellID]
+    if not cast then return nil end
+    local result = KWR.Util:Copy(cast)
+    result.spellID = spellID
+    return result
+end
+
 function CombatSpells:AllDefensives()
     return DEFENSIVES
 end
 
 function CombatSpells:AllAbilities()
     return ABILITIES
+end
+
+function CombatSpells:AllPriorityCasts()
+    return PRIORITY_CASTS
 end
 
 KWR:RegisterModule("CombatSpells", CombatSpells)
