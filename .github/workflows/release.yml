@@ -83,30 +83,39 @@ jobs:
           ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip"
 
       - name: Publish Commander Discord announcement
-        if: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS != '' }}
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
+              Write-Output "Discord announcement skipped: webhook secret is not configured."
+              exit 0
+          }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $version
 
       - name: Publish Sentinel Discord announcement
-        if: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS != '' }}
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
+              Write-Output "Discord announcement skipped: webhook secret is not configured."
+              exit 0
+          }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $version
 
       - name: Notify KWR Sentinel Discord bot
-        if: ${{ secrets.KWR_BOT_DISPATCH_TOKEN != '' && (vars.KWR_BOT_REPOSITORY != '' || secrets.KWR_BOT_REPOSITORY != '') }}
         shell: pwsh
         env:
           BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
           BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:BOT_DISPATCH_TOKEN) -or [string]::IsNullOrWhiteSpace($env:BOT_REPOSITORY)) {
+              Write-Output "Sentinel bot notification skipped: dispatch credentials are not configured."
+              exit 0
+          }
           $headers = @{
               Authorization = "Bearer $env:BOT_DISPATCH_TOKEN"
               Accept = "application/vnd.github+json"
