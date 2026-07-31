@@ -5,11 +5,14 @@ local Sensors = {
     scoreWidgetByMap = {},
     objectiveWidgetByMap = {},
     scoreSession = nil,
+    blitzSessionKey = nil,
+    blitzSource = nil,
     lastScoreRequestAt = -999,
 }
 KWR.Sensors = Sensors
 
 local Util
+local SCOREBOARD_REQUEST_INTERVAL = 10
 
 local function number(value, fallback)
     return Util:Number(value, fallback)
@@ -37,10 +40,198 @@ local function readDoubleStatus(widgetID)
     }
 end
 
+local function validScoreWidget(widget, definition)
+    if not widget or not definition then return false end
+    if widget.left < 0 or widget.right < 0 then return false end
+    local expected = number(definition.maxScore, 0)
+    local maximum = number(widget.max, 0)
+    if expected > 0 then
+        if widget.left > expected or widget.right > expected then return false end
+        if maximum > 0 and maximum ~= expected then return false end
+    end
+    return true
+end
+
 local function safeArrayLength(array)
     if type(array) ~= "table" then return 0 end
     local ok, count = pcall(function() return #array end)
     return ok and number(count, 0) or 0
+end
+
+local function evidenceTTL(source, field)
+    if source == "ui_widget" then
+        return (field == "owner" or field == "state") and 5 or 8
+    end
+    if source == "area_poi" then
+        return field == "position" and 20 or 12
+    end
+    if source == "vignette" then
+        return field == "position" and 10 or 8
+    end
+    if source == "map_definition" then
+        return 3600
+    end
+    return 10
+end
+
+local function evidenceConfidence(source, field)
+    if source == "ui_widget" then
+        return (field == "owner" or field == "state") and 100 or 90
+    end
+    if source == "area_poi" then
+        return field == "position" and 85 or 70
+    end
+    if source == "vignette" then
+        return field == "position" and 75 or 65
+    end
+    if source == "map_definition" then
+        return 40
+    end
+    return 50
+end
+
+local function sourceAuthority(field, source)
+    if field == "owner" or field == "state" then
+        if source == "ui_widget" then return 400 end
+        if source == "area_poi" then return 220 end
+        if source == "vignette" then return 180 end
+        if source == "map_definition" then return 40 end
+        return 0
+    end
+    if field == "position" then
+        if source == "area_poi" then return 320 end
+        if source == "vignette" then return 300 end
+        if source == "ui_widget" then return 250 end
+        if source == "map_definition" then return 80 end
+        return 0
+    end
+    return 0
+end
+
+local function lineageRoot(source, subject, revision)
+    return table.concat({
+        tostring(source or "unknown"),
+        tostring(subject or "unknown"),
+        tostring(revision or "0"),
+    }, ":")
+end
+
+local function ensureObjectiveEvidence(row)
+    row.evidence = row.evidence or {}
+    row.resolution = row.resolution or {}
+    return row.evidence, row.resolution
+end
+
+local function recordObjectiveEvidence(row, sourceKey, fact, value, observedAt, field, revision, extra)
+    local evidence = ensureObjectiveEvidence(row)
+    evidence[sourceKey] = evidence[sourceKey] or {}
+    local entry = {
+        id = table.concat({
+            tostring(row.label or "objective"),
+            tostring(sourceKey or "source"),
+            tostring(field or fact or "fact"),
+        }, ":"),
+        fact = fact,
+        subject = row.label,
+        value = value,
+        class = sourceKey == "map_definition" and "REFERENCE" or "OBSERVED",
+        confidence = evidenceConfidence(sourceKey, field),
+        observedAt = observedAt,
+        expiresAt = observedAt and (observedAt + evidenceTTL(sourceKey, field)) or nil,
+        source = {
+            system = sourceKey,
+        },
+        lineage = {
+            root = lineageRoot(sourceKey, row.label, revision),
+            family = string.upper(tostring(sourceKey or "unknown")),
+        },
+        conflicts = {},
+    }
+    if type(extra) == "table" then
+        for key, extraValue in pairs(extra) do
+            entry[key] = extraValue
+        end
+    end
+    evidence[sourceKey][field or fact] = entry
+    return entry
+end
+
+local function resolveObjectiveField(row, field, value, sourceKey, observedAt, revision, extra)
+    if value == nil then return false end
+    local _, resolution = ensureObjectiveEvidence(row)
+    local current = resolution[field]
+    local authority = sourceAuthority(field, sourceKey)
+    local entry = recordObjectiveEvidence(row, sourceKey, field, value, observedAt, field, revision, extra)
+    if not current then
+        resolution[field] = {
+            value = value,
+            selectedSource = sourceKey,
+            confidence = entry.confidence,
+            status = "RESOLVED",
+            observedAt = observedAt,
+            authority = authority,
+        }
+        return true
+    end
+    if current.value == value then
+        if authority >= (current.authority or 0) then
+            current.selectedSource = sourceKey
+            current.confidence = math.max(current.confidence or 0, entry.confidence or 0)
+            current.observedAt = observedAt or current.observedAt
+            current.authority = authority
+        end
+        return authority >= (current.authority or 0)
+    end
+    current.status = "CONFLICTED"
+    current.conflict = {
+        otherSource = sourceKey,
+        otherValue = value,
+        observedAt = observedAt,
+        ageDifference = current.observedAt and observedAt
+            and math.abs(observedAt - current.observedAt) or nil,
+    }
+    entry.conflicts[#entry.conflicts + 1] = {
+        selectedSource = current.selectedSource,
+        selectedValue = current.value,
+    }
+    if authority > (current.authority or 0) then
+        current.value = value
+        current.selectedSource = sourceKey
+        current.confidence = entry.confidence
+        current.observedAt = observedAt
+        current.authority = authority
+        return true
+    end
+    return false
+end
+
+local function semanticForObjective(definition, owner, state, kind, native)
+    local family = definition and definition.kind or "WORLD"
+    owner = text(owner, "UNKNOWN", 16)
+    state = text(state, "UNKNOWN", 24)
+    kind = text(kind, "OBJECTIVE", 16)
+    if kind == "FLAG" then
+        if state == "CARRIED" then return owner .. "_FLAG_ACTIVE" end
+        if state == "AVAILABLE" then return "FLAG_AVAILABLE" end
+    end
+    if family == "NODE" or family == "RESOURCE" then
+        if state == "CONTROLLED" then return owner .. "_CONTROLLED" end
+        if state == "INCOMING" then return owner .. "_ASSAULTING" end
+        if state == "MAP" then return "MAP_REFERENCE" end
+    elseif family == "CART" then
+        if state == "ACTIVE" then return "CART_ACTIVE" end
+        if state == "CONTROLLED" then return owner .. "_CART_CONTROL" end
+    elseif family == "ORB" then
+        if state == "CARRIED" then return owner .. "_ORB_HELD" end
+    elseif family == "HYBRID" then
+        if native and native.atlas and native.atlas ~= "" then
+            return text(native.atlas, "HYBRID_ACTIVE", 40)
+        end
+        if state == "CARRIED" then return owner .. "_FLAG_ACTIVE" end
+        if state == "CONTROLLED" then return owner .. "_CONTROLLED" end
+        if state == "INCOMING" then return owner .. "_ASSAULTING" end
+    end
+    return owner .. "_" .. state
 end
 
 local function canonicalLocation(label, definition, fallback)
@@ -57,29 +248,58 @@ end
 
 local function mergeObjectiveRow(result, incoming)
     if not incoming or not incoming.label then return end
+    local observedAt = incoming.observedAt or Util:Now()
+    local revision = incoming.revision or 0
     for _, row in ipairs(result.rows or {}) do
         if row.label == incoming.label then
-            if incoming.x and incoming.y then
+            if incoming.x and incoming.y and resolveObjectiveField(row, "position",
+                { x = incoming.x, y = incoming.y },
+                incoming.mapSource or incoming.source,
+                observedAt,
+                revision,
+                { source = { system = incoming.mapSource or incoming.source, poiID = incoming.poiID, vignetteGUID = incoming.vignetteGUID } }) then
                 row.x, row.y = incoming.x, incoming.y
                 row.mapSource = incoming.mapSource or incoming.source
             end
             if incoming.poiID then row.poiID = incoming.poiID end
             if incoming.vignetteGUID then row.vignetteGUID = incoming.vignetteGUID end
-            if (row.owner == nil or row.owner == "UNKNOWN") and incoming.owner then
+            if incoming.owner and resolveObjectiveField(row, "owner", incoming.owner,
+                incoming.source, observedAt, revision,
+                { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } }) then
                 row.owner = incoming.owner
             end
-            if (row.state == nil or row.state == "AVAILABLE" or row.state == "MAP")
-                and incoming.state then
+            if incoming.state and resolveObjectiveField(row, "state", incoming.state,
+                incoming.source, observedAt, revision,
+                { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } }) then
                 row.state = incoming.state
             end
+            if incoming.native then row.native = incoming.native end
+            row.selectedSource = row.resolution and row.resolution.state
+                and row.resolution.state.selectedSource or row.selectedSource or incoming.source
             return row
         end
+    end
+    incoming.selectedSource = incoming.source
+    if incoming.owner then
+        resolveObjectiveField(incoming, "owner", incoming.owner, incoming.source,
+            observedAt, revision,
+            { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } })
+    end
+    if incoming.state then
+        resolveObjectiveField(incoming, "state", incoming.state, incoming.source,
+            observedAt, revision,
+            { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } })
+    end
+    if incoming.x and incoming.y then
+        resolveObjectiveField(incoming, "position", { x = incoming.x, y = incoming.y },
+            incoming.mapSource or incoming.source, observedAt, revision,
+            { source = { system = incoming.mapSource or incoming.source, poiID = incoming.poiID, vignetteGUID = incoming.vignetteGUID } })
     end
     result.rows[#result.rows + 1] = incoming
     return incoming
 end
 
-local function countIcons(icons, labelPrefix, definition)
+local function countIcons(icons, labelPrefix, definition, sideKey, widgetID, revision)
     local controlled, incoming, flagActive = 0, 0, 0
     local rows = {}
     for index = 1, safeArrayLength(icons) do
@@ -107,7 +327,21 @@ local function countIcons(icons, labelPrefix, definition)
                 state = isFlag and (state == 1 and "CARRIED" or "AVAILABLE")
                     or (state == 2 and "CONTROLLED" or (state == 1 and "INCOMING" or "AVAILABLE")),
                 kind = isFlag and "FLAG" or "OBJECTIVE",
-                source = "widget",
+                source = "ui_widget",
+                observedAt = Util:Now(),
+                revision = revision,
+                widgetID = widgetID,
+                iconState = state,
+                native = {
+                    widgetID = widgetID,
+                    widgetType = "DOUBLE_STATE_ICON_ROW",
+                    iconState = state,
+                    side = sideKey,
+                    tooltip = state == 1 and text(icon.state1Tooltip, "", 96)
+                        or text(icon.state2Tooltip, "", 96),
+                    rawLabel = label,
+                    mapFamily = definition and definition.kind or "WORLD",
+                },
             }
         end
     end
@@ -146,11 +380,13 @@ local function readIconObjectives(definition, assigned, objectiveWidget)
     local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, objectiveWidget)
     if type(info) ~= "table" then return result end
     result.widgetID = objectiveWidget
+    local observedAt = Util:Now()
+    local revision = math.floor(observedAt * 1000 + 0.5)
 
     local leftOwned, leftIncoming, leftRows, leftFlag =
-        countIcons(info.leftIcons, "Alliance", definition)
+        countIcons(info.leftIcons, "Alliance", definition, "LEFT", objectiveWidget, revision)
     local rightOwned, rightIncoming, rightRows, rightFlag =
-        countIcons(info.rightIcons, "Horde", definition)
+        countIcons(info.rightIcons, "Horde", definition, "RIGHT", objectiveWidget, revision)
     result.friendly = KWR.TeamResolver:Value(leftOwned, rightOwned, "friendly", assigned) or 0
     result.enemy = KWR.TeamResolver:Value(leftOwned, rightOwned, "enemy", assigned) or 0
     result.friendlyIncoming = KWR.TeamResolver:Value(leftIncoming, rightIncoming, "friendly", assigned) or 0
@@ -173,6 +409,11 @@ local function readIconObjectives(definition, assigned, objectiveWidget)
                 local existing = merged[row.label]
                 if not existing or existing.state == "AVAILABLE" then
                     row.owner = owner
+                    row.native = row.native or {}
+                    row.native.leftStateCount = leftOwned + leftIncoming
+                    row.native.rightStateCount = rightOwned + rightIncoming
+                    row.native.semantic = semanticForObjective(
+                        definition, owner, row.state, row.kind, row.native)
                     merged[row.label] = row
                 end
             end
@@ -187,7 +428,17 @@ local function readIconObjectives(definition, assigned, objectiveWidget)
                 state = "AVAILABLE",
                 owner = "UNKNOWN",
                 kind = "OBJECTIVE",
-                source = "widget",
+                source = "ui_widget",
+                observedAt = observedAt,
+                revision = revision,
+                widgetID = objectiveWidget,
+                native = {
+                    widgetID = objectiveWidget,
+                    widgetType = "DOUBLE_STATE_ICON_ROW",
+                    iconState = 0,
+                    semantic = "UNOBSERVED",
+                    mapFamily = definition and definition.kind or "WORLD",
+                },
             }
             result.rows[#result.rows + 1] = row
         end
@@ -198,6 +449,22 @@ local function readIconObjectives(definition, assigned, objectiveWidget)
             if label == location then known = true break end
         end
         if not known then result.rows[#result.rows + 1] = row end
+    end
+    for _, row in ipairs(result.rows) do
+        local rowObservedAt = row.observedAt or observedAt
+        local rowRevision = row.revision or revision
+        if row.owner then
+            resolveObjectiveField(row, "owner", row.owner, row.source, rowObservedAt, rowRevision, {
+                source = { system = row.source, widgetID = row.widgetID, iconState = row.iconState },
+            })
+        end
+        if row.state then
+            resolveObjectiveField(row, "state", row.state, row.source, rowObservedAt, rowRevision, {
+                source = { system = row.source, widgetID = row.widgetID, iconState = row.iconState },
+            })
+        end
+        row.selectedSource = row.resolution and row.resolution.state
+            and row.resolution.state.selectedSource or row.source
     end
     return result
 end
@@ -217,144 +484,7 @@ local function appendPublicPOIs(result, mapID, definition)
         local info = poiID and Util:Call(C_AreaPoiInfo.GetAreaPOIInfo, mapID, poiID)
         if type(info) == "table" then
             local label = text(info.name, "", 96)
-            if label == "" then label = text(info.description, "", 96) end
-            label = canonicalLocation(label, definition, label)
-            if label ~= "" then
-                local x, y = readPosition(info.position)
-                local row = mergeObjectiveRow(result, {
-                    label = label,
-                    state = "MAP",
-                    owner = "UNKNOWN",
-                    source = "area_poi",
-                    mapSource = "area_poi",
-                    poiID = poiID,
-                    x = x,
-                    y = y,
-                })
-                seen[label] = row
-            end
-        end
-    end
-end
-
-local function nearestDefinedLocation(definition, x, y)
-    local best, bestDistance
-    for label, position in pairs(definition and definition.positions or {}) do
-        local px, py = number(position[1], nil), number(position[2], nil)
-        if px and py then
-            local dx, dy = px - x, py - y
-            local distance = (dx * dx) + (dy * dy)
-            if not bestDistance or distance < bestDistance then
-                best, bestDistance = label, distance
-            end
-        end
-    end
-    return best
-end
-
-local function appendVignettes(result, mapID, definition)
-    if not mapID or not C_VignetteInfo
-        or type(C_VignetteInfo.GetVignettes) ~= "function"
-        or type(C_VignetteInfo.GetVignetteInfo) ~= "function"
-        or type(C_VignetteInfo.GetVignettePosition) ~= "function" then
-        return
-    end
-    local vignetteGUIDs = Util:Call(C_VignetteInfo.GetVignettes)
-    if type(vignetteGUIDs) ~= "table" then return end
-    for index = 1, math.min(safeArrayLength(vignetteGUIDs), 40) do
-        local vignetteGUID = vignetteGUIDs[index]
-        local info = Util:Call(C_VignetteInfo.GetVignetteInfo, vignetteGUID)
-        local position = Util:Call(C_VignetteInfo.GetVignettePosition, vignetteGUID, mapID)
-        if type(info) == "table" and position and not Util:IsSecret(info) then
-            local x, y = readPosition(position)
-            if x and y then
-                local rawLabel = text(info.name, "", 96)
-                local label = canonicalLocation(rawLabel, definition, "")
-                local known = false
-                for _, location in ipairs(definition and definition.locations or {}) do
-                    if label == location then known = true break end
-                end
-                if not known and definition
-                    and (definition.kind == "CART" or definition.kind == "RESOURCE") then
-                    label = nearestDefinedLocation(definition, x, y) or rawLabel
-                    known = label ~= nil and label ~= ""
-                end
-                if known then
-                    mergeObjectiveRow(result, {
-                        label = label,
-                        state = "ACTIVE",
-                        owner = "UNKNOWN",
-                        source = "vignette",
-                        mapSource = "vignette",
-                        vignetteGUID = tostring(vignetteGUID),
-                        atlas = text(info.atlasName, "", 80),
-                        x = x,
-                        y = y,
-                    })
-                end
-            end
-        end
-    end
-end
-
-local function applyFallbackPositions(result, definition)
-    if not definition then return end
-    local byLabel = {}
-    for _, row in ipairs(result.rows or {}) do byLabel[row.label] = row end
-    for _, label in ipairs(definition.locations or {}) do
-        local position = definition.positions and definition.positions[label]
-        local row = byLabel[label]
-        if not row then
-            row = {
-                label = label,
-                state = "MAP",
-                owner = "UNKNOWN",
-                kind = label == "Flag" and "FLAG" or "OBJECTIVE",
-                source = "map_definition",
-            }
-            result.rows[#result.rows + 1] = row
-            byLabel[label] = row
-        end
-        if position and (not row.x or not row.y) then
-            row.x = number(position[1], nil)
-            row.y = number(position[2], nil)
-            row.mapSource = "map_definition"
-        end
-    end
-end
-
-local function requestScoreboard()
-    local now = Util:Now()
-    if now - (Sensors.lastScoreRequestAt or -999) < 2 then return end
-    Sensors.lastScoreRequestAt = now
-    if type(RequestBattlefieldScoreData) == "function" then
-        Util:Call(RequestBattlefieldScoreData)
-    end
-end
-
-local function appendFlags(result, mapID)
-    if type(GetNumBattlefieldFlagPositions) ~= "function"
-        or not C_PvP or not C_PvP.GetBattlefieldFlagPosition then
-        return
-    end
-    local count = number(Util:Call(GetNumBattlefieldFlagPositions), 0)
-    result.flags = {}
-    for index = 1, math.min(count, 8) do
-        local x, y, texture = Util:Call(C_PvP.GetBattlefieldFlagPosition, index, mapID)
-        x, y = number(x, nil), number(y, nil)
-        if x and y then
-            result.flags[#result.flags + 1] = {
-                index = index,
-                x = x,
-                y = y,
-                texture = text(texture, "", 80),
-            }
-        end
-    end
-end
-
-local function appendVehicles(result, mapID)
-    if type(GetNumBattlefieldVehicles) ~= "function"
+            if label =…1649 tokens truncated…dVehicles) ~= "function"
         or not C_PvP or not C_PvP.GetBattlefieldVehicleInfo then
         return
     end
@@ -401,14 +531,61 @@ function Sensors:ResolveSpecialization(unit)
     return resolveSpecialization(unit)
 end
 
+local function raidUnitMatchesRosterName(rosterName, unitName, shortCounts)
+    local rosterFull = Util:CanonicalName(rosterName)
+    local unitFull = Util:CanonicalName(unitName)
+    if rosterFull == "" or unitFull == "" then return false end
+    if rosterFull == unitFull then return true end
+
+    local rosterShort = Util:CanonicalShortName(rosterName)
+    local unitShort = Util:CanonicalShortName(unitName)
+    if rosterShort == "" or rosterShort ~= unitShort then return false end
+
+    -- A realm-qualified mismatch is a different player. Blizzard may omit a
+    -- same-realm suffix on one feed, so a unique short name remains a safe
+    -- transitional match only when at least one side is unqualified.
+    local rosterQualified = rosterFull:find("-", 1, true) ~= nil
+    local unitQualified = unitFull:find("-", 1, true) ~= nil
+    if rosterQualified and unitQualified then return false end
+    return (shortCounts[rosterShort] or 0) == 1
+end
+
 local function captureRoster(mapID)
     local roster = {}
     local units = {}
+    local raidNames = {}
+    local raidLocalizedClasses = {}
+    local raidClasses = {}
+    local raidRoles = {}
+    local raidConnected = {}
+    local raidDead = {}
     local definition = mapID and KWR.Maps:Resolve(mapID, "") or nil
     local observedAt = Util:Now()
-    if type(IsInRaid) == "function" and IsInRaid() then
+    local inRaid = type(IsInRaid) == "function" and IsInRaid()
+    if inRaid then
         local count = math.min(number(Util:Call(GetNumGroupMembers), 0), 40)
-        for index = 1, count do units[#units + 1] = "raid" .. index end
+        for index = 1, count do
+            units[#units + 1] = "raid" .. index
+            if type(GetRaidRosterInfo) == "function" then
+                local rosterName, _, _, _, localizedClass, classFile, _,
+                    online, isDead, rosterRole =
+                    Util:Call(GetRaidRosterInfo, index)
+                rosterName = text(rosterName, "", 64)
+                if rosterName ~= "" then raidNames[index] = rosterName end
+                localizedClass = text(localizedClass, "", 24)
+                if localizedClass ~= "" then
+                    raidLocalizedClasses[index] = localizedClass
+                end
+                classFile = text(classFile, "", 24)
+                if classFile ~= "" then raidClasses[index] = classFile:upper() end
+                if type(online) == "boolean" then raidConnected[index] = online end
+                if type(isDead) == "boolean" then raidDead[index] = isDead end
+                rosterRole = text(rosterRole, "", 12)
+                if rosterRole ~= "" and rosterRole ~= "NONE" then
+                    raidRoles[index] = rosterRole
+                end
+            end
+        end
     elseif type(IsInGroup) == "function" and IsInGroup() then
         units[#units + 1] = "player"
         local count = math.min(number(Util:Call(GetNumSubgroupMembers), 0), 4)
@@ -417,13 +594,63 @@ local function captureRoster(mapID)
         units[1] = "player"
     end
 
-    for _, unit in ipairs(units) do
-        local name = Util:UnitName(unit)
+    local raidShortCounts = {}
+    if inRaid then
+        for _, rosterName in pairs(raidNames) do
+            local shortName = Util:CanonicalShortName(rosterName)
+            if shortName ~= "" then
+                raidShortCounts[shortName] = (raidShortCounts[shortName] or 0) + 1
+            end
+        end
+    end
+
+    local seenIdentity, seenName = {}, {}
+    for unitIndex, unit in ipairs(units) do
+        local unitName = Util:UnitName(unit)
+        -- GetRaidRosterInfo owns raid-slot identity. If that slot has not
+        -- hydrated yet, omit it for this refresh instead of filling it with a
+        -- transient UnitName(raidN), which can temporarily resolve to self.
+        local name
+        if inRaid then
+            name = raidNames[unitIndex]
+        else
+            name = unitName
+        end
         if name then
-            local localizedClass, classFile = Util:UnitClass(unit)
-            local guid = text(Util:Call(UnitGUID, unit), "", 80)
-            local role = text(Util:Call(UnitGroupRolesAssigned, unit), "NONE", 12)
-            local specID, specName, specRole, specSource = resolveSpecialization(unit)
+            local unitStable = not inRaid
+                or raidUnitMatchesRosterName(name, unitName, raidShortCounts)
+            local localizedClass, classFile
+            if unitStable then
+                localizedClass, classFile = Util:UnitClass(unit)
+            end
+            if raidLocalizedClasses[unitIndex] then
+                localizedClass = raidLocalizedClasses[unitIndex]
+            end
+            if raidClasses[unitIndex] then
+                classFile = raidClasses[unitIndex]
+            end
+            localizedClass = text(localizedClass, "Unknown", 24)
+            classFile = text(classFile, "UNKNOWN", 24):upper()
+            local guid = unitStable
+                and text(Util:Call(UnitGUID, unit), "", 80) or ""
+            local role = raidRoles[unitIndex]
+                or (unitStable
+                    and text(Util:Call(UnitGroupRolesAssigned, unit), "NONE", 12)
+                    or "NONE")
+            local identity = guid ~= "" and guid or name:lower()
+            local normalizedName = name:lower()
+            local duplicate = seenIdentity[identity] == true
+                or seenName[normalizedName] == true
+            if not duplicate then
+                seenIdentity[identity] = true
+                seenName[normalizedName] = true
+            end
+            if not duplicate then
+            local specID, specName, specRole, specSource
+            if unitStable then
+                specID, specName, specRole, specSource =
+                    resolveSpecialization(unit)
+            end
             if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             local cacheKey = guid ~= "" and guid or name:lower()
             local cacheRecord
@@ -447,18 +674,36 @@ local function captureRoster(mapID)
                 Sensors.specCache[cacheKey] = cacheRecord
                 Sensors.specCache[name:lower()] = cacheRecord
             end
-            local dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
-            local connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
-            local health = number(Util:Call(UnitHealth, unit), nil)
-            local healthMax = number(Util:Call(UnitHealthMax, unit), nil)
+            local dead = raidDead[unitIndex]
+            if dead == nil and unitStable then
+                dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
+            end
+            dead = dead == true
+            local connected = raidConnected[unitIndex]
+            if connected == nil and unitStable then
+                connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
+            end
+            if connected == nil then connected = true end
+            local health = unitStable
+                and number(Util:Call(UnitHealth, unit), nil) or nil
+            local healthMax = unitStable
+                and number(Util:Call(UnitHealthMax, unit), nil) or nil
             local x, y
-            if mapID and C_Map and C_Map.GetPlayerMapPosition then
+            if unitStable and mapID and C_Map and C_Map.GetPlayerMapPosition then
                 local position = Util:Call(C_Map.GetPlayerMapPosition, mapID, unit)
                 x, y = readPosition(position)
             end
             local location = x and y and nearestDefinedLocation(definition, x, y) or nil
+            local targetGUID
+            if unitStable then
+                local targetUnit = unit .. "target"
+                if Util:Boolean(Util:Call(UnitExists, targetUnit), false)
+                    and Util:Boolean(Util:Call(UnitCanAttack, "player", targetUnit), false) then
+                    targetGUID = text(Util:Call(UnitGUID, targetUnit), "", 80)
+                end
+            end
             roster[#roster + 1] = {
-                unit = unit,
+                unit = unitStable and unit or nil,
                 guid = guid,
                 name = name,
                 shortName = Util:ShortName(name),
@@ -470,7 +715,9 @@ local function captureRoster(mapID)
                 role = role,
                 dead = dead,
                 connected = connected,
-                inCombat = Util:Boolean(Util:Call(UnitAffectingCombat, unit), false),
+                inCombat = unitStable
+                    and Util:Boolean(Util:Call(UnitAffectingCombat, unit), false)
+                    or false,
                 health = health,
                 healthMax = healthMax,
                 healthPercent = health and healthMax and healthMax > 0
@@ -481,7 +728,10 @@ local function captureRoster(mapID)
                 lastSeenAt = observedAt,
                 location = location or (mapID and "Position restricted" or "Formation"),
                 locationSource = location and "Friendly Map Position" or "Group Unit",
+                unitStable = unitStable,
+                currentTargetGUID = targetGUID ~= "" and targetGUID or nil,
             }
+            end
         end
     end
     table.sort(roster, function(a, b)
@@ -491,7 +741,7 @@ local function captureRoster(mapID)
         end
         return a.name < b.name
     end)
-    return roster
+    return roster, #units
 end
 
 function Sensors:OnInitialize()
@@ -514,7 +764,15 @@ function Sensors:ObserveWidget(widgetInfo)
     local mapKey = state and state.snapshot and state.snapshot.context
         and state.snapshot.context.mapKey
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
-        if readDoubleStatus(widgetID) then self.scoreWidgetByMap[mapKey] = widgetID end
+        local definition = KWR.Maps:Get(mapKey)
+        local widget = readDoubleStatus(widgetID)
+        if validScoreWidget(widget, definition) then
+            local verifiedID = definition and definition.scoreWidget
+            if widgetID == verifiedID
+                or not validScoreWidget(readDoubleStatus(verifiedID), definition) then
+                self.scoreWidgetByMap[mapKey] = widgetID
+            end
+        end
         if C_UIWidgetManager and type(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo) == "function" then
             local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, widgetID)
             if type(info) == "table"
@@ -531,34 +789,65 @@ function Sensors:TrackScore(context, score)
         return
     end
     if score.source ~= "ui_widget" then return end
-    if not self.scoreSession or self.scoreSession.mapKey ~= context.mapKey then
+    local now = Util:Now()
+    local sessionKey = text(
+        context.sessionKey,
+        Util:BattlefieldSessionKey(context),
+        96)
+    if not self.scoreSession or self.scoreSession.sessionKey ~= sessionKey then
         self.scoreSession = {
-            mapKey = context.mapKey,
+            sessionKey = sessionKey,
             friendly = score.friendly,
             enemy = score.enemy,
             lastCapture = nil,
+            observedAt = score.observedAt,
+            changedAt = now,
         }
     else
+        if score.friendly < (self.scoreSession.friendly or 0)
+            or score.enemy < (self.scoreSession.enemy or 0) then
+            score.regressionRejected = true
+            score.friendly = self.scoreSession.friendly or score.friendly
+            score.enemy = self.scoreSession.enemy or score.enemy
+            score.observedAt = self.scoreSession.observedAt
+            score.changedAt = self.scoreSession.changedAt
+            score.lastCapture = self.scoreSession.lastCapture
+            return
+        end
         if score.friendly > (self.scoreSession.friendly or 0) then
             self.scoreSession.lastCapture = "FRIENDLY"
         elseif score.enemy > (self.scoreSession.enemy or 0) then
             self.scoreSession.lastCapture = "ENEMY"
         end
+        if score.friendly ~= self.scoreSession.friendly
+            or score.enemy ~= self.scoreSession.enemy then
+            self.scoreSession.changedAt = now
+        end
         self.scoreSession.friendly = score.friendly
         self.scoreSession.enemy = score.enemy
+        self.scoreSession.observedAt = score.observedAt
     end
     score.lastCapture = self.scoreSession.lastCapture
+    score.changedAt = self.scoreSession.changedAt
 end
 
 function Sensors:Capture(lastMessage)
     local inInstance, instanceType = Util:Call(IsInInstance)
     instanceType = text(instanceType, "none", 16)
     local inPvP = Util:Boolean(inInstance, false) and instanceType == "pvp"
+    local _, _, _, _, _, _, _, instanceID = Util:Call(GetInstanceInfo)
     local zoneName = text(Util:Call(GetRealZoneText), text(Util:Call(GetZoneText), "World", 80), 80)
     local mapID = C_Map and C_Map.GetBestMapForUnit and number(Util:Call(C_Map.GetBestMapForUnit, "player"), nil) or nil
     local definition = KWR.Maps:Resolve(mapID, zoneName)
-    if inPvP then requestScoreboard() end
+    if inPvP then
+        requestScoreboard(false)
+    else
+        self.lastScoreRequestAt = -999
+    end
 
+    local directBlitz = inPvP and C_PvP
+        and type(C_PvP.IsBrawlSoloRBG) == "function"
+        and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false
     local context = {
         inPvP = inPvP,
         instanceType = instanceType,
@@ -567,12 +856,32 @@ function Sensors:Capture(lastMessage)
         mapName = definition and definition.title or zoneName,
         kind = definition and definition.kind or (inPvP and "UNKNOWN" or "WORLD"),
         phase = inPvP and "ACTIVE" or "WORLD",
-        isBlitz = inPvP and C_PvP and type(C_PvP.IsBrawlSoloRBG) == "function"
-            and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false,
+        instanceID = number(instanceID, nil),
+        isBlitz = directBlitz,
         capturedAt = Util:Now(),
     }
-    local roster = captureRoster(inPvP and mapID or nil)
-    local assigned, scoreboardRows = KWR.TeamResolver:Capture(inPvP, roster)
+    context.sessionKey = Util:BattlefieldSessionKey(context)
+    if not inPvP then
+        self.blitzSessionKey = nil
+        self.blitzSource = nil
+    elseif self.blitzSessionKey ~= context.sessionKey then
+        self.blitzSessionKey = context.sessionKey
+        self.blitzSource = nil
+    end
+    local roster, expectedRosterCount = captureRoster(inPvP and mapID or nil)
+    local assigned, scoreboardRows = KWR.TeamResolver:Capture(
+        inPvP, roster, context.sessionKey)
+    local scoreboardBlitz, blitzEvidence =
+        KWR.TeamResolver:DetectBlitz(scoreboardRows)
+    if directBlitz then
+        self.blitzSource = "C_PvP.IsBrawlSoloRBG"
+    elseif scoreboardBlitz then
+        self.blitzSource = blitzEvidence.source
+    end
+    context.isBlitz = self.blitzSource ~= nil
+    context.blitzSource = self.blitzSource or "unconfirmed"
+    roster, context.rosterHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
+        roster, assigned, scoreboardRows, expectedRosterCount)
     context.team = KWR.Util:Copy(assigned)
 
     local score = {
@@ -582,14 +891,14 @@ function Sensors:Capture(lastMessage)
         source = "none",
     }
     if inPvP and definition then
-        local discoveredWidget = self.scoreWidgetByMap[definition.key]
-        local scoreWidgetID = discoveredWidget or definition.scoreWidget
+        local scoreWidgetID = definition.scoreWidget
         local widget = readDoubleStatus(scoreWidgetID)
-        if not widget and discoveredWidget and discoveredWidget ~= definition.scoreWidget then
-            scoreWidgetID = definition.scoreWidget
-            widget = readDoubleStatus(definition.scoreWidget)
+        if not validScoreWidget(widget, definition) then
+            local discoveredWidget = self.scoreWidgetByMap[definition.key]
+            scoreWidgetID = discoveredWidget
+            widget = readDoubleStatus(discoveredWidget)
         end
-        if widget then
+        if validScoreWidget(widget, definition) then
             score.friendly = KWR.TeamResolver:Value(widget.left, widget.right, "friendly", assigned) or 0
             score.enemy = KWR.TeamResolver:Value(widget.left, widget.right, "enemy", assigned) or 0
             score.rawLeft = widget.left
@@ -598,11 +907,13 @@ function Sensors:Capture(lastMessage)
             score.max = widget.max > 0 and widget.max or definition.maxScore
             score.source = assigned and assigned.side and "ui_widget" or "team_unresolved"
             score.observedAt = Util:Now()
+            score.widgetAuthority = scoreWidgetID == definition.scoreWidget
+                and "verified_map_widget" or "validated_fallback_widget"
         end
     end
+    self:TrackScore(context, score)
     score.friendlyNeeded = math.max((score.max or 0) - score.friendly, 0)
     score.enemyNeeded = math.max((score.max or 0) - score.enemy, 0)
-    self:TrackScore(context, score)
 
     local objectiveWidget = definition and (self.objectiveWidgetByMap[definition.key]
         or definition.objectiveWidget)
@@ -622,7 +933,7 @@ function Sensors:Capture(lastMessage)
     end
 
     local enemies = KWR.EnemyIntel
-        and KWR.EnemyIntel:Capture(mapID, inPvP, roster, assigned, scoreboardRows) or {}
+        and KWR.EnemyIntel:Capture(context, roster, assigned, scoreboardRows) or {}
     return {
         context = context,
         score = score,
