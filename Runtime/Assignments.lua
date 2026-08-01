@@ -1,928 +1,1325 @@
-local _, KWR = ...
-
-local Assignments = {
-    integrity = {
-        sessionKey = nil,
-        records = {},
-    },
-}
-KWR.Assignments = Assignments
-
-local function isClass(player, ...)
-    local wanted = { ... }
-    for _, classFile in ipairs(wanted) do
-        if player.classFile == classFile then return true end
-    end
-    return false
-end
-
-local function selectFirst(roster, used, predicate, allowFallback)
-    for index, player in ipairs(roster) do
-        if not used[index] and predicate(player) then
-            used[index] = true
-            return index, player
-        end
-    end
-    if allowFallback then
-        for index, player in ipairs(roster) do
-            if not used[index] then
-                used[index] = true
-                return index, player
-            end
-        end
-    end
-end
-
-local function effectiveRole(player)
-    return KWR.CombatSpells:Role(player.spec, player.role)
-end
-
-local function capability(player)
-    return KWR.Capabilities:Resolve(player.classFile, player.spec, player.heroTalent) or {
-        role = effectiveRole(player),
-        range = nil,
-        tags = {},
-        jobs = {},
-    }
-end
-
-local function value(player, job)
-    local cap = capability(player)
-    local tags = cap.tags or {}
-    local role = cap.role or effectiveRole(player)
-    local score = 0
-    local weights = {
-        defend = { baseDefense = 48, sustain = 18, stealth = 14, control = 12, peel = 10 },
-        spin = { sustain = 42, baseDefense = 22, mobility = 10, control = 10, immunity = 8 },
-        fight = { teamfight = 36, burst = 15, pressure = 14, cleave = 14, rot = 13,
-            antiHeal = 10, damageSupport = 9, control = 8 },
-        float = { rotation = 34, mobility = 28, crossCap = 20, stealth = 16, control = 10 },
-        assault = { baseAssault = 38, crossCap = 30, stealth = 22, burst = 12, control = 12 },
-        carry = { flagCarry = 52, mobility = 24, sustain = 18 },
-        heal = { healing = 50, external = 16, mobility = 10, teamfight = 8 },
-    }
-    for tag, weight in pairs(weights[job] or {}) do
-        if tags[tag] then score = score + weight end
-    end
-    local preferredJobs = {
-        defend = { "DEFENDER", "ANCHOR" },
-        spin = { "ANCHOR", "DEFENDER" },
-        fight = { "ASSASSIN", "SUPPORT", "HARASSER" },
-        float = { "FLOATER", "ROAMER" },
-        assault = { "ASSASSIN", "HARASSER" },
-        carry = { "CARRIER", "ESCORT" },
-        heal = { "SUPPORT", "ESCORT" },
-    }
-    local ratingWeights = {
-        defend = { nodeDefense = 1.0, survivability = 0.8, ccPotential = 0.6 },
-        spin = { survivability = 1.0, nodeDefense = 0.8, objectiveUtility = 0.7 },
-        fight = { teamfight = 1.0, pressure = 0.8, killConfirm = 0.7 },
-        float = { mobility = 1.0, recovery = 0.7, objectiveUtility = 0.6 },
-        assault = { splitPush = 1.0, burst = 0.8, ccPotential = 0.7 },
-        carry = { flagCarry = 1.0, survivability = 0.8, mobility = 0.7 },
-        heal = { recovery = 1.0, manaEndurance = 0.8, peel = 0.7 },
-    }
-    local preference = 0
-    for _, preferred in ipairs(preferredJobs[job] or {}) do
-        preference = math.max(preference, KWR.Util:Number(cap.jobs and cap.jobs[preferred], 0))
-    end
-    -- Capability preferences refine the proven tag model without taking it over.
-    score = score + math.min(18, preference * 0.18)
-    local ratingScore, ratingWeight = 0, 0
-    for rating, weight in pairs(ratingWeights[job] or {}) do
-        ratingScore = ratingScore + ((cap.ratings and cap.ratings[rating] or 1) - 1) * weight
-        ratingWeight = ratingWeight + weight
-    end
-    if ratingWeight > 0 then
-        score = score + math.min(12, (ratingScore / ratingWeight) * 3)
-    end
-    if job == "defend" then
-        if role == "HEALER" then score = score - 80 end
-        if cap.range == "RANGED" then score = score + 12 end
-    elseif job == "spin" then
-        if role == "TANK" then score = score + 45 end
-        if role == "HEALER" then score = score - 25 end
-    elseif job == "fight" then
-        if role == "HEALER" then score = score + 60 end
-        if cap.range == "RANGED" then score = score + 8 end
-    elseif job == "carry" and role == "TANK" then
-        score = score + 45
-    elseif job == "heal" and role == "HEALER" then
-        score = score + 60
-    end
-    return score
-end
-
-function Assignments:BattleValue(player, job)
-    return value(player or {}, job)
-end
-
-local function selectBest(roster, used, job, predicate, allowFallback)
-    local bestIndex, bestPlayer, bestScore
-    for index, player in ipairs(roster) do
-        if not used[index] and (not predicate or predicate(player)) then
-            local score = value(player, job)
-            if bestScore == nil or score > bestScore
-                or (score == bestScore and tostring(player.name) < tostring(bestPlayer.name)) then
-                bestIndex, bestPlayer, bestScore = index, player, score
-            end
-        end
-    end
-    if not bestPlayer and allowFallback then
-        for index, player in ipairs(roster) do
-            if not used[index] then
-                local score = value(player, job)
-                if bestScore == nil or score > bestScore then
-                    bestIndex, bestPlayer, bestScore = index, player, score
-                end
-            end
-        end
-    end
-    if bestIndex then used[bestIndex] = true end
-    return bestIndex, bestPlayer, bestScore
-end
-
-local function add(result, player, role, location, priority, detail)
-    if not player then return end
-    local groupRole = effectiveRole(player)
-    result[#result + 1] = {
-        name = player.name,
-        shortName = player.shortName,
-        guid = player.guid,
-        class = player.class,
-        classFile = player.classFile,
-        spec = player.spec,
-        specID = player.specID,
-        specSource = player.specSource,
-        evidence = player.evidence,
-        groupRole = groupRole,
-        role = role,
-        location = location,
-        priority = priority or 50,
-        battleWeight = detail and detail.battleWeight,
-        job = detail and detail.job,
-        backupRole = detail and detail.backupRole,
-        coverageWeight = detail and detail.coverageWeight,
-        assignmentConfidence = detail and detail.assignmentConfidence,
-        stayCommitted = detail and detail.stayCommitted,
-        coverageEffect = detail and detail.coverageEffect,
-        reason = detail and detail.reason,
-        handoff = detail and detail.handoff,
-        abandonIf = detail and detail.abandonIf,
-        successCondition = detail and detail.successCondition,
-        abortCondition = detail and (detail.abortCondition
-            or detail.abandonIf),
-        dead = player.dead,
-        connected = player.connected,
-    }
-end
-
-local function remaining(roster, used, result, role, location, priority)
-    for index, player in ipairs(roster) do
-        if not used[index] then
-            used[index] = true
-            add(result, player, role, location, priority)
-        end
-    end
-end
-
-local function applyCounterDirectives(assignments, strategy)
-    local enemyShape = strategy and strategy.enemyComposition
-        and strategy.enemyComposition.id or "BALANCED"
-    for _, assignment in ipairs(assignments or {}) do
-        local role = assignment.role or ""
-        local directive
-        if enemyShape == "STEALTH" then
-            if role:find("Defender", 1, true)
-                or role:find("Float", 1, true) then
-                directive = "Pair isolated coverage and report missing stealth."
-            end
-        elseif enemyShape == "ROT" then
-            if role == "Main Fight" or role == "Strike Team" then
-                directive = "Commit one short kill window; rotate if it closes."
-            end
-        elseif enemyShape == "MELEE" then
-            if assignment.groupRole == "HEALER"
-                or role:find("Peel", 1, true) then
-                directive = "Maintain a spread support line and peel first contact."
-            end
-        elseif enemyShape == "RANGED" then
-            if role == "Main Fight" or role == "Strike Team" then
-                directive = "Approach through cover as one timed wave."
-            end
-        elseif enemyShape == "ROTATION" then
-            if role:find("Defender", 1, true) then
-                directive = "Hold the scoring requirement; do not chase roads."
-            elseif role:find("Strike", 1, true)
-                or role:find("Float", 1, true) then
-                directive = "Trade into the lightly held lane."
-            end
-        elseif enemyShape == "BUNKER" then
-            if role:find("Strike", 1, true)
-                or role:find("Float", 1, true) then
-                directive = "Threaten a second lane before committing."
-            end
-        end
-        if directive then
-            assignment.counterDirective = directive
-            assignment.handoff = assignment.handoff
-                and (assignment.handoff .. " " .. directive) or directive
-        end
-    end
-end
-
-local function assignBest(roster, used, result, job, role, location, priority, detail, predicate, allowFallback)
-    if allowFallback == nil then allowFallback = true end
-    local _, player, score = selectBest(roster, used, job, predicate, allowFallback)
-    detail = detail or {}
-    detail.battleWeight = score
-    add(result, player, role, location, priority, detail)
-    return player
-end
-
-local function assignGroup(roster, used, result, count, role, location, priority, reason)
-    local assigned = 0
-    while assigned < count do
-        local _, player, score = selectBest(roster, used, "fight", nil, false)
-        if not player then break end
-        add(result, player, role, location, priority, {
-            battleWeight = score,
-            reason = reason,
-        })
-        assigned = assigned + 1
-    end
-end
-
-local function openingNode(roster, definition, context)
-    local result, used = {}, {}
-    local faction = context and context.team and context.team.faction
-    local home = definition.home and definition.home[faction]
-        or definition.locations[1] or "Home"
-    local key = definition.key
-    if key == "EOTS" then
-        local friendlyA = faction == "Horde" and "Blood Elf Tower" or "Mage Tower"
-        local friendlyB = faction == "Horde" and "Fel Reaver" or "Draenei Ruins"
-        local enemyTower = faction == "Horde" and "Draenei Ruins" or "Fel Reaver"
-        assignBest(roster, used, result, "defend", "Tower Sitter", friendlyA, 96, {
-            reason = "Highest independent defense value protects the first scoring tower.",
-            handoff = "Float only after a named replacement confirms coverage.",
-        })
-        assignBest(roster, used, result, "defend", "Tower Sitter", friendlyB, 95, {
-            reason = "Second independent defender preserves the two-tower score floor.",
-            handoff = "Join mid only after relief reaches the tower.",
-        })
-        local midStart = #result
-        assignBest(roster, used, result, "heal", "Mid / Flag Control", "Flag", 90, {
-            reason = "Mid healer supports flag control while both towers remain covered.",
-        }, function(player) return effectiveRole(player) == "HEALER" end, false)
-        local midAssigned = #result - midStart
-        assignBest(roster, used, result, "heal", "Tower Strike", enemyTower, 89, {
-            reason = "Strike healer keeps enemy-tower pressure independent from mid.",
-        }, function(player) return effectiveRole(player) == "HEALER" end, false)
-        assignGroup(roster, used, result, math.max(0, 4 - midAssigned),
-            "Mid / Flag Control", "Flag", 88,
-            "Balanced control group spins mid without stripping both towers.")
-        remaining(roster, used, result, "Tower Strike", enemyTower, 84)
-        return result
-    end
-
-    local main = definition.priorities[1] or "Objective"
-    if key == "GILNEAS" then main = "Waterworks"
-    elseif key == "DEEPWIND" then main = "Market"
-    elseif key == "ARATHI" then main = "Blacksmith" end
-
-    if key == "ARATHI" then
-        assignBest(roster, used, result, "spin", "Blacksmith Spinner", "Blacksmith", 97, {
-            reason = "Highest spin value buys time without consuming the best ranged kill pressure.",
-            handoff = "If Blacksmith needs damage, rotate to home and release the ranged defender into Blacksmith.",
-            abandonIf = "Leave only when Blacksmith cannot be converted and two safer bases are stable.",
-        }, function(player) return effectiveRole(player) ~= "HEALER" end)
-    end
-
-    assignBest(roster, used, result, "defend", "Anchor Defender", home, 96, {
-        reason = "Best independent defender protects guaranteed opening score.",
-        handoff = key == "ARATHI"
-            and "If Blacksmith lacks damage, receive the spinner at Stables/Farm, then reinforce Blacksmith."
-            or "Leave only after the floater or another named defender confirms relief.",
-    })
-
-    if key == "ARATHI" then
-        local outer = faction == "Horde" and "Mine" or "Lumber Mill"
-        assignBest(roster, used, result, "assault", "Outer Cap / Float", outer, 90, {
-            reason = "Mobile capture threat creates a second scoring lane.",
-            handoff = "After capture, hold until a weighted defender or floater confirms the handoff.",
-            abandonIf = "Cap-and-abandon only when the main fight is decisive and recapture risk is lower than lost team-fight value.",
-        })
-    elseif key == "GILNEAS" then
-        local enemyHome = faction == "Horde" and "Lighthouse" or "Mine"
-        assignBest(roster, used, result, "assault", "Enemy-Home Scout", enemyHome, 84, {
-            reason = "Pressure scout reports defense and joins Waterworks if the fight is understrength.",
-            abandonIf = "Do not remain in an equal or reinforced side fight.",
-        })
-    elseif key == "DEEPWIND" then
-        local flank = faction == "Horde" and "Shrine" or "Ruins"
-        assignBest(roster, used, result, "defend", "Flank Defender", flank, 88, {
-            reason = "Second reliable defender covers the favorable opening lane.",
-            handoff = "Collapse with the floater on a confirmed enemy commitment.",
-        })
-        assignBest(roster, used, result, "float", "Response Floater", main, 86, {
-            reason = "Highest rotation value remains uncommitted for the first real pressure.",
-        })
-    end
-    remaining(roster, used, result, "Main Fight", main, 82)
-    return result
-end
-
-local function friendlyControlled(snapshot, definition, context)
-    local result, seen = {}, {}
-    for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
-        local location = row.label
-        if row.owner == "FRIENDLY" and row.state == "CONTROLLED"
-            and definition.positions and definition.positions[location] and not seen[location] then
-            seen[location] = true
-            result[#result + 1] = location
-        end
-    end
-    local faction = context and context.team and context.team.faction
-    local home = definition.home and definition.home[faction]
-    local rank = {}
-    if home then rank[home] = 0 end
-    for index, location in ipairs(definition.priorities or {}) do
-        if rank[location] == nil then rank[location] = index end
-    end
-    table.sort(result, function(left, right)
-        local leftRank, rightRank = rank[left] or 99, rank[right] or 99
-        if leftRank ~= rightRank then return leftRank < rightRank end
-        return left < right
-    end)
-    return result
-end
-
-local function assaultTarget(snapshot, definition)
-    local enemy, available = {}, {}
-    for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
-        if definition.positions and definition.positions[row.label] then
-            if row.owner == "ENEMY" then enemy[row.label] = true
-            elseif row.owner ~= "FRIENDLY" then available[row.label] = true end
-        end
-    end
-    for _, location in ipairs(definition.priorities or {}) do
-        if enemy[location] then return location end
-    end
-    for _, location in ipairs(definition.locations or {}) do
-        if enemy[location] then return location end
-    end
-    for _, location in ipairs(definition.priorities or {}) do
-        if available[location] then return location end
-    end
-    for _, location in ipairs(definition.locations or {}) do
-        if available[location] then return location end
-    end
-    return definition.priorities[1] or "Objective"
-end
-
-local function buildNode(roster, definition, snapshot)
-    local context = snapshot.context or {}
-    local rules = KWR.ObjectiveRules and KWR.ObjectiveRules:Resolve(snapshot) or {}
-    local controlled = friendlyControlled(snapshot, definition, context)
-    if snapshot.strategy and snapshot.strategy.state == "OPENING" or #controlled == 0 then
-        return openingNode(roster, definition, context)
-    end
-
-    local result, used = {}, {}
-    local minimumFight = math.min(6, math.max(rules.minimumFight or 3, #roster - 1))
-    local defenderLimit = math.min(#controlled, math.max(
-        rules.defenderMinimum or 1,
-        #roster - minimumFight - (rules.responseReserve or 1) + 1))
-    local faction = context.team and context.team.faction
-    local home = definition.home and definition.home[faction]
-    for index = 1, defenderLimit do
-        local location = controlled[index]
-        local role = location == home and "Anchor Defender" or "Node Defender"
-        assignBest(roster, used, result, "defend", role, location, 94 - index, {
-            reason = "Weighted independent defender preserves score without consuming core fight value.",
-            handoff = "Call relief before leaving; the nearest floater confirms coverage.",
-        })
-    end
-    if #controlled >= 3 and #roster - #result > minimumFight then
-        assignBest(roster, used, result, "float", "Defense Floater",
-            controlled[1], 89, {
-                reason = "Mobile reserve supports simultaneous incoming calls without permanent double-sitting.",
-                handoff = "Shadow the most exposed node; do not become a static second sitter.",
-            })
-    end
-    local fight = assaultTarget(snapshot, definition)
-    remaining(roster, used, result, "Strike Team", fight, 82)
-    return result
-end
-
-local function buildFlag(roster, definition)
-    local result, used = {}, {}
-    local _, carrier = selectFirst(roster, used, function(player) return effectiveRole(player) == "TANK" end, true)
-    add(result, carrier, "Flag Carrier", "Home", 100)
-    local _, carrierHealer = selectFirst(roster, used, function(player) return effectiveRole(player) == "HEALER" end, false)
-    add(result, carrierHealer, "Carrier Healer", "Our FC", 95)
-    local _, returnHealer = selectFirst(roster, used, function(player) return effectiveRole(player) == "HEALER" end, false)
-    add(result, returnHealer, "Return Healer", "Enemy FC", 85)
-    for _ = 1, 2 do
-        local _, peel = selectFirst(roster, used, function(player)
-            return isClass(player, "MAGE", "WARLOCK", "HUNTER", "PALADIN")
-        end, true)
-        add(result, peel, "Peel Team", "Our FC", 88)
-    end
-    remaining(roster, used, result, "Return Team", "Enemy FC", 80)
-    return result
-end
-
-local function buildOrb(roster, opening)
-    local result, used = {}, {}
-    if opening then
-        local lanes = { "Green Orb", "Blue Orb", "Orange Orb", "Purple Orb" }
-        for _, location in ipairs(lanes) do
-            assignBest(roster, used, result, "float", "Orb Pickup", location, 94, {
-                reason = "Named pickup lane prevents duplicate routes and missed opening orbs.",
-                handoff = "Converge toward Center only after the orb is secured.",
-            })
-        end
-        for _ = 1, math.min(3, #roster - #result) do
-            assignBest(roster, used, result, "heal", "Center Healer", "Center", 90, {
-                reason = "Central healing supports multiple carriers …4384 tokens truncated…suedAt = record.issuedAt,
-            expectedBy = record.expectedBy,
-            lastConfirmedAt = record.lastConfirmedAt,
-            travelSeconds = route and route.seconds or nil,
-            travelBand = route and route.band or "UNKNOWN",
-            evidenceSource = comparable
-                and (player.locationSource or "group_unit") or "unknown",
-            evidenceConfidence = matches and "HIGH"
-                or (comparable and "MEDIUM" or "NONE"),
-            successCondition = assignment.successCondition
-                or (job == "defend"
-                    and (expected .. " remains covered and scoring.")
-                    or (job == "assault"
-                        and ("Secure " .. expected .. " with coverage intact.")
-                        or ("Complete " .. assignment.role .. " at " .. expected .. "."))),
-            abortCondition = assignment.abortCondition
-                or assignment.abandonIf
-                or ("Abort if " .. expected
-                    .. " becomes unreachable or required coverage breaks."),
-        }
-        if status == "ABANDONED" or status == "IMPOSSIBLE" then
-            local replacement, replacementScore
-            for _, candidate in ipairs(snapshot.roster or {}) do
-                if candidate.connected ~= false and not candidate.dead
-                    and (candidate.guid or candidate.name) ~= key then
-                    local current = assignmentByPlayer[
-                        candidate.guid or candidate.name]
-                    local currentJob = current
-                        and integrityJob(current.role) or nil
-                    local stripsOnlyDefender = currentJob == "defend"
-                        and current.location ~= expected
-                        and #(assignedByLocation[current.location] or {}) <= 1
-                    if not stripsOnlyDefender then
-                        local score = value(candidate, job)
-                        if candidate.location == expected then score = score + 40 end
-                        if currentJob == "float" then score = score + 18 end
-                        if candidate.inCombat then score = score - 12 end
-                        if currentJob == "assault" then
-                            score = score - math.max(0,
-                                (current.battleWeight or 50) - 65) * 0.35
-                        end
-                        if not replacementScore or score > replacementScore then
-                            replacement, replacementScore = candidate, score
-                        end
-                    end
-                end
-            end
-            row.replacement = replacement and (replacement.shortName or replacement.name)
-            row.replacementScore = replacementScore
-            result.reassignments[#result.reassignments + 1] = row
-        end
-        result.rows[#result.rows + 1] = row
-    end
-    local profile = KWR.Maps:OperationalProfile(
-        snapshot.context and snapshot.context.mapKey)
-    for _, objective in ipairs(snapshot.objectives
-        and snapshot.objectives.rows or {}) do
-        if objective.owner == "FRIENDLY" then
-            local locationAssignments = assignedByLocation[objective.label] or {}
-            local available, names = 0, {}
-            for _, assignment in ipairs(locationAssignments) do
-                local player = players[assignment.guid or assignment.name]
-                    or players[assignment.name] or {}
-                if player.connected ~= false and not player.dead then
-                    available = available + 1
-                    names[#names + 1] =
-                        assignment.shortName or assignment.name
-                end
-            end
-            local pressure = pressureAt(snapshot, objective.label) or {}
-            local required = profile.defenderMinimum or 1
-            if KWR.ObjectiveRules and KWR.ObjectiveRules.MinimumDefenders then
-                required = KWR.ObjectiveRules:MinimumDefenders(
-                    snapshot, objective.label, pressure)
-            elseif (pressure.enemy or 0) >= 2 then
-                required = required + 1
-            end
-            local reserve
-            for _, assignment in ipairs(assignments or {}) do
-                local reserveJob = integrityJob(assignment.role)
-                if reserveJob == "float"
-                    and assignment.location ~= objective.label then
-                    reserve = assignment.shortName or assignment.name
-                    break
-                end
-            end
-            local ledger = {
-                location = objective.label,
-                required = required,
-                assigned = available,
-                defenders = names,
-                backup = reserve,
-                enemyKnown = pressure.enemy or 0,
-                state = available < required and "UNCOVERED"
-                    or (available > required + 2 and "OVERCOMMITTED"
-                    or "COVERED"),
-            }
-            if ledger.state == "UNCOVERED" then
-                result.uncovered = result.uncovered + 1
-            elseif ledger.state == "OVERCOMMITTED" then
-                result.overcommitted = result.overcommitted + 1
-            end
-            result.coverageLedger[#result.coverageLedger + 1] = ledger
-        end
-    end
-    result.reassignmentRequired = #result.reassignments > 0
-        or result.uncovered > 0
-    return result
-end
-
-function Assignments:SelectForCommand(assignments, prediction)
-    local wanted = {}
-    if prediction.status == "WIN" then
-        wanted = { ["Anchor Defender"] = true, ["Node Defender"] = true,
-            ["Defense Floater"] = true, ["Tower Sitter"] = true,
-            ["Peel Team"] = true, ["Carrier Healer"] = true, ["Cart Anchor"] = true }
-    else
-        wanted = { ["Strike Team"] = true, ["Main Fight"] = true,
-            ["Tower Strike"] = true, ["Blacksmith Spinner"] = true,
-            ["Return Team"] = true, ["Carrier Hunter"] = true,
-            ["Delay"] = true, ["Enemy Cart Delay"] = true, ["Capture Team"] = true }
-    end
-    local names = {}
-    for _, assignment in ipairs(assignments or {}) do
-        if wanted[assignment.role] and not assignment.dead and assignment.connected ~= false then
-            names[#names + 1] = assignment.shortName
-        end
-    end
-    if #names == 0 then
-        for _, assignment in ipairs(assignments or {}) do
-            if not assignment.dead and assignment.connected ~= false then
-                names[#names + 1] = assignment.shortName
-            end
-        end
-    end
-    return #names > 0 and table.concat(names, ", ") or "Team"
-end
-
-local compactRoles = {
-    ["Tank"] = "T",
-    ["Healer"] = "H",
-    ["Damage"] = "DPS",
-    ["Anchor Defender"] = "DEFEND",
-    ["Node Defender"] = "DEFEND",
-    ["Defense Floater"] = "FLOAT",
-    ["Tower Sitter"] = "DEFEND",
-    ["Tower Strike"] = "STRIKE",
-    ["Blacksmith Spinner"] = "SPIN",
-    ["Outer Cap / Float"] = "CAP",
-    ["Enemy-Home Scout"] = "SCOUT",
-    ["Flank Defender"] = "DEFEND",
-    ["Response Floater"] = "FLOAT",
-    ["Main Fight"] = "MAIN",
-    ["Strike Team"] = "STRIKE",
-    ["Flag Carrier"] = "FC",
-    ["Carrier Healer"] = "FC-H",
-    ["Return Healer"] = "EFC-H",
-    ["Peel Team"] = "PEEL",
-    ["Return Team"] = "EFC",
-    ["Orb Pickup"] = "ORB",
-    ["Center Healer"] = "MID-H",
-    ["Carrier Peel"] = "PEEL",
-    ["Orb Carrier"] = "ORB",
-    ["Carrier Hunter"] = "KILL",
-    ["Cart Anchor"] = "CART",
-    ["Cart Healer"] = "CART-H",
-    ["Cart Team"] = "CART",
-    ["Cart Floater"] = "FLOAT",
-    ["Enemy Cart Delay"] = "DELAY",
-    ["Delay"] = "DELAY",
-    ["Crystal Floater"] = "FLOAT",
-    ["Scout / Fast Cap"] = "SCOUT",
-    ["Team Healer"] = "TEAM-H",
-    ["Capture Team"] = "CAP",
-}
-
-function Assignments:CompactRole(role)
-    role = KWR.Util:Text(role, "JOB", 48)
-    return compactRoles[role] or KWR.Util:Text(role, "JOB", 12)
-end
-
-function Assignments:CompactLabel(assignment, mapKey)
-    if not assignment then return "UNASSIGNED" end
-    local role = self:CompactRole(assignment.role)
-    local location = KWR.Maps:AbbreviateLocation(
-        mapKey, assignment.location)
-    if location == "" or location == "Formation" or location == "FORM" then
-        return role
-    end
-    return role .. " -> " .. location
-end
-
-function Assignments:CompactExport(assignments, mapKey)
-    local groups, order = {}, {}
-    local definition = KWR.Maps:Get(mapKey)
-    local header = definition and definition.short or "FORM"
-    for _, assignment in ipairs(assignments or {}) do
-        local role = self:CompactRole(assignment.role)
-        local location = KWR.Maps:AbbreviateLocation(mapKey, assignment.location)
-        local key = role .. (location ~= "FORM" and ("@" .. location) or "")
-        if not groups[key] then
-            groups[key] = {}
-            order[#order + 1] = key
-        end
-        groups[key][#groups[key] + 1] = KWR.Util:Text(
-            assignment.shortName or assignment.name, "?", 16)
-    end
-    local parts = { header }
-    for _, key in ipairs(order) do
-        parts[#parts + 1] = key .. ":" .. table.concat(groups[key], ",")
-    end
-    return table.concat(parts, " | ")
-end
-
-function Assignments:LineExport(assignments, mapKey)
-    local rows = {}
-    for _, assignment in ipairs(assignments or {}) do
-        local name = KWR.Util:Text(assignment.shortName or assignment.name, "?", 24)
-        local label = self:CompactLabel(assignment, mapKey)
-        rows[#rows + 1] = name .. " - " .. label
-    end
-    return table.concat(rows, "\n")
-end
-
-function Assignments:ChatExport(assignments, mapKey)
-    local groups, order = {}, {}
-    for _, assignment in ipairs(assignments or {}) do
-        local role = self:CompactRole(assignment.role)
-        local location = KWR.Maps:AbbreviateLocation(mapKey, assignment.location)
-        local name = KWR.Util:Text(assignment.shortName or assignment.name, "?", 24)
-        local key
-        local label
-        if location == "" or location == "Formation" or location == "FORM" then
-            key = role
-            label = role
-        else
-            key = role .. "@" .. location
-            label = role .. " " .. location
-        end
-        if not groups[key] then
-            groups[key] = {
-                label = label,
-                names = {},
-            }
-            order[#order + 1] = key
-        end
-        groups[key].names[#groups[key].names + 1] = name
-    end
-    local rows = {}
-    for _, key in ipairs(order) do
-        local group = groups[key]
-        rows[#rows + 1] = group.label .. ": " .. table.concat(group.names, ", ")
-    end
-    return table.concat(rows, " | ")
-end
-
-local function commanderBucket(role)
-    role = KWR.Util:Text(role, "", 48)
-    if role:find("Defender", 1, true) or role == "Tower Sitter"
-        or role == "Flank Defender" or role == "Cart Anchor" then
-        return "SIT"
-    end
-    if role:find("Float", 1, true) or role == "Response Floater"
-        or role == "Cart Floater" or role == "Outer Cap / Float" then
-        return "FLOAT"
-    end
-    if role == "Main Fight" then
-        return "PRESS"
-    end
-    if role == "Strike Team" or role == "Tower Strike"
-        or role == "Blacksmith Spinner" or role == "Return Team"
-        or role == "Carrier Hunter" or role == "Enemy-Home Scout"
-        or role == "Capture Team" or role == "Enemy Cart Delay" then
-        return "STRIKE"
-    end
-    if role:find("Carrier", 1, true) then
-        return "CARRY"
-    end
-    return nil
-end
-
-function Assignments:CommandGroups(assignments, mapKey)
-    local buckets = {}
-    local bucketOrder = { "SIT", "FLOAT", "STRIKE", "PRESS", "CARRY" }
-    local lines = {}
-    local function add(bucket, location, name)
-        if not buckets[bucket] then
-            buckets[bucket] = { order = {}, groups = {} }
-        end
-        location = KWR.Util:Text(location, "MAP", 24)
-        if not buckets[bucket].groups[location] then
-            buckets[bucket].groups[location] = {}
-            buckets[bucket].order[#buckets[bucket].order + 1] = location
-        end
-        buckets[bucket].groups[location][#buckets[bucket].groups[location] + 1] =
-            KWR.Util:Text(name, "?", 18)
-    end
-    for _, assignment in ipairs(assignments or {}) do
-        if assignment.connected ~= false and not assignment.dead then
-            local bucket = commanderBucket(assignment.role)
-            if bucket then
-                add(bucket, KWR.Maps:AbbreviateLocation(mapKey, assignment.location),
-                    assignment.shortName or assignment.name)
-            end
-        end
-    end
-    for _, bucket in ipairs(bucketOrder) do
-        local payload = buckets[bucket]
-        if payload then
-            local parts = {}
-            for _, location in ipairs(payload.order) do
-                parts[#parts + 1] = location .. " "
-                    .. table.concat(payload.groups[location], ", ")
-            end
-            lines[#lines + 1] = bucket .. ": " .. table.concat(parts, "; ")
-        end
-    end
-    return {
-        lines = lines,
-        text = #lines > 0 and table.concat(lines, "\n")
-            or "SIT: pending\nSTRIKE: pending",
-    }
-end
-
-function Assignments:Diff(previous, current)
-    local oldByKey, changes = {}, {}
-    for _, assignment in ipairs(previous or {}) do
-        local key = assignment.guid or assignment.name or assignment.shortName
-        if key then oldByKey[key] = assignment end
-    end
-    for _, assignment in ipairs(current or {}) do
-        local key = assignment.guid or assignment.name or assignment.shortName
-        local old = key and oldByKey[key]
-        if not old or old.role ~= assignment.role or old.location ~= assignment.location then
-            changes[#changes + 1] = {
-                name = assignment.shortName,
-                fromRole = old and old.role or "UNASSIGNED",
-                fromLocation = old and old.location or "--",
-                toRole = assignment.role,
-                toLocation = assignment.location,
-                reason = assignment.reason or assignment.handoff,
-            }
-        end
-    end
-    return changes
-end
-
-function Assignments:SummarizeChanges(changes, mapKey)
-    if #(changes or {}) == 0 then return "Assignments confirmed; no changes." end
-    local parts = {}
-    for index = 1, #changes do
-        local change = changes[index]
-        parts[#parts + 1] = KWR.Util:Text(change.name, "Player", 16)
-            .. " -> " .. self:CompactRole(change.toRole)
-            .. "@" .. KWR.Maps:AbbreviateLocation(
-                mapKey, change.toLocation)
-    end
-    return table.concat(parts, "; ")
-end
-
-function Assignments:ResponsePackage(snapshot, assignments)
-    local strategy = snapshot.strategy or {}
-    local execution = strategy.executionAssessment or {}
-    local opportunity = execution.actionOpportunity or {}
-    local decision = strategy.objectiveDecision or {}
-    local integrity = snapshot.assignmentIntegrity or {}
-    local actionID = KWR.Util:Text(opportunity.action, "HOLD_PLAN", 32)
-    local target = KWR.Util:Text(opportunity.target
-        or decision.target, "current objective", 48)
-    local mapKey = snapshot.context and snapshot.context.mapKey
-    local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
-    local movers, stayers = {}, {}
-    local stayerGroups, stayerOrder = {}, {}
-    local moverRoles = {
-        ["Strike Team"] = true, ["Main Fight"] = true,
-        ["Tower Strike"] = true, ["Defense Floater"] = true,
-        ["Response Floater"] = true, ["Cart Floater"] = true,
-        ["Outer Cap / Float"] = true, ["Capture Team"] = true,
-        ["Return Team"] = true, ["Carrier Hunter"] = true,
-    }
-    for _, assignment in ipairs(assignments or {}) do
-        if assignment.connected ~= false and not assignment.dead then
-            local name = assignment.shortName or assignment.name
-            local role = assignment.role or ""
-            if role:find("Defender", 1, true)
-                or role == "Tower Sitter" or role == "Cart Anchor" then
-                stayers[#stayers + 1] = name
-                local location = KWR.Maps:AbbreviateLocation(
-                    mapKey, assignment.location)
-                if not stayerGroups[location] then
-                    stayerGroups[location] = {}
-                    stayerOrder[#stayerOrder + 1] = location
-                end
-                stayerGroups[location][#stayerGroups[location] + 1] = name
-            elseif moverRoles[role] then
-                movers[#movers + 1] = name
-            end
-        end
-    end
-    if #movers == 0 then
-        for _, assignment in ipairs(assignments or {}) do
-            if assignment.connected ~= false and not assignment.dead then
-                movers[#movers + 1] =
-                    assignment.shortName or assignment.name
-            end
-        end
-    end
-    local stayerCalls = {}
-    for _, location in ipairs(stayerOrder) do
-        stayerCalls[#stayerCalls + 1] = location .. ": "
-            .. table.concat(stayerGroups[location], ", ")
-    end
-
-    local actionText = {
-        REINFORCE = "REINFORCE " .. shortTarget,
-        REALLOCATE = "PEEL EXCESS FROM " .. shortTarget,
-        CONTAIN_TRADE = "CONTAIN " .. shortTarget .. "; TAKE EXPOSED OBJECTIVE",
-        PREPARE_PRESSURE = "PREPARE DEFENSE AT " .. shortTarget,
-        ROTATE = "ROTATE TO " .. shortTarget,
-        DISENGAGE_RESET = "DISENGAGE, RESET, AND REGROUP",
-        STALL_OR_TRADE = "STALL; TRADE THE EXPOSED OBJECTIVE",
-        RESET_REASSIGN = "RESET POSITIONS AND CONFIRM ASSIGNMENTS",
-        HOLD_PLAN = "HOLD CURRENT PLAN",
-    }
-    local confidence = KWR.Util:Text(execution.confidence, "NONE", 12)
-    local qualified = opportunity.score
-        and opportunity.score >= 85
-        and (confidence == "MEDIUM" or confidence == "HIGH")
-    local criticalGap
-    local releaseTarget
-    for _, row in ipairs(integrity.coverageLedger or {}) do
-        if row.state == "OVERCOMMITTED" then
-            releaseTarget = row
-            break
-        end
-    end
-    for _, row in ipairs(integrity.coverageLedger or {}) do
-        if row.state == "UNCOVERED" then
-            criticalGap = row
-            break
-        end
-    end
-    local recoverySummary = criticalGap
-        and (criticalGap.location .. " needs "
-            .. tostring(math.max(0, (criticalGap.required or 0)
-                - (criticalGap.assigned or 0))) .. " more.")
-        or (releaseTarget and (releaseTarget.location .. " can release "
-            .. tostring(math.max(0, (releaseTarget.assigned or 0)
-                - (releaseTarget.required or 0))) .. ".")
-            or "Coverage is currently stable.")
-    return {
-        active = execution.active == true,
-        qualified = qualified == true,
-        actionID = actionID,
-        action = actionText[actionID] or "HOLD CURRENT PLAN",
-        target = target,
-        shortTarget = shortTarget,
-        movers = movers,
-        stayers = stayers,
-        moverText = #movers > 0 and table.concat(movers, ", ") or "Team",
-        stayerText = #stayerCalls > 0 and table.concat(stayerCalls, "; ")
-            or "Assigned defenders",
-        confidence = confidence,
-        score = opportunity.score or 0,
-        reason = opportunity.reason or "No stronger execution veto.",
-        success = decision.success or "Objective state changes as called.",
-        abort = decision.abort or "Scoring path or manpower changes.",
-        recovery = {
-            criticalGap = criticalGap and criticalGap.location or nil,
-            releaseTarget = releaseTarget and releaseTarget.location or nil,
-            replacement = integrity.reassignments and integrity.reassignments[1]
-                and integrity.reassignments[1].replacement or nil,
-            summary = recoverySummary,
-            urgent = criticalGap ~= nil
-                or (integrity.reassignments and #integrity.reassignments > 0),
-        },
-    }
-end
-
-KWR:RegisterModule("Assignments", Assignments)
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
+[object Object]
