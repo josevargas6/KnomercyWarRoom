@@ -1,0 +1,29 @@
+{
+  "schema": "kwr-corpus-manifest",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "patch",
+    "summary",
+    "profiles"
+  ],
+  "summaryRequired": [
+    "replays",
+    "goldenLabels",
+    "replayResults",
+    "outcomeReviews",
+    "adversarialCases"
+  ],
+  "profileRequired": [
+    "mapProfile",
+    "mapKey",
+    "mode",
+    "replays",
+    "goldenLabels",
+    "replayResults",
+    "outcomeReviews",
+    "adversarialCases"
+  ]
+}

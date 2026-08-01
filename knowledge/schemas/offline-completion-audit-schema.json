@@ -1,0 +1,31 @@
+{
+  "schema": "kwr-offline-completion-audit-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "candidateVersion",
+    "offlinePrepared",
+    "fieldTestingPrepared",
+    "offlineEvidence",
+    "remainingLiveOnlyBlockers",
+    "environmentLimits"
+  ],
+  "evidenceRequired": [
+    "supportedMaps",
+    "baseScenarios",
+    "reviewedCorpus",
+    "adversarialCases",
+    "reviewedScenarioCalibration",
+    "adversarialScenarioCalibration",
+    "candidatePackageReportPresent",
+    "runtimePreflightPresent",
+    "packageAuditReady",
+    "packageAuditWorkspaceStatus",
+    "validatePassed",
+    "knowledgeAuditPassed",
+    "corpusAuditPassed",
+    "decisionBenchmarkPassed"
+  ]
+}

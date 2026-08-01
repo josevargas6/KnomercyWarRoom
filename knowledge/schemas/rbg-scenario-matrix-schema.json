@@ -1,0 +1,8 @@
+{
+  "schema": "kwr-rbg-scenario-matrix",
+  "schemaVersion": 1,
+  "required": ["schema", "schemaVersion", "generatedAt", "targetBaseScenariosPerMap", "shared", "maps"],
+  "sharedRequired": ["commonScenarioFamilies", "collectionOrder"],
+  "mapRequired": ["mapKey", "mapProfile", "scenarios"],
+  "scenarioRequired": ["scenarioId", "phase", "summary", "goal"]
+}

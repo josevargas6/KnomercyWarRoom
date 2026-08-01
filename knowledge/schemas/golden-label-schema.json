@@ -1,0 +1,43 @@
+{
+  "schema": "kwr-golden-label-schema",
+  "schemaVersion": 1,
+  "kind": "golden_decision_label",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "kind",
+    "labelId",
+    "replayId",
+    "mapProfile",
+    "reviewers",
+    "decision",
+    "coverage",
+    "rationale"
+  ],
+  "reviewerRequired": [
+    "reviewerId",
+    "role",
+    "agreed"
+  ],
+  "decisionRequired": [
+    "acceptablePrimaryActions",
+    "acceptableFallbackActions",
+    "forbiddenActions",
+    "mustStay",
+    "requiredCapabilities",
+    "validTargetClasses",
+    "successConditions",
+    "abortConditions",
+    "maxDelaySeconds",
+    "forceUncertaintyWhen"
+  ],
+  "coverageRequired": [
+    "problemTypes",
+    "phase",
+    "truthBand"
+  ],
+  "notes": [
+    "A golden label is an acceptable-action set, not one exact sentence.",
+    "Disagreement must be preserved instead of collapsed into false certainty."
+  ]
+}

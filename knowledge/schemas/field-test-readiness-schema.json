@@ -1,0 +1,41 @@
+{
+  "schema": "kwr-field-test-readiness-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "candidate",
+    "offlineStatus",
+    "liveRequirements",
+    "maps",
+    "blockingConditions"
+  ],
+  "offlineStatusRequired": [
+    "supportedMaps",
+    "baseScenarios",
+    "reviewedCorpus",
+    "adversarialCases",
+    "reviewedScenarioCalibration",
+    "adversarialScenarioCalibration",
+    "validatePassed",
+    "knowledgeAuditPassed",
+    "corpusAuditPassed",
+    "decisionBenchmarkPassed"
+  ],
+  "liveRequirementsRequired": [
+    "exactPackageRequired",
+    "requiredEvidence",
+    "stopConditions",
+    "remainingLiveBlockers"
+  ],
+  "mapRequired": [
+    "mapKey",
+    "profile",
+    "scenarioCount",
+    "reviewedCases",
+    "adversarialCases",
+    "liveStatus",
+    "requiredLiveProof"
+  ]
+}

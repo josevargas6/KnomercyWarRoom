@@ -1,0 +1,26 @@
+{
+  "schema": "kwr-benchmark-report",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "summary",
+    "results"
+  ],
+  "summaryRequired": [
+    "total",
+    "primaryMatches",
+    "fallbackMatches",
+    "forbiddenFailures",
+    "pass"
+  ],
+  "resultRequired": [
+    "replayId",
+    "labelId",
+    "primaryMatch",
+    "fallbackMatch",
+    "forbiddenHits",
+    "pass"
+  ]
+}

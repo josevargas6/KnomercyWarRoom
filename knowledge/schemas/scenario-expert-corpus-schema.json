@@ -1,0 +1,33 @@
+{
+  "schema": "kwr-scenario-expert-corpus-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "shared",
+    "scenarios",
+    "maps"
+  ],
+  "sharedRequired": [
+    "minimumReviewedLabels",
+    "consensusPolicy",
+    "reviewAgreementBands"
+  ],
+  "scenarioRequired": [
+    "scenarioId",
+    "mapKey",
+    "phase",
+    "summary",
+    "goal",
+    "reviewedLabels",
+    "reviewConfidence",
+    "agreementRate",
+    "consensusPrimaryAction",
+    "consensusFallbackAction",
+    "preferredComparisonId",
+    "preferredResponseId",
+    "safestCounter",
+    "expectedEnemyCounter"
+  ]
+}

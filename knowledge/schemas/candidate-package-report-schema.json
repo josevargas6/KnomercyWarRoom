@@ -1,0 +1,55 @@
+{
+  "schema": "kwr-candidate-package-report",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "candidateVersion",
+    "buildOutputDirectory",
+    "distributionArtifact",
+    "developerArtifact",
+    "sourceManifest",
+    "buildProvenance",
+    "reproducibility",
+    "environmentCertification",
+    "operatorPaths",
+    "fieldEvidenceBinding"
+  ],
+  "artifactRequired": [
+    "name",
+    "path",
+    "size",
+    "sha256"
+  ],
+  "manifestRequired": [
+    "path",
+    "distributionDigest",
+    "developerDigest"
+  ],
+  "reproducibilityRequired": [
+    "path",
+    "result",
+    "distributionDigestMatch",
+    "developerDigestMatch",
+    "notes"
+  ],
+  "environmentRequired": [
+    "buildExecuted",
+    "packageAuditInThisWorkspace",
+    "runtimeBlocker",
+    "notes"
+  ],
+  "operatorPathsRequired": [
+    "addonsRoot",
+    "kwrInstallFolder",
+    "savedVariablesFolder",
+    "savedVariablesFilePattern",
+    "backupFolderSuggestion"
+  ],
+  "fieldBindingRequired": [
+    "candidateVersion",
+    "distributionSha256",
+    "requiredProof"
+  ]
+}
