@@ -1,4 +1,3 @@
-
 ## Interface: 120007
 ## Title: |cff33aaffKnomercy War Room|r
 ## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
