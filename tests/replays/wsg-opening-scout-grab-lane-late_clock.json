@@ -1,0 +1,238 @@
+{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "wsg-opening-scout-grab-lane-005",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T05:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "WSG",
+                "mode":  "STANDARD",
+                "kind":  "FLAG",
+                "profile":  "wsg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "our_fc",
+                                                        "class":  "Druid",
+                                                        "spec":  "Guardian",
+                                                        "role":  "TANK"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "carrier_healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "return_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_fc",
+                                                     "class":  "Demon Hunter",
+                                                     "spec":  "Vengeance",
+                                                     "role":  "TANK"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Discipline",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1,
+                                       "enemy":  0,
+                                       "max":  3
+                                   },
+                         "objectives":  {
+                                            "friendlyCarrier":  null,
+                                            "enemyCarrier":  null
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "wsg_opening_scout_grab_lane_variant_5_state",
+                         "facts":  {
+                                       "phase":  "OPENING",
+                                       "summary":  "Scout the first enemy grab lane and commit peel only after the true pickup route is confirmed.",
+                                       "variant":  "late_clock",
+                                       "goal":  "Open on real carrier truth instead of panic overcoverage."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "wsg_opening_scout_grab_lane_variant_5_window",
+                         "facts":  {
+                                       "objective":  "ROUTE",
+                                       "pressure":  "URGENT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "wsg_opening_scout_grab_lane_variant_5_resolution",
+                         "facts":  {
+                                       "classification":  "EXECUTION_ERROR",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:OPENING"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:SETUP",
+                                                   "WHERE:ROUTE"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:RECOVERY"
+                                                ],
+                           "mustStay":  [
+                                            "our_fc"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "setup"
+                                                    ],
+                           "successConditions":  [
+                                                     "establish_opening_shell"
+                                                 ],
+                           "abortConditions":  [
+                                                   "enemy_wins_first_objective"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Scout the first enemy grab lane and commit peel only after the true pickup route is confirmed. Variant 5 uses the late_clock pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "hold",
+                                                                     "escort",
+                                                                     "deny"
+                                                                 ],
+                                                  "preferredComparison":  "protect current score floor before expanding.",
+                                                  "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                                  "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                                                  "doctrineComparisonIds":  [
+                                                                                "WSG_HOLD_VS_ROTATE",
+                                                                                "WSG_ESCORT_VS_CHASE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "WSG_RESP_ESCORT_SHELL",
+                                                                              "WSG_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "objective truth confirms the opening lane",
+                                                                    "coverage is planted before expansion",
+                                                                    "the score floor is not abandoned for first contact"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the enemy wins first objective control cleanly",
+                                                                        "coverage breaks before the opener settles"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "carrier route truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  0,
+                                       "enemy":  0
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Open on real carrier truth instead of panic overcoverage. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "hold",
+                                                              "escort",
+                                                              "deny"
+                                                          ],
+                                           "preferredComparison":  "protect current score floor before expanding.",
+                                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                           "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                                           "doctrineComparisonIds":  [
+                                                                         "WSG_HOLD_VS_ROTATE",
+                                                                         "WSG_ESCORT_VS_CHASE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "WSG_RESP_ESCORT_SHELL",
+                                                                       "WSG_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "objective truth confirms the opening lane",
+                                                             "coverage is planted before expansion",
+                                                             "the score floor is not abandoned for first contact"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the enemy wins first objective control cleanly",
+                                                                 "coverage breaks before the opener settles"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "carrier route truth"
+                                                             ]
+                                       }
+                }
+}
