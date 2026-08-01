@@ -84,8 +84,17 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_API_TOKEN)) {
               throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
           }
-          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_GAME_VERSION_IDS) -or $env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
-              throw "CurseForge upload is not configured: CURSEFORGE_GAME_VERSION_IDS must be comma-separated numeric CurseForge version IDs."
+          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_GAME_VERSION_IDS)) {
+              throw "CurseForge upload is not configured: CURSEFORGE_GAME_VERSION_IDS is empty."
+          }
+          $requestedVersions = @($env:CURSEFORGE_GAME_VERSION_IDS -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+          if ($requestedVersions -notmatch '^\d+$') {
+              $catalog = Invoke-RestMethod -Uri "https://api.curseforge.com/v2/games/1/versions" -Headers @{ "x-api-key" = $env:CURSEFORGE_API_TOKEN }
+              $lookup = @{}
+              foreach ($versionType in $catalog.data) { foreach ($version in $versionType.versions) { $lookup[[string]$version.name] = [string]$version.id } }
+              $resolved = @($requestedVersions | ForEach-Object { if (-not $lookup.ContainsKey($_)) { throw "CurseForge game version not found: $_" }; $lookup[$_] })
+              $env:CURSEFORGE_GAME_VERSION_IDS = $resolved -join ','
+              Write-Output "Resolved CurseForge game version IDs: $env:CURSEFORGE_GAME_VERSION_IDS"
           }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
@@ -101,8 +110,17 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_API_TOKEN)) {
               throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
           }
-          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_GAME_VERSION_IDS) -or $env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
-              throw "CurseForge upload is not configured: CURSEFORGE_GAME_VERSION_IDS must be comma-separated numeric CurseForge version IDs."
+          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_GAME_VERSION_IDS)) {
+              throw "CurseForge upload is not configured: CURSEFORGE_GAME_VERSION_IDS is empty."
+          }
+          $requestedVersions = @($env:CURSEFORGE_GAME_VERSION_IDS -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+          if ($requestedVersions -notmatch '^\d+$') {
+              $catalog = Invoke-RestMethod -Uri "https://api.curseforge.com/v2/games/1/versions" -Headers @{ "x-api-key" = $env:CURSEFORGE_API_TOKEN }
+              $lookup = @{}
+              foreach ($versionType in $catalog.data) { foreach ($version in $versionType.versions) { $lookup[[string]$version.name] = [string]$version.id } }
+              $resolved = @($requestedVersions | ForEach-Object { if (-not $lookup.ContainsKey($_)) { throw "CurseForge game version not found: $_" }; $lookup[$_] })
+              $env:CURSEFORGE_GAME_VERSION_IDS = $resolved -join ','
+              Write-Output "Resolved CurseForge game version IDs: $env:CURSEFORGE_GAME_VERSION_IDS"
           }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
