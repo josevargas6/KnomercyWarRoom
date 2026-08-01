@@ -83,10 +83,6 @@ if ([string]::IsNullOrWhiteSpace($ProjectId)) {
 if ([string]::IsNullOrWhiteSpace($ApiToken)) {
     throw "Missing CurseForge API token. Set CURSEFORGE_API_TOKEN or pass -ApiToken."
 }
-if ($versionIds.Count -eq 0) {
-    throw "Missing CurseForge game version ids. Set CURSEFORGE_GAME_VERSION_IDS to comma-separated numeric IDs."
-}
-
 $curl = Get-Command curl.exe -ErrorAction SilentlyContinue
 if (-not $curl) {
     throw "curl.exe is required for the multipart CurseForge upload."
