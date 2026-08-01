@@ -1,11230 +1,11230 @@
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
+local _, KWR = ...
+
+local ScenarioAdversarialCalibration = {}
+KWR.ScenarioAdversarialCalibration = ScenarioAdversarialCalibration
+
+local phaseIndex = nil
+
+local DATA = {
+    maps = {
+        ARATHI = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 8,
+                collapse = 4,
+                deny = 12,
+                hold = 11,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 13,
+                split = 4,
+            },
+            doctrineComparisons = {
+                ARATHI_BAIT_VS_FRONTDOOR = 4,
+                ARATHI_COLLAPSE_VS_SPLIT = 4,
+                ARATHI_CONVERT_VS_GREED = 7,
+                ARATHI_DENY_VS_TRADE = 16,
+                ARATHI_HOLD_VS_ROTATE = 8,
+                ARATHI_LATE_PROTECT_VS_PRESS = 3,
+                ARATHI_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 8,
+                ARATHI_RESP_COLLAPSE_CONNECT = 4,
+                ARATHI_RESP_DENY_TRADE = 16,
+                ARATHI_RESP_ESCORT_SHELL = 4,
+                ARATHI_RESP_LATE_GREED = 3,
+                ARATHI_RESP_RECOVER_REBAIT = 5,
+                ARATHI_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        hold = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        ARATHI_CONVERT_VS_GREED = 3,
+                        ARATHI_DENY_VS_TRADE = 3,
+                        ARATHI_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        ARATHI_RESP_DENY_TRADE = 3,
+                        ARATHI_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        ARATHI_DENY_VS_TRADE = 4,
+                        ARATHI_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        ARATHI_RESP_BAIT_SHOW = 4,
+                        ARATHI_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        ARATHI_BAIT_VS_FRONTDOOR = 4,
+                        ARATHI_COLLAPSE_VS_SPLIT = 4,
+                        ARATHI_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        ARATHI_RESP_COLLAPSE_CONNECT = 4,
+                        ARATHI_RESP_ESCORT_SHELL = 4,
+                        ARATHI_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        ARATHI_DENY_VS_TRADE = 5,
+                        ARATHI_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        ARATHI_RESP_DENY_TRADE = 5,
+                        ARATHI_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        ARATHI_DENY_VS_TRADE = 4,
+                        ARATHI_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        ARATHI_RESP_BAIT_SHOW = 4,
+                        ARATHI_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        DEEPHAUL = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                collapse = 4,
+                deny = 8,
+                escort = 11,
+                hold = 4,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 17,
+                split = 4,
+            },
+            doctrineComparisons = {
+                DEEPHAUL_BAIT_VS_FRONTDOOR = 4,
+                DEEPHAUL_COLLAPSE_VS_SPLIT = 4,
+                DEEPHAUL_CONVERT_VS_GREED = 7,
+                DEEPHAUL_DENY_VS_TRADE = 8,
+                DEEPHAUL_ESCORT_VS_CHASE = 13,
+                DEEPHAUL_HOLD_VS_ROTATE = 8,
+                DEEPHAUL_LATE_PROTECT_VS_PRESS = 3,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_COLLAPSE_CONNECT = 4,
+                DEEPHAUL_RESP_DENY_TRADE = 16,
+                DEEPHAUL_RESP_ESCORT_SHELL = 17,
+                DEEPHAUL_RESP_LATE_GREED = 3,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 5,
+                DEEPHAUL_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        escort = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        DEEPHAUL_CONVERT_VS_GREED = 3,
+                        DEEPHAUL_DENY_VS_TRADE = 3,
+                        DEEPHAUL_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        DEEPHAUL_RESP_DENY_TRADE = 3,
+                        DEEPHAUL_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        escort = 4,
+                        rotate = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPHAUL_ESCORT_VS_CHASE = 4,
+                        DEEPHAUL_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPHAUL_RESP_DENY_TRADE = 4,
+                        DEEPHAUL_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPHAUL_BAIT_VS_FRONTDOOR = 4,
+                        DEEPHAUL_COLLAPSE_VS_SPLIT = 4,
+                        DEEPHAUL_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPHAUL_RESP_COLLAPSE_CONNECT = 4,
+                        DEEPHAUL_RESP_ESCORT_SHELL = 4,
+                        DEEPHAUL_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        DEEPHAUL_DENY_VS_TRADE = 5,
+                        DEEPHAUL_ESCORT_VS_CHASE = 5,
+                        DEEPHAUL_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        DEEPHAUL_RESP_DENY_TRADE = 5,
+                        DEEPHAUL_RESP_ESCORT_SHELL = 5,
+                        DEEPHAUL_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        escort = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPHAUL_ESCORT_VS_CHASE = 4,
+                        DEEPHAUL_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPHAUL_RESP_DENY_TRADE = 4,
+                        DEEPHAUL_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        DEEPWIND = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 8,
+                collapse = 4,
+                deny = 12,
+                hold = 11,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 13,
+                split = 4,
+            },
+            doctrineComparisons = {
+                DEEPWIND_BAIT_VS_FRONTDOOR = 4,
+                DEEPWIND_COLLAPSE_VS_SPLIT = 4,
+                DEEPWIND_CONVERT_VS_GREED = 7,
+                DEEPWIND_DENY_VS_TRADE = 16,
+                DEEPWIND_HOLD_VS_ROTATE = 8,
+                DEEPWIND_LATE_PROTECT_VS_PRESS = 3,
+                DEEPWIND_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 8,
+                DEEPWIND_RESP_COLLAPSE_CONNECT = 4,
+                DEEPWIND_RESP_DENY_TRADE = 16,
+                DEEPWIND_RESP_ESCORT_SHELL = 4,
+                DEEPWIND_RESP_LATE_GREED = 3,
+                DEEPWIND_RESP_RECOVER_REBAIT = 5,
+                DEEPWIND_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        hold = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        DEEPWIND_CONVERT_VS_GREED = 3,
+                        DEEPWIND_DENY_VS_TRADE = 3,
+                        DEEPWIND_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        DEEPWIND_RESP_DENY_TRADE = 3,
+                        DEEPWIND_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPWIND_DENY_VS_TRADE = 4,
+                        DEEPWIND_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPWIND_RESP_BAIT_SHOW = 4,
+                        DEEPWIND_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPWIND_BAIT_VS_FRONTDOOR = 4,
+                        DEEPWIND_COLLAPSE_VS_SPLIT = 4,
+                        DEEPWIND_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPWIND_RESP_COLLAPSE_CONNECT = 4,
+                        DEEPWIND_RESP_ESCORT_SHELL = 4,
+                        DEEPWIND_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        DEEPWIND_DENY_VS_TRADE = 5,
+                        DEEPWIND_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        DEEPWIND_RESP_DENY_TRADE = 5,
+                        DEEPWIND_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        DEEPWIND_DENY_VS_TRADE = 4,
+                        DEEPWIND_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        DEEPWIND_RESP_BAIT_SHOW = 4,
+                        DEEPWIND_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        EOTS = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 8,
+                collapse = 4,
+                deny = 12,
+                hold = 11,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 13,
+                split = 4,
+            },
+            doctrineComparisons = {
+                EOTS_BAIT_VS_FRONTDOOR = 4,
+                EOTS_COLLAPSE_VS_SPLIT = 4,
+                EOTS_CONVERT_VS_GREED = 7,
+                EOTS_DENY_VS_TRADE = 16,
+                EOTS_HOLD_VS_ROTATE = 8,
+                EOTS_LATE_PROTECT_VS_PRESS = 3,
+                EOTS_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 8,
+                EOTS_RESP_COLLAPSE_CONNECT = 4,
+                EOTS_RESP_DENY_TRADE = 16,
+                EOTS_RESP_ESCORT_SHELL = 4,
+                EOTS_RESP_LATE_GREED = 3,
+                EOTS_RESP_RECOVER_REBAIT = 5,
+                EOTS_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        hold = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        EOTS_CONVERT_VS_GREED = 3,
+                        EOTS_DENY_VS_TRADE = 3,
+                        EOTS_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        EOTS_RESP_DENY_TRADE = 3,
+                        EOTS_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        EOTS_DENY_VS_TRADE = 4,
+                        EOTS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        EOTS_RESP_BAIT_SHOW = 4,
+                        EOTS_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        EOTS_BAIT_VS_FRONTDOOR = 4,
+                        EOTS_COLLAPSE_VS_SPLIT = 4,
+                        EOTS_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        EOTS_RESP_COLLAPSE_CONNECT = 4,
+                        EOTS_RESP_ESCORT_SHELL = 4,
+                        EOTS_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        EOTS_DENY_VS_TRADE = 5,
+                        EOTS_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        EOTS_RESP_DENY_TRADE = 5,
+                        EOTS_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        EOTS_DENY_VS_TRADE = 4,
+                        EOTS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        EOTS_RESP_BAIT_SHOW = 4,
+                        EOTS_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        GILNEAS = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 8,
+                collapse = 4,
+                deny = 12,
+                hold = 11,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 13,
+                split = 4,
+            },
+            doctrineComparisons = {
+                GILNEAS_BAIT_VS_FRONTDOOR = 4,
+                GILNEAS_COLLAPSE_VS_SPLIT = 4,
+                GILNEAS_CONVERT_VS_GREED = 7,
+                GILNEAS_DENY_VS_TRADE = 16,
+                GILNEAS_HOLD_VS_ROTATE = 8,
+                GILNEAS_LATE_PROTECT_VS_PRESS = 3,
+                GILNEAS_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 8,
+                GILNEAS_RESP_COLLAPSE_CONNECT = 4,
+                GILNEAS_RESP_DENY_TRADE = 16,
+                GILNEAS_RESP_ESCORT_SHELL = 4,
+                GILNEAS_RESP_LATE_GREED = 3,
+                GILNEAS_RESP_RECOVER_REBAIT = 5,
+                GILNEAS_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        hold = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        GILNEAS_CONVERT_VS_GREED = 3,
+                        GILNEAS_DENY_VS_TRADE = 3,
+                        GILNEAS_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        GILNEAS_RESP_DENY_TRADE = 3,
+                        GILNEAS_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        GILNEAS_DENY_VS_TRADE = 4,
+                        GILNEAS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        GILNEAS_RESP_BAIT_SHOW = 4,
+                        GILNEAS_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        GILNEAS_BAIT_VS_FRONTDOOR = 4,
+                        GILNEAS_COLLAPSE_VS_SPLIT = 4,
+                        GILNEAS_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        GILNEAS_RESP_COLLAPSE_CONNECT = 4,
+                        GILNEAS_RESP_ESCORT_SHELL = 4,
+                        GILNEAS_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        GILNEAS_DENY_VS_TRADE = 5,
+                        GILNEAS_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        GILNEAS_RESP_DENY_TRADE = 5,
+                        GILNEAS_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        GILNEAS_DENY_VS_TRADE = 4,
+                        GILNEAS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        GILNEAS_RESP_BAIT_SHOW = 4,
+                        GILNEAS_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        SEETHING = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                deny = 20,
+                hold = 8,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 20,
+            },
+            doctrineComparisons = {
+                SEETHING_BAIT_VS_FRONTDOOR = 4,
+                SEETHING_COLLAPSE_VS_SPLIT = 4,
+                SEETHING_CONVERT_VS_GREED = 7,
+                SEETHING_DENY_VS_TRADE = 16,
+                SEETHING_HOLD_VS_ROTATE = 8,
+                SEETHING_LATE_PROTECT_VS_PRESS = 3,
+                SEETHING_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 8,
+                SEETHING_RESP_COLLAPSE_CONNECT = 4,
+                SEETHING_RESP_DENY_TRADE = 16,
+                SEETHING_RESP_ESCORT_SHELL = 4,
+                SEETHING_RESP_LATE_GREED = 3,
+                SEETHING_RESP_RECOVER_REBAIT = 5,
+                SEETHING_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        late_game_score_protection = 3,
+                        rotate = 3,
+                    },
+                    doctrineComparisons = {
+                        SEETHING_CONVERT_VS_GREED = 3,
+                        SEETHING_DENY_VS_TRADE = 3,
+                        SEETHING_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        SEETHING_RESP_DENY_TRADE = 3,
+                        SEETHING_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        SEETHING_DENY_VS_TRADE = 4,
+                        SEETHING_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        SEETHING_RESP_BAIT_SHOW = 4,
+                        SEETHING_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        deny = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        SEETHING_BAIT_VS_FRONTDOOR = 4,
+                        SEETHING_COLLAPSE_VS_SPLIT = 4,
+                        SEETHING_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        SEETHING_RESP_COLLAPSE_CONNECT = 4,
+                        SEETHING_RESP_ESCORT_SHELL = 4,
+                        SEETHING_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        SEETHING_DENY_VS_TRADE = 5,
+                        SEETHING_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        SEETHING_RESP_DENY_TRADE = 5,
+                        SEETHING_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        SEETHING_DENY_VS_TRADE = 4,
+                        SEETHING_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        SEETHING_RESP_BAIT_SHOW = 4,
+                        SEETHING_RESP_DENY_TRADE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        SILVERSHARD = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                collapse = 4,
+                deny = 8,
+                escort = 11,
+                hold = 4,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 17,
+                split = 4,
+            },
+            doctrineComparisons = {
+                SILVERSHARD_BAIT_VS_FRONTDOOR = 4,
+                SILVERSHARD_COLLAPSE_VS_SPLIT = 4,
+                SILVERSHARD_CONVERT_VS_GREED = 7,
+                SILVERSHARD_DENY_VS_TRADE = 8,
+                SILVERSHARD_ESCORT_VS_CHASE = 13,
+                SILVERSHARD_HOLD_VS_ROTATE = 8,
+                SILVERSHARD_LATE_PROTECT_VS_PRESS = 3,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_COLLAPSE_CONNECT = 4,
+                SILVERSHARD_RESP_DENY_TRADE = 16,
+                SILVERSHARD_RESP_ESCORT_SHELL = 17,
+                SILVERSHARD_RESP_LATE_GREED = 3,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 5,
+                SILVERSHARD_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        escort = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        SILVERSHARD_CONVERT_VS_GREED = 3,
+                        SILVERSHARD_DENY_VS_TRADE = 3,
+                        SILVERSHARD_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        SILVERSHARD_RESP_DENY_TRADE = 3,
+                        SILVERSHARD_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        escort = 4,
+                        rotate = 4,
+                        split = 4,
+                    },
+                    doctrineComparisons = {
+                        SILVERSHARD_ESCORT_VS_CHASE = 4,
+                        SILVERSHARD_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        SILVERSHARD_RESP_DENY_TRADE = 4,
+                        SILVERSHARD_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        SILVERSHARD_BAIT_VS_FRONTDOOR = 4,
+                        SILVERSHARD_COLLAPSE_VS_SPLIT = 4,
+                        SILVERSHARD_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        SILVERSHARD_RESP_COLLAPSE_CONNECT = 4,
+                        SILVERSHARD_RESP_ESCORT_SHELL = 4,
+                        SILVERSHARD_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        SILVERSHARD_DENY_VS_TRADE = 5,
+                        SILVERSHARD_ESCORT_VS_CHASE = 5,
+                        SILVERSHARD_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        SILVERSHARD_RESP_DENY_TRADE = 5,
+                        SILVERSHARD_RESP_ESCORT_SHELL = 5,
+                        SILVERSHARD_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        escort = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        SILVERSHARD_ESCORT_VS_CHASE = 4,
+                        SILVERSHARD_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        SILVERSHARD_RESP_DENY_TRADE = 4,
+                        SILVERSHARD_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        TEMPLE = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                collapse = 4,
+                deny = 16,
+                escort = 8,
+                hold = 11,
+                late_game_score_protection = 3,
+                recover = 5,
+                rotate = 9,
+            },
+            doctrineComparisons = {
+                TEMPLE_BAIT_VS_FRONTDOOR = 4,
+                TEMPLE_COLLAPSE_VS_SPLIT = 4,
+                TEMPLE_CONVERT_VS_GREED = 7,
+                TEMPLE_DENY_VS_TRADE = 8,
+                TEMPLE_ESCORT_VS_CHASE = 8,
+                TEMPLE_HOLD_VS_ROTATE = 8,
+                TEMPLE_LATE_PROTECT_VS_PRESS = 3,
+                TEMPLE_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_COLLAPSE_CONNECT = 4,
+                TEMPLE_RESP_DENY_TRADE = 16,
+                TEMPLE_RESP_ESCORT_SHELL = 12,
+                TEMPLE_RESP_LATE_GREED = 3,
+                TEMPLE_RESP_RECOVER_REBAIT = 5,
+                TEMPLE_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        deny = 3,
+                        hold = 3,
+                        late_game_score_protection = 3,
+                    },
+                    doctrineComparisons = {
+                        TEMPLE_CONVERT_VS_GREED = 3,
+                        TEMPLE_DENY_VS_TRADE = 3,
+                        TEMPLE_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        TEMPLE_RESP_DENY_TRADE = 3,
+                        TEMPLE_RESP_LATE_GREED = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        hold = 4,
+                        rotate = 4,
+                    },
+                    doctrineComparisons = {
+                        TEMPLE_ESCORT_VS_CHASE = 4,
+                        TEMPLE_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        TEMPLE_RESP_DENY_TRADE = 4,
+                        TEMPLE_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        collapse = 4,
+                        deny = 4,
+                        escort = 4,
+                    },
+                    doctrineComparisons = {
+                        TEMPLE_BAIT_VS_FRONTDOOR = 4,
+                        TEMPLE_COLLAPSE_VS_SPLIT = 4,
+                        TEMPLE_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        TEMPLE_RESP_COLLAPSE_CONNECT = 4,
+                        TEMPLE_RESP_ESCORT_SHELL = 4,
+                        TEMPLE_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        recover = 5,
+                        rotate = 5,
+                    },
+                    doctrineComparisons = {
+                        TEMPLE_DENY_VS_TRADE = 5,
+                        TEMPLE_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        TEMPLE_RESP_DENY_TRADE = 5,
+                        TEMPLE_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        escort = 4,
+                        hold = 4,
+                    },
+                    doctrineComparisons = {
+                        TEMPLE_ESCORT_VS_CHASE = 4,
+                        TEMPLE_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        TEMPLE_RESP_DENY_TRADE = 4,
+                        TEMPLE_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        TWINPEAKS = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                collapse = 4,
+                deny = 13,
+                escort = 16,
+                hold = 8,
+                late_game_score_protection = 3,
+                recover = 5,
+                return_window = 7,
+            },
+            doctrineComparisons = {
+                TWINPEAKS_BAIT_VS_FRONTDOOR = 4,
+                TWINPEAKS_COLLAPSE_VS_SPLIT = 4,
+                TWINPEAKS_CONVERT_VS_GREED = 7,
+                TWINPEAKS_DENY_VS_TRADE = 8,
+                TWINPEAKS_ESCORT_VS_CHASE = 13,
+                TWINPEAKS_HOLD_VS_ROTATE = 8,
+                TWINPEAKS_LATE_PROTECT_VS_PRESS = 3,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_COLLAPSE_CONNECT = 4,
+                TWINPEAKS_RESP_DENY_TRADE = 16,
+                TWINPEAKS_RESP_ESCORT_SHELL = 13,
+                TWINPEAKS_RESP_LATE_GREED = 3,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 5,
+                TWINPEAKS_RESP_RETURN_WINDOW = 7,
+                TWINPEAKS_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        escort = 3,
+                        late_game_score_protection = 3,
+                        return_window = 3,
+                    },
+                    doctrineComparisons = {
+                        TWINPEAKS_CONVERT_VS_GREED = 3,
+                        TWINPEAKS_DENY_VS_TRADE = 3,
+                        TWINPEAKS_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        TWINPEAKS_RESP_DENY_TRADE = 3,
+                        TWINPEAKS_RESP_LATE_GREED = 3,
+                        TWINPEAKS_RESP_RETURN_WINDOW = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        escort = 4,
+                        hold = 4,
+                    },
+                    doctrineComparisons = {
+                        TWINPEAKS_ESCORT_VS_CHASE = 4,
+                        TWINPEAKS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        TWINPEAKS_RESP_DENY_TRADE = 4,
+                        TWINPEAKS_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        return_window = 4,
+                    },
+                    doctrineComparisons = {
+                        TWINPEAKS_BAIT_VS_FRONTDOOR = 4,
+                        TWINPEAKS_COLLAPSE_VS_SPLIT = 4,
+                        TWINPEAKS_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        TWINPEAKS_RESP_COLLAPSE_CONNECT = 4,
+                        TWINPEAKS_RESP_RETURN_WINDOW = 4,
+                        TWINPEAKS_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        escort = 5,
+                        recover = 5,
+                    },
+                    doctrineComparisons = {
+                        TWINPEAKS_DENY_VS_TRADE = 5,
+                        TWINPEAKS_ESCORT_VS_CHASE = 5,
+                        TWINPEAKS_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        TWINPEAKS_RESP_DENY_TRADE = 5,
+                        TWINPEAKS_RESP_ESCORT_SHELL = 5,
+                        TWINPEAKS_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        escort = 4,
+                        hold = 4,
+                    },
+                    doctrineComparisons = {
+                        TWINPEAKS_ESCORT_VS_CHASE = 4,
+                        TWINPEAKS_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        TWINPEAKS_RESP_DENY_TRADE = 4,
+                        TWINPEAKS_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+        WSG = {
+            adversarialCases = 20,
+            branchFamilies = {
+                bait = 4,
+                collapse = 4,
+                deny = 13,
+                escort = 16,
+                hold = 8,
+                late_game_score_protection = 3,
+                recover = 5,
+                return_window = 7,
+            },
+            doctrineComparisons = {
+                WSG_BAIT_VS_FRONTDOOR = 4,
+                WSG_COLLAPSE_VS_SPLIT = 4,
+                WSG_CONVERT_VS_GREED = 7,
+                WSG_DENY_VS_TRADE = 8,
+                WSG_ESCORT_VS_CHASE = 13,
+                WSG_HOLD_VS_ROTATE = 8,
+                WSG_LATE_PROTECT_VS_PRESS = 3,
+                WSG_RECOVER_VS_TRICKLE = 5,
+            },
+            doctrineResponses = {
+                WSG_RESP_COLLAPSE_CONNECT = 4,
+                WSG_RESP_DENY_TRADE = 16,
+                WSG_RESP_ESCORT_SHELL = 13,
+                WSG_RESP_LATE_GREED = 3,
+                WSG_RESP_RECOVER_REBAIT = 5,
+                WSG_RESP_RETURN_WINDOW = 7,
+                WSG_RESP_SPLIT_PRESSURE = 4,
+            },
+            forbiddenCommits = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            phaseSummaries = {
+                ENDGAME = {
+                    adversarialCases = 3,
+                    branchFamilies = {
+                        escort = 3,
+                        late_game_score_protection = 3,
+                        return_window = 3,
+                    },
+                    doctrineComparisons = {
+                        WSG_CONVERT_VS_GREED = 3,
+                        WSG_DENY_VS_TRADE = 3,
+                        WSG_LATE_PROTECT_VS_PRESS = 3,
+                    },
+                    doctrineResponses = {
+                        WSG_RESP_DENY_TRADE = 3,
+                        WSG_RESP_LATE_GREED = 3,
+                        WSG_RESP_RETURN_WINDOW = 3,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "ENDGAME",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 3,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 3,
+                    },
+                },
+                OPENING = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        escort = 4,
+                        hold = 4,
+                    },
+                    doctrineComparisons = {
+                        WSG_ESCORT_VS_CHASE = 4,
+                        WSG_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        WSG_RESP_DENY_TRADE = 4,
+                        WSG_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "OPENING",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                PRESSURE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        bait = 4,
+                        collapse = 4,
+                        return_window = 4,
+                    },
+                    doctrineComparisons = {
+                        WSG_BAIT_VS_FRONTDOOR = 4,
+                        WSG_COLLAPSE_VS_SPLIT = 4,
+                        WSG_CONVERT_VS_GREED = 4,
+                    },
+                    doctrineResponses = {
+                        WSG_RESP_COLLAPSE_CONNECT = 4,
+                        WSG_RESP_RETURN_WINDOW = 4,
+                        WSG_RESP_SPLIT_PRESSURE = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "PRESSURE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+                RECOVERY = {
+                    adversarialCases = 5,
+                    branchFamilies = {
+                        deny = 5,
+                        escort = 5,
+                        recover = 5,
+                    },
+                    doctrineComparisons = {
+                        WSG_DENY_VS_TRADE = 5,
+                        WSG_ESCORT_VS_CHASE = 5,
+                        WSG_RECOVER_VS_TRICKLE = 5,
+                    },
+                    doctrineResponses = {
+                        WSG_RESP_DENY_TRADE = 5,
+                        WSG_RESP_ESCORT_SHELL = 5,
+                        WSG_RESP_RECOVER_REBAIT = 5,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "RECOVERY",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 5,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 5,
+                    },
+                },
+                STABILIZE = {
+                    adversarialCases = 4,
+                    branchFamilies = {
+                        deny = 4,
+                        escort = 4,
+                        hold = 4,
+                    },
+                    doctrineComparisons = {
+                        WSG_ESCORT_VS_CHASE = 4,
+                        WSG_HOLD_VS_ROTATE = 4,
+                    },
+                    doctrineResponses = {
+                        WSG_RESP_DENY_TRADE = 4,
+                        WSG_RESP_ESCORT_SHELL = 4,
+                    },
+                    forbiddenCommits = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    phase = "STABILIZE",
+                    safeCounterPatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    scenarios = 4,
+                    truthDisciplinePatterns = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthRisk = {
+                        Capacity = 4,
+                        Count = 1,
+                        IsFixedSize = false,
+                        IsReadOnly = false,
+                        IsSynchronized = false,
+                        SyncRoot = {},
+                    },
+                    truthStress = {
+                        ADVERSARIAL = 4,
+                    },
+                },
+            },
+            safeCounterPatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            scenarios = 20,
+            truthDisciplinePatterns = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthRisk = {
+                Capacity = 4,
+                Count = 1,
+                IsFixedSize = false,
+                IsReadOnly = false,
+                IsSynchronized = false,
+                SyncRoot = {},
+            },
+            truthStress = {
+                ADVERSARIAL = 20,
+            },
+        },
+    },
+    scenarios = {
+        ["ab-endgame-clock-discipline"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_CONVERT_VS_GREED = 1,
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-endgame-clock-discipline",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-endgame-deny-backcap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_CONVERT_VS_GREED = 1,
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-endgame-deny-backcap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-last-window-deny-cap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_CONVERT_VS_GREED = 1,
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-last-window-deny-cap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-midgame-reset-shell"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-midgame-reset-shell",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-opening-farm-lm-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-opening-farm-lm-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-opening-home-bs"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-opening-home-bs",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-opening-scout-bs-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-opening-scout-bs-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-pressure-bait-bs-rotate"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_BAIT_VS_FRONTDOOR = 1,
+                ARATHI_COLLAPSE_VS_SPLIT = 1,
+                ARATHI_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_COLLAPSE_CONNECT = 1,
+                ARATHI_RESP_ESCORT_SHELL = 1,
+                ARATHI_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-pressure-bait-bs-rotate",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-pressure-isolate-road-team"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_BAIT_VS_FRONTDOOR = 1,
+                ARATHI_COLLAPSE_VS_SPLIT = 1,
+                ARATHI_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_COLLAPSE_CONNECT = 1,
+                ARATHI_RESP_ESCORT_SHELL = 1,
+                ARATHI_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-pressure-isolate-road-team",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_BAIT_VS_FRONTDOOR = 1,
+                ARATHI_COLLAPSE_VS_SPLIT = 1,
+                ARATHI_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_COLLAPSE_CONNECT = 1,
+                ARATHI_RESP_ESCORT_SHELL = 1,
+                ARATHI_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-pressure-weak-outer"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_BAIT_VS_FRONTDOOR = 1,
+                ARATHI_COLLAPSE_VS_SPLIT = 1,
+                ARATHI_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_COLLAPSE_CONNECT = 1,
+                ARATHI_RESP_ESCORT_SHELL = 1,
+                ARATHI_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-pressure-weak-outer",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-recovery-from-lost-bs"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-recovery-from-lost-bs",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-recovery-stop-four-cap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_DENY_TRADE = 1,
+                ARATHI_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-recovery-stop-four-cap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-stabilize-anchor-under-inc"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-stabilize-anchor-under-inc",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-stabilize-three-base"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-stabilize-three-base",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ab-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                ARATHI_DENY_VS_TRADE = 1,
+                ARATHI_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                ARATHI_RESP_BAIT_SHOW = 1,
+                ARATHI_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "ARATHI",
+            mapProfile = "ab_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ab-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-endgame-deny-backdoor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_CONVERT_VS_GREED = 1,
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-endgame-deny-backdoor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-endgame-no-chase"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_CONVERT_VS_GREED = 1,
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-endgame-no-chase",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-last-window-deny-spin"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_CONVERT_VS_GREED = 1,
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-last-window-deny-spin",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-midgame-reset-waterworks"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-midgame-reset-waterworks",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-opening-fake-ww-lh"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-opening-fake-ww-lh",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-opening-home-ww"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-opening-home-ww",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-opening-scout-waterworks"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-opening-scout-waterworks",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-pressure-bait-waterworks"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_BAIT_VS_FRONTDOOR = 1,
+                GILNEAS_COLLAPSE_VS_SPLIT = 1,
+                GILNEAS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_COLLAPSE_CONNECT = 1,
+                GILNEAS_RESP_ESCORT_SHELL = 1,
+                GILNEAS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-pressure-bait-waterworks",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-pressure-isolate-reserve"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_BAIT_VS_FRONTDOOR = 1,
+                GILNEAS_COLLAPSE_VS_SPLIT = 1,
+                GILNEAS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_COLLAPSE_CONNECT = 1,
+                GILNEAS_RESP_ESCORT_SHELL = 1,
+                GILNEAS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-pressure-isolate-reserve",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_BAIT_VS_FRONTDOOR = 1,
+                GILNEAS_COLLAPSE_VS_SPLIT = 1,
+                GILNEAS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_COLLAPSE_CONNECT = 1,
+                GILNEAS_RESP_ESCORT_SHELL = 1,
+                GILNEAS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-pressure-third-node"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_BAIT_VS_FRONTDOOR = 1,
+                GILNEAS_COLLAPSE_VS_SPLIT = 1,
+                GILNEAS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_COLLAPSE_CONNECT = 1,
+                GILNEAS_RESP_ESCORT_SHELL = 1,
+                GILNEAS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-pressure-third-node",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-recovery-isolated-spinner"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-recovery-isolated-spinner",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-recovery-regain-waterworks"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-recovery-regain-waterworks",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_DENY_TRADE = 1,
+                GILNEAS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-stabilize-two-base"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-stabilize-two-base",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["bfg-stabilize-waterworks-under-inc"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                GILNEAS_DENY_VS_TRADE = 1,
+                GILNEAS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                GILNEAS_RESP_BAIT_SHOW = 1,
+                GILNEAS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "GILNEAS",
+            mapProfile = "bfg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "bfg-stabilize-waterworks-under-inc",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-endgame-decisive-distance"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-endgame-decisive-distance",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-endgame-deny-last-checkpoint"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-endgame-deny-last-checkpoint",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-last-window-deny-crystal-throw"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-last-window-deny-crystal-throw",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-midgame-reset-escort"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-midgame-reset-escort",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-opening-escort-delay"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-opening-escort-delay",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-opening-scout-checkpoint-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-opening-scout-checkpoint-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-opening-split-crystal-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-opening-split-crystal-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-pressure-bait-crystal-collapse"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_BAIT_VS_FRONTDOOR = 1,
+                DEEPHAUL_COLLAPSE_VS_SPLIT = 1,
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_COLLAPSE_CONNECT = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-pressure-bait-crystal-collapse",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-pressure-isolate-escort"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_BAIT_VS_FRONTDOOR = 1,
+                DEEPHAUL_COLLAPSE_VS_SPLIT = 1,
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_COLLAPSE_CONNECT = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-pressure-isolate-escort",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_BAIT_VS_FRONTDOOR = 1,
+                DEEPHAUL_COLLAPSE_VS_SPLIT = 1,
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_COLLAPSE_CONNECT = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-pressure-turn-enemy-cart"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_BAIT_VS_FRONTDOOR = 1,
+                DEEPHAUL_COLLAPSE_VS_SPLIT = 1,
+                DEEPHAUL_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_COLLAPSE_CONNECT = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-pressure-turn-enemy-cart",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-recovery-recover-own-cart"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-recovery-recover-own-cart",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-recovery-regroup-delay"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-recovery-regroup-delay",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_DENY_VS_TRADE = 1,
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+                DEEPHAUL_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-stabilize-both-carts"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-stabilize-both-carts",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-stabilize-escort-with-delay"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-stabilize-escort-with-delay",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dhr-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPHAUL_ESCORT_VS_CHASE = 1,
+                DEEPHAUL_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPHAUL_RESP_DENY_TRADE = 1,
+                DEEPHAUL_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPHAUL",
+            mapProfile = "dhr_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dhr-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-endgame-deny-outer-trade"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_CONVERT_VS_GREED = 1,
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-endgame-deny-outer-trade",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-endgame-simultaneous-inc"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_CONVERT_VS_GREED = 1,
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-endgame-simultaneous-inc",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-last-window-deny-market-break"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_CONVERT_VS_GREED = 1,
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-last-window-deny-market-break",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-midgame-reset-market-shell"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-midgame-reset-market-shell",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-opening-market-quarry-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-opening-market-quarry-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-opening-market-shell"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-opening-market-shell",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-opening-scout-market-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-opening-scout-market-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-pressure-bait-market-rotate"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_BAIT_VS_FRONTDOOR = 1,
+                DEEPWIND_COLLAPSE_VS_SPLIT = 1,
+                DEEPWIND_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_COLLAPSE_CONNECT = 1,
+                DEEPWIND_RESP_ESCORT_SHELL = 1,
+                DEEPWIND_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-pressure-bait-market-rotate",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-pressure-ghost-flank"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_BAIT_VS_FRONTDOOR = 1,
+                DEEPWIND_COLLAPSE_VS_SPLIT = 1,
+                DEEPWIND_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_COLLAPSE_CONNECT = 1,
+                DEEPWIND_RESP_ESCORT_SHELL = 1,
+                DEEPWIND_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-pressure-ghost-flank",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-pressure-isolate-outer-team"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_BAIT_VS_FRONTDOOR = 1,
+                DEEPWIND_COLLAPSE_VS_SPLIT = 1,
+                DEEPWIND_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_COLLAPSE_CONNECT = 1,
+                DEEPWIND_RESP_ESCORT_SHELL = 1,
+                DEEPWIND_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-pressure-isolate-outer-team",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_BAIT_VS_FRONTDOOR = 1,
+                DEEPWIND_COLLAPSE_VS_SPLIT = 1,
+                DEEPWIND_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_COLLAPSE_CONNECT = 1,
+                DEEPWIND_RESP_ESCORT_SHELL = 1,
+                DEEPWIND_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-recovery-reclaim-market"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-recovery-reclaim-market",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-recovery-single-flank"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_DENY_TRADE = 1,
+                DEEPWIND_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-recovery-single-flank",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-stabilize-market-under-inc"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-stabilize-market-under-inc",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-stabilize-three-node"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-stabilize-three-node",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["dwg-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                DEEPWIND_DENY_VS_TRADE = 1,
+                DEEPWIND_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                DEEPWIND_RESP_BAIT_SHOW = 1,
+                DEEPWIND_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "DEEPWIND",
+            mapProfile = "dwg_standard",
+            mustStay = {
+                "anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "dwg-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-endgame-deny-last-swing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_CONVERT_VS_GREED = 1,
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-endgame-deny-last-swing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-endgame-flag-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_CONVERT_VS_GREED = 1,
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-endgame-flag-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-last-window-deny-flag-throw"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_CONVERT_VS_GREED = 1,
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-last-window-deny-flag-throw",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-midgame-reset-mid-trap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-midgame-reset-mid-trap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-opening-lost-mid-two-towers"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-opening-lost-mid-two-towers",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-opening-scout-mid-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-opening-scout-mid-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-opening-two-towers-mid"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-opening-two-towers-mid",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-pressure-bait-dr-rotate"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_BAIT_VS_FRONTDOOR = 1,
+                EOTS_COLLAPSE_VS_SPLIT = 1,
+                EOTS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_COLLAPSE_CONNECT = 1,
+                EOTS_RESP_ESCORT_SHELL = 1,
+                EOTS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-pressure-bait-dr-rotate",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-pressure-flag-into-tower"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_BAIT_VS_FRONTDOOR = 1,
+                EOTS_COLLAPSE_VS_SPLIT = 1,
+                EOTS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_COLLAPSE_CONNECT = 1,
+                EOTS_RESP_ESCORT_SHELL = 1,
+                EOTS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-pressure-flag-into-tower",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-pressure-isolate-flag-team"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_BAIT_VS_FRONTDOOR = 1,
+                EOTS_COLLAPSE_VS_SPLIT = 1,
+                EOTS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_COLLAPSE_CONNECT = 1,
+                EOTS_RESP_ESCORT_SHELL = 1,
+                EOTS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-pressure-isolate-flag-team",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_BAIT_VS_FRONTDOOR = 1,
+                EOTS_COLLAPSE_VS_SPLIT = 1,
+                EOTS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_COLLAPSE_CONNECT = 1,
+                EOTS_RESP_ESCORT_SHELL = 1,
+                EOTS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-recovery-rebuild-mid-control"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-recovery-rebuild-mid-control",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-recovery-tower-first"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_DENY_TRADE = 1,
+                EOTS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-recovery-tower-first",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-stabilize-mid-with-two-towers"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-stabilize-mid-with-two-towers",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-stabilize-tower-value"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-stabilize-tower-value",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["eots-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                EOTS_DENY_VS_TRADE = 1,
+                EOTS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                EOTS_RESP_BAIT_SHOW = 1,
+                EOTS_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "EOTS",
+            mapProfile = "eots_standard",
+            mustStay = {
+                "tower_anchor",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "eots-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-endgame-deny-last-channel"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                late_game_score_protection = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_CONVERT_VS_GREED = 1,
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-endgame-deny-last-channel",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-endgame-final-deposit"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                late_game_score_protection = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_CONVERT_VS_GREED = 1,
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-endgame-final-deposit",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-last-window-deny-deposit"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                late_game_score_protection = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_CONVERT_VS_GREED = 1,
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-last-window-deny-deposit",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-midgame-reset-spawn"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-midgame-reset-spawn",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-opening-main-group-early-spawn"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-opening-main-group-early-spawn",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-opening-scout-main-group"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-opening-scout-main-group",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-opening-scout-spawn-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-opening-scout-spawn-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-pressure-bait-old-node"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                deny = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_BAIT_VS_FRONTDOOR = 1,
+                SEETHING_COLLAPSE_VS_SPLIT = 1,
+                SEETHING_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_COLLAPSE_CONNECT = 1,
+                SEETHING_RESP_ESCORT_SHELL = 1,
+                SEETHING_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-pressure-bait-old-node",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-pressure-isolate-channel-team"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                deny = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_BAIT_VS_FRONTDOOR = 1,
+                SEETHING_COLLAPSE_VS_SPLIT = 1,
+                SEETHING_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_COLLAPSE_CONNECT = 1,
+                SEETHING_RESP_ESCORT_SHELL = 1,
+                SEETHING_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-pressure-isolate-channel-team",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-pressure-next-public"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                deny = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_BAIT_VS_FRONTDOOR = 1,
+                SEETHING_COLLAPSE_VS_SPLIT = 1,
+                SEETHING_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_COLLAPSE_CONNECT = 1,
+                SEETHING_RESP_ESCORT_SHELL = 1,
+                SEETHING_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-pressure-next-public",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                deny = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_BAIT_VS_FRONTDOOR = 1,
+                SEETHING_COLLAPSE_VS_SPLIT = 1,
+                SEETHING_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_COLLAPSE_CONNECT = 1,
+                SEETHING_RESP_ESCORT_SHELL = 1,
+                SEETHING_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-recovery-after-lost-channel"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-recovery-after-lost-channel",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-recovery-next-spawn"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-recovery-next-spawn",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_DENY_TRADE = 1,
+                SEETHING_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-stabilize-active-channel"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-stabilize-active-channel",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["shore-stabilize-two-node-spread"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SEETHING_DENY_VS_TRADE = 1,
+                SEETHING_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SEETHING_RESP_BAIT_SHOW = 1,
+                SEETHING_RESP_DENY_TRADE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SEETHING",
+            mapProfile = "shore_standard",
+            mustStay = {
+                "advance_group",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "shore-stabilize-two-node-spread",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-endgame-deny-last-turn"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-endgame-deny-last-turn",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-endgame-final-cart"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-endgame-final-cart",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-last-window-deny-turn"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-last-window-deny-turn",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-midgame-reset-route"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-midgame-reset-route",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-opening-cart-split"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-opening-cart-split",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-opening-lava-waterfall-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-opening-lava-waterfall-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-opening-scout-junction-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                rotate = 1,
+                split = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-opening-scout-junction-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-pressure-bait-middle-rotation"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_BAIT_VS_FRONTDOOR = 1,
+                SILVERSHARD_COLLAPSE_VS_SPLIT = 1,
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_COLLAPSE_CONNECT = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-pressure-bait-middle-rotation",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-pressure-isolate-escort"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_BAIT_VS_FRONTDOOR = 1,
+                SILVERSHARD_COLLAPSE_VS_SPLIT = 1,
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_COLLAPSE_CONNECT = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-pressure-isolate-escort",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-pressure-junction-switch"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_BAIT_VS_FRONTDOOR = 1,
+                SILVERSHARD_COLLAPSE_VS_SPLIT = 1,
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_COLLAPSE_CONNECT = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-pressure-junction-switch",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_BAIT_VS_FRONTDOOR = 1,
+                SILVERSHARD_COLLAPSE_VS_SPLIT = 1,
+                SILVERSHARD_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_COLLAPSE_CONNECT = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-recovery-after-lost-junction"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-recovery-after-lost-junction",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-recovery-best-trade"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-recovery-best-trade",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_DENY_VS_TRADE = 1,
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+                SILVERSHARD_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-stabilize-double-escort"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-stabilize-double-escort",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-stabilize-live-cart"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-stabilize-live-cart",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["ssm-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                SILVERSHARD_ESCORT_VS_CHASE = 1,
+                SILVERSHARD_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                SILVERSHARD_RESP_DENY_TRADE = 1,
+                SILVERSHARD_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "SILVERSHARD",
+            mapProfile = "ssm_standard",
+            mustStay = {
+                "escort",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "ssm-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-endgame-deny-last-pickup"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_CONVERT_VS_GREED = 1,
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-endgame-deny-last-pickup",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-endgame-highest-value"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_CONVERT_VS_GREED = 1,
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-endgame-highest-value",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-last-window-deny-drop"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                hold = 1,
+                late_game_score_protection = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_CONVERT_VS_GREED = 1,
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_LATE_GREED = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-last-window-deny-drop",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-midgame-reset-center"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-midgame-reset-center",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-opening-center-deny"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-opening-center-deny",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-opening-pickup-lanes"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-opening-pickup-lanes",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-opening-scout-pickup-order"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                hold = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-opening-scout-pickup-order",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-pressure-delete-carrier"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                collapse = 1,
+                deny = 1,
+                escort = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_BAIT_VS_FRONTDOOR = 1,
+                TEMPLE_COLLAPSE_VS_SPLIT = 1,
+                TEMPLE_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_COLLAPSE_CONNECT = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+                TEMPLE_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-pressure-delete-carrier",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-pressure-force-loose-orb"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                collapse = 1,
+                deny = 1,
+                escort = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_BAIT_VS_FRONTDOOR = 1,
+                TEMPLE_COLLAPSE_VS_SPLIT = 1,
+                TEMPLE_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_COLLAPSE_CONNECT = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+                TEMPLE_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-pressure-force-loose-orb",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-pressure-isolate-support-line"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                collapse = 1,
+                deny = 1,
+                escort = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_BAIT_VS_FRONTDOOR = 1,
+                TEMPLE_COLLAPSE_VS_SPLIT = 1,
+                TEMPLE_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_COLLAPSE_CONNECT = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+                TEMPLE_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-pressure-isolate-support-line",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                collapse = 1,
+                deny = 1,
+                escort = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_BAIT_VS_FRONTDOOR = 1,
+                TEMPLE_COLLAPSE_VS_SPLIT = 1,
+                TEMPLE_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_COLLAPSE_CONNECT = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+                TEMPLE_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-recovery-after-double-drop"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-recovery-after-double-drop",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-recovery-loose-orb-reset"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-recovery-loose-orb-reset",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                recover = 1,
+                rotate = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_DENY_VS_TRADE = 1,
+                TEMPLE_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-stabilize-spread-carriers"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-stabilize-spread-carriers",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tok-stabilize-two-orb-shell"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TEMPLE_ESCORT_VS_CHASE = 1,
+                TEMPLE_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TEMPLE_RESP_DENY_TRADE = 1,
+                TEMPLE_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TEMPLE",
+            mapProfile = "tok_standard",
+            mustStay = {
+                "friendly_carrier",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tok-stabilize-two-orb-shell",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-endgame-deny-last-grab"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_LATE_GREED = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-endgame-deny-last-grab",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-endgame-final-cap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_LATE_GREED = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-endgame-final-cap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-last-window-deny-cross"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_LATE_GREED = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-last-window-deny-cross",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-midgame-reset-offense"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-midgame-reset-offense",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-opening-home-defense-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-opening-home-defense-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-opening-route-control"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-opening-route-control",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-opening-scout-pickup-lane"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-opening-scout-pickup-lane",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-pressure-efc-choke"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_BAIT_VS_FRONTDOOR = 1,
+                TWINPEAKS_COLLAPSE_VS_SPLIT = 1,
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_COLLAPSE_CONNECT = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+                TWINPEAKS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-pressure-efc-choke",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-pressure-fake-tunnel-swap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_BAIT_VS_FRONTDOOR = 1,
+                TWINPEAKS_COLLAPSE_VS_SPLIT = 1,
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_COLLAPSE_CONNECT = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+                TWINPEAKS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-pressure-fake-tunnel-swap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-pressure-isolate-healer-line"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_BAIT_VS_FRONTDOOR = 1,
+                TWINPEAKS_COLLAPSE_VS_SPLIT = 1,
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_COLLAPSE_CONNECT = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+                TWINPEAKS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-pressure-isolate-healer-line",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_BAIT_VS_FRONTDOOR = 1,
+                TWINPEAKS_COLLAPSE_VS_SPLIT = 1,
+                TWINPEAKS_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_COLLAPSE_CONNECT = 1,
+                TWINPEAKS_RESP_RETURN_WINDOW = 1,
+                TWINPEAKS_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-recovery-after-failed-return"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-recovery-after-failed-return",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-recovery-route-rebuild"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-recovery-route-rebuild",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_DENY_VS_TRADE = 1,
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+                TWINPEAKS_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-stabilize-carrier-bunker"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-stabilize-carrier-bunker",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-stabilize-ramp-control"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-stabilize-ramp-control",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["tp-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                TWINPEAKS_ESCORT_VS_CHASE = 1,
+                TWINPEAKS_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                TWINPEAKS_RESP_DENY_TRADE = 1,
+                TWINPEAKS_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "TWINPEAKS",
+            mapProfile = "tp_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "tp-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-endgame-deny-last-grab"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_CONVERT_VS_GREED = 1,
+                WSG_DENY_VS_TRADE = 1,
+                WSG_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_LATE_GREED = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-endgame-deny-last-grab",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-endgame-return-cap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_CONVERT_VS_GREED = 1,
+                WSG_DENY_VS_TRADE = 1,
+                WSG_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_LATE_GREED = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-endgame-return-cap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-last-window-deny-cross"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                escort = 1,
+                late_game_score_protection = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_CONVERT_VS_GREED = 1,
+                WSG_DENY_VS_TRADE = 1,
+                WSG_LATE_PROTECT_VS_PRESS = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_LATE_GREED = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "ENDGAME",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-last-window-deny-cross",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-midgame-reset-offense"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_DENY_VS_TRADE = 1,
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+                WSG_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-midgame-reset-offense",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-opening-crossmap-punish"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-opening-crossmap-punish",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-opening-home-defense-read"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-opening-home-defense-read",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-opening-route-and-return"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-opening-route-and-return",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-opening-scout-grab-lane"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "OPENING",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-opening-scout-grab-lane",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-pressure-efc-stack"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_BAIT_VS_FRONTDOOR = 1,
+                WSG_COLLAPSE_VS_SPLIT = 1,
+                WSG_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_COLLAPSE_CONNECT = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+                WSG_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-pressure-efc-stack",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-pressure-fake-tunnel-swap"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_BAIT_VS_FRONTDOOR = 1,
+                WSG_COLLAPSE_VS_SPLIT = 1,
+                WSG_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_COLLAPSE_CONNECT = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+                WSG_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-pressure-fake-tunnel-swap",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-pressure-isolate-healer-line"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_BAIT_VS_FRONTDOOR = 1,
+                WSG_COLLAPSE_VS_SPLIT = 1,
+                WSG_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_COLLAPSE_CONNECT = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+                WSG_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-pressure-isolate-healer-line",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-pressure-route-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                bait = 1,
+                collapse = 1,
+                return_window = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_BAIT_VS_FRONTDOOR = 1,
+                WSG_COLLAPSE_VS_SPLIT = 1,
+                WSG_CONVERT_VS_GREED = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_COLLAPSE_CONNECT = 1,
+                WSG_RESP_RETURN_WINDOW = 1,
+                WSG_RESP_SPLIT_PRESSURE = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "PRESSURE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-pressure-route-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-recovery-after-failed-return"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_DENY_VS_TRADE = 1,
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+                WSG_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-recovery-after-failed-return",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-recovery-post-wipe"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_DENY_VS_TRADE = 1,
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+                WSG_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-recovery-post-wipe",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-recovery-rebuild-peel"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_DENY_VS_TRADE = 1,
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+                WSG_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-recovery-rebuild-peel",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-recovery-score-floor"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                recover = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_DENY_VS_TRADE = 1,
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_RECOVER_VS_TRICKLE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+                WSG_RESP_RECOVER_REBAIT = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "RECOVERY",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-recovery-score-floor",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-stabilize-escort-shell"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-stabilize-escort-shell",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-stabilize-reinforce-timing"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-stabilize-reinforce-timing",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-stabilize-trade-clock"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-stabilize-trade-clock",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+        ["wsg-stabilize-turtle-denial"] = {
+            adversarialCases = 1,
+            branchFamilies = {
+                deny = 1,
+                escort = 1,
+                hold = 1,
+            },
+            disciplineRule = "Do not full send from degraded truth; protect the score floor first.",
+            doctrineComparisons = {
+                WSG_ESCORT_VS_CHASE = 1,
+                WSG_HOLD_VS_ROTATE = 1,
+            },
+            doctrineResponses = {
+                WSG_RESP_DENY_TRADE = 1,
+                WSG_RESP_ESCORT_SHELL = 1,
+            },
+            escalateWhen = "Escalate only when battlefield truth becomes explicit and the scoring path stays covered.",
+            forbiddenCommit = "CALL:FULL_COMMIT",
+            mapKey = "WSG",
+            mapProfile = "wsg_standard",
+            mustStay = {
+                "our_fc",
+            },
+            phase = "STABILIZE",
+            safeCounterPatterns = {
+                "preserve the safer path until battlefield truth improves.",
+            },
+            safeFallbackAction = "CALL:HOLD",
+            safePrimaryAction = "PLAN:CHECK",
+            scenarioId = "wsg-stabilize-turtle-denial",
+            truthDisciplinePatterns = {
+                "Protect the score floor and refuse full-commit calls from partial truth.",
+            },
+            truthRisk = "LOW",
+            truthStress = {
+                ADVERSARIAL = 1,
+            },
+        },
+    },
+    shared = {
+        disciplinePrinciples = {
+            anchorCoverage = "Keep required defenders or carrier support planted until truth improves.",
+            forbiddenCommit = "Do not full-commit from contradictory or incomplete public facts.",
+            safeFallback = "Fallback to HOLD or CHECK before expanding from partial truth.",
+            safePrimary = "Prefer the smallest legal action that preserves the score path.",
+        },
+        minimumAdversarialCases = 1,
+    },
+}
+
+function ScenarioAdversarialCalibration:Count()
+    local count = 0
+    for _ in pairs(DATA.scenarios or {}) do count = count + 1 end
+    return count
+end
+
+function ScenarioAdversarialCalibration:Get(scenarioID)
+    local row = DATA.scenarios and DATA.scenarios[scenarioID]
+    return row and KWR.Util:Copy(row) or nil
+end
+
+function ScenarioAdversarialCalibration:GetMapSummary(mapKey)
+    mapKey = KWR.Util:Upper(mapKey, nil, 24)
+    local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
+    return row and KWR.Util:Copy(row) or nil
+end
+
+function ScenarioAdversarialCalibration:GetMapPhaseSummary(mapKey, phase)
+    mapKey = KWR.Util:Upper(mapKey, nil, 24)
+    phase = KWR.Util:Upper(phase, nil, 24)
+    local row = mapKey and phase and DATA.maps and DATA.maps[mapKey]
+    row = row and row.phaseSummaries and row.phaseSummaries[phase] or nil
+    return row and KWR.Util:Copy(row) or nil
+end
+
+function ScenarioAdversarialCalibration:GetByMapAndPhase(mapKey, phase)
+    mapKey = KWR.Util:Upper(mapKey, nil, 24)
+    phase = KWR.Util:Upper(phase, nil, 24)
+    if not mapKey or not phase then
+        return nil
+    end
+    if not phaseIndex then
+        phaseIndex = {}
+        for _, row in pairs(DATA.scenarios or {}) do
+            if row.mapKey and row.phase then
+                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
+                phaseIndex[row.mapKey][row.phase] = row
+            end
+        end
+    end
+    local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
+    return row and KWR.Util:Copy(row) or nil
+end
+
+function ScenarioAdversarialCalibration:Shared()
+    return KWR.Util:Copy(DATA.shared or {})
+end
+
+KWR:RegisterModule("ScenarioAdversarialCalibration", ScenarioAdversarialCalibration)
