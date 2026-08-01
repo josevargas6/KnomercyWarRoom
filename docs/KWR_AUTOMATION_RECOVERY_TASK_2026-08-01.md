@@ -61,13 +61,13 @@ with an actionable error.
 
 # Acceptance criteria
 
-- [ ] Scheduled maintenance status invocation no longer misbinds `Lane`.
-- [ ] Scheduled automation defaults to dry-run and disables external posts.
-- [ ] CurseForge upload helpers reject nonnumeric project IDs.
-- [ ] CurseForge upload helpers reject redirects, non-JSON bodies, and missing file IDs.
-- [ ] A valid simulated `{"id":20402}` response is accepted.
-- [ ] CI, validation, Lua tests, and build gates pass.
-- [ ] The TOC load graph contains every declared Lua file.
+- [x] Scheduled maintenance status invocation no longer misbinds `Lane`.
+- [x] Scheduled automation defaults to dry-run and disables external posts.
+- [x] CurseForge upload helpers reject nonnumeric project IDs.
+- [x] CurseForge upload helpers reject redirects, non-JSON bodies, and missing file IDs.
+- [x] A valid simulated `{"id":20402}` response is accepted.
+- [x] CI, validation, Lua tests, and build gates pass.
+- [x] The TOC load graph contains every declared Lua file.
 - [ ] Corrected workflows exist on GitHub `main`.
 - [ ] Commander alpha is publicly downloadable from CurseForge.
 
