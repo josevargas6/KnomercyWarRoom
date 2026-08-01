@@ -158,7 +158,14 @@ function Get-GitProvenance {
 
     $commit = (& $git.Source -C $resolvedRoot rev-parse HEAD 2>$null | Select-Object -First 1)
     $branch = (& $git.Source -C $resolvedRoot rev-parse --abbrev-ref HEAD 2>$null | Select-Object -First 1)
-    $tag = (& $git.Source -C $resolvedRoot describe --tags --exact-match 2>$null | Select-Object -First 1)
+    # Pull requests and local release candidates are valid git worktrees without
+    # an exact tag. Git writes that expected miss to stderr; do not turn it into
+    # a build failure while collecting provenance.
+    try {
+        $tag = (& $git.Source -C $resolvedRoot describe --tags --exact-match 2>$null | Select-Object -First 1)
+    } catch {
+        $tag = $null
+    }
     $status = (& $git.Source -C $resolvedRoot status --porcelain 2>$null)
 
     return [pscustomobject]@{
