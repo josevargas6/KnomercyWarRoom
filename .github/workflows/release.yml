@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "launch/6.1.0-alpha.29-final"
   workflow_dispatch:
     inputs:
       release_tag:
