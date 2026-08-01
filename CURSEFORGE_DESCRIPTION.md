@@ -1,55 +1,23 @@
 # Knomercy War Room
 
-Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail.
+Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail. It turns verified battlefield state into one clear next call, assignment, win condition, and abort condition for the team.
 
 ## Commander experience
 
-- Expanded Tactical Command Board as the primary interface.
-- Compact Scout HUD with score, win condition, next objective, assignment, caller, and kill target.
-- Always-running Reporter objective intelligence with movement evidence only
-  where Blizzard exposes permitted coordinates.
-- On-demand minimized Reporter map that expands into the full tactical report.
-- Blizzard map art with live objective ownership and permitted evidence overlays.
-- Objective control and map-status reporting.
-- Team roster and deterministic one-player/one-job assignments.
-- Enemy Tracker with scoreboard identity, safe last-seen evidence, priority marks, and notes.
-- Compact Team/Enemy health bars with role symbols, secure click target/focus,
-  and an evidence-backed local kill-target glow.
-- Explicitly unknown live defensive/trinket state under Retail 12 restrictions,
-  plus a dated advisory RBG meta snapshot.
-- Persistent match history, learning summary, and After Action Review feedback.
-- Explicit non-live preview mode for interface review outside PvP.
-
-## Decision system
-
-KWR reads public battleground score, objective, map, and friendly-roster state, projects the current win path with map-specific rules, then publishes one NEXT / WHO / WHEN command and its measured reason.
-
-Supported families include node, hybrid, flag, orb, cart, and resource battlegrounds.
+- Tactical Command Board with a compact synchronized command HUD.
+- Objective, team, enemy, assignment, and combat intelligence in one command pipeline.
+- Map-aware calls that explain what to take, hold, rotate, deny, or return.
+- Structured `/kwr verify`, `/kwr bug`, and manual after-action evidence for field testing and maintenance.
+- Safe secure click rows for player-initiated target/focus actions only.
 
 ## Player control and safety
 
-KWR never sends chat or addon messages automatically, changes keybindings,
-casts abilities, or performs protected combat actions automatically. Compact roster rows can
-target on left-click and focus on right-click through Blizzard secure templates;
-fixed Quick Calls can send one reviewed phrase to Instance Chat on the player's
-explicit click. Their bindings are prepared out of combat. Unavailable combat
-facts remain unknown, and dynamic calls remain manual.
+KWR never auto-casts, changes targets, runs macros, sends chat or addon messages, or performs protected combat actions. Unknown or restricted Retail data stays explicitly unknown. Players remain in control of every action.
 
-## Alpha status
+## Current alpha
 
-Version 6.1.0-alpha.12 adds complete response packages, optional target/cast
-clarity, bounded execution assessment, and retains structured
-manual post-match evidence export,
-stale-evidence rejection, assignment validation, richer field-test reports,
-one-click fixed battlefield calls with visible confirmation and a compact fallback,
-aligned decision tables, commander-focused
-information hierarchy, coordinated window layering, direct player specialization
-truth, transition-safe lazy UI, enhanced combat rosters, and tactical maps alongside contextual strategy, composition, counterplay,
-learning, provenance, bounded specialization capability ratings, battlefield
-job preferences, observed tactical ability windows, sourced visible/last-seen
-locations, explicit objective success/abort criteria, and reduced repeat
-runtime/UI work. It passes offline
-validation, 232 deterministic checks, live enemy-token binding, reassessment
-feedback, and final-score AAR handling. Live Retail 12.0.7 field testing,
-including secure-row taint checks,
-is still required before stable release.
+`6.1.0-alpha.30` is an active field-test candidate. It has passed deterministic offline validation and package checks, but it still requires live Retail field validation before stable promotion. Read the [GitHub source and release history](https://github.com/josevargas6/KnomercyWarRoom) for the full change record and verification notes.
+
+## Support
+
+Use the GitHub issue templates for reproducible bugs, diagnostics, field tests, and feature requests. Remove personal identifiers, account details, tokens, webhook URLs, and private Discord content before submitting evidence.
