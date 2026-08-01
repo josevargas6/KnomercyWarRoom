@@ -1,0 +1,21 @@
+{
+  "schema": "kwr-outcome-review",
+  "schemaVersion": 1,
+  "reviewId": "replace-me",
+  "replayId": "replace-replay-id",
+  "mapProfile": "tp_standard",
+  "result": "UNKNOWN",
+  "reviewStatus": "OPEN",
+  "classifications": {
+    "primary": "UNRESOLVED",
+    "secondary": [],
+    "summary": "Replace with reviewed causal summary."
+  },
+  "checkpoints": [
+    {
+      "offsetSeconds": 5,
+      "classification": "UNRESOLVED",
+      "summary": "Replace with checkpoint summary."
+    }
+  ]
+}
