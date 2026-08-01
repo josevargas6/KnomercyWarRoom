@@ -1,0 +1,139 @@
+name: KWR Automated Maintenance Schedule
+
+on:
+  schedule:
+    - cron: "17 15,21 * * *"
+    - cron: "30 21 * * 1"
+    - cron: "47 13 * * 2"
+    - cron: "7,22,37,52 14-19 * * 2"
+    - cron: "17 20-23 * * 2"
+    - cron: "17 0-17 * * 3"
+    - cron: "17 18 * * 3"
+    - cron: "17 15 * * 4"
+    - cron: "47 14 1 * *"
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: Maintenance lane to run.
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - status
+          - daily
+          - patch-preflight
+          - patch-baseline
+          - patch-watch
+          - extended-reconciliation
+          - weekly-reconciliation
+          - biweekly-trends
+          - monthly-maintenance
+          - release-dry-run
+          - full-dry-run
+      mode:
+        description: dry-run keeps all external writes disabled.
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - external
+      post_discord:
+        description: Post Discord updates when mode is external.
+        required: true
+        default: false
+        type: boolean
+      notify_bot:
+        description: Dispatch a maintenance event to the Sentinel bot repository.
+        required: true
+        default: false
+        type: boolean
+      confirm_external_writes:
+        description: Type PUBLISH to allow external writes in external mode.
+        required: false
+        default: ""
+
+concurrency:
+  group: kwr-automated-maintenance-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  maintenance:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Lua test runtime
+        run: npm install --global fengari-node-cli
+
+      - name: Run maintenance lane
+        shell: pwsh
+        env:
+          KWR_OWNER_NAME: ${{ vars.KWR_OWNER_NAME }}
+          KWR_GITHUB_REPOSITORY: ${{ vars.KWR_GITHUB_REPOSITORY }}
+          KWR_DEFAULT_BRANCH: ${{ vars.KWR_DEFAULT_BRANCH }}
+          KWR_PRODUCTION_BRANCH: ${{ vars.KWR_PRODUCTION_BRANCH }}
+          KWR_FAMILY_REPOSITORIES: ${{ vars.KWR_FAMILY_REPOSITORIES }}
+          DISCORD_WEBHOOK_DAILY_PROGRESS: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS }}
+          DISCORD_WEBHOOK_OPS: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+          DISCORD_WEBHOOK_ANNOUNCEMENTS: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
+          DISCORD_WEBHOOK_SUPPORT: ${{ secrets.DISCORD_WEBHOOK_SUPPORT }}
+          DISCORD_WEBHOOK_FIELD_TESTING: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING }}
+          KWR_BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
+          KWR_BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
+          CURSEFORGE_COMMANDER_PROJECT_ID: ${{ vars.CURSEFORGE_COMMANDER_PROJECT_ID || secrets.CURSEFORGE_COMMANDER_PROJECT_ID }}
+          CURSEFORGE_SENTINEL_PROJECT_ID: ${{ vars.CURSEFORGE_SENTINEL_PROJECT_ID || secrets.CURSEFORGE_SENTINEL_PROJECT_ID }}
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
+        run: |
+          $lane = "auto"
+          $mode = "dry-run"
+          $confirm = ""
+          $postDiscord = $false
+          $notifyBot = $false
+
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+              $lane = "${{ inputs.lane }}"
+              $mode = "${{ inputs.mode }}"
+              $confirm = "${{ inputs.confirm_external_writes }}"
+              $postDiscord = [System.Convert]::ToBoolean("${{ inputs.post_discord }}")
+              $notifyBot = [System.Convert]::ToBoolean("${{ inputs.notify_bot }}")
+          }
+
+          $maintenanceParameters = @{
+              Lane = $lane
+              Mode = $mode
+              ConfirmExternalWrites = $confirm
+              OutputDirectory = "artifacts\scheduled-maintenance"
+          }
+          if ($postDiscord) {
+              $maintenanceParameters.PostDiscord = $true
+          }
+          if ($notifyBot) {
+              $maintenanceParameters.NotifyBot = $true
+          }
+
+          ./tools/kwr-maintenance-schedule.ps1 @maintenanceParameters
+
+      - name: Upload maintenance evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kwr-maintenance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/scheduled-maintenance/*
+          if-no-files-found: warn
+          retention-days: 30
+
