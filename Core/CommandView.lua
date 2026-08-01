@@ -189,6 +189,28 @@ local function winPath(kind, status, prediction)
         or (status == "LOSE" and "WIN NEXT SCORE" or "BREAK TIE")
 end
 
+local function knownLocalTarget(value)
+    local target = KWR.Util:Text(value, "", 64)
+    local upper = target:upper()
+    return target ~= "" and upper ~= "U" and upper ~= "UNKNOWN"
+        and upper ~= "UNKNOWN TARGET"
+end
+
+local function localFightCall(snapshot, current)
+    local execution = snapshot and snapshot.executionCommand or {}
+    local localFight = execution.localFight or {}
+    local kill = localFight.phase == "ACTIVE" and localFight.kill or nil
+    if not kill or not knownLocalTarget(kill.target) then return nil end
+    local result = KWR.Util:Copy(current)
+    result.what = kill.mode == "PRESSURE" and "PRESS" or "KILL"
+    result.where = safeLocation(snapshot.context and snapshot.context.mapKey,
+        kill.location, result.what)
+    result.when = "NOW"
+    result.localTarget = KWR.Util:ShortName(kill.target)
+    result.source = "LOCAL_FIGHT"
+    return result
+end
+
 function CommandView:CompactMapText(mapKey, text, fallback, limit)
     local value = KWR.Util:Text(text, fallback or "", limit or 96)
     if mapKey and KWR.Maps and type(KWR.Maps.AbbreviateText) == "function" then
@@ -206,9 +228,14 @@ function CommandView:FightNow(state)
     local response = snapshot.responsePackage or command.responsePackage or {}
     local activePlay = command.activePlay or state.activePlay or {}
     local candidate = command.activePlayCandidate or {}
-    local current = callModel(activePlay, command, response, context.mapKey, true, nil)
+    local strategicCurrent = callModel(
+        activePlay, command, response, context.mapKey, true, nil)
+    local current = localFightCall(snapshot, strategicCurrent) or strategicCurrent
     local nextCall
-    if candidate.id and activePlay.id and candidate.id ~= activePlay.id then
+    if current.source == "LOCAL_FIGHT" then
+        nextCall = KWR.Util:Copy(strategicCurrent)
+        nextCall.when = "AFTER FIGHT"
+    elseif candidate.id and activePlay.id and candidate.id ~= activePlay.id then
         nextCall = callModel(candidate, command, response, context.mapKey, false, nil)
     else
         nextCall = {
