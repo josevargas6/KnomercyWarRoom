@@ -1,0 +1,242 @@
+{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "tp-pressure-isolate-healer-line-004",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T04:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "TWINPEAKS",
+                "mode":  "STANDARD",
+                "kind":  "FLAG",
+                "profile":  "tp_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "our_fc",
+                                                        "class":  "Druid",
+                                                        "spec":  "Guardian",
+                                                        "role":  "TANK"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "carrier_healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "return_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_fc",
+                                                     "class":  "Demon Hunter",
+                                                     "spec":  "Vengeance",
+                                                     "role":  "TANK"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Discipline",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1,
+                                       "enemy":  1,
+                                       "max":  3
+                                   },
+                         "objectives":  {
+                                            "friendlyCarrier":  "our_fc",
+                                            "enemyCarrier":  "enemy_fc"
+                                        },
+                         "evidenceQuality":  "MEDIUM"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "tp_pressure_isolate_healer_line_variant_4_state",
+                         "facts":  {
+                                       "phase":  "PRESSURE",
+                                       "summary":  "Isolate the enemy healer line before the true return collapse lands.",
+                                       "variant":  "uncertain_window",
+                                       "goal":  "Create the return window by stripping the first rescue wave."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "tp_pressure_isolate_healer_line_variant_4_window",
+                         "facts":  {
+                                       "objective":  "EFC",
+                                       "pressure":  "LOW_TRUTH",
+                                       "truth":  "MEDIUM"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "tp_pressure_isolate_healer_line_variant_4_resolution",
+                         "facts":  {
+                                       "classification":  "UNRESOLVED",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:PRESS",
+                                                   "WHERE:EFC"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:STALL"
+                                                ],
+                           "mustStay":  [
+                                            "our_fc"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "pressure",
+                                                        "control"
+                                                    ],
+                           "successConditions":  [
+                                                     "convert_pressure_window"
+                                                 ],
+                           "abortConditions":  [
+                                                   "target_reinforced_early"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Isolate the enemy healer line before the true return collapse lands. Variant 4 uses the uncertain_window pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "collapse",
+                                                                     "return_window",
+                                                                     "bait"
+                                                                 ],
+                                                  "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                                  "safestCounter":  "commit only on the real conversion window.",
+                                                  "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                  "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                  "doctrineComparisonIds":  [
+                                                                                "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                                                "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                                                "TWINPEAKS_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                                              "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                                              "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the target lane is still live before reinforcement lands",
+                                                                    "the pressure package arrives together",
+                                                                    "the current score floor remains protected during the strike"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the target reinforces before arrival",
+                                                                        "the pressure package splits into equal weak contacts"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "carrier route truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1,
+                                       "enemy":  1
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Create the return window by stripping the first rescue wave. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "collapse",
+                                                              "return_window",
+                                                              "bait"
+                                                          ],
+                                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                           "safestCounter":  "commit only on the real conversion window.",
+                                           "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                           "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                           "doctrineComparisonIds":  [
+                                                                         "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                                         "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                                       "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the target lane is still live before reinforcement lands",
+                                                             "the pressure package arrives together",
+                                                             "the current score floor remains protected during the strike"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the target reinforces before arrival",
+                                                                 "the pressure package splits into equal weak contacts"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "carrier route truth"
+                                                             ]
+                                       }
+                }
+}
