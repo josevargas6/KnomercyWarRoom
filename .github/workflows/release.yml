@@ -20,12 +20,12 @@ jobs:
     timeout-minutes: 15
     environment:
       name: production
-      url: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || github.ref_name }}
     steps:
-      - name: Checkout tag
+      - name: Checkout release source
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release_tag || github.ref }}
+          ref: ${{ github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -62,12 +62,15 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "${{ inputs.release_tag || github.ref_name }}"
-          artifacts/*
-          --prerelease
-          --generate-notes
-          --title "Knomercy War Room ${{ inputs.release_tag || github.ref_name }}"
+        run: |
+          $releaseTag = "${{ inputs.release_tag || github.ref_name }}"
+          gh release view $releaseTag *> $null
+          if ($LASTEXITCODE -eq 0) {
+              gh release upload $releaseTag artifacts/* --clobber
+              gh release edit $releaseTag --prerelease --title "Knomercy War Room $releaseTag"
+          } else {
+              gh release create $releaseTag artifacts/* --prerelease --generate-notes --title "Knomercy War Room $releaseTag"
+          }
 
       - name: Upload Commander to CurseForge
         shell: pwsh
