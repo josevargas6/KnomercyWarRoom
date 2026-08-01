@@ -16,6 +16,7 @@ $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $artifact = [IO.Path]::GetFullPath($ArtifactPath)
 $changelogPath = Join-Path $root "KWRSentinel\CHANGELOG.md"
 $tocPath = Join-Path $root "KWRSentinel\KWRSentinel.toc"
+. (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
 
 function ConvertTo-JsonStringLiteral {
     param([AllowNull()][string]$Value)
@@ -80,29 +81,21 @@ if ($DryRun) {
 if ([string]::IsNullOrWhiteSpace($ProjectId)) {
     throw "Missing CurseForge project id. Set CURSEFORGE_PROJECT_ID or pass -ProjectId."
 }
+Assert-CurseForgeProjectId -ProjectId $ProjectId
 if ([string]::IsNullOrWhiteSpace($ApiToken)) {
     throw "Missing CurseForge API token. Set CURSEFORGE_API_TOKEN or pass -ApiToken."
 }
-$curl = Get-Command curl.exe -ErrorAction SilentlyContinue
-if (-not $curl) {
-    throw "curl.exe is required for the multipart CurseForge upload."
-}
 
-$endpoint = "https://www.curseforge.com/api/projects/$ProjectId/upload-file"
 $metadataPath = Join-Path ([IO.Path]::GetTempPath()) ("kwr-curseforge-metadata-" + [guid]::NewGuid().ToString("N") + ".json")
 Set-Content -LiteralPath $metadataPath -Value $metadataJson -Encoding UTF8 -NoNewline
-& $curl.Source `
-    -f `
-    -X POST `
-    -H "X-Api-Token: $ApiToken" `
-    -F "metadata=<$metadataPath" `
-    -F "file=@$artifact" `
-    $endpoint
-
-if ($LASTEXITCODE -ne 0) {
+try {
+    $fileId = Invoke-CurseForgeMultipartUpload `
+        -ProjectId $ProjectId `
+        -ApiToken $ApiToken `
+        -MetadataPath $metadataPath `
+        -ArtifactPath $artifact
+} finally {
     Remove-Item -LiteralPath $metadataPath -Force -ErrorAction SilentlyContinue
-    throw "CurseForge upload failed with exit code $LASTEXITCODE."
 }
-Remove-Item -LiteralPath $metadataPath -Force -ErrorAction SilentlyContinue
 
-Write-Output "CurseForge upload request completed for project $ProjectId."
+Write-Output "CurseForge accepted file $fileId for project $ProjectId."
