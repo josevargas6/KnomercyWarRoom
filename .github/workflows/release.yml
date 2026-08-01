@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - "launch/6.1.0-alpha.30-final"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to build and publish
+        required: true
+        default: v6.1.0-alpha.30
 
 permissions:
   contents: write
@@ -12,29 +20,145 @@ jobs:
   release:
     runs-on: windows-latest
     timeout-minutes: 15
+    environment:
+      name: production
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}
     steps:
-      - name: Checkout tag
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Checkout release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Install Lua test runtime
         run: npm install --global fengari-node-cli
 
+      - name: Run complete release gate
+        shell: pwsh
+        run: |
+          ./tools/validate.ps1
+          ./tools/security-audit.ps1
+          ./tools/knowledge-audit.ps1
+          ./tools/test-automation.ps1
+          fengari tests/smoke.lua
+          fengari tests/soak.lua
+
+      - name: Validate tag matches addon version
+        shell: pwsh
+        run: |
+          $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $expectedTag = "v$($tocVersion)"
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+          if ($releaseTag -ne $expectedTag) {
+              throw "Release tag mismatch. Expected $expectedTag but got $releaseTag."
+          }
+
       - name: Build and certify packages
         shell: pwsh
-        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts"
+        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
 
       - name: Create GitHub prerelease
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "${{ github.ref_name }}"
-          artifacts/*
-          --prerelease
-          --generate-notes
-          --title "Knomercy War Room ${{ github.ref_name }}"
+        run: |
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+          gh release view $releaseTag *> $null
+          if ($LASTEXITCODE -eq 0) {
+              gh release upload $releaseTag artifacts/* --clobber
+              gh release edit $releaseTag --prerelease --title "Knomercy War Room $releaseTag"
+          } else {
+              gh release create $releaseTag artifacts/* --prerelease --generate-notes --title "Knomercy War Room $releaseTag"
+          }
+
+      - name: Upload Commander to CurseForge
+        shell: pwsh
+        env:
+          CURSEFORGE_PROJECT_ID: "1632632"
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_API_TOKEN)) {
+              throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
+          }
+          if ($env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
+              Write-Output "CurseForge game-version metadata omitted; upload API treats it as optional."
+              $env:CURSEFORGE_GAME_VERSION_IDS = ""
+          }
+          $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip"
+
+      - name: Upload Sentinel to CurseForge
+        shell: pwsh
+        env:
+          CURSEFORGE_PROJECT_ID: "1614463"
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CURSEFORGE_API_TOKEN)) {
+              throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
+          }
+          if ($env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
+              Write-Output "CurseForge game-version metadata omitted; upload API treats it as optional."
+              $env:CURSEFORGE_GAME_VERSION_IDS = ""
+          }
+          $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip"
+
+      - name: Publish Commander Discord announcement
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
+              Write-Output "Discord announcement skipped: webhook secret is not configured."
+              exit 0
+          }
+          $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $version
+
+      - name: Publish Sentinel Discord announcement
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
+              Write-Output "Discord announcement skipped: webhook secret is not configured."
+              exit 0
+          }
+          $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $version
+
+      - name: Notify KWR Sentinel Discord bot
+        shell: pwsh
+        env:
+          BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
+          BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:BOT_DISPATCH_TOKEN) -or [string]::IsNullOrWhiteSpace($env:BOT_REPOSITORY)) {
+              Write-Output "Sentinel bot notification skipped: dispatch credentials are not configured."
+              exit 0
+          }
+          $headers = @{
+              Authorization = "Bearer $env:BOT_DISPATCH_TOKEN"
+              Accept = "application/vnd.github+json"
+              "X-GitHub-Api-Version" = "2022-11-28"
+          }
+          $payload = @{
+              event_type = "kwr_release_published"
+              client_payload = @{
+                  commander_version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+                  sentinel_version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+                  source_repository = "${{ github.repository }}"
+                  release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+              }
+          } | ConvertTo-Json -Depth 5
+          Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$env:BOT_REPOSITORY/dispatches" -Headers $headers -ContentType "application/json" -Body $payload
+
