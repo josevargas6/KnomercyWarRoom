@@ -17,7 +17,7 @@ local ROW_TOP = 26
 local LANE_BOTTOM_PADDING = 8
 local FRAME_PADDING = 8
 local TOOLBAR_HEIGHT = 26
-local COMMAND_HEIGHT = 42
+local COMMAND_HEIGHT = 70
 local SECTION_GAP = 6
 local SOLO_WIDTH = 336
 
@@ -167,12 +167,15 @@ local function createSecureRow(parent, name)
     row.roleBadge.text:SetAllPoints()
     row.roleBadge:Hide()
 
-    row.nameText = KWR.Theme:Font(row, 10, "white", "LEFT", "OUTLINE")
+    row.nameText = KWR.Theme:Font(row, 10, "white", "LEFT", "OUTLINE,THICKOUTLINE")
     row.detailIcon = row:CreateTexture(nil, "ARTWORK")
     row.detailIcon:Hide()
     row.detailText = KWR.Theme:Font(row, 9, "soft", "RIGHT", "OUTLINE")
-    row.healthText = KWR.Theme:Font(row, 9, "white", "RIGHT", "OUTLINE")
+    row.healthText = KWR.Theme:Font(row, 9, "white", "RIGHT", "OUTLINE,THICKOUTLINE")
     row.stateText = KWR.Theme:Font(row, 8, "soft", "RIGHT", "OUTLINE")
+    if row.nameText.SetDrawLayer then row.nameText:SetDrawLayer("OVERLAY", 7) end
+    if row.healthText.SetDrawLayer then row.healthText:SetDrawLayer("OVERLAY", 7) end
+    if row.health.SetFrameLevel then row.health:SetFrameLevel(0) end
     singleLine(row.nameText)
     singleLine(row.detailText)
     singleLine(row.healthText)
@@ -186,7 +189,7 @@ local function createSecureRow(parent, name)
         if self.tooltipHealth then GameTooltip:AddLine(self.tooltipHealth, 1, 1, 1) end
         if self.tooltipState then GameTooltip:AddLine(self.tooltipState, 1, 0.78, 0.25, true) end
         GameTooltip:AddLine("Left-click: target", 1, 1, 1)
-        GameTooltip:AddLine("Right-click: focus", 1, 1, 1)
+        GameTooltip:AddLine("Shift+Right-click: focus", 1, 1, 1)
         if self.killReason then GameTooltip:AddLine("KWR: " .. self.killReason, 1, 0.72, 0.2, true) end
         GameTooltip:Show()
     end)
@@ -225,23 +228,50 @@ local function formatEnemyHeading(localEnemies, visibleEnemies, staleEnemies)
 end
 
 local function setSpotlightIdle(spotlight)
-    spotlight.nameText:SetText("NO LOCAL TARGET")
+    local function resize(fontString, size)
+        local path, _, flags = fontString:GetFont()
+        if path then fontString:SetFont(path, size, flags) end
+    end
+    spotlight.nameText:ClearAllPoints()
+    spotlight.nameText:SetPoint("TOPLEFT", 10, -4)
+    spotlight.nameText:SetPoint("TOPRIGHT", -10, -4)
+    spotlight.nameText:SetHeight(16)
+    spotlight.nameText:SetJustifyH("LEFT")
+    resize(spotlight.nameText, 13)
+    spotlight.detailText:ClearAllPoints()
+    spotlight.detailText:SetPoint("TOPLEFT", 10, -27)
+    spotlight.detailText:SetPoint("TOPRIGHT", -10, -27)
+    spotlight.detailText:SetHeight(16)
+    spotlight.detailText:SetJustifyH("LEFT")
+    resize(spotlight.detailText, 11)
+    spotlight.actionText:ClearAllPoints()
+    spotlight.actionText:SetPoint("BOTTOMLEFT", 10, 4)
+    spotlight.actionText:SetPoint("BOTTOMRIGHT", -10, 4)
+    spotlight.actionText:SetHeight(16)
+    spotlight.actionText:SetJustifyH("LEFT")
+    resize(spotlight.actionText, 11)
+    spotlight.nameText:SetText("NO ENEMY TARGET")
     spotlight.nameText:SetTextColor(KWR.Theme:Color("soft"))
-    spotlight.detailText:SetText("Tab or click an enemy player to track.")
+    spotlight.detailText:SetText("Tab or click an enemy player.")
+    spotlight.detailText:SetTextColor(KWR.Theme:Color("muted"))
     spotlight.statusBadge:SetTone("muted")
     spotlight.statusBadge:SetText("WATCH")
     spotlight.truthBadge:SetTone("muted")
     spotlight.truthBadge:SetText("NO TARGET")
     spotlight.statusBadge:Hide()
     spotlight.truthBadge:Hide()
-    spotlight.actionText:SetText("WATCH")
-    spotlight.actionText:SetTextColor(KWR.Theme:Color("muted"))
-    spotlight.actionText:Hide()
+    spotlight.actionText:SetText("ACTION: SELECT TARGET")
+    spotlight.actionText:SetTextColor(KWR.Theme:Color("gold"))
+    spotlight.actionText:Show()
     spotlight.healthText:SetText("--")
+    spotlight.healthText:Hide()
     if spotlight.stateIcon then spotlight.stateIcon:Hide() end
     spotlight.health:SetMinMaxValues(0, 100)
     spotlight.health:SetValue(0)
     spotlight.health:SetStatusBarColor(0.26, 0.28, 0.31, 0.62)
+    spotlight.health:Hide()
+    spotlight.scrim:SetColorTexture(0.01, 0.015, 0.025, 0.92)
+    spotlight.scrim:SetShown(true)
     spotlight:SetBackdropBorderColor(KWR.Theme:Color("borderHi"))
 end
 
@@ -307,6 +337,22 @@ local function updateToken(owner, state)
     local localFight = execution.localFight or {}
     parts[#parts + 1] = localFight.updatedAt
     parts[#parts + 1] = localFight.phase
+    parts[#parts + 1] = KWR.Util:Signature({
+        "LOCAL_FIGHT",
+        localFight.kill and localFight.kill.mode or "",
+        localFight.kill and localFight.kill.target or "",
+        localFight.kill and localFight.kill.targetGUID or "",
+        localFight.kill and localFight.kill.location or "",
+    })
+    for _, control in ipairs(localFight.controls or {}) do
+        parts[#parts + 1] = KWR.Util:Signature({
+            "LOCAL_CONTROL",
+            control.actor or "", control.actorGUID or "",
+            control.target or "", control.targetGUID or "",
+            control.assigned == true and "ASSIGNED" or "OPEN",
+            control.state or "",
+        })
+    end
     return KWR.Util:Signature(parts)
 end
 
@@ -419,7 +465,9 @@ local function createTrackerFrame(owner, kind)
     local frame = CreateFrame("Frame", "KWR_CombatRoster" .. lower, UIParent, "BackdropTemplate")
     local profile = frameProfile(kind)
     anchorFrame(frame, profile)
-    frame:SetFrameStrata("HIGH")
+    -- CombatRoster contains protected secure rows. Keep its layer fixed at
+    -- creation time; LayoutCoordinator must never mutate it after creation.
+    frame:SetFrameStrata("MEDIUM")
     frame:SetToplevel(true)
     frame:SetClampedToScreen(true)
     KWR.Theme:Style(frame, "background", "borderHi")
@@ -600,7 +648,11 @@ function CombatRoster:Create()
                 if unit == "target" and CombatRoster.lastState then
                     CombatRoster:UpdateSpotlight(
                         CombatRoster.lastState.snapshot.enemies,
-                        CombatRoster.lastState.snapshot.combat)
+                        CombatRoster.lastState.snapshot.combat,
+                        CombatRoster.lastState.snapshot.executionCommand
+                            and CombatRoster.lastState.snapshot.executionCommand.localFight,
+                        CombatRoster.lastState.snapshot.executionCommand
+                            and CombatRoster.lastState.snapshot.executionCommand.countdown)
                 end
             end
         end)
@@ -618,8 +670,9 @@ function CombatRoster:DirectSpotlightHealth(data)
     KWR.CombatRosterVisuals:DirectSpotlightHealth(self, data)
 end
 
-function CombatRoster:UpdateSpotlight(enemies, combat, localFight)
-    KWR.CombatRosterVisuals:UpdateSpotlight(self, enemies, combat, localFight, {
+function CombatRoster:UpdateSpotlight(enemies, combat, localFight, countdown)
+    KWR.CombatRosterVisuals:UpdateSpotlight(self, enemies, combat, localFight,
+        countdown, {
         sameUnitOrName = sameUnitOrName,
         activeCombatTarget = activeCombatTarget,
         activeCombatReason = activeCombatReason,
