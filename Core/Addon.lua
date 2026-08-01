@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.29"
+KWR.version = "6.1.0-alpha.30"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
