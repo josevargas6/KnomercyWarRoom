@@ -292,6 +292,10 @@ function Invoke-BotNotification {
     $payload = [ordered]@{
         event_type = "kwr_maintenance_schedule"
         client_payload = [ordered]@{
+            automation_role = "discord-execution-transport"
+            codex_authority = "implementation-and-publication"
+            codex_handoff = "github-review-only"
+            payload_version = 1
             lane = $Lane
             mode = $Mode
             source = "KnomercyWarRoom maintenance scheduler"
