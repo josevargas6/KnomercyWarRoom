@@ -1,0 +1,62 @@
+name: KWR Daily Discord Update
+
+on:
+  schedule:
+    - cron: "17 22 * * *"
+  workflow_dispatch:
+    inputs:
+      post_ops:
+        description: Also post the ops update when DISCORD_WEBHOOK_OPS is configured.
+        required: true
+        type: boolean
+        default: true
+
+concurrency:
+  group: kwr-daily-discord
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  post-daily-update:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Dry-run daily-progress message
+        shell: pwsh
+        run: ./tools/kwr-daily-discord-update.ps1 -Section daily-progress -DryRun
+
+      - name: Dry-run ops message
+        shell: pwsh
+        run: ./tools/kwr-daily-discord-update.ps1 -Section ops -DryRun
+
+      - name: Post daily-progress update
+        if: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS != '' }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS }}
+        run: ./tools/kwr-daily-discord-update.ps1 -Section daily-progress
+
+      - name: Skip daily-progress update when secret is missing
+        if: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS == '' }}
+        shell: pwsh
+        run: Write-Output "Skipping daily-progress post because DISCORD_WEBHOOK_DAILY_PROGRESS is not configured."
+
+      - name: Post ops update
+        if: ${{ secrets.DISCORD_WEBHOOK_OPS != '' && (github.event_name == 'schedule' || inputs.post_ops) }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+        run: ./tools/kwr-daily-discord-update.ps1 -Section ops
+
+      - name: Skip ops update when secret is missing or disabled
+        if: ${{ secrets.DISCORD_WEBHOOK_OPS == '' || (github.event_name != 'schedule' && !inputs.post_ops) }}
+        shell: pwsh
+        run: Write-Output "Skipping ops post because DISCORD_WEBHOOK_OPS is not configured or the run disabled ops posting."
+
