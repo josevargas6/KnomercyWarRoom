@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.1.0-alpha.30
+
+- Certified field-test polish for tracker readability and local-fight synchronization.
+- Repaired canonical release sources and extracted package validation.
+- Added release automation readiness for weekly maintenance and hotfix delivery.
+
 ## 6.1.0-alpha.29
 
 Distribution note: this is the synchronized Commander/Sentinel Retail 12.0.7
@@ -8,6 +14,17 @@ submission guidance, and ready-to-post Discord copy are included with the
 certified distribution evidence. The 2026-07-31 live field test found no bugs
 outside the visual repairs, which are now complete; promotion remains gated on
 the final packaged visual recheck.
+
+- Added resolution-aware KWR window clamping and Blizzard Options collision avoidance.
+- Added a scroll viewport for lower Command Center content at compact heights.
+- Removed the redundant quick-call secondary label that collided with action text.
+- Lowered KWR surfaces beneath Blizzard spellbook, map, quest, and options windows while keeping them above the game world.
+- KWR no longer relocates Fight Now when Blizzard windows open; it remains at the saved position and only lowers its layer.
+- Fixed a Retail taint error by removing dynamic frame-strata changes from the protected CombatRoster trackers.
+- Simplified the live Enemy tracker call card to show the CC caller/class and initial, kill class and initial, and the coordinated switch countdown.
+- Fixed Team tracker bound-row hydration from showing a qualified and short-name copy of the same teammate when the short name is unique.
+- Reworked the compact Enemy target bar into separate target, status, and action lines, removing duplicate LIVE badges and clipped action text.
+- Suppressed unresolved Enemy call cards and synchronized Fight Now's current recommendation with confirmed live local-fight targets and locations while retaining the strategic play under NEXT.
 
 - Added a commander Discord release-update pack and guarded announce script so
   KWR Commander now has ready-to-post announcement, support, field-testing,
@@ -348,7 +365,66 @@ the final packaged visual recheck.
 ## 6.1.0-alpha.11
 
 - Added an optional, always-precreated current-target spotlight to the existing
-  compact combat roster. It displ…831 tokens truncated…mulation without machine learning or a parallel decision engine.
+  compact combat roster. It displays direct target health without storing or
+  comparing secret health values.
+- Added a small reviewed priority-cast catalog and event-fed `STOP` accents for
+  selected must-stop and advantage-swing casts. KWR never claims a cast is
+  interruptible and never interrupts automatically.
+- Added explicit advisory responses for observed immunity, absorb, and major
+  defensive windows. Verified swap-class protection removes that enemy from
+  automated kill-candidate ranking but never changes the player's target.
+- Added priority-cast and defensive accents to existing enemy rows.
+- Extended the optional Cursor Ring with one evidence-driven color state:
+  danger, caution, rotation, recovery, uncertainty, or neutral.
+- Added an Options toggle for target/cast combat visuals.
+- Added priority-cast evidence to live verification and compact AAR state.
+- Expanded deterministic diagnostics from 222 to 226 checks and retained the
+  500-refresh bounded-state soak.
+
+## 6.1.0-alpha.10
+
+- Added one bounded execution-assessment layer inside the existing Strategist;
+  no parallel command brain, timer, or combat window was introduced.
+- Added objective commitment, reinforcement advantage, pressure forecast,
+  rotation economy, fight-collapse, recovery-window, and organization-entropy
+  assessments using already-sanitized Reporter, assignment, resource, and
+  confidence evidence.
+- Added one ranked action opportunity for explanation and review. It does not
+  replace the live three-line command HUD or perform actions automatically.
+- Expanded `/kwr explain`, `/kwr verify`, and manual AAR export with the
+  assessment evidence so field decisions can be audited.
+- Added seven deterministic assessment checks, bringing the suite to 222, and
+  retained the 500-refresh bounded-state soak.
+- Preserved Alpha 9 as the rollback baseline. Target spotlight, cast accents,
+  Combat Clarity controls, and visual rings remain gated for live testing.
+
+## 6.1.0-alpha.9
+
+- Added a bounded manual match-evidence exporter to the existing AAR journal.
+- Captures sanitized match metadata, friendly/enemy composition, KWR commands,
+  objective transitions, assignment integrity, player locations, safely
+  exposed scoreboard statistics, and factual enemy sightings.
+- Added `/kwr aar`, `/kwr aar copy`, and `/kwr aar clear`.
+- Added `COPY EXPORT` to the existing Command Center Intel/AAR page and the
+  existing post-match review surface; both reuse KWR's manual copy dialog.
+- Added an option to disable AAR evidence recording.
+- Kept unknown information unknown and separated recommendations, supporting
+  evidence, observed execution, and known outcomes in the export.
+- Added safe optional scoreboard fields that are discarded when Retail marks
+  them secret.
+- Expanded deterministic diagnostics from 210 to 215 checks and retained the
+  500-refresh bounded-state soak.
+
+## 6.1.0-alpha.8
+
+- Added a multi-source confidence budget with evidence, bounded risk, and
+  conservative low-confidence behavior.
+- Added friendly/enemy objective ETA estimates, enemy-intent prediction,
+  battlefield momentum, and match-only rotation memory to Reporter.
+- Added short-lived opportunity windows and honest resource-economy estimates
+  from permitted observed evidence.
+- Added lightweight HOLD, ROTATE, TRADE, TEAMFIGHT, and SPLIT outcome
+  simulation without machine learning or a parallel decision engine.
 - Added continuous assignment-integrity verification with abandoned,
   impossible, moving, and on-station states plus replacement recommendations.
 - Expanded `/kwrwhy` with confidence evidence, candidate outcomes, ETA,
@@ -692,3 +768,8 @@ the final packaged visual recheck.
 - Added map-specific predictors and deterministic assignments.
 - Removed automatic communication, targeting, keybinding writes, and protected actions.
 - Added validation, packaging, hashes, and release documentation.
+## 6.1.0-alpha.29
+
+- Added resolution-aware KWR window clamping and Blizzard Options collision avoidance.
+- Added a scroll viewport for lower Command Center content at compact heights.
+- Removed the redundant quick-call secondary label that collided with action text.
