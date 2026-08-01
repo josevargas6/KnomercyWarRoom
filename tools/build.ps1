@@ -333,11 +333,22 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
                 })
             }
 
+            # Compare canonical entry maps as well as their summary digests. The
+            # manifest digest is an optimization; PowerShell object enumeration
+            # can vary between clean temporary roots even when every staged file
+            # path, size, and SHA-256 is identical.
+            $distributionEntriesMatch = (ConvertTo-Json @($distributionEntries | Sort-Object path) -Compress -Depth 5) -eq (ConvertTo-Json @($nestedSourceManifest.distribution.entries | Sort-Object path) -Compress -Depth 5)
+            $developerEntriesMatch = (ConvertTo-Json @($developerEntries | Sort-Object path) -Compress -Depth 5) -eq (ConvertTo-Json @($nestedSourceManifest.developer.entries | Sort-Object path) -Compress -Depth 5)
+            $sentinelEntriesMatch = if ($hasSentinel) {
+                (ConvertTo-Json @($sentinelEntries | Sort-Object path) -Compress -Depth 5) -eq (ConvertTo-Json @($nestedSourceManifest.sentinel.entries | Sort-Object path) -Compress -Depth 5)
+            } else {
+                $true
+            }
             $sourceDigestMatches = [pscustomobject]@{
-                distribution = $distributionDigest -eq $nestedSourceManifest.distribution.digest
-                developer = $developerDigest -eq $nestedSourceManifest.developer.digest
+                distribution = ($distributionDigest -eq $nestedSourceManifest.distribution.digest) -or $distributionEntriesMatch
+                developer = ($developerDigest -eq $nestedSourceManifest.developer.digest) -or $developerEntriesMatch
                 sentinel = if ($hasSentinel) {
-                    $sentinelDigest -eq $nestedSourceManifest.sentinel.digest
+                    ($sentinelDigest -eq $nestedSourceManifest.sentinel.digest) -or $sentinelEntriesMatch
                 } else {
                     $true
                 }
