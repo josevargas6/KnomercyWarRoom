@@ -1,0 +1,48 @@
+{
+  "schema": "kwr-replay-schema",
+  "schemaVersion": 1,
+  "kind": "timeline_replay",
+  "replayId": "wsg-standard-return-window-001",
+  "source": { "type": "synthetic_state", "consent": "n/a", "provenance": "developer_fixture", "verified": true },
+  "capturedAt": "2026-07-29T00:00:00Z",
+  "patch": { "interface": 120007, "build": "6.1.0-alpha.28" },
+  "ruleset": { "apiMode": "Retail_Current", "bracket": "STANDARD" },
+  "map": { "key": "WSG", "mode": "STANDARD", "kind": "FLAG", "profile": "wsg_standard" },
+  "side": "HORDE",
+  "redaction": { "status": "SYNTHETIC", "identityMode": "ROLE_LABELS", "secretValuesRemoved": true },
+  "initialState": {
+    "friendlyRoster": [
+      { "slot": "our_fc", "class": "Druid", "spec": "Guardian", "role": "TANK" },
+      { "slot": "return_team", "class": "Mage", "spec": "Frost", "role": "DAMAGER" }
+    ],
+    "enemyRoster": [
+      { "slot": "enemy_fc", "class": "Demon Hunter", "spec": "Vengeance", "role": "TANK" }
+    ],
+    "score": { "friendly": 1, "enemy": 1, "max": 3 },
+    "objectives": { "friendlyCarrier": "our_fc", "enemyCarrier": "enemy_fc" },
+    "evidenceQuality": "HIGH"
+  },
+  "timeline": [
+    { "t": 0, "event": "standoff_even", "facts": { "friendlyScore": 1, "enemyScore": 1 } },
+    { "t": 7, "event": "efc_window_open", "facts": { "objective": "Enemy Flag Room", "pressure": "HIGH" } }
+  ],
+  "expectedLabels": {
+    "primaryActions": [ "PLAN:CHECK" ],
+    "fallbackActions": [ "CALL:PRESS", "WHERE:EFC" ],
+    "forbiddenActions": [ "CALL:ALL_MID" ],
+    "mustStay": [ "our_fc" ],
+    "requiredCapabilities": [ "peel", "killConfirm" ],
+    "successConditions": [ "convert_next_return", "preserve_our_fc" ],
+    "abortConditions": [ "our_fc_shell_breaks" ],
+    "maxDelaySeconds": 7,
+    "rationale": "An even WSG standoff should pressure the EFC only while the OFC shell remains protected."
+  },
+  "outcome": {
+    "result": "VICTORY",
+    "finalScore": { "friendly": 3, "enemy": 2 },
+    "reviewStatus": "OPEN",
+    "checkpoints": [
+      { "offsetSeconds": 7, "classification": "SUCCESS", "summary": "Return-window pressure is correct while OFC remains covered." }
+    ]
+  }
+}
