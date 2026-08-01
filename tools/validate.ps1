@@ -1,39 +1,88 @@
 [CmdletBinding()]
-param()
+param(
+    [ValidateSet('production','release-candidate','beta','development','local')]
+    [string]$Channel = 'production'
+)
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $tocPath = Join-Path $root "KnomercyWarRoom.toc"
+$sentinelTocPath = Join-Path $root "KWRSentinel\KWRSentinel.toc"
+$releaseManifest = Join-Path $PSScriptRoot "release-manifest.ps1"
+. $releaseManifest
 $errors = [System.Collections.Generic.List[string]]::new()
 $warnings = [System.Collections.Generic.List[string]]::new()
+
+$tocVersionForChannel = if (Test-Path -LiteralPath $tocPath) {
+    ((Get-Content -LiteralPath $tocPath | Where-Object { $_ -match '^## Version:' }) -replace '^## Version:\s*','').Trim()
+} else { '' }
+if ($Channel -eq 'production' -and $tocVersionForChannel -match '-(dev|local|beta|rc)') {
+    Add-ValidationError "Production validation rejects prerelease channel suffix: $tocVersionForChannel"
+}
+if ($Channel -in @('development','local') -and $tocVersionForChannel -notmatch '-(dev|local|beta|rc)') {
+    $warnings.Add("Development validation is using a production-shaped version; package promotion remains disabled.")
+}
 
 function Add-ValidationError {
     param([string]$Message)
     $script:errors.Add($Message)
 }
 
-if (-not (Test-Path -LiteralPath $tocPath)) {
-    Add-ValidationError "KnomercyWarRoom.toc is missing."
-} else {
-    $toc = Get-Content -LiteralPath $tocPath
+function Validate-TocBundle {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$TocPath,
+        [Parameter(Mandatory = $true)]
+        [string]$RootPath,
+        [Parameter(Mandatory = $true)]
+        [string]$Label
+    )
+
+    $toc = Get-Content -LiteralPath $TocPath
     $entries = @(
         $toc |
             Where-Object { $_ -and $_ -notmatch "^\s*#" } |
-            ForEach-Object { $_.Trim().Replace("/", "\") }
+            ForEach-Object { $_.Trim().Replace("/", "\") } |
+            Where-Object { $_ -notmatch "^##" }
     )
 
     foreach ($entry in $entries) {
-        if (-not (Test-Path -LiteralPath (Join-Path $root $entry))) {
-            Add-ValidationError "TOC entry is missing: $entry"
+        if (-not (Test-Path -LiteralPath (Join-Path $RootPath $entry))) {
+            Add-ValidationError "$Label TOC entry is missing: $entry"
         }
     }
 
     $duplicates = @($entries | Group-Object | Where-Object Count -gt 1)
     foreach ($duplicate in $duplicates) {
-        Add-ValidationError "Duplicate TOC entry: $($duplicate.Name)"
+        Add-ValidationError "$Label duplicate TOC entry: $($duplicate.Name)"
     }
 
-    $runtimeDirectories = @("Core", "Data", "Runtime", "Features", "UI")
+    return $toc
+}
+
+if (-not (Test-Path -LiteralPath $tocPath)) {
+    Add-ValidationError "KnomercyWarRoom.toc is missing."
+} else {
+    $toc = Validate-TocBundle -TocPath $tocPath -RootPath $root -Label "KWR"
+    $entries = @(
+        $toc |
+            Where-Object { $_ -and $_ -notmatch "^\s*#" } |
+            ForEach-Object { $_.Trim().Replace("/", "\") } |
+            Where-Object { $_ -notmatch "^##" }
+    )
+
+    $runtimeDirectories = @(
+        "Core",
+        "Data",
+        "Rulesets",
+        "Compliance",
+        "Adapters",
+        "State",
+        "Intelligence",
+        "Runtime",
+        "Features",
+        "UI"
+    )
     $runtimeLua = foreach ($directory in $runtimeDirectories) {
         $path = Join-Path $root $directory
         if (Test-Path -LiteralPath $path) {
@@ -42,6 +91,9 @@ if (-not (Test-Path -LiteralPath $tocPath)) {
     }
     foreach ($file in $runtimeLua) {
         $relative = $file.FullName.Substring($root.Length + 1)
+        if ((Get-ReleaseExcludedEntries) -contains $relative) {
+            continue
+        }
         if ($entries -notcontains $relative) {
             Add-ValidationError "Runtime Lua file is not loaded by the TOC: $relative"
         }
@@ -54,7 +106,29 @@ if (-not (Test-Path -LiteralPath $tocPath)) {
     }
 }
 
-$luaFiles = @(Get-ChildItem -LiteralPath $root -Recurse -File -Filter "*.lua")
+if (Test-Path -LiteralPath $sentinelTocPath) {
+    $sentinelRoot = Split-Path -Parent $sentinelTocPath
+    Validate-TocBundle -TocPath $sentinelTocPath -RootPath $sentinelRoot -Label "KWRSentinel" | Out-Null
+}
+
+$ignoredLuaRoots = @(
+    (Join-Path $root "artifacts"),
+    (Join-Path $root "node_modules"),
+    (Join-Path $root ".pnpm-store"),
+    (Join-Path $root ".git")
+) | ForEach-Object {
+    [IO.Path]::GetFullPath($_).TrimEnd("\", "/") + [IO.Path]::DirectorySeparatorChar
+}
+$luaFiles = @(
+    Get-ChildItem -LiteralPath $root -Recurse -File -Filter "*.lua" |
+        Where-Object {
+            $fullPath = [IO.Path]::GetFullPath($_.FullName)
+            -not ($ignoredLuaRoots | Where-Object {
+                $fullPath.StartsWith(
+                    $_, [StringComparison]::OrdinalIgnoreCase)
+            })
+        }
+)
 
 $nonAsciiHits = @($luaFiles | Select-String -Pattern "[^\x00-\x7F]")
 foreach ($hit in $nonAsciiHits) {
@@ -67,10 +141,39 @@ foreach ($hit in $legacyHits) {
     Add-ValidationError "Legacy patch marker: $($hit.Path):$($hit.LineNumber)"
 }
 
-$forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-z]*\s*\(|\bSaveBindings\s*\(|\bTargetUnit\s*\(|\bFocusUnit\s*\(|\bCastSpell[A-Za-z]*\s*\(|\bRunMacroText\s*\(|\bCombatLogGetCurrentEventInfo\s*\("
+$forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-z]*\s*\(|\bSaveBindings\s*\(|\bTargetUnit\s*\(|\bFocusUnit\s*\(|\bAssistUnit\s*\(|\bSpellTargetUnit\s*\(|\bCastSpell[A-Za-z]*\s*\(|\bUseAction\s*\(|\bRunMacro\s*\(|\bRunMacroText\s*\(|\bCombatLogGetCurrentEventInfo\s*\("
 $forbiddenHits = @($luaFiles | Select-String -Pattern $forbiddenPattern)
 foreach ($hit in $forbiddenHits) {
     Add-ValidationError "Forbidden protected/communication API: $($hit.Path):$($hit.LineNumber)"
+}
+
+$safeAuraAdapterPath = Join-Path $root "Adapters\SafeAuraAdapter.lua"
+$rawAuraHits = @(
+    $runtimeLua |
+        Where-Object { $_.FullName -ne $safeAuraAdapterPath } |
+        Select-String -Pattern "\bC_UnitAuras\b|\bUnitAura\s*\(|\bAuraUtil\b"
+)
+foreach ($hit in $rawAuraHits) {
+    Add-ValidationError "Raw aura API exists outside SafeAuraAdapter: $($hit.Path):$($hit.LineNumber)"
+}
+
+$safeCombatLogAdapterPath = Join-Path $root "Adapters\SafeCombatLogAdapter.lua"
+$rawCombatLogHits = @(
+    $runtimeLua |
+        Where-Object { $_.FullName -ne $safeCombatLogAdapterPath } |
+        Select-String -Pattern "\bCombatLogGetCurrentEventInfo\s*\("
+)
+foreach ($hit in $rawCombatLogHits) {
+    Add-ValidationError "Raw combat-log API exists outside SafeCombatLogAdapter: $($hit.Path):$($hit.LineNumber)"
+}
+
+$spellCallHits = @(
+    $runtimeLua |
+        Where-Object { $_.FullName -notlike "*\Data\CommandVocabulary.lua" } |
+        Select-String -Pattern "Kidney now|Solar Beam now|Kick now|Blind now|Press X|Use macro"
+)
+foreach ($hit in $spellCallHits) {
+    Add-ValidationError "Spell-specific commander instruction text: $($hit.Path):$($hit.LineNumber)"
 }
 
 $midnightBlockedEvents = @($runtimeLua | Select-String -Pattern '"COMBAT_LOG_EVENT_UNFILTERED"')
@@ -178,7 +281,8 @@ foreach ($document in $requiredDocs) {
     }
 }
 
-Write-Output "KWR 6.0 validation"
+$displayVersion = if ($tocVersion) { $tocVersion } else { "unknown" }
+Write-Output "KWR $displayVersion validation"
 Write-Output "Root: $root"
 Write-Output "Lua files: $($luaFiles.Count)"
 Write-Output "Errors: $($errors.Count)"

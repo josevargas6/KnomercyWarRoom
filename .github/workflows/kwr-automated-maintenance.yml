@@ -65,6 +65,8 @@ jobs:
   maintenance:
     runs-on: windows-latest
     timeout-minutes: 30
+    environment:
+      name: production
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -94,8 +96,8 @@ jobs:
           DISCORD_WEBHOOK_FIELD_TESTING: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING }}
           KWR_BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
           KWR_BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
-          CURSEFORGE_COMMANDER_PROJECT_ID: ${{ vars.CURSEFORGE_COMMANDER_PROJECT_ID || secrets.CURSEFORGE_COMMANDER_PROJECT_ID }}
-          CURSEFORGE_SENTINEL_PROJECT_ID: ${{ vars.CURSEFORGE_SENTINEL_PROJECT_ID || secrets.CURSEFORGE_SENTINEL_PROJECT_ID }}
+          CURSEFORGE_COMMANDER_PROJECT_ID: "1632632"
+          CURSEFORGE_SENTINEL_PROJECT_ID: "1614463"
           CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
           CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
