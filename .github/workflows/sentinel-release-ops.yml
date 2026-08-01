@@ -1,0 +1,128 @@
+name: KWR Sentinel Release Ops
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: GitHub release tag containing the certified Sentinel ZIP.
+        required: true
+        default: v6.1.0-alpha.25
+      sentinel_sha256:
+        description: Expected SHA-256 for KWRSentinel_6_1_0_ALPHA_25.zip.
+        required: true
+        default: 2F25602899C4F278C7A71A443C89C25DE7076F21FF818C5E4BD9670881CC2ED6
+      upload_curseforge:
+        description: Upload the certified ZIP to CurseForge.
+        required: true
+        type: boolean
+        default: false
+      post_discord:
+        description: Post prepared Discord updates through configured webhooks.
+        required: true
+        type: boolean
+        default: false
+      confirm_external_writes:
+        description: Type PUBLISH to permit a CurseForge upload or Discord post.
+        required: false
+        default: ""
+
+concurrency:
+  group: sentinel-release-ops
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release-ops:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Sentinel repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Download certified release artifacts
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          gh release download "${{ inputs.release_tag }}" `
+            --repo "${{ github.repository }}" `
+            --pattern "KWRSentinel_6_1_0_ALPHA_25.zip" `
+            --pattern "KWR_6_1_0_ALPHA_25_SHA256.txt" `
+            --dir artifacts
+
+      - name: Verify Sentinel artifact hash
+        shell: pwsh
+        run: |
+          $artifact = Join-Path "${{ github.workspace }}" "artifacts\KWRSentinel_6_1_0_ALPHA_25.zip"
+          if (-not (Test-Path -LiteralPath $artifact)) {
+              throw "Missing Sentinel release artifact: $artifact"
+          }
+          $actual = (Get-FileHash -LiteralPath $artifact -Algorithm SHA256).Hash.ToUpperInvariant()
+          $expected = "${{ inputs.sentinel_sha256 }}".ToUpperInvariant()
+          if ($actual -ne $expected) {
+              throw "Sentinel hash mismatch. Expected $expected but got $actual."
+          }
+          Write-Output "Verified Sentinel artifact: $actual"
+
+      - name: Dry-run release operations
+        shell: pwsh
+        run: |
+          ./tools/curseforge-upload-sentinel.ps1 `
+            -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_6_1_0_ALPHA_25.zip" `
+            -DryRun
+          foreach ($section in @("announcements", "support", "field-testing", "ops")) {
+              ./tools/sentinel-discord-announce.ps1 -Section $section -DryRun
+          }
+
+      - name: Confirm external release writes
+        if: ${{ inputs.upload_curseforge || inputs.post_discord }}
+        shell: pwsh
+        run: |
+          if ("${{ inputs.confirm_external_writes }}" -cne "PUBLISH") {
+              throw "External release writes require confirm_external_writes=PUBLISH."
+          }
+
+      - name: Upload Sentinel to CurseForge
+        if: ${{ inputs.upload_curseforge }}
+        shell: pwsh
+        env:
+          CURSEFORGE_PROJECT_ID: "1614463"
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
+          CURSEFORGE_GAME_VERSION_IDS: ${{ secrets.CURSEFORGE_GAME_VERSION_IDS }}
+        run: |
+          ./tools/curseforge-upload-sentinel.ps1 `
+            -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_6_1_0_ALPHA_25.zip"
+
+      - name: Post Discord announcement
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section announcements
+
+      - name: Post Discord support notes
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_SUPPORT }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section support
+
+      - name: Post Discord field-test notes
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section field-testing
+
+      - name: Post Discord ops receipt
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section ops
+

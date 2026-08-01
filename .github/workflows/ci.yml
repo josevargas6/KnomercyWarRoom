@@ -38,6 +38,10 @@ jobs:
         shell: pwsh
         run: ./tools/knowledge-audit.ps1
 
+      - name: Test release automation contracts
+        shell: pwsh
+        run: ./tools/test-automation.ps1
+
       - name: Run deterministic diagnostics
         run: fengari tests/smoke.lua
 

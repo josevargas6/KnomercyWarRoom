@@ -1,92 +1,345 @@
+Exit code: 0
+Wall time: 0.2 seconds
+Total output lines: 780
+Output:
 # Changelog
 
-## 6.1.0-alpha.12
+## 6.1.0-alpha.30
 
-- Added one complete response package derived from the existing execution
-  assessment: action, target, movers, stayers, success, abort, confidence, and
-  evidence score.
-- Allowed only high-confidence, score-85+ execution responses to arbitrate the
-  existing Commander action. No parallel command owner was introduced.
-- Made manual reassessment publish a compact changed-assignment summary and
-  identify the affected players directly in the command.
-- Added response-package agreement across Tactical, Assignments, `/kwr
-  explain`, `/kwr verify`, and structured AAR export.
-- Propagated reviewed enemy-composition counter directives to relevant
-  individual assignments.
-- Strengthened assignment audits with roster-identity, priority-range, and
-  flag-carrier role validation.
-- Added a one-second dirty-state cache for execution assessment and exposed its
-  telemetry in `/kwr perf`.
-- Throttled carrier-aura scans and added objective truth-quality provenance.
-- Expanded deterministic diagnostics from 226 to 232 checks and retained the
-  500-refresh bounded-state soak.
+- Certified field-test polish for tracker readability and local-fight synchronization.
+- Repaired canonical release sources and extracted package validation.
+- Added release automation readiness for weekly maintenance and hotfix delivery.
+- Repaired scheduled-maintenance parameter binding and restored dry-run-safe
+  scheduled defaults.
+- Hardened CurseForge publication so redirects, HTML error pages, invalid
+  project IDs, and responses without a real file ID fail the release gate.
 
-## 6.1.0-alpha.11
+## 6.1.0-alpha.29
 
-- Added an optional, always-precreated current-target spotlight to the existing
-  compact combat roster. It displays direct target health without storing or
-  comparing secret health values.
-- Added a small reviewed priority-cast catalog and event-fed `STOP` accents for
-  selected must-stop and advantage-swing casts. KWR never claims a cast is
-  interruptible and never interrupts automatically.
-- Added explicit advisory responses for observed immunity, absorb, and major
-  defensive windows. Verified swap-class protection removes that enemy from
-  automated kill-candidate ranking but never changes the player's target.
-- Added priority-cast and defensive accents to existing enemy rows.
-- Extended the optional Cursor Ring with one evidence-driven color state:
-  danger, caution, rotation, recovery, uncertainty, or neutral.
-- Added an Options toggle for target/cast combat visuals.
-- Added priority-cast evidence to live verification and compact AAR state.
-- Expanded deterministic diagnostics from 222 to 226 checks and retained the
-  500-refresh bounded-state soak.
+Distribution note: this is the synchronized Commander/Sentinel Retail 12.0.7
+field-test candidate. Release notes, package provenance, checksums, CurseForge
+submission guidance, and ready-to-post Discord copy are included with the
+certified distribution evidence. The 2026-07-31 live field test found no bugs
+outside the visual repairs, which are now complete; promotion remains gated on
+the final packaged visual recheck.
 
-## 6.1.0-alpha.10
+- Added resolution-aware KWR window clamping and Blizzard Options collision avoidance.
+- Added a scroll viewport for lower Command Center content at compact heights.
+- Removed the redundant quick-call secondary label that collided with action text.
+- Lowered KWR surfaces beneath Blizzard spellbook, map, quest, and options windows while keeping them above the game world.
+- KWR no longer relocates Fight Now when Blizzard windows open; it remains at the saved position and only lowers its layer.
+- Fixed a Retail taint error by removing dynamic frame-strata changes from the protected CombatRoster trackers.
+- Simplified the live Enemy tracker call card to show the CC caller/class and initial, kill class and initial, and the coordinated switch countdown.
+- Fixed Team tracker bound-row hydration from showing a qualified and short-name copy of the same teammate when the short name is unique.
+- Reworked the compact Enemy target bar into separate target, status, and action lines, removing duplicate LIVE badges and clipped action text.
+- Suppressed unresolved Enemy call cards and synchronized Fight Now's current recommendation with confirmed live local-fight targets and locations while retaining the strategic play under NEXT.
 
-- Added one bounded execution-assessment layer inside the existing Strategist;
-  no parallel command brain, timer, or combat window was introduced.
-- Added objective commitment, reinforcement advantage, pressure forecast,
-  rotation economy, fight-collapse, recovery-window, and organization-entropy
-  assessments using already-sanitized Reporter, assignment, resource, and
-  confidence evidence.
-- Added one ranked action opportunity for explanation and review. It does not
-  replace the live three-line command HUD or perform actions automatically.
-- Expanded `/kwr explain`, `/kwr verify`, and manual AAR export with the
-  assessment evidence so field decisions can be audited.
-- Added seven deterministic assessment checks, bringing the suite to 222, and
+- Added a commander Discord release-update pack and guarded announce script so
+  KWR Commander now has ready-to-post announcement, support, field-testing,
+  and ops copy alongside the existing Sentinel Discord path.
+- Added a repository-owned CurseForge commander upload checklist and guarded
+  upload script so the certified commander distribution ZIP can be submitted
+  through the same evidence-first path already used by Sentinel.
+- Added a reviewed expert scenario corpus with 200 battlefield labels across
+  supported maps and phases, and integrated that corpus into Strategist
+  outputs as preferred action, fallback, safest counter, expected enemy
+  counter, agreement rate, and review confidence.
+- Added a bounded enemy-response planner that classifies likely enemy answers,
+  chooses the safest reply, adjusts candidate consequences, and re-sorts
+  strategic recommendations from legal reviewed context instead of one-step
+  heuristics alone.
+- Expanded deterministic offline coverage so smoke assertions now verify the
+  expert corpus and enemy-response plan are attached to live strategy output.
+- Imported the evaluated KWR design-system brand and icon asset pack into
+  production addon paths, added a shared icon registry, switched the minimap
+  launcher to the KWR sigil, replaced combat-roster role letters with shared
+  role icons, and moved tactical-map markers onto KWR semantic/objective icons.
+- Added a repository-owned KWR brand standard and developer UI standard, and
+  locked the first canonical design-token contract into `UI/Theme.lua` while
+  preserving legacy theme color lookups.
+- Added a repository-owned Lua test runner that discovers cached or installed
+  runtimes and requires smoke, soak, and replay pass markers.
+- Scoped the smoke assertion harness below Lua's active-local limit so offline
+  compilation failures can no longer hide later deterministic checks.
+- Restored live reviewed/adversarial calibration lookup across the corpus and
+  tactical scenario ID schemes, and excluded module metadata from the problem
+  signal coverage audit.
+- Rebuilt Team and Enemy tracking around one unified roster presentation
+  boundary instead of independently anchored compact panes, toolbar chrome,
+  and UI-owned truth cleanup.
+- Moved published friendly identity normalization into `TeamResolver` and
+  defensive enemy truth filtering into `EnemyIntel`.
+- Replaced compact row reshuffling with stable battlefield-session enemy slots,
+  one root anchor, one integrated command lane, and bounded single-line
+  identity/health/action rows.
+- Removed the full strategy refresh previously triggered by merely showing the
+  compact roster.
+- Rebuilt the expanded Team and Enemy pages as ten-row command surfaces with
+  stable enemy positions, a single selected-enemy context strip, and less
+  repeated source language.
+- Made Command Center pages build on first use and added semantic row
+  signatures so unchanged Team and Enemy visuals are skipped.
+- Routed friendly unit health events directly to visible compact and expanded
+  health bars without forcing a strategy rebuild.
+- Added a backward-compatible migration from legacy pane, toolbar, and solo
+  positions to the unified roster anchor.
+- Refit the Tactical Map page to its real command-center content boundary so
+  the map, all ten team jobs, Recent Calls, next-call card, and every command
+  control stay inside the window at the same time.
+
+## 6.1.0-alpha.28
+
+- Rebuilt the live compact card as `KWR FIGHT NOW`: score plus projected
+  result, battleground win path, current and next WHAT/WHO/WHERE/WHEN calls,
+  defense/offense posture, and independent KILL/CC lanes now form one
+  bottom-line combat read.
+- Removed live confidence, source, revision, refresh, reassessment, and other
+  maintenance language from the combat card while preserving the full setup
+  and expanded planning surfaces.
+- Friendly health rows now repaint with each player's synchronized execution
+  job and safely fall back to the map assignment when that packet clears;
+  enemy rows show KILL, PRESS, or CC only from the reviewed local-fight packet.
+- Centralized movement, kill, stop/CC, recovery, carrier, unknown, and stale
+  colors so the HUD, combat roster, target reticle, and battlefield identifiers
+  use the same crosshair meanings.
+- Repaired the combat-roster visual cache so a changed synchronized assignment
+  updates its health row immediately even when optional observation fields are
+  unavailable.
+- Established `RELEASE_VISION.md` as the single authority for KWR suite scope,
+  component boundaries, recovery sequencing, and promotion direction after
+  local-to-GitHub version drift was confirmed.
+- Classified Commander, Sentinel, Beacon, the Discord bot, Maps, and ScoreCard
+  as separate release lanes under one product vision rather than one merged
+  runtime, ZIP, or version.
+- Removed all external battleground-map detection, recommendations, and
+  compatibility code; KWR remains fully standalone.
+- Legacy Support View commands now point only to Blizzard's native `Shift-M`
+  battlefield map.
+- Kept KWR's internal battlefield-intelligence runtime, synchronized command
+  HUD, Sentinel routing, and audio unchanged.
+- Restored one permanent `LOCAL FIGHT` card to the compact commander HUD with
+  independent kill and healer-control lanes plus explicit unknown placeholders.
+- Kept confirmed local healers assigned between casts, prioritized active
+  free-casters, rejected remote scoreboard-only healers, and cleared actors
+  when bounded local evidence expires.
+- Prevented synchronized healer-control routing from pulling protected
+  defenders or carriers off their objective assignment.
+- Hardened package certification to require explicit Fengari smoke and soak
+  pass markers instead of trusting its process exit code alone.
+
+## 6.1.0-alpha.27
+
+- Retired the standalone KWR Support HUD from the production load graph after
+  consolidating live direction into the synchronized compact command card.
+- Kept KWR's internal Reporter intelligence pipeline and the expanded tactical
+  board; only the redundant standalone map window was retired.
+- Kept battlefield-map presentation outside KWR and routed it to native
+  `Shift-M`.
+- Updated launcher, slash-command, preview, presentation, and option copy to
+  direct battlefield-map use to native `Shift-M`.
+- Preserved legacy saved-variable keys for downgrade safety while disabling
+  Support HUD restoration.
+
+## 6.1.0-alpha.26
+
+- Unified the existing objective assignments, three-lane healer-control planner,
+  kill-target selector, and countdown into one synchronized execution packet.
+- Compact battleground HUD now renders that packet in objective, control, kill,
+  and trigger order, while hiding redundant Team Plan and Local Target panels.
+- SentinelBridge now relays the matched player's synchronized pickup, control,
+  protected objective, or kill job and its exact expected target.
+- Removed assignment fallbacks that could show another player's job when the
+  current player had no matching teamfight assignment.
+- Added optional, rate-limited local TTS calls derived from the same packet as
+  the visual HUD, plus a `REPEAT` button and command-audio option.
+- Added deterministic coverage for stable packet signatures, two and three
+  healer-control lanes, orb handoffs, Sentinel routing, and audio deduplication.
+
+## 6.1.0-alpha.25
+
+- Replaced the old opaque all-player battlefield overlay with transparent role/class identifiers.
+- Friendly players now show role icon plus short name; enemy players show class icon plus short name.
+- Confirmed flag and orb carrier state replaces the normal icon and preserves objective color.
+- KWR health now appears only on the current enemy target; active priority casts receive the only cast strip.
+- Unknown role/class state degrades to a neutral marker instead of guessing.
+- Reduced identifier refresh cadence to 4 Hz and removed non-target health reads.
+- Renamed the option to `Show compact battlefield identifiers` without changing the saved setting key.
+- Repaired the original release-audit Phase 0 correctness blockers without
+  replacing the runtime architecture: Store publication is now exact, objective
+  widget truth keeps its reviewed authority, enemy map dots no longer fabricate
+  positions from teammate context, and canonical identity no longer merges
+  same-short-name players by default.
+- Hardened the compact secure-surface suppression path and removed the
+  recursion-prone combat-roster visibility loop that previously destabilized
+  compact battlefield presentation.
+- Added deterministic regression coverage for nested Store publication,
+  objective-source authority, enemy coordinate truthfulness, canonical identity,
+  Reporter stale-friendly pruning, current-state MemoryBudget sampling,
+  post-integrity strategy output, and zero-deficit recovery summaries.
+- Upgraded package certification so the extracted distribution addon, not just
+  the developer archive, now executes smoke and soak validation during the
+  package audit.
+
+## 6.1.0-alpha.23
+
+- Fixed battlefield-side truth so normal battlegrounds no longer let scoreboard
+  side noise flip friendly Horde/Alliance ownership; native faction now stays
+  authoritative unless WoW explicitly marks the player as mercenary.
+- Added stronger post-match settle refreshes and final-state command overrides so
+  the commander HUD can swap stale mid-match calls for the real final
+  victory/defeat state once the scoreboard finishes settling.
+
+## 6.1.0-alpha.22
+
+- Added independent saved anchors for solo `TEAM` and solo `ENEMY` combat-roster
+  layouts, so each mode can keep its own commander-side position instead of
+  sharing one generic frame anchor.
+- Updated Reset Window Positions to restore the new solo roster anchors along
+  with the existing split-pane layout defaults.
+
+## 6.1.0-alpha.21
+
+- Added independent saved drag anchors for the split compact team and enemy
+  roster panes in BOTH mode, so each side can be positioned separately for
+  commander layouts.
+- Added compact-roster reset support for the split pane anchors so Reset Window
+  Positions restores the default left/right pane layout cleanly.
+
+## 6.1.0-alpha.20
+
+- Fixed the compact-roster syntax regression that prevented `CombatRoster` from
+  loading and cascaded nil-module errors into the War Room and presentation
+  layer.
+- Added nil-safe compact-surface suppression and restore paths so the main
+  window no longer hard-crashes if a compact module fails to initialize.
+- Removed protected scale suppression from the presentation layer to avoid
+  tainting Blizzard raid-frame edit-mode controls during battleground
+  presentation cleanup.
+- Cleared stale match/reassessment state on non-PvP world transitions so
+  battleground results unwind more reliably when returning to formation/world
+  mode.
+- Hardened battlefield orb assignment lookups to index both full and short
+  player names for more reliable friendly-nameplate mission labels.
+
+## 6.1.0-alpha.19
+
+- Split battleground auto-show from manual compact-roster visibility so the
+  roster no longer writes itself permanently "shown" just by entering PvP.
+- Tightened battleground presentation cleanup with additional world/zone
+  refresh hooks so compact battlefield surfaces restore more reliably on exit.
+- Added a first battlefield-orb pass to the existing command reticle package.
+  Visible nameplates can now render lightweight KWR ally/enemy orb overlays
+  with role/kill/carry meaning instead of relying on the reticle alone.
+- Gated target reticle and battlefield orbs to live PvP state so they fall off
+  cleanly when returning to world/formation mode.
+- Added an options toggle for battlefield orbs on visible nameplates.
+
+## 6.1.0-alpha.18
+
+- Split the compact combat roster into a true two-pane visual layout in BOTH
+  mode so team and enemy intelligence read as separate battlefield surfaces
+  instead of one large slab.
+- Added automatic compact-roster kill-target handoff. When the current target
+  dies or drops out, the spotlight now falls through to the active KWR kill
+  target or the best local/visible enemy instead of collapsing to empty.
+- Added force-refresh on compact roster open and reporter open so field tools
+  immediately request current truth instead of waiting for the next passive
+  update.
+- Expanded transition settling refreshes, including `PLAYER_LEAVING_WORLD`,
+  and extended world/zone/roster follow-up windows to better survive slow
+  battleground exit and loading transitions without needing `/reload`.
+- Canonicalized reporter fallback locations so abbreviations and aliases map
+  back to real battleground objectives more reliably.
+- Reduced compact reporter-map marker bulk and converted routine player tracks
+  toward cleaner dot-like markers while preserving kill/carry emphasis.
+- Removed synthetic `Team Engagement` labels from enemy last-seen location
+  output when no real battleground location is known.
+- Reduced KWR window opacity across the theme so battlefield visuals remain
+  visible behind the commander surfaces.
+
+## 6.1.0-alpha.17
+
+- Added battleground presentation mode as a first-class KWR package instead of
+  scattered per-window tweaks.
+- Presentation mode now suppresses redundant Blizzard battleground clutter
+  while inside battleground instances, including top widget/timer surfaces,
+  minimap/minimap cluster, objective tracker, status tracking bars, and
+  Blizzard raid frames.
+- Added safe restore behavior so suppressed Blizzard UI returns when leaving
+  the battleground or disabling presentation mode.
+- Added battleground presentation controls to the KWR options window.
+- Added `/kwr presentation` and `/kwr bgui` to quickly toggle the new
+  presentation package during testing.
+- Field test arming now enables presentation mode so battleground verification
+  uses the intended commander-facing layout.
+
+## 6.1.0-alpha.15
+
+- Replaced abbreviated mover counts with complete spoken command rosters.
+  Scout HUD objective calls now list every named mover and any named defenders
+  by compact objective, without `+3` or other numeric shorthand.
+- Enlarged the Scout HUD command area and separated the full call, personal
+  assignment, mover roster, timing, confidence, and kill target into readable
+  sections suitable for voice leadership.
+- Made qualified execution responses bypass the short command-stability hold
+  so an evidence-supported emergency pivot is displayed immediately.
+- Added four bounded post-zone transition truth confirmations and three
+  bounded group-roster confirmations. These are finite event responses and do
+  not add a polling loop or permanent ticker.
+- Added `UNIT_NAME_UPDATE` and `PLAYER_ROLES_ASSIGNED` refreshes so raid names,
+  roles, health bindings, and secure roster rows converge after loading.
+- Cross-checked raid unit identities against Blizzard's raid-roster records,
+  suppressed duplicate identities, and withheld unstable unit bindings until
+  the corresponding unit token resolves.
+- Expanded deterministic diagnostics to 243 checks and added regression
+  coverage for complete spoken commands and bounded transition settling.
+
+## 6.1.0-alpha.14
+
+- Replaced the lossy refresh flag with one bounded, preemptible dirty-state
+  scheduler. Simultaneous score, roster, and transition events now produce one
+  primary refresh plus at most one newest-truth follow-up.
+- Added guaranteed settling refreshes after login, world/zone transitions,
+  group roster changes, score-table changes, match activation, and public
+  widget updates without adding another ticker.
+- Made each map's reviewed score widget authoritative. Dynamically discovered
+  widgets are validated fallbacks and cannot silently displace the configured
+  source; within-match score regressions are rejected.
+- Added widget authority, score-change age, regression state, queue
+  coalescing, follow-up, preemption, and settle telemetry to `/kwr verify` and
+  `/kwr perf`.
+- Replaced duplicate `Team Engagement` location text with source-aware
+  descriptions such as `ENGAGED WITH STRIKE -> LM`. Direct positions remain
+  authoritative; assignment-derived destinations remain explicitly inferred.
+- Kept enemy identities and safely numeric last-observed health visible after
+  live tokens disappear, and retained the last local target spotlight for five
+  clearly labeled seconds.
+- Unified compact assignment terminology across Team, HUD, combat roster, and
+  command copy surfaces.
+- Corrected the Team table's eight-pixel header/row offset and widened its
+  assignment column.
+- Replaced the fixed 46-pixel square minimap launcher with a 32-pixel circular
+  launcher positioned from the current minimap radius.
+- Expanded deterministic diagnostics from 240 to 242 checks, added scheduler,
+  score-authority, launcher, and table-alignment regression assertions, and
   retained the 500-refresh bounded-state soak.
-- Preserved Alpha 9 as the rollback baseline. Target spotlight, cast accents,
-  Combat Clarity controls, and visual rings remain gated for live testing.
 
-## 6.1.0-alpha.9
+## 6.1.0-alpha.13
 
-- Added a bounded manual match-evidence exporter to the existing AAR journal.
-- Captures sanitized match metadata, friendly/enemy composition, KWR commands,
-  objective transitions, assignment integrity, player locations, safely
-  exposed scoreboard statistics, and factual enemy sightings.
-- Added `/kwr aar`, `/kwr aar copy`, and `/kwr aar clear`.
-- Added `COPY EXPORT` to the existing Command Center Intel/AAR page and the
-  existing post-match review surface; both reuse KWR's manual copy dialog.
-- Added an option to disable AAR evidence recording.
-- Kept unknown information unknown and separated recommendations, supporting
-  evidence, observed execution, and known outcomes in the export.
-- Added safe optional scoreboard fields that are discarded when Retail marks
-  them secret.
-- Expanded deterministic diagnostics from 210 to 215 checks and retained the
-  500-refresh bounded-state soak.
-
-## 6.1.0-alpha.8
-
-- Added a multi-source confidence budget with evidence, bounded risk, and
-  conservative low-confidence behavior.
-- Added friendly/enemy objective ETA estimates, enemy-intent prediction,
-  battlefield momentum, and match-only rotation memory to Reporter.
-- Added short-lived opportunity windows and honest resource-economy estimates
-  from permitted observed evidence.
-- Added lightweight HOLD, ROTATE, TRADE, TEAMFIGHT, and SPLIT outcome
-  simulation without machine learning or a parallel decision engine.
-- Added continuous assignment-integrity verification with abandoned,
-  impossible, moving, and on-station states plus replacement recommendations.
-- Expanded `/kwrwhy` with confidence evidence, candidate outcomes, ETA,
+- Added one normalized battlefield truth contract with source, observation
+  time, expiration, confidence, verification state, and conservative gating.
+- Added static map-route ETA fallback when exact legal coordinates are not
+  available; observed movement remains higher confidence.
+- Upgraded every assignment into a monitored contract with issue time,
+  expected arrival, evidence source, success condition, abort condition,
+  completion state, and value-aware replacement.
+- Added an objective coverage ledger that identifies uncovered and
+  overcommitted friendly objectives without stripping the sole defender from
+  another node.
+- Reworked the existing five candidate actions into objective-aware heuristic
+  scores with named targets, opportunity cost, reversibility, evidence,
+  success, and abort semantics. Scores are explicitly not statistical win
+  probabili…1333 tokens truncated… outcomes, ETA,
   intent, momentum, opportunity, resources, success/abort criteria, and
   assignment integrity while preserving the three-line combat HUD.
 - Added developer-only counterfactual decision review records to AAR; they do
@@ -427,3 +680,9 @@
 - Added map-specific predictors and deterministic assignments.
 - Removed automatic communication, targeting, keybinding writes, and protected actions.
 - Added validation, packaging, hashes, and release documentation.
+## 6.1.0-alpha.29
+
+- Added resolution-aware KWR window clamping and Blizzard Options collision avoidance.
+- Added a scroll viewport for lower Command Center content at compact heights.
+- Removed the redundant quick-call secondary label that collided with action text.
+
