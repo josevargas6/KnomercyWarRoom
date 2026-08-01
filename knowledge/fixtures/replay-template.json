@@ -1,0 +1,67 @@
+{
+  "schema": "kwr-replay-schema",
+  "schemaVersion": 1,
+  "kind": "timeline_replay",
+  "replayId": "replace-me",
+  "source": {
+    "type": "field_capture",
+    "consent": "local_review",
+    "provenance": "manual_export",
+    "verified": false
+  },
+  "capturedAt": "2026-07-29T00:00:00Z",
+  "patch": {
+    "interface": 120007,
+    "build": "6.1.0-alpha.28"
+  },
+  "ruleset": {
+    "apiMode": "Retail_Current",
+    "bracket": "STANDARD"
+  },
+  "map": {
+    "key": "TWINPEAKS",
+    "mode": "STANDARD",
+    "kind": "FLAG",
+    "profile": "tp_standard"
+  },
+  "side": "HORDE",
+  "redaction": {
+    "status": "SANITIZED",
+    "identityMode": "ROLE_LABELS",
+    "secretValuesRemoved": true
+  },
+  "initialState": {
+    "friendlyRoster": [],
+    "enemyRoster": [],
+    "score": {
+      "friendly": 0,
+      "enemy": 0
+    },
+    "objectives": {
+      "friendlyCarrier": null,
+      "enemyCarrier": null
+    },
+    "evidenceQuality": "HIGH"
+  },
+  "timeline": [],
+  "expectedLabels": {
+    "primaryActions": [],
+    "fallbackActions": [],
+    "forbiddenActions": [],
+    "mustStay": [],
+    "requiredCapabilities": [],
+    "successConditions": [],
+    "abortConditions": [],
+    "maxDelaySeconds": 0,
+    "rationale": "Replace with reviewed rationale."
+  },
+  "outcome": {
+    "result": "UNKNOWN",
+    "finalScore": {
+      "friendly": 0,
+      "enemy": 0
+    },
+    "reviewStatus": "OPEN",
+    "checkpoints": []
+  }
+}
