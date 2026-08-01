@@ -100,10 +100,10 @@ jobs:
           CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
           $lane = "auto"
-          $mode = "external"
-          $confirm = "PUBLISH"
-          $postDiscord = $true
-          $notifyBot = $true
+          $mode = "dry-run"
+          $confirm = ""
+          $postDiscord = $false
+          $notifyBot = $false
 
           if ("${{ github.event_name }}" -eq "workflow_dispatch") {
               $lane = "${{ inputs.lane }}"
@@ -113,20 +113,20 @@ jobs:
               $notifyBot = [System.Convert]::ToBoolean("${{ inputs.notify_bot }}")
           }
 
-          $args = @(
-              "-Lane", $lane,
-              "-Mode", $mode,
-              "-ConfirmExternalWrites", $confirm,
-              "-OutputDirectory", "artifacts\scheduled-maintenance"
-          )
+          $maintenanceParameters = @{
+              Lane = $lane
+              Mode = $mode
+              ConfirmExternalWrites = $confirm
+              OutputDirectory = "artifacts\scheduled-maintenance"
+          }
           if ($postDiscord) {
-              $args += "-PostDiscord"
+              $maintenanceParameters.PostDiscord = $true
           }
           if ($notifyBot) {
-              $args += "-NotifyBot"
+              $maintenanceParameters.NotifyBot = $true
           }
 
-          ./tools/kwr-maintenance-schedule.ps1 @args
+          ./tools/kwr-maintenance-schedule.ps1 @maintenanceParameters
 
       - name: Upload maintenance evidence
         uses: actions/upload-artifact@v4
