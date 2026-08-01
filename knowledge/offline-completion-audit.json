@@ -1,0 +1,51 @@
+{
+    "schema":  "kwr-offline-completion-audit",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-08-01T05:56:08Z",
+    "candidateVersion":  "6.1.0-alpha.29",
+    "offlinePrepared":  true,
+    "fieldTestingPrepared":  true,
+    "offlineEvidence":  {
+                            "supportedMaps":  10,
+                            "baseScenarios":  200,
+                            "reviewedCorpus":  1010,
+                            "adversarialCases":  201,
+                            "reviewedScenarioCalibration":  200,
+                            "adversarialScenarioCalibration":  200,
+                            "candidatePackageReportPresent":  true,
+                            "runtimePreflightPresent":  true,
+                            "packageAuditReady":  true,
+                            "packageAuditWorkspaceStatus":  "CERTIFIED_IN_WORKSPACE",
+                            "validatePassed":  true,
+                            "knowledgeAuditPassed":  true,
+                            "corpusAuditPassed":  true,
+                            "decisionBenchmarkPassed":  true
+                        },
+    "remainingLiveOnlyBlockers":  [
+                                      {
+                                          "value":  [
+                                                        "KWR-032",
+                                                        "KWR-033",
+                                                        "KWR-034",
+                                                        "TP-D03"
+                                                    ],
+                                          "Count":  4
+                                      },
+                                      {
+                                          "value":  [
+                                                        "exact hashed package install and upgrade proof",
+                                                        "taint and blocked-action safety proof",
+                                                        "lifecycle stability proof",
+                                                        "field performance budgets",
+                                                        "map-family battlefield proof",
+                                                        "evidence-backed decision quality"
+                                                    ],
+                                          "Count":  6
+                                      }
+                                  ],
+    "environmentLimits":  [
+                              "Lua, LuaJIT, and Fengari are not directly on PATH in this Codex environment.",
+                              "The repository Lua runner discovers the readable cached Node and Fengari runtime without changing PATH.",
+                              "Live Retail behavior, secure-action proof, and field performance remain external to this workspace."
+                          ]
+}

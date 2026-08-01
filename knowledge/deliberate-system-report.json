@@ -1,0 +1,161 @@
+﻿{
+    "schema":  "kwr-deliberate-system-report",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-07-30T00:07:06",
+    "targets":  {
+                    "supportedMaps":  10,
+                    "baseScenariosPerMap":  10,
+                    "starterCorpusPerScenario":  1,
+                    "reviewedCasesPerScenario":  5,
+                    "adversarialCasesPerScenario":  1
+                },
+    "current":  {
+                    "supportedMaps":  10,
+                    "scenarioDefinitions":  100,
+                    "starterReplays":  510,
+                    "goldenLabels":  510,
+                    "replayResults":  510,
+                    "outcomeReviews":  510,
+                    "adversarialCases":  101
+                },
+    "gaps":  {
+                 "starterReplayGap":  0,
+                 "goldenLabelGap":  0,
+                 "replayResultGap":  0,
+                 "outcomeReviewGap":  0,
+                 "reviewedCorpusGap":  0,
+                 "adversarialGap":  0
+             },
+    "maps":  [
+                 {
+                     "mapKey":  "ARATHI",
+                     "mapProfile":  "ab_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "GILNEAS",
+                     "mapProfile":  "bfg_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "DEEPWIND",
+                     "mapProfile":  "dwg_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "EOTS",
+                     "mapProfile":  "eots_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "WSG",
+                     "mapProfile":  "wsg_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "TWINPEAKS",
+                     "mapProfile":  "tp_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  11,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "TEMPLE",
+                     "mapProfile":  "tok_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "SILVERSHARD",
+                     "mapProfile":  "ssm_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "DEEPHAUL",
+                     "mapProfile":  "dhr_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 },
+                 {
+                     "mapKey":  "SEETHING",
+                     "mapProfile":  "shore_standard",
+                     "targetScenarios":  10,
+                     "currentStarterReplays":  51,
+                     "currentGoldenLabels":  51,
+                     "currentReplayResults":  51,
+                     "currentOutcomeReviews":  51,
+                     "currentAdversarialCases":  10,
+                     "starterReplayGap":  0,
+                     "reviewedCorpusGap":  0,
+                     "adversarialGap":  0
+                 }
+             ]
+}

@@ -1,0 +1,32 @@
+{
+    "schema":  "kwr-runtime-preflight",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-08-01T05:56:08Z",
+    "candidateVersion":  "6.1.0-alpha.29",
+    "node":  {
+                 "nodeOnPath":  false,
+                 "nodeOnPathSource":  null,
+                 "bundledNodePath":  "C:\\Users\\josev\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+                 "bundledNodeReadable":  true
+             },
+    "fengari":  {
+                    "fengariCmdOnPath":  null,
+                    "fengariPs1OnPath":  null,
+                    "accessibleCliPaths":  [
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.pnpm\\fengari-node-cli@0.1.0\\node_modules\\fengari-node-cli\\src\\lua-cli.js",
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.CMD",
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.ps1"
+                                           ],
+                    "blockedCliPaths":  [
+
+                                        ]
+                },
+    "localLuaTools":  {
+                          "rootPath":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools",
+                          "present":  true,
+                          "cliReadable":  true,
+                          "packageReadable":  true
+                      },
+    "packageAuditReady":  true,
+    "recommendedNextStep":  "Run package-audit.ps1 against the current candidate artifacts."
+}

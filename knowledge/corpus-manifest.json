@@ -1,0 +1,119 @@
+﻿{
+    "schema":  "kwr-corpus-manifest",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29",
+                  "gamePatch":  "12.0.7"
+              },
+    "summary":  {
+                    "replays":  1010,
+                    "goldenLabels":  1010,
+                    "replayResults":  1010,
+                    "outcomeReviews":  1010,
+                    "adversarialCases":  201
+                },
+    "profiles":  [
+                     {
+                         "mapProfile":  "ab_standard",
+                         "mapKey":  "ARATHI",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "bfg_standard",
+                         "mapKey":  "GILNEAS",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "dwg_standard",
+                         "mapKey":  "DEEPWIND",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "eots_standard",
+                         "mapKey":  "EOTS",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "wsg_standard",
+                         "mapKey":  "WSG",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "tp_standard",
+                         "mapKey":  "TWINPEAKS",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  21
+                     },
+                     {
+                         "mapProfile":  "tok_standard",
+                         "mapKey":  "TEMPLE",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "ssm_standard",
+                         "mapKey":  "SILVERSHARD",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "dhr_standard",
+                         "mapKey":  "DEEPHAUL",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     },
+                     {
+                         "mapProfile":  "shore_standard",
+                         "mapKey":  "SEETHING",
+                         "mode":  "STANDARD",
+                         "replays":  101,
+                         "goldenLabels":  101,
+                         "replayResults":  101,
+                         "outcomeReviews":  101,
+                         "adversarialCases":  20
+                     }
+                 ]
+}
