@@ -1,1160 +1,1160 @@
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
-[object Object]
+local _, KWR = ...
+
+local BattlePlans = {}
+KWR.BattlePlans = BattlePlans
+
+local ALL_ARCHETYPES = {
+    "BALANCED", "STEALTH", "ROT", "MELEE", "RANGED", "ROTATION", "BUNKER",
+}
+
+local function accepted(values)
+    local result = {}
+    for _, value in ipairs(values or {}) do result[value] = true end
+    return result
+end
+
+local function anyOf(...)
+    return accepted({ ... })
+end
+
+local function plan(id, state, archetypes, action, why, switchIf, stop,
+    requires, assignments, meta)
+    meta = meta or {}
+    return {
+        id = id,
+        state = state or "ANY",
+        archetypes = accepted(archetypes or ALL_ARCHETYPES),
+        action = action,
+        why = why,
+        switchIf = switchIf,
+        stop = stop,
+        requires = requires or {},
+        assignments = assignments or {},
+        reviewed = true,
+        priority = meta.priority or 0,
+        pugFriendly = meta.pugFriendly == true,
+        enemyArchetypes = accepted(meta.enemyArchetypes or {}),
+        ourTiers = accepted(meta.ourTiers or {}),
+        enemyTiers = accepted(meta.enemyTiers or {}),
+        tags = accepted(meta.tags or {}),
+        note = meta.note,
+    }
+end
+
+local PLANS = {
+    ARATHI = {
+        plan("AB_OPENING_BS_HOME_SAFE", "OPENING",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "Leave one anchor at home, plant the outer ranged defender, move the main fight core through Blacksmith, and keep one floater preserving coverage between the two held lanes.",
+            "This is the safest reviewed three-lane opening when the roster can hold one outer base without sacrificing the Blacksmith fight.",
+            "Move the floater or outer defender only after home and Blacksmith both confirm a replacement body on the flag.",
+            "Do not strip home or leave Blacksmith without a spinner and one real healer line.",
+            { baseDefense = 1 }, { "Anchor Defender", "Outer Defender", "Blacksmith Spinner", "Main Fight", "Floater" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "safe" } }),
+
+        plan("AB_OPENING_DOUBLE_STEALTH_PRESSURE", "OPENING",
+            { "STEALTH", "ROTATION" },
+            "Secure home, show enough at Blacksmith to pin the response, and send the ghost-cap package to the favorable outer node.",
+            "Stealth and rotation rosters gain more by forcing a bad reaction than by mirroring a full Blacksmith brawl.",
+            "Collapse the ghost-cap package into Blacksmith only if the outer defender is paired before the cap window.",
+            "Do not send both stealth players onto the same obvious route without a pressure show.",
+            { baseDefense = 1, crossCap = 1 }, { "Anchor Defender", "Pressure Show", "Ghost Cap", "Floater" },
+            { priority = 9, enemyArchetypes = { "BALANCED", "RANGED", "BUNKER" }, ourTiers = { "NODE_LOCKDOWN", "ROGUE_MAP_CHOKE", "FERAL_STEALTH" }, tags = { "opening", "stealth" } }),
+
+        plan("AB_OPENING_ANTI_MELEE_SPREAD", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Protect home, keep one ranged outer defender wide, and make the melee enemy fight uphill into a spun Blacksmith instead of a stacked deathball.",
+            "Melee collapse comps are strongest when every defender and healer stands on the same flag circle.",
+            "Release the ranged defender into Blacksmith only after the spinner is replaced at home.",
+            "Do not stack every healer and ranged player on the Blacksmith flag.",
+            { baseDefense = 1, sustain = 1 }, { "Anchor Defender", "Outer Defender", "Blacksmith Spinner", "Main Fight" },
+            { priority = 7, enemyArchetypes = { "MELEE" }, enemyTiers = { "ANTI_HEALER", "MEAT_GRINDER", "MELEE_COLLAPSE" }, tags = { "opening", "anti-melee" } }),
+
+        plan("AB_STABILIZE_BS_TRIANGLE", "WIN",
+            { "BALANCED", "RANGED", "ROT", "BUNKER" },
+            "Keep one defender on each owned node, leave the reserve mobile, and move only the Blacksmith fight core while all three scoring bases stay covered.",
+            "A stable three-base triangle wins faster than a greedy fourth-base chase.",
+            "Counterattack only after the reserve and every sitter confirm the three-base shell is covered again.",
+            "Do not turn the reserve into a permanent second sitter.",
+            { baseDefense = 1, rotation = 1 }, { "Anchor Defender", "Node Defender", "Defense Floater", "Main Fight" },
+            { priority = 10, tags = { "stabilize", "triangle" } }),
+
+        plan("AB_WIN_TWO_BASE_BS_SHELL", "WIN",
+            { "BALANCED", "RANGED", "BUNKER" },
+            "If the roster cannot safely hold three, preserve home plus Blacksmith and force the enemy to take the long route into the next recoverable node.",
+            "A two-base shell with a live Blacksmith spinner is better than collapsing the map with an unsafe third sitter.",
+            "Advance only when the next outer node is truly isolated.",
+            "Do not send defenders to road fights while the score path is still winning.",
+            { baseDefense = 1, sustain = 1 }, { "Anchor Defender", "Blacksmith Spinner", "Main Fight", "Floater" },
+            { priority = 6, pugFriendly = true, tags = { "win", "shell" } }),
+
+        plan("AB_PRESSURE_WEAK_OUTER", "ANY",
+            { "STEALTH", "ROTATION", "MELEE", "BALANCED" },
+            "Show just enough at Blacksmith, then strike the weakest outer defender with a compact kill-confirm group.",
+            "Arathi rewards one decisive weak-side numbers edge more than mirrored trading in the middle.",
+            "Abort the strike if reinforcements arrive before control lands.",
+            "Do not leave Blacksmith without a spinner and one real healer line.",
+            { control = 2, crossCap = 1 }, { "Blacksmith Spinner", "Strike Team", "Floater", "Anchor Defender" },
+            { priority = 7, tags = { "pressure", "weakside" } }),
+
+        plan("AB_RECOVERY_SWAP_FROM_LOST_BS", "LOSE",
+            { "STEALTH", "ROTATION", "MELEE" },
+            "Regroup off the road, replant home, and capture the recoverable outer node instead of feeding the Blacksmith deathball.",
+            "If Blacksmith is already stabilized by the enemy, the recoverable score lane is usually outer and faster.",
+            "Switch back to Blacksmith only if the enemy over-rotates to the outer save.",
+            "Do not trickle one by one back into a lost center fight.",
+            { crossCap = 1 }, { "Anchor Defender", "Recovery Strike", "Distraction", "Floater" },
+            { priority = 9, enemyArchetypes = { "MELEE", "ROT", "BUNKER" }, tags = { "recovery", "swap" } }),
+
+        plan("AB_RECOVERY_PROTECT_TWO_FORCE_TRADE", "LOSE",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "Protect two real bases, refuse panic over-rotations, and trade only into the outer node that changes the clock fastest.",
+            "Many Arathi recoveries fail because teams abandon both holds while trying to instantly equalize.",
+            "Push the trade only when defenders confirm they can survive the next assault window.",
+            "Do not convert a losing score into a collapse by moving every DPS off defense.",
+            { baseDefense = 1, rotation = 1 }, { "Anchor Defender", "Node Defender", "Defense Floater", "Strike Team" },
+            { priority = 8, pugFriendly = true, tags = { "recovery", "trade" } }),
+
+        plan("AB_OPENING_ANTI_BUNKER_OUTER_TRADE", "OPENING",
+            { "BALANCED", "STEALTH", "ROTATION", "RANGED" },
+            "Secure home, refuse the bunker front-to-back team fight, and trade quickly into the outer node they left thin while Blacksmith stays spun not owned.",
+            "Bunker-style teams are strongest when they pin every player into one long front-door brawl.",
+            "Collapse the trade team back to Blacksmith the moment the exposed outer lane is reinforced.",
+            "Do not feed repeated bodies into the bunker shell while the weak-side node is open.",
+            { baseDefense = 1, crossCap = 1 }, { "Anchor Defender", "Blacksmith Spinner", "Trade Team", "Floater" },
+            { priority = 8, enemyArchetypes = { "BUNKER" }, enemyTiers = { "FLAG_SPECIALIST" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("AB_PRESSURE_SITTER_SWAP", "ANY",
+            { "BALANCED", "RANGED", "ROTATION", "STEALTH" },
+            "Swap the stronger objective fighter into the live Blacksmith fight and replace the safer sitter only after coverage is confirmed.",
+            "Arathi often turns when the wrong defender is stuck sitting while the better team-fight player is wasted off-point.",
+            "Return the temporary sitter only after the replacement arrives and the fight lane stabilizes.",
+            "Do not peel the only true anti-cap body off the vulnerable node early.",
+            { baseDefense = 1, control = 2 }, { "Temporary Sitter", "Fight Reinforce", "Replacement Route", "Floater" },
+            { priority = 7, pugFriendly = true, tags = { "pressure", "sitter-swap" } }),
+
+        plan("AB_ENDGAME_CLOCK_DISCIPLINE", "WIN",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Protect the exact bases that keep the winning clock alive and ignore vanity chases unless the next cap is mathematically decisive.",
+            "Late Arathi leads are lost more often to greed than to enemy brilliance.",
+            "Commit the reserve only to the base that breaks the score floor or seals the win.",
+            "Do not leave a winning node shell for road kills or a dead fourth-base fantasy.",
+            { baseDefense = 1, rotation = 1 }, { "Node Defender", "Reserve", "Decisive Trade Only" },
+            { priority = 9, tags = { "endgame", "clock" } }),
+
+        plan("AB_OPENING_PUG_BS_TWO_HOME_FLEX", "OPENING",
+            { "BALANCED", "RANGED", "BUNKER" },
+            "Secure one home base, show enough at the second home route to prevent a free back-cap, and commit the real damage package to Blacksmith.",
+            "Pug Arathi groups often lose before the first clock because they either over-home or under-home.",
+            "Promote the second home flex into Blacksmith only after the first home flag is fully secured and the road is clear.",
+            "Do not send every ranged player into Blacksmith while both home lanes remain unconfirmed.",
+            { baseDefense = 1, control = 2 }, { "Anchor Defender", "Home Flex", "Blacksmith Team", "Reserve" },
+            { priority = 8, pugFriendly = true, enemyArchetypes = { "STEALTH", "ROTATION" }, tags = { "opening", "pug-safe" } }),
+
+        plan("AB_RECOVERY_CENTER_IF_OUTERS_LOCKED", "LOSE",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "If both outer lanes are fully planted, regroup to retake Blacksmith with one true collapse instead of bleeding into the roads.",
+            "Sometimes the center retake is the only realistic way to break two disciplined outer holds.",
+            "Rebuild home coverage the moment Blacksmith flips or the enemy second wave is late.",
+            "Do not keep half the team dueling outside while the center retake window is live.",
+            { teamfight = 1, control = 2 }, { "Home Anchor", "Blacksmith Collapse", "Late Reinforce", "Road Denial" },
+            { priority = 8, enemyArchetypes = { "BUNKER", "RANGED" }, tags = { "recovery", "center-retake" } }),
+
+        plan("AB_PRESSURE_FOURTH_ONLY_AFTER_REPLACE", "WIN",
+            { "STEALTH", "ROTATION", "BALANCED" },
+            "Attempt the fourth base only after every held node confirms a replacement path and the reserve remains intact.",
+            "Winning Arathi teams can suffocate the map with a fourth base, but only after the third shell is truly dressed.",
+            "Cancel the fourth-base route the moment any held node loses its replacement or second layer.",
+            "Do not turn a clean three-base win into a double-cap collapse for a vanity fourth.",
+            { baseDefense = 1, rotation = 1, crossCap = 1 }, { "Node Defender", "Replacement Route", "Fourth-Base Strike", "Reserve" },
+            { priority = 7, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "pressure", "fourth-base" } }),
+    },
+
+    GILNEAS = {
+        plan("BFG_OPENING_WW_HOME", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "BUNKER" },
+            "Plant one weighted home defender, keep one pressure scout conditional, and commit the team-fight core to Waterworks.",
+            "This is still the strongest stable opener when the roster can win one decisive Waterworks fight and hold home safely.",
+            "Pull the pressure scout into Waterworks if the opening is understrength.",
+            "Do not double-sit home while Waterworks is still undecided.",
+            { baseDefense = 1 }, { "Home Defender", "Pressure Scout", "Waterworks Team" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "standard" } }),
+
+        plan("BFG_OPENING_ANTI_MELEE_WW", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Secure home, fight Waterworks from spread positions, and make the melee enemy commit through peel and crossfire before the first real burst.",
+            "Melee-heavy teams want a stacked Waterworks flag. We want them crossing into a broken formation.",
+            "Collapse only after the first melee connection is peeled.",
+            "Do not fight shoulder-to-shoulder on the Waterworks flag against a cleave roster.",
+            { baseDefense = 1, peel = 1 }, { "Home Defender", "Waterworks Team", "Floater" },
+            { priority = 8, enemyArchetypes = { "MELEE" }, enemyTiers = { "ANTI_HEALER", "MEAT_GRINDER", "MELEE_COLLAPSE" }, tags = { "opening", "anti-melee" } }),
+
+        plan("BFG_OPENING_GHOST_HOME", "OPENING",
+            { "STEALTH", "ROTATION" },
+            "Secure home, show contest numbers at Waterworks, and send the stealth-cap package toward the enemy home when the defender is isolated.",
+            "Stealth and rotation comps gain more from forcing the enemy to abandon Waterworks than from mirroring it forever.",
+            "Collapse back into Waterworks if the stealth-cap lane is paired before control.",
+            "Do not send the entire float package away from Waterworks before their response is pinned.",
+            { baseDefense = 1, crossCap = 1 }, { "Home Defender", "Waterworks Show", "Ghost Cap", "Floater" },
+            { priority = 9, ourTiers = { "NODE_LOCKDOWN", "ROGUE_MAP_CHOKE", "FERAL_STEALTH", "PUG_FRIENDLY" }, tags = { "opening", "ghostcap" } }),
+
+        plan("BFG_HOLD_TWO_EARLY_CALLS", "WIN",
+            { "BALANCED", "BUNKER", "RANGED", "ROT" },
+            "Leave one real defender on each held base, keep one response reserve off-flag, and move only the strike team once both nodes still remain covered.",
+            "Battle for Gilneas is won by protecting two on time, not by fighting three late.",
+            "Counterattack only after the incoming group is contained and both defenders confirm the two-base shell is still covered.",
+            "Do not peel the last real defender off the weak node.",
+            { baseDefense = 1, rotation = 1 }, { "Node Defender", "Response Reserve", "Strike Team" },
+            { priority = 10, tags = { "win", "two-base" } }),
+
+        plan("BFG_PRESSURE_ABANDONED_THIRD", "ANY",
+            { "ROTATION", "STEALTH", "MELEE", "BALANCED" },
+            "Show Waterworks, then strike the abandoned third base with a compact control group and a named fallback route.",
+            "The enemy often strips the third base to save Waterworks or home. That is the window to score.",
+            "Abort if the defender is reinforced before crowd control lands.",
+            "Do not force a full reset from Waterworks if the third-base window closes.",
+            { control = 2 }, { "Show Team", "Strike Team", "Home Defender", "Floater" },
+            { priority = 7, tags = { "pressure", "third-base" } }),
+
+        plan("BFG_RECOVERY_ISOLATED_SPINNER", "LOSE",
+            { "STEALTH", "MELEE", "ROTATION" },
+            "Regroup off the road and capture one isolated spinner with synchronized control.",
+            "Gilneas recoveries are won by grouped control on the weakest node, not by re-entering the strongest fight.",
+            "Swap targets if the isolated defender is reinforced before the crowd control chain begins.",
+            "Do not split into equal attacks on both outer bases.",
+            { control = 2, crossCap = 1 }, { "Recovery Strike", "Distraction", "Home Defender" },
+            { priority = 9, tags = { "recovery", "spinner" } }),
+
+        plan("BFG_RECOVERY_TRADE_HOME_FOR_WW", "LOSE",
+            { "BALANCED", "RANGED", "ROT" },
+            "If Waterworks is the only recoverable lane, leave one real home defender, move the full trade package together through the fastest route, and keep no fake pressure group stranded elsewhere.",
+            "Some losing Gilneas states can only be fixed by retaking Waterworks with true numbers, not by half-pressure on the third base.",
+            "Return to two-base defense immediately once Waterworks flips and both scoring flags are covered.",
+            "Do not leave home empty while trying to retake Waterworks.",
+            { baseDefense = 1, teamfight = 1 }, { "Home Defender", "Recovery Push", "Floater" },
+            { priority = 8, enemyArchetypes = { "BALANCED", "RANGED", "BUNKER" }, tags = { "recovery", "waterworks" } }),
+
+        plan("BFG_PRESSURE_DOUBLE_ANCHOR_THEN_BREAK", "ANY",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "Anchor both held bases first, then break the isolated third base only when the response reserve is already moving.",
+            "Gilneas pressure succeeds when the held shell survives the first counter-rotation.",
+            "Abort the break if either anchor base loses its second layer before contact.",
+            "Do not strip both anchors to create one bigger but fake assault group.",
+            { baseDefense = 1, rotation = 1 }, { "Anchor Defender", "Node Defender", "Response Reserve", "Strike Team" },
+            { priority = 8, tags = { "pressure", "anchored-break" } }),
+
+        plan("BFG_ENDGAME_NO_FREE_CHASE", "WIN",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Stop chasing off-node kills, hold the two scoring bases, and move only the named reserve into incoming lanes.",
+            "When the Gilneas clock is already winning, random chases are just delayed throws.",
+            "Release a second mover only after both defenders confirm the first response is insufficient.",
+            "Do not pull a sitter because the road fight looks winnable.",
+            { baseDefense = 1, rotation = 1 }, { "Node Defender", "Reserve", "Road Denial" },
+            { priority = 9, tags = { "endgame", "discipline" } }),
+
+        plan("BFG_OPENING_MINE_HOME_SPLIT", "OPENING",
+            { "STEALTH", "ROTATION", "RANGED" },
+            "Secure home, send the strike package through the less-telegraphed outer lane, and use Waterworks only as the pressure show.",
+            "Gilneas can be won from the gate by forcing the enemy to choose between Waterworks pride and outer-node integrity.",
+            "Collapse the split opener into Waterworks only if the outer lane is paired before control lands.",
+            "Do not keep both floaters on the road while the weak outer lane is still isolated.",
+            { baseDefense = 1, crossCap = 1, mobility = 2 }, { "Home Defender", "Waterworks Show", "Outer Strike", "Floater" },
+            { priority = 8, enemyArchetypes = { "BUNKER", "RANGED" }, ourTiers = { "NODE_LOCKDOWN", "ROGUE_MAP_CHOKE", "FERAL_STEALTH" }, tags = { "opening", "outer-split" } }),
+
+        plan("BFG_RECOVERY_HOME_RESET_THEN_BREAK", "LOSE",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Restore a fully safe home base first, then move the grouped break team into the node with the weakest second defender.",
+            "Gilneas recoveries fail when both the home shell and the break team are half-built at the same time.",
+            "Release the break team only after the home node confirms a real sitter and one response lane.",
+            "Do not convert a one-node recovery into two fake nodes with no scoring path.",
+            { baseDefense = 1, rotation = 1, control = 2 }, { "Home Reset", "Break Team", "Response Reserve", "Road Denial" },
+            { priority = 8, pugFriendly = true, tags = { "recovery", "reset-then-break" } }),
+
+        plan("BFG_PRESSURE_HOLD_WW_BREAK_OUTER", "WIN",
+            { "BALANCED", "MELEE", "RANGED", "ROT" },
+            "Keep Waterworks stabilized with the smallest safe shell and use the compact reserve to break the least protected outer node.",
+            "A stable Waterworks plus one timed outer break often ends the map faster than over-defending the center forever.",
+            "Return the break team immediately once the outer lane hard stabilizes or fails.",
+            "Do not strip Waterworks below the minimum healing and spin needed to survive the enemy re-engage.",
+            { baseDefense = 1, teamfight = 1, control = 2 }, { "Waterworks Shell", "Outer Break", "Reserve Route", "Home Defender" },
+            { priority = 7, tags = { "pressure", "ww-shell" } }),
+    },
+
+    DEEPWIND = {
+        plan("DWG_OPENING_MARKET_TRIANGLE", "OPENING",
+            { "BALANCED", "RANGED", "ROT", "BUNKER" },
+            "Secure home and one flank while the Market team and named floater remain connected.",
+            "Deepwind rewards a three-point response triangle more than equal players at every node.",
+            "Collapse the floater and weak-side defender when the first real enemy commitment appears.",
+            "Do not scatter one player to every base.",
+            { baseDefense = 1, rotation = 1 }, { "Home Defender", "Flank Defender", "Market Team", "Response Floater" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "triangle" } }),
+
+        plan("DWG_OPENING_GHOSTED_FLANK", "OPENING",
+            { "STEALTH", "ROTATION" },
+            "Plant home, show enough central pressure, and send the stealth rotation package to the ghosted flank.",
+            "Wide maps punish teams that reveal every opening lane immediately.",
+            "Collapse the ghosted flank into Market if the cap lane is paired or the Market fight is understrength.",
+            "Do not reveal the stealth package on the central road before the show team is seen.",
+            { baseDefense = 1, mobility = 2, crossCap = 1 }, { "Home Defender", "Central Show", "Ghost Flank", "Floater" },
+            { priority = 9, ourTiers = { "NODE_LOCKDOWN", "ROGUE_MAP_CHOKE", "DOUBLE_HUNTER", "FERAL_STEALTH" }, tags = { "opening", "ghostflank" } }),
+
+        plan("DWG_OPENING_ANTI_ROTATION_LOCK", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Secure three meaningful positions early and force the enemy rotation team to travel through your prepared response triangle.",
+            "Rotation comps win when you chase them. They lose when every move runs into planted coverage.",
+            "Release the reserve only after the threatened point confirms incoming numbers.",
+            "Do not send the reserve to the first fake pressure ping.",
+            { baseDefense = 1, rotation = 1 }, { "Home Defender", "Flank Defender", "Market Team", "Response Floater" },
+            { priority = 8, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "opening", "anti-rotation" } }),
+
+        plan("DWG_STABILIZE_DEFEND_THREE", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "BUNKER" },
+            "Defend three and keep one fast response group uncommitted.",
+            "A mobile reserve prevents simultaneous outer-base losses without creating dead weight.",
+            "Consolidate if two defenders call before the reserve can arrive.",
+            "Do not create a permanent second sitter at every node.",
+            { rotation = 1 }, { "Three Defenders", "Response Group", "Scout" },
+            { priority = 10, tags = { "win", "three-base" } }),
+
+        plan("DWG_PRESSURE_WEAK_OUTSIDE", "ANY",
+            { "STEALTH", "ROTATION", "MELEE", "BALANCED" },
+            "Pull defenders central, then strike the weak outside lane with the float package and one healer.",
+            "Deepwind punish windows happen when the enemy over-values Market or a loud flank call.",
+            "Abort if the target is reinforced before control lands.",
+            "Do not commit the full center group unless the assaulted lane becomes the new score floor.",
+            { mobility = 2 }, { "Pressure Show", "Strike Team", "Floater", "Home Defender" },
+            { priority = 7, tags = { "pressure", "outside" } }),
+
+        plan("DWG_RECOVERY_FLANK_REBUILD", "LOSE",
+            { "STEALTH", "ROTATION", "MELEE" },
+            "Collapse onto one recoverable flank and rebuild a three-node response triangle from there.",
+            "A stable Deepwind recovery starts with one flank the team can actually hold, not five scattered bodies.",
+            "Once the flank flips, replant one defender and pull the reserve central.",
+            "Do not fight in four locations while losing the fifth.",
+            { mobility = 2, crossCap = 1 }, { "Recovery Strike", "Home Defender", "Rebuild Floater" },
+            { priority = 9, tags = { "recovery", "rebuild" } }),
+
+        plan("DWG_RECOVERY_MARKET_ONLY_IF_COVERED", "LOSE",
+            { "BALANCED", "RANGED", "ROT", "BUNKER" },
+            "Retake Market only if home plus one flank remain covered; otherwise trade the farthest exposed objective instead.",
+            "Market is strong, but many losses come from abandoning the actual score floor to die there.",
+            "Switch immediately to the exposed outer lane if Market cannot convert before the next loss.",
+            "Do not let 'Market is central' become an excuse to bleed three bases.",
+            { baseDefense = 1, teamfight = 1 }, { "Home Defender", "Flank Defender", "Market Push", "Floater" },
+            { priority = 7, tags = { "recovery", "market" } }),
+
+        plan("DWG_OPENING_ANTI_BUNKER_MARKET_BYPASS", "OPENING",
+            { "BALANCED", "STEALTH", "ROTATION", "RANGED" },
+            "Plant home, show enough Market presence to pin the bunker, and force the first real score through the weak flank instead of the front door.",
+            "Bunker teams on Deepwind want every player contesting the protected center anchor.",
+            "Collapse the bypass group back into Market only after the flank lane is covered or fully lost.",
+            "Do not queue repeated center deaths into a fortified Market when the flank is open.",
+            { baseDefense = 1, crossCap = 1 }, { "Home Defender", "Market Show", "Flank Break", "Response Floater" },
+            { priority = 8, enemyArchetypes = { "BUNKER" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("DWG_PRESSURE_MARKET_ONLY_IF_CLOCK", "ANY",
+            { "BALANCED", "RANGED", "ROT", "BUNKER" },
+            "Hit Market only if it becomes the cleanest clock-changing objective; otherwise force the outer lane that breaks their response triangle.",
+            "Market is powerful but not automatically the smartest fight.",
+            "Shift the strike immediately once an outer lane loses its second defender.",
+            "Do not tunnel Market because it feels central while the outer score lane opens.",
+            { rotation = 1, control = 2 }, { "Market Team", "Outer Strike", "Response Floater", "Home Defender" },
+            { priority = 7, tags = { "pressure", "market-if-clock" } }),
+
+        plan("DWG_ENDGAME_TRIANGLE_DISCIPLINE", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "BUNKER" },
+            "Protect the winning triangle and force every enemy push to travel farther than your reserve.",
+            "The last Deepwind mistake is usually overextending from a winning shape.",
+            "Release the reserve only toward the point that actually breaks the score floor.",
+            "Do not turn a protected flank into a dead roam lane.",
+            { baseDefense = 1, rotation = 1 }, { "Three Defenders", "Response Group", "Do Not Chase" },
+            { priority = 9, tags = { "endgame", "triangle" } }),
+
+        plan("DWG_OPENING_MARKET_FAKE_OUTSIDE_BREAK", "OPENING",
+            { "STEALTH", "ROTATION", "BALANCED" },
+            "Show a real Market contest, then send the break package to the outside node the enemy already stripped for center tempo.",
+            "Deepwind teams often reveal their true weak side by overfeeding Market in the first fifteen seconds.",
+            "Collapse the break back to Market if the center contact is lost before the cap chain starts.",
+            "Do not fully abandon Market before the enemy actually commits bodies there.",
+            { baseDefense = 1, crossCap = 1, mobility = 2 }, { "Market Show", "Outside Break", "Home Defender", "Response Floater" },
+            { priority = 8, ourTiers = { "BLITZ_CONVERSION", "ROGUE_MAP_CHOKE", "FERAL_STEALTH" }, tags = { "opening", "fake-market" } }),
+
+        plan("DWG_RECOVERY_MARKET_IF_WEAKSIDE_CLOSED", "LOSE",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "If every outer lane is dressed, regroup to retake Market and rebuild the triangle from the center outward.",
+            "When weak-side pressure is gone, Market becomes the fastest way to re-open the whole map.",
+            "Replant home and the easiest flank immediately once Market stabilizes.",
+            "Do not send isolated players on long weak-side routes if the center retake is the only live swing.",
+            { teamfight = 1, control = 2, rotation = 1 }, { "Home Anchor", "Market Collapse", "Late Flank Restore", "Reserve" },
+            { priority = 8, enemyArchetypes = { "BUNKER", "RANGED" }, tags = { "recovery", "market-retake" } }),
+
+        plan("DWG_PRESSURE_FIFTH_ONLY_ON_CLOCK_BREAK", "WIN",
+            { "STEALTH", "ROTATION", "BALANCED" },
+            "Threaten the fifth node only when it decisively breaks the score clock and the response triangle keeps four protected.",
+            "Deepwind punishes greedy fifth-node pushes more harshly than almost any node map.",
+            "Abort the fifth-node plan the moment any protected point loses the reserve path.",
+            "Do not trade a winning four-node shell for a noisy fifth-node fantasy.",
+            { baseDefense = 1, rotation = 1, crossCap = 1 }, { "Four-Node Shell", "Fifth-Node Threat", "Reserve" },
+            { priority = 7, tags = { "pressure", "fifth-if-clock" } }),
+    },
+
+    EOTS = {
+        plan("EOTS_OPENING_TWO_TOWERS_SPLIT", "OPENING",
+            { "BALANCED", "RANGED", "ROT", "ROTATION", "BUNKER" },
+            "Plant one weighted sitter at each friendly tower, control mid with four, and send four as the rotating enemy-tower strike.",
+            "Two stable home towers preserve score while mid control and split pressure create the third objective.",
+            "The nearest sitter floats only after another player explicitly covers the tower.",
+            "Do not pull both sitters into mid or send the entire team to the flag.",
+            { baseDefense = 2, control = 2 }, { "Tower Sitter", "Mid / Flag Control", "Tower Strike", "Floater" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "tower-first" } }),
+
+        plan("EOTS_OPENING_CASTER_TOWER_LOCK", "OPENING",
+            { "RANGED", "ROT", "BALANCED" },
+            "Use the ranged shell to hold home towers at distance, keep mid peeled, and punish the first enemy tower over-rotation.",
+            "Caster-heavy rosters score best when towers stay stable and mid fights happen on their terms.",
+            "Convert the flag only when it changes the projected tower clock.",
+            "Do not tunnel a low-value flag while losing tower control.",
+            { baseDefense = 2, control = 2 }, { "Tower Sitter", "Mid Control", "Tower Strike" },
+            { priority = 8, ourTiers = { "CASTER_SIEGE", "TRIPLE_RANGED", "ELEMENTAL_CONTROL" }, tags = { "opening", "caster" } }),
+
+        plan("EOTS_OPENING_ANTI_STEALTH_TOWERS", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Keep both tower sitters planted, put the anti-stealth ranged class on the weaker tower, and refuse to overreact to fake mid movement.",
+            "Stealth teams want the tower sitters to leave first. That is the opening loss condition.",
+            "Send only the named strike package to the weak enemy tower.",
+            "Do not chase missing stealth into open terrain while towers are single-covered.",
+            { baseDefense = 2 }, { "Tower Sitter", "Anti-Stealth Sitter", "Mid Control", "Tower Strike" },
+            { priority = 9, enemyArchetypes = { "STEALTH", "ROTATION" }, tags = { "opening", "anti-stealth" } }),
+
+        plan("EOTS_STABILIZE_TOWERS_FIRST", "ANY",
+            { "BALANCED", "RANGED", "ROT", "BUNKER" },
+            "Stabilize tower control before investing in the flag.",
+            "Tower ownership creates continuous score and determines flag value.",
+            "Commit to flag only when its delivery changes the projected clock.",
+            "Do not trade two towers for one delivery.",
+            {}, { "Tower Teams", "Flag Scout", "Floater" },
+            { priority = 10, tags = { "stabilize", "tower-value" } }),
+
+        plan("EOTS_PRESSURE_FLAG_WHILE_STRIKING_TOWER", "ANY",
+            { "ROTATION", "STEALTH", "MELEE", "BALANCED" },
+            "Threaten the flag with the center group while the strike team forces an enemy-tower response.",
+            "The flag is strongest when it amplifies tower pressure instead of replacing it.",
+            "Drop the flag threat if the strike team loses the timing edge.",
+            "Do not park seven players in mid without tower leverage.",
+            { mobility = 2, control = 2 }, { "Mid / Flag Control", "Tower Strike", "Tower Sitter" },
+            { priority = 7, tags = { "pressure", "flag-pressure" } }),
+
+        plan("EOTS_RECOVERY_TOWER_BEFORE_FLAG", "LOSE",
+            { "STEALTH", "ROTATION", "MELEE", "BALANCED" },
+            "Recover a tower before investing in a low-value flag delivery.",
+            "A team behind on towers rarely fixes the clock with flag vanity alone.",
+            "Deliver the flag only when the recovered tower survives the response.",
+            "Do not send the whole team to flag while the tower score is losing.",
+            { mobility = 2 }, { "Tower Recovery", "Mid / Flag Delay", "Tower Sitter" },
+            { priority = 9, tags = { "recovery", "tower-first" } }),
+
+        plan("EOTS_PRESSURE_COLLAPSE_THIRD_TOWER", "ANY",
+            { "STEALTH", "ROTATION", "BALANCED", "MELEE" },
+            "Keep the two friendly sitters planted, hold enough in mid to deny a free flag, and collapse the strike package onto the weakest enemy tower.",
+            "Eye of the Storm gains the most when tower control and mid denial happen at the same time.",
+            "Abort the collapse if one friendly sitter loses confirmed coverage before crowd control lands.",
+            "Do not pull both sitters to chase one flag turn-in.",
+            { baseDefense = 2, crossCap = 1 }, { "Tower Sitter", "Mid Denial", "Tower Collapse", "Floater" },
+            { priority = 9, tags = { "pressure", "third-tower" } }),
+
+        plan("EOTS_ENDGAME_FLAG_ONLY_IF_DECISIVE", "WIN",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Deliver the flag only when it is the decisive clock swing; otherwise keep towers alive and deny the enemy delivery.",
+            "Late Eye endgames are thrown by overvaluing a flashy cap over stable tower score.",
+            "Shift the flag carrier only when the delivery beats the current tower clock.",
+            "Do not trade tower integrity for a non-decisive flag run.",
+            { baseDefense = 2 }, { "Tower Sitter", "Flag Escort", "Mid Denial" },
+            { priority = 9, tags = { "endgame", "decisive-flag" } }),
+
+        plan("EOTS_RECOVERY_SPLIT_SITTER_RESTORE", "LOSE",
+            { "BALANCED", "RANGED", "ROTATION", "STEALTH" },
+            "Restore two planted sitters first, then rebuild mid leverage and only then pressure the third tower.",
+            "Many Eye recoveries fail because every body is thrown at the next tower before the friendly towers are actually safe.",
+            "Release the recovery strike only after both restored towers confirm real sitters or replacements.",
+            "Do not rebuild a third objective while the first two are still fake holds.",
+            { baseDefense = 2, mobility = 2 }, { "Tower Sitter", "Recovery Strike", "Mid Delay", "Floater" },
+            { priority = 8, tags = { "recovery", "restore-sitters" } }),
+
+        plan("EOTS_OPENING_TWO_TOWER_NO_FLAG_TRAP", "OPENING",
+            { "BALANCED", "BUNKER", "RANGED" },
+            "Secure the two home towers, hold mid without over-chasing the first flag, and make the strike team earn the third tower before any delivery greed.",
+            "Eye openings are thrown when teams treat the first flag as sacred while tower ownership is still unresolved.",
+            "Shift flag attention upward only after the third-tower window closes or succeeds.",
+            "Do not send both tower sitters or the whole strike team after an early neutral flag run.",
+            { baseDefense = 2, control = 2 }, { "Tower Sitter", "Mid Control", "Third Tower Strike", "Flag Delay" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "no-flag-trap" } }),
+
+        plan("EOTS_PRESSURE_FLAG_ONLY_AT_THREE", "WIN",
+            { "BALANCED", "ROTATION", "RANGED" },
+            "Treat the flag as urgent only when three towers are held or when a single cap flips the clock immediately.",
+            "The flag is a multiplier, not a religion.",
+            "Release the escort only after tower sitters confirm the held shell remains intact.",
+            "Do not strip tower defense for a low-value two-tower flag fantasy.",
+            { baseDefense = 2, mobility = 2 }, { "Tower Sitter", "Flag Escort", "Mid Denial", "Third Tower Shell" },
+            { priority = 8, tags = { "pressure", "flag-at-three" } }),
+
+        plan("EOTS_RECOVERY_FLAG_STALL_FOR_TOWER_SWAP", "LOSE",
+            { "STEALTH", "ROTATION", "BALANCED" },
+            "Use the flag or mid threat only to stall attention while the grouped swap retakes the softer tower.",
+            "Losing Eye recoveries often need the flag as bait, not as the actual comeback plan.",
+            "Collapse the stall group the moment the tower flip becomes real.",
+            "Do not convert the stall into a full delivery chase while still losing the tower race.",
+            { mobility = 2, crossCap = 1, control = 2 }, { "Mid Stall", "Tower Swap", "Tower Restore", "Floater" },
+            { priority = 7, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "recovery", "flag-stall" } }),
+    },
+
+    WSG = {
+        plan("WSG_OPENING_ROUTE_ASSIGNMENTS", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "BUNKER" },
+            "Name the carrier, pin the carrier healer and home peel to our flag route, send one grouped return team out together, and leave no home lane uncovered before gates open.",
+            "A defined escort and return structure prevents the opening from dissolving into mid skirmishes.",
+            "Shift one return player home only if the carrier shell still keeps healer plus peel coverage.",
+            "Do not split offense across tunnel, ramp, and midfield without one regroup route.",
+            { flagCarry = 1, healing = 2 }, { "Flag Carrier", "Carrier Group", "Home Peel", "Return Team" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "route" } }),
+
+        plan("WSG_OPENING_FLAG_SPECIALIST", "OPENING",
+            { "BALANCED", "ROTATION", "BUNKER" },
+            "Protect the named carrier route, send the offensive priest with the return team, and keep one peel package glued to the FC until the first stack cycle.",
+            "Flag-specialist rosters win when escort, offense, and peel are intentionally separated instead of all hovering mid.",
+            "Collapse the offensive priest home only if the FC healer loses support.",
+            "Do not let the return group dissolve into midfield damage.",
+            { flagCarry = 1, healing = 2 }, { "Flag Carrier", "Carrier Group", "Home Peel", "Return Team" },
+            { priority = 9, ourTiers = { "FLAG_SPECIALIST" }, tags = { "opening", "flag-specialist" } }),
+
+        plan("WSG_OPENING_ANTI_BUNKER", "OPENING",
+            { "BALANCED", "MELEE", "ROT" },
+            "Deny the enemy route early, preserve our carrier shell, and refuse low-value early offense until the bunker pieces are visible.",
+            "Bunker teams want you to over-extend offense before the FC route is even established.",
+            "Push grouped offense only after escorts, peel, and healer positions are confirmed.",
+            "Do not trickle into a fully healthy bunker with no route control.",
+            { flagCarry = 1, healing = 2 }, { "Flag Carrier", "Carrier Group", "Route Denial", "Return Scout" },
+            { priority = 9, enemyArchetypes = { "BUNKER" }, enemyTiers = { "FLAG_SPECIALIST" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("WSG_STABILIZE_CARRIER_FIRST", "WIN",
+            { "BUNKER", "BALANCED", "ROT" },
+            "Keep healer plus peel on our carrier, send only the named return group with healer control, and leave home route denial covered behind them.",
+            "A safe carrier plus one synchronized return preserves the lead.",
+            "Shift another player to defense if our carrier loses peel coverage.",
+            "Do not send the entire team away from our carrier.",
+            { flagCarry = 1, healing = 2 }, { "Carrier Group", "Return Group", "Home Peel" },
+            { priority = 10, tags = { "win", "carrier-first" } }),
+
+        plan("WSG_PRESSURE_RETURN_WAVE", "ANY",
+            { "MELEE", "RANGED", "ROT", "BALANCED" },
+            "Group offense, exhaust externals, secure the return, and escort the immediate cap.",
+            "Separated offense cannot break a stable carrier position.",
+            "Wait for the next resurrection wave if fewer than six arrive together.",
+            "Do not farm mid while the enemy carrier is stable.",
+            { control = 2 }, { "Return Team", "Carrier Peel", "Cap Escort" },
+            { priority = 8, tags = { "pressure", "return-wave" } }),
+
+        plan("WSG_RECOVERY_RESET_OFFENSE", "LOSE",
+            { "MELEE", "ROTATION", "RANGED" },
+            "Stop trickling, keep peel and one healer on our carrier, regroup the full return wave at one route, and move only when home coverage is restored.",
+            "Most losing Warsong states stay losing because offense arrives in fragments and peel disappears.",
+            "Restart the return only once healer control, burst, and escort timing are named.",
+            "Do not re-enter the enemy carrier room one at a time.",
+            { control = 2 }, { "Carrier Group", "Return Team", "Home Peel" },
+            { priority = 10, tags = { "recovery", "reset" } }),
+
+        plan("WSG_WIN_HIGH_STACK_COLLAPSE", "WIN",
+            { "BALANCED", "MELEE", "ROT", "RANGED" },
+            "Keep our carrier alive until enemy stacks make the next grouped return the highest-value kill window.",
+            "The cleanest flag maps are often won by patience, not by forcing equal health bunker fights.",
+            "Call the collapse only when healer control, burst, and route denial all land in the same window.",
+            "Do not force the return before the enemy carrier stack pressure matters.",
+            { flagCarry = 1, control = 2 }, { "Carrier Group", "Return Team", "Route Denial" },
+            { priority = 9, tags = { "win", "high-stack" } }),
+
+        plan("WSG_OPENING_ANTI_STEALTH_ROUTE", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Plant anti-stealth coverage on the route, keep the FC healer glued, and deny the first isolated sap-cap pattern.",
+            "Stealth openers win Warsong when the route is treated like empty space.",
+            "Move the anti-stealth piece only after the escort confirms the first route handoff is safe.",
+            "Do not let both escort and anti-stealth leave the same lane together.",
+            { flagCarry = 1, healing = 2 }, { "Flag Carrier", "Carrier Group", "Anti-Stealth Route", "Return Team" },
+            { priority = 8, enemyArchetypes = { "STEALTH", "ROTATION" }, tags = { "opening", "anti-stealth" } }),
+
+        plan("WSG_ENDGAME_PROTECT_CAP_WINDOW", "WIN",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Keep the carrier shell intact, deny the enemy route denial group, and move only the named synchronized return while the winning cap lane stays covered.",
+            "Late Warsong wins are often thrown by greedily overextending while our carrier is already safe enough to score.",
+            "Recommit a second wave only if the first return fails without breaking carrier safety.",
+            "Do not send peel, escort, and return all into the same room if our carrier can already win on the next cap.",
+            { flagCarry = 1, control = 2 }, { "Carrier Group", "Route Denial", "Return Team" },
+            { priority = 9, tags = { "endgame", "cap-window" } }),
+
+        plan("WSG_OPENING_ANTI_BUNKER_FAST_PICK", "OPENING",
+            { "MELEE", "ROTATION", "BALANCED" },
+            "Own a fast route, pick the first exposed escort or healer before the bunker forms, and keep the FC shell untouched.",
+            "Flag maps are easiest before the enemy bunker actually finishes dressing.",
+            "Convert back to route denial if the early pick does not happen on schedule.",
+            "Do not drag the whole team into their base room before the first escort weakness is forced.",
+            { flagCarry = 1, control = 2, burst = 2 }, { "Flag Carrier", "Carrier Group", "Fast Pick Team", "Route Denial" },
+            { priority = 8, enemyArchetypes = { "BUNKER" }, enemyTiers = { "FLAG_SPECIALIST" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("WSG_RECOVERY_RESET_ROOM_TO_ROUTE", "LOSE",
+            { "BALANCED", "RANGED", "ROTATION", "BUNKER" },
+            "Abandon the dead room fight, rebuild one route-denial shell, and restart the return from the safest lane.",
+            "Warsong recoveries die when everyone keeps forcing the same room where the last offense already failed.",
+            "Re-enter the room only after the route denial and healer control arrive together.",
+            "Do not trickle through tunnel or ramp just because the enemy carrier is visible there.",
+            { flagCarry = 1, control = 2, healing = 2 }, { "Carrier Group", "Route Denial", "Return Reset", "Healer Control" },
+            { priority = 8, tags = { "recovery", "route-reset" } }),
+
+        plan("WSG_ENDGAME_EFC_STACK_COLLAPSE", "WIN",
+            { "MELEE", "ROTATION", "BALANCED" },
+            "Delay until enemy carrier stacks and then push the synchronized collapse with one escort-safe return wave.",
+            "The cleanest late Warsong kill is often the one taken after stacks, not before.",
+            "Abort the kill wave if our own carrier loses peel during the setup.",
+            "Do not empty the FC shell just because the enemy carrier becomes visible first.",
+            { flagCarry = 1, control = 2, burst = 2 }, { "Carrier Group", "Escort Safe Return", "Stack Collapse", "Route Denial" },
+            { priority = 8, tags = { "endgame", "stack-collapse" } }),
+    },
+
+    TWINPEAKS = {
+        plan("TP_OPENING_ROUTE_CONTROL", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "BUNKER" },
+            "Name one carrier route, keep escort and home peel on that lane, send one grouped return team through a single ramp, and leave the opposite ramp covered only by denial.",
+            "Route ownership matters before either carrier reaches a bunker position.",
+            "Collapse home if enemy offense bypasses route denial.",
+            "Do not divide offense between both ramps without a regroup call.",
+            { flagCarry = 1, healing = 2 }, { "Flag Carrier", "Route Escort", "Home Peel", "Return Team" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "route" } }),
+
+        plan("TP_OPENING_BLITZ_ROUTE", "OPENING",
+            { "ROTATION", "MELEE", "BALANCED" },
+            "Own one fast carrier route, keep the return team mounted and grouped, and deny the enemy intercept group before the bunker forms.",
+            "Tempo comps win Twin Peaks by deciding the first route, not by wandering the midfield.",
+            "Rebuild at home if the fast route is lost before escort stabilizes.",
+            "Do not chase separated enemy players while the carrier route is unclaimed.",
+            { flagCarry = 1, mobility = 2 }, { "Flag Carrier", "Route Escort", "Intercept Denial", "Return Team" },
+            { priority = 8, ourTiers = { "BLITZ_CONVERSION", "DH_DISRUPTION" }, tags = { "opening", "tempo" } }),
+
+        plan("TP_OPENING_ANTI_BUNKER_CHOKE", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Own the choke, deny the intercept group, and keep offense grouped until the bunker exposes its first defensive layer.",
+            "Bunker teams want offense to split before the route and healer control are both ready.",
+            "Push offense only after the route denial group confirms the approach is open.",
+            "Do not run separate offense waves through both ramps.",
+            { flagCarry = 1, control = 2 }, { "Carrier Group", "Route Denial", "Return Team" },
+            { priority = 9, enemyArchetypes = { "BUNKER" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("TP_STABILIZE_ROUTE_BUNKER", "WIN",
+            { "BUNKER", "ROTATION", "BALANCED" },
+            "Keep the carrier shell planted, leave route denial on the live enemy approach, and move only the return scout or grouped kill wave once home peel remains covered.",
+            "Route control reduces pressure before it reaches the carrier.",
+            "Collapse home if enemy offense bypasses the denial group.",
+            "Do not trade carrier safety for unrelated mid kills.",
+            { flagCarry = 1 }, { "Carrier Group", "Route Denial", "Return Scout" },
+            { priority = 10, tags = { "win", "route-bunker" } }),
+
+        plan("TP_PRESSURE_CHOKE_RETURN", "ANY",
+            { "MELEE", "RANGED", "ROT", "BALANCED" },
+            "Force the enemy carrier through a controlled choke and push one synchronized return wave.",
+            "Twin Peaks kills happen when the return and route denial groups arrive together.",
+            "Reset if offense reaches the choke in separate packets.",
+            "Do not start the push without healer control named.",
+            { control = 2 }, { "Return Team", "Route Denial", "Carrier Peel" },
+            { priority = 8, tags = { "pressure", "choke" } }),
+
+        plan("TP_RECOVERY_REBUILD_ROUTE", "LOSE",
+            { "MELEE", "ROTATION", "RANGED" },
+            "Regroup at the route, rebuild peel, then push one complete return wave.",
+            "A losing Twin Peaks offense usually needs a full route reset before it needs more damage.",
+            "Delay the next push until the return team and route escort reach the same launch point.",
+            "Do not send frustrated solo players into the enemy base.",
+            { control = 2, mobility = 1 }, { "Carrier Group", "Return Team", "Route Escort" },
+            { priority = 10, tags = { "recovery", "route-reset" } }),
+
+        plan("TP_WIN_HIGH_STACK_ROUTE_COLLAPSE", "WIN",
+            { "BALANCED", "MELEE", "ROT", "RANGED" },
+            "Protect the FC until enemy stacks and route denial create one decisive collapse window.",
+            "Twin Peaks is often won by choosing the right route kill window, not the first available damage push.",
+            "Collapse only when the route denial group and return wave arrive together.",
+            "Do not send a half-offense into a still-clean bunker route.",
+            { flagCarry = 1, control = 2 }, { "Carrier Group", "Return Team", "Route Denial" },
+            { priority = 9, tags = { "win", "high-stack" } }),
+
+        plan("TP_PRESSURE_ALT_RAMP_SWAP", "ANY",
+            { "ROTATION", "STEALTH", "BALANCED" },
+            "Threaten one ramp, then swap the grouped return through the less-covered route once the denial group draws the response.",
+            "Twin Peaks pressures best when the enemy commits early to the wrong access lane.",
+            "Abort the swap if escort and return cannot hit the second lane together.",
+            "Do not let route denial and return pressure split onto opposite ramps.",
+            { mobility = 2, control = 2 }, { "Route Denial", "Return Team", "Carrier Peel" },
+            { priority = 8, tags = { "pressure", "route-swap" } }),
+
+        plan("TP_OPENING_ANTI_STEALTH_ROUTE_PAIR", "OPENING",
+            { "BALANCED", "RANGED", "BUNKER" },
+            "Pair the first route handoff with anti-stealth coverage and deny the classic vanish-reopen pattern before it reaches the carrier shell.",
+            "Twin Peaks stealth pressure wins by turning route space into fake safe space.",
+            "Release the anti-stealth pair only after the first escort handoff is confirmed.",
+            "Do not let escort and anti-stealth both leave the same ramp together.",
+            { flagCarry = 1, healing = 2, control = 2 }, { "Flag Carrier", "Route Escort", "Anti-Stealth Pair", "Return Team" },
+            { priority = 8, enemyArchetypes = { "STEALTH", "ROTATION" }, enemyTiers = { "ROGUE_MAP_CHOKE", "FERAL_STEALTH" }, tags = { "opening", "anti-stealth" } }),
+
+        plan("TP_RECOVERY_CAP_TRADE_IF_ROUTE_SAFE", "LOSE",
+            { "BALANCED", "ROTATION", "RANGED" },
+            "If the enemy carrier cannot die first, protect our route and force the equalizing cap trade before re-opening the next return cycle.",
+            "Twin Peaks recoveries sometimes require accepting the first trade so the second route can be controlled.",
+            "Shift back to the return kill plan the moment the route stabilizes after the trade.",
+            "Do not die trying to deny an unstoppable cap while our own route is still open.",
+            { flagCarry = 1, control = 2, healing = 2 }, { "Carrier Route Protect", "Trade Escort", "Next Return Wave", "Home Peel" },
+            { priority = 7, tags = { "recovery", "cap-trade" } }),
+
+        plan("TP_ENDGAME_OWN_FLAG_FIRST", "WIN",
+            { "BALANCED", "BUNKER", "RANGED", "ROTATION" },
+            "If our next cap already wins, keep peel and escort on our route, leave route denial between the enemy and our carrier, and send only minimal return pressure forward.",
+            "Late Twin Peaks is often won by refusing to turn a secured route into a chaotic final room fight.",
+            "Commit extra offense only after our carrier route confirms the last handoff.",
+            "Do not send peel, route denial, and return all into the enemy base if our own flag path is already winning.",
+            { flagCarry = 1, healing = 2, control = 2 }, { "Carrier Group", "Route Denial", "Minimal Return", "Home Peel" },
+            { priority = 8, tags = { "endgame", "own-flag-first" } }),
+    },
+
+    TEMPLE = {
+        plan("TOK_OPENING_PICKUP_LANES", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "ROTATION" },
+            "Assign four pickup lanes, keep healers central, and converge carriers toward supported scoring space.",
+            "Named pickups prevent duplicate routes while the center group protects the first scoring cycle.",
+            "Abandon a pickup only when the replacement player confirms it.",
+            "Do not stack all carriers before center control exists.",
+            { mobility = 2, healing = 2 }, { "Orb Pickup", "Center Healer", "Carrier Peel" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "orb-lanes" } }),
+
+        plan("TOK_OPENING_SAFE_TWO_ORB", "OPENING",
+            { "BALANCED", "BUNKER", "RANGED" },
+            "Secure two safe opening orbs, hold center with the main shell, and prepare the third pickup only after the first carriers are protected.",
+            "Pug and bunker-style rosters often throw Temple by overextending for all four orbs before protection exists.",
+            "Expand to the third and fourth lanes only after center coverage is live.",
+            "Do not send healers with unsupported outer pickups.",
+            { healing = 2, sustain = 1 }, { "Orb Carrier", "Center Healer", "Carrier Peel", "Replacement Pickup" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "safe" } }),
+
+        plan("TOK_OPENING_ANTI_MELEE_SPREAD", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Spread carriers enough to avoid shared pressure while center peel forces the melee collapse to travel.",
+            "Temple losses versus melee are usually caused by voluntarily stacking every carrier into one kill box.",
+            "Collapse one carrier inward only after the first hostile movement tools are spent.",
+            "Do not sit every orb holder on the same center pixel.",
+            { healing = 2, peel = 1 }, { "Orb Pickup", "Center Healer", "Carrier Peel" },
+            { priority = 9, enemyArchetypes = { "MELEE" }, enemyTiers = { "ANTI_HEALER", "MEAT_GRINDER", "MELEE_COLLAPSE" }, tags = { "opening", "anti-melee" } }),
+
+        plan("TOK_STABILIZE_CENTER_CONTROL", "ANY",
+            { "BALANCED", "ROT", "RANGED" },
+            "Control center, protect high-value carriers, and prepare replacement pickups.",
+            "Center control converts carrier uptime into the strongest score rate.",
+            "Spread carriers if stacked pressure creates a shared kill zone.",
+            "Do not stack every carrier in one vulnerable position.",
+            { healing = 2 }, { "Carriers", "Center Control", "Replacement" },
+            { priority = 10, tags = { "stabilize", "center" } }),
+
+        plan("TOK_PRESSURE_CARRIER_DELETE", "LOSE",
+            { "MELEE", "ROTATION", "BALANCED" },
+            "Collapse on the most actionable enemy carrier and recover the loose orb.",
+            "Removing score generation is more valuable than unrelated kills.",
+            "Swap carriers if the target gains major active defenses.",
+            "Do not chase a protected carrier away from the next pickup.",
+            { burst = 2 }, { "Kill Team", "Pickup", "Friendly Peel" },
+            { priority = 9, ourTiers = { "DK_KILL_BOX", "ANTI_HEALER", "MEAT_GRINDER" }, tags = { "pressure", "carrier-delete" } }),
+
+        plan("TOK_RECOVERY_LOOSE_ORB_RESET", "LOSE",
+            { "BALANCED", "ROTATION", "MELEE", "RANGED" },
+            "Recover loose orbs as a group and rebuild center control before stacking carriers.",
+            "Temple recoveries fail when the team chases kills while neutral orbs sit unclaimed.",
+            "Re-stack score only after replacements and healers are back in place.",
+            "Do not keep dying on a low-value carrier while open orbs remain free.",
+            { mobility = 2 }, { "Pickup", "Center Healer", "Carrier Peel", "Kill Team" },
+            { priority = 8, tags = { "recovery", "loose-orb" } }),
+
+        plan("TOK_WIN_HIGH_STACK_PROTECT_AND_DELETE", "WIN",
+            { "BALANCED", "ROT", "RANGED", "MELEE" },
+            "Protect our high-value carrier, deny free swaps, and collapse only when the enemy carrier becomes the more fragile score source.",
+            "Temple swings when one side protects stacks longer than the other, not when everyone tunnels the nearest low orb.",
+            "Rotate our fragile carrier out only after the replacement pickup is already covered.",
+            "Do not trade a protected friendly carrier for a low-chance enemy chase.",
+            { healing = 2, peel = 1 }, { "Carrier Peel", "Replacement Pickup", "Kill Team", "Center Healer" },
+            { priority = 9, tags = { "win", "stack-discipline" } }),
+
+        plan("TOK_ENDGAME_DENY_PICKUP_LANE", "WIN",
+            { "BALANCED", "ROTATION", "STEALTH", "RANGED" },
+            "Deny the one pickup lane that can change the last score swing and leave every other fight alone.",
+            "Late Temple wins come from denying the next carrier, not farming expired targets.",
+            "Reassign the kill team as soon as the decisive orb is secured or reset.",
+            "Do not chase across the map while the game-winning orb spawns free.",
+            { mobility = 2, control = 2 }, { "Denial Team", "Carrier Peel", "Replacement Pickup" },
+            { priority = 8, tags = { "endgame", "pickup-denial" } }),
+
+        plan("TOK_OPENING_OUTER_RING_PICKUPS", "OPENING",
+            { "RANGED", "ROT", "BALANCED" },
+            "Take the safer outer-ring pickups first, keep healers central, and refuse the instant center dogpile unless it is clearly favorable.",
+            "Temple does not require every opener to be a center coinflip.",
+            "Collapse inward only after the first carriers are already assigned and protected.",
+            "Do not walk four pickups through one hostile center lane before support exists.",
+            { mobility = 2, healing = 2 }, { "Outer Pickup", "Center Healer", "Carrier Peel", "Reserve Pickup" },
+            { priority = 8, enemyArchetypes = { "MELEE", "ROT" }, tags = { "opening", "outer-ring" } }),
+
+        plan("TOK_PRESSURE_REPLACE_LOW_STACK", "ANY",
+            { "BALANCED", "ROTATION", "RANGED", "STEALTH" },
+            "Replace the low-stack vulnerable carrier before forcing the kill wave so the enemy cannot win the attrition race during our offense.",
+            "Temple pressure is stronger when the friendly score engine is dressed before the collapse.",
+            "Delay the kill wave until the replacement pickup is in safe hands.",
+            "Do not send the peel line away while the low-stack carrier is still the softest target on the map.",
+            { mobility = 2, peel = 1, healing = 2 }, { "Replacement Pickup", "Carrier Peel", "Kill Team", "Center Healer" },
+            { priority = 7, tags = { "pressure", "replace-low-stack" } }),
+
+        plan("TOK_RECOVERY_TWO_CARRIER_RESET", "LOSE",
+            { "BALANCED", "RANGED", "BUNKER", "ROT" },
+            "Give up the fragile extra orb, stabilize around two safe carriers, and rebuild center control before re-expanding.",
+            "Temple recoveries often start by shrinking the score footprint, not by pretending all four orbs are still manageable.",
+            "Re-expand to a third or fourth carrier only after the peel shell and pickup lanes are alive again.",
+            "Do not feed repeated deaths holding a third low-value orb in a losing state.",
+            { healing = 2, peel = 1 }, { "Safe Carriers", "Center Reset", "Replacement Pickup", "Kill Team" },
+            { priority = 8, pugFriendly = true, tags = { "recovery", "two-carrier-reset" } }),
+    },
+
+    SILVERSHARD = {
+        plan("SSM_OPENING_CART_SPLIT", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "ROTATION" },
+            "Split into named Lava, Water, and Top cart groups with one mobile response player.",
+            "Every active cart receives enough presence without wasting the strongest fight group off-route.",
+            "The response player joins the first cart facing real enemy numbers.",
+            "Do not keep players on a secured or completed route.",
+            { mobility = 1, control = 2 }, { "Lava Team", "Water Team", "Top Team", "Cart Floater" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "split-carts" } }),
+
+        plan("SSM_OPENING_SAFE_TWO_CART", "OPENING",
+            { "BALANCED", "BUNKER" },
+            "Commit hard to the two most likely scoring routes and keep one reserve instead of over-splitting the opener.",
+            "Pug rosters lose Silvershard by trying to be everywhere at once before the first route proves valuable.",
+            "Expand to the third cart only if the reserve confirms real advantage.",
+            "Do not send one isolated player to a dead route just because it exists.",
+            { mobility = 1 }, { "Primary Cart", "Secondary Cart", "Cart Floater" },
+            { priority = 7, pugFriendly = true, tags = { "opening", "safe" } }),
+
+        plan("SSM_OPENING_ANTI_MELEE_TOP_LAVA", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Take routes that let ranged peel and line of sight work before accepting the first melee collapse.",
+            "Melee teams want a tight neutral junction; ranged teams want time and angles.",
+            "Pull the reserve into the first cart where peel is required.",
+            "Do not meet the melee stack in the narrowest possible tunnel for free.",
+            { control = 2 }, { "Top Team", "Lava Team", "Cart Floater" },
+            { priority = 8, enemyArchetypes = { "MELEE" }, enemyTiers = { "MEAT_GRINDER", "MELEE_COLLAPSE" }, tags = { "opening", "anti-melee" } }),
+
+        plan("SSM_STABILIZE_ESCORT_ROTATE", "WIN",
+            { "BALANCED", "ROTATION", "RANGED" },
+            "Keep enough bodies escorting the live scoring cart, move the next-rotation group early, and leave a delay pair covering the enemy turn-in lane.",
+            "Early movement preserves both current score and next-cart tempo.",
+            "Leave when the current route is mathematically secure.",
+            "Do not remain at a completed or unrecoverable cart.",
+            { rotation = 1 }, { "Cart Team", "Next Rotation", "Delay" },
+            { priority = 10, tags = { "win", "escort-rotate" } }),
+
+        plan("SSM_PRESSURE_DELAY_RECOVER", "LOSE",
+            { "MELEE", "STEALTH", "ROTATION" },
+            "Delay the enemy turn-in and take the shortest recoverable cart.",
+            "One delay group can buy the time required for a favorable score trade.",
+            "Abandon delay if it cannot alter the turn-in.",
+            "Do not fight off-cart after the route is decided.",
+            { mobility = 2 }, { "Delay", "Recovery Cart", "Scout" },
+            { priority = 9, tags = { "pressure", "delay" } }),
+
+        plan("SSM_ENDGAME_DECISIVE_CART_ONLY", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "BUNKER" },
+            "Commit only to carts that can alter the final score.",
+            "Late Silvershard throws happen when players keep escorting a route that no longer matters.",
+            "Move immediately when a different cart becomes the real final-score swing.",
+            "Do not die defending a cart that is already mathematically irrelevant.",
+            {}, { "Decisive Cart", "Delay", "Reserve" },
+            { priority = 9, tags = { "endgame", "decisive-cart" } }),
+
+        plan("SSM_RECOVERY_DECISIVE_SPLIT", "LOSE",
+            { "BALANCED", "ROTATION", "MELEE", "RANGED" },
+            "Put the main group on the only recoverable cart, leave one delay package on the enemy score line, and abandon every dead track so the real swing lane stays covered.",
+            "Silvershard recoveries fail when the team keeps escorting sentimental carts instead of the one that changes the race.",
+            "Rebuild onto the next decisive route the moment the current cart becomes mathematically dead.",
+            "Do not die defending a side cart that cannot catch the race.",
+            { mobility = 2, control = 2 }, { "Recovery Cart", "Delay Team", "Scout", "Reserve" },
+            { priority = 9, tags = { "recovery", "decisive-split" } }),
+
+        plan("SSM_ENDGAME_STOP_DEAD_ESCORT", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "BUNKER" },
+            "Stop escorting the cart that no longer changes the finish and move every spare body to the final swing route.",
+            "A winning Silvershard clock is preserved by knowing when an escort has already done enough.",
+            "Shift the escort group as soon as the next cart becomes the true finish-point lever.",
+            "Do not let completed escort logic strand four players on a dead lane.",
+            {}, { "Decisive Cart", "Reserve", "Delay" },
+            { priority = 9, tags = { "endgame", "escort-discipline" } }),
+
+        plan("SSM_OPENING_ANTI_ROTATION_ROUTE_PIN", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Pin the rotation team to one loud route with real escort presence and send the reserve only after the second cart proves live.",
+            "Silvershard rotation comps profit when every defender instantly abandons their current lane for the newest ping.",
+            "Release the reserve once the second route becomes the actual score swing.",
+            "Do not let the reserve bounce to every cart animation without a contact call.",
+            { control = 2, rotation = 1 }, { "Primary Cart", "Reserve", "Secondary Cart", "Delay" },
+            { priority = 8, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "opening", "anti-rotation" } }),
+
+        plan("SSM_OPENING_TWO_ROUTE_PIN_THIRD_SCOUT", "OPENING",
+            { "BALANCED", "RANGED", "BUNKER" },
+            "Leave real escort teams on the two highest-value carts, keep one scout delaying the third lane only, and hold the reserve until another route becomes truly decisive.",
+            "Silvershard openers fail when one player is sacrificed to every possible track equally.",
+            "Upgrade the third-lane scout only if it becomes the actual decisive cart.",
+            "Do not anchor a full escort on three routes before any of them proves live.",
+            { mobility = 1, control = 2 }, { "Primary Cart", "Secondary Cart", "Third-Lane Scout", "Reserve" },
+            { priority = 8, pugFriendly = true, tags = { "opening", "two-route-pin" } }),
+
+        plan("SSM_PRESSURE_STOP_ESCORT_START_DELAY", "ANY",
+            { "ROTATION", "STEALTH", "BALANCED" },
+            "When one escort has done enough, peel those players early into delay so the enemy loses the next score line before it starts.",
+            "The cleanest Silvershard pressure often comes from leaving a cart at the right time, not the longest time.",
+            "Return to escort only if the current route becomes decisive again.",
+            "Do not keep four bodies babysitting a cart that no longer needs them.",
+            { control = 2, mobility = 2 }, { "Finished Escort Peel", "Delay Team", "Decisive Cart", "Reserve" },
+            { priority = 7, tags = { "pressure", "escort-to-delay" } }),
+
+        plan("SSM_ENDGAME_FORCE_LAST_TURN", "WIN",
+            { "BALANCED", "MELEE", "RANGED", "ROTATION" },
+            "Force everything onto the final cart that mathematically wins and reduce every other lane to throwaway delay only.",
+            "Late Silvershard is a math problem before it is a team-fight problem.",
+            "Abandon all non-decisive escort lanes the instant the last-turn route is identified.",
+            "Do not let sentiment for an old cart steal the final winning turn.",
+            { control = 2, mobility = 1 }, { "Last-Turn Cart", "Delay Only", "Reserve" },
+            { priority = 8, tags = { "endgame", "last-turn" } }),
+    },
+
+    DEEPHAUL = {
+        plan("DHR_OPENING_ESCORT_DELAY", "OPENING",
+            { "BALANCED", "ROT", "RANGED", "ROTATION" },
+            "Leave six escorting our cart, keep four delaying theirs, and move only the Crystal floater while both cart jobs remain covered.",
+            "A strong escort plus a real delay group advances the primary race without abandoning either cart.",
+            "Move the mobile delay player to Crystal only while both carts remain covered.",
+            "Do not trade cart presence for an unconfirmed Crystal fight.",
+            { control = 2, mobility = 1 }, { "Our Cart Escort", "Enemy Cart Delay", "Crystal Floater" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "escort-delay" } }),
+
+        plan("DHR_OPENING_BLITZ_TEMPO", "OPENING",
+            { "ROTATION", "MELEE", "BALANCED" },
+            "Win the race with tempo: keep escort tight, delay as a group, and turn only the enemy cart that changes the next junction.",
+            "Tempo comps succeed here when every move serves the cart race instead of side fights.",
+            "Skip Crystal if either cart obligation becomes uncovered.",
+            "Do not let the delay team become random tunnel combat.",
+            { mobility = 2, control = 2 }, { "Our Cart Escort", "Enemy Cart Delay", "Crystal Floater" },
+            { priority = 8, ourTiers = { "BLITZ_CONVERSION", "DH_DISRUPTION" }, tags = { "opening", "tempo" } }),
+
+        plan("DHR_OPENING_ANTI_BUNKER_CART_FIRST", "OPENING",
+            { "BALANCED", "RANGED", "ROT" },
+            "Stay with our cart and assign a separate group to slow theirs.",
+            "Cart progress is the primary win condition, especially into bunker-style teams that want long stall fights.",
+            "Contest Crystal only when both carts remain covered.",
+            "Do not leave our cart uncovered for a secondary objective.",
+            {}, { "Escort", "Delay", "Crystal Scout" },
+            { priority = 9, enemyArchetypes = { "BUNKER" }, tags = { "opening", "anti-bunker" } }),
+
+        plan("DHR_STABILIZE_CART_FIRST", "ANY",
+            { "BALANCED", "BUNKER", "ROT" },
+            "Keep escort on our cart, leave delay on theirs, and send only the Crystal scout when both cart lines remain covered.",
+            "The cart race stays primary until a Crystal swing actually changes the projection.",
+            "Take Crystal only when the escort and delay obligations are both stable.",
+            "Do not let 'free Crystal' become a hidden cart throw.",
+            {}, { "Escort", "Delay", "Crystal Scout" },
+            { priority = 10, tags = { "stabilize", "cart-first" } }),
+
+        plan("DHR_PRESSURE_TURN_ENEMY", "LOSE",
+            { "MELEE", "ROTATION", "RANGED" },
+            "Turn the enemy cart before investing in Crystal or extended mid pressure.",
+            "Stopping enemy progress is the fastest way to recover the race.",
+            "Return to escort when the enemy cart is safely reversed.",
+            "Do not spend the recovery window in a side fight.",
+            { control = 2 }, { "Turn Team", "Our Escort", "Crystal Delay" },
+            { priority = 9, tags = { "pressure", "turn-cart" } }),
+
+        plan("DHR_ENDGAME_DISTANCE_PROTECT", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "BUNKER" },
+            "Protect the decisive cart distance and ignore Crystal unless it changes the race.",
+            "Late Deep Six errors happen when teams leave the lead cart for a neutral side objective.",
+            "Reassign the reserve only when another junction becomes the real finish point.",
+            "Do not die contesting a route that cannot change the final turn-in.",
+            {}, { "Escort", "Delay", "Reserve" },
+            { priority = 9, tags = { "endgame", "distance" } }),
+
+        plan("DHR_PRESSURE_CRYSTAL_ONLY_IF_SWING", "ANY",
+            { "BALANCED", "ROTATION", "RANGED", "STEALTH" },
+            "Take Crystal only when it materially changes the next cart junction; otherwise stay on escort and delay duty.",
+            "Deephaul wins when the team respects the cart race instead of glamor objectives.",
+            "Abandon Crystal immediately if either cart obligation becomes uncovered.",
+            "Do not convert a stable race edge into a side-objective stall.",
+            { mobility = 1, control = 2 }, { "Our Cart Escort", "Enemy Cart Delay", "Crystal Floater" },
+            { priority = 8, tags = { "pressure", "crystal-swing" } }),
+
+        plan("DHR_RECOVERY_ESCORT_ALL_IN", "LOSE",
+            { "BALANCED", "MELEE", "ROTATION", "RANGED" },
+            "If only one cart can still swing the race, move the whole playable group onto that escort, leave only bare-minimum delay behind, and ignore Crystal until the escort line is safe.",
+            "Some Deephaul recoveries require total commitment to the one survivable race line.",
+            "Release a body back to delay only after the escort path is mathematically favored.",
+            "Do not split evenly when only one cart still matters.",
+            { control = 2, mobility = 1 }, { "All-In Escort", "Delay Only", "Crystal Abandon" },
+            { priority = 9, tags = { "recovery", "all-in" } }),
+
+        plan("DHR_OPENING_CRYSTAL_BAIT_NO_COMMIT", "OPENING",
+            { "STEALTH", "ROTATION", "BALANCED" },
+            "Show one mobile player toward Crystal only to pull eyes while the real escort and delay packages establish the cart race.",
+            "Crystal can be used as information warfare without becoming the plan.",
+            "Collapse the bait instantly once either cart makes first contact.",
+            "Do not convert the bait into a full Crystal brawl before the race is dressed.",
+            { mobility = 2, control = 2 }, { "Escort", "Delay", "Crystal Bait", "Reserve" },
+            { priority = 7, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "opening", "crystal-bait" } }),
+
+        plan("DHR_RECOVERY_TURN_THEN_ESCORT", "LOSE",
+            { "BALANCED", "RANGED", "ROTATION", "MELEE" },
+            "If enemy progress is too far ahead, turn the hostile cart first and only then rebuild our escort lead.",
+            "Some Deephaul recoveries cannot be won by pure escort speed because the enemy clock is already too far forward.",
+            "Shift back into escort-first mode the moment the hostile cart is safely reversed.",
+            "Do not split the comeback force between half-turn and half-escort.",
+            { control = 2, mobility = 1 }, { "Turn Team", "Escort Rebuild", "Delay Only", "Crystal Ignore" },
+            { priority = 8, tags = { "recovery", "turn-then-escort" } }),
+
+        plan("DHR_ENDGAME_IGNORE_CRYSTAL_LEAD", "WIN",
+            { "BALANCED", "BUNKER", "RANGED", "ROTATION" },
+            "If Crystal cannot change the finish, leave it dead, keep escort on the winning cart line, and move every spare body into turn denial only.",
+            "Late Deephaul throws come from confusing a visible side objective with the real race lever.",
+            "Touch Crystal only if the distance math truly changes because of it.",
+            "Do not peel escort or delay off the winning cart line for cosmetic Crystal control.",
+            { control = 2 }, { "Escort", "Delay", "Distance Protect", "Crystal Ignore" },
+            { priority = 9, tags = { "endgame", "ignore-crystal" } }),
+    },
+
+    SEETHING = {
+        plan("SHORE_OPENING_SCOUTS", "OPENING",
+            { "BALANCED", "ROTATION", "STEALTH", "RANGED" },
+            "Send three mobile scouts to reveal spawn lanes and hold the main group for the first confirmed active node.",
+            "Information and arrival timing prevent the team from splitting before scoring locations are known.",
+            "Collapse every scout except the one covering the next likely spawn.",
+            "Do not fight at inactive or exhausted nodes.",
+            { mobility = 2 }, { "North Scout", "East Scout", "West Scout", "Main Capture Team" },
+            { priority = 10, pugFriendly = true, tags = { "opening", "scouts" } }),
+
+        plan("SHORE_OPENING_CONSERVATIVE_MAIN_PACK", "OPENING",
+            { "BALANCED", "BUNKER" },
+            "Use one or two light scouts only and keep the main pack intact for the first real public spawn.",
+            "Pug rosters on Seething Shore often lose more by over-scouting than by arriving one second later together.",
+            "Release a second scout only after the first spawn is identified.",
+            "Do not split the main team before the first active node exists.",
+            { mobility = 1 }, { "Scout", "Main Capture Team", "Reserve" },
+            { priority = 7, pugFriendly = true, tags = { "opening", "conservative" } }),
+
+        plan("SHORE_OPENING_ANTI_ROTATION_PRELOAD", "OPENING",
+            { "BALANCED", "ROT", "RANGED" },
+            "Reveal the first spawn, then pre-rotate one mobile package toward the next public lane while the main pack secures channel control.",
+            "Rotation teams are strongest when they own the second spawn before anyone else moves.",
+            "Collapse the preload package back into the first node if the channel is under real threat.",
+            "Do not send the preload package so early that the first channel becomes under-defended.",
+            { mobility = 2, control = 2 }, { "Main Capture Team", "Pre-Rotate Package", "Scout" },
+            { priority = 8, enemyArchetypes = { "ROTATION", "STEALTH" }, tags = { "opening", "preload" } }),
+
+        plan("SHORE_STABILIZE_EARLY_ROTATE", "ANY",
+            { "ROTATION", "STEALTH", "BALANCED" },
+            "Rotate early to the next public spawn and protect the channel.",
+            "Arrival timing matters more than road kills.",
+            "Regroup if the team cannot reach two nodes with useful numbers.",
+            "Do not remain at an exhausted node.",
+            { mobility = 2 }, { "Fast Cap", "Main Team", "Scout" },
+            { priority = 10, tags = { "stabilize", "early-rotate" } }),
+
+        plan("SHORE_PRESSURE_DENY_CHANNEL", "LOSE",
+            { "MELEE", "RANGED", "ROTATION", "BALANCED" },
+            "Group for the next active node and deny every free channel.",
+            "A clean denial preserves the only recoverable scoring window.",
+            "Move immediately when the node becomes exhausted.",
+            "Do not split before the next spawn is confirmed.",
+            { control = 2 }, { "Denial Team", "Next Scout" },
+            { priority = 9, tags = { "pressure", "deny-channel" } }),
+
+        plan("SHORE_ENDGAME_ONLY_DECISIVE_DEPOSITS", "WIN",
+            { "BALANCED", "ROTATION", "RANGED", "STEALTH" },
+            "Contest only deposits that can change the final resource race.",
+            "The winning team should stop bleeding bodies into completed nodes and late low-value fights.",
+            "Reassign all mobile players to the next decisive public spawn.",
+            "Do not spend the final minute defending an exhausted node.",
+            {}, { "Decisive Spawn", "Reserve", "Scout" },
+            { priority = 9, tags = { "endgame", "decisive-spawn" } }),
+
+        plan("SHORE_PRESSURE_PRELOAD_SECOND_NODE", "ANY",
+            { "ROTATION", "STEALTH", "BALANCED" },
+            "Secure the current active node with minimum winning numbers and preload the next likely public lane with a mobile pair.",
+            "Seething Shore rewards teams that are already moving when the next deposit becomes relevant.",
+            "Collapse the preload pair back in if the current channel loses control.",
+            "Do not preload so hard that the current node flips before the deposit finishes.",
+            { mobility = 2, control = 2 }, { "Current Channel Team", "Preload Pair", "Scout" },
+            { priority = 8, tags = { "pressure", "preload-next" } }),
+
+        plan("SHORE_RECOVERY_SINGLE_DEPOSIT_COMMIT", "LOSE",
+            { "BALANCED", "MELEE", "ROTATION", "RANGED" },
+            "Identify the one deposit that still changes the race and commit there with grouped denial instead of broad equal presence.",
+            "Late Seething recoveries fail when everyone shows up a little bit everywhere.",
+            "Disengage exhausted or irrelevant lanes immediately after the deposit window closes.",
+            "Do not spend the comeback timer protecting a node that no longer matters.",
+            { control = 2, mobility = 2 }, { "Decisive Deposit", "Delay Scout", "Reserve" },
+            { priority = 9, tags = { "recovery", "single-deposit" } }),
+
+        plan("SHORE_STABILIZE_DOUBLE_LANE_THEN_COLLAPSE", "ANY",
+            { "BALANCED", "ROTATION", "STEALTH", "RANGED" },
+            "Hold the current active deposit with minimum winning numbers, keep one scout preloaded to the next lane, and collapse the reserve only after the new spawn confirms.",
+            "Seething Shore rewards two-lane discipline far more than broad equal presence.",
+            "Move the reserve the moment the second deposit becomes real or the current one exhausts.",
+            "Do not strand the whole team at a finished channel while the next lane opens.",
+            { mobility = 2, control = 2 }, { "Current Deposit", "Preload Scout", "Reserve", "Next Collapse" },
+            { priority = 8, tags = { "stabilize", "double-lane" } }),
+
+        plan("SHORE_OPENING_ANTI_MELEE_WIDE_SCOUT", "OPENING",
+            { "RANGED", "ROT", "BALANCED" },
+            "Use wider scout lanes, avoid the first choke brawl, and make the melee core arrive late to the first active deposit.",
+            "Seething melee teams are strongest when every first contact happens on their chosen pixel.",
+            "Collapse the wide scouts inward once the first active node is secured or denied.",
+            "Do not let the first public spawn become a free melee funnel.",
+            { mobility = 2, control = 2 }, { "Wide Scout", "Main Channel Team", "Reserve", "Next Scout" },
+            { priority = 8, enemyArchetypes = { "MELEE" }, enemyTiers = { "MEAT_GRINDER", "MELEE_COLLAPSE", "ANTI_HEALER" }, tags = { "opening", "anti-melee" } }),
+
+        plan("SHORE_PRESSURE_DOUBLE_DEPOSIT_SPLIT", "ANY",
+            { "ROTATION", "STEALTH", "BALANCED" },
+            "When two meaningful deposits are live, secure the easier one and send only the compact denial package to interrupt the second.",
+            "Seething Shore punishes teams that treat both live deposits like equal must-wins.",
+            "Collapse both groups back together the moment one deposit exhausts or fully stabilizes.",
+            "Do not split the whole roster into two full fights with no reserve.",
+            { mobility = 2, control = 2 }, { "Primary Deposit", "Denial Package", "Reserve", "Next Scout" },
+            { priority = 8, tags = { "pressure", "double-deposit" } }),
+
+        plan("SHORE_ENDGAME_IGNORE_EXHAUSTED_NODE", "WIN",
+            { "BALANCED", "RANGED", "ROTATION", "STEALTH" },
+            "Ignore exhausted or nearly finished nodes and move early to the next deposit that actually flips the final race.",
+            "Late Seething Shore is decided by arrival to the last meaningful spawn, not by finishing every visible fight.",
+            "Release the current group as soon as the active node becomes mathematically irrelevant.",
+            "Do not strand the winning team on a deposit that no longer changes the outcome.",
+            { mobility = 2 }, { "Current Exit", "Next Spawn Preload", "Reserve", "Scout" },
+            { priority = 9, tags = { "endgame", "ignore-exhausted" } }),
+    },
+}
+
+function BattlePlans:Get(mapKey)
+    local result = {}
+    for _, entry in ipairs(PLANS[mapKey] or {}) do
+        if KWR.PatchData:PlanEnabled(entry.id) then result[#result + 1] = entry end
+    end
+    return result
+end
+
+function BattlePlans:Count()
+    local count = 0
+    for _, plans in pairs(PLANS) do count = count + #plans end
+    return count
+end
+
+KWR:RegisterModule("BattlePlans", BattlePlans)

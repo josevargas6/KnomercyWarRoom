@@ -1,0 +1,35 @@
+{
+  "schema": "kwr-replay-run-result",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "replayId",
+    "replayPath",
+    "strict",
+    "final",
+    "evaluation",
+    "checkpoints"
+  ],
+  "finalRequired": [
+    "planID",
+    "status",
+    "tags",
+    "summary"
+  ],
+  "evaluationRequired": [
+    "primaryMatch",
+    "fallbackMatch",
+    "forbiddenHits"
+  ],
+  "checkpointRequired": [
+    "step",
+    "at",
+    "event",
+    "planID",
+    "status",
+    "current",
+    "next",
+    "tags"
+  ]
+}

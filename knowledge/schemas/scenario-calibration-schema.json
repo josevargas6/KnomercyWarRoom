@@ -1,0 +1,30 @@
+{
+  "schema": "kwr-scenario-calibration-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "shared",
+    "scenarios"
+  ],
+  "sharedRequired": [
+    "classificationGuidance",
+    "minimumReviewedCases"
+  ],
+  "scenarioRequired": [
+    "scenarioId",
+    "mapKey",
+    "phase",
+    "summary",
+    "goal",
+    "reviewedCases",
+    "wins",
+    "losses",
+    "winRate",
+    "primaryClassifications",
+    "topFailure",
+    "disciplineRule",
+    "reviewConfidence"
+  ]
+}

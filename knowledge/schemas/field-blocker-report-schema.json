@@ -1,0 +1,28 @@
+{
+  "schema": "kwr-field-blocker-report-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "candidateVersion",
+    "blockingDefects",
+    "recommendedSessions",
+    "liveOnlyGates"
+  ],
+  "blockerRequired": [
+    "id",
+    "priority",
+    "status",
+    "title",
+    "liveProofNeeded",
+    "bestMap",
+    "bestSession"
+  ],
+  "sessionRequired": [
+    "sessionId",
+    "purpose",
+    "maps",
+    "clears"
+  ]
+}

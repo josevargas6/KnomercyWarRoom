@@ -1,0 +1,28 @@
+{
+  "schema": "kwr-scenario-adversarial-calibration-schema",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "shared",
+    "scenarios"
+  ],
+  "sharedRequired": [
+    "minimumAdversarialCases",
+    "disciplinePrinciples"
+  ],
+  "scenarioRequired": [
+    "scenarioId",
+    "mapKey",
+    "phase",
+    "adversarialCases",
+    "truthRisk",
+    "safePrimaryAction",
+    "safeFallbackAction",
+    "forbiddenCommit",
+    "mustStay",
+    "disciplineRule",
+    "escalateWhen"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "kwr-outcome-review",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "reviewId",
+    "replayId",
+    "mapProfile",
+    "result",
+    "reviewStatus",
+    "classifications",
+    "checkpoints"
+  ],
+  "classificationRequired": [
+    "primary",
+    "summary"
+  ],
+  "checkpointRequired": [
+    "offsetSeconds",
+    "classification",
+    "summary"
+  ],
+  "classificationAllowlist": [
+    "DECISION_ERROR",
+    "EXECUTION_ERROR",
+    "SENSOR_ERROR",
+    "OPPONENT_COUNTER",
+    "MECHANICAL_LOSS",
+    "UNRESOLVED",
+    "SUCCESS"
+  ]
+}

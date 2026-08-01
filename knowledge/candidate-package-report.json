@@ -1,0 +1,97 @@
+{
+    "schema":  "kwr-candidate-package-report",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-07-31T23:18:44Z",
+    "candidateVersion":  "6.1.0-alpha.29",
+    "buildOutputDirectory":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance",
+    "distributionArtifact":  {
+                                 "name":  "KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip",
+                                 "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip",
+                                 "size":  520549,
+                                 "sha256":  "1380730C4D0E7CD3FA4CFE0BEBCF06AD527CF5A6FEE9AD7A02976399B96041A4"
+                             },
+    "developerArtifact":  {
+                              "name":  "KWR_6_1_0_ALPHA_29_DEVELOPER.zip",
+                              "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_DEVELOPER.zip",
+                              "size":  35965158,
+                              "sha256":  "13793350A2F70AC3713E161F61CBEA9B4C9F9017F48197F589E0DDA15C0D90DE"
+                          },
+    "hashManifest":  {
+                         "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_SHA256.txt",
+                         "lines":  [
+                                       "1380730C4D0E7CD3FA4CFE0BEBCF06AD527CF5A6FEE9AD7A02976399B96041A4  KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip",
+                                       "13793350A2F70AC3713E161F61CBEA9B4C9F9017F48197F589E0DDA15C0D90DE  KWR_6_1_0_ALPHA_29_DEVELOPER.zip",
+                                       "52103D003879EA838B7845A2C2F7F0B5BFE97BE32DC6238CA5B2B215A8400676  KWRSentinel_6_1_0_ALPHA_25.zip"
+                                   ]
+                     },
+    "sourceManifest":  {
+                           "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "329D4A7CA3E41C2DA64067746817780E648DEEB079017F799875575BBA67D582",
+                           "distributionEntryCount":  127,
+                           "developerDigest":  "9B8DD776635F3FFD573A2F228A537773C7BD18926791EF2DBE51CA308986D9A3",
+                           "developerEntryCount":  4910
+                       },
+    "buildProvenance":  {
+                            "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-07-31T23:13:45.7447541Z",
+                            "sentinelIncluded":  true,
+                            "powershellEdition":  "Desktop",
+                            "powershellVersion":  "5.1.26100.8875",
+                            "nodeAvailableOnBuildPath":  false,
+                            "npmAvailableOnBuildPath":  false,
+                            "fengariAvailableOnBuildPath":  false,
+                            "gitAvailable":  false
+                        },
+    "reproducibility":  {
+                            "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_REPRODUCIBILITY.json",
+                            "result":  "PASS_WITH_DOCUMENTED_EXCEPTION",
+                            "distributionDigestMatch":  true,
+                            "developerDigestMatch":  true,
+                            "notes":  [
+                                          "Two clean builds were executed with the primary package audit intact and nested reproducibility/package-audit recursion disabled in the secondary pass.",
+                                          "Staged payload digests matched across clean builds, but PowerShell Compress-Archive did not produce byte-identical ZIP containers.",
+                                          "Package audit still validated the extracted payload, release exclusions, and extracted runtime smoke/soak on the primary build."
+                                      ]
+                        },
+    "packageAudit":  {
+                         "path":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance\\KWR_6_1_0_ALPHA_29_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-07-31T23:18:40.6908604Z",
+                         "result":  "PASS",
+                         "hashesVerified":  3,
+                         "distributionEntries":  127,
+                         "developerEntries":  4918,
+                         "extractedDistributionRuntime":  "PASS",
+                         "extractedDeveloperRuntime":  "PASS",
+                         "reproducibilityCheck":  "PASS_COMPATIBLE"
+                     },
+    "environmentCertification":  {
+                                     "buildExecuted":  true,
+                                     "packageAuditInThisWorkspace":  "CERTIFIED_IN_WORKSPACE",
+                                     "runtimeBlocker":  null,
+                                     "runtimePreflightPath":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\knowledge\\runtime-preflight.json",
+                                     "notes":  [
+                                                   "The exact distribution and developer ZIPs were created in this workspace.",
+                                                   "The reproducibility report was created in this workspace.",
+                                                   "Extracted-runtime package certification was completed in this workspace.",
+                                                   "Live install and upgrade proof still require real client execution and field evidence."
+                                               ]
+                                 },
+    "operatorPaths":  {
+                          "addonsRoot":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns",
+                          "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
+                          "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
+                          "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
+                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.0-alpha.29"
+                      },
+    "fieldEvidenceBinding":  {
+                                 "candidateVersion":  "6.1.0-alpha.29",
+                                 "distributionSha256":  "1380730C4D0E7CD3FA4CFE0BEBCF06AD527CF5A6FEE9AD7A02976399B96041A4",
+                                 "requiredProof":  [
+                                                       "Screenshot or text capture of installed TOC version.",
+                                                       "Recorded distribution ZIP SHA256 used for install.",
+                                                       "Backup location for pre-session SavedVariables.",
+                                                       "Proof whether the session was clean install or upgrade install.",
+                                                       "Any /kwr verify, bug, screenshot, or AAR evidence tied to this same hash."
+                                                   ]
+                             }
+}

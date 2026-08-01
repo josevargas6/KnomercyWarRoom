@@ -1,0 +1,8 @@
+{
+  "schema": "kwr-rbg-foundation",
+  "schemaVersion": 1,
+  "required": ["schema", "schemaVersion", "generatedAt", "shared", "maps"],
+  "sharedRequired": ["doctrineLayers", "sensorFamilies", "decisionAxes", "corpusLayers"],
+  "mapRequired": ["mapKey", "title", "short", "family", "decisionModel", "primaryQuestions", "benchmarkFocus", "corpusMinimum"],
+  "corpusMinimumRequired": ["replays", "goldenLabels", "outcomeReviews", "adversarialCases"]
+}

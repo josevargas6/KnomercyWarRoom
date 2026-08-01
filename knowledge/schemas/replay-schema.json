@@ -1,0 +1,87 @@
+{
+  "schema": "kwr-replay-schema",
+  "schemaVersion": 1,
+  "kind": "timeline_replay",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "kind",
+    "replayId",
+    "source",
+    "capturedAt",
+    "patch",
+    "ruleset",
+    "map",
+    "side",
+    "redaction",
+    "initialState",
+    "timeline",
+    "expectedLabels",
+    "outcome"
+  ],
+  "sourceRequired": [
+    "type",
+    "consent",
+    "provenance",
+    "verified"
+  ],
+  "mapRequired": [
+    "key",
+    "mode",
+    "kind",
+    "profile"
+  ],
+  "redactionRequired": [
+    "status",
+    "identityMode",
+    "secretValuesRemoved"
+  ],
+  "initialStateRequired": [
+    "friendlyRoster",
+    "enemyRoster",
+    "score",
+    "objectives",
+    "evidenceQuality"
+  ],
+  "timelineEventRequired": [
+    "t",
+    "event",
+    "facts"
+  ],
+  "expectedLabelRequired": [
+    "primaryActions",
+    "fallbackActions",
+    "forbiddenActions",
+    "mustStay",
+    "requiredCapabilities",
+    "successConditions",
+    "abortConditions",
+    "maxDelaySeconds",
+    "rationale"
+  ],
+  "outcomeRequired": [
+    "result",
+    "finalScore",
+    "reviewStatus",
+    "checkpoints"
+  ],
+  "checkpointRequired": [
+    "offsetSeconds",
+    "classification",
+    "summary"
+  ],
+  "classificationAllowlist": [
+    "DECISION_ERROR",
+    "EXECUTION_ERROR",
+    "SENSOR_ERROR",
+    "OPPONENT_COUNTER",
+    "MECHANICAL_LOSS",
+    "UNRESOLVED",
+    "SUCCESS"
+  ],
+  "notes": [
+    "Identifiers must be sanitized or salted per replay.",
+    "Unavailable public facts must be explicit null or unavailable markers.",
+    "Timeline order must be chronological and deterministic."
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "schema": "kwr-rbg-scenario-matrix",
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-30T00:00:00Z",
+  "targetBaseScenariosPerMap": 20,
+  "shared": {
+    "commonScenarioFamilies": [
+      "OPENING_SETUP",
+      "OPENING_COUNTER_READ",
+      "STABILIZE_LEAD",
+      "STABILIZE_BREAK_RESPONSE",
+      "PRESSURE_CONVERT",
+      "PRESSURE_BAIT",
+      "RECOVERY_FROM_DEFICIT",
+      "RECOVERY_REGROUP",
+      "ENDGAME_CLOSE",
+      "ENDGAME_DENY_THROW",
+      "MIDGAME_RESET_DISCIPLINE",
+      "LAST_WINDOW_DENY_FORCE",
+      "OPENING_SCOUT_INFO",
+      "OPENING_CROSSMAP_PUNISH",
+      "STABILIZE_TRADE_DISCIPLINE",
+      "STABILIZE_REINFORCE_TIMING",
+      "PRESSURE_ISOLATION",
+      "PRESSURE_ROUTE_DENIAL",
+      "RECOVERY_POST_WIPE",
+      "RECOVERY_SCORE_FLOOR"
+    ],
+    "collectionOrder": [
+      "OPENING_SETUP",
+      "OPENING_COUNTER_READ",
+      "STABILIZE_LEAD",
+      "STABILIZE_BREAK_RESPONSE",
+      "PRESSURE_CONVERT",
+      "PRESSURE_BAIT",
+      "RECOVERY_FROM_DEFICIT",
+      "RECOVERY_REGROUP",
+      "ENDGAME_CLOSE",
+      "ENDGAME_DENY_THROW",
+      "MIDGAME_RESET_DISCIPLINE",
+      "LAST_WINDOW_DENY_FORCE",
+      "OPENING_SCOUT_INFO",
+      "OPENING_CROSSMAP_PUNISH",
+      "STABILIZE_TRADE_DISCIPLINE",
+      "STABILIZE_REINFORCE_TIMING",
+      "PRESSURE_ISOLATION",
+      "PRESSURE_ROUTE_DENIAL",
+      "RECOVERY_POST_WIPE",
+      "RECOVERY_SCORE_FLOOR"
+    ]
+  },
+  "maps": [
+    {
+      "mapKey": "ARATHI",
+      "mapProfile": "ab_standard",
+      "scenarios": [
+        { "scenarioId": "ab-opening-home-bs", "phase": "OPENING", "summary": "Secure home and establish the Blacksmith opener.", "goal": "Win the first stable node shell." },
+        { "scenarioId": "ab-opening-farm-lm-read", "phase": "OPENING", "summary": "Read the enemy split from Farm and claim Lumber Mill only if Blacksmith stays contestable.", "goal": "Open into the better two-node shell without blind overcommit." },
+        { "scenarioId": "ab-stabilize-three-base", "phase": "STABILIZE", "summary": "Protect a 3-2 lead with a reserve route.", "goal": "Hold the winning clock." },
+        { "scenarioId": "ab-stabilize-anchor-under-inc", "phase": "STABILIZE", "summary": "Reinforce the pressured anchor node without emptying the cross-map reserve.", "goal": "Keep the shell intact while denying the flip." },
+        { "scenarioId": "ab-pressure-weak-outer", "phase": "PRESSURE", "summary": "Pressure the weakest outer node while preserving center coverage.", "goal": "Convert map pressure into a fourth lane or safer third." },
+        { "scenarioId": "ab-pressure-bait-bs-rotate", "phase": "PRESSURE", "summary": "Show at Blacksmith to pull defenders, then punish the slower outer rotation.", "goal": "Create a cleaner node swing than a front-door brawl." },
+        { "scenarioId": "ab-recovery-from-lost-bs", "phase": "RECOVERY", "summary": "Recover after losing Blacksmith control.", "goal": "Rebuild a recoverable scoring path." },
+        { "scenarioId": "ab-recovery-stop-four-cap", "phase": "RECOVERY", "summary": "Abort low-value side pressure and stop the enemy four-cap first.", "goal": "Restore a survivable map state before rebuilding offense." },
+        { "scenarioId": "ab-endgame-clock-discipline", "phase": "ENDGAME", "summary": "Protect only the exact bases needed to finish.", "goal": "Close without a greed throw." }
+        ,{ "scenarioId": "ab-endgame-deny-backcap", "phase": "ENDGAME", "summary": "Anchor the back-cap route and refuse chase fights off the node ring.", "goal": "Finish on node truth instead of kill bait." }
+        ,{ "scenarioId": "ab-midgame-reset-shell", "phase": "RECOVERY", "summary": "Call a full shell reset after staggered road deaths before re-entering the node game.", "goal": "Restore defender timing and stop feeding broken lanes." }
+        ,{ "scenarioId": "ab-last-window-deny-cap", "phase": "ENDGAME", "summary": "Deny the final enemy cap route even if it means giving up a low-value outer touch.", "goal": "Finish by protecting the only clock that still matters." }
+        ,{ "scenarioId": "ab-opening-scout-bs-read", "phase": "OPENING", "summary": "Scout the first Blacksmith commit and punish the empty outer node only if the road picture confirms it.", "goal": "Convert information into the safer opener instead of blind splitting." }
+        ,{ "scenarioId": "ab-opening-crossmap-punish", "phase": "OPENING", "summary": "Force a visible Farm or Lumber Mill answer, then hit the cross-map node the reserve can no longer save.", "goal": "Win the opener through route punishment, not equal trading." }
+        ,{ "scenarioId": "ab-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Trade one low-value assault only when the current node clock still wins the race.", "goal": "Protect the lead without overdefending every touch." }
+        ,{ "scenarioId": "ab-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Send reinforcements only on the timing that preserves both Blacksmith control and the next outer response.", "goal": "Keep the shell stable without late double-rotating." }
+        ,{ "scenarioId": "ab-pressure-isolate-road-team", "phase": "PRESSURE", "summary": "Isolate the enemy road team before committing to the node spin.", "goal": "Create a cleaner capture by removing the first reinforcement wave." }
+        ,{ "scenarioId": "ab-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest enemy reinforce route, then cap through the weakened node ring.", "goal": "Turn movement control into a safer node conversion." }
+        ,{ "scenarioId": "ab-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a full wipe by rebuilding one anchor and one reserve lane before touching the third node again.", "goal": "Restore the shell before chasing equal-map pressure." }
+        ,{ "scenarioId": "ab-recovery-score-floor", "phase": "RECOVERY", "summary": "Take the score floor first by protecting the base pair that prevents an immediate collapse.", "goal": "Stay alive on clock while rebuilding the next swing." }
+      ]
+    },
+    {
+      "mapKey": "GILNEAS",
+      "mapProfile": "bfg_standard",
+      "scenarios": [
+        { "scenarioId": "bfg-opening-home-ww", "phase": "OPENING", "summary": "Secure home and commit to Waterworks.", "goal": "Build the first two-base shell." },
+        { "scenarioId": "bfg-opening-fake-ww-lh", "phase": "OPENING", "summary": "Show Waterworks pressure early, then rotate the faster strike into Lighthouse.", "goal": "Win the first real two-base shell through route timing." },
+        { "scenarioId": "bfg-stabilize-two-base", "phase": "STABILIZE", "summary": "Hold two with one response route.", "goal": "Protect the winning score path." },
+        { "scenarioId": "bfg-stabilize-waterworks-under-inc", "phase": "STABILIZE", "summary": "Reinforce Waterworks without stripping the home fallback.", "goal": "Keep the center shell alive and deny the collapse." },
+        { "scenarioId": "bfg-pressure-third-node", "phase": "PRESSURE", "summary": "Punish the weak third node after showing at Waterworks.", "goal": "Force a bad enemy rotation." },
+        { "scenarioId": "bfg-pressure-bait-waterworks", "phase": "PRESSURE", "summary": "Threaten Waterworks long enough to drag the reserve, then hit the softer side node.", "goal": "Convert fake center danger into a cleaner spin." },
+        { "scenarioId": "bfg-recovery-isolated-spinner", "phase": "RECOVERY", "summary": "Recover by grouped control on the isolated defender.", "goal": "Re-enter the scoring race." },
+        { "scenarioId": "bfg-recovery-regain-waterworks", "phase": "RECOVERY", "summary": "Retake Waterworks only when the home node remains covered.", "goal": "Recover the best-value node without opening a double loss." },
+        { "scenarioId": "bfg-endgame-no-chase", "phase": "ENDGAME", "summary": "Refuse off-node chases while ahead.", "goal": "End on two controlled bases." }
+        ,{ "scenarioId": "bfg-endgame-deny-backdoor", "phase": "ENDGAME", "summary": "Sit the backdoor path and stop last-second ninja value before leaving the node.", "goal": "Close on defender discipline." }
+        ,{ "scenarioId": "bfg-midgame-reset-waterworks", "phase": "RECOVERY", "summary": "Reset the failed Waterworks grind and rebuild from a real two-base shell.", "goal": "Stop donating bodies into a center trap that no longer wins." }
+        ,{ "scenarioId": "bfg-last-window-deny-spin", "phase": "ENDGAME", "summary": "Deny the last enemy spin window at the decisive node before chasing any cleanup kill.", "goal": "Finish by protecting the true final flag state." }
+        ,{ "scenarioId": "bfg-opening-scout-waterworks", "phase": "OPENING", "summary": "Scout the Waterworks lane first and commit only after the side-node answer is actually revealed.", "goal": "Open on verified route truth instead of equal guessing." }
+        ,{ "scenarioId": "bfg-opening-crossmap-punish", "phase": "OPENING", "summary": "Pull the enemy response to Waterworks, then punish the cross-map node the reserve abandoned.", "goal": "Win the opener through route punishment, not a center brawl." }
+        ,{ "scenarioId": "bfg-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value side trade only when the two-base clock still remains winning.", "goal": "Protect the lead without overdefending fake pressure." }
+        ,{ "scenarioId": "bfg-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live node on the timing that still preserves the next home response.", "goal": "Keep the shell stable without double-rotating into collapse." }
+        ,{ "scenarioId": "bfg-pressure-isolate-reserve", "phase": "PRESSURE", "summary": "Isolate the enemy reserve path before spinning the real node.", "goal": "Convert pressure through a delayed reinforcement wave instead of a front-door stall." }
+        ,{ "scenarioId": "bfg-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest Lighthouse or Mine reinforce route before fully committing to the cap.", "goal": "Turn movement control into a cleaner node take." }
+        ,{ "scenarioId": "bfg-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding one stable base and one reserve lane before touching center again.", "goal": "Restore the shell before feeding another Waterworks loss." }
+        ,{ "scenarioId": "bfg-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the minimum two-base score floor first when a greed retake would open the full collapse.", "goal": "Stay alive on clock while setting up the next reclaim." }
+      ]
+    },
+    {
+      "mapKey": "DEEPWIND",
+      "mapProfile": "dwg_standard",
+      "scenarios": [
+        { "scenarioId": "dwg-opening-market-shell", "phase": "OPENING", "summary": "Establish the central shell and connected flanks.", "goal": "Claim the most stable first hold." },
+        { "scenarioId": "dwg-opening-market-quarry-read", "phase": "OPENING", "summary": "Secure Market first, then choose Quarry or Ruins from the enemy opening shape.", "goal": "Open into the best triangle instead of locking a blind flank." },
+        { "scenarioId": "dwg-stabilize-three-node", "phase": "STABILIZE", "summary": "Hold three with a mobile reserve.", "goal": "Protect Market value and outer coverage." },
+        { "scenarioId": "dwg-stabilize-market-under-inc", "phase": "STABILIZE", "summary": "Keep Market stable under pressure while preserving the connected flank route.", "goal": "Deny the shell break that collapses both sides." },
+        { "scenarioId": "dwg-pressure-ghost-flank", "phase": "PRESSURE", "summary": "Strike the weak flank after pulling defenders central.", "goal": "Convert reserve timing into a node swing." },
+        { "scenarioId": "dwg-pressure-bait-market-rotate", "phase": "PRESSURE", "summary": "Flash pressure through Market to bait the reserve, then hit the longer outer route.", "goal": "Create a cheap flank take without surrendering center value." },
+        { "scenarioId": "dwg-recovery-single-flank", "phase": "RECOVERY", "summary": "Recover by collapsing onto one reclaimable flank.", "goal": "Restore a stable triangle." },
+        { "scenarioId": "dwg-recovery-reclaim-market", "phase": "RECOVERY", "summary": "Retake Market when the outer losses make side-node trading unwinnable.", "goal": "Recover the map heart before chasing edge value." },
+        { "scenarioId": "dwg-endgame-simultaneous-inc", "phase": "ENDGAME", "summary": "Finish while denying simultaneous outer assaults.", "goal": "Close before shell break." }
+        ,{ "scenarioId": "dwg-endgame-deny-outer-trade", "phase": "ENDGAME", "summary": "Ignore low-value ghost taps and stop the one outer trade that can flip the clock.", "goal": "Finish on true score leverage." }
+        ,{ "scenarioId": "dwg-midgame-reset-market-shell", "phase": "RECOVERY", "summary": "Reset the broken Market shell and rebuild around one connected reclaim instead of equal flank panic.", "goal": "Recover map shape before bleeding both sides." }
+        ,{ "scenarioId": "dwg-last-window-deny-market-break", "phase": "ENDGAME", "summary": "Protect Market from the last enemy break window even if an outer trade looks tempting.", "goal": "Finish by denying the only center collapse that still matters." }
+        ,{ "scenarioId": "dwg-opening-scout-market-read", "phase": "OPENING", "summary": "Scout the first Market fight shape and choose the outer commit only after the reserve route is visible.", "goal": "Open into the best triangle using real information." }
+        ,{ "scenarioId": "dwg-opening-crossmap-punish", "phase": "OPENING", "summary": "Pull defenders through Market, then punish the opposite flank the reserve can no longer save.", "goal": "Win the opener by forcing the wrong long rotation." }
+        ,{ "scenarioId": "dwg-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one outer trade only when Market plus the current flank clock still stays winning.", "goal": "Protect the lead without reacting to every fake touch." }
+        ,{ "scenarioId": "dwg-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the pressured node on the timing that still keeps Market and the far flank connected.", "goal": "Hold the shell without breaking both sides at once." }
+        ,{ "scenarioId": "dwg-pressure-isolate-outer-team", "phase": "PRESSURE", "summary": "Catch the isolated outer team before the node spin begins.", "goal": "Create a cleaner flank capture by deleting the first relief wave." }
+        ,{ "scenarioId": "dwg-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest Market-to-flank reinforce route, then take the exposed node through timing.", "goal": "Turn route control into safer conversion." }
+        ,{ "scenarioId": "dwg-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding one connected flank and one reserve lane before contesting the full map again.", "goal": "Restore triangle shape before equal panic pressure." }
+        ,{ "scenarioId": "dwg-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor by holding the two nodes that stop the immediate clock collapse first.", "goal": "Stay in the game while building the next reclaim." }
+      ]
+    },
+    {
+      "mapKey": "EOTS",
+      "mapProfile": "eots_standard",
+      "scenarios": [
+        { "scenarioId": "eots-opening-two-towers-mid", "phase": "OPENING", "summary": "Open with two tower sitters and mid control.", "goal": "Establish usable opening ownership." },
+        { "scenarioId": "eots-opening-lost-mid-two-towers", "phase": "OPENING", "summary": "Lose the first mid touch but secure two towers and rebuild through the next flag value.", "goal": "Avoid overreacting to early mid loss when tower truth stays playable." },
+        { "scenarioId": "eots-stabilize-tower-value", "phase": "STABILIZE", "summary": "Protect tower score before overvaluing flag routes.", "goal": "Keep scoring leverage." },
+        { "scenarioId": "eots-stabilize-mid-with-two-towers", "phase": "STABILIZE", "summary": "Hold mid only when two-tower ownership makes the flag route actually winning.", "goal": "Convert mid control into real value instead of empty fighting." },
+        { "scenarioId": "eots-pressure-flag-into-tower", "phase": "PRESSURE", "summary": "Use flag threat to force an enemy tower response.", "goal": "Create a tower swing." },
+        { "scenarioId": "eots-pressure-bait-dr-rotate", "phase": "PRESSURE", "summary": "Threaten Draenei Ruins enough to bend the enemy route, then swing the exposed tower.", "goal": "Turn false tower danger into the cheaper capture." },
+        { "scenarioId": "eots-recovery-tower-first", "phase": "RECOVERY", "summary": "Recover a tower before forcing a low-value flag.", "goal": "Repair the score path." },
+        { "scenarioId": "eots-recovery-rebuild-mid-control", "phase": "RECOVERY", "summary": "Rebuild mid control only after tower parity makes the next flag matter.", "goal": "Recover through score truth instead of habit." },
+        { "scenarioId": "eots-endgame-flag-clock", "phase": "ENDGAME", "summary": "Calculate final flag value against tower clock.", "goal": "Take only the decisive route." }
+        ,{ "scenarioId": "eots-endgame-deny-last-swing", "phase": "ENDGAME", "summary": "Anchor the one tower that protects the clock and deny the final backdoor swing.", "goal": "Finish without abandoning decisive tower truth." }
+        ,{ "scenarioId": "eots-midgame-reset-mid-trap", "phase": "RECOVERY", "summary": "Reset the failed mid trap and rebuild through the next useful tower-value line.", "goal": "Stop losing towers while fighting for a dead flag picture." }
+        ,{ "scenarioId": "eots-last-window-deny-flag-throw", "phase": "ENDGAME", "summary": "Deny the last enemy flag route when tower truth already wins faster than a greedy chase.", "goal": "Finish by refusing a final false-mid throw." }
+        ,{ "scenarioId": "eots-opening-scout-mid-read", "phase": "OPENING", "summary": "Scout the first mid control picture before overcommitting the tower sitters to a dead flag line.", "goal": "Open on real tower-plus-mid truth instead of habit." }
+        ,{ "scenarioId": "eots-opening-crossmap-punish", "phase": "OPENING", "summary": "Force the enemy to over-answer one tower lane, then punish the cross-map tower that loses reserve support.", "goal": "Win the opener through route punishment rather than empty mid fighting." }
+        ,{ "scenarioId": "eots-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one flag touch to go only when the tower clock still remains winning without it.", "goal": "Protect score leverage without chasing every mid event." }
+        ,{ "scenarioId": "eots-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live tower or mid fight only on the timing that preserves the next tower answer.", "goal": "Keep the shell stable without breaking both routes." }
+        ,{ "scenarioId": "eots-pressure-isolate-flag-team", "phase": "PRESSURE", "summary": "Isolate the enemy flag team before swinging the exposed tower.", "goal": "Create a cleaner tower take by removing the first support wave." }
+        ,{ "scenarioId": "eots-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest tower reinforce route before fully committing to the capture.", "goal": "Turn movement control into a safer tower conversion." }
+        ,{ "scenarioId": "eots-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding two tower truth before forcing the next mid fight.", "goal": "Restore the score path before feeding a dead flag chase." }
+        ,{ "scenarioId": "eots-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the minimum tower score floor first when a greed mid reset would open the collapse.", "goal": "Stay alive on clock while preparing the next useful flag line." }
+      ]
+    },
+    {
+      "mapKey": "WSG",
+      "mapProfile": "wsg_standard",
+      "scenarios": [
+        { "scenarioId": "wsg-opening-route-and-return", "phase": "OPENING", "summary": "Assign the carrier route, peel, and return team.", "goal": "Create the first valid flag state." },
+        { "scenarioId": "wsg-opening-home-defense-read", "phase": "OPENING", "summary": "Hold enough home defense to stop the fast enemy grab while our route forms.", "goal": "Open without gifting a free early carrier state." },
+        { "scenarioId": "wsg-stabilize-escort-shell", "phase": "STABILIZE", "summary": "Protect our FC while building one return wave.", "goal": "Keep defense intact." },
+        { "scenarioId": "wsg-stabilize-turtle-denial", "phase": "STABILIZE", "summary": "Refuse endless tunnel pressure and rebuild a real return shell instead.", "goal": "Prevent fake offense from breaking our own carrier first." },
+        { "scenarioId": "wsg-pressure-efc-stack", "phase": "PRESSURE", "summary": "Pressure the EFC with healer control and one wave.", "goal": "Create a real return window." },
+        { "scenarioId": "wsg-pressure-fake-tunnel-swap", "phase": "PRESSURE", "summary": "Show tunnel pressure, then swap the hit to the safer EFC route collapse.", "goal": "Create the return window through path denial instead of face tanking." },
+        { "scenarioId": "wsg-recovery-rebuild-peel", "phase": "RECOVERY", "summary": "Recover by restoring peel before the next push.", "goal": "Stop failed trickle offense." },
+        { "scenarioId": "wsg-recovery-after-failed-return", "phase": "RECOVERY", "summary": "Reset after a failed return wave and restore carrier safety before re-engaging.", "goal": "Recover the shell instead of chain-feeding the same line." },
+        { "scenarioId": "wsg-endgame-return-cap", "phase": "ENDGAME", "summary": "Synchronize final return with immediate cap.", "goal": "Close the game on one clean conversion." }
+        ,{ "scenarioId": "wsg-endgame-deny-last-grab", "phase": "ENDGAME", "summary": "Protect the grab lanes first so the enemy never gets the final desperation state.", "goal": "Finish by denying the reset before it starts." }
+        ,{ "scenarioId": "wsg-midgame-reset-offense", "phase": "RECOVERY", "summary": "Reset the offense after a failed tunnel push and rebuild peel before the next real return wave.", "goal": "Stop chain-feeding into the enemy carrier shell." }
+        ,{ "scenarioId": "wsg-last-window-deny-cross", "phase": "ENDGAME", "summary": "Deny the last enemy cross-map grab route before overcommitting to a flashy finish.", "goal": "Finish by protecting the final controllable reset path." }
+        ,{ "scenarioId": "wsg-opening-scout-grab-lane", "phase": "OPENING", "summary": "Scout the first enemy grab lane and commit peel only after the true pickup route is confirmed.", "goal": "Open on real carrier truth instead of panic overcoverage." }
+        ,{ "scenarioId": "wsg-opening-crossmap-punish", "phase": "OPENING", "summary": "Force a defensive answer on one carrier route, then punish the cross-map lane left uncovered.", "goal": "Win the opener through route punishment rather than mirrored rushing." }
+        ,{ "scenarioId": "wsg-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value cross-map trade only when our carrier shell still keeps the winning clock.", "goal": "Protect the lead without overreacting to fake offense." }
+        ,{ "scenarioId": "wsg-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live return lane on the timing that still preserves peel on our FC.", "goal": "Keep the shell stable without breaking carrier safety." }
+        ,{ "scenarioId": "wsg-pressure-isolate-healer-line", "phase": "PRESSURE", "summary": "Isolate the enemy healer line before the real return commit lands.", "goal": "Create the return window by cutting the first rescue wave." }
+        ,{ "scenarioId": "wsg-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the safest enemy carrier route before collapsing the real return window.", "goal": "Turn movement control into a cleaner cap path." }
+        ,{ "scenarioId": "wsg-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding peel and route vision before sending the next return team.", "goal": "Restore carrier safety before another offense." }
+        ,{ "scenarioId": "wsg-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor first by stopping the next free enemy grab before chasing a fancy return.", "goal": "Stay alive on win path while rebuilding the real cap window." }
+      ]
+    },
+    {
+      "mapKey": "TWINPEAKS",
+      "mapProfile": "tp_standard",
+      "scenarios": [
+        { "scenarioId": "tp-opening-route-control", "phase": "OPENING", "summary": "Own one carrier route and deny the enemy approach.", "goal": "Establish a valid opening path." },
+        { "scenarioId": "tp-opening-home-defense-read", "phase": "OPENING", "summary": "Keep enough home cover to stop the fast enemy pickup while our route takes shape.", "goal": "Open without surrendering a free early flag state." },
+        { "scenarioId": "tp-stabilize-carrier-bunker", "phase": "STABILIZE", "summary": "Bunker our carrier without abandoning route vision.", "goal": "Preserve the shell and next return chance." },
+        { "scenarioId": "tp-stabilize-ramp-control", "phase": "STABILIZE", "summary": "Control the ramp and graveyard approach so the bunker does not become a trap.", "goal": "Keep carrier safety tied to route truth." },
+        { "scenarioId": "tp-pressure-efc-choke", "phase": "PRESSURE", "summary": "Force the enemy carrier through one controlled choke.", "goal": "Create a clean return window." },
+        { "scenarioId": "tp-pressure-fake-tunnel-swap", "phase": "PRESSURE", "summary": "Show tunnel pressure, then collapse the safer side route once defenders shift.", "goal": "Open the EFC without bleeding into the obvious choke." },
+        { "scenarioId": "tp-recovery-route-rebuild", "phase": "RECOVERY", "summary": "Recover by regrouping at route and restoring peel.", "goal": "Re-enter the scoring race." },
+        { "scenarioId": "tp-recovery-after-failed-return", "phase": "RECOVERY", "summary": "Reset after a failed return call and recover our route control before re-pushing.", "goal": "Stop chained losses from one expired window." },
+        { "scenarioId": "tp-endgame-final-cap", "phase": "ENDGAME", "summary": "Protect carrier safety and convert the decisive cap.", "goal": "Finish without mid distraction." }
+        ,{ "scenarioId": "tp-endgame-deny-last-grab", "phase": "ENDGAME", "summary": "Lock the enemy pickup route first so the final return cannot be undone.", "goal": "Finish by denying the last reset state." }
+        ,{ "scenarioId": "tp-midgame-reset-offense", "phase": "RECOVERY", "summary": "Reset after a broken offense and rebuild one true route before forcing another collapse.", "goal": "Stop route chaos from becoming a second free enemy grab." }
+        ,{ "scenarioId": "tp-last-window-deny-cross", "phase": "ENDGAME", "summary": "Deny the enemy's last cross-map pickup lane even if the kill route still looks tempting.", "goal": "Finish by protecting the final reset state first." }
+        ,{ "scenarioId": "tp-opening-scout-pickup-lane", "phase": "OPENING", "summary": "Scout the first enemy pickup lane and commit peel only after the true grab route is confirmed.", "goal": "Open on real flag-route truth instead of panic coverage." }
+        ,{ "scenarioId": "tp-opening-crossmap-punish", "phase": "OPENING", "summary": "Force one side-route answer, then punish the cross-map lane the reserve can no longer protect.", "goal": "Win the opener through route punishment rather than mirrored rushing." }
+        ,{ "scenarioId": "tp-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value cross-map trade only when our carrier shell still keeps the winning clock.", "goal": "Protect the lead without overreacting to fake offense." }
+        ,{ "scenarioId": "tp-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live return lane on the timing that still preserves bunker safety and route vision.", "goal": "Keep the shell stable without breaking our carrier first." }
+        ,{ "scenarioId": "tp-pressure-isolate-healer-line", "phase": "PRESSURE", "summary": "Isolate the enemy healer line before the true return collapse lands.", "goal": "Create the return window by stripping the first rescue wave." }
+        ,{ "scenarioId": "tp-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the safest enemy carrier route before fully committing the return call.", "goal": "Turn movement control into a cleaner cap path." }
+        ,{ "scenarioId": "tp-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding peel, route vision, and one true return lane before re-engaging.", "goal": "Restore carrier safety before the next collapse." }
+        ,{ "scenarioId": "tp-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor first by denying the next free pickup before chasing a flashy kill route.", "goal": "Stay alive on win path while rebuilding the decisive return." }
+      ]
+    },
+    {
+      "mapKey": "TEMPLE",
+      "mapProfile": "tok_standard",
+      "scenarios": [
+        { "scenarioId": "tok-opening-pickup-lanes", "phase": "OPENING", "summary": "Assign pickup lanes and central healer support.", "goal": "Secure the first orb advantage." },
+        { "scenarioId": "tok-opening-center-deny", "phase": "OPENING", "summary": "Deny the strongest enemy pickup lane before extending to loose-value orbs.", "goal": "Open by controlling the safest early orb truth." },
+        { "scenarioId": "tok-stabilize-spread-carriers", "phase": "STABILIZE", "summary": "Spread carriers while keeping center support.", "goal": "Protect value without shared collapse." },
+        { "scenarioId": "tok-stabilize-two-orb-shell", "phase": "STABILIZE", "summary": "Build a two-orb shell with peel coverage instead of forcing a greedy third hold.", "goal": "Preserve score lead through survivable carrier value." },
+        { "scenarioId": "tok-pressure-delete-carrier", "phase": "PRESSURE", "summary": "Delete the most actionable enemy carrier.", "goal": "Turn high-value enemy score into loose value." },
+        { "scenarioId": "tok-pressure-force-loose-orb", "phase": "PRESSURE", "summary": "Pressure the exposed carrier until the orb drops into a controlled pickup lane.", "goal": "Create swing value without overcommitting into center chaos." },
+        { "scenarioId": "tok-recovery-loose-orb-reset", "phase": "RECOVERY", "summary": "Recover loose orbs and rebuild center control.", "goal": "Repair the value deficit." },
+        { "scenarioId": "tok-recovery-after-double-drop", "phase": "RECOVERY", "summary": "Reform after multiple orb drops and claim the safest next carrier state.", "goal": "Recover shape before chasing maximum value." },
+        { "scenarioId": "tok-endgame-highest-value", "phase": "ENDGAME", "summary": "Protect the highest-value carrier and deny the next pickup.", "goal": "Close on value discipline." }
+        ,{ "scenarioId": "tok-endgame-deny-last-pickup", "phase": "ENDGAME", "summary": "Sit the last live pickup lane and refuse low-value chases off the winning carriers.", "goal": "Finish by denying the only comeback orb." }
+        ,{ "scenarioId": "tok-midgame-reset-center", "phase": "RECOVERY", "summary": "Reset the failed center brawl and rebuild around the safest supported carrier state.", "goal": "Recover orb value without chain-dropping again." }
+        ,{ "scenarioId": "tok-last-window-deny-drop", "phase": "ENDGAME", "summary": "Deny the final enemy drop-and-repickup route before chasing extra damage.", "goal": "Finish by removing the only comeback orb sequence." }
+        ,{ "scenarioId": "tok-opening-scout-pickup-order", "phase": "OPENING", "summary": "Scout the first pickup order before spreading healers into a dead loose-orb pattern.", "goal": "Open on real orb-value truth instead of equal chasing." }
+        ,{ "scenarioId": "tok-opening-crossmap-punish", "phase": "OPENING", "summary": "Force an enemy answer toward one pickup lane, then punish the cross-map orb the support line abandoned.", "goal": "Win the opener through route punishment, not center chaos." }
+        ,{ "scenarioId": "tok-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value loose orb only when the carried-value clock still remains winning.", "goal": "Protect the lead without overdefending every drop." }
+        ,{ "scenarioId": "tok-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the pressured carrier only on the timing that still preserves the next safe pickup lane.", "goal": "Keep the shell stable without breaking carrier spread." }
+        ,{ "scenarioId": "tok-pressure-isolate-support-line", "phase": "PRESSURE", "summary": "Isolate the enemy support line before deleting the real high-value carrier.", "goal": "Create the swing by removing the first peel wave." }
+        ,{ "scenarioId": "tok-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the safest repickup route before fully collapsing the carrier.", "goal": "Turn movement control into a safer orb swing." }
+        ,{ "scenarioId": "tok-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding one supported carrier state before contesting maximum value again.", "goal": "Restore score shape before another chain-drop." }
+        ,{ "scenarioId": "tok-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the minimum orb-value floor first when greed for a larger swing would open the comeback.", "goal": "Stay alive on score while building the next real carrier line." }
+      ]
+    },
+    {
+      "mapKey": "SILVERSHARD",
+      "mapProfile": "ssm_standard",
+      "scenarios": [
+        { "scenarioId": "ssm-opening-cart-split", "phase": "OPENING", "summary": "Split into named cart groups with one mobile response.", "goal": "Secure the first scoring carts." },
+        { "scenarioId": "ssm-opening-lava-waterfall-read", "phase": "OPENING", "summary": "Read the first split and commit only to the opening carts with reachable escort value.", "goal": "Open into the best live-cart structure instead of equal splitting by habit." },
+        { "scenarioId": "ssm-stabilize-live-cart", "phase": "STABILIZE", "summary": "Escort live carts and leave dead routes early.", "goal": "Preserve active score value." },
+        { "scenarioId": "ssm-stabilize-double-escort", "phase": "STABILIZE", "summary": "Keep both live escorts connected while refusing dead middle skirmishes.", "goal": "Protect score-active cart value on time." },
+        { "scenarioId": "ssm-pressure-junction-switch", "phase": "PRESSURE", "summary": "Delay enemy turn-in while reinforcing the shortest recoverable cart.", "goal": "Steal the next valuable route." },
+        { "scenarioId": "ssm-pressure-bait-middle-rotation", "phase": "PRESSURE", "summary": "Bait the enemy into over-rotating middle, then swing the shorter live route.", "goal": "Win the next cart through movement timing instead of raw fighting." },
+        { "scenarioId": "ssm-recovery-best-trade", "phase": "RECOVERY", "summary": "Abandon dead routes and regroup on the best score trade.", "goal": "Rebuild from the best reachable cart." },
+        { "scenarioId": "ssm-recovery-after-lost-junction", "phase": "RECOVERY", "summary": "Recover after losing the junction race by regrouping on the next live escortable cart.", "goal": "Stop feeding a dead turn and rebuild score truth." },
+        { "scenarioId": "ssm-endgame-final-cart", "phase": "ENDGAME", "summary": "Commit only to carts that can still move the final score.", "goal": "Finish with route discipline." }
+        ,{ "scenarioId": "ssm-endgame-deny-last-turn", "phase": "ENDGAME", "summary": "Sit the enemy's only final turn route and ignore off-route fights that cannot score.", "goal": "Finish by denying the last meaningful cart movement." }
+        ,{ "scenarioId": "ssm-midgame-reset-route", "phase": "RECOVERY", "summary": "Reset the failed junction race and regroup on the next cart that can still change the score.", "goal": "Stop feeding dead rails and rebuild live movement." }
+        ,{ "scenarioId": "ssm-last-window-deny-turn", "phase": "ENDGAME", "summary": "Protect the last enemy turn route before any optional chase into dead-track fighting.", "goal": "Finish by denying the only remaining scoring rail." }
+        ,{ "scenarioId": "ssm-opening-scout-junction-read", "phase": "OPENING", "summary": "Scout the first junction decision before hard-committing bodies to the wrong live carts.", "goal": "Open on real cart-value truth instead of equal splitting." }
+        ,{ "scenarioId": "ssm-opening-crossmap-punish", "phase": "OPENING", "summary": "Force the enemy answer toward one cart, then punish the cross-map rail the reserve cannot cover.", "goal": "Win the opener through route punishment rather than mid scrapping." }
+        ,{ "scenarioId": "ssm-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value cart trade only when the remaining live carts still keep the winning clock.", "goal": "Protect the lead without contesting every dead route." }
+        ,{ "scenarioId": "ssm-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the pressured cart only on the timing that still preserves the next live escort answer.", "goal": "Keep the shell stable without double-rotating into empty track." }
+        ,{ "scenarioId": "ssm-pressure-isolate-escort", "phase": "PRESSURE", "summary": "Isolate the enemy escort line before swinging the decisive cart route.", "goal": "Create a cleaner rail swing by stripping the first support wave." }
+        ,{ "scenarioId": "ssm-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest enemy turn or escort route before fully committing to the live cart.", "goal": "Turn movement control into safer cart conversion." }
+        ,{ "scenarioId": "ssm-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding one live escort and one response lane before contesting the full junction picture again.", "goal": "Restore score structure before feeding dead rails." }
+        ,{ "scenarioId": "ssm-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor first by holding the best reachable cart instead of chasing a lost swing.", "goal": "Stay alive on clock while preparing the next real route flip." }
+      ]
+    },
+    {
+      "mapKey": "DEEPHAUL",
+      "mapProfile": "dhr_standard",
+      "scenarios": [
+        { "scenarioId": "dhr-opening-escort-delay", "phase": "OPENING", "summary": "Split escort and grouped delay teams.", "goal": "Create the first cart race structure." },
+        { "scenarioId": "dhr-opening-split-crystal-read", "phase": "OPENING", "summary": "Read whether Crystal matters later and refuse to break the first escort shell for it.", "goal": "Open on cart truth before side-resource temptation." },
+        { "scenarioId": "dhr-stabilize-both-carts", "phase": "STABILIZE", "summary": "Keep both cart obligations covered before Crystal.", "goal": "Preserve real score value." },
+        { "scenarioId": "dhr-stabilize-escort-with-delay", "phase": "STABILIZE", "summary": "Maintain escort discipline while the delay team buys only the necessary checkpoint time.", "goal": "Hold the race without bleeding both jobs." },
+        { "scenarioId": "dhr-pressure-turn-enemy-cart", "phase": "PRESSURE", "summary": "Pressure the enemy cart while keeping escort intact.", "goal": "Reverse the race." },
+        { "scenarioId": "dhr-pressure-bait-crystal-collapse", "phase": "PRESSURE", "summary": "Threaten Crystal long enough to bend enemy movement, then punish the exposed cart route.", "goal": "Create cart swing value through safer timing than a pure Crystal fight." },
+        { "scenarioId": "dhr-recovery-regroup-delay", "phase": "RECOVERY", "summary": "Recover by regrouping the delay team first.", "goal": "Stop enemy progress before side value." },
+        { "scenarioId": "dhr-recovery-recover-own-cart", "phase": "RECOVERY", "summary": "Rebuild around the escortable home cart when the enemy cart race is temporarily lost.", "goal": "Recover the score floor before chasing the larger swing." },
+        { "scenarioId": "dhr-endgame-decisive-distance", "phase": "ENDGAME", "summary": "Protect the decisive cart distance and ignore fake side fights.", "goal": "Close on cart truth." }
+        ,{ "scenarioId": "dhr-endgame-deny-last-checkpoint", "phase": "ENDGAME", "summary": "Anchor the enemy's final checkpoint route and force every last-second fight onto cart truth.", "goal": "Finish by denying the only remaining comeback path." }
+        ,{ "scenarioId": "dhr-midgame-reset-escort", "phase": "RECOVERY", "summary": "Reset the escort after a broken checkpoint fight and rebuild the safer cart race first.", "goal": "Recover the score floor before chasing the larger denial swing." }
+        ,{ "scenarioId": "dhr-last-window-deny-crystal-throw", "phase": "ENDGAME", "summary": "Deny the final cart checkpoint even if Crystal bait appears for one last distraction.", "goal": "Finish by forcing every last action onto cart truth." }
+        ,{ "scenarioId": "dhr-opening-scout-checkpoint-read", "phase": "OPENING", "summary": "Scout the first checkpoint picture before breaking the escort shell for side Crystal temptation.", "goal": "Open on verified cart truth instead of speculative side value." }
+        ,{ "scenarioId": "dhr-opening-crossmap-punish", "phase": "OPENING", "summary": "Force the enemy answer toward one cart lane, then punish the cross-map checkpoint the reserve abandoned.", "goal": "Win the opener through route punishment rather than equal escort splitting." }
+        ,{ "scenarioId": "dhr-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value side trade only when the current cart distance still keeps the winning clock.", "goal": "Protect the lead without contesting every distraction." }
+        ,{ "scenarioId": "dhr-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live cart or delay lane only on the timing that still preserves the next checkpoint answer.", "goal": "Keep the race stable without double-breaking both jobs." }
+        ,{ "scenarioId": "dhr-pressure-isolate-escort", "phase": "PRESSURE", "summary": "Isolate the enemy escort line before swinging the decisive cart checkpoint.", "goal": "Create a cleaner race reversal by removing the first support wave." }
+        ,{ "scenarioId": "dhr-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the shortest enemy checkpoint reinforce route before fully committing to the cart swing.", "goal": "Turn movement control into safer cart conversion." }
+        ,{ "scenarioId": "dhr-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by rebuilding one escort shell and one delay lane before contesting the full race picture again.", "goal": "Restore score structure before feeding the next checkpoint." }
+        ,{ "scenarioId": "dhr-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor first by stabilizing the best reachable home-cart path before chasing the larger denial swing.", "goal": "Stay alive on distance while preparing the next real reversal." }
+      ]
+    },
+    {
+      "mapKey": "SEETHING",
+      "mapProfile": "shore_standard",
+      "scenarios": [
+        { "scenarioId": "shore-opening-scout-main-group", "phase": "OPENING", "summary": "Scout spawns while keeping the main group intact.", "goal": "Win the first meaningful node race." },
+        { "scenarioId": "shore-opening-main-group-early-spawn", "phase": "OPENING", "summary": "Keep the main group together and snap to the first revealed high-value spawn.", "goal": "Open with arrival advantage instead of scattered guesses." },
+        { "scenarioId": "shore-stabilize-active-channel", "phase": "STABILIZE", "summary": "Protect the active channel and leave exhausted nodes.", "goal": "Preserve usable deposit value." },
+        { "scenarioId": "shore-stabilize-two-node-spread", "phase": "STABILIZE", "summary": "Split only when both nodes remain channel-safe and the next spawn route stays reachable.", "goal": "Hold value without creating a free collapse." },
+        { "scenarioId": "shore-pressure-next-public", "phase": "PRESSURE", "summary": "Deny one channel while pre-rotating to the next public spawn.", "goal": "Create arrival advantage." },
+        { "scenarioId": "shore-pressure-bait-old-node", "phase": "PRESSURE", "summary": "Hold enemy attention on the dying node long enough to steal the next real spawn race.", "goal": "Convert fake ground value into the next scoring arrival." },
+        { "scenarioId": "shore-recovery-next-spawn", "phase": "RECOVERY", "summary": "Recover by regrouping for the next spawn rather than feeding old ground.", "goal": "Re-enter the resource race." },
+        { "scenarioId": "shore-recovery-after-lost-channel", "phase": "RECOVERY", "summary": "Reset after a lost channel and reform on the next reachable node instead of staggering in.", "goal": "Recover structure before trying to catch up on raw kills." },
+        { "scenarioId": "shore-endgame-final-deposit", "phase": "ENDGAME", "summary": "Contest only deposits that can change the final score.", "goal": "Finish on spawn-race discipline." }
+        ,{ "scenarioId": "shore-endgame-deny-last-channel", "phase": "ENDGAME", "summary": "Sit the final enemy channel route and ignore exhausted nodes that cannot flip the score.", "goal": "Finish by denying the only remaining deposit." }
+        ,{ "scenarioId": "shore-midgame-reset-spawn", "phase": "RECOVERY", "summary": "Reset after losing a channel race and regroup for the next spawn that still reaches in time.", "goal": "Recover structure instead of staggering into exhausted ground." }
+        ,{ "scenarioId": "shore-last-window-deny-deposit", "phase": "ENDGAME", "summary": "Deny the final enemy deposit route even if a dying side node still looks clickable.", "goal": "Finish by protecting the only score event left." }
+        ,{ "scenarioId": "shore-opening-scout-spawn-read", "phase": "OPENING", "summary": "Scout the first real spawn read before splitting bodies toward a node that may die on arrival.", "goal": "Open on verified spawn timing instead of equal guessing." }
+        ,{ "scenarioId": "shore-opening-crossmap-punish", "phase": "OPENING", "summary": "Force the enemy answer to one spawn lane, then punish the cross-map node the reserve can no longer reach on time.", "goal": "Win the opener through route punishment rather than scattered arrivals." }
+        ,{ "scenarioId": "shore-stabilize-trade-clock", "phase": "STABILIZE", "summary": "Allow one low-value node trade only when the active channel clock still remains winning.", "goal": "Protect the lead without contesting every exhausted lane." }
+        ,{ "scenarioId": "shore-stabilize-reinforce-timing", "phase": "STABILIZE", "summary": "Reinforce the live channel only on the timing that still preserves the next spawn answer.", "goal": "Keep the shell stable without arriving late to both nodes." }
+        ,{ "scenarioId": "shore-pressure-isolate-channel-team", "phase": "PRESSURE", "summary": "Isolate the enemy channel team before committing to the decisive node swing.", "goal": "Create a cleaner deposit denial by stripping the first support wave." }
+        ,{ "scenarioId": "shore-pressure-route-denial", "phase": "PRESSURE", "summary": "Deny the safest enemy route to the next public spawn before fully committing to the node.", "goal": "Turn movement control into safer arrival advantage." }
+        ,{ "scenarioId": "shore-recovery-post-wipe", "phase": "RECOVERY", "summary": "Recover after a wipe by regrouping for one reachable node and one follow-up route before contesting the full spawn picture again.", "goal": "Restore structure before feeding exhausted ground." }
+        ,{ "scenarioId": "shore-recovery-score-floor", "phase": "RECOVERY", "summary": "Protect the score floor first by locking the next reachable deposit path instead of chasing a lost side fight.", "goal": "Stay alive on resources while preparing the next true swing." }
+      ]
+    }
+  ]
+}

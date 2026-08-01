@@ -7,6 +7,18 @@ local function trackerText(value, fallback, maxLength)
     return KWR.Util:TextClip(value, fallback, maxLength)
 end
 
+local function brightClassColor(r, g, b)
+    return math.min(1, (r or 0.7) * 1.22 + 0.04),
+        math.min(1, (g or 0.7) * 1.22 + 0.04),
+        math.min(1, (b or 0.7) * 1.22 + 0.04)
+end
+
+local function emphasizeHealthText(font)
+    if not font then return end
+    font:SetTextColor(1, 1, 1, 1)
+    if font.SetDrawLayer then font:SetDrawLayer("OVERLAY", 7) end
+end
+
 local function applyIcon(texture, iconID)
     if not texture then return false end
     if KWR.Icons then
@@ -57,6 +69,207 @@ local function sameCallTarget(enemy, call)
     return enemyName ~= "" and callName ~= "" and enemyName == callName
 end
 
+local function shortInitial(value)
+    local short = KWR.Util:ShortName(KWR.Util:Text(value, "", 64))
+    local initial = string.sub(short, 1, 1)
+    return initial ~= "" and string.upper(initial) or "?"
+end
+
+local function classLabel(enemy)
+    if type(enemy) ~= "table" then return "UNKNOWN" end
+    local label = KWR.Util:Text(enemy.class, "", 32)
+    if label == "" then
+        label = KWR.Util:Text(enemy.classFile, "UNKNOWN", 24)
+        label = string.lower(label)
+        label = string.upper(string.sub(label, 1, 1)) .. string.sub(label, 2)
+    end
+    return label
+end
+
+local function callEnemy(enemies, call)
+    if type(call) ~= "table" then return nil end
+    for _, enemy in ipairs(enemies or {}) do
+        if sameCallTarget(enemy, call) then return enemy end
+    end
+    return nil
+end
+
+local function countdownText(countdown)
+    local values = {}
+    for _, tick in ipairs(countdown and countdown.ticks or {}) do
+        if tick ~= "GO" then values[#values + 1] = tostring(tick) end
+    end
+    if #values == 0 then values = { "5", "4", "3", "2", "1" } end
+    return "SWITCH IN " .. table.concat(values, " ")
+end
+
+local function knownCallTarget(value)
+    if type(value) ~= "string" then return false end
+    local normalized = string.upper(value:gsub("^%s+", ""):gsub("%s+$", ""))
+    return normalized ~= "" and normalized ~= "U"
+        and normalized ~= "UNKNOWN" and normalized ~= "UNKNOWN TARGET"
+end
+
+local function setFontSize(fontString, size)
+    local path, _, flags = fontString:GetFont()
+    if path then fontString:SetFont(path, size, flags) end
+end
+
+local function applySpotlightTextLayout(spotlight, nameRightInset)
+    spotlight.nameText:ClearAllPoints()
+    spotlight.nameText:SetPoint("TOPLEFT", 10, -4)
+    spotlight.nameText:SetPoint("TOPRIGHT", -(nameRightInset or 10), -4)
+    spotlight.nameText:SetHeight(16)
+    spotlight.nameText:SetJustifyH("LEFT")
+    setFontSize(spotlight.nameText, 13)
+    spotlight.detailText:ClearAllPoints()
+    spotlight.detailText:SetPoint("TOPLEFT", 10, -27)
+    spotlight.detailText:SetPoint("TOPRIGHT", -10, -27)
+    spotlight.detailText:SetHeight(16)
+    spotlight.detailText:SetJustifyH("LEFT")
+    setFontSize(spotlight.detailText, 11)
+    spotlight.actionText:ClearAllPoints()
+    spotlight.actionText:SetPoint("BOTTOMLEFT", 10, 4)
+    spotlight.actionText:SetPoint("BOTTOMRIGHT", -10, 4)
+    spotlight.actionText:SetHeight(16)
+    spotlight.actionText:SetJustifyH("LEFT")
+    setFontSize(spotlight.actionText, 11)
+end
+
+local function renderTargetCard(spotlight, target, currentTarget, recentLocal,
+    cast, defensive, kill, pressure)
+    applySpotlightTextLayout(spotlight, 72)
+    spotlight.nameText:SetText("TARGET: "
+        .. trackerText(target.shortName or target.name, "UNKNOWN", 20))
+    spotlight.nameText:SetTextColor(KWR.Theme:Color("white"))
+
+    local statusText = "STATUS: TRACKED"
+    local statusTone = "muted"
+    if currentTarget and target.visible == true then
+        statusText = "STATUS: TARGETED | LIVE"
+        statusTone = "green"
+    elseif recentLocal then
+        statusText = "STATUS: HERE"
+        statusTone = "yellow"
+    elseif target.visible == true then
+        statusText = "STATUS: LIVE"
+        statusTone = "green"
+    elseif target.age then
+        statusText = "STATUS: LAST " .. KWR.Util:Age(target.age)
+    end
+    spotlight.detailText:SetText(statusText)
+    spotlight.detailText:SetTextColor(KWR.Theme:Color(statusTone))
+
+    local actionText = currentTarget and "ACTION: YOUR TARGET" or "ACTION: WATCH"
+    local actionTone = currentTarget and "TARGET" or "STALE"
+    if cast then
+        actionText = "STOP: " .. trackerText(cast.name, "PRIORITY CAST", 20)
+        actionTone = "STOP"
+    elseif defensive then
+        actionText = "DEFENSIVE: " .. trackerText(defensive.name, "ACTIVE", 18)
+        actionTone = "IMMUNE"
+    elseif target.carrier then
+        actionText = "CARRIER"
+            .. ((target.carrierStacks or 0) > 0
+                and (" x" .. tostring(target.carrierStacks)) or "")
+        actionTone = "CARRY"
+    elseif kill then
+        actionText = "ACTION: KILL NOW"
+        actionTone = "KILL"
+    elseif pressure then
+        actionText = "ACTION: PRESS NOW"
+        actionTone = "STOP"
+    end
+    spotlight.actionText:SetText(actionText)
+    spotlight.actionText:SetTextColor(KWR.Theme:CombatColor(actionTone))
+    spotlight.actionText:Show()
+    spotlight.statusBadge:Hide()
+    spotlight.truthBadge:Hide()
+    spotlight.stateIcon:Hide()
+    spotlight.health:Show()
+    spotlight.healthText:Show()
+end
+
+local function renderCallCard(spotlight, enemies, localFight, countdown)
+    local controls = localFight and localFight.controls or {}
+    local control
+    for _, candidate in ipairs(controls) do
+        if candidate.assigned == true then
+            control = candidate
+            break
+        end
+    end
+    control = control or controls[1]
+    local kill = localFight and localFight.kill
+    if not control and not kill then return false end
+
+    local controlEnemy = callEnemy(enemies, control)
+    local killEnemy = callEnemy(enemies, kill)
+    local validControl = control and control.assigned == true
+        and controlEnemy ~= nil
+    local validKill = killEnemy ~= nil
+    if not validControl and not validKill then return false end
+    local controlName = control and KWR.Util:ShortName(control.actor) or nil
+    local controlTarget = controlEnemy
+        and (controlEnemy.shortName or controlEnemy.name) or (control and control.target)
+    local killTarget = killEnemy
+        and (killEnemy.shortName or killEnemy.name) or (kill and kill.target)
+
+    applySpotlightTextLayout(spotlight, 10)
+    local ccText = "CC: NONE"
+    if validControl and controlName and knownCallTarget(controlTarget) then
+        ccText = controlName .. " CC - " .. classLabel(controlEnemy)
+            .. " " .. shortInitial(controlTarget)
+    end
+    spotlight.nameText:SetText(ccText)
+    spotlight.nameText:SetTextColor(KWR.Theme:Color("white"))
+    local killText = "KILL: NONE"
+    if validKill and knownCallTarget(killTarget) then
+        killText = "KILL: " .. classLabel(killEnemy) .. " "
+            .. shortInitial(killTarget)
+    end
+    spotlight.detailText:SetText(killText)
+    spotlight.detailText:SetTextColor(KWR.Theme:CombatColor("KILL"))
+    spotlight.actionText:SetText(countdownText(countdown))
+    spotlight.actionText:SetTextColor(KWR.Theme:Color("gold"))
+    spotlight.actionText:Show()
+    spotlight.statusBadge:Hide()
+    spotlight.truthBadge:Hide()
+    spotlight.stateIcon:Hide()
+    spotlight.health:Hide()
+    spotlight.healthText:Hide()
+    spotlight.scrim:SetColorTexture(0.01, 0.015, 0.025, 0.92)
+    spotlight.scrim:SetShown(true)
+    spotlight:SetBackdropBorderColor(KWR.Theme:CombatColor("KILL"))
+    return true
+end
+
+local function hasCallData(enemies, localFight)
+    if not localFight then return false end
+    if callEnemy(enemies, localFight.kill) then return true end
+    for _, control in ipairs(localFight.controls or {}) do
+        if control.assigned == true and callEnemy(enemies, control) then
+            return true
+        end
+    end
+    return false
+end
+
+local function callCardSignature(localFight, countdown)
+    local control = localFight and localFight.controls
+        and localFight.controls[1] or nil
+    return KWR.Util:Signature({
+        "CALL_CARD",
+        localFight and localFight.updatedAt or 0,
+        localFight and localFight.kill and localFight.kill.target or "",
+        localFight and localFight.kill and localFight.kill.targetGUID or "",
+        control and control.actor or "",
+        control and control.target or "",
+        control and control.targetGUID or "",
+        table.concat(countdown and countdown.ticks or {}, ","),
+    })
+end
+
 function CombatRosterVisuals:DirectHealth(owner, row, unit)
     if not unit or unit == "" or type(UnitExists) ~= "function"
         or not KWR.Util:Boolean(KWR.Util:Call(UnitExists, unit), false) then return end
@@ -72,6 +285,7 @@ function CombatRosterVisuals:DirectHealth(owner, row, unit)
             else
                 row.healthText:SetText("LIVE")
             end
+            emphasizeHealthText(row.healthText)
         end)
         if ok then return end
     end
@@ -106,7 +320,8 @@ function CombatRosterVisuals:DirectSpotlightHealth(owner, data)
     end
 end
 
-function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight, helpers)
+function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
+    countdown, helpers)
     local spotlight = owner.enemyFrame and owner.enemyFrame.targetSpotlight
     if not spotlight
         or KWR.db.profile.combatRoster.combatVisuals == false then return end
@@ -152,6 +367,18 @@ function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
         if target then owner.lastSpotlightKey = target.key end
     end
     if not target then
+        if hasCallData(enemies, localFight) then
+            local signature = callCardSignature(localFight, countdown)
+            if owner.lastSpotlightSignature == signature then
+                owner.spotlightSkips = (owner.spotlightSkips or 0) + 1
+                return
+            end
+            owner.lastSpotlightSignature = signature
+            owner.spotlightUpdates = (owner.spotlightUpdates or 0) + 1
+            helpers.setSpotlightIdle(spotlight)
+            renderCallCard(spotlight, enemies, localFight, countdown)
+            return
+        end
         owner.lastSpotlightKey = nil
         if owner.lastSpotlightSignature ~= "IDLE" then
             owner.lastSpotlightSignature = "IDLE"
@@ -166,19 +393,25 @@ function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
     end
 
     local spotlightSignature = KWR.Util:Signature({
-        target.key, target.guid, target.name, target.shortName,
-        target.classFile, target.role, target.healthPercent,
-        target.lastHealthPercent, target.visible, target.dead,
-        target.age and math.floor(target.age),
-        target.localEngaged, target.localRange,
-        target.recentLocalEngaged, target.recentLocalRange,
-        target.carrier, target.carrierStacks,
-        target.priorityCast and target.priorityCast.spellID,
-        target.priorityCast and target.priorityCast.priority,
+        "SPOTLIGHT",
+        callCardSignature(localFight, countdown),
+        target.key or "", target.guid or "", target.name or "",
+        target.shortName or "", target.classFile or "", target.role or "",
+        target.healthPercent or "", target.lastHealthPercent or "",
+        target.visible == true and "VISIBLE" or "HIDDEN",
+        target.dead == true and "DEAD" or "ALIVE",
+        target.age and math.floor(target.age) or "",
+        target.localEngaged == true and "ENGAGED" or "",
+        target.localRange == true and "LOCAL" or "",
+        target.recentLocalEngaged == true and "RECENT_ENGAGED" or "",
+        target.recentLocalRange == true and "RECENT_LOCAL" or "",
+        target.carrier == true and "CARRIER" or "",
+        target.carrierStacks or "",
+        target.priorityCast and target.priorityCast.spellID or "",
+        target.priorityCast and target.priorityCast.priority or "",
         target.defensivesActive and target.defensivesActive[1]
-            and target.defensivesActive[1].spellID,
-        localFight and localFight.updatedAt,
-        helpers.activeCombatReason(combat),
+            and target.defensivesActive[1].spellID or "",
+        helpers.activeCombatReason(combat) or "",
         currentTarget,
     })
     if owner.lastSpotlightSignature == spotlightSignature then
@@ -191,6 +424,24 @@ function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
     owner.lastSpotlightSignature = spotlightSignature
     owner.spotlightUpdates = (owner.spotlightUpdates or 0) + 1
 
+    spotlight.nameText:ClearAllPoints()
+    spotlight.nameText:SetPoint("LEFT", spotlight.stateIcon, "RIGHT", 6, 0)
+    spotlight.nameText:SetWidth(170)
+    spotlight.nameText:SetHeight(14)
+    spotlight.nameText:SetJustifyH("LEFT")
+    setFontSize(spotlight.nameText, 12)
+    spotlight.detailText:ClearAllPoints()
+    spotlight.detailText:SetPoint("LEFT", spotlight.truthBadge, "RIGHT", 8, 0)
+    spotlight.detailText:SetPoint("RIGHT", -126, 0)
+    spotlight.detailText:SetHeight(14)
+    spotlight.detailText:SetJustifyH("LEFT")
+    setFontSize(spotlight.detailText, 9)
+    spotlight.actionText:ClearAllPoints()
+    spotlight.actionText:SetPoint("BOTTOMRIGHT", -10, 3)
+    spotlight.actionText:SetWidth(116)
+    spotlight.actionText:SetHeight(14)
+    spotlight.actionText:SetJustifyH("RIGHT")
+    setFontSize(spotlight.actionText, 9)
     local r, g, b = helpers.classColor(target.classFile)
     spotlight.statusBadge:Show()
     spotlight.truthBadge:Show()
@@ -208,6 +459,8 @@ function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
     local recentLocal = target.localEngaged == true or target.localRange == true
         or target.recentLocalEngaged == true or target.recentLocalRange == true
     spotlight.actionText:Hide()
+    spotlight.health:Show()
+    spotlight.healthText:Show()
     spotlight.detailText:SetText(
         currentTarget and "TARGETED NOW" or "WATCHED ENEMY")
     applyIcon(spotlight.stateIcon, currentTarget and "kill" or "enemy")
@@ -311,6 +564,9 @@ function CombatRosterVisuals:UpdateSpotlight(owner, enemies, combat, localFight,
             or "--")
         spotlight.health:SetStatusBarColor(0.26, 0.28, 0.31, 0.24)
     end
+    renderTargetCard(spotlight, target, currentTarget, recentLocal,
+        cast, defensive, kill, pressure)
+    renderCallCard(spotlight, enemies, localFight, countdown)
 end
 
 function CombatRosterVisuals:ApplyRole(owner, row, role, helpers)
@@ -356,7 +612,8 @@ function CombatRosterVisuals:ApplyBinding(owner, row, data, team)
     if team == "TEAM" and data.unit then
         desired.unit = data.unit
         desired.type1 = "target"
-        desired.type2 = "focus"
+        desired.type2 = "macro"
+        desired.macrotext2 = "/focus [mod:shift,@" .. data.unit .. "]"
     elseif team == "ENEMY" then
         local targetName = KWR.Util:Text(data.name or data.shortName, "", 64)
         if type(Ambiguate) == "function" then
@@ -367,7 +624,8 @@ function CombatRosterVisuals:ApplyBinding(owner, row, data, team)
             desired.type1 = "macro"
             desired.type2 = "macro"
             desired.macrotext1 = "/cleartarget\n/targetexact " .. targetName
-            desired.macrotext2 = "/targetexact " .. targetName .. "\n/focus\n/targetlasttarget"
+            desired.macrotext2 = "/targetexact " .. targetName
+                .. " [mod:shift]\n/focus [mod:shift]\n/targetlasttarget [mod:shift]"
         end
     end
     for attribute, value in pairs(desired) do
@@ -428,7 +686,7 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
     row.displayName = trackerText(data.shortName or data.name, "Unknown", 20)
     row.displayUnit = data.unit
     row.nameText:SetText(row.displayName)
-    local r, g, b = helpers.classColor(data.classFile)
+    local r, g, b = brightClassColor(helpers.classColor(data.classFile))
     row.classR, row.classG, row.classB = r, g, b
     row.nameText:SetTextColor(r, g, b, 1)
     row.detailText:SetTextColor(KWR.Theme:Color("soft"))
@@ -444,7 +702,7 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
         or (data.unit and "LIVE"
         or (lastPercent and ("~" .. tostring(math.floor(lastPercent + 0.5)) .. "%")
         or "--")))
-    row.healthText:SetTextColor(hr, hg, hb, 1)
+    emphasizeHealthText(row.healthText)
     row.danger:SetShown(percent ~= nil and percent <= 35 and not data.dead)
     if data.unit then owner:DirectHealth(row, data.unit) end
     local role = KWR.Util:Text(data.role or data.groupRole, "NONE", 16)
@@ -552,6 +810,7 @@ end
 
 function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, assignments)
     local byUnit, byKey, byName = {}, {}, {}
+    local shortCounts = {}
     for index = 1, owner.maxRows do
         local entry = data and data[index]
         if entry then
@@ -561,6 +820,11 @@ function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, as
             local name = KWR.Util:CanonicalName(
                 entry.name or entry.shortName)
             if name ~= "" then byName[name] = entry end
+            local shortName = KWR.Util:CanonicalShortName(
+                entry.shortName or entry.name)
+            if shortName ~= "" then
+                shortCounts[shortName] = (shortCounts[shortName] or 0) + 1
+            end
         end
     end
     local used = {}
@@ -590,6 +854,12 @@ function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, as
             if guid ~= "" then aliases[#aliases + 1] = "GUID:" .. guid end
             if key ~= "" then aliases[#aliases + 1] = "KEY:" .. key end
             if name ~= "" then aliases[#aliases + 1] = "NAME:" .. name end
+            local shortName = KWR.Util:CanonicalShortName(
+                entry.shortName or entry.name)
+            if team == "TEAM" and shortName ~= ""
+                and shortCounts[shortName] == 1 then
+                aliases[#aliases + 1] = "SHORT:" .. shortName
+            end
             local duplicate = false
             for _, alias in ipairs(aliases) do
                 if used[alias] then duplicate = true break end

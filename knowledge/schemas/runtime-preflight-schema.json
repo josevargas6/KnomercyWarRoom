@@ -1,0 +1,32 @@
+{
+  "schema": "kwr-runtime-preflight",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "candidateVersion",
+    "node",
+    "fengari",
+    "localLuaTools",
+    "packageAuditReady",
+    "recommendedNextStep"
+  ],
+  "nodeRequired": [
+    "nodeOnPath",
+    "bundledNodePath",
+    "bundledNodeReadable"
+  ],
+  "fengariRequired": [
+    "fengariCmdOnPath",
+    "fengariPs1OnPath",
+    "accessibleCliPaths",
+    "blockedCliPaths"
+  ],
+  "localLuaToolsRequired": [
+    "rootPath",
+    "present",
+    "cliReadable",
+    "packageReadable"
+  ]
+}

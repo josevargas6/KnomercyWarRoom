@@ -1,0 +1,50 @@
+{
+  "schema": "kwr-deliberate-system-report",
+  "schemaVersion": 1,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "generatedAt",
+    "targets",
+    "current",
+    "gaps",
+    "maps"
+  ],
+  "targetsRequired": [
+    "supportedMaps",
+    "baseScenariosPerMap",
+    "starterCorpusPerScenario",
+    "reviewedCasesPerScenario",
+    "adversarialCasesPerScenario"
+  ],
+  "currentRequired": [
+    "supportedMaps",
+    "scenarioDefinitions",
+    "starterReplays",
+    "goldenLabels",
+    "replayResults",
+    "outcomeReviews",
+    "adversarialCases"
+  ],
+  "gapsRequired": [
+    "starterReplayGap",
+    "goldenLabelGap",
+    "replayResultGap",
+    "outcomeReviewGap",
+    "reviewedCorpusGap",
+    "adversarialGap"
+  ],
+  "mapRequired": [
+    "mapKey",
+    "mapProfile",
+    "targetScenarios",
+    "currentStarterReplays",
+    "currentGoldenLabels",
+    "currentReplayResults",
+    "currentOutcomeReviews",
+    "currentAdversarialCases",
+    "starterReplayGap",
+    "reviewedCorpusGap",
+    "adversarialGap"
+  ]
+}

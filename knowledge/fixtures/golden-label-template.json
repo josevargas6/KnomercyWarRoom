@@ -1,0 +1,33 @@
+{
+  "schema": "kwr-golden-label-schema",
+  "schemaVersion": 1,
+  "kind": "golden_decision_label",
+  "labelId": "replace-me",
+  "replayId": "replace-replay-id",
+  "mapProfile": "tp_standard",
+  "reviewers": [
+    {
+      "reviewerId": "reviewer-a",
+      "role": "commander",
+      "agreed": false
+    }
+  ],
+  "decision": {
+    "acceptablePrimaryActions": [],
+    "acceptableFallbackActions": [],
+    "forbiddenActions": [],
+    "mustStay": [],
+    "requiredCapabilities": [],
+    "validTargetClasses": [],
+    "successConditions": [],
+    "abortConditions": [],
+    "maxDelaySeconds": 0,
+    "forceUncertaintyWhen": []
+  },
+  "coverage": {
+    "problemTypes": [],
+    "phase": "OPENING",
+    "truthBand": "HIGH"
+  },
+  "rationale": "Replace with reviewer rationale."
+}
