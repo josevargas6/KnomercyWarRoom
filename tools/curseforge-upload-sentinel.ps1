@@ -89,16 +89,20 @@ if (-not $curl) {
 }
 
 $endpoint = "https://www.curseforge.com/api/projects/$ProjectId/upload-file"
+$metadataPath = Join-Path ([IO.Path]::GetTempPath()) ("kwr-curseforge-metadata-" + [guid]::NewGuid().ToString("N") + ".json")
+Set-Content -LiteralPath $metadataPath -Value $metadataJson -Encoding UTF8 -NoNewline
 & $curl.Source `
     -f `
     -X POST `
     -H "X-Api-Token: $ApiToken" `
-    -F "metadata=$metadataJson" `
+    -F "metadata=<$metadataPath" `
     -F "file=@$artifact" `
     $endpoint
 
 if ($LASTEXITCODE -ne 0) {
+    Remove-Item -LiteralPath $metadataPath -Force -ErrorAction SilentlyContinue
     throw "CurseForge upload failed with exit code $LASTEXITCODE."
 }
+Remove-Item -LiteralPath $metadataPath -Force -ErrorAction SilentlyContinue
 
 Write-Output "CurseForge upload request completed for project $ProjectId."
