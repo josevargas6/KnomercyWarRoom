@@ -1,0 +1,124 @@
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = "Stop"
+$root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+$checks = 0
+
+function Assert-True {
+    param(
+        [Parameter(Mandatory = $true)]
+        [bool]$Condition,
+        [Parameter(Mandatory = $true)]
+        [string]$Message
+    )
+
+    $script:checks++
+    if (-not $Condition) {
+        throw $Message
+    }
+}
+
+function Assert-Throws {
+    param(
+        [Parameter(Mandatory = $true)]
+        [scriptblock]$Action,
+        [Parameter(Mandatory = $true)]
+        [string]$Message
+    )
+
+    $threw = $false
+    try {
+        & $Action
+    } catch {
+        $threw = $true
+    }
+    Assert-True -Condition $threw -Message $Message
+}
+
+. (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
+
+Assert-CurseForgeProjectId -ProjectId "1632632"
+$checks++
+Assert-Throws -Action {
+    Assert-CurseForgeProjectId -ProjectId "30cd47c7-4f43-4852-9936-3ea3a8b77a65"
+} -Message "CurseForge UUID project id was accepted."
+
+$fileId = Assert-CurseForgeUploadResponse `
+    -HttpStatus "200" `
+    -ResponseBody '{"id":20402}'
+Assert-True -Condition ($fileId -eq 20402) -Message "Valid CurseForge response did not return its file id."
+Assert-Throws -Action {
+    Assert-CurseForgeUploadResponse `
+        -HttpStatus "302" `
+        -ResponseBody '<h2>Object moved to /error</h2>'
+} -Message "CurseForge redirect error was accepted."
+Assert-Throws -Action {
+    Assert-CurseForgeUploadResponse -HttpStatus "200" -ResponseBody '<html>Error</html>'
+} -Message "CurseForge HTML response was accepted."
+Assert-Throws -Action {
+    Assert-CurseForgeUploadResponse -HttpStatus "200" -ResponseBody '{"status":"ok"}'
+} -Message "CurseForge response without a file id was accepted."
+
+$maintenanceWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\kwr-automated-maintenance.yml"
+) -Raw
+Assert-True `
+    -Condition ($maintenanceWorkflow -match '\$maintenanceParameters\s*=\s*@\{') `
+    -Message "Maintenance workflow does not use named hashtable splatting."
+Assert-True `
+    -Condition ($maintenanceWorkflow -match '@maintenanceParameters') `
+    -Message "Maintenance workflow does not invoke the runner with named parameters."
+Assert-True `
+    -Condition ($maintenanceWorkflow -notmatch '\$args\s*=') `
+    -Message "Maintenance workflow reintroduced the automatic args array."
+Assert-True `
+    -Condition ($maintenanceWorkflow -match '\$mode\s*=\s*"dry-run"') `
+    -Message "Scheduled maintenance does not default to dry-run."
+Assert-True `
+    -Condition ($maintenanceWorkflow -match '\$postDiscord\s*=\s*\$false') `
+    -Message "Scheduled maintenance defaults to a Discord write."
+Assert-True `
+    -Condition ($maintenanceWorkflow -match '\$notifyBot\s*=\s*\$false') `
+    -Message "Scheduled maintenance defaults to a bot dispatch."
+
+$releaseWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\release.yml"
+) -Raw
+Assert-True `
+    -Condition ($releaseWorkflow -match 'CURSEFORGE_PROJECT_ID:\s*"1632632"') `
+    -Message "Commander release workflow does not use public project id 1632632."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'CURSEFORGE_PROJECT_ID:\s*"1614463"') `
+    -Message "Sentinel release workflow does not use public project id 1614463."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'automation_role\s*=\s*"discord-execution-transport"') `
+    -Message "Release dispatch does not declare the constrained Discord execution role."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'codex_handoff\s*=\s*"github-review-only"') `
+    -Message "Release dispatch does not declare the GitHub-review-only Codex boundary."
+
+$maintenanceScript = Get-Content -LiteralPath (
+    Join-Path $root "tools\kwr-maintenance-schedule.ps1"
+) -Raw
+Assert-True `
+    -Condition ($maintenanceScript -match 'automation_role\s*=\s*"discord-execution-transport"') `
+    -Message "Maintenance dispatch does not declare the constrained Discord execution role."
+Assert-True `
+    -Condition ($maintenanceScript -match 'codex_handoff\s*=\s*"github-review-only"') `
+    -Message "Maintenance dispatch does not declare the GitHub-review-only Codex boundary."
+
+foreach ($workflow in @(
+    "ci.yml",
+    "deploy.yml",
+    "kwr-automated-maintenance.yml",
+    "kwr-daily-discord.yml",
+    "release.yml",
+    "sentinel-release-ops.yml"
+)) {
+    Assert-True `
+        -Condition (Test-Path -LiteralPath (Join-Path $root ".github\workflows\$workflow")) `
+        -Message "Required automation workflow is missing: $workflow"
+}
+
+Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

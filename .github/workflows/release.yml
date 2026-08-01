@@ -5,13 +5,13 @@ on:
     tags:
       - "v*"
     branches:
-      - "launch/6.1.0-alpha.29-final"
+      - "launch/6.1.0-alpha.30-final"
   workflow_dispatch:
     inputs:
       release_tag:
         description: Existing release tag to build and publish
         required: true
-        default: v6.1.0-alpha.29
+        default: v6.1.0-alpha.30
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: production
-      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.29' }}
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}
     steps:
       - name: Checkout release source
         uses: actions/checkout@v4
@@ -43,6 +43,7 @@ jobs:
           ./tools/validate.ps1
           ./tools/security-audit.ps1
           ./tools/knowledge-audit.ps1
+          ./tools/test-automation.ps1
           fengari tests/smoke.lua
           fengari tests/soak.lua
 
@@ -51,7 +52,7 @@ jobs:
         run: |
           $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $expectedTag = "v$($tocVersion)"
-          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.29' }}"
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
           if ($releaseTag -ne $expectedTag) {
               throw "Release tag mismatch. Expected $expectedTag but got $releaseTag."
           }
@@ -65,7 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.29' }}"
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
           gh release view $releaseTag *> $null
           if ($LASTEXITCODE -eq 0) {
               gh release upload $releaseTag artifacts/* --clobber
@@ -77,7 +78,7 @@ jobs:
       - name: Upload Commander to CurseForge
         shell: pwsh
         env:
-          CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_COMMANDER_PROJECT_ID || secrets.CURSEFORGE_COMMANDER_PROJECT_ID }}
+          CURSEFORGE_PROJECT_ID: "1632632"
           CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
           CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
@@ -95,7 +96,7 @@ jobs:
       - name: Upload Sentinel to CurseForge
         shell: pwsh
         env:
-          CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_SENTINEL_PROJECT_ID || secrets.CURSEFORGE_SENTINEL_PROJECT_ID }}
+          CURSEFORGE_PROJECT_ID: "1614463"
           CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
           CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
@@ -134,15 +135,23 @@ jobs:
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $version
 
+      - name: Mint KWR Automation installation token
+        id: kwr-app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.KWR_AUTOMATION_APP_ID || secrets.KWR_AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.KWR_AUTOMATION_APP_PRIVATE_KEY }}
+          owner: josevargas6
+          repositories: kwr-sentinel-bot
+
       - name: Notify KWR Sentinel Discord bot
         shell: pwsh
         env:
-          BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
+          BOT_DISPATCH_TOKEN: ${{ steps.kwr-app-token.outputs.token }}
           BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
         run: |
           if ([string]::IsNullOrWhiteSpace($env:BOT_DISPATCH_TOKEN) -or [string]::IsNullOrWhiteSpace($env:BOT_REPOSITORY)) {
-              Write-Output "Sentinel bot notification skipped: dispatch credentials are not configured."
-              exit 0
+              throw "Sentinel bot notification blocked: GitHub App dispatch credentials are not configured."
           }
           $headers = @{
               Authorization = "Bearer $env:BOT_DISPATCH_TOKEN"
@@ -152,11 +161,21 @@ jobs:
           $payload = @{
               event_type = "kwr_release_published"
               client_payload = @{
+                  automation_role = "discord-execution-transport"
+                  codex_authority = "implementation-and-publication"
+                  codex_handoff = "github-review-only"
+                  payload_version = 1
                   commander_version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
                   sentinel_version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
                   source_repository = "${{ github.repository }}"
-                  release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.29' }}"
-                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.29' }}"
+                  release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
+                  source_urls = @(
+                      "https://github.com/${{ github.repository }}"
+                      "https://www.curseforge.com/wow/addons/knomercy-war-room"
+                      "https://www.curseforge.com/wow/addons/kwr-sentinel"
+                  )
+                  confidence = "confirmed"
               }
           } | ConvertTo-Json -Depth 5
           Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$env:BOT_REPOSITORY/dispatches" -Headers $headers -ContentType "application/json" -Body $payload
