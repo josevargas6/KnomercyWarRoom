@@ -13,6 +13,7 @@
 
 Core\Addon.lua
 Core\BuildInfo.lua
+Core\Diagnostics.lua
 Core\CommandView.lua
 Core\Util.lua
 Core\CommandReview.lua
@@ -112,6 +113,7 @@ Runtime\MatchRuntime.lua
 
 UI\Theme.lua
 UI\IconRegistry.lua
+UI\LayoutCoordinator.lua
 
 Features\CursorRing.lua
 
@@ -131,6 +133,7 @@ UI\CombatRoster.lua
 UI\HUD.lua
 UI\Presentation.lua
 UI\MainWindowReports.lua
+UI\ReporterMap.lua
 UI\MainWindowShell.lua
 UI\MainWindowLauncher.lua
 UI\MainWindowCommands.lua
