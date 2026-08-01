@@ -1,0 +1,130 @@
+{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "ab-pressure-route-denial-005-label",
+    "replayId":  "ab-pressure-route-denial-005",
+    "mapProfile":  "ab_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "collapse",
+                                                               "split",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                            "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                            "primaryComparisonId":  "ARATHI_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "ARATHI_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "ARATHI_COLLAPSE_VS_SPLIT",
+                                                                          "ARATHI_BAIT_VS_FRONTDOOR",
+                                                                          "ARATHI_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "ARATHI_RESP_SPLIT_PRESSURE",
+                                                                        "ARATHI_RESP_COLLAPSE_CONNECT",
+                                                                        "ARATHI_RESP_ESCORT_SHELL"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Deny the shortest enemy reinforce route, then cap through the weakened node ring. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "ARATHI_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "ARATHI_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "ARATHI_COLLAPSE_VS_SPLIT",
+                                                         "ARATHI_BAIT_VS_FRONTDOOR",
+                                                         "ARATHI_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "ARATHI_RESP_SPLIT_PRESSURE",
+                                                       "ARATHI_RESP_COLLAPSE_CONNECT",
+                                                       "ARATHI_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}
