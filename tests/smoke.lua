@@ -12,13 +12,29 @@ KWR_DB = {
 }
 
 local currentTime = 100
+_G.__kwrProfileTimeMs = _G.__kwrProfileTimeMs or 100000
 local mockPvP = false
+local mockInstanceType = "none"
 local mockCombat = false
+local mockLocale = "enUS"
 local mockInspectSpec
 local mockLeftScore, mockRightScore = 900, 1000
+local mockWidgetOverrides = {}
 local scoreRequests = 0
 function GetTime() return currentTime end
-function debugprofilestop() return currentTime * 1000 end
+function GetLocale() return mockLocale end
+function debugprofilestop()
+    local runtimeMs
+    if type(os) == "table" and type(os.clock) == "function" then
+        runtimeMs = os.clock() * 1000
+    end
+    if type(runtimeMs) == "number" and runtimeMs > _G.__kwrProfileTimeMs then
+        _G.__kwrProfileTimeMs = runtimeMs
+    else
+        _G.__kwrProfileTimeMs = _G.__kwrProfileTimeMs + 0.05
+    end
+    return _G.__kwrProfileTimeMs
+end
 function geterrorhandler()
     return function(message)
         return debug.traceback(tostring(message), 2)
@@ -59,6 +75,17 @@ Object.__index = function(tableValue, key)
         return function(self) return self.value end
     elseif key == "SetShown" then
         return function(self, shown) self.shown = shown == true end
+    elseif key == "SetPoint" then
+        return function(self, ...)
+            local points = rawget(self, "points")
+            if type(points) ~= "table" then
+                points = {}
+                rawset(self, "points", points)
+            end
+            points[#points + 1] = { ... }
+        end
+    elseif key == "ClearAllPoints" then
+        return function(self) rawset(self, "points", {}) end
     elseif key == "Show" then
         return function(self) self.shown = true end
     elseif key == "Hide" then
@@ -70,7 +97,12 @@ Object.__index = function(tableValue, key)
     elseif key == "GetChecked" then
         return function(self) return self.checked == true end
     elseif key == "GetPoint" then
-        return function() return "CENTER", UIParent, "CENTER", 0, 0 end
+        return function(self, index)
+            local points = rawget(self, "points")
+            local point = points and points[index or 1]
+            if point then return unpack(point) end
+            return "CENTER", UIParent, "CENTER", 0, 0
+        end
     elseif key == "GetEffectiveScale" then
         return function() return 1 end
     elseif key == "GetChildren" then
@@ -97,16 +129,49 @@ Object.__index = function(tableValue, key)
         return function(self, width, height)
             self.width, self.height = width, height
         end
+    elseif key == "SetWidth" then
+        return function(self, width) self.width = width end
+    elseif key == "SetHeight" then
+        return function(self, height) self.height = height end
+    elseif key == "SetBackdropColor" then
+        return function(self, ...)
+            self.backdropColor = { ... }
+        end
+    elseif key == "SetBackdropBorderColor" then
+        return function(self, ...)
+            self.backdropBorderColor = { ... }
+        end
+    elseif key == "SetTextColor" then
+        return function(self, ...)
+            self.textColor = { ... }
+        end
+    elseif key == "SetVertexColor" then
+        return function(self, ...)
+            self.vertexColor = { ... }
+        end
+    elseif key == "GetWidth" then
+        return function(self) return rawget(self, "width") or 0 end
+    elseif key == "GetHeight" then
+        return function(self) return rawget(self, "height") or 0 end
     elseif key == "SetMultiLine" then
         return function(self, enabled)
             self.multiLine = enabled == true
         end
+    elseif key == "SetSpacing" then
+        return function(self, spacing) self.spacing = spacing end
     end
     return function() end
 end
 
-function CreateFrame(_, name)
-    local frame = setmetatable({ shown = true, scripts = {}, events = {} }, Object)
+function CreateFrame(frameType, name, parent, template)
+    local frame = setmetatable({
+        shown = true,
+        scripts = {},
+        events = {},
+        frameType = frameType,
+        parent = parent,
+        template = template,
+    }, Object)
     if name then _G[name] = frame end
     return frame
 end
@@ -114,6 +179,14 @@ end
 UIParent = CreateFrame("Frame", "UIParent")
 DEFAULT_CHAT_FRAME = { AddMessage = function() end }
 GameTooltip = setmetatable({}, Object)
+CompactRaidFrameManager = CreateFrame("Frame", "CompactRaidFrameManager")
+CompactRaidFrameContainer = CreateFrame("Frame", "CompactRaidFrameContainer")
+local compactRaidManagerSettings = {
+    IsShown = true,
+}
+function CompactRaidFrameManager_SetSetting(key, value)
+    compactRaidManagerSettings[key] = value
+end
 
 C_Timer = {
     After = function(_, callback) callback() end,
@@ -127,8 +200,17 @@ C_Map = {
     GetPlayerMapPosition = function() return nil end,
 }
 C_UIWidgetManager = {
-    GetDoubleStatusBarWidgetVisualizationInfo = function()
+    GetDoubleStatusBarWidgetVisualizationInfo = function(widgetID)
         if not mockPvP then return nil end
+        local override = mockWidgetOverrides[widgetID]
+        if override then
+            return {
+                leftBarValue = override.left,
+                rightBarValue = override.right,
+                leftBarMax = override.max,
+                rightBarMax = override.max,
+            }
+        end
         return {
             leftBarValue = mockLeftScore,
             rightBarValue = mockRightScore,
@@ -151,72 +233,135 @@ C_UIWidgetManager = {
         }
     end,
 }
+local mockScoreboardRows
 C_PvP = {
     GetScoreInfo = function(index)
         if not mockPvP then return nil end
-        if index == 1 then
-            return {
-                name = "TestPlayer",
-                guid = "Player-1-SELF",
-                className = "Warrior",
-                classToken = "WARRIOR",
-                talentSpec = "Arms",
-                roleAssigned = 8,
-                faction = 0,
-            }
-        end
-        if index == 2 then
-            return {
-                name = "EnemyHealer-OtherRealm",
-                guid = "Player-2-ENEMY",
-                className = "Priest",
-                classToken = "PRIEST",
-                talentSpec = "Discipline",
-                roleAssigned = 4,
-                faction = 1,
-            }
-        end
+        return mockScoreboardRows[index]
     end,
 }
 
-function IsInInstance() return mockPvP, mockPvP and "pvp" or "none" end
-function IsInRaid() return false end
-function IsInGroup() return false end
-function GetNumGroupMembers() return 1 end
+function IsInInstance()
+    if mockPvP then
+        return true, mockInstanceType == "arena" and "arena" or "pvp"
+    end
+    if mockInstanceType ~= "none" then
+        return true, mockInstanceType
+    end
+    return false, "none"
+end
+local mockRaid = false
+local mockRaidTokensStable = false
+local mockRaidNames = { "Alpha", "Bravo", "Charlie" }
+function IsInRaid() return mockRaid end
+function IsInGroup() return mockRaid end
+function GetNumGroupMembers() return mockRaid and 3 or 1 end
 function GetNumSubgroupMembers() return 0 end
-function GetNumBattlefieldScores() return mockPvP and 2 or 0 end
+function GetRaidRosterInfo(index)
+    if not mockRaid then return nil end
+    return mockRaidNames[index], 0, 1, 90, "Warrior", "WARRIOR",
+        "Stormwind City", true, false, "DAMAGER"
+end
+mockScoreboardRows = {
+    {
+        name = "TestPlayer",
+        guid = "Player-1-SELF",
+        className = "Warrior",
+        classToken = "WARRIOR",
+        talentSpec = "Arms",
+        roleAssigned = 8,
+        faction = 0,
+    },
+    {
+        name = "EnemyHealer-OtherRealm",
+        guid = "Player-2-ENEMY",
+        className = "Priest",
+        classToken = "PRIEST",
+        talentSpec = "Discipline",
+        roleAssigned = 4,
+        faction = 1,
+    },
+}
+function GetNumBattlefieldScores() return mockPvP and #mockScoreboardRows or 0 end
 function RequestBattlefieldScoreData() scoreRequests = scoreRequests + 1 end
-local mockLiveEnemy = false
-function UnitExists(unit) return unit == "player" or (mockLiveEnemy and unit == "nameplate7") end
-function UnitName(unit) if unit == "player" then return "TestPlayer", "TestRealm" end end
+local mockLiveEnemies = {}
+local function mockLiveEnemy(unit)
+    return unit and mockLiveEnemies[unit] or nil
+end
+function UnitExists(unit)
+    return unit == "player"
+        or (mockRaid and unit and unit:find("^raid%d+$") ~= nil)
+        or mockLiveEnemy(unit) ~= nil
+end
+function UnitName(unit)
+    if unit == "player" then return "TestPlayer", "TestRealm" end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        local index = tonumber(unit:match("%d+"))
+        return mockRaidTokensStable and mockRaidNames[index] or "Alpha", "TestRealm"
+    end
+    local enemy = mockLiveEnemy(unit)
+    if enemy then return enemy.name, enemy.realm end
+end
 function UnitClass(unit)
     if unit == "player" then return "Warrior", "WARRIOR", 1 end
-    if mockLiveEnemy and unit == "nameplate7" then return "Priest", "PRIEST", 5 end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        return "Warrior", "WARRIOR", 1
+    end
+    local enemy = mockLiveEnemy(unit)
+    if enemy then return enemy.className, enemy.classFile, enemy.classID or 1 end
 end
 function UnitClassBase(unit)
     if unit == "player" then return "WARRIOR", 1 end
-    if mockLiveEnemy and unit == "nameplate7" then return "PRIEST", 5 end
+    local enemy = mockLiveEnemy(unit)
+    if enemy then return enemy.classFile, enemy.classID or 1 end
 end
 function UnitIsFriend(_, unit) return unit == "player" end
-function UnitRace(unit) if mockLiveEnemy and unit == "nameplate7" then return "Human" end end
-function UnitSexBase(unit) if mockLiveEnemy and unit == "nameplate7" then return 1 end end
-function UnitHonorLevel(unit) if mockLiveEnemy and unit == "nameplate7" then return 100 end end
-function UnitHealth(unit) return mockLiveEnemy and unit == "nameplate7" and 550 or 1000 end
-function UnitHealthMax() return 1000 end
+function UnitCanAttack(_, unit) return unit ~= "player" and mockLiveEnemy(unit) ~= nil end
+function UnitIsPlayer(unit) return unit == "player" or mockLiveEnemy(unit) ~= nil end
+function UnitRace(unit) local enemy = mockLiveEnemy(unit); if enemy then return enemy.raceName end end
+function UnitSexBase(unit) local enemy = mockLiveEnemy(unit); if enemy then return enemy.gender or 1 end end
+function UnitHonorLevel(unit) local enemy = mockLiveEnemy(unit); if enemy then return enemy.honorLevel or 0 end end
+function UnitHealth(unit) local enemy = mockLiveEnemy(unit); return enemy and enemy.health or 1000 end
+function UnitHealthMax(unit) local enemy = mockLiveEnemy(unit); return enemy and enemy.healthMax or 1000 end
 function UnitGroupRolesAssigned() return "DAMAGER" end
-function UnitIsDeadOrGhost() return false end
+function UnitIsDeadOrGhost(unit) local enemy = mockLiveEnemy(unit); return enemy and enemy.dead == true or false end
 function UnitIsConnected() return true end
-function UnitAffectingCombat(unit) return mockLiveEnemy and unit == "nameplate7" or false end
+function UnitAffectingCombat(unit) local enemy = mockLiveEnemy(unit); return enemy and enemy.inCombat == true or false end
 function UnitFactionGroup() return "Alliance" end
-function UnitGUID(unit) if unit == "player" then return "Player-1-SELF" end end
+local mockMercenary = false
+function UnitIsMercenary() return mockMercenary end
+function UnitGUID(unit)
+    if unit == "player" then return "Player-1-SELF" end
+    if mockRaid and unit and unit:find("^raid%d+$") then
+        return "Player-1-RAID" .. tostring(unit:match("%d+"))
+    end
+    local enemy = mockLiveEnemy(unit)
+    if enemy then return enemy.guid end
+end
 local mockDirectPlayerSpec = false
 function GetSpecialization() if mockDirectPlayerSpec then return 1 end end
 function GetSpecializationInfo(index)
     if mockDirectPlayerSpec and index == 1 then return 252, "Unholy", "", 0, "DAMAGER" end
 end
-function GetInspectSpecialization(unit) if unit == "player" then return mockInspectSpec end end
+inspectNotifications = {}
+clearedInspectPlayers = 0
+function CanInspect(unit)
+    return unit ~= nil and unit ~= "" and unit ~= "player"
+end
+function NotifyInspect(unit)
+    inspectNotifications[#inspectNotifications + 1] = unit
+end
+function ClearInspectPlayer()
+    clearedInspectPlayers = clearedInspectPlayers + 1
+end
+function GetInspectSpecialization(unit)
+    if unit == "player" or (unit and unit:find("^raid%d+$")) or (unit and unit:find("^party%d+$")) then
+        return mockInspectSpec
+    end
+end
 function GetSpecializationInfoByID(specID)
     if specID == 258 then return 258, "Shadow" end
+    if specID == 257 then return 257, "Holy" end
 end
 function GetRealZoneText() return mockPvP and "Arathi Basin" or "Stormwind City" end
 function GetZoneText() return mockPvP and "Arathi Basin" or "Stormwind City" end
@@ -226,22 +371,75 @@ function IsShiftKeyDown() return false end
 
 local files = {
     "Core/Addon.lua",
+    "Core/BuildInfo.lua",
+    "Core/CommandView.lua",
     "Core/Util.lua",
+    "Core/CommandReview.lua",
     "Core/Store.lua",
     "Data/Maps.lua",
+    "Data/RBGMapProfiles.lua",
+    "Data/ObjectiveRules.lua",
+    "Data/AssignmentDoctrine.lua",
     "Data/Doctrine.lua",
     "Data/MetaSnapshot.lua",
     "Data/SourceRegistry.lua",
     "Data/PatchData.lua",
     "Data/CombatSpells.lua",
+    "Data/SpellTags.lua",
+    "Data/CommandVocabulary.lua",
+    "Data/PlayerControlProfiles.lua",
+    "Data/EnemyProblemTypes.lua",
+    "Data/ProblemSignalRegistry.lua",
+    "Data/CounterplayMatrix.lua",
+    "Data/ObjectiveWeights.lua",
     "Data/Capabilities.lua",
     "Data/Compositions.lua",
     "Data/BattlePlans.lua",
     "Data/ScenarioLibrary.lua",
+    "Data/ScenarioCalibration.lua",
+    "Data/ScenarioAdversarialCalibration.lua",
+    "Data/ScenarioExpertCorpus.lua",
+    "Data/CompThreats.lua",
+    "Data/EnemyDefenseModels.lua",
+    "Data/OpenerDoctrine.lua",
+    "Data/RecoveryDoctrine.lua",
+    "Data/EndgameDoctrine.lua",
+    "Data/DoctrineComparisons.lua",
+    "Data/ScenarioFixtures.lua",
     "Data/Counters.lua",
     "Data/KnowledgeManifest.lua",
+    "Rulesets/Retail_Current.lua",
+    "Rulesets/PTR_12_1.lua",
+    "Rulesets/Strict_Future.lua",
+    "Rulesets/RulesetLoader.lua",
+    "Compliance/ApiMode.lua",
+    "Compliance/ComplianceGate.lua",
+    "Adapters/SafeAuraAdapter.lua",
+    "Adapters/SafeCombatLogAdapter.lua",
+    "Adapters/SafeUnitAdapter.lua",
+    "Adapters/SafeBattlegroundAdapter.lua",
+    "Adapters/SafeSpeechAdapter.lua",
+    "State/FactStore.lua",
+    "State/BoardStateTypes.lua",
+    "State/BoardStateBuilder.lua",
+    "State/BoardState.lua",
+    "State/LocalTeamfightState.lua",
+    "State/EnemyProblemState.lua",
+    "State/FriendlyRoleState.lua",
+    "State/AssignmentState.lua",
+    "State/CountdownState.lua",
+    "State/PlayerTargetState.lua",
+    "State/DRTracker.lua",
+    "Intelligence/EnemyProblemDetector.lua",
+    "Intelligence/AssignmentScorer.lua",
+    "Intelligence/AssignmentOptimizer.lua",
+    "Intelligence/KillTargetSelector.lua",
+    "Intelligence/CommandReasonBuilder.lua",
+    "Intelligence/TeamfightCommandPlanner.lua",
+    "Intelligence/ExecutionCommandBuilder.lua",
     "Runtime/TeamResolver.lua",
     "Runtime/EncounterHistory.lua",
+    "Runtime/OpponentModels.lua",
     "Runtime/Sensors.lua",
     "Runtime/RosterInspector.lua",
     "Runtime/EnemyIntel.lua",
@@ -251,21 +449,40 @@ local files = {
     "Runtime/Preview.lua",
     "Runtime/Reporter.lua",
     "Runtime/Predictor.lua",
+    "Runtime/EnemyResponsePlanner.lua",
     "Runtime/Strategist.lua",
+    "Runtime/AssignmentOverrides.lua",
     "Runtime/Assignments.lua",
     "Runtime/Commander.lua",
     "Runtime/Learning.lua",
     "Runtime/AAR.lua",
     "Runtime/Verification.lua",
+    "Runtime/MemoryBudget.lua",
+    "Runtime/SentinelBridge.lua",
+    "Runtime/CommandAudio.lua",
     "Runtime/MatchRuntime.lua",
-    "Features/CursorRing.lua",
     "UI/Theme.lua",
+    "UI/IconRegistry.lua",
+    "Features/CursorRing.lua",
     "UI/CopyDialog.lua",
     "UI/QuickCalls.lua",
+    "UI/TeamfightCommandCard.lua",
+    "UI/PersonalAssignmentCard.lua",
+    "UI/CrosshairPresenter.lua",
+    "UI/TargetAssistFrame.lua",
+    "UI/CountdownFrame.lua",
+    "UI/DebugReasonPanel.lua",
     "UI/TacticalMap.lua",
-    "UI/ReporterMap.lua",
+    "UI/RosterPresentation.lua",
+    "UI/CombatRosterVisuals.lua",
+    "UI/CombatRosterState.lua",
     "UI/CombatRoster.lua",
     "UI/HUD.lua",
+    "UI/MainWindowReports.lua",
+    "UI/MainWindowShell.lua",
+    "UI/MainWindowLauncher.lua",
+    "UI/MainWindowCommands.lua",
+    "UI/MainWindowPages.lua",
     "UI/MainWindow.lua",
     "UI/AARWindow.lua",
     "UI/Options.lua",
@@ -273,11 +490,37 @@ local files = {
 }
 
 local namespace = {}
+local releaseOnly = rawget(_G, "KWR_TEST_RELEASE_ONLY") == true
+local optionalFiles = {
+    ["Core/Diagnostics.lua"] = true,
+    ["Runtime/Preview.lua"] = true,
+}
+function ResolveAddonPath(path)
+    if (rawget(_G, "KWR_TEST_ROOT") or ".") == "." then
+        return path
+    end
+    local normalizedRoot = tostring(rawget(_G, "KWR_TEST_ROOT")):gsub("\\", "/")
+    if normalizedRoot:sub(-1) == "/" then
+        return normalizedRoot .. path
+    end
+    return normalizedRoot .. "/" .. path
+end
 for _, path in ipairs(files) do
-    local chunk, message = loadfile(path)
-    assert(chunk, path .. ": " .. tostring(message))
-    chunk("KnomercyWarRoom", namespace)
-    namespace = _G.KWR or namespace
+    local chunk, message = loadfile(ResolveAddonPath(path))
+    if not chunk and releaseOnly and optionalFiles[path] then
+        message = tostring(message or "")
+        if message:find("cannot open", 1, true) then
+            chunk = false
+        else
+            assert(chunk, path .. ": " .. tostring(message))
+        end
+    else
+        assert(chunk, path .. ": " .. tostring(message))
+    end
+    if chunk then
+        chunk("KnomercyWarRoom", namespace)
+        namespace = _G.KWR or namespace
+    end
 end
 
 local bootstrap = assert(_G.KWR_BootstrapFrame, "Bootstrap frame was not created.")
@@ -285,218 +528,449 @@ assert(bootstrap.scripts.OnEvent, "Bootstrap OnEvent handler was not registered.
 bootstrap.scripts.OnEvent(bootstrap, "ADDON_LOADED", "KnomercyWarRoom")
 bootstrap.scripts.OnEvent(bootstrap, "PLAYER_LOGIN")
 
-assert(KWR.ready == true, "KWR did not become ready.")
-assert(KWR.db.profile.main.page == "TACTICAL", "Legacy command page did not migrate.")
-assert(KWR.db.profile.hud.point == "CENTER" and KWR.db.profile.hud.x == -440,
-    "Legacy HUD placement did not migrate.")
-assert(KWR.Store:Get().command, "Command state was not published.")
-assert(KWR.Store:Get().snapshot.formation.openSlots == 9, "Formation advisor did not count open slots.")
-assert(KWR.Store:Get().command.status == "FORMING", "World mode did not publish formation guidance.")
-assert(KWR.MatchRuntime.frame:IsEventRegistered("UPDATE_UI_WIDGET"),
-    "Active events were not registered during initialization.")
-local worldRefreshes = KWR.MatchRuntime.diagnostics.refreshes
-KWR.MatchRuntime:HandleEvent("UPDATE_UI_WIDGET")
-assert(KWR.MatchRuntime.diagnostics.refreshes == worldRefreshes,
-    "Inactive runtime processed a battleground-only event.")
-
-mockPvP = true
-assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp"), "PvP pipeline refresh failed.")
-assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp-team-confirm"), "PvP team confirmation refresh failed.")
-assert(scoreRequests >= 1, "PvP capture did not request fresh scoreboard identity data.")
-assert(KWR.MatchRuntime:Reassess(), "Manual battlefield reassessment failed.")
-assert(type(KWR.Store:Get().snapshot.reassessment) == "table"
-    and type(KWR.Store:Get().snapshot.reassessment.changes) == "table",
-    "Manual battlefield reassessment did not publish assignment changes.")
-mockLiveEnemy = true
-KWR.MatchRuntime:HandleEvent("NAME_PLATE_UNIT_ADDED", "nameplate7")
-assert(KWR.EnemyIntel.observedTokens.nameplate7 == "Nameplate",
-    "Enemy observer did not retain the active nameplate token.")
-local observedEnemy = KWR.Store:Get().snapshot.enemies[1]
-assert(observedEnemy and observedEnemy.shortName == "EnemyHealer"
-    and observedEnemy.unit == "nameplate7"
-    and math.abs((observedEnemy.healthPercent or 0) - 55) < 0.01
-    and observedEnemy.localEngaged == true,
-    "Restricted live enemy token did not bind to the unique scoreboard identity: "
-        .. tostring(observedEnemy and observedEnemy.shortName) .. "/"
-        .. tostring(observedEnemy and observedEnemy.unit) .. "/"
-        .. tostring(observedEnemy and observedEnemy.healthPercent) .. "/"
-        .. tostring(observedEnemy and observedEnemy.localEngaged))
-assert(KWR.Store:Get().snapshot.combat.killTarget
-    and KWR.Store:Get().snapshot.combat.killTarget.shortName == "EnemyHealer",
-    "Local in-combat enemy was not selected as the kill target.")
-KWR.MatchRuntime:HandleEvent("NAME_PLATE_UNIT_REMOVED", "nameplate7")
-mockLiveEnemy = false
-assert(KWR.EnemyIntel.observedTokens.nameplate7 == nil,
-    "Enemy observer did not release the removed nameplate token.")
-local liveState = KWR.Store:Get()
-assert(liveState.snapshot.context.mapKey == "ARATHI", "Sensor did not resolve Arathi Basin.")
-assert(liveState.snapshot.context.team.side == "right"
-    and liveState.snapshot.context.team.faction == "Horde",
-    "Assigned Horde battlefield team did not override native Alliance faction.")
-assert(liveState.snapshot.score.friendly == 1000 and liveState.snapshot.score.enemy == 900,
-    "Widget score was not normalized to the assigned Horde team.")
-assert(liveState.snapshot.objectives.friendly == 3 and liveState.snapshot.objectives.enemy == 2,
-    "Objective ownership was not normalized to the assigned Horde team.")
-assert(liveState.assignments[1].role == "Anchor Defender"
-    and liveState.assignments[1].location == "Farm",
-    "Horde Arathi anchor was not assigned to the Horde home objective.")
-local verificationReport = KWR.Verification:CurrentReport()
-assert(verificationReport:find("Assigned team: Horde / right", 1, true),
-    "Live verification report omitted assigned-team evidence.")
-assert(verificationReport:find("Score source: ui_widget", 1, true),
-    "Live verification report omitted authoritative score evidence.")
-assert(verificationReport:find("Command evidence:", 1, true)
-    and verificationReport:find("Assignment audit: PASS", 1, true)
-    and verificationReport:find("Reporter: ACTIVE", 1, true)
-    and verificationReport:find("Transitions:", 1, true),
-    "Live verification report omitted command, assignment, Reporter, or transition evidence.")
-assert(verificationReport:find("ASSIGN:", 1, true),
-    "Live verification report omitted per-player assignment evidence.")
-assert(#KWR.Verification.ledger > 0, "Verification ledger did not record live transitions.")
-assert(liveState.prediction.status == "WIN", "Pipeline did not project the Arathi 3-2 win.")
-assert(liveState.command.status == "WIN", "Commander did not publish the projected status.")
-assert(liveState.command.line2:find("NEXT:", 1, true), "Commander did not publish a NEXT line.")
-assert(#liveState.snapshot.enemies == 1 and liveState.snapshot.enemies[1].shortName == "EnemyHealer",
-    "Scoreboard faction detection did not follow the assigned team.")
-assert(KWR.AAR.active ~= nil, "AAR did not open a live match journal.")
-assert(KWR.AAR:DetermineResult({
-    matchComplete = true,
-    scoreEnd = { friendly = 2, enemy = 1, max = 3 },
-}) == "VICTORY", "Time-limit match completion did not resolve the winning team.")
-
-mockRightScore = 1500
-assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp-complete-score"), "Final PvP score refresh failed.")
-mockPvP = false
-KWR.db.profile.preview = true
-assert(KWR.MatchRuntime:ForceRefresh("smoke-preview"), "Preview pipeline refresh failed.")
-local previewState = KWR.Store:Get()
-assert(previewState.snapshot.context.preview == true, "Preview was not explicitly labeled.")
-assert(previewState.mode == "PREVIEW", "Store did not publish preview mode.")
-assert(#previewState.snapshot.enemies == 10, "Preview enemy tracker was not populated.")
-assert(#previewState.assignments == 10, "Preview assignments were not generated.")
-assert(previewState.snapshot.reporter.active == true, "Reporter did not run in the background pipeline.")
-assert(previewState.snapshot.reporter.coverage.friendly == 10, "Reporter missed friendly movement tracks.")
-assert(previewState.snapshot.reporter.coverage.enemy == 10, "Reporter missed enemy movement tracks.")
-assert(type(previewState.prediction.movementEvidence) == "string", "Prediction did not receive Reporter evidence.")
-assert(previewState.snapshot.combat.killTarget ~= nil, "Combat intelligence did not select a local kill target.")
-assert(previewState.snapshot.combat.killTarget.shortName == "Syraelina", "Combat intelligence did not prefer the exposed healer.")
-assert(previewState.snapshot.combat.killTarget.localKillTarget == true, "Selected kill target was not marked for the compact glow.")
-assert(previewState.snapshot.combat.killReason:find("trinket used", 1, true), "Observed trinket use did not affect kill reasoning.")
-assert(previewState.snapshot.strategy.planID ~= nil, "Strategy engine did not select a battle plan.")
-assert(previewState.snapshot.formation.complete == true, "Full preview roster was not formation-ready.")
-assert(previewState.command.planID == previewState.snapshot.strategy.planID, "Commander did not publish the selected plan.")
-assert(KWR.MetaSnapshot:Count() == 40, "RBG meta snapshot is incomplete.")
-assert(KWR.MetaSnapshot:Lookup("PRIEST", "Discipline").rank == 1, "RBG meta snapshot lookup failed.")
-assert(#KWR.AAR:GetHistory() == 1, "Completed match was not committed to the AAR journal.")
-local completed = KWR.AAR:GetHistory()[1]
-assert(completed.result == "VICTORY", "AAR did not record the assigned Horde team's victory.")
-completed.primaryPlanID = completed.primaryPlanID or "AB_STABLE_THREE"
-completed.result = "VICTORY"
-KWR.AAR:SaveFeedback(completed.id, { wonBy = "Objectives", notes = "Reviewed smoke match." })
-KWR.AARWindow:Show(completed.id)
-assert(KWR.AARWindow.frame.wonBy.value == "Objectives"
-    and KWR.AARWindow.frame.wonBy.buttons[2].selected == true,
-    "Saved AAR selection did not remain visibly selected.")
-local strengthButton = KWR.AARWindow.frame.strength.buttons[1]
-strengthButton.scripts.OnClick(strengthButton)
-strengthButton.scripts.OnLeave(strengthButton)
-assert(strengthButton.selected == true
-    and KWR.AARWindow.frame.strength.value == "Coordination",
-    "Clicked AAR selection did not retain its selected state.")
-assert(KWR.Learning:Summary().samples == 1, "Reviewed AAR did not enter bounded learning.")
-assert(KWR.Learning:Adjustment(completed.mapKey, completed.primaryPlanID) == 0,
-    "Learning affected decisions before the minimum sample size.")
-
-currentTime = 101
-local movedPreview = KWR.Preview:Build()
-movedPreview.roster[1].x = movedPreview.roster[1].x + 0.03
-local movedReport = KWR.Reporter:Observe(movedPreview)
-local playerTrack
-for _, track in ipairs(movedReport.friendly) do
-    if track.name == "Knomercy" then playerTrack = track break end
+local function smokeBootstrapExports()
+    return {
+        KWR = KWR,
+        now = function()
+            return currentTime
+        end,
+        setTime = function(value)
+            currentTime = value
+        end,
+        advanceTime = function(delta)
+            currentTime = currentTime + (tonumber(delta) or 0)
+            return currentTime
+        end,
+        resetCommander = function()
+            if KWR.Commander and KWR.Commander.ResetSession then
+                KWR.Commander:ResetSession()
+            end
+        end,
+    }
 end
-assert(playerTrack and #playerTrack.points >= 2, "Reporter did not retain bounded movement history.")
-assert(playerTrack.direction ~= "HOLDING", "Reporter did not derive a movement direction.")
-assert(type(movedReport.pressure) == "table", "Reporter did not analyze objective pressure.")
 
-KWR.db.profile.preview = false
-mockInspectSpec = 258
-assert(KWR.MatchRuntime:ForceRefresh("smoke-inspect-observed"), "Observed-spec refresh failed.")
-assert(KWR.Store:Get().snapshot.roster[1].spec == "Shadow", "Observed teammate spec was not captured.")
-mockInspectSpec = nil
-assert(KWR.MatchRuntime:ForceRefresh("smoke-inspect-retained"), "Retained-spec refresh failed.")
-assert(KWR.Store:Get().snapshot.roster[1].spec == "Shadow",
-    "Observed teammate spec was discarded after inspection changed.")
-mockDirectPlayerSpec = true
-assert(KWR.MatchRuntime:ForceRefresh("smoke-player-spec"), "Direct player-spec refresh failed.")
-assert(KWR.Store:Get().snapshot.roster[1].spec == "Unholy"
-    and KWR.Store:Get().snapshot.roster[1].role == "DAMAGER"
-    and KWR.Store:Get().snapshot.roster[1].specSource == "player_spec",
-    "Player specialization did not use the direct specialization API.")
-assert(KWR.MatchRuntime:ForceRefresh("smoke-world"), "World pipeline refresh failed.")
-assert(KWR.Store:Get().snapshot.context.preview ~= true, "Preview did not turn off cleanly.")
-assert(KWR.MatchRuntime.active == false, "Runtime remained active after leaving PvP.")
-assert(KWR.MatchRuntime.frame:IsEventRegistered("UPDATE_UI_WIDGET"),
-    "Stopping the runtime mutated its event subscriptions.")
+if rawget(_G, "KWR_SMOKE_BOOTSTRAP_ONLY") == true then
+    return smokeBootstrapExports()
+end
 
-KWR.CombatRoster:Show("TEAM")
-KWR.HUD.ready = true
-KWR.db.profile.hud.enabled = true
-KWR.HUD:Update(KWR.Store:Get())
-assert(KWR.CombatRoster.frame:IsShown() and KWR.HUD.frame:IsShown(),
-    "Compact surfaces did not open for coordination test.")
-KWR.MainWindow:Show("TEAM")
-assert(not KWR.CombatRoster.frame:IsShown() and not KWR.HUD.frame:IsShown(),
-    "Expanded mode did not suppress compact surfaces.")
-local quickCall = KWR.MainWindow.pages.OBJECTIVES.callsCard.buttons[1]
-assert(quickCall.quickCallSecure == true
-    and quickCall:GetAttribute("type1") == "macro"
-    and quickCall:GetAttribute("macrotext1") == "/instance INC PRIMARY",
-    "Quick Call was not armed as a fixed player-click secure action.")
-mockPvP = true
-quickCall.scripts.PostClick(quickCall, "LeftButton")
-assert(KWR.MainWindow.pages.OBJECTIVES.callsCard.status.value == "CALL ACTIVATED: INC PRIMARY",
-    "Quick Call did not provide visible battleground confirmation.")
-mockPvP = false
-mockCombat = true
-local combatFallback = KWR.QuickCalls:CreateButton(UIParent, "HELP HOME", 132, 25)
-assert(combatFallback.quickCallFallback == true
-    and combatFallback:GetAttribute("macrotext1") == nil,
-    "A first-created in-combat Quick Call did not remain a non-secure fallback.")
-mockCombat = false
-mockCombat = true
-KWR.MainWindow:Hide()
-assert(KWR.MainWindow.frame:IsShown()
-    and KWR.MainWindow.pendingVisibility
-    and KWR.MainWindow.pendingVisibility.shown == false,
-    "Protected expanded window hide was not deferred during combat.")
-mockCombat = false
-KWR.MainWindow:FlushCombatVisibility()
-assert(not KWR.MainWindow.frame:IsShown(),
-    "Deferred expanded window hide did not complete after combat.")
-KWR.MainWindow:Show("TEAM")
-local rejectedCall = KWR.QuickCalls:CreateButton(UIParent, "DYNAMIC UNREVIEWED CALL", 132, 25)
-assert(rejectedCall.quickCallRejected == true
-    and rejectedCall:GetAttribute("macrotext1") == nil,
-    "An unreviewed Quick Call reached the secure binding path.")
-KWR.CopyDialog:ShowCompact("Compact Test", "ONE LINE")
-assert(KWR.CopyDialog.frame.width == 460 and KWR.CopyDialog.frame.height == 126
-    and KWR.CopyDialog.frame.edit.multiLine == false,
-    "Single-line copy did not use the compact dialog geometry.")
-KWR.CopyDialog:ShowText("Report Test", "LINE 1\nLINE 2")
-assert(KWR.CopyDialog.frame.width == 620 and KWR.CopyDialog.frame.height == 240
-    and KWR.CopyDialog.frame.edit.multiLine == true,
-    "Report copy did not restore the multiline dialog geometry.")
-KWR.CopyDialog.frame:Hide()
-KWR.MainWindow:RestoreCompactSurfaces()
-assert(KWR.CombatRoster.frame:IsShown() and KWR.HUD.frame:IsShown(),
-    "Compact surfaces were not restored after expanded mode.")
-KWR.MainWindow.frame:Hide()
+local previewState
+do
+assert(KWR.ready == true, "KWR did not become ready.")
+…59717 tokens truncated…                dead = false,
+                currentTargetGUID = "Enemy-Priest-V",
+            },
+            {
+                name = "Stan",
+                guid = "Player-Stan",
+                role = "DAMAGER",
+                spec = "Balance",
+                connected = true,
+                dead = false,
+                currentTargetGUID = "Enemy-Warrior-Z",
+            },
+        },
+        enemies = {
+            {
+                name = "Priest-V",
+                shortName = "Priest-V",
+                guid = "Enemy-Priest-V",
+                role = "HEALER",
+                spec = "Discipline",
+                visible = true,
+                localRange = true,
+                freeCasting = true,
+                dr = {
+                    subdue = {
+                        state = "READY",
+                        confidence = "CONFIRMED",
+                        remaining = 0,
+                    },
+                },
+                source = "nameplate",
+            },
+            {
+                name = "Priest-M",
+                shortName = "Priest-M",
+                guid = "Enemy-Priest-M",
+                role = "HEALER",
+                spec = "Holy",
+                visible = true,
+                localRange = true,
+                freeCasting = true,
+                source = "nameplate",
+            },
+            {
+                name = "Warrior-Z",
+                shortName = "Warrior-Z",
+                guid = "Enemy-Warrior-Z",
+                role = "DAMAGER",
+                spec = "Arms",
+                visible = true,
+                localRange = true,
+                overextended = true,
+                killable = true,
+                healthPercent = 32,
+                source = "nameplate",
+            },
+        },
+    }
+    local plan = KWR.TeamfightCommandPlanner:Plan(teamfightSnapshot)
+    local byActor = {}
+    for _, assignment in ipairs(plan.assignments or {}) do
+        byActor[assignment.actor] = assignment
+    end
+    assert(plan.active == true, "Teamfight planner did not activate for local fight replay.")
+    assert(plan.boardSummary and plan.boardSummary.enemyCount == 3
+        and plan.boardSummary.friendlyCount == 2,
+        "BoardState summary did not preserve local fight roster counts.")
+    assert(plan.optimizer and plan.optimizer.nodes <= 5000
+        and plan.optimizer.problems >= 2,
+        "Assignment optimizer did not expose bounded search diagnostics.")
+    assert(byActor.Knomercy and byActor.Knomercy.verb == "Subdue"
+        and byActor.Knomercy.target == "Priest-V",
+        "Knomercy was not assigned to subdue Priest-V.")
+    assert(byActor.Knomercy.drState and byActor.Knomercy.drState.state == "READY",
+        "Assignment did not preserve safe DR confidence state.")
+    assert(byActor.Stan and byActor.Stan.verb == "Subdue"
+        and byActor.Stan.target == "Priest-M",
+        "Stan was not assigned to subdue Priest-M.")
+    assert(plan.killTarget and plan.killTarget.verb == "Kill"
+        and plan.killTarget.target == "Warrior-Z",
+        "Warrior-Z was not selected as the coordinated kill target.")
+    assert(plan.killTarget.supportCoverage == 2,
+        "Kill target did not account for resolved support-control assignments.")
+    teamfightSnapshot.teamfight = plan
+    do (function()
+    local executionPacket = KWR.ExecutionCommandBuilder:Build(
+        teamfightSnapshot, {}, {}, { action = "Collapse now." })
+    assert(executionPacket.active == true
+        and #executionPacket.controls == 2
+        and executionPacket.primaryTarget.target == "Warrior-Z",
+        "Synchronized execution packet lost control lanes or kill target: active="
+            .. tostring(executionPacket.active) .. " controls="
+            .. tostring(#executionPacket.controls) .. " target="
+            .. tostring(executionPacket.primaryTarget and executionPacket.primaryTarget.target))
+    assert(KWR.ExecutionCommandBuilder:PersonalFor(
+        executionPacket, "Knomercy", "Player-Knomercy").target == "Priest-V",
+        "Synchronized packet did not route Knomercy's personal control target.")
+    assert(KWR.ExecutionCommandBuilder:PersonalFor(
+        executionPacket, "Unknown", "Player-Unknown") == nil,
+        "Personal routing leaked another player's assignment through fallback.")
+    local repeatPacket = KWR.ExecutionCommandBuilder:Build(
+        teamfightSnapshot, {}, {}, { action = "Collapse now." })
+    assert(repeatPacket.signature == executionPacket.signature,
+        "Equivalent execution inputs did not produce a stable signature.")
+    assert(executionPacket.localFight
+        and executionPacket.localFight.kill
+        and executionPacket.localFight.kill.target == "Warrior-Z"
+        and #executionPacket.localFight.controls == 2,
+        "Local-fight packet did not preserve independent kill and healer-control truth.")
 
-local result = KWR.Diagnostics:Run()
-if result.failed > 0 then
-    local report = KWR.Diagnostics:Report()
-    error(report)
+    do (function()
+    local passiveSnapshot = KWR.Util:Copy(teamfightSnapshot)
+    passiveSnapshot.enemies[1].freeCasting = false
+    passiveSnapshot.enemies[2].freeCasting = false
+    passiveSnapshot.enemies[#passiveSnapshot.enemies + 1] = {
+        name = "Remote-Priest",
+        shortName = "Remote-Priest",
+        guid = "Enemy-Remote-Priest",
+        role = "HEALER",
+        spec = "Holy",
+        visible = true,
+        localRange = false,
+        freeCasting = true,
+        source = "scoreboard",
+    }
+    passiveSnapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(passiveSnapshot)
+    local passivePacket = KWR.ExecutionCommandBuilder:Build(
+        passiveSnapshot, {}, {}, { action = "Collapse now." })
+    local passiveTargets = {}
+    for _, control in ipairs(passivePacket.localFight.controls or {}) do
+        passiveTargets[control.target] = true
+    end
+    assert(passiveTargets["Priest-V"] == true
+        and passiveTargets["Priest-M"] == true,
+        "Confirmed local healers did not retain control lanes between casts.")
+    assert(passiveTargets["Remote-Priest"] ~= true,
+        "Remote scoreboard healer incorrectly received a local control lane.")
+
+    local prioritySnapshot = KWR.Util:Copy(passiveSnapshot)
+    prioritySnapshot.enemies[2].freeCasting = true
+    prioritySnapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(prioritySnapshot)
+    local priorityPacket = KWR.ExecutionCommandBuilder:Build(
+        prioritySnapshot, {}, {}, { action = "Collapse now." })
+    assert(priorityPacket.localFight.controls[1]
+        and priorityPacket.localFight.controls[1].target == "Priest-M",
+        "Free-casting healer control did not outrank passive local healer control.")
+
+    local recentSnapshot = KWR.Util:Copy(passiveSnapshot)
+    for _, enemy in ipairs(recentSnapshot.enemies) do
+        enemy.localRange = false
+        enemy.localEngaged = false
+        enemy.freeCasting = false
+        enemy.recentLocalRange = enemy.role == "HEALER"
+            and enemy.guid ~= "Enemy-Remote-Priest"
+    end
+    recentSnapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(recentSnapshot)
+    local recentPacket = KWR.ExecutionCommandBuilder:Build(
+        recentSnapshot, {}, {}, { action = "Hold." })
+    assert(recentPacket.localFight.phase == "RECENT"
+        and #recentPacket.localFight.controls == 2
+        and recentPacket.localFight.controls[1].state == "RECENT"
+        and recentPacket.localFight.kill == nil,
+        "Recent healer-control truth did not persist without retaining an expired kill target: phase="
+            .. tostring(recentPacket.localFight.phase)
+            .. " controls=" .. tostring(#recentPacket.localFight.controls)
+            .. " state=" .. tostring(recentPacket.localFight.controls[1]
+                and recentPacket.localFight.controls[1].state)
+            .. " kill=" .. tostring(recentPacket.localFight.kill
+                and recentPacket.localFight.kill.target))
+
+    local clearedSnapshot = KWR.Util:Copy(recentSnapshot)
+    for _, enemy in ipairs(clearedSnapshot.enemies) do
+        enemy.recentLocalRange = false
+        enemy.recentLocalEngaged = false
+    end
+    clearedSnapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(clearedSnapshot)
+    local clearedPacket = KWR.ExecutionCommandBuilder:Build(
+        clearedSnapshot, {}, {}, { action = "Hold." })
+    assert(clearedPacket.localFight.phase == "CLEAR"
+        and clearedPacket.localFight.kill == nil
+        and #clearedPacket.localFight.controls == 0,
+        "Expired local-fight actors were retained after local evidence cleared.")
+
+    local protectedPacket = KWR.ExecutionCommandBuilder:Build(
+        teamfightSnapshot, {}, {
+            {
+                name = "Knomercy",
+                guid = "Player-Knomercy",
+                role = "Anchor Defender",
+                location = "Farm",
+            },
+        }, { action = "Collapse now." })
+    local protectedJob = KWR.ExecutionCommandBuilder:PersonalFor(
+        protectedPacket, "Knomercy", "Player-Knomercy")
+    assert(protectedJob
+        and protectedJob.role == "Anchor Defender"
+        and protectedPacket.controls[1]
+        and protectedPacket.controls[1].assigned == false
+        and protectedPacket.controls[1].protectedAssignment == "Anchor Defender",
+        "Synchronized healer control overrode a protected objective assignment.")
+    end)() end
+
+    teamfightSnapshot.executionCommand = executionPacket
+    local sentinelView = KWR.SentinelBridge:BuildView("Knomercy", {
+        revision = 4,
+        snapshot = teamfightSnapshot,
+        assignments = {},
+        prediction = {},
+        command = {},
+        mode = "LIVE",
+    })
+    assert(sentinelView.assignment.source == "SYNCHRONIZED_EXECUTION"
+        and sentinelView.assignment.target == "Priest-V"
+        and sentinelView.watch.mode == "CONTROL"
+        and sentinelView.execution.signature == executionPacket.signature,
+        "SentinelBridge did not relay the synchronized personal assignment and revision: source="
+            .. tostring(sentinelView.assignment.source) .. " target="
+            .. tostring(sentinelView.assignment.target) .. " mode="
+            .. tostring(sentinelView.watch.mode) .. " signature="
+            .. tostring(sentinelView.execution.signature == executionPacket.signature))
+    end)() end
+    local seenExpandedType = false
+    for _, problem in ipairs(plan.problems or {}) do
+        if problem.type == "FREE_CASTING_HEALER" then
+            seenExpandedType = true
+            assert(problem.evidenceIDs and #problem.evidenceIDs > 0,
+                "Expanded enemy problem did not preserve evidence IDs.")
+        end
+    end
+    assert(seenExpandedType == true,
+        "Enemy problem detector did not emit the future-proof healer problem type.")
+    local signalSummary = KWR.ProblemSignalRegistry:Summary()
+    assert(signalSummary.total >= 10
+        and signalSummary.supported >= 8
+        and signalSummary.disabled >= 1
+        and signalSummary.legacyAliases >= 3
+        and signalSummary.auditOK == true,
+        "Problem signal registry summary drifted away from the ET-01 contract.")
+    local freeCastRow = KWR.ProblemSignalRegistry:Describe("FREE_CAST_HEALER")
+    assert(freeCastRow
+        and freeCastRow.key == "FREE_CASTING_HEALER"
+        and freeCastRow.fullCoverage == true,
+        "Problem signal registry did not canonicalize the free-cast healer alias.")
+    local disabledRow = KWR.ProblemSignalRegistry:Describe("RESPAWN_WAVE_ADVANTAGE")
+    assert(disabledRow
+        and disabledRow.enabled == false
+        and disabledRow.disabledReason ~= nil,
+        "Problem signal registry did not preserve disabled advanced-problem truth.")
+    local signalAudit = KWR.ProblemSignalRegistry:Audit(plan.problems)
+    assert(signalAudit.auditOK == true
+        and signalAudit.active > 0
+        and signalAudit.activeUnsupported == 0
+        and signalAudit.activeDisabled == 0
+        and signalAudit.activeUnknown == 0,
+        "Active teamfight problems were not fully covered by the signal registry.")
+    assert(plan.countdown and plan.countdown.ticks[1] == 5
+        and plan.countdown.ticks[#plan.countdown.ticks] == "GO",
+        "Teamfight planner did not generate the five-second countdown.")
+    assert(byActor.Knomercy.debugReasons and #byActor.Knomercy.debugReasons > 0
+        and byActor.Stan.debugReasons and #byActor.Stan.debugReasons > 0,
+        "Teamfight planner did not produce debug reasons.")
+    assert(byActor.Knomercy.targetStatus == "MATCHED"
+        and byActor.Stan.targetStatus == "NOT_TARGETED",
+        "Target-assist state did not distinguish matched and unmatched targets.")
+    assert(KWR.TeamfightCommandCard:Build(plan).lines[2]
+        == "Knomercy -> Subdue Priest-V",
+        "Teamfight command card did not expose the commander job intent.")
+    assert(KWR.PersonalAssignmentCard:Build(byActor.Knomercy).targetStatus == "MATCHED",
+        "Personal assignment card did not preserve target-match state.")
+    assert(#KWR.CrosshairPresenter:Markers(plan) == 3,
+        "Crosshair presenter did not produce assignment and kill-target markers.")
+    assert(KWR.TargetAssistFrame:Build(byActor.Stan).message == "Select the assigned target.",
+        "Target assist presenter produced the wrong manual guidance.")
+    assert(KWR.CountdownFrame:Build(plan.countdown).ticks[6] == "GO",
+        "Countdown presenter did not preserve the GO tick.")
+    assert(#KWR.DebugReasonPanel:Build(plan) == 3,
+        "Debug reason panel did not expose all command reasons.")
+    local forbidden = KWR.CommandVocabulary:ContainsForbiddenLanguage(plan.summary)
+    assert(forbidden == false,
+        "Teamfight command used spell-specific or automation language.")
+    local unknownCard = KWR.PersonalAssignmentCard:Build(nil)
+    assert(unknownCard.targetStatus == "UNKNOWN" and unknownCard.confidence == "UNKNOWN",
+        "Personal assignment card did not tolerate UNKNOWN state.")
+
+    do (function()
+    local orbSnapshot = {
+        context = {
+            inPvP = true,
+            preview = false,
+            mapKey = "TEMPLE",
+            mapName = "Temple of Kotmogu",
+            kind = "ORB",
+            phase = "LIVE",
+        },
+        roster = {
+            { name = "Krysm", guid = "Player-Krysm", role = "DAMAGER", spec = "Frost",
+                connected = true, dead = false },
+            { name = "Max", guid = "Player-Max", role = "DAMAGER", spec = "Havoc",
+                connected = true, dead = false },
+        },
+        enemies = {},
+        objectives = {
+            carriers = {
+                { player = "Krysm", owner = "FRIENDLY", kind = "ORB",
+                    objective = "Blue Orb", stacks = 510, healthPercent = 31, visible = true },
+            },
+        },
+        teamfight = {
+            displayEligible = false,
+            assignments = {},
+            problems = {},
+            confidence = "UNKNOWN",
+            countdown = KWR.CountdownState:Build(5),
+        },
+    }
+    local orbAssignments = {
+        { name = "Krysm", guid = "Player-Krysm", role = "Orb Carrier", location = "Blue Orb" },
+        { name = "Max", guid = "Player-Max", role = "Carrier Hunter", location = "Enemy Carrier" },
+    }
+    local orbPacket = KWR.ExecutionCommandBuilder:Build(
+        orbSnapshot, {}, orbAssignments, {})
+    assert(orbPacket.objectiveHandoff
+        and orbPacket.objectiveHandoff.actor == "Max"
+        and orbPacket.objectiveHandoff.stacks == 510
+        and orbPacket.trigger == "GO ON BLUE ORB DROP",
+        "High-risk orb did not produce a qualified synchronized handoff.")
+    assert(KWR.ExecutionCommandBuilder:PersonalFor(
+        orbPacket, "Max", "Player-Max").shortRole == "PICKUP",
+        "Sentinel personal routing did not prioritize the orb handoff.")
+    assert(orbPacket.spokenText:find("Max, prepare Blue pickup", 1, true),
+        "Visual orb handoff and canonical spoken call drifted.")
+
+    local threeLaneSnapshot = KWR.Util:Copy(teamfightSnapshot)
+    threeLaneSnapshot.roster[#threeLaneSnapshot.roster + 1] = {
+        name = "Rogue-One", guid = "Player-Rogue-One", role = "DAMAGER",
+        spec = "Assassination", connected = true, dead = false,
+    }
+    threeLaneSnapshot.teamfight = KWR.Util:Copy(plan)
+    threeLaneSnapshot.teamfight.problems[#threeLaneSnapshot.teamfight.problems + 1] = {
+        type = "CASTER_HEALER_SUPPORT",
+        enemy = { name = "Priest-B", shortName = "Priest-B", guid = "Enemy-Priest-B",
+            role = "HEALER", spec = "Holy" },
+    }
+    threeLaneSnapshot.teamfight.assignments[#threeLaneSnapshot.teamfight.assignments + 1] = {
+        actor = "Rogue-One", actorGUID = "Player-Rogue-One", verb = "Subdue",
+        target = "Priest-B", targetGUID = "Enemy-Priest-B", confidence = "HIGH",
+    }
+    local threeLanePacket = KWR.ExecutionCommandBuilder:Build(
+        threeLaneSnapshot, {}, {}, {})
+    assert(#threeLanePacket.controls == 3
+        and threeLanePacket.controls[3].actor == "Rogue-One",
+        "Synchronized command packet did not preserve three healer-control lanes.")
+
+    local oldAvailable = KWR.SafeSpeechAdapter.IsAvailable
+    local oldSpeak = KWR.SafeSpeechAdapter.Speak
+    local oldStop = KWR.SafeSpeechAdapter.Stop
+    local spoken = 0
+    KWR.SafeSpeechAdapter.IsAvailable = function() return true end
+    KWR.SafeSpeechAdapter.Speak = function() spoken = spoken + 1 return true end
+    KWR.SafeSpeechAdapter.Stop = function() end
+    KWR.db.profile.hud.audio.enabled = true
+    KWR.CommandAudio.lastSignature = nil
+    KWR.CommandAudio.lastSpokenAt = -100
+    local audioPacket = KWR.ExecutionCommandBuilder:Build(
+        teamfightSnapshot, {}, {}, { action = "Collapse now." })
+    KWR.CommandAudio:SpeakPacket(audioPacket, false)
+    KWR.CommandAudio:SpeakPacket(audioPacket, false)
+    assert(spoken == 1, "Unchanged synchronized command signature replayed audio.")
+
+    local function silentCopy(suffix)
+        return {
+            active = audioPacket.active,
+            authoritative = audioPacket.authoritative,
+            audible = audioPacket.audible,
+            confidence = audioPacket.confidence,
+            signature = audioPacket.signature .. suffix,
+            spokenText = audioPacket.spokenText,
+        }
+    end
+    local silentPacket = silentCopy(":preview")
+    silentPacket.authoritative = false
+    KWR.CommandAudio:SpeakPacket(silentPacket, true)
+    assert(spoken == 1, "Preview synchronized command produced audio.")
+
+    silentPacket = silentCopy(":low")
+    silentPacket.confidence = "LOW"
+    silentPacket.audible = false
+    KWR.CommandAudio:SpeakPacket(silentPacket, true)
+    assert(spoken == 1, "Low-confidence synchronized command produced audio.")
+
+    KWR.db.profile.hud.audio.enabled = false
+    silentPacket = silentCopy(":disabled")
+    KWR.CommandAudio:SpeakPacket(silentPacket, true)
+    assert(spoken == 1, "Disabled synchronized command audio still spoke.")
+
+    KWR.db.profile.hud.audio.enabled = true
+    KWR.SafeSpeechAdapter.IsAvailable = function() return false end
+    silentPacket.signature = audioPacket.signature .. ":unavailable"
+    KWR.CommandAudio:SpeakPacket(silentPacket, true)
+    assert(spoken == 1, "Unavailable text-to-speech did not fail silent.")
+
+    KWR.SafeSpeechAdapter.IsAvailable = oldAvailable
+    KWR.SafeSpeechAdapter.Speak = oldSpeak
+    KWR.SafeSpeechAdapter.Stop = oldStop
+    end)() end
+end
+end
+
+local result = { passed = 0, failed = 0 }
+if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
+    result = KWR.Diagnostics:Run()
+    if result.failed > 0 then
+        local report = KWR.Diagnostics:Report()
+        error(report)
+    end
 end
 
 print("KWR_SMOKE_PASS checks=" .. tostring(result.passed))
