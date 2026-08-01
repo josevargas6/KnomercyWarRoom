@@ -16,10 +16,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
 
@@ -30,9 +30,21 @@ jobs:
         shell: pwsh
         run: ./tools/validate.ps1
 
+      - name: Scan workspace for committed credentials
+        shell: pwsh
+        run: ./tools/security-audit.ps1
+
       - name: Audit knowledge data
         shell: pwsh
         run: ./tools/knowledge-audit.ps1
+
+      - name: Test release automation contracts
+        shell: pwsh
+        run: ./tools/test-automation.ps1
+
+      - name: Test public social copy
+        shell: pwsh
+        run: ./tools/test-social-copy.ps1
 
       - name: Run deterministic diagnostics
         run: fengari tests/smoke.lua
@@ -45,7 +57,7 @@ jobs:
         run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts"
 
       - name: Upload certified packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: kwr-${{ github.run_id }}-${{ github.sha }}
           path: artifacts/*

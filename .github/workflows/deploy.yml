@@ -1,0 +1,36 @@
+name: KWR CurseForge Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+
+      - name: Validate addon metadata
+        shell: pwsh
+        run: |
+          $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          if (-not $tocVersion -or $tocVersion -notmatch '^\d+\.\d+\.\d+-alpha\.\d+$') {
+              throw "TOC Version must use the release format MAJOR.MINOR.PATCH-alpha.N; got '$tocVersion'."
+          }
+          if ("${{ github.event_name }}" -eq "push" -and "${{ github.ref_name }}" -ne "v$tocVersion") {
+              throw "Release tag mismatch. Expected v$tocVersion but got ${{ github.ref_name }}."
+          }
+
+      - name: Run repository validation
+        shell: pwsh
+        run: ./tools/validate.ps1
+
+      - name: Package and upload to CurseForge
+        uses: BigWigsMods/packager@v2
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          CF_PROJECT_ID: "1632632"
