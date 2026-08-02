@@ -1,6 +1,12 @@
 $ErrorActionPreference = 'Stop'
 
-$requiredFiles = @('README.md', 'CURSEFORGE_DESCRIPTION.md', 'docs/SOCIAL_COPY.md')
+$requiredFiles = @(
+    'README.md',
+    'CURSEFORGE_DESCRIPTION.md',
+    'docs/SOCIAL_COPY.md',
+    'docs/KWR_COMMANDER_DISCORD_CHANNEL_UPDATES.md',
+    'docs/SENTINEL_DISCORD_CHANNEL_UPDATES.md'
+)
 foreach ($path in $requiredFiles) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Missing social copy file: $path"
@@ -29,6 +35,19 @@ foreach ($productSection in @('Commander', 'Sentinel')) {
     $sectionMatch = [regex]::Match($socialCopy, $sectionPattern)
     if (-not $sectionMatch.Success -or $sectionMatch.Groups[1].Value -notmatch '6\.1\.0-alpha\.32') {
         throw "Social copy $productSection section does not identify the current Alpha 32 candidate."
+    }
+}
+
+$releaseUpdates = Get-Content -LiteralPath 'docs/KWR_COMMANDER_DISCORD_CHANNEL_UPDATES.md' -Raw
+$releaseUpdates += Get-Content -LiteralPath 'docs/SENTINEL_DISCORD_CHANNEL_UPDATES.md' -Raw
+foreach ($staleVersion in @('6.1.0-alpha.29', '6.1.0-alpha.25')) {
+    if ($releaseUpdates -match [regex]::Escape($staleVersion)) {
+        throw "Release channel copy contains stale candidate version: $staleVersion"
+    }
+}
+foreach ($receipt in @('8558795', '8558797')) {
+    if ($releaseUpdates -notmatch [regex]::Escape($receipt)) {
+        throw "Release channel copy is missing CurseForge receipt: $receipt"
     }
 }
 
