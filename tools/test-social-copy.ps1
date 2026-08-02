@@ -9,7 +9,7 @@ foreach ($path in $requiredFiles) {
 
 $copy = ($requiredFiles | ForEach-Object { Get-Content -LiteralPath $_ -Raw }) -join "`n"
 $requiredPhrases = @(
-    '6.1.0-alpha.31',
+    '6.1.0-alpha.32',
     'player-controlled',
     'field-test',
     'never auto-casts',

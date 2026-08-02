@@ -10,7 +10,7 @@ Knomercy War Room is a player-controlled Rated Battleground command system for
 World of Warcraft Retail. It turns verified battlefield state into one clear
 next call, assignment, win condition, and abort condition for the team.
 
-The current public candidate is `6.1.0-alpha.31`. It is an active field-test
+The current public candidate is `6.1.0-alpha.32`. It is an active field-test
 release, not a stable guarantee. KWR never auto-casts, changes targets, sends
 chat, or performs protected actions. Players remain in control of every action.
 

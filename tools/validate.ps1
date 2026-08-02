@@ -111,6 +111,22 @@ if (Test-Path -LiteralPath $sentinelTocPath) {
     Validate-TocBundle -TocPath $sentinelTocPath -RootPath $sentinelRoot -Label "KWRSentinel" | Out-Null
 }
 
+foreach ($retailTocPath in @($tocPath, $sentinelTocPath)) {
+    if (-not (Test-Path -LiteralPath $retailTocPath)) {
+        continue
+    }
+    $interfaceLine = Get-Content -LiteralPath $retailTocPath |
+        Where-Object { $_ -match "^## Interface:" } |
+        Select-Object -First 1
+    $interfaceIds = @(($interfaceLine -replace "^## Interface:\s*", "") -split "," |
+        ForEach-Object { $_.Trim() })
+    foreach ($requiredInterface in @("120007", "120100")) {
+        if ($interfaceIds -notcontains $requiredInterface) {
+            Add-ValidationError "Retail TOC $retailTocPath is missing supported interface $requiredInterface."
+        }
+    }
+}
+
 $ignoredLuaRoots = @(
     (Join-Path $root "artifacts"),
     (Join-Path $root "node_modules"),
