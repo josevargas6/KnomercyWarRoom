@@ -38,18 +38,25 @@ jobs:
 
       - name: Validate exact release copy
         shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
         run: |
+          if ($env:RELEASE_VERSION -cne "6.1.0-alpha.32") {
+              throw "This receipt is certified only for 6.1.0-alpha.32."
+          }
           ./tools/test-social-copy.ps1
-          ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -DryRun
-          ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -DryRun
-          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}" -DryRun
-          ./tools/sentinel-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}" -DryRun
+          ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $env:RELEASE_VERSION -DryRun
+          ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version $env:RELEASE_VERSION -DryRun
+          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $env:RELEASE_VERSION -CommanderVersion $env:RELEASE_VERSION -DryRun
+          ./tools/sentinel-discord-announce.ps1 -Section ops -Version $env:RELEASE_VERSION -CommanderVersion $env:RELEASE_VERSION -DryRun
 
       - name: Confirm external writes
         if: ${{ inputs.post_discord }}
         shell: pwsh
+        env:
+          CONFIRM_EXTERNAL_WRITES: ${{ inputs.confirm_external_writes }}
         run: |
-          if ("${{ inputs.confirm_external_writes }}" -cne "PUBLISH") {
+          if ($env:CONFIRM_EXTERNAL_WRITES -cne "PUBLISH") {
               throw "Discord posts require confirm_external_writes=PUBLISH."
           }
 
@@ -58,25 +65,29 @@ jobs:
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
-        run: ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}"
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $env:RELEASE_VERSION
 
       - name: Post Sentinel announcement
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
-        run: ./tools/sentinel-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}"
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $env:RELEASE_VERSION -CommanderVersion $env:RELEASE_VERSION
 
       - name: Post Commander ops receipt
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
-        run: ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}"
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version $env:RELEASE_VERSION
 
       - name: Post Sentinel ops receipt
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
-        run: ./tools/sentinel-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}"
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section ops -Version $env:RELEASE_VERSION -CommanderVersion $env:RELEASE_VERSION
