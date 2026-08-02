@@ -1,13 +1,19 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.33 - 2026-08-01
+
+- Restores the complete multi-panel Sentinel runtime to standalone source.
+- Makes the TOC and runtime-reported version agree.
+- Preserves Retail protected-data fallbacks and player-click-only behavior.
+
 ## 6.1.0-alpha.32 - 2026-08-01
 
-- Declares both supported Retail interface builds, 12.0.7 and 12.1.0, in the packaged TOC.
+- Declares both supported Retail interface builds, 12.0.7 and 12.1.0.
 - Preserves the Alpha 31 execution-card behavior and safety boundary.
 
 ## 6.1.0-alpha.31 - 2026-08-01
 
-- Aligns the embedded Sentinel package with the Commander Alpha 31 release commit.
+- Aligns the standalone source with the certified Commander Alpha 31 bundle.
 - Publishes explicit World of Warcraft Retail 12.1.0 and 12.0.7 metadata.
 - Preserves the Alpha 25 execution-card behavior and safety boundary.
 

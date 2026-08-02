@@ -132,6 +132,20 @@ local function winBadgeText(winState)
     return "SETUP"
 end
 
+local function deriveWinState(view)
+    local score = view.score or {}
+    local status = upper(score.status, "")
+    if status == "WINNING" or status == "LOSING" or status == "EVEN" or status == "SETUP" then
+        return status
+    end
+    local friendly = tonumber(score.friendly or 0) or 0
+    local enemy = tonumber(score.enemy or 0) or 0
+    if friendly > enemy then return "WINNING" end
+    if enemy > friendly then return "LOSING" end
+    if view.mode == "LIVE" then return "EVEN" end
+    return "SETUP"
+end
+
 local function scoreHeadline(view)
     local score = view.score or {}
     local mapShort = clean(score.mapShort, "WORLD")
@@ -150,20 +164,6 @@ local function scoreSubline(view)
     return string.format("%s | %s",
         clean(score.mapName, "World"),
         clean(score.timeToWin, "unknown"))
-end
-
-local function deriveWinState(view)
-    local score = view.score or {}
-    local status = upper(score.status, "")
-    if status == "WINNING" or status == "LOSING" or status == "EVEN" or status == "SETUP" then
-        return status
-    end
-    local friendly = tonumber(score.friendly or 0) or 0
-    local enemy = tonumber(score.enemy or 0) or 0
-    if friendly > enemy then return "WINNING" end
-    if enemy > friendly then return "LOSING" end
-    if view.mode == "LIVE" then return "EVEN" end
-    return "SETUP"
 end
 
 local function trustState(view)
@@ -655,10 +655,15 @@ end
 function HUD:Toggle()
     local frame = self:Create()
     if frame:IsShown() then
+        Sentinel.db.profile.hud.enabled = false
         frame:Hide()
         if self.targetCue then self.targetCue:Hide() end
     else
+        Sentinel.db.profile.hud.enabled = true
         self:Update()
+    end
+    if Sentinel.MinimapButton then
+        Sentinel.MinimapButton:Refresh()
     end
 end
 

@@ -67,7 +67,9 @@ local function spellCooldownSeconds(spellID)
 end
 
 local function clock(value)
-    value = tonumber(value or 0) or 0
+    if value == nil then return "UNKNOWN" end
+    value = tonumber(value)
+    if value == nil then return "UNKNOWN" end
     if value <= 0 then return "READY" end
     value = math.ceil(value)
     local minutes = math.floor(value / 60)
@@ -205,7 +207,7 @@ local function localStatus(view)
         dead = dead,
         movement = text(assignment.movement, "STAY", 24),
         stage = text(stage, "", 48),
-        rez = dead and clock(releaseTimeRemaining() or 0) or "ALIVE",
+        rez = dead and clock(releaseTimeRemaining()) or "ALIVE",
         trinket = clock(trinket),
         kick = spells.kickName and (spells.kickName .. " " .. clock(kick)) or "NO KICK",
         cc = spells.ccName and (spells.ccName .. " " .. clock(cc)) or "NO CC",

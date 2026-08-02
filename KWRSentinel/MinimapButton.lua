@@ -4,10 +4,10 @@ local MinimapButton = {}
 Sentinel.MinimapButton = MinimapButton
 
 local ICON_TEXTURE = "Interface\\Icons\\Ability_Rogue_TricksOftheTrade"
-local BRAND_TEXTURE = "Interface\\AddOns\\KnomercyWarRoom\\Assets\\Brand\\Minimap\\kwr_minimap_icon_32.png"
 local DEFAULT_ANGLE = 225
 local RADIUS = 96
 local MENU_FRAME_NAME = "KWRSentinel_MinimapMenu"
+local positionButton
 
 local function profile()
     local db = Sentinel.db and Sentinel.db.profile
@@ -154,7 +154,7 @@ local function showMenu(button)
     EasyMenu(buildMenu(button), menuFrame, "cursor", 0, 0, "MENU")
 end
 
-local function positionButton(button)
+positionButton = function(button)
     local settings = profile()
     local angle = math.rad(settings.angle or DEFAULT_ANGLE)
     local x = math.cos(angle) * RADIUS
@@ -200,7 +200,7 @@ function MinimapButton:Create()
     button.icon = button:CreateTexture(nil, "ARTWORK")
     button.icon:SetPoint("CENTER")
     button.icon:SetSize(16, 16)
-    button.icon:SetTexture(BRAND_TEXTURE)
+    button.icon:SetTexture(ICON_TEXTURE)
 
     button.fallback = button:CreateTexture(nil, "ARTWORK")
     button.fallback:SetPoint("CENTER")

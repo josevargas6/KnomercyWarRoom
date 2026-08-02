@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.1.0-alpha.33
+
+- Preserved the reviewed live Commander UI corrections, including coordinated reset behavior for launcher and combat-roster positions.
+- Restored standalone and embedded Sentinel source parity with matching Alpha 33 runtime metadata.
+- Removed protected target/focus actions from Sentinel enemy rows and kept the tracker visual-only.
+- Corrected Sentinel HUD, minimap, standalone asset, and default panel-layout defects found during review.
+- Advanced guarded release automation to exact Alpha 33 artifacts without rewriting Alpha 32 history.
+
 ## 6.1.0-alpha.32
 
 - Declared both supported Retail interface builds, 12.0.7 and 12.1.0, in Commander and Sentinel TOCs.

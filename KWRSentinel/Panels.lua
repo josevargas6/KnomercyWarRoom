@@ -165,7 +165,7 @@ local function createShell(name, title, width, height, setting)
     frame.brand = frame.headerBand:CreateTexture(nil, "ARTWORK")
     frame.brand:SetPoint("LEFT", 6, 0)
     frame.brand:SetSize(12, 12)
-    frame.brand:SetTexture("Interface\\AddOns\\KnomercyWarRoom\\Assets\\Brand\\Logos\\kwr_compact_mark.png")
+    frame.brand:SetTexture("Interface\\Icons\\Ability_Rogue_TricksOftheTrade")
 
     frame.title = Sentinel.Theme:Title(frame.headerBand, 10, "LEFT")
     frame.title:SetPoint("LEFT", frame.brand, "RIGHT", 6, 0)
@@ -198,107 +198,11 @@ local function makeKeyValue(parent, label, y)
     return value
 end
 
-local function secureTargetName(name)
-    name = trim(name)
-    if name == "" then return "" end
-    if type(Ambiguate) == "function" then
-        local safe = Ambiguate(name, "none")
-        if type(safe) == "string" and safe ~= "" then
-            return safe
-        end
-    end
-    return name
-end
-
-local function locateEnemyUnit(data)
-    if type(data) ~= "table" then return nil end
-    local wantedGUID = trim(data.guid or "")
-    local wantedName = trim(data.name or "")
-    local shortWanted = secureTargetName(wantedName):lower()
-    local function matches(unit)
-        if not unit or type(UnitExists) ~= "function" or not UnitExists(unit) then
-            return false
-        end
-        if type(UnitCanAttack) == "function" and not UnitCanAttack("player", unit) then
-            return false
-        end
-        if wantedGUID ~= "" and type(UnitGUID) == "function" and UnitGUID(unit) == wantedGUID then
-            return true
-        end
-        if shortWanted ~= "" and type(UnitName) == "function" then
-            return secureTargetName(UnitName(unit) or ""):lower() == shortWanted
-        end
-        return false
-    end
-    for _, unit in ipairs({ data.unit, "target", "focus", "mouseover" }) do
-        if matches(unit) then
-            return unit
-        end
-    end
-    for index = 1, 40 do
-        local unit = "nameplate" .. tostring(index)
-        if matches(unit) then
-            return unit
-        end
-    end
-    return nil
-end
-
-local function bindEnemyRow(row, data)
-    if InCombatLockdown and InCombatLockdown() then
-        return
-    end
-    local resolvedUnit = locateEnemyUnit(data)
-    local targetName = secureTargetName(data and (data.name or data.shortName) or "")
-    local desired = {
-        unit = resolvedUnit or false,
-        type1 = false,
-        type2 = false,
-        macrotext1 = false,
-        macrotext2 = false,
-    }
-    if resolvedUnit then
-        desired.type1 = "target"
-        desired.type2 = "focus"
-    elseif targetName ~= "" then
-        desired.type1 = "macro"
-        desired.type2 = "macro"
-        desired.macrotext1 = "/cleartarget\n/targetexact " .. targetName
-        desired.macrotext2 = "/targetexact " .. targetName .. "\n/focus\n/targetlasttarget"
-    end
-    for attribute, value in pairs(desired) do
-        if row:GetAttribute(attribute) ~= value then
-            row:SetAttribute(attribute, value)
-        end
-    end
-    row.boundUnit = resolvedUnit
-    row.boundName = targetName
-end
-
-local function resetEnemyRowBinding(row)
-    if InCombatLockdown and InCombatLockdown() then
-        return
-    end
-    for _, attribute in ipairs({ "unit", "type1", "type2", "macrotext1", "macrotext2" }) do
-        if row:GetAttribute(attribute) ~= false then
-            row:SetAttribute(attribute, false)
-        end
-    end
-    row.boundUnit = nil
-    row.boundName = nil
-end
-
-local function makeRow(parent, y, clickable)
-    local template = clickable == true
-        and "SecureUnitButtonTemplate,BackdropTemplate"
-        or "BackdropTemplate"
-    local row = CreateFrame(clickable == true and "Button" or "Frame", nil, parent, template)
+local function makeRow(parent, y)
+    local row = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     row:SetPoint("TOPLEFT", 8, y)
     row:SetPoint("TOPRIGHT", -8, y)
     row:SetHeight(18)
-    if clickable == true and row.RegisterForClicks then
-        row:RegisterForClicks("AnyUp")
-    end
     Sentinel.Theme:Style(row, "panel", "hairline")
 
     row.icon = row:CreateTexture(nil, "ARTWORK")
@@ -326,24 +230,6 @@ local function makeRow(parent, y, clickable)
     row.state = Sentinel.Theme:Font(row, 8, "text", "RIGHT", "OUTLINE")
     row.state:SetPoint("RIGHT", -2, 0)
     row.state:SetWidth(54)
-    if clickable == true then
-        row:SetScript("OnEnter", function(selfRow)
-            if not GameTooltip then return end
-            GameTooltip:SetOwner(selfRow, "ANCHOR_RIGHT")
-            GameTooltip:SetText(selfRow.name:GetText() or "Enemy")
-            GameTooltip:AddLine("Left-click: target", 1, 1, 1)
-            GameTooltip:AddLine("Right-click: focus", 1, 1, 1)
-            if selfRow.boundUnit then
-                GameTooltip:AddLine("Mouseover cast: available while this row is bound to a live unit.", 0.70, 0.84, 0.96, true)
-            else
-                GameTooltip:AddLine("Mouseover cast: unavailable until the enemy is a live local unit.", 0.90, 0.65, 0.22, true)
-            end
-            GameTooltip:Show()
-        end)
-        row:SetScript("OnLeave", function()
-            if GameTooltip then GameTooltip:Hide() end
-        end)
-    end
     return row
 end
 
@@ -368,7 +254,7 @@ function Panels:CreateTracker(kind)
     local frame = createShell(name, title, 292, 206, kind)
     frame.rows = {}
     for index = 1, 8 do
-        frame.rows[index] = makeRow(frame, -30 - (index * 20), kind == "enemy")
+        frame.rows[index] = makeRow(frame, -30 - (index * 20))
     end
     self[key] = frame
     return frame
@@ -422,15 +308,11 @@ function Panels:UpdateTracker(kind, rows)
             applyClassVisuals(row, data.classFile)
             if kind == "enemy" then
                 applyIntentVisuals(row, data.intent)
-                bindEnemyRow(row, data)
             else
                 row.intentIcon:Hide()
                 row.intentText:Hide()
             end
         else
-            if kind == "enemy" then
-                resetEnemyRowBinding(row)
-            end
             row.icon:Hide()
             row.intentIcon:Hide()
             row.intentText:Hide()

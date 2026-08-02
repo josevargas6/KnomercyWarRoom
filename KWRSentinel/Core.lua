@@ -4,12 +4,10 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.0-alpha.25"
+Sentinel.version = "6.1.0-alpha.33"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
-Sentinel.channel = "production"
-Sentinel.watermark = nil
 
 local DEFAULTS = {
     profile = {
@@ -32,7 +30,7 @@ local DEFAULTS = {
                 point = "CENTER",
                 relativePoint = "CENTER",
                 x = 360,
-                y = -214,
+                y = -300,
             },
             team = {
                 enabled = false,
@@ -191,9 +189,6 @@ frame:SetScript("OnEvent", function(_, event, ...)
         Sentinel.ready = true
     elseif event == "PLAYER_LOGIN" then
         Sentinel:EnableModules()
-        if Sentinel.channel == "development" or Sentinel.channel == "local" then
-            Sentinel:Print("KWR DEVELOPMENT BUILD - NOT FOR PRODUCTION USE", true)
-        end
         if Sentinel.db.profile.loadMessage ~= false then
             Sentinel:Print("Compact commander-linked execution card and target confirmation are active.", true)
         end

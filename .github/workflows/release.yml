@@ -5,13 +5,13 @@ on:
     tags:
       - "v*"
     branches:
-      - "launch/6.1.0-alpha.32-final"
+      - "launch/6.1.0-alpha.33-final"
   workflow_dispatch:
     inputs:
       release_tag:
         description: Existing release tag to build and publish
         required: true
-        default: v6.1.0-alpha.32
+        default: v6.1.0-alpha.33
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: production
-      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.33' }}
     steps:
       - name: Checkout release source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -52,7 +52,7 @@ jobs:
         run: |
           $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $expectedTag = "v$($tocVersion)"
-          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}"
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.33' }}"
           if ($releaseTag -ne $expectedTag) {
               throw "Release tag mismatch. Expected $expectedTag but got $releaseTag."
           }
@@ -70,7 +70,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}"
+          $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.33' }}"
           gh release view $releaseTag *> $null
           if ($LASTEXITCODE -eq 0) {
               gh release upload $releaseTag artifacts/* --clobber
@@ -169,8 +169,8 @@ jobs:
                   payload_version = 1
                   commander_version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
                   sentinel_version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-                  release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}"
-                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}"
+                  release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.33' }}"
+                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.33' }}"
                   source_urls = @(
                       "https://github.com/${{ github.repository }}"
                       "https://www.curseforge.com/wow/addons/knomercy-war-room"

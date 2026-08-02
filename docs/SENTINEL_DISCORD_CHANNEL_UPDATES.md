@@ -2,7 +2,7 @@
 
 Status: ready-to-post
 
-Date: 2026-07-31
+Date: 2026-08-02
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -34,14 +34,14 @@ GitHub Actions route:
 ## #announcements
 
 ```text
-KWR Sentinel 6.1.0-alpha.32 is publicly available for alpha testing as the
-synchronized execution-card companion for Commander 6.1.0-alpha.32.
+KWR Sentinel 6.1.0-alpha.33 is available for alpha testing as the synchronized
+execution-card companion for Commander 6.1.0-alpha.33.
 
 Download:
-https://github.com/josevargas6/KWRSentinel/releases/download/v6.1.0-alpha.32/KWRSentinel_6_1_0_ALPHA_32.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.33/KWRSentinel_6_1_0_ALPHA_33.zip
 
 Release page:
-https://github.com/josevargas6/KWRSentinel/releases/tag/v6.1.0-alpha.32
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
 
 Install folder:
 World of Warcraft/_retail_/Interface/AddOns/KWRSentinel
@@ -50,9 +50,10 @@ Scope:
 Compact player execution card, commander trust badge, target confirmation cue, and one conservative readiness alert.
 
 Distribution state:
-The automated release gate passed and CurseForge accepted file 8558797 for
-Retail 12.1.0 and 12.0.7. Alpha moderation visibility may lag. Current packaged
-in-game evidence still gates stable promotion.
+The guarded release gate publishes the exact reviewed GitHub artifact and
+submits the same build to CurseForge for Retail 12.1.0 and 12.0.7. CurseForge
+moderation visibility may lag. Current packaged in-game evidence still gates
+stable promotion.
 
 Current limitation:
 Same-client KWR bridge only. Cross-player Sentinel relay is not enabled.
@@ -80,7 +81,7 @@ Bug reports should include:
 ## #kwr-field-testing
 
 ```text
-KWR Sentinel 6.1.0-alpha.32 field-test targets:
+KWR Sentinel 6.1.0-alpha.33 field-test targets:
 
 1. Enter a Retail battleground with KWR and KWRSentinel installed on the same client.
 2. Confirm the card shows LOCAL KWR when commander bridge data is available.
@@ -95,19 +96,19 @@ Report any taint, Lua errors, unreadable text, repeated alerts, or incorrect tar
 ## Restricted Ops Thread
 
 ```text
-KWR Sentinel 6.1.0-alpha.32 distribution receipt
+KWR Sentinel 6.1.0-alpha.33 distribution receipt
 
 GitHub repo:
 https://github.com/josevargas6/KWRSentinel
 
 GitHub prerelease:
-https://github.com/josevargas6/KWRSentinel/releases/tag/v6.1.0-alpha.32
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
 
 ZIP:
-https://github.com/josevargas6/KWRSentinel/releases/download/v6.1.0-alpha.32/KWRSentinel_6_1_0_ALPHA_32.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.33/KWRSentinel_6_1_0_ALPHA_33.zip
 
-SHA-256:
-BF6A306643B665483A66272228C12728AB9B966A277E1C78B0777DAD0D8B95D9
+SHA-256 manifest:
+KWR_6_1_0_ALPHA_33_SHA256.txt on the GitHub prerelease
 
 Validation:
 - validate.ps1 passed
@@ -117,5 +118,6 @@ Validation:
 - build.ps1 -IncludeSentinel package audit passed
 
 CurseForge:
-File 8558797 accepted for Retail 12.1.0 and 12.0.7; public moderation visibility pending.
+The guarded release workflow submits the certified artifact for Retail 12.1.0
+and 12.0.7; public moderation visibility must be verified before readiness is announced.
 ```

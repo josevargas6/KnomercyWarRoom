@@ -108,7 +108,33 @@ if (-not (Test-Path -LiteralPath $tocPath)) {
 
 if (Test-Path -LiteralPath $sentinelTocPath) {
     $sentinelRoot = Split-Path -Parent $sentinelTocPath
-    Validate-TocBundle -TocPath $sentinelTocPath -RootPath $sentinelRoot -Label "KWRSentinel" | Out-Null
+    $sentinelToc = Validate-TocBundle -TocPath $sentinelTocPath -RootPath $sentinelRoot -Label "KWRSentinel"
+    $sentinelVersion = (($sentinelToc | Where-Object { $_ -match '^## Version:' }) `
+        -replace '^## Version:\s*', '').Trim()
+    $sentinelCore = Get-Content -LiteralPath (Join-Path $sentinelRoot 'Core.lua') -Raw
+    if ($sentinelCore -notmatch [regex]::Escape('Sentinel.version = "' + $sentinelVersion + '"')) {
+        Add-ValidationError "Sentinel TOC and Core.lua versions do not match."
+    }
+    if ($tocVersion -and $sentinelVersion -cne $tocVersion) {
+        Add-ValidationError "Commander and embedded Sentinel versions do not match."
+    }
+
+    $sentinelPanels = Get-Content -LiteralPath (Join-Path $sentinelRoot 'Panels.lua') -Raw
+    if ($sentinelPanels -match 'SecureUnitButtonTemplate|macrotext1|macrotext2|/targetexact|/focus') {
+        Add-ValidationError "Sentinel enemy tracker must remain visual-only."
+    }
+    $sentinelUiSource = @(
+        Get-Content -LiteralPath (Join-Path $sentinelRoot 'MinimapButton.lua') -Raw
+        $sentinelPanels
+    ) -join "`n"
+    if ($sentinelUiSource -match 'Interface\\\\AddOns\\\\KnomercyWarRoom') {
+        Add-ValidationError "Standalone Sentinel UI depends on Commander assets."
+    }
+    $sentinelBridge = Get-Content -LiteralPath (Join-Path $sentinelRoot 'Bridge.lua') -Raw
+    if ($sentinelBridge -notmatch 'if value == nil then return "UNKNOWN" end' -or
+        $sentinelBridge -match 'releaseTimeRemaining\(\) or 0') {
+        Add-ValidationError "Sentinel bridge does not preserve unknown cooldown state."
+    }
 }
 
 foreach ($retailTocPath in @($tocPath, $sentinelTocPath)) {
