@@ -25,19 +25,18 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0-alpha.29 is prepared for controlled
-Rated Battleground field distribution.
+Knomercy War Room Commander 6.1.0-alpha.32 is publicly available for alpha testing.
 
-Project page:
-https://www.curseforge.com/wow/addons/knomercy-war-room/preview
+GitHub release:
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.32
 
-Current candidate:
-Knomercy War Room 6.1.0-alpha.29
+CurseForge project:
+https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Current state:
-Offline certification and tonight's live Retail 12.0.7 field test are green.
-No functional bugs were found, and the identified visual repairs are complete.
-Final packaged visual verification remains before stable-release promotion.
+The automated release gate passed and CurseForge accepted file 8558795 for
+Retail 12.1.0 and 12.0.7. Alpha moderation visibility may lag. This remains a
+field-test candidate; current packaged in-game evidence still gates stable promotion.
 
 What this addon is:
 Player-controlled Rated Battleground command, assignments, enemy tracking, tactical map, Fight Now HUD, and AAR support.
@@ -60,7 +59,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander alpha.29 field-test focus:
+KWR Commander alpha.32 field-test focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -77,19 +76,22 @@ Remaining release work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander distribution status
+KWR Commander 6.1.0-alpha.32 distribution receipt
 
 CurseForge project:
-https://www.curseforge.com/wow/addons/knomercy-war-room/preview
+https://www.curseforge.com/wow/addons/knomercy-war-room
 
 CurseForge project id:
 1632632
 
-Current candidate:
-Knomercy War Room 6.1.0-alpha.29 with KWRSentinel 6.1.0-alpha.25
+GitHub release:
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.32
 
 Certified artifact:
-KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip
+KWR_6_1_0_ALPHA_32_DISTRIBUTION.zip
+
+SHA-256:
+5CF33ACFCA988F17B0FFF3D8E0F1605A131FF94CBC5A8D297F216EFF322995D3
 
 Validation:
 - validate.ps1 passed
@@ -99,8 +101,7 @@ Validation:
 - commander CurseForge upload dry-run passed
 
 Current truth:
-- Commander CurseForge project exists
-- first commander file is not yet publicly proven uploaded
-- Discord copy is prepared
-- live field blockers still gate broad release promotion
+- CurseForge accepted file 8558795 for Retail 12.1.0 and 12.0.7
+- GitHub release and certified assets are public
+- stable promotion remains gated by current packaged in-game evidence
 ```

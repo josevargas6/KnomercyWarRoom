@@ -1,0 +1,82 @@
+name: KWR Release Social Receipt
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact published candidate version.
+        required: true
+        default: 6.1.0-alpha.32
+      post_discord:
+        description: Post corrected announcement and ops receipts.
+        required: true
+        type: boolean
+        default: false
+      confirm_external_writes:
+        description: Type PUBLISH to permit Discord posts.
+        required: false
+        default: ""
+
+concurrency:
+  group: kwr-release-social-receipt
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  receipt:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    environment:
+      name: production
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate exact release copy
+        shell: pwsh
+        run: |
+          ./tools/test-social-copy.ps1
+          ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -DryRun
+          ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -DryRun
+          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}" -DryRun
+          ./tools/sentinel-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}" -DryRun
+
+      - name: Confirm external writes
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        run: |
+          if ("${{ inputs.confirm_external_writes }}" -cne "PUBLISH") {
+              throw "Discord posts require confirm_external_writes=PUBLISH."
+          }
+
+      - name: Post Commander announcement
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
+        run: ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}"
+
+      - name: Post Sentinel announcement
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section announcements -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}"
+
+      - name: Post Commander ops receipt
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
+        run: ./tools/kwr-commander-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}"
+
+      - name: Post Sentinel ops receipt
+        if: ${{ inputs.post_discord }}
+        shell: pwsh
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
+        run: ./tools/sentinel-discord-announce.ps1 -Section ops -Version "${{ inputs.version }}" -CommanderVersion "${{ inputs.version }}"
