@@ -2,9 +2,11 @@
 
 ## 6.1.0-alpha.33 - 2026-08-01
 
-- Restores the complete multi-panel Sentinel runtime to standalone source.
+- Restores the complete execution card, target cue, status helper, options, and minimap runtime to standalone source.
 - Makes the TOC and runtime-reported version agree.
-- Preserves Retail protected-data fallbacks and player-click-only behavior.
+- Removes out-of-scope team/enemy tracker panels and inert raid-frame controls.
+- Preserves unresolved commander targets and renders unavailable cooldown data as unknown.
+- Preserves Retail protected-data fallbacks and player-controlled behavior.
 
 ## 6.1.0-alpha.32 - 2026-08-01
 

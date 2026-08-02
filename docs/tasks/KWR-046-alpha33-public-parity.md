@@ -50,14 +50,14 @@ before announcing readiness.
 
 # Acceptance criteria
 
-- [ ] Commander UI parity changes are merged with a clean final review.
-- [ ] Standalone Sentinel Alpha 33 source is merged with a clean final review.
-- [ ] Embedded Sentinel is byte-identical to standalone reviewed source.
+- [x] Commander UI parity changes are merged with a clean final review.
+- [x] Standalone Sentinel Alpha 33 source is merged after all completed review findings were resolved.
+- [x] Embedded Sentinel is byte-identical to standalone reviewed source.
 - [ ] Complete local and hosted release gates pass.
 - [ ] The Alpha 33 tag resolves to the reviewed Commander merge commit.
 - [ ] GitHub prerelease artifacts and SHA-256 manifests resolve publicly.
 - [ ] Commander and Sentinel Alpha 33 CurseForge files resolve publicly.
-- [ ] Render runs the reviewed bot main commit with healthy Discord readiness.
+- [x] Render runs the reviewed bot main commit with healthy Discord readiness.
 - [ ] Installed Commander and Sentinel trees match the public Alpha 33 packages.
 
 # Verification
@@ -67,6 +67,14 @@ before announcing readiness.
 2. Verify tag/commit identity and all generated artifact hashes.
 3. Verify GitHub and CurseForge public endpoints after publication.
 4. Compare extracted packages with the installed addon trees.
+
+# Known constraints
+
+GitHub's Codex reviewer reached the account review-usage limit after four
+completed Sentinel review rounds. The final completed round's findings were
+resolved, all review threads are closed, hosted CI passed on the merged source,
+and the remaining documentation-only correction passed CI in PR 10. Do not
+describe this as a fresh automated review of the final documentation commit.
 
 # Rollback
 
