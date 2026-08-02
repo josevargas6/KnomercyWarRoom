@@ -121,4 +121,40 @@ foreach ($workflow in @(
         -Message "Required automation workflow is missing: $workflow"
 }
 
+foreach ($requiredPath in @(
+    "docs\SOCIAL_COPY.md",
+    "docs\WORKFLOW_NOW.md",
+    "tests\golden\twin_peaks_recovery_sample.label.json",
+    "tools\kwr-daily-discord-update.ps1",
+    "tools\replay-test-runner.lua",
+    "tools\test-lua.ps1",
+    "tools\test-social-copy.ps1"
+)) {
+    Assert-True `
+        -Condition (Test-Path -LiteralPath (Join-Path $root $requiredPath)) `
+        -Message "Workflow dependency is missing: $requiredPath"
+}
+
+$dailyDiscordWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\kwr-daily-discord.yml"
+) -Raw
+Assert-True `
+    -Condition ($dailyDiscordWorkflow -notmatch '(?m)^\s*if:.*secrets\.') `
+    -Message "Daily Discord workflow references secrets directly in an if expression."
+Assert-True `
+    -Condition ($dailyDiscordWorkflow -match '(?m)^\s*if:.*env\.DISCORD_WEBHOOK_DAILY_PROGRESS') `
+    -Message "Daily Discord workflow does not gate the daily webhook through job env."
+Assert-True `
+    -Condition ($dailyDiscordWorkflow -match '(?m)^\s*if:.*env\.DISCORD_WEBHOOK_OPS') `
+    -Message "Daily Discord workflow does not gate the ops webhook through job env."
+
+$dailyDryRun = @(& (Join-Path $root "tools\kwr-daily-discord-update.ps1") `
+    -Section daily-progress -DryRun) -join "`n"
+Assert-True `
+    -Condition ($dailyDryRun -match 'Build:\s+6\.1\.0-alpha\.30') `
+    -Message "Daily update does not use the current addon manifest version."
+Assert-True `
+    -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
+    -Message "Daily update does not disclose the stale field-evidence baseline."
+
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

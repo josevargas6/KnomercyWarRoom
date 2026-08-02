@@ -1,0 +1,51 @@
+{
+  "schema": "kwr-golden-label-schema",
+  "schemaVersion": 1,
+  "kind": "golden_decision_label",
+  "labelId": "tp-standard-recovery-001-label",
+  "replayId": "tp-standard-recovery-001",
+  "mapProfile": "tp_standard",
+  "reviewers": [
+    {
+      "reviewerId": "reviewer-a",
+      "role": "commander",
+      "agreed": true
+    }
+  ],
+  "decision": {
+    "acceptablePrimaryActions": [
+      "PLAN:RECOVERY"
+    ],
+    "acceptableFallbackActions": [
+      "CALL:HOLD",
+      "WHERE:HOME"
+    ],
+    "forbiddenActions": [
+      "PLAN:OPENING"
+    ],
+    "mustStay": [],
+    "requiredCapabilities": [
+      "deny",
+      "carrier_survival"
+    ],
+    "validTargetClasses": [],
+    "successConditions": [
+      "home_defense_holds"
+    ],
+    "abortConditions": [
+      "coverage_breaks"
+    ],
+    "maxDelaySeconds": 8,
+    "forceUncertaintyWhen": [
+      "carrier_truth_missing"
+    ]
+  },
+  "coverage": {
+    "problemTypes": [
+      "FLAG_CARRIER_ESCAPING"
+    ],
+    "phase": "RECOVERY",
+    "truthBand": "HIGH"
+  },
+  "rationale": "Recovery lines must preserve home coverage before any greed route while down on caps."
+}

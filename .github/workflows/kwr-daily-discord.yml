@@ -22,6 +22,9 @@ jobs:
   post-daily-update:
     runs-on: windows-latest
     timeout-minutes: 10
+    env:
+      DISCORD_WEBHOOK_DAILY_PROGRESS: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS }}
+      DISCORD_WEBHOOK_OPS: ${{ secrets.DISCORD_WEBHOOK_OPS }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,25 +40,25 @@ jobs:
         run: ./tools/kwr-daily-discord-update.ps1 -Section ops -DryRun
 
       - name: Post daily-progress update
-        if: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS != '' }}
+        if: ${{ env.DISCORD_WEBHOOK_DAILY_PROGRESS != '' }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS }}
+          DISCORD_WEBHOOK_URL: ${{ env.DISCORD_WEBHOOK_DAILY_PROGRESS }}
         run: ./tools/kwr-daily-discord-update.ps1 -Section daily-progress
 
       - name: Skip daily-progress update when secret is missing
-        if: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS == '' }}
+        if: ${{ env.DISCORD_WEBHOOK_DAILY_PROGRESS == '' }}
         shell: pwsh
         run: Write-Output "Skipping daily-progress post because DISCORD_WEBHOOK_DAILY_PROGRESS is not configured."
 
       - name: Post ops update
-        if: ${{ secrets.DISCORD_WEBHOOK_OPS != '' && (github.event_name == 'schedule' || inputs.post_ops) }}
+        if: ${{ env.DISCORD_WEBHOOK_OPS != '' && (github.event_name == 'schedule' || inputs.post_ops) }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+          DISCORD_WEBHOOK_URL: ${{ env.DISCORD_WEBHOOK_OPS }}
         run: ./tools/kwr-daily-discord-update.ps1 -Section ops
 
       - name: Skip ops update when secret is missing or disabled
-        if: ${{ secrets.DISCORD_WEBHOOK_OPS == '' || (github.event_name != 'schedule' && !inputs.post_ops) }}
+        if: ${{ env.DISCORD_WEBHOOK_OPS == '' || (github.event_name != 'schedule' && !inputs.post_ops) }}
         shell: pwsh
         run: Write-Output "Skipping ops post because DISCORD_WEBHOOK_OPS is not configured or the run disabled ops posting."
