@@ -2,7 +2,7 @@
 
 Status: ready-to-post
 
-Date: 2026-07-31
+Date: 2026-08-02
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -25,18 +25,19 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0-alpha.32 is publicly available for alpha testing.
+Knomercy War Room Commander 6.1.0-alpha.33 is available for alpha testing.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.32
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Current state:
-The automated release gate passed and CurseForge accepted file 8558795 for
-Retail 12.1.0 and 12.0.7. Alpha moderation visibility may lag. This remains a
-field-test candidate; current packaged in-game evidence still gates stable promotion.
+The guarded release gate publishes the exact reviewed GitHub artifact and
+submits the same build to CurseForge for Retail 12.1.0 and 12.0.7. CurseForge
+moderation visibility may lag. This remains a field-test candidate; current
+packaged in-game evidence still gates stable promotion.
 
 What this addon is:
 Player-controlled Rated Battleground command, assignments, enemy tracking, tactical map, Fight Now HUD, and AAR support.
@@ -59,7 +60,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander alpha.32 field-test focus:
+KWR Commander alpha.33 field-test focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -76,7 +77,7 @@ Remaining release work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.0-alpha.32 distribution receipt
+KWR Commander 6.1.0-alpha.33 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -85,13 +86,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.32
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
 
 Certified artifact:
-KWR_6_1_0_ALPHA_32_DISTRIBUTION.zip
+KWR_6_1_0_ALPHA_33_DISTRIBUTION.zip
 
-SHA-256:
-5CF33ACFCA988F17B0FFF3D8E0F1605A131FF94CBC5A8D297F216EFF322995D3
+SHA-256 manifest:
+KWR_6_1_0_ALPHA_33_SHA256.txt on the GitHub prerelease
 
 Validation:
 - validate.ps1 passed
@@ -101,7 +102,7 @@ Validation:
 - commander CurseForge upload dry-run passed
 
 Current truth:
-- CurseForge accepted file 8558795 for Retail 12.1.0 and 12.0.7
-- GitHub release and certified assets are public
+- CurseForge receives the exact certified artifact for Retail 12.1.0 and 12.0.7
+- GitHub release assets and their public hashes are the source of truth
 - stable promotion remains gated by current packaged in-game evidence
 ```

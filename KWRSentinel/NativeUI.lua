@@ -17,16 +17,6 @@ function NativeUI:ToggleScore()
     end
 end
 
-function NativeUI:ToggleRaidFrames()
-    if InCombatLockdown and InCombatLockdown() then
-        return false
-    end
-    if type(Sentinel) == "table" and type(Sentinel.Print) == "function" then
-        Sentinel:Print("Native raid-frame visibility is protected by Blizzard and cannot be toggled by Sentinel.", true)
-    end
-    return true
-end
-
 function NativeUI:ToggleKWRRoster()
     if type(_G.KWR) == "table" and _G.KWR.CombatRoster and _G.KWR.CombatRoster.Show then
         local frame = _G.KWR.CombatRoster.frame

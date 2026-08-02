@@ -36,4 +36,3 @@ chat, or automates gameplay. It is a display and observation client only.
 - `/sentinel` or `/kwrs` toggles the execution card.
 - `/kwrs map` toggles the Blizzard battlefield map.
 - `/kwrs score` toggles the Blizzard scoreboard.
-- `/kwrs raid` toggles Blizzard raid frames.

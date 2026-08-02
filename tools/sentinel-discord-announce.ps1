@@ -4,7 +4,7 @@ param(
     [string]$Section = "announcements",
     [string]$WebhookUrl = $env:DISCORD_WEBHOOK_URL,
     [string]$Version = "",
-    [string]$CommanderVersion = "6.1.0-alpha.32",
+    [string]$CommanderVersion = "6.1.0-alpha.33",
     [switch]$DryRun
 )
 

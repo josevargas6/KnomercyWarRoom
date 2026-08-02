@@ -5268,12 +5268,6 @@ if KWR.Presentation then
     mockInstanceType = "pvp"
     assert(KWR.MatchRuntime:ForceRefresh("presentation-restore-pvp"), "Presentation battleground refresh failed.")
 end
-if Sentinel and Sentinel.NativeUI then
-    local beforeRaidSetting = compactRaidManagerSettings.IsShown
-    local toggleResult = Sentinel.NativeUI:ToggleRaidFrames()
-    assert(toggleResult == true and compactRaidManagerSettings.IsShown == beforeRaidSetting,
-        "Sentinel native raid-frame toggle should refuse protected visibility changes.")
-end
 KWR.db.profile.combatRoster.shown = persistedRosterShown
 assert(KWR.ReporterMap == nil,
     "Retired KWR Support HUD was still loaded in the production module graph.")

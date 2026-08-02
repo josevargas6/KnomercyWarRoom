@@ -4,10 +4,10 @@ local MinimapButton = {}
 Sentinel.MinimapButton = MinimapButton
 
 local ICON_TEXTURE = "Interface\\Icons\\Ability_Rogue_TricksOftheTrade"
-local BRAND_TEXTURE = "Interface\\AddOns\\KnomercyWarRoom\\Assets\\Brand\\Minimap\\kwr_minimap_icon_32.png"
 local DEFAULT_ANGLE = 225
 local RADIUS = 96
 local MENU_FRAME_NAME = "KWRSentinel_MinimapMenu"
+local positionButton
 
 local function profile()
     local db = Sentinel.db and Sentinel.db.profile
@@ -99,28 +99,6 @@ local function buildMenu(button)
             end,
         },
         {
-            text = "Show team tracker",
-            keepShownOnClick = true,
-            isNotRadio = true,
-            checked = menuChecked(function()
-                return Sentinel.db.profile.panels.team.enabled == true
-            end),
-            func = function()
-                setPanelEnabled("team", not (Sentinel.db.profile.panels.team.enabled == true))
-            end,
-        },
-        {
-            text = "Show enemy tracker",
-            keepShownOnClick = true,
-            isNotRadio = true,
-            checked = menuChecked(function()
-                return Sentinel.db.profile.panels.enemy.enabled == true
-            end),
-            func = function()
-                setPanelEnabled("enemy", not (Sentinel.db.profile.panels.enemy.enabled == true))
-            end,
-        },
-        {
             text = "Open full options",
             notCheckable = true,
             func = function()
@@ -154,7 +132,7 @@ local function showMenu(button)
     EasyMenu(buildMenu(button), menuFrame, "cursor", 0, 0, "MENU")
 end
 
-local function positionButton(button)
+positionButton = function(button)
     local settings = profile()
     local angle = math.rad(settings.angle or DEFAULT_ANGLE)
     local x = math.cos(angle) * RADIUS
@@ -200,7 +178,7 @@ function MinimapButton:Create()
     button.icon = button:CreateTexture(nil, "ARTWORK")
     button.icon:SetPoint("CENTER")
     button.icon:SetSize(16, 16)
-    button.icon:SetTexture(BRAND_TEXTURE)
+    button.icon:SetTexture(ICON_TEXTURE)
 
     button.fallback = button:CreateTexture(nil, "ARTWORK")
     button.fallback:SetPoint("CENTER")
@@ -249,7 +227,7 @@ function MinimapButton:Create()
         GameTooltip:AddLine("Left-click: show/hide execution card", 1, 1, 1)
         GameTooltip:AddLine("Right-click: Sentinel quick options", 1, 1, 1)
         GameTooltip:AddLine("Drag: move button", 0.72, 0.82, 0.92)
-        GameTooltip:AddLine("Menu toggles: crosshair, status, team, enemy", 0.72, 0.82, 0.92)
+        GameTooltip:AddLine("Menu toggles: crosshair and status", 0.72, 0.82, 0.92)
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function()

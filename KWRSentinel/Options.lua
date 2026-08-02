@@ -81,13 +81,6 @@ function Options:Create()
     self.checks[#self.checks + 1] = createCheck(surfaces, "Show status helper", 8, -86,
         function() return Sentinel.db.profile.panels.status.enabled == true end,
         function(value) Sentinel.db.profile.panels.status.enabled = value; Sentinel.Panels:Update() end)
-    self.checks[#self.checks + 1] = createCheck(surfaces, "Show team tracker", 8, -114,
-        function() return Sentinel.db.profile.panels.team.enabled == true end,
-        function(value) Sentinel.db.profile.panels.team.enabled = value; Sentinel.Panels:Update() end)
-    self.checks[#self.checks + 1] = createCheck(surfaces, "Show enemy tracker", 8, -142,
-        function() return Sentinel.db.profile.panels.enemy.enabled == true end,
-        function(value) Sentinel.db.profile.panels.enemy.enabled = value; Sentinel.Panels:Update() end)
-
     local utility = section(frame, "UTILITY", 266, -54, 238, 186)
     self.checks[#self.checks + 1] = createCheck(utility, "Show minimap button", 8, -30,
         function() return Sentinel.db.profile.minimap.enabled == true end,
