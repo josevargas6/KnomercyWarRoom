@@ -93,8 +93,11 @@ jobs:
         env:
           CURSEFORGE_PROJECT_ID: "1614463"
           CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
-          CURSEFORGE_GAME_VERSION_IDS: ${{ secrets.CURSEFORGE_GAME_VERSION_IDS }}
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS || secrets.CURSEFORGE_GAME_VERSION_IDS }}
         run: |
+          if ($env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
+              throw "CurseForge upload blocked: CURSEFORGE_GAME_VERSION_IDS must be a comma-separated list of numeric CurseForge version IDs."
+          }
           ./tools/curseforge-upload-sentinel.ps1 `
             -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_6_1_0_ALPHA_25.zip"
 
@@ -102,26 +105,26 @@ jobs:
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
         run: ./tools/sentinel-discord-announce.ps1 -Section announcements
 
       - name: Post Discord support notes
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_SUPPORT }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_SUPPORT || secrets.WEBHOOK_SUPPORT }}
         run: ./tools/sentinel-discord-announce.ps1 -Section support
 
       - name: Post Discord field-test notes
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING || secrets.FIELD_TESTING }}
         run: ./tools/sentinel-discord-announce.ps1 -Section field-testing
 
       - name: Post Discord ops receipt
         if: ${{ inputs.post_discord }}
         shell: pwsh
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
         run: ./tools/sentinel-discord-announce.ps1 -Section ops
