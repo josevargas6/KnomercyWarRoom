@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 10
     env:
       DISCORD_WEBHOOK_DAILY_PROGRESS: ${{ secrets.DISCORD_WEBHOOK_DAILY_PROGRESS }}
-      DISCORD_WEBHOOK_OPS: ${{ secrets.DISCORD_WEBHOOK_OPS }}
+      DISCORD_WEBHOOK_OPS: ${{ secrets.DISCORD_WEBHOOK_OPS || secrets.OPS_HOOK }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

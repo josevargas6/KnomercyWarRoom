@@ -157,4 +157,26 @@ Assert-True `
     -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
     -Message "Daily update does not disclose the stale field-evidence baseline."
 
+$releaseWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\release.yml"
+) -Raw
+Assert-True `
+    -Condition ($releaseWorkflow -match 'CurseForge upload blocked: CURSEFORGE_GAME_VERSION_IDS') `
+    -Message "Release automation must fail closed when CurseForge game-version IDs are missing or invalid."
+Assert-True `
+    -Condition ($releaseWorkflow -notmatch 'game-version metadata omitted') `
+    -Message "Release automation must not omit CurseForge game-version metadata."
+
+$maintenanceWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\kwr-automated-maintenance.yml"
+) -Raw
+$sentinelReleaseWorkflow = Get-Content -LiteralPath (
+    Join-Path $root ".github\workflows\sentinel-release-ops.yml"
+) -Raw
+foreach ($secretAlias in @("OPS_HOOK", "WEBHOOK_ANNOUNCEMENTS", "WEBHOOK_SUPPORT", "FIELD_TESTING")) {
+    Assert-True `
+        -Condition (($maintenanceWorkflow + $dailyDiscordWorkflow + $sentinelReleaseWorkflow) -match [regex]::Escape("secrets.$secretAlias")) `
+        -Message "Configured Discord secret alias is not wired: $secretAlias"
+}
+
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

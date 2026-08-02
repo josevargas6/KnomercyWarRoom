@@ -86,8 +86,7 @@ jobs:
               throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
           }
           if ($env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
-              Write-Output "CurseForge game-version metadata omitted; upload API treats it as optional."
-              $env:CURSEFORGE_GAME_VERSION_IDS = ""
+              throw "CurseForge upload blocked: CURSEFORGE_GAME_VERSION_IDS must be a comma-separated list of numeric CurseForge version IDs."
           }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
@@ -104,8 +103,7 @@ jobs:
               throw "CurseForge upload is not configured: add CURSEFORGE_API_TOKEN to the production environment secrets."
           }
           if ($env:CURSEFORGE_GAME_VERSION_IDS -notmatch '^\s*\d+(\s*,\s*\d+)*\s*$') {
-              Write-Output "CurseForge game-version metadata omitted; upload API treats it as optional."
-              $env:CURSEFORGE_GAME_VERSION_IDS = ""
+              throw "CurseForge upload blocked: CURSEFORGE_GAME_VERSION_IDS must be a comma-separated list of numeric CurseForge version IDs."
           }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
