@@ -167,7 +167,6 @@ jobs:
                   payload_version = 1
                   commander_version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
                   sentinel_version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-                  source_repository = "${{ github.repository }}"
                   release_tag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
                   release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
                   source_urls = @(
