@@ -151,7 +151,7 @@ Assert-True `
 $dailyDryRun = @(& (Join-Path $root "tools\kwr-daily-discord-update.ps1") `
     -Section daily-progress -DryRun) -join "`n"
 Assert-True `
-    -Condition ($dailyDryRun -match 'Build:\s+6\.1\.0-alpha\.30') `
+    -Condition ($dailyDryRun -match 'Build:\s+6\.1\.0-alpha\.31') `
     -Message "Daily update does not use the current addon manifest version."
 Assert-True `
     -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
@@ -166,6 +166,12 @@ Assert-True `
 Assert-True `
     -Condition ($releaseWorkflow -notmatch 'game-version metadata omitted') `
     -Message "Release automation must not omit CurseForge game-version metadata."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'ref:\s*\$\{\{ inputs\.release_tag \|\| github\.ref_name \}\}') `
+    -Message "Release automation must check out the requested release tag."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'git describe --tags --exact-match HEAD') `
+    -Message "Release automation must prove that the checked-out commit is exactly tagged."
 
 $maintenanceWorkflow = Get-Content -LiteralPath (
     Join-Path $root ".github\workflows\kwr-automated-maintenance.yml"

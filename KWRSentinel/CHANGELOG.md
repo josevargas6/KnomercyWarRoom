@@ -1,5 +1,11 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.31 - 2026-08-01
+
+- Aligns the embedded Sentinel package with the Commander Alpha 31 release commit.
+- Publishes explicit World of Warcraft Retail 12.1.0 and 12.0.7 metadata.
+- Preserves the Alpha 25 execution-card behavior and safety boundary.
+
 ## 6.1.0-alpha.25 - 2026-07-17
 
 Initial official Sentinel alpha distribution candidate.
