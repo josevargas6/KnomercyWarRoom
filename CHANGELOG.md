@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.1.0-alpha.31
+
+- Repaired CurseForge Retail version metadata and made invalid upload metadata fail closed.
+- Enforced exact-tag source provenance for every GitHub prerelease build.
+- Aligned Commander and embedded Sentinel on one immutable release commit.
+- Connected scheduled Discord publication to the configured production webhook names.
+
 ## 6.1.0-alpha.30
 
 - Certified field-test polish for tracker readability and local-fight synchronization.

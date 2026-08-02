@@ -42,13 +42,13 @@ The release job checks out the requested tag and fails unless `HEAD` is exactly 
 - [ ] Tag pushes continue to check out the pushed tag.
 - [ ] The job proves that checked-out `HEAD` exactly matches the requested tag.
 - [ ] Automation tests lock both safeguards.
-- [ ] Alpha 30 assets are rebuilt from the immutable Alpha 30 tag.
+- [ ] A superseding Alpha 31 tag contains the repaired workflow and aligned Commander/Sentinel versions.
 
 # Verification
 
 1. Run validation, security audit, and automation tests.
 2. Run hosted CI.
-3. Dispatch Alpha 30 and inspect the published provenance commit and tag.
+3. Tag Alpha 31 and inspect the published provenance commit and tag.
 
 # Rollback
 

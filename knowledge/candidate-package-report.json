@@ -2,7 +2,7 @@
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
     "generatedAt":  "2026-07-31T23:18:44Z",
-    "candidateVersion":  "6.1.0-alpha.30",
+    "candidateVersion":  "6.1.0-alpha.31",
     "buildOutputDirectory":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom\\artifacts\\scheduled-maintenance",
     "distributionArtifact":  {
                                  "name":  "KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip",
