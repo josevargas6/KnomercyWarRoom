@@ -137,6 +137,14 @@ local function decorate(button, label, width, height)
     button.label:SetText(label)
     button.callText = label
     button.callMeta = META[label]
+    -- Keep the intent metadata available to diagnostics and tests, but do not
+    -- render a second line inside the compact button where it competes with
+    -- the required action label at narrow UI scales.
+    if button.callMeta and button.callMeta.group then
+        button.groupText = KWR.Theme:Font(button, 7, "muted", "LEFT", "OUTLINE")
+        button.groupText:SetText(KWR.Util:Text(button.callMeta.group, "", 14))
+        button.groupText:Hide()
+    end
     button:SetScript("OnEnter", function(self)
         KWR.Theme:Style(self, "raised", "borderHi")
         self.label:SetTextColor(KWR.Theme:Color("gold"))
@@ -174,17 +182,6 @@ function QuickCalls:CreateButton(parent, label, width, height, status)
 
     local button = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     decorate(button, callText, width, height)
-    if button.callMeta and button.callMeta.group then
-        button.groupText = KWR.Theme:Font(button, 7, "muted", "LEFT", "OUTLINE")
-        button.groupText:SetPoint("TOPLEFT", 7, -4)
-        button.groupText:SetWidth((width or 132) - 12)
-        button.groupText:SetHeight(10)
-        button.groupText:SetText(KWR.Util:Text(button.callMeta.group, "", 14))
-        button.label:ClearAllPoints()
-        button.label:SetPoint("BOTTOMLEFT", 6, 4)
-        button.label:SetPoint("BOTTOMRIGHT", -6, 4)
-        button.label:SetHeight(16)
-    end
     button:RegisterForClicks("AnyUp")
     button:SetAttribute("type1", "macro")
     button:SetAttribute("macrotext1", "/instance " .. callText)

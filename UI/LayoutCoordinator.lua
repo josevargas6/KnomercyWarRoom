@@ -188,6 +188,14 @@ function LayoutCoordinator:Reset()
         profile.main.point, profile.main.relativePoint, profile.main.x, profile.main.y = "CENTER", "CENTER", 0, 0
         profile.hud.point, profile.hud.relativePoint, profile.hud.x, profile.hud.y = "CENTER", "CENTER", -440, 0
         profile.options.point, profile.options.relativePoint, profile.options.x, profile.options.y = "CENTER", "CENTER", 0, 0
+        profile.launcher.angle = 225
+        local roster = profile.combatRoster
+        roster.point, roster.relativePoint, roster.x, roster.y = "CENTER", "CENTER", 0, 140
+        roster.layoutVersion = 3
+        roster.teamMini.point, roster.teamMini.relativePoint = "CENTER", "CENTER"
+        roster.teamMini.x, roster.teamMini.y = -170, 140
+        roster.enemyMini.point, roster.enemyMini.relativePoint = "CENTER", "CENTER"
+        roster.enemyMini.x, roster.enemyMini.y = 170, 140
     end
     for _, frame in ipairs({
         KWR.MainWindow and KWR.MainWindow.frame,
@@ -199,6 +207,22 @@ function LayoutCoordinator:Reset()
     if KWR.MainWindow and KWR.MainWindow.frame then KWR.MainWindow.frame:SetPoint("CENTER") end
     if KWR.HUD and KWR.HUD.frame then KWR.HUD.frame:SetPoint("CENTER", UIParent, "CENTER", -440, 0) end
     if KWR.Options and KWR.Options.frame then KWR.Options.frame:SetPoint("CENTER") end
+    if KWR.MainWindow and KWR.MainWindow.launcher then
+        KWR.MainWindow:PositionLauncher()
+    end
+    if KWR.CombatRoster then
+        if KWR.CombatRoster.teamFrame then
+            KWR.CombatRoster.teamFrame:ClearAllPoints()
+            KWR.CombatRoster.teamFrame:SetPoint("CENTER", UIParent, "CENTER", -170, 140)
+        end
+        if KWR.CombatRoster.enemyFrame then
+            KWR.CombatRoster.enemyFrame:ClearAllPoints()
+            KWR.CombatRoster.enemyFrame:SetPoint("CENTER", UIParent, "CENTER", 170, 140)
+        end
+        if KWR.CombatRoster.teamFrame or KWR.CombatRoster.enemyFrame then
+            KWR.CombatRoster:Layout(KWR.db.profile.combatRoster.mode or "BOTH")
+        end
+    end
     self:Apply()
 end
 

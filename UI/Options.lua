@@ -348,6 +348,10 @@ function Options:Create()
         "Reset the saved positions for KWR-owned windows.",
         366, -692, 342, 170)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
+        if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
+            KWR.LayoutCoordinator:Reset()
+            return
+        end
         local main = KWR.db.profile.main
         main.point, main.relativePoint, main.x, main.y = "CENTER", "CENTER", 0, 0
         if KWR.MainWindow and KWR.MainWindow.frame then
