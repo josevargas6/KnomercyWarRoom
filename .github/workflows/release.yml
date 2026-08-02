@@ -27,7 +27,7 @@ jobs:
       - name: Checkout release source
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.release_tag || github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -55,6 +55,10 @@ jobs:
           $releaseTag = "${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.30' }}"
           if ($releaseTag -ne $expectedTag) {
               throw "Release tag mismatch. Expected $expectedTag but got $releaseTag."
+          }
+          $checkedOutTag = (git describe --tags --exact-match HEAD 2>$null | Select-Object -First 1)
+          if ($checkedOutTag -ne $releaseTag) {
+              throw "Release source mismatch. Expected checkout at $releaseTag but HEAD resolves to '$checkedOutTag'."
           }
 
       - name: Build and certify packages
