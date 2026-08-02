@@ -181,7 +181,8 @@ function CombatRosterState:Update(owner, state, helpers)
         friendlyScoreFaction)
     local stableEnemies = self:StableEnemyRows(owner, enemies)
     owner:UpdateSpotlight(enemies, state.snapshot.combat,
-        state.snapshot.executionCommand and state.snapshot.executionCommand.localFight)
+        state.snapshot.executionCommand and state.snapshot.executionCommand.localFight,
+        state.snapshot.executionCommand and state.snapshot.executionCommand.countdown)
     local assignments = friendlyAssignments(state, roster)
     local fightCalls = enemyCalls(state.snapshot, enemies)
     local alive, localEnemies, visibleEnemies, staleEnemies = 0, 0, 0, 0

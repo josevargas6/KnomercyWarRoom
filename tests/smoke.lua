@@ -159,6 +159,10 @@ Object.__index = function(tableValue, key)
         end
     elseif key == "SetSpacing" then
         return function(self, spacing) self.spacing = spacing end
+    elseif key == "SetFrameStrata" then
+        return function(self, strata) self.frameStrata = strata end
+    elseif key == "GetFrameStrata" then
+        return function(self) return self.frameStrata end
     end
     return function() end
 end
@@ -4917,6 +4921,7 @@ assert(quickCall.quickCallSecure == true
     "Quick Call was not armed as a fixed player-click secure action.")
 assert(quickCall.callMeta and quickCall.callMeta.group == "PRESSURE"
     and quickCall.groupText.value == "PRESSURE"
+    and not quickCall.groupText:IsShown()
     and KWR.MainWindow.pages.OBJECTIVES.callsCard.pressureBadge.text.value == "PRESSURE"
     and KWR.MainWindow.pages.OBJECTIVES.callsCard.helper.value ~= "",
     "Quick Calls did not expose grouped commander intent guidance.")
@@ -5442,6 +5447,7 @@ assert(KWR.MainWindow.launcherMenu.stateBadge.text.value ~= ""
     and KWR.MainWindow.launcherMenu.buttons[2].label.value == "FIGHT NOW"
     and KWR.MainWindow.launcherMenu.buttons[3].label.value == "TEAM BOARD"
     and KWR.MainWindow.launcherMenu.buttons[4].label.value == "MAP / SHIFT-M"
+    and KWR.MainWindow.launcherMenu:GetFrameStrata() == "HIGH"
     and KWR.MainWindow.launcherMenu.buttons[3].icon.texture ~= nil,
     "Launcher menu or top-level shell naming drifted from the command-center contract.")
 KWR.MainWindow.launcherMenu.buttons[3].scripts.OnClick()
