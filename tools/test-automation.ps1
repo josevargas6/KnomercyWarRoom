@@ -185,4 +185,12 @@ foreach ($secretAlias in @("OPS_HOOK", "WEBHOOK_ANNOUNCEMENTS", "WEBHOOK_SUPPORT
         -Message "Configured Discord secret alias is not wired: $secretAlias"
 }
 
+$workflowFiles = Get-ChildItem -Path (Join-Path $root ".github\workflows\*.y*ml") -File
+foreach ($workflowFile in $workflowFiles) {
+    $workflowSource = Get-Content -LiteralPath $workflowFile.FullName -Raw
+    Assert-True `
+        -Condition ($workflowSource -notmatch '(?m)^\s*uses:\s+[^\s#]+@v\d+(?:\s|$)') `
+        -Message "Workflow contains a moving major-version action tag: $($workflowFile.Name)"
+}
+
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

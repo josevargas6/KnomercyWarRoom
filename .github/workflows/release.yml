@@ -25,12 +25,12 @@ jobs:
       url: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || (github.ref_type == 'tag' && github.ref_name) || 'v6.1.0-alpha.32' }}
     steps:
       - name: Checkout release source
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ inputs.release_tag || github.ref_name }}
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
 
@@ -139,7 +139,7 @@ jobs:
 
       - name: Mint KWR Automation installation token
         id: kwr-app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ vars.KWR_AUTOMATION_APP_ID || secrets.KWR_AUTOMATION_APP_ID }}
           private-key: ${{ secrets.KWR_AUTOMATION_APP_PRIVATE_KEY }}
