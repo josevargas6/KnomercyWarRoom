@@ -130,10 +130,26 @@ if (Test-Path -LiteralPath $sentinelTocPath) {
     if ($sentinelUiSource -match 'Interface\\\\AddOns\\\\KnomercyWarRoom') {
         Add-ValidationError "Standalone Sentinel UI depends on Commander assets."
     }
+    $sentinelSurfaceSource = @(
+        $sentinelCore
+        Get-Content -LiteralPath (Join-Path $sentinelRoot 'Options.lua') -Raw
+        $sentinelUiSource
+    ) -join "`n"
+    if ($sentinelSurfaceSource -match
+        'CreateTracker|UpdateTracker|TEAM TRACKER|ENEMY TRACKER|panels\.team|panels\.enemy|Show team tracker|Show enemy tracker') {
+        Add-ValidationError "Standalone Sentinel exposes out-of-scope team or enemy tracker panels."
+    }
+    $sentinelNativeUi = Get-Content -LiteralPath (Join-Path $sentinelRoot 'NativeUI.lua') -Raw
+    if ($sentinelNativeUi -match 'ToggleRaidFrames|CompactRaid') {
+        Add-ValidationError "Standalone Sentinel exposes an inert or protected raid-frame command."
+    }
     $sentinelBridge = Get-Content -LiteralPath (Join-Path $sentinelRoot 'Bridge.lua') -Raw
     if ($sentinelBridge -notmatch 'if value == nil then return "UNKNOWN" end' -or
         $sentinelBridge -match 'releaseTimeRemaining\(\) or 0') {
         Add-ValidationError "Sentinel bridge does not preserve unknown cooldown state."
+    }
+    if ($sentinelBridge -notmatch 'elseif \(not view\.watch\.name or view\.watch\.name == ""\)') {
+        Add-ValidationError "Sentinel bridge can overwrite an unresolved reviewed target."
     }
 }
 

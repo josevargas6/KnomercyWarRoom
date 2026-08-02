@@ -99,28 +99,6 @@ local function buildMenu(button)
             end,
         },
         {
-            text = "Show team tracker",
-            keepShownOnClick = true,
-            isNotRadio = true,
-            checked = menuChecked(function()
-                return Sentinel.db.profile.panels.team.enabled == true
-            end),
-            func = function()
-                setPanelEnabled("team", not (Sentinel.db.profile.panels.team.enabled == true))
-            end,
-        },
-        {
-            text = "Show enemy tracker",
-            keepShownOnClick = true,
-            isNotRadio = true,
-            checked = menuChecked(function()
-                return Sentinel.db.profile.panels.enemy.enabled == true
-            end),
-            func = function()
-                setPanelEnabled("enemy", not (Sentinel.db.profile.panels.enemy.enabled == true))
-            end,
-        },
-        {
             text = "Open full options",
             notCheckable = true,
             func = function()
@@ -249,7 +227,7 @@ function MinimapButton:Create()
         GameTooltip:AddLine("Left-click: show/hide execution card", 1, 1, 1)
         GameTooltip:AddLine("Right-click: Sentinel quick options", 1, 1, 1)
         GameTooltip:AddLine("Drag: move button", 0.72, 0.82, 0.92)
-        GameTooltip:AddLine("Menu toggles: crosshair, status, team, enemy", 0.72, 0.82, 0.92)
+        GameTooltip:AddLine("Menu toggles: crosshair and status", 0.72, 0.82, 0.92)
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function()

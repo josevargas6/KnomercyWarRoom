@@ -32,20 +32,6 @@ local DEFAULTS = {
                 x = 360,
                 y = -300,
             },
-            team = {
-                enabled = false,
-                point = "CENTER",
-                relativePoint = "CENTER",
-                x = -314,
-                y = -120,
-            },
-            enemy = {
-                enabled = false,
-                point = "CENTER",
-                relativePoint = "CENTER",
-                x = 314,
-                y = -120,
-            },
         },
         minimap = {
             enabled = true,
@@ -151,10 +137,6 @@ SlashCmdList.KWRSENTINEL = function(message)
     end
     if message == "options" and Sentinel.Options then
         Sentinel.Options:Toggle()
-        return
-    end
-    if message == "raid" and Sentinel.NativeUI then
-        Sentinel.NativeUI:ToggleRaidFrames()
         return
     end
     if message == "show" and Sentinel.HUD then

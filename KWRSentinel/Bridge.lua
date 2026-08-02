@@ -316,7 +316,8 @@ local function augmentWatch(view)
                 view.watch.healthPercent = math.floor((health / healthMax) * 100 + 0.5)
             end
         end
-    elseif UnitExists("target") and UnitCanAttack("player", "target") then
+    elseif (not view.watch.name or view.watch.name == "")
+        and UnitExists("target") and UnitCanAttack("player", "target") then
         view.watch.name = shortName(UnitName("target"))
         view.watch.localFallbackTarget = true
         view.watch.liveCast = castInfo("target")
