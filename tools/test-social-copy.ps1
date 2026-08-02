@@ -23,6 +23,15 @@ foreach ($phrase in $requiredPhrases) {
     }
 }
 
+$socialCopy = Get-Content -LiteralPath 'docs/SOCIAL_COPY.md' -Raw
+foreach ($productSection in @('Commander', 'Sentinel')) {
+    $sectionPattern = '(?ms)^##\s+' + [regex]::Escape($productSection) + '\s+(.*?)(?=^##\s+|\z)'
+    $sectionMatch = [regex]::Match($socialCopy, $sectionPattern)
+    if (-not $sectionMatch.Success -or $sectionMatch.Groups[1].Value -notmatch '6\.1\.0-alpha\.32') {
+        throw "Social copy $productSection section does not identify the current Alpha 32 candidate."
+    }
+}
+
 $secretPatterns = @(
     'discord(app)?\.com/api/webhooks/\d+/[A-Za-z0-9_-]+',
     '(?i)(token|api[_-]?key|secret)\s*[:=]\s*[^\s`]+',

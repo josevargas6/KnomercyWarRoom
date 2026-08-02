@@ -23,7 +23,7 @@ KWR Sentinel is the compact player execution client for Knomercy War Room. It
 shows commander trust, match state, personal job, movement authority, target
 responsibility, and one hold/win instruction without automating gameplay.
 
-The current public candidate is `6.1.0-alpha.25`. Sentinel is optional and
+The current public candidate is `6.1.0-alpha.32`. Sentinel is optional and
 works as a safe standalone fallback when Commander is not installed.
 
 Official source and release history: [GitHub](https://github.com/josevargas6/KWRSentinel).
