@@ -1,5 +1,10 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.32 - 2026-08-01
+
+- Declares both supported Retail interface builds, 12.0.7 and 12.1.0, in the packaged TOC.
+- Preserves the Alpha 31 execution-card behavior and safety boundary.
+
 ## 6.1.0-alpha.31 - 2026-08-01
 
 - Aligns the embedded Sentinel package with the Commander Alpha 31 release commit.

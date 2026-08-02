@@ -9,7 +9,7 @@ foreach ($path in $requiredFiles) {
 
 $copy = ($requiredFiles | ForEach-Object { Get-Content -LiteralPath $_ -Raw }) -join "`n"
 $requiredPhrases = @(
-    '6.1.0-alpha.31',
+    '6.1.0-alpha.32',
     'player-controlled',
     'field-test',
     'never auto-casts',
@@ -20,6 +20,15 @@ $requiredPhrases = @(
 foreach ($phrase in $requiredPhrases) {
     if ($copy -notmatch [regex]::Escape($phrase)) {
         throw "Social copy is missing required phrase: $phrase"
+    }
+}
+
+$socialCopy = Get-Content -LiteralPath 'docs/SOCIAL_COPY.md' -Raw
+foreach ($productSection in @('Commander', 'Sentinel')) {
+    $sectionPattern = '(?ms)^##\s+' + [regex]::Escape($productSection) + '\s+(.*?)(?=^##\s+|\z)'
+    $sectionMatch = [regex]::Match($socialCopy, $sectionPattern)
+    if (-not $sectionMatch.Success -or $sectionMatch.Groups[1].Value -notmatch '6\.1\.0-alpha\.32') {
+        throw "Social copy $productSection section does not identify the current Alpha 32 candidate."
     }
 }
 

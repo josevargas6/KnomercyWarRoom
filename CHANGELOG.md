@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.1.0-alpha.32
+
+- Declared both supported Retail interface builds, 12.0.7 and 12.1.0, in Commander and Sentinel TOCs.
+- Supersedes Alpha 31 packaging without changing addon runtime behavior.
+
 ## 6.1.0-alpha.31
 
 - Repaired CurseForge Retail version metadata and made invalid upload metadata fail closed.

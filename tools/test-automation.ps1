@@ -151,7 +151,7 @@ Assert-True `
 $dailyDryRun = @(& (Join-Path $root "tools\kwr-daily-discord-update.ps1") `
     -Section daily-progress -DryRun) -join "`n"
 Assert-True `
-    -Condition ($dailyDryRun -match 'Build:\s+6\.1\.0-alpha\.31') `
+    -Condition ($dailyDryRun -match 'Build:\s+6\.1\.0-alpha\.32') `
     -Message "Daily update does not use the current addon manifest version."
 Assert-True `
     -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
