@@ -467,6 +467,7 @@ local files = {
     "Runtime/MatchRuntime.lua",
     "UI/Theme.lua",
     "UI/IconRegistry.lua",
+    "UI/LayoutCoordinator.lua",
     "Features/CursorRing.lua",
     "UI/CopyDialog.lua",
     "UI/QuickCalls.lua",
@@ -6096,6 +6097,15 @@ do
     end)() end
 end
 end
+
+KWR.db.profile.launcher.angle = 10
+KWR.db.profile.combatRoster.teamMini.x = 99
+KWR.db.profile.combatRoster.enemyMini.x = 101
+KWR.LayoutCoordinator:Reset()
+assert(KWR.db.profile.launcher.angle == 225
+    and KWR.db.profile.combatRoster.teamMini.x == -170
+    and KWR.db.profile.combatRoster.enemyMini.x == 170,
+    "Coordinated layout reset did not restore launcher and combat-roster positions.")
 
 local result = { passed = 0, failed = 0 }
 if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
