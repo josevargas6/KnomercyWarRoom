@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.2 seconds
-Output:
 # KWR Sentinel User Guide
 
 KWR Sentinel is the compact player execution client for Knomercy War Room. It
