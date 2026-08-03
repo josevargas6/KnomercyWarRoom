@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.2 seconds
-Output:
 # KnoMercy War Room Wiki
 
 ## Start here
