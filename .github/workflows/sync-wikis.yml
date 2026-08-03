@@ -1,0 +1,41 @@
+Exit code: 0
+Wall time: 0.2 seconds
+Output:
+name: Synchronize Commander and Sentinel Wikis
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "README.md"
+      - "CHANGELOG.md"
+      - "Core/**"
+      - "Runtime/**"
+      - "KWRSentinel/**"
+      - "docs/KWR_USER_GUIDE_WIKI.md"
+      - "docs/SENTINEL_USER_GUIDE_WIKI.md"
+      - "docs/wiki-home-*.md"
+      - "tools/publish-wikis.ps1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      WIKI_PUBLISH_TOKEN: ${{ secrets.WIKI_PUBLISH_TOKEN }}
+    steps:
+      - name: Checkout addon source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Publish synchronized Wiki pages
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:WIKI_PUBLISH_TOKEN)) {
+              Write-Output "Wiki publication skipped; configure the WIKI_PUBLISH_TOKEN repository secret."
+              exit 0
+          }
+          ./tools/publish-wikis.ps1
+
