@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.2 seconds
-Output:
 # KnoMercy War Room â€” Commander & Sentinel User Guide
 
 > Canonical operator guide for the current field candidate. Keep this page aligned with `README.md`, `KWRSentinel/README.md`, and the release notes whenever commands or surfaces change.
