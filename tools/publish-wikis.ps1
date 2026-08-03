@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.2 seconds
-Output:
 param(
     [string]$CommanderWiki = "josevargas6/KnomercyWarRoom.wiki",
     [string]$SentinelWiki = "josevargas6/KWRSentinel.wiki",
