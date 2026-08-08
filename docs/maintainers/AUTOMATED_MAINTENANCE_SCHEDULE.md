@@ -1,4 +1,4 @@
-# Automated Maintenance Schedule
+# Historical: Automated Maintenance Schedule
 
 This schedule is the operational bridge between the existing maintenance plan,
 GitHub Actions, Discord server updates, optional Sentinel Discord bot dispatch,

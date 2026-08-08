@@ -4,6 +4,8 @@ title: Simplify the live enemy call card
 owner: unassigned
 priority: high
 risk: low
+status: planned
+authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: []
 affected_modules:
   - UI/CombatRoster.lua

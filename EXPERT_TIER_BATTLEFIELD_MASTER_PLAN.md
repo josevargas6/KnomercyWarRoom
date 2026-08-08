@@ -1,4 +1,4 @@
-# KWR Expert-Tier Battlefield Master Plan
+# Historical: KWR Expert-Tier Battlefield Master Plan
 
 Status date: 2026-07-29  
 Plan ID: `KWR-036`  

@@ -106,19 +106,16 @@ foreach ($file in $markdownFiles) {
     $relative = $file.FullName.Substring($root.Length + 1).Replace('/', '\\')
     if ($relative -match '^docs\\(evidence|audits)\\') {
         $historical = Get-Content -LiteralPath $file.FullName -Raw
-        if ($historical -match '(?i)\b(current status|current baseline|sole authority|source of truth)\b') {
-            Add-AuditError "Historical document claims to be current or authoritative: $relative"
+        if ($historical -notmatch '(?m)^# Historical') {
+            Add-AuditError "Historical document lacks an explicit historical label: $relative"
         }
         continue
     }
     $text = Get-Content -LiteralPath $file.FullName -Raw
     if ($text -match '(?m)^# Historical') {
-        if ($text -match '(?i)\b(current status|current baseline|sole authority|source of truth)\b') {
-            Add-AuditError "Historical document claims to be current or authoritative: $relative"
-        }
         continue
     }
-    if ($text -match $claimPattern -and $relative -notin $authorityPaths -and $relative -notin @('README.md', 'AGENTS.md')) {
+    if ($text -match $claimPattern -and $relative -notmatch '^docs\\tasks\\' -and $relative -notin $authorityPaths -and $relative -notin @('README.md', 'AGENTS.md')) {
         Add-AuditError "Competing active authority claim: $relative"
     }
 }

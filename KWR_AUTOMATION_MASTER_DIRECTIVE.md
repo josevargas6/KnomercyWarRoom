@@ -1,4 +1,4 @@
-# KWR Automation Master Directive
+# Historical: KWR Automation Master Directive
 
 This file is the repository-level operating policy for synchronization,
 validation, packaging, release automation, and development isolation.

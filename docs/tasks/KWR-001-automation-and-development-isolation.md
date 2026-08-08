@@ -4,6 +4,8 @@ title: Enforce automation and development-channel isolation
 owner: unassigned
 priority: high
 risk: medium
+status: planned
+authority_references: [AGENTS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules: [tools, docs, .github]
 ---

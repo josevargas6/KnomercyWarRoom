@@ -1,4 +1,4 @@
-# KWR Winning-State Execution Map
+# Historical: KWR Winning-State Execution Map
 
 This is a supporting Commander execution ledger under `RELEASE_VISION.md`.
 It does not own suite scope, component dependencies, repository recovery, or

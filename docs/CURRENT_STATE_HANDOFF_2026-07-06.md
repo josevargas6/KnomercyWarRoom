@@ -1,4 +1,4 @@
-# KWR Current-State Handoff
+# Historical: KWR Current-State Handoff
 
 Date: 2026-07-06  
 Addon version: 6.1.0-alpha.23  

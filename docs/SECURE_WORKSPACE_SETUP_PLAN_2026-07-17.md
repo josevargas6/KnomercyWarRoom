@@ -1,4 +1,4 @@
-# Secure Workspace Setup Plan
+# Historical: Secure Workspace Setup Plan
 
 Status: foundation implemented; credential-dependent activation pending  
 Audit date: 2026-07-17  

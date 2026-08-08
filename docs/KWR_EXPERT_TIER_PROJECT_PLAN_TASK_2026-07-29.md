@@ -17,6 +17,8 @@ affected_modules:
   - docs/WORKFLOW_NOW.md
 ---
 
+# Historical: expert-tier delivery plan task
+
 # Objective
 
 Create one repository-native project plan that carries Knomercy War Room from

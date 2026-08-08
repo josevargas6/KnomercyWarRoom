@@ -1,4 +1,4 @@
-# KnoMercy War Room Continuous Maintenance Automation Plan
+# Historical: KnoMercy War Room Continuous Maintenance Automation Plan
 
 **Status:** Proposed architecture; no production automation is enabled by this document  
 **Last revised:** 2026-07-14  
@@ -580,4 +580,3 @@ The system is production-ready when:
 - [Render deploys and deploy hooks](https://render.com/docs/deploys)
 - [Render health checks](https://render.com/docs/health-checks)
 - [Render API](https://render.com/docs/api)
-

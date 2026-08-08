@@ -1,4 +1,4 @@
-# KWR-047 baseline provenance record
+# Historical: KWR-047 baseline provenance record
 
 This dated audit preserves the observed baseline and rollback route.
 

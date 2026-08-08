@@ -4,6 +4,8 @@ title: Synchronize local fight truth with commander surfaces
 owner: unassigned
 priority: critical
 risk: medium
+status: planned
+authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies:
   - KWR-032
   - KWR-033

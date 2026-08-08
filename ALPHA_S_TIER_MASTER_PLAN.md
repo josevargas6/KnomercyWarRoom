@@ -1,4 +1,4 @@
-# KWR Alpha S-Tier Master Plan
+# Historical: KWR Alpha S-Tier Master Plan
 
 This is the final objective-driven execution plan for taking KWR from the
 current offline-validated alpha candidate to an alpha test build that feels

@@ -1,4 +1,4 @@
-# Final Release Audit
+# Historical: Final Release Audit
 
 Date: 2026-07-13  
 Repository: `KnomercyWarRoom`  
@@ -384,7 +384,6 @@ Broad alpha expansion requires all P1/P2 correctness gates, release-pruned load 
 ## Exact Release Condition
 
 External testing may begin only when Phase 0 is complete, all Phase 0 acceptance tests pass in source and release-pruned packages, and one owner-approved Retail combat-lockdown smoke produces zero Lua, taint, or blocked-action errors. This is not approval for stable public promotion.
-
 
 
 

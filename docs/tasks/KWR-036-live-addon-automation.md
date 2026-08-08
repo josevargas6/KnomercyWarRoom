@@ -4,6 +4,8 @@ title: Establish governed live addon automation
 owner: unassigned
 priority: high
 risk: high
+status: planned
+authority_references: [AGENTS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules:
   - .github/workflows/release.yml
