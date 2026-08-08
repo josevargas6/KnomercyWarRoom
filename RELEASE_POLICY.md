@@ -1,5 +1,7 @@
 # KWR Release Policy
 
+This is the sole authority for release authorization, channels, and provenance.
+
 GitHub is the release source of truth. Builds must originate from committed
 content and protected workflows. Local WoW folders are deployment targets only.
 

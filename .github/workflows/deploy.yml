@@ -27,7 +27,10 @@ jobs:
 
       - name: Run repository validation
         shell: pwsh
-        run: ./tools/validate.ps1
+        run: |
+          ./tools/validate.ps1
+          ./tools/document-authority-audit.ps1
+          ./tools/source-drift-audit.ps1
 
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@6d50adb6e8517eefef63f4afb16a6518166a6b28 # v2.5.1

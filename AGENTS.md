@@ -2,6 +2,10 @@
 
 These instructions apply to every task, chat, review, and implementation performed in this repository. They are the default unless a task states a stricter requirement.
 
+This file is the sole authority for engineering rules. GitHub committed content
+is the development and release source; World of Warcraft AddOns folders are
+deployment targets only.
+
 ## Mission
 
 KnoMercy War Room is a purpose-built Rated Battleground war-room addon, not a bundle of generic PvP widgets. Every change must strengthen strategy, map intelligence, assignments, enemy analysis, cooldown awareness, or commander clarity for real in-game use.

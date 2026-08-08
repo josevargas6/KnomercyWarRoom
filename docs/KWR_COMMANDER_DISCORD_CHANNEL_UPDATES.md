@@ -103,6 +103,6 @@ Validation:
 
 Current truth:
 - CurseForge receives the exact certified artifact for Retail 12.1.0 and 12.0.7
-- GitHub release assets and their public hashes are the source of truth
+- GitHub release assets and their public hashes are the authoritative published record
 - stable promotion remains gated by current packaged in-game evidence
 ```

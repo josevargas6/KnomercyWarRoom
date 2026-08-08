@@ -4,6 +4,8 @@ title: Improve tracker name and health text contrast
 owner: unassigned
 priority: high
 risk: low
+status: planned
+authority_references: [AGENTS.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
   - UI/CombatRoster.lua

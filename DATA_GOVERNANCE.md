@@ -1,5 +1,7 @@
 # KWR Data Governance
 
+This is the sole authority for runtime and gameplay-data ownership.
+
 Reviewed gameplay data lives under `Data/` and is loaded by the existing TOC.
 `Core/Store.lua` owns persisted runtime state. Do not duplicate definitions in
 Commander, Sentinel, bot, or documentation. Any future generated artifact must

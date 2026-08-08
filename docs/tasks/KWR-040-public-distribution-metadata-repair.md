@@ -4,6 +4,8 @@ title: Repair public distribution metadata and webhook aliases
 owner: unassigned
 priority: critical
 risk: medium
+status: planned
+authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules: [.github/workflows, tools]
 ---

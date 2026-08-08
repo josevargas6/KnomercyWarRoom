@@ -4,6 +4,8 @@ title: Publish exact release social receipts
 owner: unassigned
 priority: high
 risk: low
+status: planned
+authority_references: [RELEASE_POLICY.md, CHANGELOG.md]
 dependencies: [KWR-041, KWR-042]
 affected_modules: [release automation, Discord copy, tests]
 ---

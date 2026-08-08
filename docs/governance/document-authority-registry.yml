@@ -1,0 +1,50 @@
+version: 1
+authorities:
+  - concern: Engineering rules
+    path: AGENTS.md
+  - concern: Product identity and UX invariants
+    path: DESIGN_CONTRACT.md
+  - concern: Architecture and module ownership
+    path: ARCHITECTURE.md
+  - concern: Current version, blockers, and promotion status
+    path: RELEASE_READINESS.md
+  - concern: Release authorization, channels, and provenance
+    path: RELEASE_POLICY.md
+  - concern: Runtime and gameplay data ownership
+    path: DATA_GOVERNANCE.md
+  - concern: Addon communication restrictions
+    path: PROTOCOL.md
+  - concern: Security requirements
+    path: SECURITY.md
+  - concern: Future priorities
+    path: PRODUCT_ROADMAP.md
+  - concern: Completed behavior changes
+    path: CHANGELOG.md
+  - concern: Individual implementation scope
+    path: docs/tasks/
+  - concern: Historical verification
+    path: docs/evidence/
+approved_root_markdown:
+  - AGENTS.md
+  - ARCHITECTURE.md
+  - BATTLEGROUND_VERIFICATION.md
+  - CHANGELOG.md
+  - CONTRIBUTING.md
+  - CURSEFORGE_DESCRIPTION.md
+  - DATA_GOVERNANCE.md
+  - DESIGN_CONTRACT.md
+  - DEVELOPMENT.md
+  - LICENSE
+  - META_SOURCES.md
+  - PRODUCT_ROADMAP.md
+  - PROJECT_HANDOFF.md
+  - PROTOCOL.md
+  - QA_CHECKLIST.md
+  - README.md
+  - RELEASE_POLICY.md
+  - RELEASE_READINESS.md
+  - SECURITY.md
+  - THIRD_PARTY_NOTICES.md
+historical_prefixes:
+  - docs/evidence/
+  - docs/audits/

@@ -4,6 +4,8 @@ title: Pin all Commander workflow actions
 owner: unassigned
 priority: high
 risk: low
+status: planned
+authority_references: [AGENTS.md, SECURITY.md]
 dependencies: []
 affected_modules: [GitHub Actions]
 ---

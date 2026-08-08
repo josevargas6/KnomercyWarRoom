@@ -322,6 +322,23 @@ if ($hasSentinel) {
 if (@($distributionEntries | Where-Object { $_ -match "(^|/)(tests|tools|knowledge)/" }).Count -gt 0) {
     throw "Distribution ZIP contains developer-only directories."
 }
+$productionDirectories = @(Get-ProductionPackageDirectories)
+$productionFiles = @(Get-ProductionPackageFiles)
+foreach ($entry in $distributionEntries) {
+    if ($entry.EndsWith('/')) {
+        continue
+    }
+    $relative = $entry -replace '^KnomercyWarRoom/', ''
+    $topLevel = ($relative -split '/')[0]
+    if ($relative -notin $productionFiles -and $topLevel -notin $productionDirectories) {
+        throw "Distribution ZIP contains a file outside the production allowlist: $relative"
+    }
+}
+foreach ($requiredFile in $productionFiles) {
+    if ($distributionEntries -notcontains ("KnomercyWarRoom/" + $requiredFile)) {
+        throw "Distribution ZIP is missing allowlisted production file: $requiredFile"
+    }
+}
 if (@($distributionEntries | Where-Object { $_ -match "KWR_520|RC5_ReleaseReady|release-ready-candidate" }).Count -gt 0) {
     throw "Distribution ZIP contains legacy runtime content."
 }

@@ -4,6 +4,51 @@ function Get-ReleaseExcludedEntries {
     )
 }
 
+function Get-ProductionPackageDirectories {
+    return @(
+        'Adapters',
+        'Assets',
+        'Compliance',
+        'Core',
+        'Data',
+        'Features',
+        'Intelligence',
+        'Rulesets',
+        'Runtime',
+        'State',
+        'UI'
+    )
+}
+
+function Get-ProductionPackageFiles {
+    return @(
+        'BATTLEGROUND_VERIFICATION.md',
+        'CHANGELOG.md',
+        'CURSEFORGE_DESCRIPTION.md',
+        'DESIGN_CONTRACT.md',
+        'KnomercyWarRoom.toc',
+        'LICENSE',
+        'META_SOURCES.md',
+        'README.md',
+        'RELEASE_READINESS.md',
+        'THIRD_PARTY_NOTICES.md'
+    )
+}
+
+function Get-SentinelProductionFiles {
+    return @(
+        'Bridge.lua',
+        'Core.lua',
+        'HUD.lua',
+        'KWRSentinel.toc',
+        'MinimapButton.lua',
+        'NativeUI.lua',
+        'Options.lua',
+        'Panels.lua',
+        'Theme.lua'
+    )
+}
+
 function Get-NormalizedRelativePath {
     param(
         [Parameter(Mandatory = $true)]

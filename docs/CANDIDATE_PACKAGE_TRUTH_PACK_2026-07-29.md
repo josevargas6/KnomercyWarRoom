@@ -1,6 +1,6 @@
 # KWR candidate package truth pack — 2026-07-29
 
-This is the offline package receipt for the current field-test candidate:
+This is a historical offline package receipt for the dated field-test candidate:
 `6.1.0-alpha.29`.
 
 Use this pack when we want later live evidence to mean something exact. Every

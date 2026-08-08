@@ -2,6 +2,11 @@
 artifacts/
 builds/
 node_modules/
+.pnpm-store/
+tmp/
+temp/
+coverage/
+tmp_*.txt
 *.zip
 *.log
 

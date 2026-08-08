@@ -1,13 +1,14 @@
-# Release Readiness - 6.1.0-alpha.33
+# Release Readiness - 6.1.0-alpha.36
 
-Suite scope and release sequencing are defined by `RELEASE_VISION.md`. This
-file records the current Commander gate decision only.
+This is the sole current-version, blocker, and promotion-status authority.
+GitHub committed content is the canonical development source; the live AddOns
+folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Offline implementation gate passed. Ready for focused field validation;
-broader field promotion and stable public promotion remain blocked by live-only
-evidence.**
+**Alpha 36 is a source-recovery candidate. Promotion remains blocked until the
+recovery PR, KWR-047 source governance, package manifest, installed-folder
+comparison, and protected release workflow have all passed.**
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working

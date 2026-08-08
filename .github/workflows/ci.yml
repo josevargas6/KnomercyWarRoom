@@ -30,6 +30,12 @@ jobs:
         shell: pwsh
         run: ./tools/validate.ps1
 
+      - name: Audit document and source authority
+        shell: pwsh
+        run: |
+          ./tools/document-authority-audit.ps1
+          ./tools/source-drift-audit.ps1
+
       - name: Scan workspace for committed credentials
         shell: pwsh
         run: ./tools/security-audit.ps1

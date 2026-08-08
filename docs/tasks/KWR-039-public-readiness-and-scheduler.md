@@ -4,6 +4,8 @@ title: Prove public readiness and restore governed Codex scheduling
 owner: unassigned
 priority: high
 risk: medium
+status: planned
+authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: [GitHub Actions, Codex desktop automations]
 affected_modules: [repository workflow, release evidence, maintainer documentation]
 ---

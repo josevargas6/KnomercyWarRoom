@@ -1,14 +1,14 @@
-# Knomercy War Room 6.1 Alpha 29
+# Knomercy War Room
 
 Knomercy War Room is a player-controlled Rated Battleground command system for World of Warcraft Retail.
 
 The suite release direction, component boundaries, recovery state, and ordered
-backlog are defined in `RELEASE_VISION.md`. The current field candidate is
-`6.1.0-alpha.29`, descended from the recovered in-game `6.1.0-alpha.28`
-source that was newer than the inspected GitHub branches and had to be
-reviewed through a dedicated recovery branch before remote promotion.
+backlog are defined in `PRODUCT_ROADMAP.md`. Release status is defined solely
+by `RELEASE_READINESS.md`.
+All versioned recovery and Alpha 29 descriptions below are historical feature
+context. The TOC-aligned release decision is solely `RELEASE_READINESS.md`.
 The complete path from this candidate to an expert-tier, competitively
-benchmarked release is defined in `EXPERT_TIER_BATTLEFIELD_MASTER_PLAN.md`.
+benchmarked release is recorded in the changelog and dated evidence.
 The offline Decision Lab schema contract now begins in
 `knowledge/schemas/replay-schema.json`,
 `knowledge/schemas/golden-label-schema.json`,
@@ -71,7 +71,7 @@ the current group against a 10-player RBG roster, identifies missing roles,
 recommends best-fit specializations, explains the emerging composition
 archetype, and presents leadership, ready-check, and positioning guidance.
 
-Alpha 29 is the current field-test candidate. It keeps one synchronized command
+The historical Alpha 29 candidate kept one synchronized command
 packet across the compact HUD, Sentinel, and optional local speech; reserves a
 persistent `LOCAL FIGHT` card for kill and healer-control truth; reconciles
 friendly identities while raid tokens settle; and uses native `Shift-M` instead

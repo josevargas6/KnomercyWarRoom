@@ -4,6 +4,8 @@ title: Require Shift for tracker focus assignment
 owner: unassigned
 priority: medium
 risk: medium
+status: planned
+authority_references: [AGENTS.md, SECURITY.md]
 dependencies: []
 affected_modules:
   - UI/CombatRoster.lua

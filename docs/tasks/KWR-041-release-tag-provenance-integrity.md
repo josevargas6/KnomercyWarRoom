@@ -4,6 +4,8 @@ title: Enforce release tag provenance integrity
 owner: unassigned
 priority: critical
 risk: medium
+status: planned
+authority_references: [RELEASE_POLICY.md, SECURITY.md]
 dependencies: [KWR-040]
 affected_modules: [.github/workflows, tools]
 ---

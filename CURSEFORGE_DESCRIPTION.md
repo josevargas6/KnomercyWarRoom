@@ -37,7 +37,7 @@ facts remain unknown, and dynamic calls remain manual.
 
 ## Alpha status
 
-Version 6.1.0-alpha.29 adds battlefield truth contracts, monitored assignments,
+The historical 6.1.0-alpha.29 feature summary added battlefield truth contracts, monitored assignments,
 objective-aware candidate decisions, complete response packages, and optional target/cast
 clarity, bounded execution assessment, and retains structured
 manual post-match evidence export,

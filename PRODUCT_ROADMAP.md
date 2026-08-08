@@ -1,11 +1,11 @@
 # KWR 10/10 Product Roadmap
 
-## Current handoff and next release
+## Roadmap context
 
-`PROJECT_HANDOFF.md` is the authoritative no-drift plan following
-6.1.0-alpha.9. Alpha 9 remains the certified runtime baseline. Alpha 10 is an
-additive combat-clarity and decision-quality program, not an architecture
-rewrite.
+`PROJECT_HANDOFF.md` is historical context only. This roadmap is the sole
+authority for future priorities; release decisions remain in
+`RELEASE_READINESS.md`. The work remains an additive combat-clarity and
+decision-quality program, not an architecture rewrite.
 
 The immediate order is:
 

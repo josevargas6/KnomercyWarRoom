@@ -4,6 +4,8 @@ title: Declare Retail 12.1 interface compatibility
 owner: unassigned
 priority: critical
 risk: low
+status: planned
+authority_references: [ARCHITECTURE.md, RELEASE_READINESS.md]
 dependencies: [KWR-041]
 affected_modules: [KnomercyWarRoom.toc, KWRSentinel]
 ---
