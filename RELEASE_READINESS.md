@@ -6,9 +6,13 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 36 is a source-recovery candidate. Promotion remains blocked until the
-recovery PR, KWR-047 source governance, package manifest, installed-folder
-comparison, and protected release workflow have all passed.**
+**Alpha 36 is the current GitHub prerelease. The recovery PR, KWR-047 source
+governance, package manifest, installed-folder comparison, and protected
+release workflow all passed on 2026-08-08. Commander and Sentinel are deployed
+from the verified package manifests; the public prerelease is
+[`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
+Any further promotion still requires new owner approval and fresh field
+evidence.**
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
