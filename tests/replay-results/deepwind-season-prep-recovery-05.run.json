@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "deepwind-season-prep-recovery-05-001",
+    "replayPath":  "tests/replays/deepwind-season-prep-recovery-05.json",
+    "labelPath":  "tests/golden/deepwind-season-prep-recovery-05.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:TAKE",
+                               "WHERE:MKT",
+                               "NEXT:MKT"
+                           ],
+                  "summary":  [
+                                  "DWG 675-930 LOSE",
+                                  "ACTION: Recover by collapsing onto one reclaimable flank. Season-prep branch: recover a missing defender.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "RESET_DISCIPLINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "deepwind_season_prep_recovery_05_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "MKT",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "MKT",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:TAKE",
+                                         "WHERE:MKT"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "tp-pressure-isolate-healer-line-002-outcome",
+    "replayId":  "tp-pressure-isolate-healer-line-002",
+    "mapProfile":  "tp_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+                                              "REINFORCED_LINE",
+                                              "CLEAN",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Isolate the enemy healer line before the true return collapse lands. stayed aligned and closed favorably."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Isolate the enemy healer line before the true return collapse lands."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Isolate the enemy healer line before the true return collapse lands. stayed aligned and closed favorably."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Lesson: Reinforced lines should be repeated when support arrives on time."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "REINFORCED_LINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "return_window",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                         "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                       "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

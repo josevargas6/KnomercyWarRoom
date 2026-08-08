@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "wsg-recovery-score-floor-004",
+    "replayPath":  "tests/replays/wsg-recovery-score-floor-uncertain_window.json",
+    "labelPath":  "tests/golden/wsg-recovery-score-floor-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:COVER",
+                               "WHERE:HOME",
+                               "NEXT:HOME"
+                           ],
+                  "summary":  [
+                                  "WSG variant 4 LOSE",
+                                  "ACTION: Protect the score floor first by stopping the next free enemy grab before chasing a fancy return.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Protect the score floor first by stopping the next free enemy grab before chasing a fancy return. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Stay alive on win path while rebuilding the real cap window."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "wsg_recovery_score_floor_variant_4_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "COVER",
+                                            "who":  "TEAM",
+                                            "where":  "HOME",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "HOME",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:COVER",
+                                         "WHERE:HOME"
+                                     ]
+                        }
+                    ]
+}

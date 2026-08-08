@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "eots-opening-crossmap-punish-005-outcome",
+    "replayId":  "eots-opening-crossmap-punish-005",
+    "mapProfile":  "eots_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "EXECUTION_ERROR",
+                            "secondary":  [
+                                              "EXECUTION_BREAK",
+                                              "FAILED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Force the enemy to over-answer one tower lane, then punish the cross-map tower that loses reserve support. was reasonable, but the notional execution path failed the intended close."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Force the enemy to over-answer one tower lane, then punish the cross-map tower that loses reserve support."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Force the enemy to over-answer one tower lane, then punish the cross-map tower that loses reserve support. was reasonable, but the notional execution path failed the intended close."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Lesson: The branch was defensible, but the team cannot trickle or miss the timing."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "EXECUTION_BREAK",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "FAILED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "EOTS_HOLD_VS_ROTATE",
+                                                         "EOTS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "EOTS_RESP_BAIT_SHOW",
+                                                       "EOTS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

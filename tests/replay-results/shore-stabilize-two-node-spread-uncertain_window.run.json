@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "shore-stabilize-two-node-spread-004",
+    "replayPath":  "tests/replays/shore-stabilize-two-node-spread-uncertain_window.json",
+    "labelPath":  "tests/golden/shore-stabilize-two-node-spread-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SEETHING variant 4 WIN",
+                                  "ACTION: Split only when both nodes remain channel-safe and the next spawn route stays reachable.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Split only when both nodes remain channel-safe and the next spawn route stays reachable. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Hold value without creating a free collapse."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "shore_stabilize_two_node_spread_variant_4_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

@@ -1,7 +1,5 @@
 local _, KWR = ...
 
--- Keep the canonical Lua source explicit in distribution staging.
-
 local ScenarioCalibration = {}
 KWR.ScenarioCalibration = ScenarioCalibration
 

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tok-pressure-force-loose-orb-005",
+    "replayPath":  "tests/replays/tok-pressure-force-loose-orb-late_clock.json",
+    "labelPath":  "tests/golden/tok-pressure-force-loose-orb-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:KILL",
+                               "WHERE:MID",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "TEMPLE variant 5 TIE",
+                                  "ACTION: Pressure the exposed carrier until the orb drops into a controlled pickup lane.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Pressure the exposed carrier until the orb drops into a controlled pickup lane. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Create swing value without overcommitting into center chaos."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tok_pressure_force_loose_orb_variant_5_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "KILL",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:KILL",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

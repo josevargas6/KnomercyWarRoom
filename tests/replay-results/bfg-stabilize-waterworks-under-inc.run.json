@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-stabilize-waterworks-under-inc-001",
+    "replayPath":  "tests/replays/bfg-stabilize-waterworks-under-inc.json",
+    "labelPath":  "tests/golden/bfg-stabilize-waterworks-under-inc.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "BFG 1125-900 WIN",
+                                  "ACTION: Reinforce Waterworks without stripping the home fallback.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "SHELL_DISCIPLINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_stabilize_waterworks_under_inc_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

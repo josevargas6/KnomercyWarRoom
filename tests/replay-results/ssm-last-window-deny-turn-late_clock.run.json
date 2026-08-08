@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "ssm-last-window-deny-turn-005",
+    "replayPath":  "tests/replays/ssm-last-window-deny-turn-late_clock.json",
+    "labelPath":  "tests/golden/ssm-last-window-deny-turn-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:ESCORT",
+                               "WHERE:TOP",
+                               "NEXT:TOP"
+                           ],
+                  "summary":  [
+                                  "SILVERSHARD variant 5 WIN",
+                                  "ACTION: Protect the last enemy turn route before any optional chase into dead-track fighting.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Protect the last enemy turn route before any optional chase into dead-track fighting. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Finish by denying the only remaining scoring rail."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "ssm_last_window_deny_turn_variant_5_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "ESCORT",
+                                            "who":  "TEAM",
+                                            "where":  "TOP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "ESCORT",
+                                         "who":  "TEAM",
+                                         "where":  "TOP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:ESCORT",
+                                         "WHERE:TOP"
+                                     ]
+                        }
+                    ]
+}

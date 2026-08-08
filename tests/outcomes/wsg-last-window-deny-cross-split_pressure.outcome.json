@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "wsg-last-window-deny-cross-003-outcome",
+    "replayId":  "wsg-last-window-deny-cross-003",
+    "mapProfile":  "wsg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "OPPONENT_COUNTER",
+                            "secondary":  [
+                                              "ENEMY_COUNTER_WINDOW",
+                                              "CONTESTED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Deny the last enemy cross-map grab route before overcommitting to a flashy finish. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Deny the last enemy cross-map grab route before overcommitting to a flashy finish."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Deny the last enemy cross-map grab route before overcommitting to a flashy finish. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Lesson: Respect the counter route and avoid equal split pressure into their preferred branch."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CONTESTED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "return_window",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_LATE_PROTECT_VS_PRESS",
+                                                         "WSG_DENY_VS_TRADE",
+                                                         "WSG_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_LATE_GREED",
+                                                       "WSG_RESP_DENY_TRADE",
+                                                       "WSG_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

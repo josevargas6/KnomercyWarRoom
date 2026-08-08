@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dwg-pressure-isolate-outer-team-005",
+    "replayPath":  "tests/replays/dwg-pressure-isolate-outer-team-late_clock.json",
+    "labelPath":  "tests/golden/dwg-pressure-isolate-outer-team-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:TAKE",
+                               "WHERE:R",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "DEEPWIND variant 5 TIE",
+                                  "ACTION: Catch the isolated outer team before the node spin begins.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Catch the isolated outer team before the node spin begins. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Create a cleaner flank capture by deleting the first relief wave."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dwg_pressure_isolate_outer_team_variant_5_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "R",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:TAKE",
+                                         "WHERE:R"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dhr-pressure-turn-enemy-cart-004",
+    "replayPath":  "tests/replays/dhr-pressure-turn-enemy-cart-uncertain_window.json",
+    "labelPath":  "tests/golden/dhr-pressure-turn-enemy-cart-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:TURN",
+                               "WHERE:EC",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "DEEPHAUL variant 4 TIE",
+                                  "ACTION: Pressure the enemy cart while keeping escort intact.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Pressure the enemy cart while keeping escort intact. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Reverse the race."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dhr_pressure_turn_enemy_cart_variant_4_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "TURN",
+                                            "who":  "TEAM",
+                                            "where":  "EC",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:TURN",
+                                         "WHERE:EC"
+                                     ]
+                        }
+                    ]
+}

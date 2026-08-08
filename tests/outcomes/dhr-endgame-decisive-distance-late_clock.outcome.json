@@ -1,0 +1,79 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "dhr-endgame-decisive-distance-005-outcome",
+    "replayId":  "dhr-endgame-decisive-distance-005",
+    "mapProfile":  "dhr_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "EXECUTION_ERROR",
+                            "secondary":  [
+                                              "EXECUTION_BREAK",
+                                              "FAILED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Protect the decisive cart distance and ignore fake side fights. was reasonable, but the notional execution path failed the intended close."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Protect the decisive cart distance and ignore fake side fights."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Protect the decisive cart distance and ignore fake side fights. was reasonable, but the notional execution path failed the intended close."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Lesson: The branch was defensible, but the team cannot trickle or miss the timing."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "EXECUTION_BREAK",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "FAILED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "DEEPHAUL_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                                         "DEEPHAUL_DENY_VS_TRADE",
+                                                         "DEEPHAUL_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPHAUL_RESP_LATE_GREED",
+                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tok-stabilize-spread-carriers-003",
+    "replayPath":  "tests/replays/tok-stabilize-spread-carriers-split_pressure.json",
+    "labelPath":  "tests/golden/tok-stabilize-spread-carriers-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "TEMPLE variant 3 WIN",
+                                  "ACTION: Spread carriers while keeping center support.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Spread carriers while keeping center support. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Protect value without shared collapse."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tok_stabilize_spread_carriers_variant_3_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

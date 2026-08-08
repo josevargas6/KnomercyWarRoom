@@ -1,0 +1,76 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "wsg-season-prep-pressure-10-001-outcome",
+    "replayId":  "wsg-season-prep-pressure-10-001",
+    "mapProfile":  "wsg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Create a real return window. Validate this PRESSURE branch after the new season launches. remained aligned with the selected pressure line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Pressure the EFC with healer control and one wave. Season-prep branch: reset when the window closes."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Create a real return window. Validate this PRESSURE branch after the new season launches."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "WINDOW_CONVERSION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "return_window",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "WSG_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "WSG_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_COLLAPSE_VS_SPLIT",
+                                                         "WSG_BAIT_VS_FRONTDOOR",
+                                                         "WSG_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_SPLIT_PRESSURE",
+                                                       "WSG_RESP_COLLAPSE_CONNECT",
+                                                       "WSG_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ]
+                       }
+}

@@ -1,0 +1,76 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "dwg-pressure-route-denial-001-outcome",
+    "replayId":  "dwg-pressure-route-denial-001",
+    "mapProfile":  "dwg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Turn route control into safer conversion. remained aligned with the selected pressure line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Deny the shortest Market-to-flank reinforce route, then take the exposed node through timing."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Turn route control into safer conversion."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "WINDOW_CONVERSION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "DEEPWIND_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "DEEPWIND_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                         "DEEPWIND_BAIT_VS_FRONTDOOR",
+                                                         "DEEPWIND_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                       "DEEPWIND_RESP_COLLAPSE_CONNECT",
+                                                       "DEEPWIND_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

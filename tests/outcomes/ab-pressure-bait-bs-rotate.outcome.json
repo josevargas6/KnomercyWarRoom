@@ -1,0 +1,76 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ab-pressure-bait-bs-rotate-001-outcome",
+    "replayId":  "ab-pressure-bait-bs-rotate-001",
+    "mapProfile":  "ab_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Create a cleaner node swing than a front-door brawl. remained aligned with the selected pressure line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Show at Blacksmith to pull defenders, then punish the slower outer rotation."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Create a cleaner node swing than a front-door brawl."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "WINDOW_CONVERSION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "ARATHI_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "ARATHI_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "ARATHI_COLLAPSE_VS_SPLIT",
+                                                         "ARATHI_BAIT_VS_FRONTDOOR",
+                                                         "ARATHI_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "ARATHI_RESP_SPLIT_PRESSURE",
+                                                       "ARATHI_RESP_COLLAPSE_CONNECT",
+                                                       "ARATHI_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

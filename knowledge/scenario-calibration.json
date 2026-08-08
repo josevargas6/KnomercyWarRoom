@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-scenario-calibration",
     "schemaVersion":  1,
-    "generatedAt":  "2026-07-30T14:57:46Z",
+    "generatedAt":  "2026-08-03T05:24:47Z",
     "shared":  {
                    "minimumReviewedCases":  5,
                    "classificationGuidance":  {

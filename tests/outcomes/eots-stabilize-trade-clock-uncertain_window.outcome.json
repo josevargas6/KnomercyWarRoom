@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "eots-stabilize-trade-clock-004-outcome",
+    "replayId":  "eots-stabilize-trade-clock-004",
+    "mapProfile":  "eots_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "UNRESOLVED",
+                            "secondary":  [
+                                              "LOW_TRUTH_STATE",
+                                              "HELD_BACK",
+                                              "DEGRADED"
+                                          ],
+                            "summary":  "Allow one flag touch to go only when the tower clock still remains winning without it. occurred under degraded truth and remains intentionally unresolved."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Initial contest review: Allow one flag touch to go only when the tower clock still remains winning without it."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Allow one flag touch to go only when the tower clock still remains winning without it. occurred under degraded truth and remains intentionally unresolved."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Lesson: Keep the call reversible until objective and movement truth improve."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                        "decisionQuality":  "CAUTIOUS",
+                        "executionQuality":  "HELD_BACK",
+                        "truthQuality":  "DEGRADED",
+                        "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "EOTS_HOLD_VS_ROTATE",
+                                                         "EOTS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "EOTS_RESP_BAIT_SHOW",
+                                                       "EOTS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

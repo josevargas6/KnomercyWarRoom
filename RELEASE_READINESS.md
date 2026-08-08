@@ -1,15 +1,15 @@
-# Release Readiness - 6.1.0-alpha.29
+# Release Readiness - 6.1.0-alpha.33
 
 Suite scope and release sequencing are defined by `RELEASE_VISION.md`. This
 file records the current Commander gate decision only.
 
 ## Current decision
 
-**Ready for focused field validation, bounded defect repair, and continued
-evidence capture. Not ready for broader field promotion or stable public
-promotion.**
+**Offline implementation gate passed. Ready for focused field validation;
+broader field promotion and stable public promotion remain blocked by live-only
+evidence.**
 
-The first preserved Twin Peaks screenshot pass is now recorded at
+The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
 Horde-relative score direction, native-map coexistence, roster/assignment
 population, conservative unknown handling, enemy observation aging, and a live
@@ -18,20 +18,23 @@ lose-state command transition. It also confirms two P1 trust blockers:
 - expanded Team health is empty/dim while compact legal health is visible;
 - expanded Team specialization labels drop historical `(HIST)` provenance.
 
-Twin Peaks therefore remains partial. The candidate must repair and reverify
-`KWR-032` before the Team truth portion of the map gate can pass.
+Twin Peaks remains partial because that screenshot predates the repaired
+candidate and cannot certify it.
 
 Supplemental match-end evidence confirms the final Horde-relative `0-3`
 defeat agrees with the AAR and captures flag pickup/drop/return/capture events.
 It also adds two P1 command blockers:
 
-- `KWR-033`: 58 published-command replacements produced `STABILITY REVIEW`
-  with an average lifetime displayed as `0:00`;
-- `KWR-034`: raw flag-event prose became a tactical `REINFORCE` target.
+- `KWR-033`: the prior candidate recorded 58 replacements and misleading
+  `0:00` lifetime semantics;
+- `KWR-034`: the prior candidate allowed raw flag-event prose into a tactical
+  target.
 
 The Commander is now a field defect-repair candidate. Additional random-map
 testing remains useful for evidence collection, but broader promotion is
-blocked until KWR-032 through KWR-034 are repaired and reverified.
+Those three implementation blockers are now closed offline on Alpha 33. Their
+remaining acceptance items are live-only and remain open until final Retail
+evidence is captured.
 
 Current repo state:
 
@@ -50,10 +53,9 @@ Current repo state:
 - remaining blockers are Retail-only gates: live stability, taint/safety,
   field-performance proof, screenshot matrix, supported-map certification, and
   release-presentation proof;
-- `KWR-032` remains an evidenced offline/live repair gate for Team health and
-  specialization provenance;
-- `KWR-033` and `KWR-034` are evidenced command-stability and flag-target
-  quality gates.
+- `KWR-032`, `KWR-033`, and `KWR-034` have evidence-derived `LIVE_ONLY`
+  status in `knowledge/field-blocker-report.json`; their deterministic/code
+  criteria are complete.
 
 ## Alpha engineering gate
 

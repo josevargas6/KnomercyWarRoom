@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tok-opening-pickup-lanes-004",
+    "replayPath":  "tests/replays/tok-opening-pickup-lanes-uncertain_window.json",
+    "labelPath":  "tests/golden/tok-opening-pickup-lanes-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "OPENING",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:OPENING",
+                               "CALL:SETUP",
+                               "WHERE:MID",
+                               "NEXT:MID"
+                           ],
+                  "summary":  [
+                                  "TEMPLE variant 4 TIE",
+                                  "ACTION: Assign pickup lanes and central healer support.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Assign pickup lanes and central healer support. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Secure the first orb advantage."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tok_opening_pickup_lanes_variant_4_state",
+                            "planID":  "OPENING",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "SETUP",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "MID",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:OPENING",
+                                         "CALL:SETUP",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

@@ -1210,9 +1210,17 @@ function Assignments:ResponsePackage(snapshot, assignments)
     local decision = strategy.objectiveDecision or {}
     local integrity = snapshot.assignmentIntegrity or {}
     local actionID = KWR.Util:Text(opportunity.action, "HOLD_PLAN", 32)
-    local target = KWR.Util:Text(opportunity.target
+    local rawTarget = KWR.Util:Text(opportunity.target
         or decision.target, "current objective", 48)
     local mapKey = snapshot.context and snapshot.context.mapKey
+    local target = KWR.ObjectiveIntel
+        and KWR.ObjectiveIntel:CanonicalCommandTarget(
+            mapKey, rawTarget, snapshot.context)
+        or rawTarget
+    local targetNeedsVerification = target == "VERIFY"
+    if targetNeedsVerification then
+        actionID = "HOLD_PLAN"
+    end
     local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
     local movers, stayers = {}, {}
     local stayerGroups, stayerOrder = {}, {}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tp-opening-crossmap-punish-005",
+    "replayPath":  "tests/replays/tp-opening-crossmap-punish-late_clock.json",
+    "labelPath":  "tests/golden/tp-opening-crossmap-punish-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "OPENING",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:OPENING",
+                               "CALL:SETUP",
+                               "WHERE:ROUTE",
+                               "NEXT:ROUTE"
+                           ],
+                  "summary":  [
+                                  "TWINPEAKS variant 5 TIE",
+                                  "ACTION: Force one side-route answer, then punish the cross-map lane the reserve can no longer protect.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Force one side-route answer, then punish the cross-map lane the reserve can no longer protect. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Win the opener through route punishment rather than mirrored rushing."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tp_opening_crossmap_punish_variant_5_state",
+                            "planID":  "OPENING",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "SETUP",
+                                            "who":  "TEAM",
+                                            "where":  "ROUTE",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "ROUTE",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:OPENING",
+                                         "CALL:SETUP",
+                                         "WHERE:ROUTE"
+                                     ]
+                        }
+                    ]
+}

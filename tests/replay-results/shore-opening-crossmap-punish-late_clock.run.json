@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "shore-opening-crossmap-punish-005",
+    "replayPath":  "tests/replays/shore-opening-crossmap-punish-late_clock.json",
+    "labelPath":  "tests/golden/shore-opening-crossmap-punish-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "OPENING",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:OPENING",
+                               "CALL:SETUP",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SEETHING variant 5 TIE",
+                                  "ACTION: Force the enemy answer to one spawn lane, then punish the cross-map node the reserve can no longer reach on time.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Force the enemy answer to one spawn lane, then punish the cross-map node the reserve can no longer reach on time. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Win the opener through route punishment rather than scattered arrivals."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "shore_opening_crossmap_punish_variant_5_state",
+                            "planID":  "OPENING",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "SETUP",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:OPENING",
+                                         "CALL:SETUP",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "shore-endgame-deny-last-channel-004",
+    "replayPath":  "tests/replays/shore-endgame-deny-last-channel-uncertain_window.json",
+    "labelPath":  "tests/golden/shore-endgame-deny-last-channel-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CHECK",
+                               "WHERE:NEXT",
+                               "NEXT:NEXT"
+                           ],
+                  "summary":  [
+                                  "SEETHING variant 4 WIN",
+                                  "ACTION: Sit the final enemy channel route and ignore exhausted nodes that cannot flip the score.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Sit the final enemy channel route and ignore exhausted nodes that cannot flip the score. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Finish by denying the only remaining deposit."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "shore_endgame_deny_last_channel_variant_4_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CHECK",
+                                            "who":  "TEAM",
+                                            "where":  "NEXT",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "NEXT",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CHECK",
+                                         "WHERE:NEXT"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "dhr-opening-crossmap-punish-003-outcome",
+    "replayId":  "dhr-opening-crossmap-punish-003",
+    "mapProfile":  "dhr_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "OPPONENT_COUNTER",
+                            "secondary":  [
+                                              "ENEMY_COUNTER_WINDOW",
+                                              "CONTESTED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Force the enemy answer toward one cart lane, then punish the cross-map checkpoint the reserve abandoned. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Force the enemy answer toward one cart lane, then punish the cross-map checkpoint the reserve abandoned."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Force the enemy answer toward one cart lane, then punish the cross-map checkpoint the reserve abandoned. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Lesson: Respect the counter route and avoid equal split pressure into their preferred branch."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CONTESTED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "split",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "DEEPHAUL_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "DEEPHAUL_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPHAUL_HOLD_VS_ROTATE",
+                                                         "DEEPHAUL_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPHAUL_RESP_ESCORT_SHELL",
+                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

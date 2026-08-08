@@ -1,0 +1,75 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "seething-season-prep-endgame-10-001-outcome",
+    "replayId":  "seething-season-prep-endgame-10-001",
+    "mapProfile":  "shore_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Finish on spawn-race discipline. Validate this ENDGAME branch after the new season launches. remained aligned with the selected endgame line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Contest only deposits that can change the final score. Season-prep branch: reset after a failed final push."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Finish on spawn-race discipline. Validate this ENDGAME branch after the new season launches."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LATE_GAME_PROTECTION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "SEETHING_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "SEETHING_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                         "SEETHING_DENY_VS_TRADE",
+                                                         "SEETHING_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SEETHING_RESP_LATE_GREED",
+                                                       "SEETHING_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

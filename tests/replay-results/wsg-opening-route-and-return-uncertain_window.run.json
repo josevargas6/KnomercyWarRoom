@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "wsg-opening-route-and-return-004",
+    "replayPath":  "tests/replays/wsg-opening-route-and-return-uncertain_window.json",
+    "labelPath":  "tests/golden/wsg-opening-route-and-return-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "OPENING",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:OPENING",
+                               "CALL:SETUP",
+                               "WHERE:ROUTE",
+                               "NEXT:ROUTE"
+                           ],
+                  "summary":  [
+                                  "WSG variant 4 TIE",
+                                  "ACTION: Assign the carrier route, peel, and return team.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Assign the carrier route, peel, and return team. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Create the first valid flag state."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "wsg_opening_route_and_return_variant_4_state",
+                            "planID":  "OPENING",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "SETUP",
+                                            "who":  "TEAM",
+                                            "where":  "ROUTE",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "ROUTE",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:OPENING",
+                                         "CALL:SETUP",
+                                         "WHERE:ROUTE"
+                                     ]
+                        }
+                    ]
+}

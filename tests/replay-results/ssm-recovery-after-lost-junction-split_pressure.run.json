@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "ssm-recovery-after-lost-junction-003",
+    "replayPath":  "tests/replays/ssm-recovery-after-lost-junction-split_pressure.json",
+    "labelPath":  "tests/golden/ssm-recovery-after-lost-junction-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:TAKE",
+                               "WHERE:MID",
+                               "NEXT:MID"
+                           ],
+                  "summary":  [
+                                  "SILVERSHARD variant 3 LOSE",
+                                  "ACTION: Recover after losing the junction race by regrouping on the next live escortable cart.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Recover after losing the junction race by regrouping on the next live escortable cart. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Stop feeding a dead turn and rebuild score truth."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "ssm_recovery_after_lost_junction_variant_3_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "MID",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:TAKE",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-endgame-no-chase-003",
+    "replayPath":  "tests/replays/bfg-endgame-no-chase-split_pressure.json",
+    "labelPath":  "tests/golden/bfg-endgame-no-chase-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "GILNEAS variant 3 WIN",
+                                  "ACTION: Refuse off-node chases while ahead.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Refuse off-node chases while ahead. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "End on two controlled bases."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_endgame_no_chase_variant_3_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

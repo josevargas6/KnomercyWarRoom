@@ -1,0 +1,122 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "eots-season-prep-stabilize-18-001-label",
+    "replayId":  "eots-season-prep-stabilize-18-001",
+    "mapProfile":  "eots_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:HOLD"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "tower_anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "rotation"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "preserve_winning_state"
+                                           ],
+                     "abortConditions":  [
+                                             "coverage_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "STABILIZE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                                            "doctrineComparisonIds":  [
+                                                                          "EOTS_HOLD_VS_ROTATE",
+                                                                          "EOTS_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "EOTS_RESP_BAIT_SHOW",
+                                                                        "EOTS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the current shell still wins the score path",
+                                                              "reserve timing remains intact",
+                                                              "friendly defenders stay planted on the score floor"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the shell loses its planted defender",
+                                                                  "the reserve route is consumed by a higher-value emergency"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Protect tower score before overvaluing flag routes. Season-prep branch: confirm the next rotation. Keep scoring leverage. Validate this STABILIZE branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "EOTS_HOLD_VS_ROTATE",
+                                                         "EOTS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "EOTS_RESP_BAIT_SHOW",
+                                                       "EOTS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

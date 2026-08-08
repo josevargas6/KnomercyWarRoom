@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "eots-season-prep-opening-19-001",
+    "replayPath":  "tests/replays/eots-season-prep-opening-19.json",
+    "labelPath":  "tests/golden/eots-season-prep-opening-19.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "OPENING",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:OPENING",
+                               "CALL:SETUP",
+                               "WHERE:MID",
+                               "NEXT:MID"
+                           ],
+                  "summary":  [
+                                  "EOTS 0-0 TIE",
+                                  "ACTION: Open with two tower sitters and mid control. Season-prep branch: avoid a speculative chase.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "OPENING_CONTROL",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "eots_season_prep_opening_19_state",
+                            "planID":  "OPENING",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "SETUP",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "MID",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:OPENING",
+                                         "CALL:SETUP",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

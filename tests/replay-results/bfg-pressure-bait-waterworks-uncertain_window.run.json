@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-pressure-bait-waterworks-004",
+    "replayPath":  "tests/replays/bfg-pressure-bait-waterworks-uncertain_window.json",
+    "labelPath":  "tests/golden/bfg-pressure-bait-waterworks-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:TAKE",
+                               "WHERE:LH",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "GILNEAS variant 4 TIE",
+                                  "ACTION: Threaten Waterworks long enough to drag the reserve, then hit the softer side node.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Threaten Waterworks long enough to drag the reserve, then hit the softer side node. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Convert fake center danger into a cleaner spin."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_pressure_bait_waterworks_variant_4_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "LH",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:TAKE",
+                                         "WHERE:LH"
+                                     ]
+                        }
+                    ]
+}

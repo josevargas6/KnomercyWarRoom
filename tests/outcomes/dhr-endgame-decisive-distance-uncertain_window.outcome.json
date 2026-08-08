@@ -1,0 +1,79 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "dhr-endgame-decisive-distance-004-outcome",
+    "replayId":  "dhr-endgame-decisive-distance-004",
+    "mapProfile":  "dhr_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "UNRESOLVED",
+                            "secondary":  [
+                                              "LOW_TRUTH_STATE",
+                                              "HELD_BACK",
+                                              "DEGRADED"
+                                          ],
+                            "summary":  "Protect the decisive cart distance and ignore fake side fights. occurred under degraded truth and remains intentionally unresolved."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Initial contest review: Protect the decisive cart distance and ignore fake side fights."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Protect the decisive cart distance and ignore fake side fights. occurred under degraded truth and remains intentionally unresolved."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Lesson: Keep the call reversible until objective and movement truth improve."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                        "decisionQuality":  "CAUTIOUS",
+                        "executionQuality":  "HELD_BACK",
+                        "truthQuality":  "DEGRADED",
+                        "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "DEEPHAUL_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPHAUL_LATE_PROTECT_VS_PRESS",
+                                                         "DEEPHAUL_DENY_VS_TRADE",
+                                                         "DEEPHAUL_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPHAUL_RESP_LATE_GREED",
+                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

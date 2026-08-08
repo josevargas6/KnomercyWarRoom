@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "shore-pressure-next-public-004",
+    "replayPath":  "tests/replays/shore-pressure-next-public-uncertain_window.json",
+    "labelPath":  "tests/golden/shore-pressure-next-public-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:ROTATE",
+                               "WHERE:NEXT",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SEETHING variant 4 TIE",
+                                  "ACTION: Deny one channel while pre-rotating to the next public spawn.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Deny one channel while pre-rotating to the next public spawn. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Create arrival advantage."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "shore_pressure_next_public_variant_4_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "ROTATE",
+                                            "who":  "TEAM",
+                                            "where":  "NEXT",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:ROTATE",
+                                         "WHERE:NEXT"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "bfg-recovery-score-floor-003-outcome",
+    "replayId":  "bfg-recovery-score-floor-003",
+    "mapProfile":  "bfg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "OPPONENT_COUNTER",
+                            "secondary":  [
+                                              "ENEMY_COUNTER_WINDOW",
+                                              "CONTESTED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Protect the minimum two-base score floor first when a greed retake would open the full collapse. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Protect the minimum two-base score floor first when a greed retake would open the full collapse."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Protect the minimum two-base score floor first when a greed retake would open the full collapse. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Lesson: Respect the counter route and avoid equal split pressure into their preferred branch."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CONTESTED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "GILNEAS_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "GILNEAS_RESP_RECOVER_REBAIT",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_RECOVER_VS_TRICKLE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_RECOVER_REBAIT",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

@@ -1,0 +1,130 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "wsg-recovery-post-wipe-003-label",
+    "replayId":  "wsg-recovery-post-wipe-003",
+    "mapProfile":  "wsg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:RECOVERY"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:COVER"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:OPENING"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "regroup",
+                                                  "deny"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "rebuild_score_path"
+                                           ],
+                     "abortConditions":  [
+                                             "regroup_fails"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "BASE_UNDER_THREAT"
+                                      ],
+                     "phase":  "RECOVERY",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "recover",
+                                                               "escort",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "WSG_RECOVER_VS_TRICKLE",
+                                            "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "WSG_RECOVER_VS_TRICKLE",
+                                                                          "WSG_DENY_VS_TRADE",
+                                                                          "WSG_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "WSG_RESP_ESCORT_SHELL",
+                                                                        "WSG_RESP_RECOVER_REBAIT",
+                                                                        "WSG_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "a regroup wave can still arrive before resolution",
+                                                              "the enemy winning lane can still be denied",
+                                                              "the rebuild does not expose a worse immediate loss"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the regroup wave arrives too late",
+                                                                  "the denial lane is already gone"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ],
+                                            "variantShape":  "split_pressure",
+                                            "variantClassification":  "OPPONENT_COUNTER"
+                                        }
+                 },
+    "rationale":  "Recover after a wipe by rebuilding peel and route vision before sending the next return team. Variant 3 covers the split_pressure shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "WSG_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_RECOVER_VS_TRICKLE",
+                                                         "WSG_DENY_VS_TRADE",
+                                                         "WSG_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_ESCORT_SHELL",
+                                                       "WSG_RESP_RECOVER_REBAIT",
+                                                       "WSG_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

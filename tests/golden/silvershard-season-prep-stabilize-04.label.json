@@ -1,0 +1,122 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "silvershard-season-prep-stabilize-04-001-label",
+    "replayId":  "silvershard-season-prep-stabilize-04-001",
+    "mapProfile":  "ssm_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:HOLD"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "escort"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "rotation"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "preserve_winning_state"
+                                           ],
+                     "abortConditions":  [
+                                             "coverage_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "STABILIZE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "escort",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "SILVERSHARD_HOLD_VS_ROTATE",
+                                                                          "SILVERSHARD_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                                        "SILVERSHARD_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the current shell still wins the score path",
+                                                              "reserve timing remains intact",
+                                                              "friendly defenders stay planted on the score floor"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the shell loses its planted defender",
+                                                                  "the reserve route is consumed by a higher-value emergency"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "route timing truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Escort live carts and leave dead routes early. Season-prep branch: protect the current carrier or objective. Preserve active score value. Validate this STABILIZE branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_HOLD_VS_ROTATE",
+                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ]
+                       }
+}

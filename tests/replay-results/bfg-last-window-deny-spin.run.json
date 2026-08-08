@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-last-window-deny-spin-001",
+    "replayPath":  "tests/replays/bfg-last-window-deny-spin.json",
+    "labelPath":  "tests/golden/bfg-last-window-deny-spin.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "BFG 1320-1185 WIN",
+                                  "ACTION: Deny the last enemy spin window at the decisive node before chasing any cleanup kill.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LATE_GAME_PROTECTION",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_last_window_deny_spin_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

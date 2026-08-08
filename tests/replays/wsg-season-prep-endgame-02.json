@@ -1,0 +1,232 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "wsg-season-prep-endgame-02-001",
+    "source":  {
+                   "type":  "synthetic_state",
+                   "consent":  "n/a",
+                   "provenance":  "developer_fixture",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "WSG",
+                "mode":  "STANDARD",
+                "kind":  "FLAG",
+                "profile":  "wsg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "our_fc",
+                                                        "class":  "Druid",
+                                                        "spec":  "Guardian",
+                                                        "role":  "TANK"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "carrier_healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "return_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_fc",
+                                                     "class":  "Demon Hunter",
+                                                     "spec":  "Vengeance",
+                                                     "role":  "TANK"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Discipline",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  2,
+                                       "enemy":  1,
+                                       "max":  3
+                                   },
+                         "objectives":  {
+                                            "friendlyCarrier":  "our_fc",
+                                            "enemyCarrier":  "enemy_fc"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "wsg_season_prep_endgame_02_state",
+                         "facts":  {
+                                       "phase":  "ENDGAME",
+                                       "summary":  "Synchronize final return with immediate cap. Season-prep branch: deny the final enemy score route.",
+                                       "goal":  "Close the game on one clean conversion. Validate this ENDGAME branch after the new season launches."
+                                   }
+                     },
+                     {
+                         "t":  10,
+                         "event":  "wsg_season_prep_endgame_02_window",
+                         "facts":  {
+                                       "objective":  "CAP",
+                                       "pressure":  "MEDIUM"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:CAP",
+                                                   "WHERE:CAP"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:CHASE"
+                                                ],
+                           "mustStay":  [
+                                            "our_fc"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "discipline",
+                                                        "coverage"
+                                                    ],
+                           "successConditions":  [
+                                                     "close_match_cleanly"
+                                                 ],
+                           "abortConditions":  [
+                                                   "final_state_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Synchronize final return with immediate cap. Season-prep branch: deny the final enemy score route. Close the game on one clean conversion. Validate this ENDGAME branch after the new season launches.",
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "late_game_score_protection",
+                                                                     "return_window",
+                                                                     "escort"
+                                                                 ],
+                                                  "preferredComparison":  "preserve the winning path before optional pressure.",
+                                                  "safestCounter":  "commit only on the real conversion window.",
+                                                  "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                                                  "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                                                  "doctrineComparisonIds":  [
+                                                                                "WSG_LATE_PROTECT_VS_PRESS",
+                                                                                "WSG_DENY_VS_TRADE",
+                                                                                "WSG_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "WSG_RESP_LATE_GREED",
+                                                                              "WSG_RESP_DENY_TRADE",
+                                                                              "WSG_RESP_RETURN_WINDOW"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the protected path still wins the game",
+                                                                    "the enemy desperation route is still denyable",
+                                                                    "optional pressure is weaker than direct score protection"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the winning path no longer wins",
+                                                                        "the enemy last-score route cannot be denied in time"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "carrier route truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  2,
+                                       "enemy":  1
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Close the game on one clean conversion. Validate this ENDGAME branch after the new season launches. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "late_game_score_protection",
+                                                              "return_window",
+                                                              "escort"
+                                                          ],
+                                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                                           "safestCounter":  "commit only on the real conversion window.",
+                                           "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                                           "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                                           "doctrineComparisonIds":  [
+                                                                         "WSG_LATE_PROTECT_VS_PRESS",
+                                                                         "WSG_DENY_VS_TRADE",
+                                                                         "WSG_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "WSG_RESP_LATE_GREED",
+                                                                       "WSG_RESP_DENY_TRADE",
+                                                                       "WSG_RESP_RETURN_WINDOW"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the protected path still wins the game",
+                                                             "the enemy desperation route is still denyable",
+                                                             "optional pressure is weaker than direct score protection"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the winning path no longer wins",
+                                                                 "the enemy last-score route cannot be denied in time"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "carrier route truth"
+                                                             ]
+                                       }
+                }
+}

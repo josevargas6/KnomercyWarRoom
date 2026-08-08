@@ -1,8 +1,8 @@
 {
     "schema":  "kwr-runtime-preflight",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-01T05:56:08Z",
-    "candidateVersion":  "6.1.0-alpha.33",
+    "generatedAt":  "2026-08-08T18:07:19Z",
+    "candidateVersion":  "6.1.0-alpha.36",
     "node":  {
                  "nodeOnPath":  false,
                  "nodeOnPathSource":  null,
@@ -13,9 +13,7 @@
                     "fengariCmdOnPath":  null,
                     "fengariPs1OnPath":  null,
                     "accessibleCliPaths":  [
-                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.pnpm\\fengari-node-cli@0.1.0\\node_modules\\fengari-node-cli\\src\\lua-cli.js",
-                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.CMD",
-                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.ps1"
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.pnpm\\fengari-node-cli@0.1.0\\node_modules\\fengari-node-cli\\src\\lua-cli.js"
                                            ],
                     "blockedCliPaths":  [
 

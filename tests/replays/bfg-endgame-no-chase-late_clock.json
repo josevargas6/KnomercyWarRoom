@@ -1,0 +1,242 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "bfg-endgame-no-chase-005",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T05:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "GILNEAS",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "bfg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1460,
+                                       "enemy":  1231,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "friendlyIncoming":  0,
+                                            "friendly":  2,
+                                            "enemyIncoming":  1,
+                                            "enemy":  1
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "bfg_endgame_no_chase_variant_5_state",
+                         "facts":  {
+                                       "phase":  "ENDGAME",
+                                       "summary":  "Refuse off-node chases while ahead.",
+                                       "variant":  "late_clock",
+                                       "goal":  "End on two controlled bases."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "bfg_endgame_no_chase_variant_5_window",
+                         "facts":  {
+                                       "objective":  "FIELD",
+                                       "pressure":  "URGENT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "bfg_endgame_no_chase_variant_5_resolution",
+                         "facts":  {
+                                       "classification":  "EXECUTION_ERROR",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:CHASE"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "discipline",
+                                                        "coverage"
+                                                    ],
+                           "successConditions":  [
+                                                     "close_match_cleanly"
+                                                 ],
+                           "abortConditions":  [
+                                                   "final_state_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Refuse off-node chases while ahead. Variant 5 uses the late_clock pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "late_game_score_protection",
+                                                                     "deny",
+                                                                     "hold"
+                                                                 ],
+                                                  "preferredComparison":  "preserve the winning path before optional pressure.",
+                                                  "safestCounter":  "deny the enemy score event before chasing side value.",
+                                                  "primaryComparisonId":  "GILNEAS_LATE_PROTECT_VS_PRESS",
+                                                  "primaryResponseId":  "GILNEAS_RESP_LATE_GREED",
+                                                  "doctrineComparisonIds":  [
+                                                                                "GILNEAS_LATE_PROTECT_VS_PRESS",
+                                                                                "GILNEAS_DENY_VS_TRADE",
+                                                                                "GILNEAS_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "GILNEAS_RESP_LATE_GREED",
+                                                                              "GILNEAS_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the protected path still wins the game",
+                                                                    "the enemy desperation route is still denyable",
+                                                                    "optional pressure is weaker than direct score protection"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the winning path no longer wins",
+                                                                        "the enemy last-score route cannot be denied in time"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1320,
+                                       "enemy":  1185
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "End on two controlled bases. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "late_game_score_protection",
+                                                              "deny",
+                                                              "hold"
+                                                          ],
+                                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "GILNEAS_LATE_PROTECT_VS_PRESS",
+                                           "primaryResponseId":  "GILNEAS_RESP_LATE_GREED",
+                                           "doctrineComparisonIds":  [
+                                                                         "GILNEAS_LATE_PROTECT_VS_PRESS",
+                                                                         "GILNEAS_DENY_VS_TRADE",
+                                                                         "GILNEAS_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "GILNEAS_RESP_LATE_GREED",
+                                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the protected path still wins the game",
+                                                             "the enemy desperation route is still denyable",
+                                                             "optional pressure is weaker than direct score protection"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the winning path no longer wins",
+                                                                 "the enemy last-score route cannot be denied in time"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

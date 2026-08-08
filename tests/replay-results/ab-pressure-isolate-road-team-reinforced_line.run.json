@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "ab-pressure-isolate-road-team-002",
+    "replayPath":  "tests/replays/ab-pressure-isolate-road-team-reinforced_line.json",
+    "labelPath":  "tests/golden/ab-pressure-isolate-road-team-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:TAKE",
+                               "WHERE:LM",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "ARATHI variant 2 TIE",
+                                  "ACTION: Isolate the enemy road team before committing to the node spin.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Isolate the enemy road team before committing to the node spin. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Create a cleaner capture by removing the first reinforcement wave."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "ab_pressure_isolate_road_team_variant_2_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "LM",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:TAKE",
+                                         "WHERE:LM"
+                                     ]
+                        }
+                    ]
+}

@@ -16,10 +16,6 @@ local function currentState(fallback)
     return nil
 end
 
-local function setNativeRaidFramesShown(shown)
-    return shown == true
-end
-
 function Presentation:IsEnabled()
     local profile = KWR.db.profile.presentation or {}
     return profile.enabled ~= false
@@ -48,30 +44,19 @@ function Presentation:AutoShowSurfaces()
 end
 
 function Presentation:ApplyNativeCleanup()
-    local profile = KWR.db.profile.presentation or {}
-    if profile.hideRaidFrames ~= true then
-        return
-    end
-    if InCombatLockdown and InCombatLockdown() then
-        return
-    end
     self.session = self.session or {}
-    if self.session.raidFramesCaptured ~= true then
-        self.session.raidFramesCaptured = true
-        self.session.raidManagerShown = CompactRaidFrameManager
-            and CompactRaidFrameManager:IsShown() or false
-        self.session.raidContainerShown = CompactRaidFrameContainer
-            and CompactRaidFrameContainer:IsShown() or false
-    end
-    self.session.raidFrameControlSkipped = true
+    -- Blizzard raid frames are owned by Blizzard and may be replaced or hooked
+    -- by frame-management addons. Do not inspect or control them; KWR's own
+    -- roster surfaces provide the optional battleground presentation instead.
+    self.session.nativeRaidFramesUntouched = true
 end
 
 function Presentation:RestoreNativeCleanup(session)
     session = session or self.session
-    if type(session) ~= "table" or session.raidFramesCaptured ~= true then
+    if type(session) ~= "table" then
         return
     end
-    session.raidFrameControlSkipped = true
+    session.nativeRaidFramesUntouched = true
 end
 
 function Presentation:RestoreSurfaces()

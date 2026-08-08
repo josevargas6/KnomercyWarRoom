@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ssm-opening-crossmap-punish-002-outcome",
+    "replayId":  "ssm-opening-crossmap-punish-002",
+    "mapProfile":  "ssm_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+                                              "REINFORCED_LINE",
+                                              "CLEAN",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Force the enemy answer toward one cart, then punish the cross-map rail the reserve cannot cover. stayed aligned and closed favorably."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Force the enemy answer toward one cart, then punish the cross-map rail the reserve cannot cover."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Force the enemy answer toward one cart, then punish the cross-map rail the reserve cannot cover. stayed aligned and closed favorably."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Lesson: Reinforced lines should be repeated when support arrives on time."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "REINFORCED_LINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "split",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_HOLD_VS_ROTATE",
+                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

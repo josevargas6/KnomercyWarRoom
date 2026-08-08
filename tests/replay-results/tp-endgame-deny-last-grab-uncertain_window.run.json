@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tp-endgame-deny-last-grab-004",
+    "replayPath":  "tests/replays/tp-endgame-deny-last-grab-uncertain_window.json",
+    "labelPath":  "tests/golden/tp-endgame-deny-last-grab-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CAP",
+                               "WHERE:CAP",
+                               "NEXT:CAP"
+                           ],
+                  "summary":  [
+                                  "TWINPEAKS variant 4 WIN",
+                                  "ACTION: Lock the enemy pickup route first so the final return cannot be undone.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Lock the enemy pickup route first so the final return cannot be undone. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Finish by denying the last reset state."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tp_endgame_deny_last_grab_variant_4_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CAP",
+                                            "who":  "TEAM",
+                                            "where":  "CAP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CAP",
+                                         "who":  "TEAM",
+                                         "where":  "CAP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CAP",
+                                         "WHERE:CAP"
+                                     ]
+                        }
+                    ]
+}

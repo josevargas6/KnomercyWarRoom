@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tp-pressure-route-denial-003",
+    "replayPath":  "tests/replays/tp-pressure-route-denial-split_pressure.json",
+    "labelPath":  "tests/golden/tp-pressure-route-denial-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:PRESS",
+                               "WHERE:EFC",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "TWINPEAKS variant 3 TIE",
+                                  "ACTION: Deny the safest enemy carrier route before fully committing the return call.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Deny the safest enemy carrier route before fully committing the return call. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Turn movement control into a cleaner cap path."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tp_pressure_route_denial_variant_3_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "PRESS",
+                                            "who":  "TEAM",
+                                            "where":  "EFC",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:PRESS",
+                                         "WHERE:EFC"
+                                     ]
+                        }
+                    ]
+}

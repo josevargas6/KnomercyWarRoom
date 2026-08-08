@@ -1,0 +1,131 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "ssm-pressure-bait-middle-rotation-004-label",
+    "replayId":  "ssm-pressure-bait-middle-rotation-004",
+    "mapProfile":  "ssm_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TURN"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "escort"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing",
+                                                  "movement_truth_ambiguous"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "MEDIUM",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "collapse",
+                                                               "rotate",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                            "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                            "primaryComparisonId":  "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                                                          "SILVERSHARD_BAIT_VS_FRONTDOOR",
+                                                                          "SILVERSHARD_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                                                        "SILVERSHARD_RESP_COLLAPSE_CONNECT",
+                                                                        "SILVERSHARD_RESP_ESCORT_SHELL"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "route timing truth"
+                                                              ],
+                                            "variantShape":  "uncertain_window",
+                                            "variantClassification":  "UNRESOLVED"
+                                        }
+                 },
+    "rationale":  "Bait the enemy into over-rotating middle, then swing the shorter live route. Variant 4 covers the uncertain_window shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                                         "SILVERSHARD_BAIT_VS_FRONTDOOR",
+                                                         "SILVERSHARD_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                                       "SILVERSHARD_RESP_COLLAPSE_CONNECT",
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-recovery-post-wipe-004",
+    "replayPath":  "tests/replays/bfg-recovery-post-wipe-uncertain_window.json",
+    "labelPath":  "tests/golden/bfg-recovery-post-wipe-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:TAKE",
+                               "WHERE:WW",
+                               "NEXT:WW"
+                           ],
+                  "summary":  [
+                                  "GILNEAS variant 4 LOSE",
+                                  "ACTION: Recover after a wipe by rebuilding one stable base and one reserve lane before touching center again.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Recover after a wipe by rebuilding one stable base and one reserve lane before touching center again. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Restore the shell before feeding another Waterworks loss."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_recovery_post_wipe_variant_4_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "WW",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "WW",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:TAKE",
+                                         "WHERE:WW"
+                                     ]
+                        }
+                    ]
+}

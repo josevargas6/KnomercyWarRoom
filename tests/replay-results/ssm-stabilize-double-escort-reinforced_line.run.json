@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "ssm-stabilize-double-escort-002",
+    "replayPath":  "tests/replays/ssm-stabilize-double-escort-reinforced_line.json",
+    "labelPath":  "tests/golden/ssm-stabilize-double-escort-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SILVERSHARD variant 2 WIN",
+                                  "ACTION: Keep both live escorts connected while refusing dead middle skirmishes.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Keep both live escorts connected while refusing dead middle skirmishes. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Protect score-active cart value on time."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "ssm_stabilize_double_escort_variant_2_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

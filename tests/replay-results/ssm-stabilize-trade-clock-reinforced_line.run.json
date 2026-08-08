@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "ssm-stabilize-trade-clock-002",
+    "replayPath":  "tests/replays/ssm-stabilize-trade-clock-reinforced_line.json",
+    "labelPath":  "tests/golden/ssm-stabilize-trade-clock-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:HOLD",
+                               "WHERE:FIELD",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SILVERSHARD variant 2 WIN",
+                                  "ACTION: Allow one low-value cart trade only when the remaining live carts still keep the winning clock.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Allow one low-value cart trade only when the remaining live carts still keep the winning clock. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Protect the lead without contesting every dead route."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "ssm_stabilize_trade_clock_variant_2_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "HOLD",
+                                            "who":  "TEAM",
+                                            "where":  "FIELD",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "HOLD",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:HOLD",
+                                         "WHERE:FIELD"
+                                     ]
+                        }
+                    ]
+}

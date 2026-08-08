@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dwg-midgame-reset-market-shell-004",
+    "replayPath":  "tests/replays/dwg-midgame-reset-market-shell-uncertain_window.json",
+    "labelPath":  "tests/golden/dwg-midgame-reset-market-shell-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:TAKE",
+                               "WHERE:MKT",
+                               "NEXT:MKT"
+                           ],
+                  "summary":  [
+                                  "DEEPWIND variant 4 LOSE",
+                                  "ACTION: Reset the broken Market shell and rebuild around one connected reclaim instead of equal flank panic.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Reset the broken Market shell and rebuild around one connected reclaim instead of equal flank panic. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Recover map shape before bleeding both sides."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dwg_midgame_reset_market_shell_variant_4_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "MKT",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "MKT",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:TAKE",
+                                         "WHERE:MKT"
+                                     ]
+                        }
+                    ]
+}

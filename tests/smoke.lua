@@ -257,10 +257,12 @@ end
 local mockRaid = false
 local mockRaidTokensStable = false
 local mockRaidNames = { "Alpha", "Bravo", "Charlie" }
+mockParty = false
+mockPartyLeaderAlias = false
 function IsInRaid() return mockRaid end
-function IsInGroup() return mockRaid end
+function IsInGroup() return mockRaid or mockParty end
 function GetNumGroupMembers() return mockRaid and 3 or 1 end
-function GetNumSubgroupMembers() return 0 end
+function GetNumSubgroupMembers() return mockParty and 2 or 0 end
 function GetRaidRosterInfo(index)
     if not mockRaid then return nil end
     return mockRaidNames[index], 0, 1, 90, "Warrior", "WARRIOR",
@@ -295,6 +297,7 @@ end
 function UnitExists(unit)
     return unit == "player"
         or (mockRaid and unit and unit:find("^raid%d+$") ~= nil)
+        or (mockParty and unit and unit:find("^party%d+$") ~= nil)
         or mockLiveEnemy(unit) ~= nil
 end
 function UnitName(unit)
@@ -303,12 +306,21 @@ function UnitName(unit)
         local index = tonumber(unit:match("%d+"))
         return mockRaidTokensStable and mockRaidNames[index] or "Alpha", "TestRealm"
     end
+    if mockParty and unit == "party1" and mockPartyLeaderAlias then
+        return "TestPlayer-LoadingAlias", "TestRealm"
+    end
+    if mockParty and unit and unit:find("^party%d+$") then
+        return "Party" .. tostring(unit:match("%d+")), "TestRealm"
+    end
     local enemy = mockLiveEnemy(unit)
     if enemy then return enemy.name, enemy.realm end
 end
 function UnitClass(unit)
     if unit == "player" then return "Warrior", "WARRIOR", 1 end
     if mockRaid and unit and unit:find("^raid%d+$") then
+        return "Warrior", "WARRIOR", 1
+    end
+    if mockParty and unit and unit:find("^party%d+$") then
         return "Warrior", "WARRIOR", 1
     end
     local enemy = mockLiveEnemy(unit)
@@ -320,6 +332,11 @@ function UnitClassBase(unit)
     if enemy then return enemy.classFile, enemy.classID or 1 end
 end
 function UnitIsFriend(_, unit) return unit == "player" end
+function UnitIsUnit(left, right)
+    if left == right then return true end
+    return mockParty and mockPartyLeaderAlias
+        and left == "party1" and right == "player"
+end
 function UnitCanAttack(_, unit) return unit ~= "player" and mockLiveEnemy(unit) ~= nil end
 function UnitIsPlayer(unit) return unit == "player" or mockLiveEnemy(unit) ~= nil end
 function UnitRace(unit) local enemy = mockLiveEnemy(unit); if enemy then return enemy.raceName end end
@@ -338,6 +355,12 @@ function UnitGUID(unit)
     if unit == "player" then return "Player-1-SELF" end
     if mockRaid and unit and unit:find("^raid%d+$") then
         return "Player-1-RAID" .. tostring(unit:match("%d+"))
+    end
+    if mockParty and unit == "party1" and mockPartyLeaderAlias then
+        return "Player-1-SELF-TRANSIENT"
+    end
+    if mockParty and unit and unit:find("^party%d+$") then
+        return "Player-1-PARTY" .. tostring(unit:match("%d+"))
     end
     local enemy = mockLiveEnemy(unit)
     if enemy then return enemy.guid end
@@ -826,6 +849,24 @@ do
     KWR.ObjectiveIntel:ObserveMessage("Verite hat die Flagge der Horde erobert!", "WSG")
     assert(KWR.ObjectiveIntel.carriers["Horde Flag"] == nil,
         "ObjectiveIntel did not resolve the reviewed German flag capture grammar.")
+    local allianceContext = { team = { faction = "Alliance" } }
+    local hordeContext = { team = { faction = "Horde" } }
+    assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
+        "WSG", "Alliance Flag has been picked up", allianceContext) == "Our FC",
+        "Alliance assigned-side flag pickup did not normalize to Our FC.")
+    assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
+        "WSG", "Alliance Flag has been picked up", hordeContext) == "Enemy FC",
+        "Horde assigned-side flag pickup did not normalize Alliance as enemy.")
+    assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
+        "WSG", "Horde Flag was returned to its base", allianceContext) == "Enemy Flag Room",
+        "Returned enemy flag did not retain its canonical affected flag target.")
+    assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
+        "WSG", "Alliance flag has been picked up", allianceContext) ~=
+        "Alliance Flag has been picked up",
+        "Raw flag prose crossed the canonical action-target boundary.")
+    assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
+        "WSG", "unrecognized localized widget label", allianceContext) == "VERIFY",
+        "Unknown flag target did not fall back to VERIFY.")
     KWR.ObjectiveIntel:ObserveMessage("Priest hat den Hof angegriffen!", "ARATHI")
     assert(KWR.ObjectiveIntel.timers["Hof"]
         and KWR.ObjectiveIntel.timers["Hof"].assaulter == "Priest",
@@ -1254,6 +1295,21 @@ mockRaidTokensStable = false
 assert(KWR.MatchRuntime:ForceRefresh("smoke-solo-reset"),
     "Solo roster reset failed.")
 
+mockParty = true
+mockPartyLeaderAlias = true
+assert(KWR.MatchRuntime:ForceRefresh("smoke-party-leader-hydration"),
+    "Leader-first party hydration capture failed.")
+KWR._testLeaderHydrationRoster = KWR.Store:Get().snapshot.roster
+assert(#KWR._testLeaderHydrationRoster == 2
+    and (KWR._testLeaderHydrationRoster[1].unit == "player"
+        or KWR._testLeaderHydrationRoster[2].unit == "player"),
+    "Leader-first roster hydration added a transient duplicate of the player.")
+KWR._testLeaderHydrationRoster = nil
+mockParty = false
+mockPartyLeaderAlias = false
+assert(KWR.MatchRuntime:ForceRefresh("smoke-party-leader-reset"),
+    "Leader-first party hydration reset failed.")
+
 mockPvP = true
 mockInstanceType = "pvp"
 mockMercenary = true
@@ -1279,8 +1335,8 @@ assert(KWR.ScenarioCalibration:Count() == 200,
     "Scenario calibration did not expose one reviewed row per current base RBG scenario.")
 assert(KWR.ScenarioAdversarialCalibration:Count() == 200,
     "Scenario adversarial calibration did not expose one fail-closed row per current base RBG scenario.")
-assert(KWR.ScenarioExpertCorpus:Count() == 200,
-    "Scenario expert corpus did not expose one reviewed expert row per current base RBG scenario.")
+assert(KWR.ScenarioExpertCorpus:Count() == 1200,
+    "Scenario expert corpus did not expose the current reviewed and season-prep scenario set.")
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
 assert(KWR.DoctrineComparisons:CountResponses() == 200,
@@ -1375,16 +1431,20 @@ assert(wsgExpertReview
     and wsgExpertReview.preferredResponseId == "WSG_RESP_ESCORT_SHELL"
     and type(wsgExpertReview.safestCounter) == "string",
     "Scenario expert corpus did not expose reviewed opening doctrine for Warsong Gulch.")
+assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "PENDING_SEASON_REVIEW",
+    "Season-prep scenario corpus entry lost its pending-review guard.")
+assert(KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus ~= "PENDING_SEASON_REVIEW",
+    "Season-prep scenario entered live expert selection before review.")
 local tpMapExpertReview = KWR.ScenarioExpertCorpus:GetMapSummary("TWINPEAKS")
 assert(tpMapExpertReview
-    and tpMapExpertReview.scenarios == 20
-    and tpMapExpertReview.reviewedLabels >= 100
+    and tpMapExpertReview.scenarios == 120
+    and tpMapExpertReview.reviewedLabels >= 200
     and type(tpMapExpertReview.phaseSummaries) == "table",
     "Scenario expert corpus did not expose Twin Peaks map review depth.")
 local tpEndgameExpertReview = KWR.ScenarioExpertCorpus:GetMapPhaseSummary("TWINPEAKS", "ENDGAME")
 assert(tpEndgameExpertReview
-    and tpEndgameExpertReview.scenarios == 3
-    and tpEndgameExpertReview.reviewedLabels >= 15,
+    and tpEndgameExpertReview.scenarios == 23
+    and tpEndgameExpertReview.reviewedLabels >= 35,
     "Scenario expert corpus did not expose Twin Peaks endgame review depth.")
 mockLeftScore, mockRightScore = 900, 1000
 assert(KWR.MatchRuntime:Reassess(), "Manual battlefield reassessment failed.")
@@ -1660,7 +1720,7 @@ assert(verificationReport:find("ASSIGN:", 1, true),
     "Live verification report omitted per-player assignment evidence.")
 assert(verificationReport:find("PROBLEM:", 1, true),
     "Live verification report omitted active problem-signal evidence.")
-assert(verificationReport:find("Commander overrides: 1 active", 1, true)
+assert(verificationReport:find("ActivePlay switches: 1 active", 1, true)
     and verificationReport:find("OVERRIDE:", 1, true),
     "Live verification report omitted commander override visibility.")
 assert(verificationReport:find("Strategy confidence:", 1, true)
@@ -4042,7 +4102,7 @@ if not releaseOnly then
         and KWR.AARWindow.frame.reviewCard.value.value:find("TRANSITION", 1, true)
         and KWR.AARWindow.frame.evidenceCard.value.value:find("OBJ EVENTS", 1, true)
         and KWR.AARWindow.frame.snapshotCard.value.value:find("SWAPS", 1, true)
-        and KWR.AARWindow.frame.evidenceCard.value.value:find("OVERRIDES", 1, true),
+        and KWR.AARWindow.frame.evidenceCard.value.value:find("ACTIVEPLAY SWITCHES", 1, true),
         "AAR window did not surface snapshot, decision-review, and evidence summaries.")
     assert(KWR.AARWindow.frame.resultBadge.text.value == "VICTORY"
         and KWR.AARWindow.frame.reviewBadge.text.value == "REVIEW DONE"
@@ -4782,13 +4842,13 @@ assert(KWR.MainWindow:UpdateHealthForUnit("player"),
 local directHealthVisible = false
 for _, row in ipairs(teamCard.rows) do
     if row.displayUnit == "player"
-        and row.healthText.value == "100%" then
+        and row.healthText.value == "LIVE" then
         directHealthVisible = true
         break
     end
 end
 assert(directHealthVisible,
-    "Expanded Team health did not display its direct percentage.")
+    "Expanded Team health did not display its bounded direct-live state.")
 for index, rowField in ipairs({ "player", "spec", "role", "health", "life", "position" }) do
     local headerPoint = teamCard.headers[index].points
         and teamCard.headers[index].points[1]
@@ -5229,21 +5289,29 @@ KWR.MainWindow:Hide()
 local persistedRosterShown = KWR.db.profile.combatRoster.shown
 KWR.db.profile.combatRoster.shown = false
 if KWR.Presentation then
-    CompactRaidFrameManager:Show()
-    CompactRaidFrameContainer:Show()
+    local nativeRaidManager = CompactRaidFrameManager
+    local nativeRaidContainer = CompactRaidFrameContainer
+    CompactRaidFrameManager = {
+        IsShown = function()
+            error("Presentation must not inspect addon-managed raid frames")
+        end,
+    }
+    CompactRaidFrameContainer = {
+        IsShown = function()
+            error("Presentation must not inspect addon-managed raid frames")
+        end,
+    }
     KWR.Presentation.session = nil
     KWR.Presentation.active = false
     KWR.Presentation.lastState = KWR.Store:Get()
     KWR.Presentation:Activate(KWR.Store:Get())
     assert(KWR.Presentation.session
-        and KWR.Presentation.session.raidFramesCaptured == true
-        and KWR.Presentation.session.raidManagerShown == true
-        and KWR.Presentation.session.raidContainerShown == true
+        and KWR.Presentation.session.nativeRaidFramesUntouched == true
         and compactRaidManagerSettings.IsShown == true,
-        "Presentation activate should capture native raid-frame state without mutating protected visibility.")
+        "Presentation activate should leave addon-managed native raid frames untouched.")
     KWR.Presentation:Deactivate()
     assert(compactRaidManagerSettings.IsShown == true,
-        "Presentation deactivate should leave protected native raid-frame visibility untouched.")
+        "Presentation deactivate should leave addon-managed native raid frames untouched.")
     KWR.Presentation.session = {
         rosterShown = true,
         teamShown = true,
@@ -5267,6 +5335,8 @@ if KWR.Presentation then
         "Presentation restore should hide compact RBG surfaces outside battlegrounds.")
     mockInstanceType = "pvp"
     assert(KWR.MatchRuntime:ForceRefresh("presentation-restore-pvp"), "Presentation battleground refresh failed.")
+    CompactRaidFrameManager = nativeRaidManager
+    CompactRaidFrameContainer = nativeRaidContainer
 end
 KWR.db.profile.combatRoster.shown = persistedRosterShown
 assert(KWR.ReporterMap == nil,

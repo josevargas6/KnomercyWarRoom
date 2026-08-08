@@ -1,0 +1,242 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "ssm-pressure-bait-middle-rotation-002",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T02:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "SILVERSHARD",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "ssm_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  905,
+                                       "enemy":  806,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeCart":  "TOP",
+                                            "nextCart":  "TOP"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "ssm_pressure_bait_middle_rotation_variant_2_state",
+                         "facts":  {
+                                       "phase":  "PRESSURE",
+                                       "summary":  "Bait the enemy into over-rotating middle, then swing the shorter live route.",
+                                       "variant":  "reinforced_line",
+                                       "goal":  "Win the next cart through movement timing instead of raw fighting."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "ssm_pressure_bait_middle_rotation_variant_2_window",
+                         "facts":  {
+                                       "objective":  "TOP",
+                                       "pressure":  "HIGH",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "ssm_pressure_bait_middle_rotation_variant_2_resolution",
+                         "facts":  {
+                                       "classification":  "SUCCESS",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:TURN",
+                                                   "WHERE:TOP"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:STALL"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "pressure",
+                                                        "control"
+                                                    ],
+                           "successConditions":  [
+                                                     "convert_pressure_window"
+                                                 ],
+                           "abortConditions":  [
+                                                   "target_reinforced_early"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Bait the enemy into over-rotating middle, then swing the shorter live route. Variant 2 uses the reinforced_line pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "collapse",
+                                                                     "rotate",
+                                                                     "bait"
+                                                                 ],
+                                                  "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                                  "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                                  "primaryComparisonId":  "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                                  "primaryResponseId":  "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                                  "doctrineComparisonIds":  [
+                                                                                "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                                                                "SILVERSHARD_BAIT_VS_FRONTDOOR",
+                                                                                "SILVERSHARD_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                                                              "SILVERSHARD_RESP_COLLAPSE_CONNECT",
+                                                                              "SILVERSHARD_RESP_ESCORT_SHELL"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the target lane is still live before reinforcement lands",
+                                                                    "the pressure package arrives together",
+                                                                    "the current score floor remains protected during the strike"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the target reinforces before arrival",
+                                                                        "the pressure package splits into equal weak contacts"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  825,
+                                       "enemy":  780
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Win the next cart through movement timing instead of raw fighting. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "collapse",
+                                                              "rotate",
+                                                              "bait"
+                                                          ],
+                                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                           "primaryComparisonId":  "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                           "primaryResponseId":  "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                           "doctrineComparisonIds":  [
+                                                                         "SILVERSHARD_COLLAPSE_VS_SPLIT",
+                                                                         "SILVERSHARD_BAIT_VS_FRONTDOOR",
+                                                                         "SILVERSHARD_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "SILVERSHARD_RESP_SPLIT_PRESSURE",
+                                                                       "SILVERSHARD_RESP_COLLAPSE_CONNECT",
+                                                                       "SILVERSHARD_RESP_ESCORT_SHELL"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the target lane is still live before reinforcement lands",
+                                                             "the pressure package arrives together",
+                                                             "the current score floor remains protected during the strike"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the target reinforces before arrival",
+                                                                 "the pressure package splits into equal weak contacts"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ]
+                                       }
+                }
+}

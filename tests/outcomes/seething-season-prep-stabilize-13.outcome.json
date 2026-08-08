@@ -1,0 +1,74 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "seething-season-prep-stabilize-13-001-outcome",
+    "replayId":  "seething-season-prep-stabilize-13-001",
+    "mapProfile":  "shore_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Preserve usable deposit value. Validate this STABILIZE branch after the new season launches. remained aligned with the selected stabilize line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Protect the active channel and leave exhausted nodes. Season-prep branch: deny a back-cap or flank."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Preserve usable deposit value. Validate this STABILIZE branch after the new season launches."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "SHELL_DISCIPLINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "SEETHING_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "SEETHING_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "SEETHING_HOLD_VS_ROTATE",
+                                                         "SEETHING_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SEETHING_RESP_BAIT_SHOW",
+                                                       "SEETHING_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

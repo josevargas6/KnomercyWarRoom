@@ -769,7 +769,7 @@ function Verification:Format(entry)
             entry.assignmentIntegrity and entry.assignmentIntegrity.unverified or 0,
             entry.assignmentIntegrity and entry.assignmentIntegrity.abandoned or 0,
             entry.assignmentIntegrity and entry.assignmentIntegrity.impossible or 0),
-        string.format("Commander overrides: %d active", entry.overrideCount or 0),
+        string.format("ActivePlay switches: %d active", entry.overrideCount or 0),
         string.format("Reporter: %s / risk %d / hotspot %s / coverage %d friendly (%d located), %d enemy (%d located) / age %s",
             entry.reporterActive and "ACTIVE" or "INACTIVE",
             entry.reporterRisk or 0,

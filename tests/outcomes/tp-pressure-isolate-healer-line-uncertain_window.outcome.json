@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "tp-pressure-isolate-healer-line-004-outcome",
+    "replayId":  "tp-pressure-isolate-healer-line-004",
+    "mapProfile":  "tp_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "UNRESOLVED",
+                            "secondary":  [
+                                              "LOW_TRUTH_STATE",
+                                              "HELD_BACK",
+                                              "DEGRADED"
+                                          ],
+                            "summary":  "Isolate the enemy healer line before the true return collapse lands. occurred under degraded truth and remains intentionally unresolved."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Initial contest review: Isolate the enemy healer line before the true return collapse lands."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Isolate the enemy healer line before the true return collapse lands. occurred under degraded truth and remains intentionally unresolved."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Lesson: Keep the call reversible until objective and movement truth improve."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                        "decisionQuality":  "CAUTIOUS",
+                        "executionQuality":  "HELD_BACK",
+                        "truthQuality":  "DEGRADED",
+                        "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "return_window",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                         "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                       "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

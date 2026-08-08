@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "bfg-opening-crossmap-punish-002-outcome",
+    "replayId":  "bfg-opening-crossmap-punish-002",
+    "mapProfile":  "bfg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+                                              "REINFORCED_LINE",
+                                              "CLEAN",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Pull the enemy response to Waterworks, then punish the cross-map node the reserve abandoned. stayed aligned and closed favorably."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Pull the enemy response to Waterworks, then punish the cross-map node the reserve abandoned."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Pull the enemy response to Waterworks, then punish the cross-map node the reserve abandoned. stayed aligned and closed favorably."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Lesson: Reinforced lines should be repeated when support arrives on time."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "REINFORCED_LINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_HOLD_VS_ROTATE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_BAIT_SHOW",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

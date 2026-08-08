@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "seething-season-prep-pressure-14-001",
+    "replayPath":  "tests/replays/seething-season-prep-pressure-14.json",
+    "labelPath":  "tests/golden/seething-season-prep-pressure-14.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:ROTATE",
+                               "WHERE:NEXT",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "SHORE 825-780 TIE",
+                                  "ACTION: Deny one channel while pre-rotating to the next public spawn. Season-prep branch: pressure the next score event.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "WINDOW_CONVERSION",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "seething_season_prep_pressure_14_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "ROTATE",
+                                            "who":  "TEAM",
+                                            "where":  "NEXT",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:ROTATE",
+                                         "WHERE:NEXT"
+                                     ]
+                        }
+                    ]
+}

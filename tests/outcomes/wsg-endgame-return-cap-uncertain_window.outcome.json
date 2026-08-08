@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "wsg-endgame-return-cap-004-outcome",
+    "replayId":  "wsg-endgame-return-cap-004",
+    "mapProfile":  "wsg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "UNRESOLVED",
+                            "secondary":  [
+                                              "LOW_TRUTH_STATE",
+                                              "HELD_BACK",
+                                              "DEGRADED"
+                                          ],
+                            "summary":  "Synchronize final return with immediate cap. occurred under degraded truth and remains intentionally unresolved."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Initial contest review: Synchronize final return with immediate cap."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Synchronize final return with immediate cap. occurred under degraded truth and remains intentionally unresolved."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Lesson: Keep the call reversible until objective and movement truth improve."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                        "decisionQuality":  "CAUTIOUS",
+                        "executionQuality":  "HELD_BACK",
+                        "truthQuality":  "DEGRADED",
+                        "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "return_window",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_LATE_PROTECT_VS_PRESS",
+                                                         "WSG_DENY_VS_TRADE",
+                                                         "WSG_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_LATE_GREED",
+                                                       "WSG_RESP_DENY_TRADE",
+                                                       "WSG_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

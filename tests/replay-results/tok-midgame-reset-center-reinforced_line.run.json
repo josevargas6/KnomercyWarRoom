@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tok-midgame-reset-center-002",
+    "replayPath":  "tests/replays/tok-midgame-reset-center-reinforced_line.json",
+    "labelPath":  "tests/golden/tok-midgame-reset-center-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:RESET",
+                               "WHERE:MID",
+                               "NEXT:MID"
+                           ],
+                  "summary":  [
+                                  "TEMPLE variant 2 LOSE",
+                                  "ACTION: Reset the failed center brawl and rebuild around the safest supported carrier state.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Reset the failed center brawl and rebuild around the safest supported carrier state. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Recover orb value without chain-dropping again."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tok_midgame_reset_center_variant_2_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "RESET",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "MID",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:RESET",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

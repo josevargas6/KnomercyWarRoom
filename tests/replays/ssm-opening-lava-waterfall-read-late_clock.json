@@ -1,0 +1,238 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "ssm-opening-lava-waterfall-read-005",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T05:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "SILVERSHARD",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "ssm_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  140,
+                                       "enemy":  46,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeCart":  "LAVA",
+                                            "nextCart":  "TOP"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "ssm_opening_lava_waterfall_read_variant_5_state",
+                         "facts":  {
+                                       "phase":  "OPENING",
+                                       "summary":  "Read the first split and commit only to the opening carts with reachable escort value.",
+                                       "variant":  "late_clock",
+                                       "goal":  "Open into the best live-cart structure instead of equal splitting by habit."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "ssm_opening_lava_waterfall_read_variant_5_window",
+                         "facts":  {
+                                       "objective":  "LAVA",
+                                       "pressure":  "URGENT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "ssm_opening_lava_waterfall_read_variant_5_resolution",
+                         "facts":  {
+                                       "classification":  "EXECUTION_ERROR",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:OPENING"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:SETUP",
+                                                   "WHERE:LAVA"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:RECOVERY"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "setup"
+                                                    ],
+                           "successConditions":  [
+                                                     "establish_opening_shell"
+                                                 ],
+                           "abortConditions":  [
+                                                   "enemy_wins_first_objective"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Read the first split and commit only to the opening carts with reachable escort value. Variant 5 uses the late_clock pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "split",
+                                                                     "escort",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "choose the safer legal branch before adding greed.",
+                                                  "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                                  "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                  "doctrineComparisonIds":  [
+                                                                                "SILVERSHARD_HOLD_VS_ROTATE",
+                                                                                "SILVERSHARD_ESCORT_VS_CHASE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                                              "SILVERSHARD_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "objective truth confirms the opening lane",
+                                                                    "coverage is planted before expansion",
+                                                                    "the score floor is not abandoned for first contact"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the enemy wins first objective control cleanly",
+                                                                        "coverage breaks before the opener settles"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  0,
+                                       "enemy":  0
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Open into the best live-cart structure instead of equal splitting by habit. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "split",
+                                                              "escort",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                           "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                                           "doctrineComparisonIds":  [
+                                                                         "SILVERSHARD_HOLD_VS_ROTATE",
+                                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "objective truth confirms the opening lane",
+                                                             "coverage is planted before expansion",
+                                                             "the score floor is not abandoned for first contact"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the enemy wins first objective control cleanly",
+                                                                 "coverage breaks before the opener settles"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ]
+                                       }
+                }
+}

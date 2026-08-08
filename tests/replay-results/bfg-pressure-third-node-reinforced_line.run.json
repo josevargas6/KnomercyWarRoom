@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "bfg-pressure-third-node-002",
+    "replayPath":  "tests/replays/bfg-pressure-third-node-reinforced_line.json",
+    "labelPath":  "tests/golden/bfg-pressure-third-node-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "CHECK",
+                  "status":  "TIE",
+                  "tags":  [
+                               "PLAN:CHECK",
+                               "CALL:TAKE",
+                               "WHERE:LH",
+                               "NEXT:FIELD"
+                           ],
+                  "summary":  [
+                                  "GILNEAS variant 2 TIE",
+                                  "ACTION: Punish the weak third node after showing at Waterworks.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Punish the weak third node after showing at Waterworks. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Force a bad enemy rotation."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "bfg_pressure_third_node_variant_2_state",
+                            "planID":  "CHECK",
+                            "status":  "TIE",
+                            "current":  {
+                                            "what":  "TAKE",
+                                            "who":  "TEAM",
+                                            "where":  "LH",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CHECK",
+                                         "who":  "TEAM",
+                                         "where":  "FIELD",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:CHECK",
+                                         "CALL:TAKE",
+                                         "WHERE:LH"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "dhr-opening-split-crystal-read-002-outcome",
+    "replayId":  "dhr-opening-split-crystal-read-002",
+    "mapProfile":  "dhr_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+                                              "REINFORCED_LINE",
+                                              "CLEAN",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Read whether Crystal matters later and refuse to break the first escort shell for it. stayed aligned and closed favorably."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Read whether Crystal matters later and refuse to break the first escort shell for it."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Read whether Crystal matters later and refuse to break the first escort shell for it. stayed aligned and closed favorably."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Lesson: Reinforced lines should be repeated when support arrives on time."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "REINFORCED_LINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "split",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "DEEPHAUL_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "DEEPHAUL_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPHAUL_HOLD_VS_ROTATE",
+                                                         "DEEPHAUL_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPHAUL_RESP_ESCORT_SHELL",
+                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

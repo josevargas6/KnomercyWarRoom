@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "gilneas-season-prep-pressure-18-001-label",
+    "replayId":  "gilneas-season-prep-pressure-18-001",
+    "mapProfile":  "bfg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "collapse",
+                                                               "split",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                            "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                            "primaryComparisonId":  "GILNEAS_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "GILNEAS_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "GILNEAS_COLLAPSE_VS_SPLIT",
+                                                                          "GILNEAS_BAIT_VS_FRONTDOOR",
+                                                                          "GILNEAS_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "GILNEAS_RESP_SPLIT_PRESSURE",
+                                                                        "GILNEAS_RESP_COLLAPSE_CONNECT",
+                                                                        "GILNEAS_RESP_ESCORT_SHELL"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Punish the weak third node after showing at Waterworks. Season-prep branch: turn a local win into map value. Force a bad enemy rotation. Validate this PRESSURE branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "GILNEAS_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "GILNEAS_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_COLLAPSE_VS_SPLIT",
+                                                         "GILNEAS_BAIT_VS_FRONTDOOR",
+                                                         "GILNEAS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_SPLIT_PRESSURE",
+                                                       "GILNEAS_RESP_COLLAPSE_CONNECT",
+                                                       "GILNEAS_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

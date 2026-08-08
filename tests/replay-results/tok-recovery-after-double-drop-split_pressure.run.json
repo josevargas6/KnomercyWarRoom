@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tok-recovery-after-double-drop-003",
+    "replayPath":  "tests/replays/tok-recovery-after-double-drop-split_pressure.json",
+    "labelPath":  "tests/golden/tok-recovery-after-double-drop-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:RESET",
+                               "WHERE:MID",
+                               "NEXT:MID"
+                           ],
+                  "summary":  [
+                                  "TEMPLE variant 3 LOSE",
+                                  "ACTION: Reform after multiple orb drops and claim the safest next carrier state.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Reform after multiple orb drops and claim the safest next carrier state. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Recover shape before chasing maximum value."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tok_recovery_after_double_drop_variant_3_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "RESET",
+                                            "who":  "TEAM",
+                                            "where":  "MID",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "MID",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:RESET",
+                                         "WHERE:MID"
+                                     ]
+                        }
+                    ]
+}

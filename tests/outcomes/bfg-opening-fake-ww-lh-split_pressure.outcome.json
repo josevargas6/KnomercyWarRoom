@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "bfg-opening-fake-ww-lh-003-outcome",
+    "replayId":  "bfg-opening-fake-ww-lh-003",
+    "mapProfile":  "bfg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "OPPONENT_COUNTER",
+                            "secondary":  [
+                                              "ENEMY_COUNTER_WINDOW",
+                                              "CONTESTED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Show Waterworks pressure early, then rotate the faster strike into Lighthouse. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Show Waterworks pressure early, then rotate the faster strike into Lighthouse."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Show Waterworks pressure early, then rotate the faster strike into Lighthouse. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Lesson: Respect the counter route and avoid equal split pressure into their preferred branch."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CONTESTED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_HOLD_VS_ROTATE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_BAIT_SHOW",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

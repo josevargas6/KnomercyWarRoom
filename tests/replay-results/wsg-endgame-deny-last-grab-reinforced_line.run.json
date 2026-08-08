@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "wsg-endgame-deny-last-grab-002",
+    "replayPath":  "tests/replays/wsg-endgame-deny-last-grab-reinforced_line.json",
+    "labelPath":  "tests/golden/wsg-endgame-deny-last-grab-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CAP",
+                               "WHERE:CAP",
+                               "NEXT:CAP"
+                           ],
+                  "summary":  [
+                                  "WSG variant 2 WIN",
+                                  "ACTION: Protect the grab lanes first so the enemy never gets the final desperation state.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Protect the grab lanes first so the enemy never gets the final desperation state. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Finish by denying the reset before it starts."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "wsg_endgame_deny_last_grab_variant_2_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CAP",
+                                            "who":  "TEAM",
+                                            "where":  "CAP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CAP",
+                                         "who":  "TEAM",
+                                         "where":  "CAP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CAP",
+                                         "WHERE:CAP"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "bfg-stabilize-trade-clock-003-label",
+    "replayId":  "bfg-stabilize-trade-clock-003",
+    "mapProfile":  "bfg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:HOLD"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "rotation"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "preserve_winning_state"
+                                           ],
+                     "abortConditions":  [
+                                             "coverage_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "STABILIZE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                                            "doctrineComparisonIds":  [
+                                                                          "GILNEAS_HOLD_VS_ROTATE",
+                                                                          "GILNEAS_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "GILNEAS_RESP_BAIT_SHOW",
+                                                                        "GILNEAS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the current shell still wins the score path",
+                                                              "reserve timing remains intact",
+                                                              "friendly defenders stay planted on the score floor"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the shell loses its planted defender",
+                                                                  "the reserve route is consumed by a higher-value emergency"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "split_pressure",
+                                            "variantClassification":  "OPPONENT_COUNTER"
+                                        }
+                 },
+    "rationale":  "Allow one low-value side trade only when the two-base clock still remains winning. Variant 3 covers the split_pressure shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_HOLD_VS_ROTATE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_BAIT_SHOW",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "tp-last-window-deny-cross-004-outcome",
+    "replayId":  "tp-last-window-deny-cross-004",
+    "mapProfile":  "tp_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "UNRESOLVED",
+                            "secondary":  [
+                                              "LOW_TRUTH_STATE",
+                                              "HELD_BACK",
+                                              "DEGRADED"
+                                          ],
+                            "summary":  "Deny the enemy\u0027s last cross-map pickup lane even if the kill route still looks tempting. occurred under degraded truth and remains intentionally unresolved."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Initial contest review: Deny the enemy\u0027s last cross-map pickup lane even if the kill route still looks tempting."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Deny the enemy\u0027s last cross-map pickup lane even if the kill route still looks tempting. occurred under degraded truth and remains intentionally unresolved."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "UNRESOLVED",
+                            "summary":  "Lesson: Keep the call reversible until objective and movement truth improve."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LOW_TRUTH_STATE",
+                        "decisionQuality":  "CAUTIOUS",
+                        "executionQuality":  "HELD_BACK",
+                        "truthQuality":  "DEGRADED",
+                        "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "return_window",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "TWINPEAKS_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                                                         "TWINPEAKS_DENY_VS_TRADE",
+                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_LATE_GREED",
+                                                       "TWINPEAKS_RESP_DENY_TRADE",
+                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

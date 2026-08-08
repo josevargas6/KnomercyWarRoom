@@ -1,0 +1,75 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "deepwind-season-prep-endgame-13-001-outcome",
+    "replayId":  "deepwind-season-prep-endgame-13-001",
+    "mapProfile":  "dwg_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Close before shell break. Validate this ENDGAME branch after the new season launches. remained aligned with the selected endgame line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Finish while denying simultaneous outer assaults. Season-prep branch: force the enemy into the longer route."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Close before shell break. Validate this ENDGAME branch after the new season launches."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LATE_GAME_PROTECTION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "deny",
+                                              "hold"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "DEEPWIND_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "DEEPWIND_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPWIND_LATE_PROTECT_VS_PRESS",
+                                                         "DEEPWIND_DENY_VS_TRADE",
+                                                         "DEEPWIND_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPWIND_RESP_LATE_GREED",
+                                                       "DEEPWIND_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

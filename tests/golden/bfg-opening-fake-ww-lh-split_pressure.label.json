@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "bfg-opening-fake-ww-lh-003-label",
+    "replayId":  "bfg-opening-fake-ww-lh-003",
+    "mapProfile":  "bfg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:OPENING"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:SETUP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "setup"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "establish_opening_shell"
+                                           ],
+                     "abortConditions":  [
+                                             "enemy_wins_first_objective"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "OPENING",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "rotate",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                            "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                                            "doctrineComparisonIds":  [
+                                                                          "GILNEAS_HOLD_VS_ROTATE",
+                                                                          "GILNEAS_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "GILNEAS_RESP_BAIT_SHOW",
+                                                                        "GILNEAS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "objective truth confirms the opening lane",
+                                                              "coverage is planted before expansion",
+                                                              "the score floor is not abandoned for first contact"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the enemy wins first objective control cleanly",
+                                                                  "coverage breaks before the opener settles"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "split_pressure",
+                                            "variantClassification":  "OPPONENT_COUNTER"
+                                        }
+                 },
+    "rationale":  "Show Waterworks pressure early, then rotate the faster strike into Lighthouse. Variant 3 covers the split_pressure shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_HOLD_VS_ROTATE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_BAIT_SHOW",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

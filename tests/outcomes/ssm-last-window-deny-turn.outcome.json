@@ -1,0 +1,75 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ssm-last-window-deny-turn-001-outcome",
+    "replayId":  "ssm-last-window-deny-turn-001",
+    "mapProfile":  "ssm_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Finish by denying the only remaining scoring rail. remained aligned with the selected endgame line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Protect the last enemy turn route before any optional chase into dead-track fighting."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Finish by denying the only remaining scoring rail."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "LATE_GAME_PROTECTION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "SILVERSHARD_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                         "SILVERSHARD_DENY_VS_TRADE",
+                                                         "SILVERSHARD_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_LATE_GREED",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ]
+                       }
+}

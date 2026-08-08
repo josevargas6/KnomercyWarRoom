@@ -86,7 +86,8 @@ local function snapshotText(entry)
             and (tostring(entry.scoreEnd.friendly) .. " - " .. tostring(entry.scoreEnd.enemy))
             or "Unknown"),
         "DURATION  " .. KWR.Util:Clock(entry.duration or 0),
-        "CALLS  " .. tostring(#(entry.commands or {})),
+        "ISSUED  " .. tostring(stability.issued or 0),
+        "RETAINED  " .. tostring(stability.retainedRecords or #(entry.commands or {})),
         "SWAPS  " .. tostring(stability.replacements or 0),
         "STABILITY  " .. text(stability.commandHealth, "UNKNOWN", 16),
         "AVG LIFE  " .. (((stability.averageLifetime or 0) > 0
@@ -143,7 +144,7 @@ local function evidenceText(entry)
         "PLAYER NOTES  " .. tostring(countEvidenceNotes(entry)),
         "THREATS  " .. tostring(#(entry.enemyThreats or {})),
         "REVIEW  " .. yesNo(entry.feedback and next(entry.feedback)),
-        "OVERRIDES  " .. tostring(stability.overrides or 0),
+        "ACTIVEPLAY SWITCHES  " .. tostring(stability.overrides or 0),
         "TRAVEL / USE  " .. tostring(math.floor((activePlay.travelSeconds or 0) + 0.5))
             .. " / " .. tostring(math.floor((activePlay.interactionSeconds or 0) + 0.5)) .. "s",
         lastObjective and ("LAST EVENT  " .. text(lastObjective.text, "Unknown", 52))

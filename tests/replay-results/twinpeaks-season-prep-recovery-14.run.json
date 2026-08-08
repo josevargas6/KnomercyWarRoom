@@ -1,0 +1,63 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "twinpeaks-season-prep-recovery-14-001",
+    "replayPath":  "tests/replays/twinpeaks-season-prep-recovery-14.json",
+    "labelPath":  "tests/golden/twinpeaks-season-prep-recovery-14.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "RECOVERY",
+                  "status":  "LOSE",
+                  "tags":  [
+                               "PLAN:RECOVERY",
+                               "CALL:COVER",
+                               "WHERE:HOME",
+                               "NEXT:HOME"
+                           ],
+                  "summary":  [
+                                  "TP 0-1 LOSE",
+                                  "ACTION: Recover by regrouping at route and restoring peel. Season-prep branch: stop an enemy conversion.",
+                                  "WHO: Team"
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "RESET_DISCIPLINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Stay on the reviewed line while battlefield truth remains intact."
+                                       }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "twinpeaks_season_prep_recovery_14_state",
+                            "planID":  "RECOVERY",
+                            "status":  "LOSE",
+                            "current":  {
+                                            "what":  "COVER",
+                                            "who":  "TEAM",
+                                            "where":  "HOME",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "RECOVER",
+                                         "who":  "TEAM",
+                                         "where":  "HOME",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:RECOVERY",
+                                         "CALL:COVER",
+                                         "WHERE:HOME"
+                                     ]
+                        }
+                    ]
+}

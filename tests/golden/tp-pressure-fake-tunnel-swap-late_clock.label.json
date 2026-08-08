@@ -1,0 +1,130 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "tp-pressure-fake-tunnel-swap-005-label",
+    "replayId":  "tp-pressure-fake-tunnel-swap-005",
+    "mapProfile":  "tp_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:PRESS"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "collapse",
+                                                               "return_window",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                            "safestCounter":  "commit only on the real conversion window.",
+                                            "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                                          "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                                          "TWINPEAKS_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                                        "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                                        "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Show tunnel pressure, then collapse the safer side route once defenders shift. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "return_window",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_COLLAPSE_VS_SPLIT",
+                                                         "TWINPEAKS_BAIT_VS_FRONTDOOR",
+                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_SPLIT_PRESSURE",
+                                                       "TWINPEAKS_RESP_COLLAPSE_CONNECT",
+                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

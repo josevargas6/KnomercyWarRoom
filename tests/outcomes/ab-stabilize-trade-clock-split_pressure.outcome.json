@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ab-stabilize-trade-clock-003-outcome",
+    "replayId":  "ab-stabilize-trade-clock-003",
+    "mapProfile":  "ab_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "OPPONENT_COUNTER",
+                            "secondary":  [
+                                              "ENEMY_COUNTER_WINDOW",
+                                              "CONTESTED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Trade one low-value assault only when the current node clock still wins the race. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Trade one low-value assault only when the current node clock still wins the race."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Trade one low-value assault only when the current node clock still wins the race. was challenged by an enemy counter pattern and remains useful for comparison."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "OPPONENT_COUNTER",
+                            "summary":  "Lesson: Respect the counter route and avoid equal split pressure into their preferred branch."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CONTESTED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "ARATHI_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "ARATHI_RESP_BAIT_SHOW",
+                           "doctrineComparisonIds":  [
+                                                         "ARATHI_HOLD_VS_ROTATE",
+                                                         "ARATHI_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "ARATHI_RESP_BAIT_SHOW",
+                                                       "ARATHI_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "split_pressure",
+                           "variantClassification":  "OPPONENT_COUNTER"
+                       }
+}

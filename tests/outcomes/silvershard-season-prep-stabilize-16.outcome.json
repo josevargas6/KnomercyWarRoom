@@ -1,0 +1,74 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "silvershard-season-prep-stabilize-16-001-outcome",
+    "replayId":  "silvershard-season-prep-stabilize-16-001",
+    "mapProfile":  "ssm_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Preserve active score value. Validate this STABILIZE branch after the new season launches. remained aligned with the selected stabilize line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Escort live carts and leave dead routes early. Season-prep branch: trade only with a recovery route."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Preserve active score value. Validate this STABILIZE branch after the new season launches."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "SHELL_DISCIPLINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_HOLD_VS_ROTATE",
+                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ]
+                       }
+}

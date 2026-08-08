@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "seething-season-prep-pressure-12-001-label",
+    "replayId":  "seething-season-prep-pressure-12-001",
+    "mapProfile":  "shore_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:ROTATE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "advance_group"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "bait",
+                                                               "rotate",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "choose the safer legal branch before adding greed.",
+                                            "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                            "primaryComparisonId":  "SEETHING_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "SEETHING_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "SEETHING_COLLAPSE_VS_SPLIT",
+                                                                          "SEETHING_BAIT_VS_FRONTDOOR",
+                                                                          "SEETHING_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SEETHING_RESP_SPLIT_PRESSURE",
+                                                                        "SEETHING_RESP_COLLAPSE_CONNECT",
+                                                                        "SEETHING_RESP_ESCORT_SHELL"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Deny one channel while pre-rotating to the next public spawn. Season-prep branch: hold a split until the collapse is real. Create arrival advantage. Validate this PRESSURE branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "bait",
+                                              "rotate",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "SEETHING_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "SEETHING_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "SEETHING_COLLAPSE_VS_SPLIT",
+                                                         "SEETHING_BAIT_VS_FRONTDOOR",
+                                                         "SEETHING_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SEETHING_RESP_SPLIT_PRESSURE",
+                                                       "SEETHING_RESP_COLLAPSE_CONNECT",
+                                                       "SEETHING_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "dwg-pressure-isolate-outer-team-001-label",
+    "replayId":  "dwg-pressure-isolate-outer-team-001",
+    "mapProfile":  "dwg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:CHECK"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:STALL"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "pressure",
+                                                  "control"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "convert_pressure_window"
+                                           ],
+                     "abortConditions":  [
+                                             "target_reinforced_early"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "PRESSURE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "collapse",
+                                                               "split",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                            "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                            "primaryComparisonId":  "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                            "primaryResponseId":  "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                            "doctrineComparisonIds":  [
+                                                                          "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                                          "DEEPWIND_BAIT_VS_FRONTDOOR",
+                                                                          "DEEPWIND_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                                        "DEEPWIND_RESP_COLLAPSE_CONNECT",
+                                                                        "DEEPWIND_RESP_ESCORT_SHELL"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the target lane is still live before reinforcement lands",
+                                                              "the pressure package arrives together",
+                                                              "the current score floor remains protected during the strike"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the target reinforces before arrival",
+                                                                  "the pressure package splits into equal weak contacts"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Catch the isolated outer team before the node spin begins. Create a cleaner flank capture by deleting the first relief wave.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "DEEPWIND_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "DEEPWIND_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                         "DEEPWIND_BAIT_VS_FRONTDOOR",
+                                                         "DEEPWIND_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                       "DEEPWIND_RESP_COLLAPSE_CONNECT",
+                                                       "DEEPWIND_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

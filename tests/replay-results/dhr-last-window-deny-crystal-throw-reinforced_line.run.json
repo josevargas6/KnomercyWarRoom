@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dhr-last-window-deny-crystal-throw-002",
+    "replayPath":  "tests/replays/dhr-last-window-deny-crystal-throw-reinforced_line.json",
+    "labelPath":  "tests/golden/dhr-last-window-deny-crystal-throw-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:ESCORT",
+                               "WHERE:OC",
+                               "NEXT:OC"
+                           ],
+                  "summary":  [
+                                  "DEEPHAUL variant 2 WIN",
+                                  "ACTION: Deny the final cart checkpoint even if Crystal bait appears for one last distraction.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Deny the final cart checkpoint even if Crystal bait appears for one last distraction. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Finish by forcing every last action onto cart truth."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dhr_last_window_deny_crystal_throw_variant_2_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "ESCORT",
+                                            "who":  "TEAM",
+                                            "where":  "OC",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "ESCORT",
+                                         "who":  "TEAM",
+                                         "where":  "OC",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:ESCORT",
+                                         "WHERE:OC"
+                                     ]
+                        }
+                    ]
+}

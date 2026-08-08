@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "tp-stabilize-carrier-bunker-005-outcome",
+    "replayId":  "tp-stabilize-carrier-bunker-005",
+    "mapProfile":  "tp_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "EXECUTION_ERROR",
+                            "secondary":  [
+                                              "EXECUTION_BREAK",
+                                              "FAILED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Bunker our carrier without abandoning route vision. was reasonable, but the notional execution path failed the intended close."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Bunker our carrier without abandoning route vision."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Bunker our carrier without abandoning route vision. was reasonable, but the notional execution path failed the intended close."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Lesson: The branch was defensible, but the team cannot trickle or miss the timing."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "EXECUTION_BREAK",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "FAILED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "TWINPEAKS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "TWINPEAKS_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_HOLD_VS_ROTATE",
+                                                         "TWINPEAKS_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_ESCORT_SHELL",
+                                                       "TWINPEAKS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

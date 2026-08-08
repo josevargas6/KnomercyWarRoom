@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "wsg-endgame-return-cap-004",
+    "replayPath":  "tests/replays/wsg-endgame-return-cap-uncertain_window.json",
+    "labelPath":  "tests/golden/wsg-endgame-return-cap-uncertain_window.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CAP",
+                               "WHERE:CAP",
+                               "NEXT:CAP"
+                           ],
+                  "summary":  [
+                                  "WSG variant 4 WIN",
+                                  "ACTION: Synchronize final return with immediate cap.",
+                                  "SHAPE: uncertain_window",
+                                  "DRIVER: LOW_TRUTH_STATE",
+                                  "LESSON: Keep the call reversible until objective and movement truth improve."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "LOW_TRUTH_STATE",
+                                           "decisionQuality":  "CAUTIOUS",
+                                           "executionQuality":  "HELD_BACK",
+                                           "truthQuality":  "DEGRADED",
+                                           "recommendedLesson":  "Keep the call reversible until objective and movement truth improve."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "uncertain_window",
+                                            "primaryClassification":  "UNRESOLVED",
+                                            "summary":  "Synchronize final return with immediate cap. occurred under degraded truth and remains intentionally unresolved.",
+                                            "lesson":  "Keep the call reversible until objective and movement truth improve.",
+                                            "goal":  "Close the game on one clean conversion."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "wsg_endgame_return_cap_variant_4_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CAP",
+                                            "who":  "TEAM",
+                                            "where":  "CAP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CAP",
+                                         "who":  "TEAM",
+                                         "where":  "CAP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CAP",
+                                         "WHERE:CAP"
+                                     ]
+                        }
+                    ]
+}

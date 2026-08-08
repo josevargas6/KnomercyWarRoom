@@ -1,0 +1,241 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "eots-stabilize-mid-with-two-towers-005",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T05:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "EOTS",
+                "mode":  "STANDARD",
+                "kind":  "HYBRID",
+                "profile":  "eots_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "tower_anchor",
+                                                        "class":  "Warlock",
+                                                        "spec":  "Affliction",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "mid_support",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "strike",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_flag_runner",
+                                                     "class":  "Mage",
+                                                     "spec":  "Frost",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_tower_anchor",
+                                                     "class":  "Hunter",
+                                                     "spec":  "Marksman",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1265,
+                                       "enemy":  946,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "friendlyIncoming":  0,
+                                            "friendly":  2,
+                                            "enemyIncoming":  0,
+                                            "flagValue":  85,
+                                            "enemy":  2
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "eots_stabilize_mid_with_two_towers_variant_5_state",
+                         "facts":  {
+                                       "phase":  "STABILIZE",
+                                       "summary":  "Hold mid only when two-tower ownership makes the flag route actually winning.",
+                                       "variant":  "late_clock",
+                                       "goal":  "Convert mid control into real value instead of empty fighting."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "eots_stabilize_mid_with_two_towers_variant_5_window",
+                         "facts":  {
+                                       "objective":  "FIELD",
+                                       "pressure":  "URGENT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "eots_stabilize_mid_with_two_towers_variant_5_resolution",
+                         "facts":  {
+                                       "classification":  "EXECUTION_ERROR",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:RECOVERY"
+                                                ],
+                           "mustStay":  [
+                                            "tower_anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "rotation"
+                                                    ],
+                           "successConditions":  [
+                                                     "preserve_winning_state"
+                                                 ],
+                           "abortConditions":  [
+                                                   "coverage_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Hold mid only when two-tower ownership makes the flag route actually winning. Variant 5 uses the late_clock pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "hold",
+                                                                     "deny",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "protect current score floor before expanding.",
+                                                  "safestCounter":  "deny the enemy score event before chasing side value.",
+                                                  "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                                                  "doctrineComparisonIds":  [
+                                                                                "EOTS_HOLD_VS_ROTATE",
+                                                                                "EOTS_DENY_VS_TRADE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "EOTS_RESP_BAIT_SHOW",
+                                                                              "EOTS_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the current shell still wins the score path",
+                                                                    "reserve timing remains intact",
+                                                                    "friendly defenders stay planted on the score floor"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the shell loses its planted defender",
+                                                                        "the reserve route is consumed by a higher-value emergency"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1125,
+                                       "enemy":  900
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Convert mid control into real value instead of empty fighting. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "hold",
+                                                              "deny",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "protect current score floor before expanding.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "EOTS_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "EOTS_RESP_BAIT_SHOW",
+                                           "doctrineComparisonIds":  [
+                                                                         "EOTS_HOLD_VS_ROTATE",
+                                                                         "EOTS_DENY_VS_TRADE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "EOTS_RESP_BAIT_SHOW",
+                                                                       "EOTS_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the current shell still wins the score path",
+                                                             "reserve timing remains intact",
+                                                             "friendly defenders stay planted on the score floor"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the shell loses its planted defender",
+                                                                 "the reserve route is consumed by a higher-value emergency"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

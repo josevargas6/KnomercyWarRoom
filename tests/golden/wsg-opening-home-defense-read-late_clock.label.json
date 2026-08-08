@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "wsg-opening-home-defense-read-005-label",
+    "replayId":  "wsg-opening-home-defense-read-005",
+    "mapProfile":  "wsg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:OPENING"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:SETUP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "setup"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "establish_opening_shell"
+                                           ],
+                     "abortConditions":  [
+                                             "enemy_wins_first_objective"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "OPENING",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "escort",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "WSG_HOLD_VS_ROTATE",
+                                                                          "WSG_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "WSG_RESP_ESCORT_SHELL",
+                                                                        "WSG_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "objective truth confirms the opening lane",
+                                                              "coverage is planted before expansion",
+                                                              "the score floor is not abandoned for first contact"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the enemy wins first objective control cleanly",
+                                                                  "coverage breaks before the opener settles"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Hold enough home defense to stop the fast enemy grab while our route forms. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_HOLD_VS_ROTATE",
+                                                         "WSG_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_ESCORT_SHELL",
+                                                       "WSG_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

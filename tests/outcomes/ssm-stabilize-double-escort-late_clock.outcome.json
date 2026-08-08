@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ssm-stabilize-double-escort-005-outcome",
+    "replayId":  "ssm-stabilize-double-escort-005",
+    "mapProfile":  "ssm_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "EXECUTION_ERROR",
+                            "secondary":  [
+                                              "EXECUTION_BREAK",
+                                              "FAILED",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Keep both live escorts connected while refusing dead middle skirmishes. was reasonable, but the notional execution path failed the intended close."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Keep both live escorts connected while refusing dead middle skirmishes."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Keep both live escorts connected while refusing dead middle skirmishes. was reasonable, but the notional execution path failed the intended close."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "EXECUTION_ERROR",
+                            "summary":  "Lesson: The branch was defensible, but the team cannot trickle or miss the timing."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "EXECUTION_BREAK",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "FAILED",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_HOLD_VS_ROTATE",
+                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

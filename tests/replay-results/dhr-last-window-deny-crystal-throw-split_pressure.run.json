@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dhr-last-window-deny-crystal-throw-003",
+    "replayPath":  "tests/replays/dhr-last-window-deny-crystal-throw-split_pressure.json",
+    "labelPath":  "tests/golden/dhr-last-window-deny-crystal-throw-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:ESCORT",
+                               "WHERE:OC",
+                               "NEXT:OC"
+                           ],
+                  "summary":  [
+                                  "DEEPHAUL variant 3 WIN",
+                                  "ACTION: Deny the final cart checkpoint even if Crystal bait appears for one last distraction.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Deny the final cart checkpoint even if Crystal bait appears for one last distraction. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Finish by forcing every last action onto cart truth."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dhr_last_window_deny_crystal_throw_variant_3_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "ESCORT",
+                                            "who":  "TEAM",
+                                            "where":  "OC",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "ESCORT",
+                                         "who":  "TEAM",
+                                         "where":  "OC",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:ESCORT",
+                                         "WHERE:OC"
+                                     ]
+                        }
+                    ]
+}

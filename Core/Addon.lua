@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.33"
+KWR.version = "6.1.0-alpha.36"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -122,7 +122,9 @@ local DEFAULTS = {
             hideObjectiveTracker = true,
             hideMinimap = true,
             hideStatusTracking = true,
-            hideRaidFrames = true,
+            -- KWR never controls Blizzard-owned raid frames. Keep this legacy
+            -- preference inert so profile migration remains non-destructive.
+            hideRaidFrames = false,
             autoReporter = false,
             autoRoster = true,
         },

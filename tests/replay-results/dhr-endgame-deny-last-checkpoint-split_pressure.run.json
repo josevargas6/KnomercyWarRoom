@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "dhr-endgame-deny-last-checkpoint-003",
+    "replayPath":  "tests/replays/dhr-endgame-deny-last-checkpoint-split_pressure.json",
+    "labelPath":  "tests/golden/dhr-endgame-deny-last-checkpoint-split_pressure.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:ESCORT",
+                               "WHERE:OC",
+                               "NEXT:OC"
+                           ],
+                  "summary":  [
+                                  "DEEPHAUL variant 3 WIN",
+                                  "ACTION: Anchor the enemy\u0027s final checkpoint route and force every last-second fight onto cart truth.",
+                                  "SHAPE: split_pressure",
+                                  "DRIVER: ENEMY_COUNTER_WINDOW",
+                                  "LESSON: Respect the counter route and avoid equal split pressure into their preferred branch."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "ENEMY_COUNTER_WINDOW",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CONTESTED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Respect the counter route and avoid equal split pressure into their preferred branch."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "split_pressure",
+                                            "primaryClassification":  "OPPONENT_COUNTER",
+                                            "summary":  "Anchor the enemy\u0027s final checkpoint route and force every last-second fight onto cart truth. was challenged by an enemy counter pattern and remains useful for comparison.",
+                                            "lesson":  "Respect the counter route and avoid equal split pressure into their preferred branch.",
+                                            "goal":  "Finish by denying the only remaining comeback path."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "dhr_endgame_deny_last_checkpoint_variant_3_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "ESCORT",
+                                            "who":  "TEAM",
+                                            "where":  "OC",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "ESCORT",
+                                         "who":  "TEAM",
+                                         "where":  "OC",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:ESCORT",
+                                         "WHERE:OC"
+                                     ]
+                        }
+                    ]
+}

@@ -1,0 +1,130 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "ssm-midgame-reset-route-005-label",
+    "replayId":  "ssm-midgame-reset-route-005",
+    "mapProfile":  "ssm_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:RECOVERY"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:OPENING"
+                                          ],
+                     "mustStay":  [
+                                      "escort"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "regroup",
+                                                  "deny"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "rebuild_score_path"
+                                           ],
+                     "abortConditions":  [
+                                             "regroup_fails"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "BASE_UNDER_THREAT"
+                                      ],
+                     "phase":  "RECOVERY",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "recover",
+                                                               "rotate",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                            "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                            "primaryComparisonId":  "SILVERSHARD_RECOVER_VS_TRICKLE",
+                                            "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "SILVERSHARD_RECOVER_VS_TRICKLE",
+                                                                          "SILVERSHARD_DENY_VS_TRADE",
+                                                                          "SILVERSHARD_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                                        "SILVERSHARD_RESP_RECOVER_REBAIT",
+                                                                        "SILVERSHARD_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "a regroup wave can still arrive before resolution",
+                                                              "the enemy winning lane can still be denied",
+                                                              "the rebuild does not expose a worse immediate loss"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the regroup wave arrives too late",
+                                                                  "the denial lane is already gone"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "route timing truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Reset the failed junction race and regroup on the next cart that can still change the score. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "rotate",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "SILVERSHARD_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "SILVERSHARD_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_RECOVER_VS_TRICKLE",
+                                                         "SILVERSHARD_DENY_VS_TRADE",
+                                                         "SILVERSHARD_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_ESCORT_SHELL",
+                                                       "SILVERSHARD_RESP_RECOVER_REBAIT",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

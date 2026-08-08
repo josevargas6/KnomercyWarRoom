@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "bfg-recovery-post-wipe-002-label",
+    "replayId":  "bfg-recovery-post-wipe-002",
+    "mapProfile":  "bfg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:RECOVERY"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:OPENING"
+                                          ],
+                     "mustStay":  [
+                                      "anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "regroup",
+                                                  "deny"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "rebuild_score_path"
+                                           ],
+                     "abortConditions":  [
+                                             "regroup_fails"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "BASE_UNDER_THREAT"
+                                      ],
+                     "phase":  "RECOVERY",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "recover",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "GILNEAS_RECOVER_VS_TRICKLE",
+                                            "primaryResponseId":  "GILNEAS_RESP_RECOVER_REBAIT",
+                                            "doctrineComparisonIds":  [
+                                                                          "GILNEAS_RECOVER_VS_TRICKLE",
+                                                                          "GILNEAS_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "GILNEAS_RESP_RECOVER_REBAIT",
+                                                                        "GILNEAS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "a regroup wave can still arrive before resolution",
+                                                              "the enemy winning lane can still be denied",
+                                                              "the rebuild does not expose a worse immediate loss"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the regroup wave arrives too late",
+                                                                  "the denial lane is already gone"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "reinforced_line",
+                                            "variantClassification":  "SUCCESS"
+                                        }
+                 },
+    "rationale":  "Recover after a wipe by rebuilding one stable base and one reserve lane before touching center again. Variant 2 covers the reinforced_line shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "GILNEAS_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "GILNEAS_RESP_RECOVER_REBAIT",
+                           "doctrineComparisonIds":  [
+                                                         "GILNEAS_RECOVER_VS_TRICKLE",
+                                                         "GILNEAS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "GILNEAS_RESP_RECOVER_REBAIT",
+                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

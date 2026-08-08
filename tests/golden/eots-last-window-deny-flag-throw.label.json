@@ -1,0 +1,124 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "eots-last-window-deny-flag-throw-001-label",
+    "replayId":  "eots-last-window-deny-flag-throw-001",
+    "mapProfile":  "eots_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:HOLD"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:CHASE"
+                                          ],
+                     "mustStay":  [
+                                      "tower_anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "discipline",
+                                                  "coverage"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "close_match_cleanly"
+                                           ],
+                     "abortConditions":  [
+                                             "final_state_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "ENDGAME",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "late_game_score_protection",
+                                                               "deny",
+                                                               "hold"
+                                                           ],
+                                            "preferredComparison":  "preserve the winning path before optional pressure.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "EOTS_LATE_PROTECT_VS_PRESS",
+                                            "primaryResponseId":  "EOTS_RESP_LATE_GREED",
+                                            "doctrineComparisonIds":  [
+                                                                          "EOTS_LATE_PROTECT_VS_PRESS",
+                                                                          "EOTS_DENY_VS_TRADE",
+                                                                          "EOTS_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "EOTS_RESP_LATE_GREED",
+                                                                        "EOTS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the protected path still wins the game",
+                                                              "the enemy desperation route is still denyable",
+                                                              "optional pressure is weaker than direct score protection"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the winning path no longer wins",
+                                                                  "the enemy last-score route cannot be denied in time"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Deny the last enemy flag route when tower truth already wins faster than a greedy chase. Finish by refusing a final false-mid throw.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "deny",
+                                              "hold"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "EOTS_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "EOTS_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "EOTS_LATE_PROTECT_VS_PRESS",
+                                                         "EOTS_DENY_VS_TRADE",
+                                                         "EOTS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "EOTS_RESP_LATE_GREED",
+                                                       "EOTS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

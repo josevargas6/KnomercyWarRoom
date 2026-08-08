@@ -1,0 +1,242 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "dhr-pressure-isolate-escort-005",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T05:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "DEEPHAUL",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "dhr_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  965,
+                                       "enemy":  826,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeCart":  "EC",
+                                            "nextCart":  "OC"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "dhr_pressure_isolate_escort_variant_5_state",
+                         "facts":  {
+                                       "phase":  "PRESSURE",
+                                       "summary":  "Isolate the enemy escort line before swinging the decisive cart checkpoint.",
+                                       "variant":  "late_clock",
+                                       "goal":  "Create a cleaner race reversal by removing the first support wave."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "dhr_pressure_isolate_escort_variant_5_window",
+                         "facts":  {
+                                       "objective":  "EC",
+                                       "pressure":  "URGENT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "dhr_pressure_isolate_escort_variant_5_resolution",
+                         "facts":  {
+                                       "classification":  "EXECUTION_ERROR",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:TURN",
+                                                   "WHERE:EC"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:STALL"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "pressure",
+                                                        "control"
+                                                    ],
+                           "successConditions":  [
+                                                     "convert_pressure_window"
+                                                 ],
+                           "abortConditions":  [
+                                                   "target_reinforced_early"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Isolate the enemy escort line before swinging the decisive cart checkpoint. Variant 5 uses the late_clock pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "collapse",
+                                                                     "rotate",
+                                                                     "bait"
+                                                                 ],
+                                                  "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                                  "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                                  "primaryComparisonId":  "DEEPHAUL_COLLAPSE_VS_SPLIT",
+                                                  "primaryResponseId":  "DEEPHAUL_RESP_SPLIT_PRESSURE",
+                                                  "doctrineComparisonIds":  [
+                                                                                "DEEPHAUL_COLLAPSE_VS_SPLIT",
+                                                                                "DEEPHAUL_BAIT_VS_FRONTDOOR",
+                                                                                "DEEPHAUL_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "DEEPHAUL_RESP_SPLIT_PRESSURE",
+                                                                              "DEEPHAUL_RESP_COLLAPSE_CONNECT",
+                                                                              "DEEPHAUL_RESP_ESCORT_SHELL"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the target lane is still live before reinforcement lands",
+                                                                    "the pressure package arrives together",
+                                                                    "the current score floor remains protected during the strike"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the target reinforces before arrival",
+                                                                        "the pressure package splits into equal weak contacts"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  825,
+                                       "enemy":  780
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Create a cleaner race reversal by removing the first support wave. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "collapse",
+                                                              "rotate",
+                                                              "bait"
+                                                          ],
+                                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                           "primaryComparisonId":  "DEEPHAUL_COLLAPSE_VS_SPLIT",
+                                           "primaryResponseId":  "DEEPHAUL_RESP_SPLIT_PRESSURE",
+                                           "doctrineComparisonIds":  [
+                                                                         "DEEPHAUL_COLLAPSE_VS_SPLIT",
+                                                                         "DEEPHAUL_BAIT_VS_FRONTDOOR",
+                                                                         "DEEPHAUL_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "DEEPHAUL_RESP_SPLIT_PRESSURE",
+                                                                       "DEEPHAUL_RESP_COLLAPSE_CONNECT",
+                                                                       "DEEPHAUL_RESP_ESCORT_SHELL"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the target lane is still live before reinforcement lands",
+                                                             "the pressure package arrives together",
+                                                             "the current score floor remains protected during the strike"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the target reinforces before arrival",
+                                                                 "the pressure package splits into equal weak contacts"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ]
+                                       }
+                }
+}

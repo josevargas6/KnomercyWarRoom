@@ -774,6 +774,7 @@ local function captureRoster(mapID)
     end
 
     local seenIdentity, seenName = {}, {}
+    local seenPlayerUnit = false
     for unitIndex, unit in ipairs(units) do
         local unitName = Util:UnitName(unit)
         -- GetRaidRosterInfo owns raid-slot identity. If that slot has not
@@ -785,7 +786,16 @@ local function captureRoster(mapID)
         else
             name = unitName
         end
-        if name then
+        -- During the pre-full-roster transition Blizzard can temporarily make
+        -- more than one group token resolve to the leader. Names and GUIDs
+        -- may still be provisional, so identity text alone cannot prevent a
+        -- duplicate Team row. Keep the first real player token and omit later
+        -- tokens that the client confirms are the same unit.
+        local isAdditionalPlayerToken = unit ~= "player"
+            and seenPlayerUnit
+            and type(UnitIsUnit) == "function"
+            and Util:Boolean(Util:Call(UnitIsUnit, unit, "player"), false)
+        if name and not isAdditionalPlayerToken then
             local unitStable = not inRaid
                 or raidUnitMatchesRosterName(name, unitName, raidShortCounts)
             local localizedClass, classFile
@@ -813,6 +823,10 @@ local function captureRoster(mapID)
             if not duplicate then
                 seenIdentity[identity] = true
                 seenName[normalizedName] = true
+                if type(UnitIsUnit) == "function"
+                    and Util:Boolean(Util:Call(UnitIsUnit, unit, "player"), false) then
+                    seenPlayerUnit = true
+                end
             end
             if not duplicate then
             local specID, specName, specRole, specSource

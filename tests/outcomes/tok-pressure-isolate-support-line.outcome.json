@@ -1,0 +1,76 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "tok-pressure-isolate-support-line-001-outcome",
+    "replayId":  "tok-pressure-isolate-support-line-001",
+    "mapProfile":  "tok_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+
+                                          ],
+                            "summary":  "Create the swing by removing the first peel wave. remained aligned with the selected pressure line."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "The reviewed lane stayed legal through the first contest."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Isolate the enemy support line before deleting the real high-value carrier."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Create the swing by removing the first peel wave."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "WINDOW_CONVERSION",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Repeat the reviewed line unless live battlefield truth clearly degrades."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "deny",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "TEMPLE_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "TEMPLE_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "TEMPLE_COLLAPSE_VS_SPLIT",
+                                                         "TEMPLE_BAIT_VS_FRONTDOOR",
+                                                         "TEMPLE_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TEMPLE_RESP_SPLIT_PRESSURE",
+                                                       "TEMPLE_RESP_COLLAPSE_CONNECT",
+                                                       "TEMPLE_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ]
+                       }
+}

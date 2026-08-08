@@ -1,0 +1,80 @@
+﻿{
+    "schema":  "kwr-outcome-review",
+    "schemaVersion":  1,
+    "reviewId":  "ab-pressure-route-denial-002-outcome",
+    "replayId":  "ab-pressure-route-denial-002",
+    "mapProfile":  "ab_standard",
+    "result":  "VICTORY",
+    "reviewStatus":  "OPEN",
+    "classifications":  {
+                            "primary":  "SUCCESS",
+                            "secondary":  [
+                                              "REINFORCED_LINE",
+                                              "CLEAN",
+                                              "STABLE"
+                                          ],
+                            "summary":  "Deny the shortest enemy reinforce route, then cap through the weakened node ring. stayed aligned and closed favorably."
+                        },
+    "checkpoints":  [
+                        {
+                            "offsetSeconds":  5,
+                            "classification":  "SUCCESS",
+                            "summary":  "Initial contest review: Deny the shortest enemy reinforce route, then cap through the weakened node ring."
+                        },
+                        {
+                            "offsetSeconds":  10,
+                            "classification":  "SUCCESS",
+                            "summary":  "Deny the shortest enemy reinforce route, then cap through the weakened node ring. stayed aligned and closed favorably."
+                        },
+                        {
+                            "offsetSeconds":  18,
+                            "classification":  "SUCCESS",
+                            "summary":  "Lesson: Reinforced lines should be repeated when support arrives on time."
+                        }
+                    ],
+    "attribution":  {
+                        "outcomeDriver":  "REINFORCED_LINE",
+                        "decisionQuality":  "ALIGNED",
+                        "executionQuality":  "CLEAN",
+                        "truthQuality":  "STABLE",
+                        "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                    },
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "collapse",
+                                              "split",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                           "primaryComparisonId":  "ARATHI_COLLAPSE_VS_SPLIT",
+                           "primaryResponseId":  "ARATHI_RESP_SPLIT_PRESSURE",
+                           "doctrineComparisonIds":  [
+                                                         "ARATHI_COLLAPSE_VS_SPLIT",
+                                                         "ARATHI_BAIT_VS_FRONTDOOR",
+                                                         "ARATHI_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "ARATHI_RESP_SPLIT_PRESSURE",
+                                                       "ARATHI_RESP_COLLAPSE_CONNECT",
+                                                       "ARATHI_RESP_ESCORT_SHELL"
+                                                   ],
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

@@ -1,0 +1,128 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "shore-last-window-deny-deposit-005-label",
+    "replayId":  "shore-last-window-deny-deposit-005",
+    "mapProfile":  "shore_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:CHECK"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:CHASE"
+                                          ],
+                     "mustStay":  [
+                                      "advance_group"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "discipline",
+                                                  "coverage"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "close_match_cleanly"
+                                           ],
+                     "abortConditions":  [
+                                             "final_state_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "ENDGAME",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "late_game_score_protection",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "preserve the winning path before optional pressure.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "SEETHING_LATE_PROTECT_VS_PRESS",
+                                            "primaryResponseId":  "SEETHING_RESP_LATE_GREED",
+                                            "doctrineComparisonIds":  [
+                                                                          "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                                          "SEETHING_DENY_VS_TRADE",
+                                                                          "SEETHING_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SEETHING_RESP_LATE_GREED",
+                                                                        "SEETHING_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the protected path still wins the game",
+                                                              "the enemy desperation route is still denyable",
+                                                              "optional pressure is weaker than direct score protection"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the winning path no longer wins",
+                                                                  "the enemy last-score route cannot be denied in time"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Deny the final enemy deposit route even if a dying side node still looks clickable. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "SEETHING_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "SEETHING_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                         "SEETHING_DENY_VS_TRADE",
+                                                         "SEETHING_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SEETHING_RESP_LATE_GREED",
+                                                       "SEETHING_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tp-endgame-final-cap-005",
+    "replayPath":  "tests/replays/tp-endgame-final-cap-late_clock.json",
+    "labelPath":  "tests/golden/tp-endgame-final-cap-late_clock.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CAP",
+                               "WHERE:CAP",
+                               "NEXT:CAP"
+                           ],
+                  "summary":  [
+                                  "TWINPEAKS variant 5 WIN",
+                                  "ACTION: Protect carrier safety and convert the decisive cap.",
+                                  "SHAPE: late_clock",
+                                  "DRIVER: EXECUTION_BREAK",
+                                  "LESSON: The branch was defensible, but the team cannot trickle or miss the timing."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "EXECUTION_BREAK",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "FAILED",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "The branch was defensible, but the team cannot trickle or miss the timing."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "late_clock",
+                                            "primaryClassification":  "EXECUTION_ERROR",
+                                            "summary":  "Protect carrier safety and convert the decisive cap. was reasonable, but the notional execution path failed the intended close.",
+                                            "lesson":  "The branch was defensible, but the team cannot trickle or miss the timing.",
+                                            "goal":  "Finish without mid distraction."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tp_endgame_final_cap_variant_5_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CAP",
+                                            "who":  "TEAM",
+                                            "where":  "CAP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CAP",
+                                         "who":  "TEAM",
+                                         "where":  "CAP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CAP",
+                                         "WHERE:CAP"
+                                     ]
+                        }
+                    ]
+}

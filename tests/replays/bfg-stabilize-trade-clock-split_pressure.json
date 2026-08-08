@@ -1,0 +1,240 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "bfg-stabilize-trade-clock-003",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T03:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "GILNEAS",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "bfg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1080,
+                                       "enemy":  885,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "friendlyIncoming":  0,
+                                            "friendly":  2,
+                                            "enemyIncoming":  1,
+                                            "enemy":  1
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "bfg_stabilize_trade_clock_variant_3_state",
+                         "facts":  {
+                                       "phase":  "STABILIZE",
+                                       "summary":  "Allow one low-value side trade only when the two-base clock still remains winning.",
+                                       "variant":  "split_pressure",
+                                       "goal":  "Protect the lead without overdefending fake pressure."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "bfg_stabilize_trade_clock_variant_3_window",
+                         "facts":  {
+                                       "objective":  "FIELD",
+                                       "pressure":  "SPLIT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "bfg_stabilize_trade_clock_variant_3_resolution",
+                         "facts":  {
+                                       "classification":  "OPPONENT_COUNTER",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:HOLD",
+                                                   "WHERE:FIELD"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:RECOVERY"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "rotation"
+                                                    ],
+                           "successConditions":  [
+                                                     "preserve_winning_state"
+                                                 ],
+                           "abortConditions":  [
+                                                   "coverage_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Allow one low-value side trade only when the two-base clock still remains winning. Variant 3 uses the split_pressure pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "hold",
+                                                                     "deny",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "protect current score floor before expanding.",
+                                                  "safestCounter":  "deny the enemy score event before chasing side value.",
+                                                  "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                                                  "doctrineComparisonIds":  [
+                                                                                "GILNEAS_HOLD_VS_ROTATE",
+                                                                                "GILNEAS_DENY_VS_TRADE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "GILNEAS_RESP_BAIT_SHOW",
+                                                                              "GILNEAS_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the current shell still wins the score path",
+                                                                    "reserve timing remains intact",
+                                                                    "friendly defenders stay planted on the score floor"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the shell loses its planted defender",
+                                                                        "the reserve route is consumed by a higher-value emergency"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1125,
+                                       "enemy":  900
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Protect the lead without overdefending fake pressure. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "hold",
+                                                              "deny",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "protect current score floor before expanding.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "GILNEAS_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "GILNEAS_RESP_BAIT_SHOW",
+                                           "doctrineComparisonIds":  [
+                                                                         "GILNEAS_HOLD_VS_ROTATE",
+                                                                         "GILNEAS_DENY_VS_TRADE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "GILNEAS_RESP_BAIT_SHOW",
+                                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the current shell still wins the score path",
+                                                             "reserve timing remains intact",
+                                                             "friendly defenders stay planted on the score floor"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the shell loses its planted defender",
+                                                                 "the reserve route is consumed by a higher-value emergency"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

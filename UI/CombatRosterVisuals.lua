@@ -280,11 +280,9 @@ function CombatRosterVisuals:DirectHealth(owner, row, unit)
             local maximum = UnitHealthMax(unit)
             row.health:SetMinMaxValues(0, maximum)
             row.health:SetValue(health)
-            if type(AbbreviateNumbers) == "function" then
-                row.healthText:SetText(AbbreviateNumbers(health))
-            else
-                row.healthText:SetText("LIVE")
-            end
+            -- Direct native display is legal; arithmetic/string conversion
+            -- would be unsafe when Retail returns secret health values.
+            row.healthText:SetText("LIVE")
             emphasizeHealthText(row.healthText)
         end)
         if ok then return end
@@ -314,8 +312,7 @@ function CombatRosterVisuals:DirectSpotlightHealth(owner, data)
             local maximum = UnitHealthMax("target")
             spotlight.health:SetMinMaxValues(0, maximum)
             spotlight.health:SetValue(health)
-            spotlight.healthText:SetText(type(AbbreviateNumbers) == "function"
-                and AbbreviateNumbers(health) or "LIVE")
+            spotlight.healthText:SetText("LIVE")
         end)
     end
 end

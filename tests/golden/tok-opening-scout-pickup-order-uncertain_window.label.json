@@ -1,0 +1,127 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "tok-opening-scout-pickup-order-004-label",
+    "replayId":  "tok-opening-scout-pickup-order-004",
+    "mapProfile":  "tok_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:OPENING"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:SETUP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "friendly_carrier"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "setup"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "establish_opening_shell"
+                                           ],
+                     "abortConditions":  [
+                                             "enemy_wins_first_objective"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing",
+                                                  "movement_truth_ambiguous"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "OPENING",
+                     "truthBand":  "MEDIUM",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "rotate",
+                                                               "bait"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "rotate only when the next lane beats the current score event.",
+                                            "primaryComparisonId":  "TEMPLE_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "TEMPLE_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "TEMPLE_HOLD_VS_ROTATE",
+                                                                          "TEMPLE_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "TEMPLE_RESP_ESCORT_SHELL",
+                                                                        "TEMPLE_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "objective truth confirms the opening lane",
+                                                              "coverage is planted before expansion",
+                                                              "the score floor is not abandoned for first contact"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the enemy wins first objective control cleanly",
+                                                                  "coverage breaks before the opener settles"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "uncertain_window",
+                                            "variantClassification":  "UNRESOLVED"
+                                        }
+                 },
+    "rationale":  "Scout the first pickup order before spreading healers into a dead loose-orb pattern. Variant 4 covers the uncertain_window shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "rotate",
+                                              "bait"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "rotate only when the next lane beats the current score event.",
+                           "primaryComparisonId":  "TEMPLE_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "TEMPLE_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "TEMPLE_HOLD_VS_ROTATE",
+                                                         "TEMPLE_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TEMPLE_RESP_ESCORT_SHELL",
+                                                       "TEMPLE_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}
