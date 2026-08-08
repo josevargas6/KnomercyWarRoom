@@ -22,10 +22,11 @@ foreach ($entry in @($manifest.distribution.entries)) {
 $productionRoots = @($manifest.productionAllowlist.directories)
 $errors = [System.Collections.Generic.List[string]]::new()
 $actual = @{}
+$installedRootFullPath = [IO.Path]::GetFullPath($InstalledAddonRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
 foreach ($file in Get-ChildItem -LiteralPath $InstalledAddonRoot -Recurse -File -Force) {
-    $relative = $file.FullName.Substring([IO.Path]::GetFullPath($InstalledAddonRoot).TrimEnd('\\').Length + 1)
+    $relative = $file.FullName.Substring($installedRootFullPath.Length + 1)
     $topLevel = ($relative -split '[\\/]')[0]
-    if ($topLevel -in $productionRoots -or $relative -eq 'KnomercyWarRoom.toc') {
+    if ($expected.ContainsKey($relative) -or $topLevel -in $productionRoots) {
         $actual[$relative] = [pscustomobject]@{
             size = [int64]$file.Length
             sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToUpperInvariant()
