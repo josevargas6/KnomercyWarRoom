@@ -11,8 +11,11 @@ governance, package manifest, installed-folder comparison, and protected
 release workflow all passed on 2026-08-08. Commander and Sentinel are deployed
 from the verified package manifests; the public prerelease is
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
-Any further promotion still requires new owner approval and fresh field
-evidence.**
+CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
+workflow. Direct Render production deployment and worker-health confirmation
+remain unverified: the bot's `render.yaml` disables automatic deployment and
+the Render dashboard requires an authenticated owner session. Any further
+promotion still requires new owner approval and fresh field evidence.**
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
