@@ -1,0 +1,122 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "wsg-season-prep-stabilize-04-001-label",
+    "replayId":  "wsg-season-prep-stabilize-04-001",
+    "mapProfile":  "wsg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:HOLD"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "rotation"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "preserve_winning_state"
+                                           ],
+                     "abortConditions":  [
+                                             "coverage_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "STABILIZE",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "escort",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "WSG_HOLD_VS_ROTATE",
+                                                                          "WSG_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "WSG_RESP_ESCORT_SHELL",
+                                                                        "WSG_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the current shell still wins the score path",
+                                                              "reserve timing remains intact",
+                                                              "friendly defenders stay planted on the score floor"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the shell loses its planted defender",
+                                                                  "the reserve route is consumed by a higher-value emergency"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Protect our FC while building one return wave. Season-prep branch: protect the current carrier or objective. Keep defense intact. Validate this STABILIZE branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "WSG_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "WSG_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_HOLD_VS_ROTATE",
+                                                         "WSG_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_ESCORT_SHELL",
+                                                       "WSG_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the current shell still wins the score path",
+                                             "reserve timing remains intact",
+                                             "friendly defenders stay planted on the score floor"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the shell loses its planted defender",
+                                                 "the reserve route is consumed by a higher-value emergency"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ]
+                       }
+}

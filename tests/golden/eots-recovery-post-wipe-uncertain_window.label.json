@@ -1,0 +1,127 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "eots-recovery-post-wipe-004-label",
+    "replayId":  "eots-recovery-post-wipe-004",
+    "mapProfile":  "eots_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:RECOVERY"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:TAKE"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:OPENING"
+                                          ],
+                     "mustStay":  [
+                                      "tower_anchor"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "regroup",
+                                                  "deny"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "rebuild_score_path"
+                                           ],
+                     "abortConditions":  [
+                                             "regroup_fails"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing",
+                                                  "movement_truth_ambiguous"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "BASE_UNDER_THREAT"
+                                      ],
+                     "phase":  "RECOVERY",
+                     "truthBand":  "MEDIUM",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "recover",
+                                                               "deny",
+                                                               "rotate"
+                                                           ],
+                                            "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                            "safestCounter":  "deny the enemy score event before chasing side value.",
+                                            "primaryComparisonId":  "EOTS_RECOVER_VS_TRICKLE",
+                                            "primaryResponseId":  "EOTS_RESP_RECOVER_REBAIT",
+                                            "doctrineComparisonIds":  [
+                                                                          "EOTS_RECOVER_VS_TRICKLE",
+                                                                          "EOTS_DENY_VS_TRADE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "EOTS_RESP_RECOVER_REBAIT",
+                                                                        "EOTS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "a regroup wave can still arrive before resolution",
+                                                              "the enemy winning lane can still be denied",
+                                                              "the rebuild does not expose a worse immediate loss"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the regroup wave arrives too late",
+                                                                  "the denial lane is already gone"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "movement / location truth"
+                                                              ],
+                                            "variantShape":  "uncertain_window",
+                                            "variantClassification":  "UNRESOLVED"
+                                        }
+                 },
+    "rationale":  "Recover after a wipe by rebuilding two tower truth before forcing the next mid fight. Variant 4 covers the uncertain_window shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "recover",
+                                              "deny",
+                                              "rotate"
+                                          ],
+                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                           "primaryComparisonId":  "EOTS_RECOVER_VS_TRICKLE",
+                           "primaryResponseId":  "EOTS_RESP_RECOVER_REBAIT",
+                           "doctrineComparisonIds":  [
+                                                         "EOTS_RECOVER_VS_TRICKLE",
+                                                         "EOTS_DENY_VS_TRADE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "EOTS_RESP_RECOVER_REBAIT",
+                                                       "EOTS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "movement / location truth"
+                                             ],
+                           "variantShape":  "uncertain_window",
+                           "variantClassification":  "UNRESOLVED"
+                       }
+}

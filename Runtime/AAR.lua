@@ -722,6 +722,7 @@ function AAR:BuildCommandStabilitySummary()
     local latestOverride = overrides[#overrides]
     local latestSuppression = suppressions[#suppressions]
     return {
+        evaluations = KWR.Util:Number(metrics.evaluations, 0) or 0,
         issued = KWR.Util:Number(metrics.issued, 0) or 0,
         replacements = KWR.Util:Number(metrics.replacements, 0) or 0,
         stabilized = KWR.Util:Number(metrics.stabilized, 0) or 0,
@@ -742,6 +743,7 @@ function AAR:BuildCommandStabilitySummary()
         successRate = KWR.Util:Number(metrics.successRate, 0) or 0,
         averageSwitchAdvantage = KWR.Util:Number(metrics.averageSwitchAdvantage, 0) or 0,
         activePlayRetains = KWR.Util:Number(metrics.activePlayRetains, 0) or 0,
+        retainedRecords = #(KWR.Commander:GetHistory() or {}),
         suppressedAlternatives = KWR.Util:Number(metrics.suppressedAlternatives, 0) or 0,
         suppressedByPersistence = KWR.Util:Number(metrics.suppressedByPersistence, 0) or 0,
         suppressedBySuperiority = KWR.Util:Number(metrics.suppressedBySuperiority, 0) or 0,
@@ -1104,10 +1106,10 @@ function AAR:Export(entry)
     lines[#lines + 1] = "Command Stability:"
     local stability = entry.commandStability or {}
     lines[#lines + 1] = string.format(
-        "- Issued %s | replacements %s | stabilized %s | reversals %s | retained %s | suppressed %s",
-        unknown(stability.issued), unknown(stability.replacements),
+        "- Evaluations %s | issued %s | replacements %s | stabilized %s | reversals %s | retained records %s | suppressed %s",
+        unknown(stability.evaluations), unknown(stability.issued), unknown(stability.replacements),
         unknown(stability.stabilized), unknown(stability.reversals),
-        unknown(stability.activePlayRetains), unknown(stability.suppressedAlternatives))
+        unknown(stability.retainedRecords), unknown(stability.suppressedAlternatives))
     lines[#lines + 1] = string.format("- Stability budget: %s | %s",
         clean(stability.commandHealth, "UNKNOWN", 16),
         clean(stability.commandHealthReason, "No stability budget reason.", 120))
@@ -1115,13 +1117,13 @@ function AAR:Export(entry)
         clean(stability.certificationStatus, "INSUFFICIENT_SAMPLE", 32),
         clean(stability.certificationReason, "Collect more command samples.", 120))
     lines[#lines + 1] = string.format(
-        "- Overrides %s | invalidations %s | pre-move invalidations %s | avg lifetime %s | median %s",
+        "- ActivePlay switches %s | invalidations %s | pre-move invalidations %s | avg lifetime %s | median %s",
         unknown(stability.overrides), unknown(stability.invalidations),
         unknown(stability.preMoveInvalidations),
         stability.averageLifetime and KWR.Util:Clock(stability.averageLifetime) or "Unknown",
         stability.medianLifetime and KWR.Util:Clock(stability.medianLifetime) or "Unknown")
     lines[#lines + 1] = string.format(
-        "- Churn detail: suppress persistence %s | suppress superiority %s | overrides pre-arrival %s / committed %s | invalidations pre-arrival %s / committed %s",
+        "- Churn detail: suppress persistence %s | suppress superiority %s | ActivePlay switches pre-arrival %s / committed %s | invalidations pre-arrival %s / committed %s",
         unknown(stability.suppressedByPersistence),
         unknown(stability.suppressedBySuperiority),
         unknown(stability.overridesBeforeArrival),

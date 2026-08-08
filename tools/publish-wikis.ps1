@@ -55,4 +55,3 @@ function Sync-Wiki {
 
 Sync-Wiki $CommanderWiki "docs/KWR_USER_GUIDE_WIKI.md" "Commander-and-Sentinel-User-Guide.md" "docs/wiki-home-commander.md" "Synchronize Commander and Sentinel user guide"
 Sync-Wiki $SentinelWiki "docs/SENTINEL_USER_GUIDE_WIKI.md" "KWR-Sentinel-User-Guide.md" "docs/wiki-home-sentinel.md" "Synchronize Sentinel user guide"
-

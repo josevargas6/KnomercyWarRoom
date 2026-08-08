@@ -1,0 +1,72 @@
+﻿{
+    "schema":  "kwr-replay-run-result",
+    "schemaVersion":  1,
+    "replayId":  "tp-endgame-final-cap-002",
+    "replayPath":  "tests/replays/tp-endgame-final-cap-reinforced_line.json",
+    "labelPath":  "tests/golden/tp-endgame-final-cap-reinforced_line.label.json",
+    "strict":  true,
+    "final":  {
+                  "planID":  "PACE_AHEAD",
+                  "status":  "WIN",
+                  "tags":  [
+                               "PLAN:PACE_AHEAD",
+                               "CALL:CAP",
+                               "WHERE:CAP",
+                               "NEXT:CAP"
+                           ],
+                  "summary":  [
+                                  "TWINPEAKS variant 2 WIN",
+                                  "ACTION: Protect carrier safety and convert the decisive cap.",
+                                  "SHAPE: reinforced_line",
+                                  "DRIVER: REINFORCED_LINE",
+                                  "LESSON: Reinforced lines should be repeated when support arrives on time."
+                              ]
+              },
+    "evaluation":  {
+                       "primaryMatch":  true,
+                       "fallbackMatch":  true,
+                       "forbiddenHits":  [
+
+                                         ],
+                       "attribution":  {
+                                           "outcomeDriver":  "REINFORCED_LINE",
+                                           "decisionQuality":  "ALIGNED",
+                                           "executionQuality":  "CLEAN",
+                                           "truthQuality":  "STABLE",
+                                           "recommendedLesson":  "Reinforced lines should be repeated when support arrives on time."
+                                       },
+                       "branchReview":  {
+                                            "variantShape":  "reinforced_line",
+                                            "primaryClassification":  "SUCCESS",
+                                            "summary":  "Protect carrier safety and convert the decisive cap. stayed aligned and closed favorably.",
+                                            "lesson":  "Reinforced lines should be repeated when support arrives on time.",
+                                            "goal":  "Finish without mid distraction."
+                                        }
+                   },
+    "checkpoints":  [
+                        {
+                            "step":  1,
+                            "at":  0,
+                            "event":  "tp_endgame_final_cap_variant_2_state",
+                            "planID":  "PACE_AHEAD",
+                            "status":  "WIN",
+                            "current":  {
+                                            "what":  "CAP",
+                                            "who":  "TEAM",
+                                            "where":  "CAP",
+                                            "when":  "NOW"
+                                        },
+                            "next":  {
+                                         "what":  "CAP",
+                                         "who":  "TEAM",
+                                         "where":  "CAP",
+                                         "when":  "UNTIL CHANGE"
+                                     },
+                            "tags":  [
+                                         "PLAN:PACE_AHEAD",
+                                         "CALL:CAP",
+                                         "WHERE:CAP"
+                                     ]
+                        }
+                    ]
+}

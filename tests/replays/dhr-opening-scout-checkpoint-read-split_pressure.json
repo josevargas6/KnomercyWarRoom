@@ -1,0 +1,238 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "dhr-opening-scout-checkpoint-read-003",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T03:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "DEEPHAUL",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "dhr_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  0,
+                                       "enemy":  0,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeCart":  "OC",
+                                            "nextCart":  "EC"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "dhr_opening_scout_checkpoint_read_variant_3_state",
+                         "facts":  {
+                                       "phase":  "OPENING",
+                                       "summary":  "Scout the first checkpoint picture before breaking the escort shell for side Crystal temptation.",
+                                       "variant":  "split_pressure",
+                                       "goal":  "Open on verified cart truth instead of speculative side value."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "dhr_opening_scout_checkpoint_read_variant_3_window",
+                         "facts":  {
+                                       "objective":  "OC",
+                                       "pressure":  "SPLIT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "dhr_opening_scout_checkpoint_read_variant_3_resolution",
+                         "facts":  {
+                                       "classification":  "OPPONENT_COUNTER",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:OPENING"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:SETUP",
+                                                   "WHERE:OC"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:RECOVERY"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "coverage",
+                                                        "setup"
+                                                    ],
+                           "successConditions":  [
+                                                     "establish_opening_shell"
+                                                 ],
+                           "abortConditions":  [
+                                                   "enemy_wins_first_objective"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Scout the first checkpoint picture before breaking the escort shell for side Crystal temptation. Variant 3 uses the split_pressure pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "split",
+                                                                     "escort",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "choose the safer legal branch before adding greed.",
+                                                  "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                                  "primaryComparisonId":  "DEEPHAUL_HOLD_VS_ROTATE",
+                                                  "primaryResponseId":  "DEEPHAUL_RESP_ESCORT_SHELL",
+                                                  "doctrineComparisonIds":  [
+                                                                                "DEEPHAUL_HOLD_VS_ROTATE",
+                                                                                "DEEPHAUL_ESCORT_VS_CHASE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "DEEPHAUL_RESP_ESCORT_SHELL",
+                                                                              "DEEPHAUL_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "objective truth confirms the opening lane",
+                                                                    "coverage is planted before expansion",
+                                                                    "the score floor is not abandoned for first contact"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the enemy wins first objective control cleanly",
+                                                                        "coverage breaks before the opener settles"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  0,
+                                       "enemy":  0
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Open on verified cart truth instead of speculative side value. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "split",
+                                                              "escort",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "choose the safer legal branch before adding greed.",
+                                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                           "primaryComparisonId":  "DEEPHAUL_HOLD_VS_ROTATE",
+                                           "primaryResponseId":  "DEEPHAUL_RESP_ESCORT_SHELL",
+                                           "doctrineComparisonIds":  [
+                                                                         "DEEPHAUL_HOLD_VS_ROTATE",
+                                                                         "DEEPHAUL_ESCORT_VS_CHASE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "DEEPHAUL_RESP_ESCORT_SHELL",
+                                                                       "DEEPHAUL_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "objective truth confirms the opening lane",
+                                                             "coverage is planted before expansion",
+                                                             "the score floor is not abandoned for first contact"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the enemy wins first objective control cleanly",
+                                                                 "coverage breaks before the opener settles"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bend movement and expose the score floor.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ]
+                                       }
+                }
+}

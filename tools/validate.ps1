@@ -28,6 +28,13 @@ function Add-ValidationError {
     $script:errors.Add($Message)
 }
 
+foreach ($audit in @("source-drift-audit.ps1", "document-authority-audit.ps1")) {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot $audit)
+    if ($LASTEXITCODE -ne 0) {
+        Add-ValidationError "$audit failed."
+    }
+}
+
 function Validate-TocBundle {
     param(
         [Parameter(Mandatory = $true)]

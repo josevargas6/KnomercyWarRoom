@@ -35,4 +35,3 @@ jobs:
               exit 0
           }
           ./tools/publish-wikis.ps1
-

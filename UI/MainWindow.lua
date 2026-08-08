@@ -151,13 +151,9 @@ local function applyDirectHealth(statusBar, unit, healthText)
             statusBar:SetMinMaxValues(0, healthMax)
             statusBar:SetValue(health)
             if healthText then
-                if healthMax and healthMax > 0 then
-                    healthText:SetText(tostring(math.floor(((health / healthMax) * 100) + 0.5)) .. "%")
-                elseif type(AbbreviateNumbers) == "function" then
-                    healthText:SetText(AbbreviateNumbers(health))
-                else
-                    healthText:SetText("LIVE")
-                end
+                -- Retail may make health values secret.  The native bar may
+                -- consume them, but KWR must not inspect or format them.
+                healthText:SetText("LIVE")
             end
         end)
         if ok then return true end

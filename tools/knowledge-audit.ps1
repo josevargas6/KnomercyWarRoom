@@ -209,7 +209,10 @@ try {
         }
     }
     $scenarioRows = @($scenarioCalibration.scenarios)
-    $targetScenarioCount = @($supportedMaps).Count * [int]$scenarioMatrix.targetBaseScenariosPerMap
+    $eligibleScenarioCount = @($scenarioMatrix.maps | ForEach-Object {
+        @($_.scenarios | Where-Object { $_.seasonStatus -ne "PENDING_SEASON_REVIEW" }).Count
+    } | Measure-Object -Sum).Sum
+    $targetScenarioCount = [int]$eligibleScenarioCount
     if ($scenarioRows.Count -lt $targetScenarioCount) {
         $errors.Add("Scenario calibration covers fewer than $targetScenarioCount base scenarios.")
     }
@@ -223,8 +226,11 @@ try {
             $errors.Add("Scenario calibration missing map summary for $mapKey.")
             continue
         }
-        if (($mapRow.scenarios -as [int]) -lt [int]$scenarioMatrix.targetBaseScenariosPerMap) {
-            $errors.Add("Scenario calibration map summary $mapKey has too few scenarios.")
+        $eligibleForMap = [int](@($scenarioMatrix.maps | Where-Object { $_.mapKey -eq $mapKey } |
+            ForEach-Object { @($_.scenarios | Where-Object { $_.seasonStatus -ne "PENDING_SEASON_REVIEW" }).Count } |
+            Select-Object -First 1)[0])
+        if (($mapRow.scenarios -as [int]) -lt $eligibleForMap) {
+            $errors.Add("Scenario calibration map summary $mapKey has fewer reviewed scenarios than the active matrix.")
         }
         foreach ($phase in @("OPENING", "STABILIZE", "PRESSURE", "RECOVERY", "ENDGAME")) {
             if ($null -eq $mapRow.phaseSummaries.PSObject.Properties[$phase]) {
@@ -262,7 +268,10 @@ try {
         }
     }
     $scenarioRows = @($scenarioAdversarial.scenarios)
-    $targetScenarioCount = @($supportedMaps).Count * [int]$scenarioMatrix.targetBaseScenariosPerMap
+    $eligibleScenarioCount = @($scenarioMatrix.maps | ForEach-Object {
+        @($_.scenarios | Where-Object { $_.seasonStatus -ne "PENDING_SEASON_REVIEW" }).Count
+    } | Measure-Object -Sum).Sum
+    $targetScenarioCount = [int]$eligibleScenarioCount
     if ($scenarioRows.Count -lt $targetScenarioCount) {
         $errors.Add("Scenario adversarial calibration covers fewer than $targetScenarioCount base scenarios.")
     }
@@ -276,8 +285,11 @@ try {
             $errors.Add("Scenario adversarial calibration missing map summary for $mapKey.")
             continue
         }
-        if (($mapRow.scenarios -as [int]) -lt [int]$scenarioMatrix.targetBaseScenariosPerMap) {
-            $errors.Add("Scenario adversarial calibration map summary $mapKey has too few scenarios.")
+        $eligibleForMap = [int](@($scenarioMatrix.maps | Where-Object { $_.mapKey -eq $mapKey } |
+            ForEach-Object { @($_.scenarios | Where-Object { $_.seasonStatus -ne "PENDING_SEASON_REVIEW" }).Count } |
+            Select-Object -First 1)[0])
+        if (($mapRow.scenarios -as [int]) -lt $eligibleForMap) {
+            $errors.Add("Scenario adversarial calibration map summary $mapKey has fewer reviewed scenarios than the active matrix.")
         }
         foreach ($phase in @("OPENING", "STABILIZE", "PRESSURE", "RECOVERY", "ENDGAME")) {
             if ($null -eq $mapRow.phaseSummaries.PSObject.Properties[$phase]) {
@@ -339,6 +351,9 @@ try {
         }
     }
     foreach ($row in $scenarioRows) {
+        if ($row.seasonStatus -eq "PENDING_SEASON_REVIEW") {
+            continue
+        }
         foreach ($key in @($scenarioExpertSchema.scenarioRequired)) {
             if ($null -eq $row.PSObject.Properties[$key]) {
                 $errors.Add("Scenario expert corpus row missing field: $key")

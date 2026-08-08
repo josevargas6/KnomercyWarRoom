@@ -1,4 +1,4 @@
-# KnoMercy War Room â€” Commander & Sentinel User Guide
+# KnoMercy War Room — Commander & Sentinel User Guide
 
 > Canonical operator guide for the current field candidate. Keep this page aligned with `README.md`, `KWRSentinel/README.md`, and the release notes whenever commands or surfaces change.
 
@@ -28,7 +28,7 @@ Sentinel can run without Commander and will fall back safely. When both are pres
 
 ## Commander training path
 
-### Drill 1 â€” Read the board
+### Drill 1 — Read the board
 
 Run `/kwr` and identify, in order:
 
@@ -40,15 +40,15 @@ Run `/kwr` and identify, in order:
 
 Use `/kwr explain` when the call needs context. It exposes the plan, composition read, counterplay, alternatives, and switch rule. Do not replace the visible call with a theory that is not supported by current evidence.
 
-### Drill 2 â€” Validate assignments
+### Drill 2 — Validate assignments
 
 Open `/kwr assignments`. Check coverage, teammate identity, destination, expected arrival, success condition, abort condition, and replacement semantics. Use `/kwr reassess` after a meaningful objective, roster, or fight-state change.
 
-### Drill 3 â€” Manage the fight
+### Drill 3 — Manage the fight
 
 Use `/kwr hud` for the compact synchronized call and local-fight card. Use `/kwr teammini` and `/kwr enemymini` for quick roster context. Secure target/focus controls require your hardware click; the addon never performs those actions for you.
 
-### Drill 4 â€” Close the loop
+### Drill 4 — Close the loop
 
 After the match, open `/kwr aar`. Use `/kwr aar copy` for the existing manual copy box. Review `/kwr verify` or `/kwr evidence` when reporting a defect or comparing a decision with the observed result.
 
@@ -66,13 +66,13 @@ Your procedure is simple: read the card, confirm the assignment manually, execut
 
 Sentinel utilities:
 
-- `/sentinel` or `/kwrs` â€” toggle the execution card.
-- `/kwrs map` â€” toggle Blizzard's battlefield map.
-- `/kwrs score` â€” toggle Blizzard's scoreboard.
-- `/kwrs raid` â€” toggle Blizzard raid frames.
-- `/kwrs reset` â€” restore Sentinel panel positions.
-- `/kwrs options` â€” open Sentinel settings.
-- `/kwrs show` and `/kwrs hide` â€” explicitly show or hide the card.
+- `/sentinel` or `/kwrs` — toggle the execution card.
+- `/kwrs map` — toggle Blizzard's battlefield map.
+- `/kwrs score` — toggle Blizzard's scoreboard.
+- `/kwrs raid` — toggle Blizzard raid frames.
+- `/kwrs reset` — restore Sentinel panel positions.
+- `/kwrs options` — open Sentinel settings.
+- `/kwrs show` and `/kwrs hide` — explicitly show or hide the card.
 
 ## Commander command reference
 
@@ -100,7 +100,7 @@ Developer-only commands such as `/kwr test` and `/kwr preview` are not player tr
 
 ## How to make a good call
 
-Say the action, owner, target or destination, timing, success condition, and abort condition. Example structure: â€œTwo rotate Farm now; three hold Blacksmith; pressure their healer; win when Farm is secure; abort if we lose mid and return.â€ KWR supplies evidence and alternatives; the commander remains the final authority.
+Say the action, owner, target or destination, timing, success condition, and abort condition. Example structure: “Two rotate Farm now; three hold Blacksmith; pressure their healer; win when Farm is secure; abort if we lose mid and return.” KWR supplies evidence and alternatives; the commander remains the final authority.
 
 ## When the display is uncertain
 
@@ -134,9 +134,9 @@ The page is intentionally documentation-only. It must not become a second runtim
 
 ## Quick-start cards
 
-**Commander:** `/kwr` â†’ read call â†’ check assignments â†’ speak manually â†’ `/kwr reassess` after a real change â†’ `/kwr aar` after the match.
+**Commander:** `/kwr` → read call → check assignments → speak manually → `/kwr reassess` after a real change → `/kwr aar` after the match.
 
-**Sentinel:** `/kwrs` â†’ read job/target/hold instruction â†’ act manually â†’ report unclear or stale state to the commander.
+**Sentinel:** `/kwrs` → read job/target/hold instruction → act manually → report unclear or stale state to the commander.
 
 ## Source links
 
@@ -144,4 +144,3 @@ The page is intentionally documentation-only. It must not become a second runtim
 - [Sentinel README](../KWRSentinel/README.md)
 - [Sentinel product contract](SENTINEL_PRODUCT_CONTRACT.md)
 - [Autonomous operations contract](KWR_AUTONOMOUS_OPERATIONS_CONTRACT.md)
-

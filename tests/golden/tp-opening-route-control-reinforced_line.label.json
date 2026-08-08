@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "tp-opening-route-control-002-label",
+    "replayId":  "tp-opening-route-control-002",
+    "mapProfile":  "tp_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:OPENING"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:SETUP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "PLAN:RECOVERY"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "coverage",
+                                                  "setup"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "establish_opening_shell"
+                                           ],
+                     "abortConditions":  [
+                                             "enemy_wins_first_objective"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "OPENING",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "hold",
+                                                               "escort",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "protect current score floor before expanding.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "TWINPEAKS_HOLD_VS_ROTATE",
+                                            "primaryResponseId":  "TWINPEAKS_RESP_ESCORT_SHELL",
+                                            "doctrineComparisonIds":  [
+                                                                          "TWINPEAKS_HOLD_VS_ROTATE",
+                                                                          "TWINPEAKS_ESCORT_VS_CHASE"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "TWINPEAKS_RESP_ESCORT_SHELL",
+                                                                        "TWINPEAKS_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "objective truth confirms the opening lane",
+                                                              "coverage is planted before expansion",
+                                                              "the score floor is not abandoned for first contact"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the enemy wins first objective control cleanly",
+                                                                  "coverage breaks before the opener settles"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ],
+                                            "variantShape":  "reinforced_line",
+                                            "variantClassification":  "SUCCESS"
+                                        }
+                 },
+    "rationale":  "Own one carrier route and deny the enemy approach. Variant 2 covers the reinforced_line shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "hold",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "protect current score floor before expanding.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "TWINPEAKS_HOLD_VS_ROTATE",
+                           "primaryResponseId":  "TWINPEAKS_RESP_ESCORT_SHELL",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_HOLD_VS_ROTATE",
+                                                         "TWINPEAKS_ESCORT_VS_CHASE"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_ESCORT_SHELL",
+                                                       "TWINPEAKS_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "objective truth confirms the opening lane",
+                                             "coverage is planted before expansion",
+                                             "the score floor is not abandoned for first contact"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the enemy wins first objective control cleanly",
+                                                 "coverage breaks before the opener settles"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to peel the planted coverage and create a weak-side break.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "reinforced_line",
+                           "variantClassification":  "SUCCESS"
+                       }
+}

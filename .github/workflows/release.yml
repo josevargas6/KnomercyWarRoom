@@ -12,15 +12,6 @@ on:
         description: Existing release tag to build and publish
         required: true
         default: v6.1.0-alpha.33
-      curseforge_release_type:
-        description: CurseForge file channel for this explicitly approved publication
-        required: true
-        type: choice
-        options:
-          - alpha
-          - beta
-          - release
-        default: alpha
 
 permissions:
   contents: write
@@ -103,7 +94,7 @@ jobs:
           }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
-          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip" -ReleaseType "${{ inputs.curseforge_release_type || 'alpha' }}"
+          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip"
 
       - name: Upload Sentinel to CurseForge
         shell: pwsh
@@ -120,7 +111,7 @@ jobs:
           }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
-          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip" -ReleaseType "${{ inputs.curseforge_release_type || 'alpha' }}"
+          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip"
 
       - name: Publish Commander Discord announcement
         shell: pwsh

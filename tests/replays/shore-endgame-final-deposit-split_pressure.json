@@ -1,0 +1,240 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "shore-endgame-final-deposit-003",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T03:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "SEETHING",
+                "mode":  "STANDARD",
+                "kind":  "RESOURCE",
+                "profile":  "shore_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "advance_group",
+                                                        "class":  "Hunter",
+                                                        "spec":  "Marksman",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "channel_healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Holy",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "skirmisher",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_race_team",
+                                                     "class":  "Druid",
+                                                     "spec":  "Balance",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_channel",
+                                                     "class":  "Warlock",
+                                                     "spec":  "Affliction",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1275,
+                                       "enemy":  1170,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeNode":  "North",
+                                            "nextSpawnKnown":  "Center"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "shore_endgame_final_deposit_variant_3_state",
+                         "facts":  {
+                                       "phase":  "ENDGAME",
+                                       "summary":  "Contest only deposits that can change the final score.",
+                                       "variant":  "split_pressure",
+                                       "goal":  "Finish on spawn-race discipline."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "shore_endgame_final_deposit_variant_3_window",
+                         "facts":  {
+                                       "objective":  "NEXT",
+                                       "pressure":  "SPLIT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "shore_endgame_final_deposit_variant_3_resolution",
+                         "facts":  {
+                                       "classification":  "OPPONENT_COUNTER",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:CHECK",
+                                                   "WHERE:NEXT"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:CHASE"
+                                                ],
+                           "mustStay":  [
+                                            "advance_group"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "discipline",
+                                                        "coverage"
+                                                    ],
+                           "successConditions":  [
+                                                     "close_match_cleanly"
+                                                 ],
+                           "abortConditions":  [
+                                                   "final_state_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Contest only deposits that can change the final score. Variant 3 uses the split_pressure pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "late_game_score_protection",
+                                                                     "deny",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "preserve the winning path before optional pressure.",
+                                                  "safestCounter":  "deny the enemy score event before chasing side value.",
+                                                  "primaryComparisonId":  "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                  "primaryResponseId":  "SEETHING_RESP_LATE_GREED",
+                                                  "doctrineComparisonIds":  [
+                                                                                "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                                                "SEETHING_DENY_VS_TRADE",
+                                                                                "SEETHING_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "SEETHING_RESP_LATE_GREED",
+                                                                              "SEETHING_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the protected path still wins the game",
+                                                                    "the enemy desperation route is still denyable",
+                                                                    "optional pressure is weaker than direct score protection"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the winning path no longer wins",
+                                                                        "the enemy last-score route cannot be denied in time"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1320,
+                                       "enemy":  1185
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Finish on spawn-race discipline. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "late_game_score_protection",
+                                                              "deny",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "SEETHING_LATE_PROTECT_VS_PRESS",
+                                           "primaryResponseId":  "SEETHING_RESP_LATE_GREED",
+                                           "doctrineComparisonIds":  [
+                                                                         "SEETHING_LATE_PROTECT_VS_PRESS",
+                                                                         "SEETHING_DENY_VS_TRADE",
+                                                                         "SEETHING_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "SEETHING_RESP_LATE_GREED",
+                                                                       "SEETHING_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the protected path still wins the game",
+                                                             "the enemy desperation route is still denyable",
+                                                             "optional pressure is weaker than direct score protection"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the winning path no longer wins",
+                                                                 "the enemy last-score route cannot be denied in time"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-07-31T23:18:45Z",
+    "generatedAt":  "2026-08-03T05:50:42Z",
     "candidateVersion":  "6.1.0-alpha.33",
     "blockingDefects":  [
                             {

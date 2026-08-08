@@ -1,0 +1,234 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "deepwind-season-prep-pressure-12-001",
+    "source":  {
+                   "type":  "synthetic_state",
+                   "consent":  "n/a",
+                   "provenance":  "developer_fixture",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "DEEPWIND",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "dwg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  825,
+                                       "enemy":  780,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "friendlyIncoming":  0,
+                                            "friendly":  2,
+                                            "enemyIncoming":  0,
+                                            "enemy":  2
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "deepwind_season_prep_pressure_12_state",
+                         "facts":  {
+                                       "phase":  "PRESSURE",
+                                       "summary":  "Strike the weak flank after pulling defenders central. Season-prep branch: hold a split until the collapse is real.",
+                                       "goal":  "Convert reserve timing into a node swing. Validate this PRESSURE branch after the new season launches."
+                                   }
+                     },
+                     {
+                         "t":  10,
+                         "event":  "deepwind_season_prep_pressure_12_window",
+                         "facts":  {
+                                       "objective":  "R",
+                                       "pressure":  "MEDIUM"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:CHECK"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:TAKE",
+                                                   "WHERE:R"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:STALL"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "pressure",
+                                                        "control"
+                                                    ],
+                           "successConditions":  [
+                                                     "convert_pressure_window"
+                                                 ],
+                           "abortConditions":  [
+                                                   "target_reinforced_early"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Strike the weak flank after pulling defenders central. Season-prep branch: hold a split until the collapse is real. Convert reserve timing into a node swing. Validate this PRESSURE branch after the new season launches.",
+                           "legalWhen":  [
+                                             "the target lane is still live before reinforcement lands",
+                                             "the pressure package arrives together",
+                                             "the current score floor remains protected during the strike"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the target reinforces before arrival",
+                                                 "the pressure package splits into equal weak contacts"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "collapse",
+                                                                     "split",
+                                                                     "bait"
+                                                                 ],
+                                                  "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                                  "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                                  "primaryComparisonId":  "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                  "primaryResponseId":  "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                  "doctrineComparisonIds":  [
+                                                                                "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                                                "DEEPWIND_BAIT_VS_FRONTDOOR",
+                                                                                "DEEPWIND_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                                              "DEEPWIND_RESP_COLLAPSE_CONNECT",
+                                                                              "DEEPWIND_RESP_ESCORT_SHELL"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the target lane is still live before reinforcement lands",
+                                                                    "the pressure package arrives together",
+                                                                    "the current score floor remains protected during the strike"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the target reinforces before arrival",
+                                                                        "the pressure package splits into equal weak contacts"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  825,
+                                       "enemy":  780
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Convert reserve timing into a node swing. Validate this PRESSURE branch after the new season launches. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "collapse",
+                                                              "split",
+                                                              "bait"
+                                                          ],
+                                           "preferredComparison":  "concentrate force on the best live lane instead of equal split pressure.",
+                                           "safestCounter":  "refuse equal weak contacts on multiple lanes.",
+                                           "primaryComparisonId":  "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                           "primaryResponseId":  "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                           "doctrineComparisonIds":  [
+                                                                         "DEEPWIND_COLLAPSE_VS_SPLIT",
+                                                                         "DEEPWIND_BAIT_VS_FRONTDOOR",
+                                                                         "DEEPWIND_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "DEEPWIND_RESP_SPLIT_PRESSURE",
+                                                                       "DEEPWIND_RESP_COLLAPSE_CONNECT",
+                                                                       "DEEPWIND_RESP_ESCORT_SHELL"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the target lane is still live before reinforcement lands",
+                                                             "the pressure package arrives together",
+                                                             "the current score floor remains protected during the strike"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the target reinforces before arrival",
+                                                                 "the pressure package splits into equal weak contacts"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to split your hit and survive to the next reset.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

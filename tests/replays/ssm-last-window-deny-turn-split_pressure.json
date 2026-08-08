@@ -1,0 +1,240 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "ssm-last-window-deny-turn-003",
+    "source":  {
+                   "type":  "synthetic_mutation",
+                   "consent":  "n/a",
+                   "provenance":  "offline_foundation_depth_pack",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T03:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "SILVERSHARD",
+                "mode":  "STANDARD",
+                "kind":  "CART",
+                "profile":  "ssm_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "escort",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "cart_healer",
+                                                        "class":  "Shaman",
+                                                        "spec":  "Restoration",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "delay_team",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_delay",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Priest",
+                                                     "spec":  "Holy",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  1275,
+                                       "enemy":  1170,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "activeCart":  "TOP",
+                                            "nextCart":  "TOP"
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "ssm_last_window_deny_turn_variant_3_state",
+                         "facts":  {
+                                       "phase":  "ENDGAME",
+                                       "summary":  "Protect the last enemy turn route before any optional chase into dead-track fighting.",
+                                       "variant":  "split_pressure",
+                                       "goal":  "Finish by denying the only remaining scoring rail."
+                                   }
+                     },
+                     {
+                         "t":  8,
+                         "event":  "ssm_last_window_deny_turn_variant_3_window",
+                         "facts":  {
+                                       "objective":  "TOP",
+                                       "pressure":  "SPLIT",
+                                       "truth":  "HIGH"
+                                   }
+                     },
+                     {
+                         "t":  18,
+                         "event":  "ssm_last_window_deny_turn_variant_3_resolution",
+                         "facts":  {
+                                       "classification":  "OPPONENT_COUNTER",
+                                       "result":  "VICTORY"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:PACE_AHEAD"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:ESCORT",
+                                                   "WHERE:TOP"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "CALL:CHASE"
+                                                ],
+                           "mustStay":  [
+                                            "escort"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "discipline",
+                                                        "coverage"
+                                                    ],
+                           "successConditions":  [
+                                                     "close_match_cleanly"
+                                                 ],
+                           "abortConditions":  [
+                                                   "final_state_breaks"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Protect the last enemy turn route before any optional chase into dead-track fighting. Variant 3 uses the split_pressure pressure shape to expand offline comparison coverage.",
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "late_game_score_protection",
+                                                                     "escort",
+                                                                     "deny"
+                                                                 ],
+                                                  "preferredComparison":  "preserve the winning path before optional pressure.",
+                                                  "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                                  "primaryComparisonId":  "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                  "primaryResponseId":  "SILVERSHARD_RESP_LATE_GREED",
+                                                  "doctrineComparisonIds":  [
+                                                                                "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                                                "SILVERSHARD_DENY_VS_TRADE",
+                                                                                "SILVERSHARD_CONVERT_VS_GREED"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "SILVERSHARD_RESP_LATE_GREED",
+                                                                              "SILVERSHARD_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "the protected path still wins the game",
+                                                                    "the enemy desperation route is still denyable",
+                                                                    "optional pressure is weaker than direct score protection"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the winning path no longer wins",
+                                                                        "the enemy last-score route cannot be denied in time"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "route timing truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  1320,
+                                       "enemy":  1185
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Finish by denying the only remaining scoring rail. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "late_game_score_protection",
+                                                              "escort",
+                                                              "deny"
+                                                          ],
+                                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                           "primaryComparisonId":  "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                           "primaryResponseId":  "SILVERSHARD_RESP_LATE_GREED",
+                                           "doctrineComparisonIds":  [
+                                                                         "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                                         "SILVERSHARD_DENY_VS_TRADE",
+                                                                         "SILVERSHARD_CONVERT_VS_GREED"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "SILVERSHARD_RESP_LATE_GREED",
+                                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "the protected path still wins the game",
+                                                             "the enemy desperation route is still denyable",
+                                                             "optional pressure is weaker than direct score protection"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the winning path no longer wins",
+                                                                 "the enemy last-score route cannot be denied in time"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "route timing truth"
+                                                             ]
+                                       }
+                }
+}

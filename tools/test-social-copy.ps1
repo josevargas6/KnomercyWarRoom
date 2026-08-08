@@ -1,4 +1,9 @@
 $ErrorActionPreference = 'Stop'
+$toc = Get-Content -LiteralPath 'KnomercyWarRoom.toc'
+$version = (($toc | Where-Object { $_ -match '^## Version:' }) -replace '^## Version:\s*', '').Trim()
+if (-not $version) {
+    throw 'Could not resolve the Commander version from the TOC.'
+}
 
 $requiredFiles = @(
     'README.md',
@@ -15,7 +20,7 @@ foreach ($path in $requiredFiles) {
 
 $copy = ($requiredFiles | ForEach-Object { Get-Content -LiteralPath $_ -Raw }) -join "`n"
 $requiredPhrases = @(
-    '6.1.0-alpha.33',
+    $version,
     'player-controlled',
     'field-test',
     'never auto-casts',
@@ -33,8 +38,8 @@ $socialCopy = Get-Content -LiteralPath 'docs/SOCIAL_COPY.md' -Raw
 foreach ($productSection in @('Commander', 'Sentinel')) {
     $sectionPattern = '(?ms)^##\s+' + [regex]::Escape($productSection) + '\s+(.*?)(?=^##\s+|\z)'
     $sectionMatch = [regex]::Match($socialCopy, $sectionPattern)
-    if (-not $sectionMatch.Success -or $sectionMatch.Groups[1].Value -notmatch '6\.1\.0-alpha\.33') {
-        throw "Social copy $productSection section does not identify the current Alpha 33 candidate."
+    if (-not $sectionMatch.Success -or $sectionMatch.Groups[1].Value -notmatch [regex]::Escape($version)) {
+        throw "Social copy $productSection section does not identify the TOC candidate $version."
     }
 }
 

@@ -1,0 +1,501 @@
+local _, KWR = ...
+
+local ReporterMap = {}
+KWR.ReporterMap = ReporterMap
+
+local function currentState(fallback)
+    if fallback then
+        return fallback
+    end
+    if KWR.Store and type(KWR.Store.Get) == "function" then
+        return KWR.Store:Get()
+    end
+    return nil
+end
+
+local REPORTER_MAP_SIZE = 360
+local REPORTER_DRAWER_WIDTH = 152
+local REPORTER_GUTTER = 8
+local REPORTER_COLLAPSED_WIDTH = REPORTER_MAP_SIZE + (REPORTER_GUTTER * 2)
+local REPORTER_EXPANDED_WIDTH = REPORTER_COLLAPSED_WIDTH
+    + REPORTER_GUTTER + REPORTER_DRAWER_WIDTH
+local REPORTER_FRAME_HEIGHT = 554
+
+local function ownerTag(owner)
+    owner = KWR.Util:Upper(owner, "UNK", 12)
+    if owner == "FRIENDLY" then return "F" end
+    if owner == "ENEMY" then return "E" end
+    return "N"
+end
+
+local function timeText(seconds)
+    seconds = KWR.Util:Number(seconds, nil)
+    return seconds and KWR.Util:Clock(seconds) or "--"
+end
+
+local function eventLine(event)
+    if not event then return "--" end
+    return KWR.Util:Text(event.kind, "EVENT", 12)
+        .. "  "
+        .. KWR.Util:Text(event.text, "", 88)
+end
+
+local function routeLine(route)
+    if not route then return "--" end
+    return "PATH  " .. KWR.Util:Text(route.key, "Unknown", 72)
+        .. "  x" .. tostring(route.count or 0)
+end
+
+local function commandReadout(trust, prediction, context)
+    return KWR.Util:CallReadout(trust, prediction and prediction.urgency, context)
+end
+
+local function forecastBadgeText(prediction)
+    local status = KWR.Util:Upper(prediction and prediction.status, "WAIT", 12)
+    if status == "WIN" then return "green", "PROJECTED WIN" end
+    if status == "LOSE" then return "red", "PROJECTED LOSS" end
+    if status == "TIE" then return "yellow", "EVEN RACE" end
+    if status == "WAIT" then return "muted", "SETUP" end
+    return "muted", status
+end
+
+local function confidenceSummary(trust)
+    local label = KWR.Util:Upper(trust and trust.label, "NONE", 12)
+    local pace = KWR.Util:Upper(trust and trust.pace, "VERIFY_FIRST", 18)
+    if label == "HIGH" and pace ~= "VERIFY_FIRST" then
+        return "Clear read. Commit."
+    end
+    if label == "MEDIUM" then
+        return "Mostly clear. Set up, then send."
+    end
+    if label == "LOW" or pace == "VERIFY_FIRST" then
+        return "Verify first."
+    end
+    return "No clean read yet."
+end
+
+local function enemyPlanText(intent, mapKey)
+    if not intent or not intent.target or intent.target == "" then
+        return "No clear enemy move yet."
+    end
+    local target = KWR.Maps:AbbreviateLocation(mapKey, intent.target)
+    local eta = intent.eta and (" in " .. timeText(intent.eta)) or ""
+    return "Enemy likely: " .. target .. eta .. "."
+end
+
+local function plainObjectiveLine(row, mapKey)
+    if not row then return "No contested objective yet." end
+    local label = KWR.Maps:AbbreviateLocation(mapKey, row.label)
+    local parts = {
+        label .. ": " .. KWR.Util:Text(row.state, row.owner == "ENEMY" and "enemy owned" or "active", 20),
+        "[" .. ownerTag(row.owner) .. "]",
+    }
+    if row.enemyETA then
+        parts[#parts + 1] = "enemy " .. timeText(row.enemyETA)
+    end
+    return table.concat(parts, "  ")
+end
+
+local function footerText(reporter, prediction, context, mapKey)
+    reporter = reporter or {}
+    local trust = reporter.trust or {}
+    local coverage = reporter.coverage or {}
+    local intent = reporter.enemyIntent or {}
+    local _, commandTag = commandReadout(trust, prediction or {}, context or {})
+    local parts = {
+        commandTag,
+        string.format("%d SEEN  |  %d RECENT",
+            coverage.enemyVisible or 0,
+            coverage.enemyRecent or 0),
+    }
+    if intent.target and intent.target ~= "" then
+        parts[#parts + 1] = "INC "
+            .. KWR.Maps:AbbreviateLocation(mapKey, intent.target)
+            .. (intent.eta and (" " .. timeText(intent.eta)) or "")
+    end
+    return table.concat(parts, "  |  ")
+end
+
+local function compactMapCall(command, mapKey)
+    return KWR.CommandView:MapActionText(command, mapKey, "Hold current plan.", 72)
+end
+
+local function compactMapTelemetry(reporter, trust, coverage, objectiveSource, prediction, context)
+    local _, commandTag = commandReadout(trust, prediction or {}, context or {})
+    return string.format("%s  |  %d SEEN  |  %d RECENT  |  %s",
+        commandTag,
+        coverage.enemyVisible or 0,
+        coverage.enemyRecent or 0,
+        KWR.Util:ObjectiveSourceLabel(objectiveSource))
+end
+
+local function attachTooltip(owner, title, lines)
+    if not owner or type(owner.SetScript) ~= "function" then return end
+    if owner.scripts ~= nil and type(owner.scripts) ~= "table" then return end
+    owner:SetScript("OnEnter", function(self)
+        if not GameTooltip or type(GameTooltip.SetOwner) ~= "function" then return end
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        if title and title ~= "" then
+            GameTooltip:AddLine(title, 1, 0.84, 0.24)
+        end
+        for _, line in ipairs(lines or {}) do
+            GameTooltip:AddLine(line, 0.78, 0.80, 0.84, true)
+        end
+        GameTooltip:Show()
+    end)
+    owner:SetScript("OnLeave", function()
+        if GameTooltip and type(GameTooltip.Hide) == "function" then
+            GameTooltip:Hide()
+        end
+    end)
+end
+
+local function drawerLines(tab, reporter, prediction, context, commandTag)
+    local lines = {}
+    if tab == "NEXT" then
+        local pressure = reporter.pressure or {}
+        for index = 1, math.min(3, #pressure) do
+            lines[#lines + 1] = plainObjectiveLine(pressure[index], context.mapKey)
+        end
+        if #lines == 0 then
+            lines[1] = "No urgent objective check yet."
+        end
+        return "NEXT CHECK", lines
+    end
+    if tab == "FEED" then
+        local routes = reporter.routes or {}
+        if routes[1] then
+            lines[#lines + 1] = routeLine(routes[1])
+        end
+        local events = reporter.events or {}
+        local startIndex = math.max(1, #events - 1)
+        for index = startIndex, #events do
+            if events[index] then
+                lines[#lines + 1] = eventLine(events[index])
+            end
+        end
+        if #lines == 0 then
+            lines[1] = "No recent path or battleground event yet."
+        end
+        return "MAP FEED", lines
+    end
+    lines[#lines + 1] = "CALL: " .. commandTag
+    lines[#lines + 1] = confidenceSummary(reporter.trust or {})
+    lines[#lines + 1] = enemyPlanText(reporter.enemyIntent or {}, context.mapKey)
+    if prediction and prediction.friendlyTime and prediction.enemyTime then
+        lines[#lines + 1] = "CLOCK: " .. timeText(prediction.friendlyTime)
+            .. " / " .. timeText(prediction.enemyTime)
+    end
+    return "CURRENT READ", lines
+end
+
+local function updateToken(owner, state)
+    local allowed = KWR.Util:AllowsCompactBattlefieldSurfaces(state)
+    local shown = owner.frame and owner.frame:IsShown() or false
+    if not shown then
+        return KWR.Util:Signature({ allowed, KWR.Util:IsArenaContext(state) })
+    end
+    local snapshot = state and state.snapshot or {}
+    local reporter = snapshot.reporter or {}
+    local trust = reporter.trust or {}
+    local hotspot = reporter.hotspot or reporter.pressure and reporter.pressure[1] or nil
+    return KWR.Util:Signature({
+        true,
+        state and state.revision or 0,
+        snapshot.context and snapshot.context.sessionKey,
+        snapshot.context and snapshot.context.mapKey,
+        state and state.command and state.command.signature,
+        state and state.prediction and state.prediction.status,
+        reporter.summary,
+        reporter.callHint,
+        trust.label,
+        trust.pace,
+        hotspot and hotspot.label,
+        KWR.db.profile.reporter and KWR.db.profile.reporter.advancedOpen == true,
+        KWR.db.profile.reporter and KWR.db.profile.reporter.advancedTab,
+    })
+end
+
+function ReporterMap:RefreshDrawer(state)
+    local frame = self.frame
+    if not frame or not frame.drawer or not frame.drawer:IsShown() then return end
+    local snapshot = state and state.snapshot or {}
+    local context = snapshot.context or {}
+    local reporter = snapshot.reporter or {}
+    local prediction = state and state.prediction or {}
+    local _, commandTag = commandReadout(reporter.trust or {}, prediction, context)
+    local tab = KWR.Util:Upper(KWR.db.profile.reporter.advancedTab, "READ", 12)
+    local title, lines = drawerLines(tab, reporter, prediction, context, commandTag)
+    frame.readTab:SetSelected(tab == "READ")
+    frame.nextTab:SetSelected(tab == "NEXT")
+    frame.feedTab:SetSelected(tab == "FEED")
+    frame.drawer.title:SetText(title)
+    frame.drawer.body:SetText(table.concat(lines, "\n"))
+end
+
+function ReporterMap:SetAdvancedTab(tab)
+    local normalized = KWR.Util:Upper(tab, "READ", 12)
+    if normalized ~= "READ" and normalized ~= "NEXT" and normalized ~= "FEED" then
+        normalized = "READ"
+    end
+    KWR.db.profile.reporter.advancedTab = normalized
+    if self.lastState then
+        self:RefreshDrawer(self.lastState)
+    end
+end
+
+function ReporterMap:SetAdvancedOpen(open)
+    local enabled = open == true
+    KWR.db.profile.reporter.advancedOpen = enabled
+    if not self.frame then return end
+    self.frame.drawer:SetShown(enabled)
+    self.frame.readTab:SetShown(enabled)
+    self.frame.nextTab:SetShown(enabled)
+    self.frame.feedTab:SetShown(enabled)
+    self.frame.drawerToggle:SetText(enabled and "LESS" or "MORE")
+    self.frame:SetSize(enabled and REPORTER_EXPANDED_WIDTH
+        or REPORTER_COLLAPSED_WIDTH, REPORTER_FRAME_HEIGHT)
+    if enabled then
+        self:RefreshDrawer(self.lastState or currentState())
+    end
+end
+
+function ReporterMap:Create()
+    if self.frame then return self.frame end
+    local profile = KWR.db.profile.reporter
+    local frame = CreateFrame("Frame", "KWR_ReporterMiniMap", UIParent, "BackdropTemplate")
+    frame:SetSize(REPORTER_COLLAPSED_WIDTH, REPORTER_FRAME_HEIGHT)
+    frame:SetPoint(profile.point, UIParent, profile.relativePoint, profile.x, profile.y)
+    frame:SetFrameStrata("HIGH")
+    frame:SetToplevel(true)
+    frame:SetClampedToScreen(true)
+    KWR.Theme:Style(frame, "commandCenter", "borderHi")
+    frame:SetBackdropColor(0.01, 0.02, 0.04, 0.94)
+    KWR.Theme:MakeMovable(frame, profile)
+    frame:Hide()
+
+    frame.title = KWR.Theme:Title(frame, 12)
+    frame.title:SetPoint("TOPLEFT", 12, -10)
+    frame.title:SetWidth(190)
+    frame.trustBadge = KWR.Theme:Badge(frame, "muted", "CHECK", 96, 16)
+    frame.trustBadge:SetPoint("TOPLEFT", 12, -32)
+    frame.forecastBadge = KWR.Theme:Badge(frame, "muted", "SETUP", 132, 16)
+    frame.forecastBadge:SetPoint("LEFT", frame.trustBadge, "RIGHT", 8, 0)
+    frame.status = KWR.Theme:Font(frame, 8, "muted", "RIGHT", "OUTLINE")
+    frame.status:SetPoint("TOPRIGHT", -8, -34)
+    frame.status:SetWidth(112)
+
+    frame.expand = KWR.Theme:Button(frame, "EXPAND", 56, 20, function()
+        KWR.MainWindow:Show("TACTICAL")
+    end)
+    frame.expand:SetPoint("TOPRIGHT", -4, -4)
+
+    frame.drawerToggle = KWR.Theme:Button(frame, "MORE", 50, 20, function()
+        ReporterMap:SetAdvancedOpen(not KWR.db.profile.reporter.advancedOpen)
+    end)
+    frame.drawerToggle:SetPoint("RIGHT", frame.expand, "LEFT", -4, 0)
+    attachTooltip(frame.drawerToggle, "Advanced drawer", {
+        "MORE opens the READ / NEXT / FEED side drawer.",
+        "LESS hides the drawer and keeps the map compact.",
+    })
+
+    frame.brief = KWR.Theme:Card(frame, "Current Call")
+    frame.brief:SetPoint("TOPLEFT", 8, -56)
+    frame.brief:SetPoint("TOPRIGHT", -8, -56)
+    frame.brief:SetHeight(80)
+    frame.brief:SetBackdropColor(0.02, 0.03, 0.06, 0.95)
+    frame.summary = KWR.Theme:Font(frame.brief, 9, "white", "LEFT")
+    frame.summary:SetPoint("TOPLEFT", 10, -34)
+    frame.summary:SetPoint("TOPRIGHT", -10, -34)
+    frame.summary:SetHeight(18)
+    frame.call = KWR.Theme:Font(frame.brief, 9, "gold", "LEFT", "OUTLINE")
+    frame.call:SetPoint("TOPLEFT", 10, -54)
+    frame.call:SetPoint("TOPRIGHT", -10, -54)
+    frame.call:SetHeight(16)
+
+    frame.map = KWR.TacticalMap:Create(frame)
+    frame.map.compact = false
+    frame.map.reporterMode = true
+    frame.map:SetPoint("TOPLEFT", frame.brief, "BOTTOMLEFT", 0, -8)
+    frame.map:SetSize(REPORTER_MAP_SIZE, REPORTER_MAP_SIZE)
+    frame.map.headerBand:SetHeight(38)
+    frame.map.footerBand:SetHeight(18)
+    frame.map.commandText:SetPoint("TOPLEFT", 8, -22)
+    frame.map.commandText:SetPoint("TOPRIGHT", -8, -22)
+    frame.map.contextText:SetPoint("TOPLEFT", 8, -34)
+    frame.map.contextText:SetPoint("TOPRIGHT", -8, -34)
+    frame.map.stateBadge:SetSize(64, 14)
+    frame.map.trustBadge:SetSize(78, 14)
+    frame.map.coverageBadge:SetSize(70, 14)
+    frame.map.objectiveBadge:SetSize(74, 14)
+
+    frame.mapFooter = KWR.Theme:Font(frame, 8, "soft", "CENTER")
+    frame.mapFooter:SetPoint("TOPLEFT", frame.map, "BOTTOMLEFT", 0, -8)
+    frame.mapFooter:SetWidth(REPORTER_MAP_SIZE)
+    frame.mapFooter:SetHeight(14)
+
+    frame.mapLegend = KWR.Theme:Font(frame, 8, "muted", "CENTER", "OUTLINE")
+    frame.mapLegend:SetPoint("TOPLEFT", frame.mapFooter, "BOTTOMLEFT", 0, -4)
+    frame.mapLegend:SetWidth(REPORTER_MAP_SIZE)
+    frame.mapLegend:SetHeight(14)
+    frame.mapLegend:SetText("[F] Friendly  [E] Enemy  [!] Pressure  [K] Kill  [X] Dead")
+    attachTooltip(frame.mapLegend, "Reporter legend", {
+        "[F] Friendly player or objective owner.",
+        "[E] Enemy player or objective owner.",
+        "[!] Pressure hotspot or urgent objective.",
+        "[K] Local kill target from live combat evidence.",
+        "[X] Confirmed dead unit.",
+    })
+
+    frame.drawer = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+    frame.drawer:SetPoint("TOPLEFT", frame.map, "TOPRIGHT", 8, 0)
+    frame.drawer:SetSize(REPORTER_DRAWER_WIDTH, REPORTER_MAP_SIZE)
+    KWR.Theme:Style(frame.drawer, "panel", "border")
+    frame.drawer:SetBackdropColor(0.02, 0.03, 0.06, 0.95)
+    frame.drawer.title = KWR.Theme:Font(frame.drawer, 9, "gold", "LEFT", "OUTLINE")
+    frame.drawer.title:SetPoint("TOPLEFT", 10, -34)
+    frame.drawer.title:SetPoint("TOPRIGHT", -10, -34)
+    frame.drawer.title:SetHeight(14)
+    frame.drawer.body = KWR.Theme:Font(frame.drawer, 8, "soft", "LEFT")
+    frame.drawer.body:SetPoint("TOPLEFT", 10, -54)
+    frame.drawer.body:SetPoint("BOTTOMRIGHT", -10, 10)
+    frame.drawer.body:SetJustifyV("TOP")
+
+    frame.readTab = KWR.Theme:Button(frame.drawer, "READ", 42, 18, function()
+        ReporterMap:SetAdvancedTab("READ")
+    end)
+    frame.readTab:SetPoint("TOPLEFT", 8, -8)
+    frame.nextTab = KWR.Theme:Button(frame.drawer, "NEXT", 42, 18, function()
+        ReporterMap:SetAdvancedTab("NEXT")
+    end)
+    frame.nextTab:SetPoint("LEFT", frame.readTab, "RIGHT", 3, 0)
+    frame.feedTab = KWR.Theme:Button(frame.drawer, "FEED", 42, 18, function()
+        ReporterMap:SetAdvancedTab("FEED")
+    end)
+    frame.feedTab:SetPoint("LEFT", frame.nextTab, "RIGHT", 3, 0)
+    attachTooltip(frame.readTab, "READ", { "Current battlefield read and enemy intent." })
+    attachTooltip(frame.nextTab, "NEXT", { "Urgent objective checks and follow-up lanes." })
+    attachTooltip(frame.feedTab, "FEED", { "Latest route and battleground event feed." })
+
+    frame:SetScript("OnMouseUp", function(_, button)
+        if button == "RightButton" then
+            KWR.MainWindow:Show("TACTICAL")
+        end
+    end)
+
+    self.frame = frame
+    self:SetAdvancedOpen(profile.advancedOpen == true)
+    self:SetAdvancedTab(profile.advancedTab)
+    return frame
+end
+
+function ReporterMap:SyncArenaVisibility(state)
+    local blocked = not KWR.Util:AllowsCompactBattlefieldSurfaces(
+        currentState(state or self.lastState))
+    if blocked and self.frame then
+        self.frame:Hide()
+    end
+    return blocked
+end
+
+function ReporterMap:Update(state)
+    self.lastState = state
+    if self:SyncArenaVisibility(state) then return end
+    local frame = self.frame
+    if not frame or not frame:IsShown() then return end
+    if not state then return end
+
+    local snapshot = state.snapshot or {}
+    local context = snapshot.context or {}
+    local reporter = snapshot.reporter or {}
+    local prediction = state.prediction or {}
+    local hotspot = reporter.hotspot or reporter.pressure and reporter.pressure[1] or nil
+    local trust = reporter.trust or {}
+    local coverage = reporter.coverage or {}
+
+    local commandTone, commandTag = commandReadout(trust, prediction, context)
+    local forecastBadgeTone, forecastLabel = forecastBadgeText(prediction)
+    local mapDefinition = KWR.Maps:Get(context.mapKey)
+    local mapLabel = mapDefinition and mapDefinition.short
+        or KWR.Util:Text(context.mapKey, context.mapName or "MAP", 12)
+    frame.title:SetText("KWR SUPPORT  |  " .. KWR.Util:Text(
+        mapLabel, "MAP", 12))
+    frame.trustBadge:SetTone(commandTone)
+    frame.trustBadge:SetText(commandTag)
+    frame.forecastBadge:SetTone(forecastBadgeTone)
+    frame.forecastBadge:SetText(forecastLabel)
+    frame.summary:SetText(KWR.Util:Text(reporter.summary,
+        "Waiting for live battleground movement.", 84))
+    frame.call:SetText("PLAY: " .. KWR.Util:Text(reporter.callHint,
+        KWR.CommandView:ActionText(state.command, "Hold current plan.", 72), 72))
+    frame.status:SetText(table.concat({
+        confidenceSummary(trust),
+        hotspot and ("Focus " .. KWR.Maps:AbbreviateLocation(context.mapKey, hotspot.label) .. ".")
+            or "No hot fight yet.",
+    }, "  "))
+    frame.status:SetTextColor(KWR.Theme:Color(commandTone))
+    self:RefreshDrawer(state)
+
+    frame.mapFooter:SetText(footerText(reporter, prediction, context, context.mapKey))
+    frame.map:SetState(state)
+    frame.map.headerBand:SetHeight(38)
+    frame.map.footerBand:SetHeight(18)
+    frame.map.commandText:SetPoint("TOPLEFT", 8, -22)
+    frame.map.commandText:SetPoint("TOPRIGHT", -8, -22)
+    frame.map.contextText:SetPoint("TOPLEFT", 8, -34)
+    frame.map.contextText:SetPoint("TOPRIGHT", -8, -34)
+    frame.map.stateBadge:SetSize(64, 14)
+    frame.map.trustBadge:SetSize(78, 14)
+    frame.map.coverageBadge:SetSize(70, 14)
+    frame.map.objectiveBadge:SetSize(74, 14)
+    local localTarget = snapshot.combat and snapshot.combat.localTarget
+    local hotspotLabel = hotspot and hotspot.label and ("HOT " .. KWR.Util:Text(hotspot.label, "", 16))
+        or "HOT QUIET"
+    frame.map.commandText:SetText("PLAY: " .. compactMapCall(state.command, context.mapKey))
+    frame.map.contextText:SetText(table.concat({
+        localTarget and ("TARGET " .. KWR.Util:ShortName(localTarget.name or localTarget.shortName or "TARGET"))
+            or "TAB TO TARGET",
+        hotspotLabel,
+    }, "  |  "))
+    frame.map.telemetryText:SetText(compactMapTelemetry(reporter, trust, coverage,
+        snapshot.objectives and snapshot.objectives.source or "none", prediction, context))
+end
+
+function ReporterMap:Show()
+    if self:SyncArenaVisibility(currentState()) then return false end
+    if KWR.MainWindow.frame and KWR.MainWindow.frame:IsShown() then
+        KWR.MainWindow:MinimizeTo("REPORTER")
+        return true
+    end
+    local frame = self:Create()
+    if KWR.MatchRuntime then
+        KWR.MatchRuntime:ForceRefresh("reporter-show")
+    end
+    frame:Show()
+    self:Update(currentState())
+    return true
+end
+
+function ReporterMap:Toggle()
+    if self:SyncArenaVisibility(currentState()) then return false end
+    local frame = self:Create()
+    if frame:IsShown() then frame:Hide() else self:Show() end
+    return frame:IsShown()
+end
+
+function ReporterMap:OnInitialize()
+    if KWR.Store and KWR.Store.SubscribeFiltered then
+        KWR.Store:SubscribeFiltered(self, self.Update, updateToken)
+    end
+end
+
+function ReporterMap:OnEnable()
+end
+
+function ReporterMap:OnDisable()
+    if KWR.Store and KWR.Store.Unsubscribe then
+        KWR.Store:Unsubscribe(self)
+    end
+end
+
+KWR:RegisterModule("ReporterMap", ReporterMap)

@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+- Added KWR-053 with 1,000 evenly distributed, deterministic season-prep
+  scenarios and corpus fixtures (100 per supported battleground). Every new
+  entry is pending season review and excluded from runtime expert selection
+  until it has official and field-evidence approval.
+- Added KWR-052 leader-entry roster hardening. Transient group tokens that
+  resolve to the leader no longer create duplicate Team tracker rows while a
+  battleground roster is still hydrating.
+- Added KWR-051 compatibility hardening for Better Blizzard Frames and other
+  raid-frame managers. Presentation no longer reads, hides, restores, or
+  otherwise touches Blizzard-owned raid frames.
+- Reopened KWR-032 through KWR-034 as offline implementation blockers and
+  closed their deterministic/code criteria: Retail-safe direct health display,
+  evidence-derived command stability totals, and canonical flag action targets.
+- Kept live screenshots, complete-match stability, taint, performance, and
+  map certification explicitly live-only.
+- Added repository-owned Commander and Sentinel Wiki sources plus a guarded
+  GitHub Actions synchronizer so command and training documentation can be
+  republished after approved addon updates. Configure `WIKI_PUBLISH_TOKEN` in
+  repository secrets to enable cross-repository Wiki writes.
+
 ## 6.1.0-alpha.33
 
 - Preserved the reviewed live Commander UI corrections, including coordinated reset behavior for launcher and combat-roster positions.

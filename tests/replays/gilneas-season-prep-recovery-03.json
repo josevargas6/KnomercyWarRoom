@@ -1,0 +1,230 @@
+﻿{
+    "schema":  "kwr-replay-schema",
+    "schemaVersion":  1,
+    "kind":  "timeline_replay",
+    "replayId":  "gilneas-season-prep-recovery-03-001",
+    "source":  {
+                   "type":  "synthetic_state",
+                   "consent":  "n/a",
+                   "provenance":  "developer_fixture",
+                   "verified":  true
+               },
+    "capturedAt":  "2026-07-29T00:00:00Z",
+    "patch":  {
+                  "interface":  120007,
+                  "build":  "6.1.0-alpha.29"
+              },
+    "ruleset":  {
+                    "apiMode":  "Retail_Current",
+                    "bracket":  "STANDARD"
+                },
+    "map":  {
+                "key":  "GILNEAS",
+                "mode":  "STANDARD",
+                "kind":  "NODE",
+                "profile":  "bfg_standard"
+            },
+    "side":  "HORDE",
+    "redaction":  {
+                      "status":  "SYNTHETIC",
+                      "identityMode":  "ROLE_LABELS",
+                      "secretValuesRemoved":  true
+                  },
+    "initialState":  {
+                         "friendlyRoster":  [
+                                                [
+                                                    {
+                                                        "slot":  "anchor",
+                                                        "class":  "Warrior",
+                                                        "spec":  "Arms",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "floater",
+                                                        "class":  "Mage",
+                                                        "spec":  "Frost",
+                                                        "role":  "DAMAGER"
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        "slot":  "healer",
+                                                        "class":  "Priest",
+                                                        "spec":  "Discipline",
+                                                        "role":  "HEALER"
+                                                    }
+                                                ]
+                                            ],
+                         "enemyRoster":  [
+                                             [
+                                                 {
+                                                     "slot":  "enemy_push",
+                                                     "class":  "Rogue",
+                                                     "spec":  "Subtlety",
+                                                     "role":  "DAMAGER"
+                                                 }
+                                             ],
+                                             [
+                                                 {
+                                                     "slot":  "enemy_healer",
+                                                     "class":  "Druid",
+                                                     "spec":  "Restoration",
+                                                     "role":  "HEALER"
+                                                 }
+                                             ]
+                                         ],
+                         "score":  {
+                                       "friendly":  675,
+                                       "enemy":  930,
+                                       "max":  1500
+                                   },
+                         "objectives":  {
+                                            "friendlyIncoming":  1,
+                                            "friendly":  1,
+                                            "enemyIncoming":  0,
+                                            "enemy":  2
+                                        },
+                         "evidenceQuality":  "HIGH"
+                     },
+    "timeline":  [
+                     {
+                         "t":  0,
+                         "event":  "gilneas_season_prep_recovery_03_state",
+                         "facts":  {
+                                       "phase":  "RECOVERY",
+                                       "summary":  "Recover by grouped control on the isolated defender. Season-prep branch: protect the remaining score path.",
+                                       "goal":  "Re-enter the scoring race. Validate this RECOVERY branch after the new season launches."
+                                   }
+                     },
+                     {
+                         "t":  10,
+                         "event":  "gilneas_season_prep_recovery_03_window",
+                         "facts":  {
+                                       "objective":  "WW",
+                                       "pressure":  "HIGH"
+                                   }
+                     }
+                 ],
+    "expectedLabels":  {
+                           "primaryActions":  [
+                                                  "PLAN:RECOVERY"
+                                              ],
+                           "fallbackActions":  [
+                                                   "CALL:TAKE",
+                                                   "WHERE:WW"
+                                               ],
+                           "forbiddenActions":  [
+                                                    "PLAN:OPENING"
+                                                ],
+                           "mustStay":  [
+                                            "anchor"
+                                        ],
+                           "requiredCapabilities":  [
+                                                        "regroup",
+                                                        "deny"
+                                                    ],
+                           "successConditions":  [
+                                                     "rebuild_score_path"
+                                                 ],
+                           "abortConditions":  [
+                                                   "regroup_fails"
+                                               ],
+                           "maxDelaySeconds":  8,
+                           "rationale":  "Recover by grouped control on the isolated defender. Season-prep branch: protect the remaining score path. Re-enter the scoring race. Validate this RECOVERY branch after the new season launches.",
+                           "legalWhen":  [
+                                             "a regroup wave can still arrive before resolution",
+                                             "the enemy winning lane can still be denied",
+                                             "the rebuild does not expose a worse immediate loss"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the regroup wave arrives too late",
+                                                 "the denial lane is already gone"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                           "branchEvidence":  {
+                                                  "familyTags":  [
+                                                                     "recover",
+                                                                     "deny",
+                                                                     "rotate"
+                                                                 ],
+                                                  "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                                  "safestCounter":  "deny the enemy score event before chasing side value.",
+                                                  "primaryComparisonId":  "GILNEAS_RECOVER_VS_TRICKLE",
+                                                  "primaryResponseId":  "GILNEAS_RESP_RECOVER_REBAIT",
+                                                  "doctrineComparisonIds":  [
+                                                                                "GILNEAS_RECOVER_VS_TRICKLE",
+                                                                                "GILNEAS_DENY_VS_TRADE"
+                                                                            ],
+                                                  "doctrineResponseIds":  [
+                                                                              "GILNEAS_RESP_RECOVER_REBAIT",
+                                                                              "GILNEAS_RESP_DENY_TRADE"
+                                                                          ],
+                                                  "legalWhen":  [
+                                                                    "a regroup wave can still arrive before resolution",
+                                                                    "the enemy winning lane can still be denied",
+                                                                    "the rebuild does not expose a worse immediate loss"
+                                                                ],
+                                                  "invalidatedBy":  [
+                                                                        "the regroup wave arrives too late",
+                                                                        "the denial lane is already gone"
+                                                                    ],
+                                                  "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                                  "evidenceFocus":  [
+                                                                        "objective truth",
+                                                                        "score truth",
+                                                                        "movement / location truth"
+                                                                    ]
+                                              }
+                       },
+    "outcome":  {
+                    "result":  "VICTORY",
+                    "finalScore":  {
+                                       "friendly":  675,
+                                       "enemy":  930
+                                   },
+                    "reviewStatus":  "OPEN",
+                    "checkpoints":  [
+                                        {
+                                            "offsetSeconds":  10,
+                                            "classification":  "SUCCESS",
+                                            "summary":  "Re-enter the scoring race. Validate this RECOVERY branch after the new season launches. remained aligned with the selected call."
+                                        }
+                                    ],
+                    "branchEvidence":  {
+                                           "familyTags":  [
+                                                              "recover",
+                                                              "deny",
+                                                              "rotate"
+                                                          ],
+                                           "preferredComparison":  "rebuild one real score path instead of feeding the old fight.",
+                                           "safestCounter":  "deny the enemy score event before chasing side value.",
+                                           "primaryComparisonId":  "GILNEAS_RECOVER_VS_TRICKLE",
+                                           "primaryResponseId":  "GILNEAS_RESP_RECOVER_REBAIT",
+                                           "doctrineComparisonIds":  [
+                                                                         "GILNEAS_RECOVER_VS_TRICKLE",
+                                                                         "GILNEAS_DENY_VS_TRADE"
+                                                                     ],
+                                           "doctrineResponseIds":  [
+                                                                       "GILNEAS_RESP_RECOVER_REBAIT",
+                                                                       "GILNEAS_RESP_DENY_TRADE"
+                                                                   ],
+                                           "legalWhen":  [
+                                                             "a regroup wave can still arrive before resolution",
+                                                             "the enemy winning lane can still be denied",
+                                                             "the rebuild does not expose a worse immediate loss"
+                                                         ],
+                                           "invalidatedBy":  [
+                                                                 "the regroup wave arrives too late",
+                                                                 "the denial lane is already gone"
+                                                             ],
+                                           "expectedEnemyCounter":  "Enemy tries to force panic recommits before the regroup lands.",
+                                           "evidenceFocus":  [
+                                                                 "objective truth",
+                                                                 "score truth",
+                                                                 "movement / location truth"
+                                                             ]
+                                       }
+                }
+}

@@ -4,6 +4,8 @@ title: Publish source-complete Alpha 33
 owner: unassigned
 priority: critical
 risk: high
+status: in_progress
+authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: [KWR-043, KWR-SENTINEL-009]
 affected_modules: [Core, UI, KWRSentinel, release automation, release documentation]
 ---

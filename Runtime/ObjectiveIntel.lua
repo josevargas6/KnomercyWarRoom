@@ -536,6 +536,41 @@ function ObjectiveIntel:Apply(snapshot)
     return snapshot
 end
 
+-- Action targets are a stricter contract than event evidence.  Blizzard's
+-- localized sentence remains in events, but only a reviewed carrier or map
+-- target may cross into a commander action.
+function ObjectiveIntel:CanonicalCommandTarget(mapKey, target, context)
+    local value = KWR.Util:Text(target, "", 96)
+    local upper = value:upper()
+    local team = context and context.team and context.team.faction or nil
+    if upper == "OUR FC" or upper == "OUR CARRIER" then return "Our FC" end
+    if upper == "ENEMY FC" or upper == "ENEMY CARRIER" then return "Enemy FC" end
+    if upper == "HOME" then return "Home" end
+    if upper == "MID" or upper == "CENTER" then return "Mid" end
+    if upper:find("FLAG", 1, true) then
+        local flagFaction = upper:find("ALLIANCE", 1, true) and "Alliance"
+            or (upper:find("HORDE", 1, true) and "Horde" or nil)
+        if flagFaction and team then
+            local friendly = flagFaction == team
+            if upper:find("PICKED", 1, true)
+                or upper:find("CARRIED", 1, true)
+                or upper:find("TAKEN", 1, true) then
+                return friendly and "Our FC" or "Enemy FC"
+            end
+            if upper:find("RETURN", 1, true)
+                or upper:find("CAPTURE", 1, true)
+                or upper:find("DROPPED", 1, true) then
+                return friendly and "Home" or "Enemy Flag Room"
+            end
+        end
+    end
+    local definition = mapKey and KWR.Maps:Get(mapKey) or nil
+    for _, location in ipairs(definition and definition.locations or {}) do
+        if KWR.Util:Upper(location, "", 48) == upper then return location end
+    end
+    return "VERIFY"
+end
+
 function ObjectiveIntel:CarrierCount()
     local count = 0
     for _ in pairs(self.carriers) do count = count + 1 end

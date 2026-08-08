@@ -1,0 +1,130 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "tp-endgame-final-cap-005-label",
+    "replayId":  "tp-endgame-final-cap-005",
+    "mapProfile":  "tp_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "offline-foundation-pack",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:CAP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:CHASE"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "discipline",
+                                                  "coverage"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "close_match_cleanly"
+                                           ],
+                     "abortConditions":  [
+                                             "final_state_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "ENDGAME",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "late_game_score_protection",
+                                                               "return_window",
+                                                               "escort"
+                                                           ],
+                                            "preferredComparison":  "preserve the winning path before optional pressure.",
+                                            "safestCounter":  "commit only on the real conversion window.",
+                                            "primaryComparisonId":  "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                                            "primaryResponseId":  "TWINPEAKS_RESP_LATE_GREED",
+                                            "doctrineComparisonIds":  [
+                                                                          "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                                                                          "TWINPEAKS_DENY_VS_TRADE",
+                                                                          "TWINPEAKS_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "TWINPEAKS_RESP_LATE_GREED",
+                                                                        "TWINPEAKS_RESP_DENY_TRADE",
+                                                                        "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the protected path still wins the game",
+                                                              "the enemy desperation route is still denyable",
+                                                              "optional pressure is weaker than direct score protection"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the winning path no longer wins",
+                                                                  "the enemy last-score route cannot be denied in time"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ],
+                                            "variantShape":  "late_clock",
+                                            "variantClassification":  "EXECUTION_ERROR"
+                                        }
+                 },
+    "rationale":  "Protect carrier safety and convert the decisive cap. Variant 5 covers the late_clock shape.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "return_window",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "TWINPEAKS_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "TWINPEAKS_LATE_PROTECT_VS_PRESS",
+                                                         "TWINPEAKS_DENY_VS_TRADE",
+                                                         "TWINPEAKS_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "TWINPEAKS_RESP_LATE_GREED",
+                                                       "TWINPEAKS_RESP_DENY_TRADE",
+                                                       "TWINPEAKS_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ],
+                           "variantShape":  "late_clock",
+                           "variantClassification":  "EXECUTION_ERROR"
+                       }
+}

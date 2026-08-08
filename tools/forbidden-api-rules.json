@@ -1,0 +1,33 @@
+{
+  "forbiddenApis": [
+    "TargetUnit",
+    "FocusUnit",
+    "AssistUnit",
+    "SpellTargetUnit",
+    "CastSpell",
+    "CastSpellByName",
+    "RunMacro",
+    "RunMacroText",
+    "UseAction",
+    "SendAddonMessage",
+    "SendChatMessage"
+  ],
+  "adapterOnlyApis": {
+    "Adapters/SafeAuraAdapter.lua": [
+      "C_UnitAuras",
+      "UnitAura",
+      "AuraUtil"
+    ],
+    "Adapters/SafeCombatLogAdapter.lua": [
+      "CombatLogGetCurrentEventInfo"
+    ]
+  },
+  "forbiddenCommanderPhrases": [
+    "Kidney now",
+    "Solar Beam now",
+    "Kick now",
+    "Blind now",
+    "Press X",
+    "Use macro"
+  ]
+}

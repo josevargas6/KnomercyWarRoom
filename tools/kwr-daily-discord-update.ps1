@@ -161,7 +161,9 @@ function New-DailyProgressMessage {
 
     $lines = [System.Collections.Generic.List[string]]::new()
     $dateStamp = $ReportDate.ToString("yyyy-MM-dd")
-    $evidenceVersion = if ($Readiness.candidate.version) {
+    $evidenceVersion = if ($Readiness.candidate.evidenceBaseline) {
+        [string]$Readiness.candidate.evidenceBaseline
+    } elseif ($Readiness.candidate.version) {
         [string]$Readiness.candidate.version
     } else {
         [string]$Blockers.candidateVersion
@@ -237,7 +239,9 @@ function New-OpsMessage {
 
     $lines = [System.Collections.Generic.List[string]]::new()
     $dateStamp = $ReportDate.ToString("yyyy-MM-dd")
-    $evidenceVersion = if ($Readiness.candidate.version) {
+    $evidenceVersion = if ($Readiness.candidate.evidenceBaseline) {
+        [string]$Readiness.candidate.evidenceBaseline
+    } elseif ($Readiness.candidate.version) {
         [string]$Readiness.candidate.version
     } else {
         [string]$Blockers.candidateVersion

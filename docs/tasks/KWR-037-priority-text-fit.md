@@ -4,6 +4,8 @@ title: Prevent setup strategy text from being squeezed or clipped
 owner: unassigned
 priority: medium
 risk: low
+status: planned
+authority_references: [AGENTS.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
   - UI/MainWindow.lua

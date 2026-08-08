@@ -4,6 +4,8 @@ title: Preserve live Commander UI corrections in reviewed source
 owner: unassigned
 priority: high
 risk: medium
+status: planned
+authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: []
 affected_modules: [UI, tests]
 ---

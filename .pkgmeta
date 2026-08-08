@@ -1,0 +1,49 @@
+package-as: KnomercyWarRoom
+manual-changelog: CHANGELOG.md
+license-output: LICENSE
+
+# Keep the CurseForge package limited to the production addon and release notes.
+ignore:
+  - .github
+  - .gitignore
+  - .gitattributes
+  - AGENTS.md
+  - artifacts
+  - builds
+  - design
+  - docs
+  - knowledge
+  - tests
+  - tools
+  - KWRSentinel
+  - tmp_golden_names.txt
+  - tmp_outcome_names.txt
+  - tmp_replay_names.txt
+  - tmp_run_names.txt
+  - ALPHA_S_TIER_MASTER_PLAN.md
+  - ARCHITECTURE.md
+  - BATTLEGROUND_VERIFICATION.md
+  - CONTRIBUTING.md
+  - CURSEFORGE_DESCRIPTION.md
+  - CURSEFORGE_UPLOAD.md
+  - DESIGN_CONTRACT.md
+  - DEVELOPMENT.md
+  - EXPERT_TIER_BATTLEFIELD_MASTER_PLAN.md
+  - LIVE_VISUAL_SCRUB_WORKSHEET_2026-07-12.md
+  - META_SOURCES.md
+  - PILLAR_EXECUTION_SHEET.md
+  - POST_WINNING_BACKLOG.md
+  - PRODUCT_ROADMAP.md
+  - PROJECT_HANDOFF.md
+  - QA_CHECKLIST.md
+  - README.md
+  - RELEASE_EFFICIENCY_AUDIT_2026-07-11.md
+  - RELEASE_READINESS.md
+  - RELEASE_REWRITE_GUARDRAILS.md
+  - RELEASE_VISION.md
+  - SECURITY.md
+  - SENTINEL_TRANSPORT_SPEC.md
+  - S_TIER_EXECUTION_SCORECARD.md
+  - THIRD_PARTY_NOTICES.md
+  - WINNING_STATE_EXECUTION_MAP.md
+  - WINNING_STATE_RELEASE_GATES.md

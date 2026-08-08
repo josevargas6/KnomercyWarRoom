@@ -114,42 +114,32 @@ try {
         [IO.Directory]::CreateDirectory((Join-Path $tempRoot "distribution\KWRSentinel")) | Out-Null
     }
 
-    foreach ($directory in @(
-        "Core",
-        "Data",
-        "Rulesets",
-        "Compliance",
-        "Adapters",
-        "State",
-        "Intelligence",
-        "Runtime",
-        "Features",
-        "UI"
-    )) {
-        Copy-Item -LiteralPath (Join-Path $root $directory) -Destination $distributionRoot -Recurse
+    foreach ($directory in Get-ProductionPackageDirectories) {
+        $sourceDirectory = Join-Path $root $directory
+        if (-not (Test-Path -LiteralPath $sourceDirectory)) {
+            throw "Production allowlist directory is missing: $directory"
+        }
+        Copy-Item -LiteralPath $sourceDirectory -Destination $distributionRoot -Recurse
     }
     Remove-ReleaseExcludedFiles -RootPath $distributionRoot
-    foreach ($file in @(
-        "KnomercyWarRoom.toc",
-        "README.md",
-        "CHANGELOG.md",
-        "CURSEFORGE_DESCRIPTION.md",
-        "DESIGN_CONTRACT.md",
-        "BATTLEGROUND_VERIFICATION.md",
-        "META_SOURCES.md",
-        "RELEASE_READINESS.md",
-        "THIRD_PARTY_NOTICES.md",
-        "LICENSE"
-    )) {
-        Copy-Item -LiteralPath (Join-Path $root $file) -Destination $distributionRoot
+    foreach ($file in Get-ProductionPackageFiles) {
+        $sourceFile = Join-Path $root $file
+        if (-not (Test-Path -LiteralPath $sourceFile)) {
+            throw "Production allowlist file is missing: $file"
+        }
+        Copy-Item -LiteralPath $sourceFile -Destination $distributionRoot
     }
 $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     Get-ReleaseTocLines -SourceTocPath $sourceTocPath |
         Set-Content -LiteralPath $releaseTocPath -Encoding ASCII
     if ($hasSentinel) {
         $sentinelDistributionRoot = Join-Path $tempRoot "distribution\KWRSentinel"
-        foreach ($item in Get-ChildItem -LiteralPath $sentinelRoot -Force) {
-            Copy-Item -LiteralPath $item.FullName -Destination $sentinelDistributionRoot -Recurse
+        foreach ($file in Get-SentinelProductionFiles) {
+            $sourceFile = Join-Path $sentinelRoot $file
+            if (-not (Test-Path -LiteralPath $sourceFile)) {
+                throw "Sentinel production allowlist file is missing: $file"
+            }
+            Copy-Item -LiteralPath $sourceFile -Destination $sentinelDistributionRoot
         }
         if (-not (Test-Path -LiteralPath (Join-Path $sentinelDistributionRoot "KWRSentinel.toc"))) {
             throw "Sentinel package staging is missing KWRSentinel.toc."
@@ -250,6 +240,11 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
 
     $sourceManifest = [pscustomobject]@{
         candidate = $version
+        productionAllowlist = [pscustomobject]@{
+            directories = @(Get-ProductionPackageDirectories)
+            files = @(Get-ProductionPackageFiles)
+            sentinelFiles = @(Get-SentinelProductionFiles)
+        }
         releaseExclusions = @(Get-ReleaseExcludedEntries)
         distribution = [pscustomobject]@{
             digest = $distributionDigest

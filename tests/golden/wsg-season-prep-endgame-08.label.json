@@ -1,0 +1,126 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "wsg-season-prep-endgame-08-001-label",
+    "replayId":  "wsg-season-prep-endgame-08-001",
+    "mapProfile":  "wsg_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:CAP"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:CHASE"
+                                          ],
+                     "mustStay":  [
+                                      "our_fc"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "discipline",
+                                                  "coverage"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "close_match_cleanly"
+                                           ],
+                     "abortConditions":  [
+                                             "final_state_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "ENDGAME",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "late_game_score_protection",
+                                                               "return_window",
+                                                               "escort"
+                                                           ],
+                                            "preferredComparison":  "preserve the winning path before optional pressure.",
+                                            "safestCounter":  "commit only on the real conversion window.",
+                                            "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                                            "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                                            "doctrineComparisonIds":  [
+                                                                          "WSG_LATE_PROTECT_VS_PRESS",
+                                                                          "WSG_DENY_VS_TRADE",
+                                                                          "WSG_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "WSG_RESP_LATE_GREED",
+                                                                        "WSG_RESP_DENY_TRADE",
+                                                                        "WSG_RESP_RETURN_WINDOW"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the protected path still wins the game",
+                                                              "the enemy desperation route is still denyable",
+                                                              "optional pressure is weaker than direct score protection"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the winning path no longer wins",
+                                                                  "the enemy last-score route cannot be denied in time"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "carrier route truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Synchronize final return with immediate cap. Season-prep branch: deny desperation pressure. Close the game on one clean conversion. Validate this ENDGAME branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "return_window",
+                                              "escort"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "commit only on the real conversion window.",
+                           "primaryComparisonId":  "WSG_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "WSG_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "WSG_LATE_PROTECT_VS_PRESS",
+                                                         "WSG_DENY_VS_TRADE",
+                                                         "WSG_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "WSG_RESP_LATE_GREED",
+                                                       "WSG_RESP_DENY_TRADE",
+                                                       "WSG_RESP_RETURN_WINDOW"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "carrier route truth"
+                                             ]
+                       }
+}

@@ -1,4 +1,8 @@
-# KWR Alpha Project Handoff
+# Historical: KWR Alpha Project Handoff
+
+> This Alpha 9 handoff is preserved as superseded implementation context. It is
+> not an authority, release decision, or work queue. Consult
+> `RELEASE_READINESS.md` for status and `PRODUCT_ROADMAP.md` for priorities.
 
 ## Stable baseline
 
@@ -236,4 +240,3 @@ No slice advances until:
 5. false-positive examples are reviewed through AAR;
 6. the feature demonstrably changes a useful decision without persistent
    visual load.
-

@@ -1,8 +1,8 @@
 # KWR Public Communication Copy
 
-This is the audience-safe source of truth for public project descriptions and
-release announcements. Keep operational details, credentials, channel IDs, and
-private incident evidence in maintainer-only runbooks.
+This is approved audience-safe public copy. Keep operational details,
+credentials, channel IDs, and private incident evidence in maintainer-only
+runbooks. Release authorization remains solely in `RELEASE_POLICY.md`.
 
 ## Commander
 
@@ -10,8 +10,8 @@ Knomercy War Room is a player-controlled Rated Battleground command system for
 World of Warcraft Retail. It turns verified battlefield state into one clear
 next call, assignment, win condition, and abort condition for the team.
 
-The current public candidate is `6.1.0-alpha.33`. It is an active field-test
-release, not a stable guarantee. KWR never auto-casts, changes targets, sends
+The `6.1.0-alpha.36` field-test copy applies to an active field-test release, not a
+stable guarantee. KWR never auto-casts, changes targets, sends
 chat, or performs protected actions. Players remain in control of every action.
 
 Official source and release history: [GitHub](https://github.com/josevargas6/KnomercyWarRoom).
@@ -23,7 +23,7 @@ KWR Sentinel is the compact player execution client for Knomercy War Room. It
 shows commander trust, match state, personal job, movement authority, target
 responsibility, and one hold/win instruction without automating gameplay.
 
-The current public candidate is `6.1.0-alpha.33`. Sentinel is optional and
+The `6.1.0-alpha.36` public copy applies to the optional Sentinel companion and
 works as a safe standalone fallback when Commander is not installed.
 
 Official source and release history: [GitHub](https://github.com/josevargas6/KWRSentinel).

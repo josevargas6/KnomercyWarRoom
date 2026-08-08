@@ -62,4 +62,3 @@ changes, auto-casting, macro execution, or movement automation.
 
 See the [Commander and Sentinel User Guide](https://github.com/josevargas6/KnomercyWarRoom/wiki/Commander-and-Sentinel-User-Guide)
 for the full commander's training path.
-

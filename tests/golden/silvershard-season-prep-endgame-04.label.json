@@ -1,0 +1,124 @@
+﻿{
+    "schema":  "kwr-golden-label-schema",
+    "schemaVersion":  1,
+    "kind":  "golden_decision_label",
+    "labelId":  "silvershard-season-prep-endgame-04-001-label",
+    "replayId":  "silvershard-season-prep-endgame-04-001",
+    "mapProfile":  "ssm_standard",
+    "reviewers":  [
+                      {
+                          "reviewerId":  "reviewer-a",
+                          "role":  "commander",
+                          "agreed":  true
+                      }
+                  ],
+    "decision":  {
+                     "acceptablePrimaryActions":  [
+                                                      "PLAN:PACE_AHEAD"
+                                                  ],
+                     "acceptableFallbackActions":  [
+                                                       "CALL:ESCORT"
+                                                   ],
+                     "forbiddenActions":  [
+                                              "CALL:CHASE"
+                                          ],
+                     "mustStay":  [
+                                      "escort"
+                                  ],
+                     "requiredCapabilities":  [
+                                                  "discipline",
+                                                  "coverage"
+                                              ],
+                     "validTargetClasses":  [
+
+                                            ],
+                     "successConditions":  [
+                                               "close_match_cleanly"
+                                           ],
+                     "abortConditions":  [
+                                             "final_state_breaks"
+                                         ],
+                     "maxDelaySeconds":  8,
+                     "forceUncertaintyWhen":  [
+                                                  "objective_truth_missing"
+                                              ]
+                 },
+    "coverage":  {
+                     "problemTypes":  [
+                                          "OBJECTIVE_THREAT"
+                                      ],
+                     "phase":  "ENDGAME",
+                     "truthBand":  "HIGH",
+                     "branchEvidence":  {
+                                            "familyTags":  [
+                                                               "late_game_score_protection",
+                                                               "escort",
+                                                               "deny"
+                                                           ],
+                                            "preferredComparison":  "preserve the winning path before optional pressure.",
+                                            "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                                            "primaryComparisonId":  "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                            "primaryResponseId":  "SILVERSHARD_RESP_LATE_GREED",
+                                            "doctrineComparisonIds":  [
+                                                                          "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                                          "SILVERSHARD_DENY_VS_TRADE",
+                                                                          "SILVERSHARD_CONVERT_VS_GREED"
+                                                                      ],
+                                            "doctrineResponseIds":  [
+                                                                        "SILVERSHARD_RESP_LATE_GREED",
+                                                                        "SILVERSHARD_RESP_DENY_TRADE"
+                                                                    ],
+                                            "legalWhen":  [
+                                                              "the protected path still wins the game",
+                                                              "the enemy desperation route is still denyable",
+                                                              "optional pressure is weaker than direct score protection"
+                                                          ],
+                                            "invalidatedBy":  [
+                                                                  "the winning path no longer wins",
+                                                                  "the enemy last-score route cannot be denied in time"
+                                                              ],
+                                            "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                                            "evidenceFocus":  [
+                                                                  "objective truth",
+                                                                  "score truth",
+                                                                  "route timing truth"
+                                                              ]
+                                        }
+                 },
+    "rationale":  "Commit only to carts that can still move the final score. Season-prep branch: hold the last required objective. Finish with route discipline. Validate this ENDGAME branch after the new season launches.",
+    "branchEvidence":  {
+                           "familyTags":  [
+                                              "late_game_score_protection",
+                                              "escort",
+                                              "deny"
+                                          ],
+                           "preferredComparison":  "preserve the winning path before optional pressure.",
+                           "safestCounter":  "protect the scoring package while denying the enemy reset.",
+                           "primaryComparisonId":  "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                           "primaryResponseId":  "SILVERSHARD_RESP_LATE_GREED",
+                           "doctrineComparisonIds":  [
+                                                         "SILVERSHARD_LATE_PROTECT_VS_PRESS",
+                                                         "SILVERSHARD_DENY_VS_TRADE",
+                                                         "SILVERSHARD_CONVERT_VS_GREED"
+                                                     ],
+                           "doctrineResponseIds":  [
+                                                       "SILVERSHARD_RESP_LATE_GREED",
+                                                       "SILVERSHARD_RESP_DENY_TRADE"
+                                                   ],
+                           "legalWhen":  [
+                                             "the protected path still wins the game",
+                                             "the enemy desperation route is still denyable",
+                                             "optional pressure is weaker than direct score protection"
+                                         ],
+                           "invalidatedBy":  [
+                                                 "the winning path no longer wins",
+                                                 "the enemy last-score route cannot be denied in time"
+                                             ],
+                           "expectedEnemyCounter":  "Enemy tries to bait greed and reopen one last scoring lane.",
+                           "evidenceFocus":  [
+                                                 "objective truth",
+                                                 "score truth",
+                                                 "route timing truth"
+                                             ]
+                       }
+}
