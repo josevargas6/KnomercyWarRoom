@@ -20,6 +20,18 @@ $deploymentCertificationPath = Join-Path $root "knowledge\deployment-certificati
 $deploymentCertification = if (Test-Path -LiteralPath $deploymentCertificationPath) {
     Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
 } else { $null }
+$retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
+$retailCertification = if (Test-Path -LiteralPath $retailCertificationPath) {
+    Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
+} else { $null }
+$retailBinding = $retailCertification -and $retailCertification.binding.status -eq 'BOUND'
+$observedStabilityFailures = if ($retailCertification) {
+    if ($null -ne $retailCertification.summary.observedStabilityFailedMatches) {
+        [int]$retailCertification.summary.observedStabilityFailedMatches
+    } else {
+        [int]$retailCertification.summary.stabilityFailedMatches
+    }
+} else { 0 }
 $deploymentCertified = $deploymentCertification -and
     $deploymentCertification.candidateVersion -eq $version -and
     $deploymentCertification.result -eq 'PASS' -and
@@ -57,7 +69,8 @@ $report = [ordered]@{
         [ordered]@{
             id = "LIVE-STABILITY"
             priority = "P1"
-            status = if ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
+            status = if ($observedStabilityFailures -gt 0) { "CONFIRMED_DEFECT" }
+                elseif ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
             title = "Flag-map command churn and AAR stability reporting"
             liveProofNeeded = "one complete clean flag match with /kwr verify, /kwr perf, and AAR showing stability pass"
@@ -134,6 +147,19 @@ $report = [ordered]@{
     deploymentGate = [ordered]@{
         status = if ($deploymentCertified) { 'PASS' } else { 'BLOCKED' }
         evidence = 'knowledge/deployment-certification.json'
+    }
+    retailEvidenceGate = [ordered]@{
+        status = if ($retailBinding -and $retailCertification.result -eq 'PASS') {
+            'PASS'
+        } else { 'BLOCKED' }
+        binding = if ($retailCertification) {
+            $retailCertification.binding.status
+        } else { 'MISSING' }
+        completedMatches = if ($retailCertification) {
+            [int]$retailCertification.summary.completedMatches
+        } else { 0 }
+        stabilityFailedMatches = $observedStabilityFailures
+        evidence = 'knowledge/retail-field-certification.json'
     }
 }
 

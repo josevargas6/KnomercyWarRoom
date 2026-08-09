@@ -94,7 +94,10 @@ foreach ($file in $allLua) {
     $relative = $file.FullName.Substring($root.Length + 1)
     $topDirectory = ($relative -split '[\\/]')[0]
     if ($topDirectory -notin @($approvedRuntimeDirectories + 'tests') -and
-        $relative -ne 'tools\replay-test-runner.lua') {
+        $relative -notin @(
+            'tools\replay-test-runner.lua',
+            'tools\retail-savedvariables-export.lua'
+        )) {
         Add-AuditError "Runtime Lua exists outside an approved architecture directory: $relative"
     }
 }

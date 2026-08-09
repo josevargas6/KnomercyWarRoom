@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Added KWR-048 read-only SavedVariables certification, which found four
+  completed Alpha 36-compatible Retail matches and four interruptions without
+  exposing local account paths or player identities.
+- Fixed active-play replacement so a non-superior alternative remains held
+  after the minimum commitment window; command issuance timestamps now remain
+  anchored to the published command instead of resetting every evaluation.
 - Added KWR-053 with 1,000 evenly distributed, deterministic season-prep
   scenarios and corpus fixtures (100 per supported battleground). Every new
   entry is pending season review and excluded from runtime expert selection

@@ -482,6 +482,7 @@ local files = {
     "Runtime/Assignments.lua",
     "Runtime/Commander.lua",
     "Runtime/Learning.lua",
+    "Runtime/SafetyMonitor.lua",
     "Runtime/AAR.lua",
     "Runtime/Verification.lua",
     "Runtime/MemoryBudget.lua",
@@ -555,6 +556,20 @@ local bootstrap = assert(_G.KWR_BootstrapFrame, "Bootstrap frame was not created
 assert(bootstrap.scripts.OnEvent, "Bootstrap OnEvent handler was not registered.")
 bootstrap.scripts.OnEvent(bootstrap, "ADDON_LOADED", "KnomercyWarRoom")
 bootstrap.scripts.OnEvent(bootstrap, "PLAYER_LOGIN")
+assert(KWR.SafetyMonitor and KWR.SafetyMonitor.frame
+    and KWR.SafetyMonitor.frame:IsEventRegistered("ADDON_ACTION_BLOCKED")
+    and KWR.SafetyMonitor.frame:IsEventRegistered("ADDON_ACTION_FORBIDDEN"),
+    "Retail safety monitor did not register both restricted-action events.")
+KWR.SafetyMonitor.__testBefore = KWR.SafetyMonitor:Snapshot()
+KWR.SafetyMonitor.frame.scripts.OnEvent(
+    KWR.SafetyMonitor.frame, "ADDON_ACTION_BLOCKED", "tainted", "TargetUnit")
+KWR.SafetyMonitor.__testAfter = KWR.SafetyMonitor:Snapshot()
+assert(KWR.SafetyMonitor.__testAfter.blocked == KWR.SafetyMonitor.__testBefore.blocked + 1
+    and KWR.SafetyMonitor.__testAfter.total == KWR.SafetyMonitor.__testBefore.total + 1
+    and KWR.SafetyMonitor.__testAfter.recent[#KWR.SafetyMonitor.__testAfter.recent].action == "TargetUnit",
+    "Retail safety monitor did not capture bounded blocked-action evidence.")
+KWR.SafetyMonitor.__testBefore = nil
+KWR.SafetyMonitor.__testAfter = nil
 
 local function smokeBootstrapExports()
     return {
@@ -2211,6 +2226,7 @@ assert(type(latestHeldSuppression) == "table"
 assert(heldCommand.status == "WIN", "Commander did not publish the projected status.")
 local stableTrendState = KWR.Store:Get()
 stableTrendState.activePlay.issuedAt = KWR.Util:Now() - 5
+stableTrendState.activePlay.minimumCommitUntil = KWR.Util:Now() - 1
 local candidateId = KWR.Util:Signature({
     "NODE",
     "ARATHI_FORCE_ROTATE",
@@ -2238,7 +2254,7 @@ assert(superiorCandidate.activePlayDecision
     and type(switchScore) == "table"
     and type(switchScore.switchCost) == "table"
     and (switchScore.switchCost.total or 0) > 0,
-    "Commander did not expose explicit switch-cost scoring for a held node replacement candidate.")
+    "Commander did not retain a non-superior replacement after the minimum commitment window.")
 assert((switchScore.switchCost.total or 0) >= 20,
     "Arathi held-node replacement did not carry the stronger outer/structure switch-cost posture.")
 local invalidatedSnapshot = KWR.Util:Copy(replacementSnapshot)
@@ -2247,6 +2263,7 @@ invalidatedState.activePlay.reviewAt = KWR.Util:Now() - 6
 invalidatedState.activePlay.expectedArrivalAt = KWR.Util:Now() - 1
 invalidatedState.activePlay.expectedResolutionAt = KWR.Util:Now() + 12
 invalidatedState.activePlay.hardDeadlineAt = KWR.Util:Now() + 18
+invalidatedState.activePlay.minimumCommitUntil = KWR.Util:Now() + 8
 invalidatedState.activePlay.phase = "COMMITTED"
 invalidatedSnapshot.objectives = KWR.Util:Copy(invalidatedSnapshot.objectives or {})
 invalidatedSnapshot.objectives.rows = KWR.Util:Copy(invalidatedSnapshot.objectives.rows or {})
@@ -4088,6 +4105,12 @@ if not releaseOnly then
     assert(#KWR.AAR:GetHistory() == 1, "Completed match was not committed to the AAR journal.")
     local completed = KWR.AAR:GetHistory()[1]
     assert(completed.result == "VICTORY", "AAR did not record the assigned Horde team's victory.")
+    assert(completed.addonVersion == KWR.version
+        and completed.schemaVersion == KWR.schemaVersion
+        and completed.performance and completed.performance.samples > 0
+        and completed.performance.maxRefreshMs >= 0
+        and completed.safety and completed.safety.total == 0,
+        "AAR did not bind version, performance, and safety evidence to the completed match.")
     completed.primaryPlanID = completed.primaryPlanID or "AB_STABLE_THREE"
     completed.result = "VICTORY"
     KWR.AAR:SaveFeedback(completed.id, { wonBy = "Objectives", notes = "Reviewed smoke match." })

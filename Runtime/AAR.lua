@@ -330,6 +330,8 @@ function AAR:Start(state)
     local snapshot = state.snapshot
     self.active = {
         id = tostring(epoch()) .. ":" .. tostring(snapshot.context.mapKey),
+        addonVersion = KWR.version,
+        schemaVersion = KWR.schemaVersion,
         mapKey = snapshot.context.mapKey,
         mapName = snapshot.context.mapName,
         team = KWR.Util:Copy(snapshot.context.team),
@@ -351,8 +353,54 @@ function AAR:Start(state)
         ratingChange = nil,
         lastSignature = nil,
         matchComplete = false,
+        performance = {
+            samples = 0,
+            maxRefreshMs = 0,
+            maxP95Ms = 0,
+            maxMemoryKB = 0,
+            firstMemoryKB = nil,
+            lastMemoryKB = nil,
+            maxTransitionMs = 0,
+            errors = 0,
+        },
+        safetyBaseline = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {},
+        safety = { blocked = 0, forbidden = 0, total = 0 },
     }
     self:PersistActive()
+end
+
+function AAR:CaptureRuntimeEvidence(active, state)
+    local diagnostics = type(state.diagnostics) == "table" and state.diagnostics or {}
+    local performance = active.performance or {}
+    performance.samples = (performance.samples or 0) + 1
+    performance.maxRefreshMs = math.max(
+        performance.maxRefreshMs or 0, diagnostics.lastDurationMs or 0)
+    performance.maxP95Ms = math.max(
+        performance.maxP95Ms or 0, diagnostics.p95DurationMs or 0)
+    performance.maxMemoryKB = math.max(
+        performance.maxMemoryKB or 0, diagnostics.memoryKB or 0)
+    if performance.firstMemoryKB == nil and diagnostics.memoryKB ~= nil then
+        performance.firstMemoryKB = diagnostics.memoryKB
+    end
+    if diagnostics.memoryKB ~= nil then
+        performance.lastMemoryKB = diagnostics.memoryKB
+    end
+    performance.maxTransitionMs = math.max(
+        performance.maxTransitionMs or 0,
+        diagnostics.lastTransitionDurationMs or 0)
+    performance.errors = math.max(performance.errors or 0, diagnostics.errors or 0)
+    active.performance = performance
+end
+
+function AAR:FinalizeRuntimeEvidence(active)
+    local baseline = active.safetyBaseline or {}
+    local current = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {}
+    active.safety = {
+        blocked = math.max(0, (current.blocked or 0) - (baseline.blocked or 0)),
+        forbidden = math.max(0, (current.forbidden or 0) - (baseline.forbidden or 0)),
+    }
+    active.safety.total = active.safety.blocked + active.safety.forbidden
+    active.safetyBaseline = nil
 end
 
 function AAR:CaptureTeams(active, snapshot)
@@ -546,6 +594,7 @@ function AAR:Record(state)
     active.truthQualified = state.snapshot.score.source == "ui_widget"
         and state.snapshot.context.team
         and state.snapshot.context.team.side ~= nil
+    self:CaptureRuntimeEvidence(active, state)
     local reporter = state.snapshot.reporter or {}
     local combat = state.snapshot.combat or {}
     active.lastFeatures = {
@@ -882,6 +931,7 @@ function AAR:CommitInterrupted(reason)
     end
     entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
     entry.commandStability = self:BuildCommandStabilitySummary()
+    self:FinalizeRuntimeEvidence(entry)
     KWR.db.journal.history[#KWR.db.journal.history + 1] = entry
     KWR.db.journal.history = trimList(KWR.db.journal.history, self.maxHistory)
     self.lastCompleted = entry
@@ -918,6 +968,7 @@ function AAR:Finish(state)
     entry.primaryPlanID = primaryPlanID
     entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
     entry.commandStability = self:BuildCommandStabilitySummary()
+    self:FinalizeRuntimeEvidence(entry)
     entry.outcomeAttribution = entry.decisionReviews[#entry.decisionReviews]
         and KWR.Util:Copy(entry.decisionReviews[#entry.decisionReviews]) or nil
     if KWR.OpponentModels and KWR.OpponentModels.RecordMatch then
@@ -990,7 +1041,7 @@ function AAR:Export(entry)
     if not entry then return nil, "No completed KWR match evidence is available." end
     local lines = {
         "========== KWR MATCH EXPORT ==========",
-        "Version: " .. clean(KWR.version, "Unknown", 32),
+        "Version: " .. clean(entry.addonVersion or KWR.version, "Unknown", 32),
         "Map: " .. clean(entry.mapName or entry.mapKey, "Unknown", 80),
         "Result: " .. clean(entry.result, "Unknown", 20),
         "Final Score: " .. (entry.scoreEnd
@@ -1003,6 +1054,19 @@ function AAR:Export(entry)
         "Team Faction: " .. clean(entry.team and entry.team.faction, "Unknown", 16),
         "Review Context: " .. unknown(entry.feedback and sessionType(entry.feedback.sessionType) or ""),
         sessionInterpretation(sessionType(entry.feedback and entry.feedback.sessionType)),
+        string.format("Runtime: samples %d | refresh max %.3f ms | p95 max %.3f ms | memory %.1f -> %.1f KB / max %.1f KB | transition max %.3f ms | errors %d",
+            entry.performance and entry.performance.samples or 0,
+            entry.performance and entry.performance.maxRefreshMs or 0,
+            entry.performance and entry.performance.maxP95Ms or 0,
+            entry.performance and entry.performance.firstMemoryKB or 0,
+            entry.performance and entry.performance.lastMemoryKB or 0,
+            entry.performance and entry.performance.maxMemoryKB or 0,
+            entry.performance and entry.performance.maxTransitionMs or 0,
+            entry.performance and entry.performance.errors or 0),
+        string.format("Safety: blocked %d | forbidden %d | total %d",
+            entry.safety and entry.safety.blocked or 0,
+            entry.safety and entry.safety.forbidden or 0,
+            entry.safety and entry.safety.total or 0),
         "",
         "Friendly Team:",
     }

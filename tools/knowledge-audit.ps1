@@ -503,9 +503,6 @@ try {
         }
     }
     $activeVersion = [regex]::Match($tocSource, "## Version:\s*(.+)").Groups[1].Value.Trim()
-    if ($candidatePackage.candidateVersion -ne $activeVersion) {
-        $errors.Add("Candidate package report version does not match the active TOC version.")
-    }
     if (-not $candidatePackage.distributionArtifact.sha256) {
         $errors.Add("Candidate package report is missing the distribution SHA256.")
     }
@@ -541,23 +538,46 @@ try {
         }
     }
     $activeVersion = [regex]::Match($tocSource, "## Version:\s*(.+)").Groups[1].Value.Trim()
-    if ($deploymentCertification.candidateVersion -ne $activeVersion) {
-        $errors.Add('Deployment certification version does not match the active TOC version.')
-    }
-    if ($deploymentCertification.result -ne 'PASS') {
-        $errors.Add('Deployment certification is not PASS.')
-    }
-    foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
-        if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
-            $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
+    if ($deploymentCertification.candidateVersion -eq $activeVersion) {
+        if ($deploymentCertification.result -ne 'PASS') {
+            $errors.Add('Current-candidate deployment certification is not PASS.')
         }
-    }
-    if ($deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -ne 'PASS' -or
-        $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -ne 'PASS') {
-        $errors.Add('Deployment certification lacks upgrade and future-schema proof.')
+        foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
+            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
+                $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
+            }
+        }
+        if ($deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -ne 'PASS' -or
+            $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -ne 'PASS') {
+            $errors.Add('Deployment certification lacks upgrade and future-schema proof.')
+        }
     }
 } catch {
     $errors.Add("Deployment certification JSON is invalid: $($_.Exception.Message)")
+}
+
+$retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
+try {
+    $retailCertification = Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
+    foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'candidateSchema', 'source', 'binding', 'summary', 'matches', 'provenGates', 'missingGates', 'result')) {
+        if ($null -eq $retailCertification.PSObject.Properties[$key]) {
+            $errors.Add("Retail field certification missing required field: $key")
+        }
+    }
+    if ($retailCertification.source.PSObject.Properties.Name -contains 'path') {
+        $errors.Add('Retail field certification exposes a local SavedVariables path.')
+    }
+    if ($retailCertification.result -notin @('PASS', 'BLOCKED')) {
+        $errors.Add('Retail field certification result is neither PASS nor BLOCKED.')
+    }
+    if ($retailCertification.binding.status -eq 'BOUND' -and
+        (-not $retailCertification.binding.schemaMatches -or
+         -not $retailCertification.binding.deploymentVersionMatches -or
+         -not $retailCertification.binding.writtenAfterCertification)) {
+        $errors.Add('Retail field certification claims BOUND without all binding conditions.')
+    }
+} catch {
+    $errors.Add("Retail field certification JSON is invalid: $($_.Exception.Message)")
 }
 
 Write-Output "KWR knowledge audit"

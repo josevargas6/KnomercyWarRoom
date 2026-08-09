@@ -35,7 +35,13 @@ foreach ($audit in @("source-drift-audit.ps1", "document-authority-audit.ps1")) 
     }
 }
 
-foreach ($requiredTool in @("deployment-manifest-audit.ps1", "test-deployment-manifest.ps1")) {
+foreach ($requiredTool in @(
+    "deployment-manifest-audit.ps1",
+    "test-deployment-manifest.ps1",
+    "retail-savedvariables-audit.ps1",
+    "retail-savedvariables-export.lua",
+    "test-retail-savedvariables-audit.ps1"
+)) {
     if (-not (Test-Path -LiteralPath (Join-Path $PSScriptRoot $requiredTool))) {
         Add-ValidationError "Required deployment-verification tool is missing: $requiredTool"
     }

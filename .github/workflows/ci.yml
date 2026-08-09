@@ -49,6 +49,7 @@ jobs:
         run: |
           ./tools/test-automation.ps1
           ./tools/test-deployment-manifest.ps1
+          ./tools/test-retail-savedvariables-audit.ps1
 
       - name: Test public social copy
         shell: pwsh
