@@ -37,6 +37,16 @@ $savedItem = Get-Item -LiteralPath $savedPath
 $savedHash = (Get-FileHash -LiteralPath $savedPath -Algorithm SHA256).Hash.ToUpperInvariant()
 
 function Find-RetailEvidenceRuntime {
+    $pathNode = Get-Command "node" -ErrorAction SilentlyContinue
+    $pathFengari = Get-Command "fengari" -ErrorAction SilentlyContinue
+    if ($pathNode -and $pathFengari) {
+        return [pscustomobject]@{
+            Mode = "Cli"
+            Command = $pathFengari.Source
+            Node = $pathNode.Source
+            Cli = $null
+        }
+    }
     $nodeCandidates = @(
         $env:KWR_NODE_EXE,
         (Join-Path $env:USERPROFILE ".cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe"),
@@ -56,7 +66,12 @@ function Find-RetailEvidenceRuntime {
     if (-not $node -or -not $cli) {
         throw "Cached Node.js/Fengari runtime is required for Retail SavedVariables certification."
     }
-    return [pscustomobject]@{ Node = $node; Cli = $cli }
+    return [pscustomobject]@{
+        Mode = "NodeCli"
+        Command = $node
+        Node = $node
+        Cli = $cli
+    }
 }
 
 $exportLines = if ($ExportFile) {
@@ -73,8 +88,12 @@ $exportLines = if ($ExportFile) {
                     Where-Object { Test-Path -LiteralPath $_ }
             ) -join ";"
         }
-        $output = & $runtime.Node $runtime.Cli `
-            (Join-Path $PSScriptRoot "retail-savedvariables-export.lua") $savedPath 2>&1
+        $exporter = Join-Path $PSScriptRoot "retail-savedvariables-export.lua"
+        $output = if ($runtime.Mode -eq "Cli") {
+            & $runtime.Command $exporter $savedPath 2>&1
+        } else {
+            & $runtime.Node $runtime.Cli $exporter $savedPath 2>&1
+        }
         if ($LASTEXITCODE -ne 0) {
             throw "SavedVariables exporter failed: $($output -join [Environment]::NewLine)"
         }
