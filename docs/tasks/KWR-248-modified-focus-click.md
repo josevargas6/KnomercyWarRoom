@@ -4,7 +4,7 @@ title: Require Shift for tracker focus assignment
 owner: unassigned
 priority: medium
 risk: medium
-status: planned
+status: in_progress
 authority_references: [AGENTS.md, SECURITY.md]
 dependencies: []
 affected_modules:
@@ -24,16 +24,23 @@ Left-click remains fast targeting, while focus assignment is an intentional Shif
 
 Team and enemy tracker rows require the Shift modifier for focus assignment.
 
+# Current behavior
+
+Friendly and enemy rows retain left-click targeting. Their right-click macros
+put every focus operation behind `mod:shift`, and deterministic smoke coverage
+asserts the exact secure attributes. Retail interaction verification remains
+open for the complete in-combat cycle.
+
 # Non-goals
 
 Do not change left-click targeting or the existing combat-lockdown safety boundary.
 
 # Acceptance criteria
 
-- [ ] Left-click still targets the clicked unit or enemy.
-- [ ] Shift+Right-Click assigns focus.
-- [ ] Plain right-click does not assign focus.
-- [ ] Tooltips communicate the modified-click behavior.
+- [x] Left-click still targets the clicked unit or enemy.
+- [x] Shift+Right-Click assigns focus.
+- [x] Plain right-click does not assign focus.
+- [x] Tooltips communicate the modified-click behavior.
 
 # Verification
 

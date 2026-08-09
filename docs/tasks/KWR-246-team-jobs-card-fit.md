@@ -4,7 +4,7 @@ title: Fit all Team Jobs assignment rows
 owner: unassigned
 priority: medium
 risk: low
-status: planned
+status: in_progress
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
@@ -37,8 +37,8 @@ Keep the change local to the Tactical Map page layout.
 
 # Acceptance criteria
 
-- [ ] All ten Team Jobs rows fit inside the card.
-- [ ] Neighboring cards and assignment data remain unchanged.
+- [x] All ten Team Jobs rows fit inside the card geometry.
+- [x] Neighboring cards and assignment data remain unchanged.
 
 # Verification
 

@@ -4760,6 +4760,18 @@ assert(personalRow and personalRow.detailText.value == "CC -> Priest-V",
         .. tostring(personalRow and personalRow.displayName) .. " | "
         .. tostring(personalRow and personalRow.detailText.value) .. " | "
         .. tostring(personalKey) .. " | " .. table.concat(teamRowDebug, ", "))
+assert(personalRow:GetAttribute("type1") == "target"
+    and personalRow:GetAttribute("type2") == "macro"
+    and personalRow:GetAttribute("macrotext2")
+        == "/focus [mod:shift,@" .. tostring(personalRow:GetAttribute("unit")) .. "]",
+    "Friendly tracker binding did not preserve left-click target and modified right-click focus.")
+assert(killRow:GetAttribute("type1") == "macro"
+    and killRow:GetAttribute("type2") == "macro"
+    and killRow:GetAttribute("macrotext1")
+        == "/cleartarget\n/targetexact Warrior-Z"
+    and killRow:GetAttribute("macrotext2")
+        == "/targetexact [mod:shift] Warrior-Z\n/focus [mod:shift]\n/targetlasttarget [mod:shift]",
+    "Enemy tracker binding did not preserve left-click target and Shift+Right-Click focus only.")
 assert(killRow and killRow.detailText.value == "KILL"
     and controlRow and controlRow.detailText.value == "CC Knomercy"
     and killRow.detailIcon.texture ~= nil
@@ -4890,6 +4902,7 @@ assert(KWR.MainWindow.builtPageCount == 4
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.height == 514
     and KWR.MainWindow.pages.TACTICAL.timelineCard.height == 94
     and KWR.MainWindow.pages.TACTICAL.controlsCard.height == 74
+    and KWR.MainWindow.pages.TACTICAL.assignmentCard.height == 194
     and #KWR.MainWindow.pages.TACTICAL.assignmentCard.rows == 10
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.heading.value == "LIVE BATTLEFIELD VIEW"
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.summary.height == 70
