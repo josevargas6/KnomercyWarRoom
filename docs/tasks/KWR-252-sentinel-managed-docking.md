@@ -32,7 +32,7 @@ side stack with the smallest overlap; a player drag remains authoritative.
 - [x] Managed Sentinel placement avoids active KWR Commander surfaces.
 - [x] Manual Sentinel dragging disables managed repositioning for that surface.
 - [x] Reset restores managed docking.
-- [ ] Retail screenshot verifies the card and helper do not overlap Commander surfaces.
+- [x] Retail screenshot verifies the card and helper do not overlap Commander surfaces (owner-attested).
 
 # Verification
 

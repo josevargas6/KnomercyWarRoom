@@ -1,13 +1,13 @@
 {
     "schema":  "kwr-retail-field-certification",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-09T02:46:25Z",
-    "candidateVersion":  "6.1.0-alpha.38",
+    "generatedAt":  "2026-08-09T04:20:50Z",
+    "candidateVersion":  "6.1.0-alpha.40",
     "candidateSchema":  60129,
     "source":  {
                    "fileName":  "KnomercyWarRoom.lua",
-                   "sha256":  "22711DF95932E1A272CC0A8D3ED57BC53ABF16A81DF093DD58F2A1B34A5E5761",
-                   "lastWriteTimeUtc":  "2026-08-09T02:09:34Z",
+                   "sha256":  "78029308A97EB13E9A090C7A40FBDF0B188241BF0271E95288AC63A2F2EAF870",
+                   "lastWriteTimeUtc":  "2026-08-09T03:18:19Z",
                    "historyCount":  8,
                    "candidateMatchCount":  0,
                    "interruptedCheckpoint":  false
@@ -15,8 +15,8 @@
     "binding":  {
                     "status":  "UNBOUND",
                     "schemaMatches":  true,
-                    "deploymentVersionMatches":  true,
-                    "writtenAfterCertification":  false,
+                    "deploymentVersionMatches":  false,
+                    "writtenAfterCertification":  true,
                     "deploymentCertifiedAt":  "2026-08-09T02:45:52Z"
                 },
     "summary":  {

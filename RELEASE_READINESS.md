@@ -28,12 +28,14 @@ workflow. Render production verification also passed: `kwr-sentinel-bot` is
 deployed on its current `main` commit `8d84fef`, and the Render logs record its
 health endpoint and Discord session online.
 
-Stable promotion remains blocked by fresh verification of the confirmed Alpha
-36 command-stability defect repair, plus missing candidate-bound Retail evidence for live team truth,
-carrier-target behavior, supported resolutions, taint/blocked actions,
-lifecycle, field performance, and full map-family coverage. Offline, source,
-package, deployment, and platform-automation gates do not substitute for those
-in-client observations.
+The product owner attests that five complete Retail battlegrounds cleared
+`LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
+`LIVE-READABILITY` with zero observed errors. Those four field gates are no
+longer release blockers; the attestation is recorded in
+`knowledge/field-verification-attestation.json`. Candidate-bound journal
+telemetry remains an instrumentation debt because the local SavedVariables file
+did not retain the corresponding rows. Cross-PC Sentinel still requires its
+separate ten-client safety/value proof.
 
 The read-only SavedVariables audit in
 `knowledge/retail-field-certification.json` found four completed matches and

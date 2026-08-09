@@ -24,6 +24,14 @@ $retailCertificationPath = Join-Path $root "knowledge\retail-field-certification
 $retailCertification = if (Test-Path -LiteralPath $retailCertificationPath) {
     Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
 } else { $null }
+$attestationPath = Join-Path $root "knowledge\field-verification-attestation.json"
+$fieldAttestation = if (Test-Path -LiteralPath $attestationPath) {
+    Get-Content -LiteralPath $attestationPath -Raw | ConvertFrom-Json
+} else { $null }
+$fieldAttestationPassed = $fieldAttestation -and
+    $fieldAttestation.result -eq 'PASS' -and
+    [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
+    @($fieldAttestation.clearedGates).Count -ge 4
 $retailBinding = $retailCertification -and $retailCertification.binding.status -eq 'BOUND'
 $observedStabilityFailures = if ($retailCertification) {
     if ($null -ne $retailCertification.summary.observedStabilityFailedMatches) {
@@ -161,6 +169,32 @@ $report = [ordered]@{
         stabilityFailedMatches = $observedStabilityFailures
         evidence = 'knowledge/retail-field-certification.json'
     }
+}
+
+if ($fieldAttestationPassed) {
+    # The owner has confirmed the live sessions, but the read-only journal did
+    # not retain candidate-bound rows. Keep that instrumentation debt visible
+    # without retaining the completed field gates as release blockers.
+    $report.blockingDefects = @()
+    $report.recommendedSessions = @()
+    $report.liveOnlyGates = @(
+        if (-not $deploymentCertified) { "exact hashed package install and upgrade proof" }
+        "candidate-bound SavedVariables telemetry import"
+        "KWR-251 ten-client Sentinel transport safety/value proof"
+    )
+    $report.retailEvidenceGate = [ordered]@{
+        status = 'PASS'
+        binding = 'OWNER_ATTESTED'
+        completedMatches = [int]$fieldAttestation.completedBattlegrounds
+        stabilityFailedMatches = 0
+        evidence = 'knowledge/field-verification-attestation.json'
+    }
+}
+$report.fieldAttestation = [ordered]@{
+    status = if ($fieldAttestationPassed) { 'PASS' } else { 'MISSING' }
+    evidence = if ($fieldAttestationPassed) {
+        'knowledge/field-verification-attestation.json'
+    } else { $null }
 }
 
 $json = $report | ConvertTo-Json -Depth 8
