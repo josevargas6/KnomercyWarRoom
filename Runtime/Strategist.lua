@@ -146,6 +146,8 @@ local function doctrineSelection(snapshot, prediction, currentState, result)
         branch = KWR.OpenerDoctrine:Select(snapshot.context.mapKey, {
             ourComposition = result.ourComposition,
             enemyComposition = result.enemyComposition,
+            ourTier = result.ourTier,
+            enemyTier = result.enemyTier,
             compThreat = compThreat,
             enemyDefenseModel = defenseModel,
         })

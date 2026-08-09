@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added KWR-253 composition-aware opening coverage. Each of the ten supported
+  maps now exposes fifteen theory-reviewed starting branches, including ten new
+  friendly/enemy composition matchups and qualified-tier routes. They retain
+  conservative fallbacks and require Retail validation before promotion.
 - Added managed Sentinel docking to the Commander LayoutCoordinator. When both
   addons run on one client, the execution card and status helper choose the
   lowest-overlap screen edge around active Commander surfaces; dragging either

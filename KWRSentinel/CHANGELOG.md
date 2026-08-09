@@ -1,5 +1,9 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.40 - 2026-08-09
+
+- Aligns Sentinel metadata with Commander's composition-aware opening candidate.
+
 ## 6.1.0-alpha.39 - 2026-08-09
 
 - Uses the Commander LayoutCoordinator for managed screen-edge docking when

@@ -1465,6 +1465,28 @@ assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatu
     "Season-prep scenario corpus entry lost its pending-review guard.")
 assert(KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus ~= "PENDING_SEASON_REVIEW",
     "Season-prep scenario entered live expert selection before review.")
+do
+    for _, mapKey in ipairs({
+        "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS",
+        "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING",
+    }) do
+        assert(KWR.OpenerDoctrine:Count(mapKey) >= 15,
+            "Opener doctrine did not expose fifteen branches for " .. mapKey .. ".")
+    end
+    local stealthBunkerOpening = KWR.OpenerDoctrine:Select("ARATHI", {
+        ourComposition = { id = "STEALTH" },
+        enemyComposition = { id = "BUNKER" },
+    })
+    assert(stealthBunkerOpening.id == "ARATHI_OPEN_STEALTH_VS_BUNKER",
+        "Opener doctrine did not select the friendly/enemy composition branch.")
+    local tierOpening = KWR.OpenerDoctrine:Select("ARATHI", {
+        ourComposition = { id = "BALANCED" },
+        enemyComposition = { id = "STEALTH" },
+        ourTier = { id = "NODE_LOCKDOWN" },
+    })
+    assert(tierOpening.id == "ARATHI_OPEN_NODE_LOCKDOWN_VS_STEALTH",
+        "Opener doctrine did not select the qualified roster-tier branch.")
+end
 local tpMapExpertReview = KWR.ScenarioExpertCorpus:GetMapSummary("TWINPEAKS")
 assert(tpMapExpertReview
     and tpMapExpertReview.scenarios == 120
