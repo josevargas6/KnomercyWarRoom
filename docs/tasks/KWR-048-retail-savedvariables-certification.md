@@ -26,9 +26,12 @@ unsupported promotion claims.
 
 # Current behavior
 
-Retail AAR records exist in SavedVariables, but repository maintenance reports
-do not inspect them. Live certification therefore remains blocked even when
-usable post-deployment evidence exists.
+The read-only exporter and candidate-bound audit inspect Retail AAR records and
+generate `knowledge/retail-field-certification.json`. Historical Alpha36 rows
+are correctly reported as unbound to Alpha37. The task remains in progress
+until Alpha37 is deployed and a fresh candidate-bound Retail session is
+captured; implementation acceptance is complete, but field certification is
+not.
 
 # Required behavior
 
@@ -50,12 +53,12 @@ fail closed when evidence is missing, stale, interrupted, or below budget.
 
 # Acceptance criteria
 
-- [ ] Exporter reads the journal and emits sanitized match rows.
-- [ ] Audit rejects evidence older than the certified deployment.
-- [ ] Audit distinguishes completed, interrupted, ready, and failed sessions.
-- [ ] Generated certification lists both proven and missing Retail gates.
-- [ ] Deterministic fixtures cover pass and fail-closed behavior.
-- [ ] Validation and automation tests pass.
+- [x] Exporter reads the journal and emits sanitized match rows.
+- [x] Audit rejects evidence older than the certified deployment.
+- [x] Audit distinguishes completed, interrupted, ready, and failed sessions.
+- [x] Generated certification lists both proven and missing Retail gates.
+- [x] Deterministic fixtures cover pass and fail-closed behavior.
+- [x] Validation and automation tests pass.
 
 # Verification
 
