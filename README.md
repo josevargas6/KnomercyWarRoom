@@ -149,6 +149,16 @@ Candidate actions name a target and compare opportunity cost, reversibility,
 arrival evidence, and objective impact. Their 0-100 values are heuristic
 decision scores, not fabricated statistical win probabilities.
 
+## Sentinel team transport
+
+KWR Sentinel supports the reviewed `KWRSync1` addon-message bridge for members
+of the same battleground group. Commander remains the only strategic brain.
+Sentinel clients send only bounded legal observations and receive compact
+personal assignment, control, and action relays. Traffic is limited to
+`INSTANCE_CHAT`, `RAID`, or test `PARTY`; it never uses visible chat and never
+targets, focuses, casts, moves, or changes secure controls. The exact protocol,
+limits, expiry, and security rules are in `SENTINEL_TRANSPORT_SPEC.md`.
+
 ## Install
 
 Place the `KnomercyWarRoom` folder in:
@@ -192,7 +202,8 @@ Restart World of Warcraft or reload the UI.
 
 KWR:
 
-- never sends chat or addon-channel messages automatically;
+- never sends visible chat automatically; reviewed `KWRSync1` addon messages
+  are limited to Commander/Sentinel battleground transport;
 - never targets, focuses, casts, or runs macros automatically;
 - exposes target/focus only through pre-bound secure rows activated by the player's hardware click;
 - exposes six fixed Instance Chat quick calls through pre-bound secure buttons

@@ -185,6 +185,7 @@ function Runtime:ResetTransientTruth()
     if KWR.Commander and KWR.Commander.ResetSession then
         KWR.Commander:ResetSession()
     end
+    if KWR.SentinelIngress then KWR.SentinelIngress:Reset() end
     if KWR.EncounterHistory then
         KWR.EncounterHistory.sessionKey = nil
         KWR.EncounterHistory.sessionSeen = {}
@@ -374,6 +375,9 @@ function Runtime:Refresh(reason)
         end
         snapshot.context.matchComplete = self.matchComplete == true
         snapshot = self:ApplyMatchCompleteFallback(snapshot)
+        if KWR.SentinelMerge then
+            snapshot = KWR.SentinelMerge:Apply(snapshot)
+        end
         snapshot = KWR.EncounterHistory:Enrich(snapshot)
         if KWR.KnowledgeManifest and KWR.KnowledgeManifest.Status then
             snapshot.knowledgeStatus = KWR.KnowledgeManifest:Status(snapshot)
@@ -452,6 +456,7 @@ function Runtime:Refresh(reason)
             local published = KWR.Store:Publish(
                 snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
             if KWR.CommandAudio then KWR.CommandAudio:Observe(published) end
+            if KWR.CommanderComm then KWR.CommanderComm:Relay(published) end
         end
     end, runtimeErrorHandler)
     if not ok then

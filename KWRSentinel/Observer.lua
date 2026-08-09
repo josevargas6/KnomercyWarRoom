@@ -1,0 +1,86 @@
+local _, Sentinel = ...
+
+local Observer = { lastState = "", lastVisible = "", lastCast = "" }
+Sentinel.Observer = Observer
+
+local function clean(value, maximum)
+    return tostring(value or ""):gsub("[^%w%._%-]", "_"):sub(1, maximum or 64)
+end
+
+local function targetObservation()
+    if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
+    local name = clean(UnitName("target"), 64)
+    if name == "" then return nil end
+    local visible = UnitIsVisible and UnitIsVisible("target") and "1" or "0"
+    local range = CheckInteractDistance and CheckInteractDistance("target", 3) and "1" or "0"
+    return "enemy=" .. name .. ";visible=" .. visible .. ";range=" .. range .. ";engaged=0"
+end
+
+local function castObservation()
+    if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
+    local name = UnitCastingInfo("target")
+    if not name then name = UnitChannelInfo("target") end
+    if not name then return nil end
+    return "enemy=" .. clean(UnitName("target"), 64) .. ";spell=" .. clean(name, 64) .. ";state=START"
+end
+
+function Observer:SendHello()
+    local _, class = UnitClass("player")
+    Sentinel.Comm:Send("HELLO", "addon=" .. clean(Sentinel.version, 24)
+        .. ";class=" .. clean(class, 24) .. ";role=UNKNOWN;caps=1")
+end
+
+function Observer:Tick()
+    if not Sentinel.Comm then return end
+    local dead = UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") == true
+    local state = "alive=" .. (dead and "0" or "1") .. ";connected=1;reach=UNKNOWN"
+    if state ~= self.lastState then
+        Sentinel.Comm:Send("STATE", state)
+        self.lastState = state
+    else
+        Sentinel.Comm:Send("STATE", state)
+    end
+    local visible = targetObservation()
+    if visible and visible ~= self.lastVisible then
+        Sentinel.Comm:Send("OBS_VISIBLE", visible)
+        self.lastVisible = visible
+    end
+    local cast = castObservation()
+    if cast and cast ~= self.lastCast then
+        Sentinel.Comm:Send("OBS_CAST", cast)
+        self.lastCast = cast
+    end
+    if visible then
+        Sentinel.Comm:Send("OBS_PRESSURE", "friendly=1;enemy=1;healer=UNKNOWN;state=WATCH;target=LOCAL")
+    end
+end
+
+function Observer:ObserveCarrier(name, kind, label, source)
+    if not Sentinel.Comm then return false end
+    return Sentinel.Comm:Send("OBS_CARRIER", "carrier=" .. clean(name, 64)
+        .. ";kind=" .. clean(kind, 16) .. ";label=" .. clean(label, 32)
+        .. ";source=" .. clean(source, 24))
+end
+
+function Observer:OnInitialize()
+    self.frame = CreateFrame("Frame", "KWRSentinel_ObserverFrame")
+    self.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self.frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    self.frame:SetScript("OnEvent", function()
+        Observer:SendHello()
+    end)
+end
+
+function Observer:OnEnable()
+    self:SendHello()
+    self.ticker = C_Timer and C_Timer.NewTicker and C_Timer.NewTicker(2, function()
+        Observer:Tick()
+    end) or nil
+end
+
+function Observer:OnDisable()
+    if self.ticker then self.ticker:Cancel() end
+    self.ticker = nil
+end
+
+Sentinel:RegisterModule("Observer", Observer)

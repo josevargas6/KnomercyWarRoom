@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added Alpha 38's reviewed `KWRSync1` cross-client Sentinel transport. Commander
+  remains the only strategic brain; Sentinel sends bounded observations and
+  receives addressed assignment, control, and action relays with protocol,
+  session, sender, sequence, rate, and expiry validation.
 - Added KWR-250 read-only SavedVariables certification, which found four
   completed Alpha 36-compatible Retail matches and four interruptions without
   exposing local account paths or player identities.

@@ -203,6 +203,14 @@ C_Map = {
     GetBestMapForUnit = function() return mockPvP and 1366 or nil end,
     GetPlayerMapPosition = function() return nil end,
 }
+addonMessages = {}
+C_ChatInfo = {
+    RegisterAddonMessagePrefix = function() return true end,
+    SendAddonMessage = function(prefix, payload, distribution)
+        addonMessages[#addonMessages + 1] = { prefix = prefix, payload = payload, distribution = distribution }
+        return true
+    end,
+}
 C_UIWidgetManager = {
     GetDoubleStatusBarWidgetVisualizationInfo = function(widgetID)
         if not mockPvP then return nil end
@@ -253,6 +261,9 @@ function IsInInstance()
         return true, mockInstanceType
     end
     return false, "none"
+end
+function GetInstanceInfo()
+    return "Test Battleground", "none", 0, 0, 0, 0, 0, mockPvP and 44 or 0
 end
 local mockRaid = false
 local mockRaidTokensStable = false
@@ -486,6 +497,10 @@ local files = {
     "Runtime/AAR.lua",
     "Runtime/Verification.lua",
     "Runtime/MemoryBudget.lua",
+    "Runtime/SentinelIngress.lua",
+    "Runtime/SentinelMerge.lua",
+    "Runtime/SentinelRelay.lua",
+    "Runtime/CommanderComm.lua",
     "Runtime/SentinelBridge.lua",
     "Runtime/CommandAudio.lua",
     "Runtime/MatchRuntime.lua",
@@ -1779,6 +1794,43 @@ assert(sentinelView.watch and sentinelView.watch.reason ~= ""
             or sentinelView.watch.shortName == currentWatch.shortName))
         or (not currentWatch and sentinelView.watch.name == "No local target")),
     "Sentinel bridge did not publish the current local watch target.")
+do
+    KWR_TEST_COMM = KWR.CommanderComm
+    KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
+    KWR_TEST_PAYLOAD = table.concat({
+        "v=1", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=OBS_VISIBLE", "ts=1",
+        "src=testplayer", "body=enemy=EnemyHealer;visible=1;range=1;engaged=0",
+    }, "|")
+    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", "TestPlayer"),
+        "Commander rejected a valid roster-bound Sentinel observation.")
+    assert(KWR.SentinelIngress.byEnemy.enemyhealer
+        and KWR.SentinelIngress.diagnostics.accepted >= 1,
+        "Commander ingress did not retain bounded remote enemy evidence.")
+    assert(not KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", "TestPlayer"),
+        "Commander accepted a duplicate Sentinel sequence.")
+    assert(not KWR_TEST_COMM:Receive("KWRSync1", "v=2|sid=x", "INSTANCE_CHAT", "TestPlayer"),
+        "Commander accepted a malformed or future-version Sentinel envelope.")
+    KWR_TEST_ROSTER_CHECK = KWR_TEST_COMM.IsRosterSender
+    KWR_TEST_COMM.IsRosterSender = function() return true end
+    for KWR_TEST_SENDER_INDEX = 1, 10 do
+        KWR_TEST_SENDER = "Sentinel" .. tostring(KWR_TEST_SENDER_INDEX)
+        KWR_TEST_PACKET = table.concat({
+            "v=1", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=STATE", "ts=1",
+            "src=" .. KWR_TEST_SENDER:lower(), "body=alive=1;connected=1;reach=UNKNOWN",
+        }, "|")
+        assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PACKET, "INSTANCE_CHAT", KWR_TEST_SENDER),
+            "Commander rejected bounded simulated Sentinel sender " .. tostring(KWR_TEST_SENDER_INDEX))
+    end
+    KWR_TEST_COMM.IsRosterSender = KWR_TEST_ROSTER_CHECK
+    KWR_TEST_INGRESS_COUNT = 0
+    for _ in pairs(KWR.SentinelIngress.byPlayer) do KWR_TEST_INGRESS_COUNT = KWR_TEST_INGRESS_COUNT + 1 end
+    assert(KWR_TEST_INGRESS_COUNT >= 10,
+        "Commander did not retain bounded ten-Sentinel ingress state.")
+    KWR_TEST_RELAYS = KWR.SentinelRelay:Build("TestPlayer", liveState)
+    assert(KWR_TEST_RELAYS.RELAY_ASSIGN:find("to=TestPlayer", 1, true)
+        and KWR_TEST_RELAYS.RELAY_ACTION:find("action=", 1, true),
+        "Commander did not build player-addressed assignment and action relays.")
+end
 local clearedOK = KWR.AssignmentOverrides:Clear(pinnedName)
 assert(clearedOK == true, "Commander override clear did not remove the active player lock.")
 assert(#KWR.Verification.ledger > 0, "Verification ledger did not record live transitions.")

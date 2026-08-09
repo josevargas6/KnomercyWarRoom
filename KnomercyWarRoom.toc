@@ -2,7 +2,7 @@
 ## Title: |cff33aaffKnomercy War Room|r
 ## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
 ## Author: Jose / Knomercy War Room Project
-## Version: 6.1.0-alpha.37
+## Version: 6.1.0-alpha.38
 ## SavedVariables: KWR_DB
 ## IconTexture: Interface\AddOns\KnomercyWarRoom\Assets\Brand\Minimap\kwr_micro_icon_16.png
 ## Category: PvP
@@ -108,6 +108,10 @@ Runtime\SafetyMonitor.lua
 Runtime\AAR.lua
 Runtime\MemoryBudget.lua
 Runtime\Verification.lua
+Runtime\SentinelIngress.lua
+Runtime\SentinelMerge.lua
+Runtime\SentinelRelay.lua
+Runtime\CommanderComm.lua
 Runtime\SentinelBridge.lua
 Runtime\CommandAudio.lua
 Runtime\MatchRuntime.lua

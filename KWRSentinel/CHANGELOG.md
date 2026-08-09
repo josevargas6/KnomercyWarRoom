@@ -1,5 +1,11 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.38 - 2026-08-09
+
+- Adds bounded cross-client `KWRSync1` Commander relay and observation transport.
+- Keeps same-client bridge and standalone fallback intact.
+- Does not add targeting, focus, casting, macros, movement, or visible-chat transport.
+
 ## 6.1.0-alpha.33 - 2026-08-01
 
 - Restores the complete execution card, target cue, status helper, options, and minimap runtime to standalone source.

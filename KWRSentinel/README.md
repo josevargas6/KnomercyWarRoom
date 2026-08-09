@@ -11,7 +11,7 @@ reviewed target instruction exists.
 Current alpha scope:
 
 - same-client `KnomercyWarRoom` bridge through the reviewed `KWR.SentinelBridge`
-  export;
+  export, plus bounded cross-client `KWRSync1` relays after Commander handshake;
 - safe standalone fallback when the commander addon is not installed locally;
 - one-shot pre-match readiness alert with conservative unknown handling;
 - native Blizzard battleground map and scoreboard toggles.
@@ -20,8 +20,8 @@ Not included in this build:
 
 - no automatic target or focus changes;
 - no auto-casting, macro execution, or movement automation;
-- no cross-player addon-channel relay until `SENTINEL_TRANSPORT_SPEC.md` gates
-  are implemented and validated;
+- no Sentinel-to-Sentinel mesh, visible-chat fallback, or automatic gameplay
+  action;
 - no reporter map, enemy table, tactical board, or commander dashboard.
 
 Slash commands:

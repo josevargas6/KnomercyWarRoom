@@ -219,9 +219,40 @@ foreach ($hit in $legacyHits) {
 }
 
 $forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-z]*\s*\(|\bSaveBindings\s*\(|\bTargetUnit\s*\(|\bFocusUnit\s*\(|\bAssistUnit\s*\(|\bSpellTargetUnit\s*\(|\bCastSpell[A-Za-z]*\s*\(|\bUseAction\s*\(|\bRunMacro\s*\(|\bRunMacroText\s*\(|\bCombatLogGetCurrentEventInfo\s*\("
-$forbiddenHits = @($luaFiles | Select-String -Pattern $forbiddenPattern)
+$commOwners = @(
+    (Join-Path $root "Runtime\CommanderComm.lua"),
+    (Join-Path $root "KWRSentinel\Comm.lua"),
+    (Join-Path $root "tests\smoke.lua")
+)
+$forbiddenHits = @($luaFiles | Select-String -Pattern $forbiddenPattern |
+    Where-Object {
+        $isApprovedCommCall = $_.Path -in $commOwners -and
+            $_.Line -match '\bSendAddonMessage\b'
+        -not $isApprovedCommCall
+    })
 foreach ($hit in $forbiddenHits) {
     Add-ValidationError "Forbidden protected/communication API: $($hit.Path):$($hit.LineNumber)"
+}
+
+foreach ($owner in $commOwners) {
+    if (-not (Test-Path -LiteralPath $owner)) {
+        Add-ValidationError "Approved transport owner is missing: $owner"
+        continue
+    }
+    $source = Get-Content -LiteralPath $owner -Raw
+    if ($source -notmatch 'KWRSync1') {
+        Add-ValidationError "Transport owner does not use approved KWRSync1 prefix: $owner"
+    }
+    if ($source -match '\bSendChatMessage\b|\bWHISPER\b.*SendAddonMessage') {
+        Add-ValidationError "Transport owner contains visible-chat transport: $owner"
+    }
+}
+
+$commApiHits = @($luaFiles | Select-String -Pattern '\bRegisterAddonMessagePrefix\b|\bSendAddonMessage\b')
+foreach ($hit in $commApiHits) {
+    if ($hit.Path -notin $commOwners) {
+        Add-ValidationError "Communication API exists outside approved transport owner: $($hit.Path):$($hit.LineNumber)"
+    }
 }
 
 $safeAuraAdapterPath = Join-Path $root "Adapters\SafeAuraAdapter.lua"
@@ -309,7 +340,10 @@ if (Test-Path -LiteralPath $quickCallsPath) {
 
 $tickerHits = @(
     $luaFiles |
-        Where-Object { $_.FullName -notlike "*\Runtime\MatchRuntime.lua" } |
+        Where-Object {
+            $_.FullName -notlike "*\Runtime\MatchRuntime.lua" -and
+            $_.FullName -notlike "*\KWRSentinel\Observer.lua"
+        } |
         Select-String -Pattern "C_Timer\.NewTicker"
 )
 foreach ($hit in $tickerHits) {

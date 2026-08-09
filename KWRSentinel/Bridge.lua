@@ -336,10 +336,11 @@ local function augmentWatch(view)
 end
 
 function Bridge:BuildView()
+    local remote = Sentinel.Relay and Sentinel.Relay:View()
     local kwr = _G.KWR
-    local view = kwr and kwr.SentinelBridge and kwr.ready
+    local view = remote or (kwr and kwr.SentinelBridge and kwr.ready
         and kwr.SentinelBridge:BuildView(shortName(UnitName("player")))
-        or fallbackView()
+        or fallbackView())
     view.healer = healerStatus()
     view.playerStatus = localStatus(view)
     return augmentWatch(view)
