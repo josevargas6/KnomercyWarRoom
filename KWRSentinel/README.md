@@ -30,3 +30,8 @@ Slash commands:
 - `/kwrs map` toggles the battlefield map
 - `/kwrs score` toggles the scoreboard
 - `/kwrs reset` restores the execution card to its default position
+
+When Commander is installed on the same client, Sentinel uses its layout
+coordinator to dock the execution card and status helper away from active KWR
+windows. Drag either window to keep a custom placement; `/kwrs reset` returns
+it to managed docking.

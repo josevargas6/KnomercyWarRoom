@@ -4,7 +4,7 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.0-alpha.38"
+Sentinel.version = "6.1.0-alpha.39"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
@@ -14,6 +14,7 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
+            layoutManaged = true,
             point = "CENTER",
             relativePoint = "CENTER",
             x = 360,
@@ -25,6 +26,7 @@ local DEFAULTS = {
         },
         panels = {
             locked = false,
+            layoutManaged = true,
             status = {
                 enabled = true,
                 point = "CENTER",

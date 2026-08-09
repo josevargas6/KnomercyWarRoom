@@ -76,6 +76,7 @@ local function createShell(name, title, width, height, setting)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(selfFrame)
         if Sentinel.db.profile.panels.locked == true then return end
+        Sentinel.db.profile.panels.layoutManaged = false
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
@@ -144,6 +145,7 @@ function Panels:ResetPositions()
     if not defaults then return end
     local source = defaults.status
     local target = Sentinel.db.profile.panels.status
+    Sentinel.db.profile.panels.layoutManaged = true
     target.point = source.point
     target.relativePoint = source.relativePoint
     target.x = source.x

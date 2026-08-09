@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.38
+# Release Readiness - 6.1.0-alpha.39
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,7 +6,8 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 38 is the cross-client Sentinel candidate; Alpha 37 remains the installed repair candidate and Alpha 36 the verified public prerelease.**
+**Alpha 39 is the managed-Sentinel-layout candidate; Alpha 38 is the deployed
+cross-client transport candidate; Alpha 36 remains the verified public prerelease.**
 The recovery PR, KWR-047 source governance, package manifests, installed-folder
 comparisons, and protected release workflow passed on 2026-08-08. Alpha 37
 Commander and Sentinel were deployed together on 2026-08-09 from the certified
@@ -14,8 +15,10 @@ candidate packages: Commander has 388 exact files and Sentinel has 9 exact
 files, with zero missing, changed, or extra entries. Both addons are enabled
 for the active `Verite-Bladefist` character, so Sentinel's reviewed same-client
 `KWR.SentinelBridge` will activate on the next client load. Alpha 38 adds the
-reviewed bounded `KWRSync1` cross-client transport, pending package deployment
-and ten-client Retail safety/value evidence. The public prerelease remains
+reviewed bounded `KWRSync1` cross-client transport. Alpha 39 adds managed
+Sentinel docking beside active Commander UI and remains pending package
+deployment plus the required Retail layout, transport safety, and value
+evidence. The public prerelease remains
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
 CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
 workflow. Render production verification also passed: `kwr-sentinel-bot` is

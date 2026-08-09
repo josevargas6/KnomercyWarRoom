@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added managed Sentinel docking to the Commander LayoutCoordinator. When both
+  addons run on one client, the execution card and status helper choose the
+  lowest-overlap screen edge around active Commander surfaces; dragging either
+  Sentinel surface preserves its player-selected placement.
 - Added Alpha 38's reviewed `KWRSync1` cross-client Sentinel transport. Commander
   remains the only strategic brain; Sentinel sends bounded observations and
   receives addressed assignment, control, and action relays with protocol,

@@ -481,6 +481,7 @@ function HUD:Create()
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(selfFrame)
         if Sentinel.db.profile.hud.locked then return end
+        profile.layoutManaged = false
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
@@ -498,6 +499,7 @@ function HUD:ResetPosition()
         return
     end
     local profile = Sentinel.db.profile.hud
+    profile.layoutManaged = true
     profile.point = defaults.point
     profile.relativePoint = defaults.relativePoint
     profile.x = defaults.x
