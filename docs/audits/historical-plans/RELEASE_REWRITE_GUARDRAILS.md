@@ -1,4 +1,4 @@
-# KWR Release Rewrite Guardrails
+# Historical: KWR Release Rewrite Guardrails
 
 Date: 2026-07-11  
 Purpose: govern all release-cleanup and efficiency rewrite work so the addon does not drift away from its battleground commander mission.

@@ -16,6 +16,21 @@ $packageReport = if (Test-Path -LiteralPath $packageReportPath) {
 $runtimePreflight = if (Test-Path -LiteralPath $runtimePreflightPath) {
     Get-Content -LiteralPath $runtimePreflightPath -Raw | ConvertFrom-Json
 } else { $null }
+$deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
+$deploymentCertification = if (Test-Path -LiteralPath $deploymentCertificationPath) {
+    Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
+} else { $null }
+$deploymentCertified = $deploymentCertification -and
+    $deploymentCertification.candidateVersion -eq $version -and
+    $deploymentCertification.result -eq 'PASS' -and
+    $deploymentCertification.commander.missing -eq 0 -and
+    $deploymentCertification.commander.changed -eq 0 -and
+    $deploymentCertification.commander.extra -eq 0 -and
+    $deploymentCertification.sentinel.missing -eq 0 -and
+    $deploymentCertification.sentinel.changed -eq 0 -and
+    $deploymentCertification.sentinel.extra -eq 0 -and
+    $deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -eq 'PASS' -and
+    $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -eq 'PASS'
 $offlineGatePassed = $packageReport -and
     $packageReport.candidateVersion -eq $version -and
     $packageReport.packageAudit.result -eq "PASS" -and
@@ -30,7 +45,7 @@ $report = [ordered]@{
     candidateVersion = $version
     blockingDefects = @(
         [ordered]@{
-            id = "KWR-032"
+            id = "LIVE-TEAM-TRUTH"
             priority = "P1"
             status = if ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
@@ -40,7 +55,7 @@ $report = [ordered]@{
             bestSession = "TP-TEAM-TRUTH"
         },
         [ordered]@{
-            id = "KWR-033"
+            id = "LIVE-STABILITY"
             priority = "P1"
             status = if ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
@@ -50,7 +65,7 @@ $report = [ordered]@{
             bestSession = "TP-STABILITY"
         },
         [ordered]@{
-            id = "KWR-034"
+            id = "LIVE-CARRIER-TARGET"
             priority = "P1"
             status = if ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
@@ -60,7 +75,7 @@ $report = [ordered]@{
             bestSession = "TP-CARRIER-TARGET"
         },
         [ordered]@{
-            id = "TP-D03"
+            id = "LIVE-READABILITY"
             priority = "P2"
             status = "OPEN"
             title = "Supported-resolution readability remains open"
@@ -74,19 +89,19 @@ $report = [ordered]@{
             sessionId = "TP-TEAM-TRUTH"
             purpose = "clear expanded Team trust defects first"
             maps = @("TWINPEAKS")
-            clears = @("KWR-032")
+            clears = @("LIVE-TEAM-TRUTH")
         },
         [ordered]@{
             sessionId = "TP-STABILITY"
             purpose = "clear flag-match stability and AAR semantics"
             maps = @("TWINPEAKS", "WSG")
-            clears = @("KWR-033")
+            clears = @("LIVE-STABILITY")
         },
         [ordered]@{
             sessionId = "TP-CARRIER-TARGET"
             purpose = "clear canonical flag command-target behavior during carrier events"
             maps = @("TWINPEAKS", "WSG")
-            clears = @("KWR-034")
+            clears = @("LIVE-CARRIER-TARGET")
         },
         [ordered]@{
             sessionId = "RBG-MAP-CERT-1"
@@ -102,7 +117,7 @@ $report = [ordered]@{
         }
     )
     liveOnlyGates = @(
-        "exact hashed package install and upgrade proof",
+        if (-not $deploymentCertified) { "exact hashed package install and upgrade proof" }
         "taint and blocked-action safety proof",
         "lifecycle stability proof",
         "field performance budgets",
@@ -115,6 +130,10 @@ $report = [ordered]@{
             "knowledge/candidate-package-report.json",
             "knowledge/runtime-preflight.json"
         )
+    }
+    deploymentGate = [ordered]@{
+        status = if ($deploymentCertified) { 'PASS' } else { 'BLOCKED' }
+        evidence = 'knowledge/deployment-certification.json'
     }
 }
 

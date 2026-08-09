@@ -139,9 +139,8 @@ the final packaged visual recheck.
 - Repaired the combat-roster visual cache so a changed synchronized assignment
   updates its health row immediately even when optional observation fields are
   unavailable.
-- Established `RELEASE_VISION.md` as the single authority for KWR suite scope,
-  component boundaries, recovery sequencing, and promotion direction after
-  local-to-GitHub version drift was confirmed.
+- Recorded the former suite-scope vision now retained under
+  `docs/audits/historical-plans/` after local-to-GitHub version drift was confirmed.
 - Classified Commander, Sentinel, Beacon, the Discord bot, Maps, and ScoreCard
   as separate release lanes under one product vision rather than one merged
   runtime, ZIP, or version.

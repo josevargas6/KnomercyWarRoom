@@ -4,7 +4,7 @@ title: Repair public distribution metadata and webhook aliases
 owner: unassigned
 priority: critical
 risk: medium
-status: planned
+status: completed
 authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules: [.github/workflows, tools]
@@ -40,11 +40,11 @@ CurseForge production uploads fail closed unless numeric version IDs are configu
 
 # Acceptance criteria
 
-- [ ] Commander and Sentinel release uploads reject blank or nonnumeric CurseForge game-version IDs.
-- [ ] Maintenance, daily, and Sentinel release workflows recognize the configured Discord secret aliases.
-- [ ] Automation tests cover both safeguards.
-- [ ] Retail version IDs are configured without exposing credentials.
-- [ ] Correctly classified public files are verified after a protected upload.
+- [x] Commander and Sentinel release uploads reject blank or nonnumeric CurseForge game-version IDs.
+- [x] Maintenance, daily, and Sentinel release workflows recognize the configured Discord secret aliases.
+- [x] Automation tests cover both safeguards.
+- [x] Retail version IDs are configured without exposing credentials.
+- [x] Correctly classified public files are verified after a protected upload.
 
 # Verification
 

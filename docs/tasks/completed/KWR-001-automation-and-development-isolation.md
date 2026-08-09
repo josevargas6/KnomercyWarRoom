@@ -4,7 +4,7 @@ title: Enforce automation and development-channel isolation
 owner: unassigned
 priority: high
 risk: medium
-status: planned
+status: completed
 authority_references: [AGENTS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules: [tools, docs, .github]
@@ -41,10 +41,10 @@ and package audit behavior.
 
 # Acceptance criteria
 
-- [ ] Dirty builds resolve to `local` and cannot deploy to production.
-- [ ] Development deployment targets are distinct from production targets.
-- [ ] Production builds reject development/local suffixes and metadata.
-- [ ] Owner-only external actions are documented without fabrication.
+- [x] Dirty builds resolve to `local` and cannot deploy to production.
+- [x] Development deployment targets are distinct from production targets.
+- [x] Production builds reject development/local suffixes and metadata.
+- [x] Owner-only external actions are documented without fabrication.
 
 # Verification
 

@@ -4,7 +4,7 @@ title: Enforce release tag provenance integrity
 owner: unassigned
 priority: critical
 risk: medium
-status: planned
+status: completed
 authority_references: [RELEASE_POLICY.md, SECURITY.md]
 dependencies: [KWR-040]
 affected_modules: [.github/workflows, tools]
@@ -40,11 +40,11 @@ The release job checks out the requested tag and fails unless `HEAD` is exactly 
 
 # Acceptance criteria
 
-- [ ] Manual release dispatch checks out `inputs.release_tag`.
-- [ ] Tag pushes continue to check out the pushed tag.
-- [ ] The job proves that checked-out `HEAD` exactly matches the requested tag.
-- [ ] Automation tests lock both safeguards.
-- [ ] A superseding Alpha 31 tag contains the repaired workflow and aligned Commander/Sentinel versions.
+- [x] Manual release dispatch checks out `inputs.release_tag`.
+- [x] Tag pushes continue to check out the pushed tag.
+- [x] The job proves that checked-out `HEAD` exactly matches the requested tag.
+- [x] Automation tests lock both safeguards.
+- [x] A superseding Alpha 31 tag contains the repaired workflow and aligned Commander/Sentinel versions.
 
 # Verification
 

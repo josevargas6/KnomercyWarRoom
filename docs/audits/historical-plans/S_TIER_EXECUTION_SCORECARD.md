@@ -1,4 +1,4 @@
-# KWR S-Tier Execution Scorecard
+# Historical: KWR S-Tier Execution Scorecard
 
 `RELEASE_VISION.md` owns release scope and sequencing. This scorecard owns
 Commander subsystem estimates and proof requirements only. The current

@@ -4,7 +4,7 @@ title: Publish exact release social receipts
 owner: unassigned
 priority: high
 risk: low
-status: planned
+status: completed
 authority_references: [RELEASE_POLICY.md, CHANGELOG.md]
 dependencies: [KWR-041, KWR-042]
 affected_modules: [release automation, Discord copy, tests]
@@ -44,11 +44,11 @@ workflow for corrected announcement and ops receipts.
 
 # Acceptance criteria
 
-- [ ] Commander and Sentinel copy identifies Alpha 32.
-- [ ] Copy records CurseForge file IDs 8558795 and 8558797.
-- [ ] Social-copy validation rejects stale Alpha 29 and Alpha 25 claims.
-- [ ] Dry-run rendering passes for both products and both receipt types.
-- [ ] Corrected posts succeed through configured production webhooks.
+- [x] Commander and Sentinel copy identifies Alpha 32.
+- [x] Copy records CurseForge file IDs 8558795 and 8558797.
+- [x] Social-copy validation rejects stale Alpha 29 and Alpha 25 claims.
+- [x] Dry-run rendering passes for both products and both receipt types.
+- [x] Corrected posts succeed through configured production webhooks.
 
 # Verification
 

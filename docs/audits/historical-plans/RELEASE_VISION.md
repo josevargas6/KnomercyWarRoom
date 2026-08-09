@@ -1,4 +1,4 @@
-# KWR 6.1 Field-Test Release Vision
+# Historical: KWR 6.1 Field-Test Release Vision
 
 Status date: 2026-07-29  
 Release-train status: recovery alignment  

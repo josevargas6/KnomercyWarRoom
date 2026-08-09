@@ -6,12 +6,12 @@ priority: high
 risk: medium
 dependencies: []
 affected_modules:
-  - RELEASE_VISION.md
-  - ALPHA_S_TIER_MASTER_PLAN.md
-  - PILLAR_EXECUTION_SHEET.md
-  - S_TIER_EXECUTION_SCORECARD.md
-  - WINNING_STATE_EXECUTION_MAP.md
-  - WINNING_STATE_RELEASE_GATES.md
+  - docs/audits/historical-plans/RELEASE_VISION.md
+  - docs/audits/historical-plans/ALPHA_S_TIER_MASTER_PLAN.md
+  - docs/audits/historical-plans/PILLAR_EXECUTION_SHEET.md
+  - docs/audits/historical-plans/S_TIER_EXECUTION_SCORECARD.md
+  - docs/audits/historical-plans/WINNING_STATE_EXECUTION_MAP.md
+  - docs/audits/historical-plans/WINNING_STATE_RELEASE_GATES.md
   - RELEASE_READINESS.md
   - PROJECT_HANDOFF.md
   - QA_CHECKLIST.md
@@ -82,7 +82,7 @@ optional utilities as hidden dependencies.
 
 # Acceptance criteria
 
-- [x] `RELEASE_VISION.md` defines the single release-train authority.
+- [x] `docs/audits/historical-plans/RELEASE_VISION.md` defines the single release-train authority.
 - [x] Every known component has a documented role and dependency boundary.
 - [x] Local and GitHub version drift is recorded without overwriting either
   side.
@@ -95,7 +95,7 @@ optional utilities as hidden dependencies.
 
 # Verification
 
-1. Confirm all active release documents link to `RELEASE_VISION.md`.
+1. Confirm all active release documents link to `docs/audits/historical-plans/RELEASE_VISION.md`.
 2. Confirm all recorded versions match the local TOCs and inspected GitHub
    branches as of 2026-07-28.
 3. Run repository validation to prove documentation edits did not disturb the
@@ -104,6 +104,6 @@ optional utilities as hidden dependencies.
 
 # Rollback
 
-Remove `RELEASE_VISION.md` and this task brief, then revert only the authority
+Remove `docs/audits/historical-plans/RELEASE_VISION.md` and this task brief, then revert only the authority
 notices added to the existing planning documents. No runtime or saved-variable
 behavior changes in this task.

@@ -46,7 +46,9 @@ jobs:
 
       - name: Test release automation contracts
         shell: pwsh
-        run: ./tools/test-automation.ps1
+        run: |
+          ./tools/test-automation.ps1
+          ./tools/test-deployment-manifest.ps1
 
       - name: Test public social copy
         shell: pwsh

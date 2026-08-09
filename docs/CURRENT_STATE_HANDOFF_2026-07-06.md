@@ -369,7 +369,7 @@ If starting a new Codex thread, begin with:
 1. this file;
 2. `docs/WORKFLOW_NOW.md`;
 3. `docs/THREAD_STARTER_2026-07-06.md`;
-4. `PILLAR_EXECUTION_SHEET.md`;
+4. `docs/audits/historical-plans/PILLAR_EXECUTION_SHEET.md`;
 5. one or two current screenshots/errors only.
 
 Avoid carrying the full historical chat unless absolutely necessary.

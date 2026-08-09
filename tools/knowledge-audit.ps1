@@ -532,6 +532,34 @@ try {
     $errors.Add("Offline completion audit JSON is invalid: $($_.Exception.Message)")
 }
 
+$deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
+try {
+    $deploymentCertification = Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
+    foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'releaseTag', 'commander', 'sentinel', 'upgradeProof', 'result')) {
+        if ($null -eq $deploymentCertification.PSObject.Properties[$key]) {
+            $errors.Add("Deployment certification missing required field: $key")
+        }
+    }
+    $activeVersion = [regex]::Match($tocSource, "## Version:\s*(.+)").Groups[1].Value.Trim()
+    if ($deploymentCertification.candidateVersion -ne $activeVersion) {
+        $errors.Add('Deployment certification version does not match the active TOC version.')
+    }
+    if ($deploymentCertification.result -ne 'PASS') {
+        $errors.Add('Deployment certification is not PASS.')
+    }
+    foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
+        if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
+            $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
+        }
+    }
+    if ($deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -ne 'PASS' -or
+        $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -ne 'PASS') {
+        $errors.Add('Deployment certification lacks upgrade and future-schema proof.')
+    }
+} catch {
+    $errors.Add("Deployment certification JSON is invalid: $($_.Exception.Message)")
+}
+
 Write-Output "KWR knowledge audit"
 Write-Output "Errors: $($errors.Count)"
 foreach ($errorText in $errors) {

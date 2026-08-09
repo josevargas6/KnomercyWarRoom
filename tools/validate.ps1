@@ -35,6 +35,12 @@ foreach ($audit in @("source-drift-audit.ps1", "document-authority-audit.ps1")) 
     }
 }
 
+foreach ($requiredTool in @("deployment-manifest-audit.ps1", "test-deployment-manifest.ps1")) {
+    if (-not (Test-Path -LiteralPath (Join-Path $PSScriptRoot $requiredTool))) {
+        Add-ValidationError "Required deployment-verification tool is missing: $requiredTool"
+    }
+}
+
 function Validate-TocBundle {
     param(
         [Parameter(Mandatory = $true)]

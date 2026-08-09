@@ -5,7 +5,7 @@ owner: codex
 priority: high
 risk: low
 dependencies:
-  - RELEASE_VISION.md
+  - docs/audits/historical-plans/RELEASE_VISION.md
 affected_modules:
   - UI/MainWindow.lua
   - UI/MainWindowPages.lua

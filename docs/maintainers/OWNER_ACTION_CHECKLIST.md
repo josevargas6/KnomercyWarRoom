@@ -5,14 +5,14 @@ files and local validation are already prepared.
 
 These items cannot be truthfully configured from this checkout:
 
-- [ ] Protect `main` and `develop`: PRs, required checks, current branch,
+- [x] Protect `main` and `develop`: PRs, required checks, current branch,
   conversation resolution, stale-approval dismissal, CODEOWNERS review, no
   force push/delete, and protected production environment approval.
-- [ ] Require the `certify` job from `KWR CI` on pull requests before merge.
-- [ ] Require one owner approval for `production`; do not allow administrators
+- [x] Require the `certify` job from `KWR CI` on pull requests before merge.
+- [x] Require one owner approval for `production`; do not allow administrators
   to bypass the environment rule for normal releases.
-- [ ] Create GitHub environments `development`, `beta`, and `production`.
-- [ ] Add `production` environment reviewers and prevent deployment from
+- [x] Create GitHub environments `development`, `beta`, and `production`.
+- [x] Add `production` environment reviewers and prevent deployment from
   untrusted branches. The tagged release workflow is the production path.
 - [ ] Add production CurseForge, Discord, and GitHub App secrets only to the
   protected environments; never expose them to fork PRs.
@@ -24,8 +24,9 @@ These items cannot be truthfully configured from this checkout:
   `KWR_BOT_REPOSITORY` only after verifying the destination repository.
 - [ ] Create separate development Discord application, token, channels,
   webhooks, and allowlists.
-- [ ] Confirm Commander `1632632` and Sentinel `1614463` CurseForge channel mapping.
-- [ ] Approve or reject any future addon-message protocol change.
+- [x] Confirm Commander `1632632` and Sentinel `1614463` CurseForge channel mapping.
+- [x] Approve or reject any future addon-message protocol change. The current
+  decision remains rejection until `PROTOCOL.md` requirements are satisfied.
 - [ ] Run a dry-run release and rollback drill, then record the evidence.
 
 ## Tomorrow's verification order

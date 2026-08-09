@@ -4,7 +4,7 @@ title: Establish governed live addon automation
 owner: unassigned
 priority: high
 risk: high
-status: planned
+status: completed
 authority_references: [AGENTS.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules:
@@ -39,9 +39,9 @@ requires explicit protected `production` environment approval.
 
 # Acceptance criteria
 
-- [ ] Live-addon operating rules and owner-only setup are documented.
-- [ ] Production publication is blocked until protected approval.
-- [ ] Rollback and field-verification evidence are required.
+- [x] Live-addon operating rules and owner-only setup are documented.
+- [x] Production publication is blocked until protected approval.
+- [x] Rollback and field-verification evidence are required.
 
 # Verification
 

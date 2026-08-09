@@ -4,7 +4,7 @@ title: Managed Commander and Sentinel user guide wiki
 owner: unassigned
 priority: medium
 risk: low
-status: planned
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_POLICY.md]
 dependencies: []
 affected_modules:

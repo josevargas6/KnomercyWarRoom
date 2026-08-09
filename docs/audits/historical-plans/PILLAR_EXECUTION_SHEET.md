@@ -1,4 +1,4 @@
-# KWR Pillar Execution Sheet
+# Historical: KWR Pillar Execution Sheet
 
 This work-order sheet is subordinate to `RELEASE_VISION.md`. It applies to the
 Commander candidate only; optional suite components keep separate release

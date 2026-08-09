@@ -1,0 +1,33 @@
+{
+  "schema": "kwr-deployment-certification",
+  "schemaVersion": 1,
+  "certifiedAt": "2026-08-09T00:45:00Z",
+  "candidateVersion": "6.1.0-alpha.36",
+  "releaseTag": "v6.1.0-alpha.36",
+  "releaseCommit": "fd9ac07fc08a929e03f6f337e22fc30bd0d79194",
+  "commander": {
+    "sha256": "A061D15E30323EC3EBDDA1BE9E86CC1CCE5045A95990990334E8260E5B4D7A99",
+    "installedEntries": 387,
+    "missing": 0,
+    "changed": 0,
+    "extra": 0
+  },
+  "sentinel": {
+    "sha256": "C80EF22F5BBC29F55A6EFEF12DD25C2525EAF0F0FA0E49DC75B7B612F3E05A9B",
+    "installedEntries": 9,
+    "missing": 0,
+    "changed": 0,
+    "extra": 0
+  },
+  "upgradeProof": {
+    "savedVariablesMigrationMatrix": "PASS",
+    "futureSchemaReadOnlyCompatibility": "PASS",
+    "deterministicSuite": "KWR_LUA_TESTS_PASS"
+  },
+  "evidence": [
+    "docs/audits/2026-08-08/KWR-047-closure.md",
+    "docs/tasks/completed/KWR-047-pristine-source-of-truth.md",
+    "GitHub release v6.1.0-alpha.36 SHA-256 manifest"
+  ],
+  "result": "PASS"
+}

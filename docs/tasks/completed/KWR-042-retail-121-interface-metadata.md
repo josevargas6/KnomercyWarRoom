@@ -4,7 +4,7 @@ title: Declare Retail 12.1 interface compatibility
 owner: unassigned
 priority: critical
 risk: low
-status: planned
+status: completed
 authority_references: [ARCHITECTURE.md, RELEASE_READINESS.md]
 dependencies: [KWR-041]
 affected_modules: [KnomercyWarRoom.toc, KWRSentinel]
@@ -40,10 +40,10 @@ Both packaged TOCs declare interfaces 120007 and 120100, and the superseding can
 
 # Acceptance criteria
 
-- [ ] Commander and Sentinel TOCs declare 120007 and 120100.
-- [ ] Commander, embedded Sentinel, public copy, and candidate evidence identify Alpha 32.
-- [ ] Validation, Lua, automation, and package gates pass.
-- [ ] GitHub and CurseForge packages are published from the immutable Alpha 32 tag.
+- [x] Commander and Sentinel TOCs declare 120007 and 120100.
+- [x] Commander, embedded Sentinel, public copy, and candidate evidence identify Alpha 32.
+- [x] Validation, Lua, automation, and package gates pass.
+- [x] GitHub and CurseForge packages are published from the immutable Alpha 32 tag.
 
 # Verification
 

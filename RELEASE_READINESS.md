@@ -6,16 +6,22 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 36 is the current GitHub prerelease. The recovery PR, KWR-047 source
-governance, package manifest, installed-folder comparison, and protected
-release workflow all passed on 2026-08-08. Commander and Sentinel are deployed
-from the verified package manifests; the public prerelease is
+**Alpha 36 is the current verified GitHub prerelease, not a stable promotion.**
+The recovery PR, KWR-047 source governance, package manifests, installed-folder
+comparisons, and protected release workflow passed on 2026-08-08. Commander
+and Sentinel are deployed from the verified package manifests with no extra
+installed files; the public prerelease is
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
 CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
 workflow. Render production verification also passed: `kwr-sentinel-bot` is
 deployed on its current `main` commit `8d84fef`, and the Render logs record its
-health endpoint and Discord session online. Any further promotion still
-requires new owner approval and fresh field evidence.**
+health endpoint and Discord session online.
+
+Stable promotion remains blocked only by fresh Alpha 36 Retail evidence for
+live team truth, command stability, carrier-target behavior, supported
+resolutions, taint/blocked actions, lifecycle, and field performance. Offline,
+source, package, deployment, and platform-automation gates do not substitute
+for those in-client observations.
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
@@ -38,11 +44,9 @@ It also adds two P1 command blockers:
 - `KWR-034`: the prior candidate allowed raw flag-event prose into a tactical
   target.
 
-The Commander is now a field defect-repair candidate. Additional random-map
-testing remains useful for evidence collection, but broader promotion is
-Those three implementation blockers are now closed offline on Alpha 33. Their
-remaining acceptance items are live-only and remain open until final Retail
-evidence is captured.
+The three implementation repairs are closed offline. Their remaining
+acceptance evidence is live-only and remains open until Alpha 36 Retail
+captures are recorded.
 
 Current repo state:
 
@@ -58,7 +62,7 @@ Current repo state:
   evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
 - the default release package now excludes the optional Sentinel bundle unless
   `tools/build.ps1 -IncludeSentinel` is used intentionally;
-- remaining blockers are Retail-only gates: live stability, taint/safety,
+- remaining promotion gates are Retail-only: live stability, taint/safety,
   field-performance proof, screenshot matrix, supported-map certification, and
   release-presentation proof;
 - `KWR-032`, `KWR-033`, and `KWR-034` have evidence-derived `LIVE_ONLY`
@@ -203,5 +207,5 @@ not get hidden by the aggregate score.
 - Predictions for public widgets not exposed by Blizzard remain low-confidence or unknown.
 
 Promotion requires the live sections of `QA_CHECKLIST.md` to pass with captured evidence.
-Use `WINNING_STATE_RELEASE_GATES.md` as the current gate board for what is
-already proven offline versus what still requires Retail field proof.
+This document is the current gate board; prior gate plans are retained only under
+`docs/audits/historical-plans/` for provenance.

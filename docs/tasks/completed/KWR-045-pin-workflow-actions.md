@@ -4,7 +4,7 @@ title: Pin all Commander workflow actions
 owner: unassigned
 priority: high
 risk: low
-status: planned
+status: completed
 authority_references: [AGENTS.md, SECURITY.md]
 dependencies: []
 affected_modules: [GitHub Actions]
@@ -42,9 +42,9 @@ token action to v3.2.0, and pin the BigWigs packager to v2.5.1.
 
 # Acceptance criteria
 
-- [ ] No Commander workflow references a moving `@vN` action tag.
-- [ ] Automated validation and workflow contract tests pass.
-- [ ] Hosted CI passes with the pinned actions.
+- [x] No Commander workflow references a moving `@vN` action tag.
+- [x] Automated validation and workflow contract tests pass.
+- [x] Hosted CI passes with the pinned actions.
 
 # Verification
 

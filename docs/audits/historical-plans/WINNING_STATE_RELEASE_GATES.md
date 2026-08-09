@@ -1,4 +1,4 @@
-# KWR Winning-State Release Gates
+# Historical: KWR Winning-State Release Gates
 
 `RELEASE_VISION.md` owns the suite release direction. This file owns the
 Commander `6.1.0-alpha.28` offline and Retail promotion gates.

@@ -4,7 +4,7 @@ title: Publish source-complete Alpha 33
 owner: unassigned
 priority: critical
 risk: high
-status: in_progress
+status: completed
 authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: [KWR-043, KWR-SENTINEL-009]
 affected_modules: [Core, UI, KWRSentinel, release automation, release documentation]
@@ -55,12 +55,12 @@ before announcing readiness.
 - [x] Commander UI parity changes are merged with a clean final review.
 - [x] Standalone Sentinel Alpha 33 source is merged after all completed review findings were resolved.
 - [x] Embedded Sentinel is byte-identical to standalone reviewed source.
-- [ ] Complete local and hosted release gates pass.
-- [ ] The Alpha 33 tag resolves to the reviewed Commander merge commit.
-- [ ] GitHub prerelease artifacts and SHA-256 manifests resolve publicly.
-- [ ] Commander and Sentinel Alpha 33 CurseForge files resolve publicly.
+- [x] Complete local and hosted release gates pass.
+- [x] The Alpha 33 tag resolves to the reviewed Commander merge commit.
+- [x] GitHub prerelease artifacts and SHA-256 manifests resolve publicly.
+- [x] Commander and Sentinel Alpha 33 CurseForge files resolve publicly.
 - [x] Render runs the reviewed bot main commit with healthy Discord readiness.
-- [ ] Installed Commander and Sentinel trees match the public Alpha 33 packages.
+- [x] Installed Commander and Sentinel trees matched the public Alpha 33 packages before the verified Alpha 36 superseding deployment.
 
 # Verification
 
