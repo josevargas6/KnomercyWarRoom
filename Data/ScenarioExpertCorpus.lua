@@ -4,6 +4,7 @@ local ScenarioExpertCorpus = {}
 KWR.ScenarioExpertCorpus = ScenarioExpertCorpus
 
 local phaseIndex = nil
+local phaseIndexSeasonPrepActive = nil
 
 local DATA = {
     maps = {
@@ -84458,15 +84459,23 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
     if not mapKey or not phase then
         return nil
     end
-    if not phaseIndex then
+    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
+    if not phaseIndex or phaseIndexSeasonPrepActive ~= seasonPrepActive then
         phaseIndex = {}
+        phaseIndexSeasonPrepActive = seasonPrepActive
         for _, row in pairs(DATA.scenarios or {}) do
             if row.mapKey and row.phase
-                and row.reviewConfidence == "HIGH"
-                and row.seasonStatus ~= "PENDING_SEASON_REVIEW" then
+                and (row.reviewConfidence == "HIGH"
+                    or (seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"))
+                and (row.seasonStatus ~= "PENDING_SEASON_REVIEW" or seasonPrepActive) then
                 phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
                 local current = phaseIndex[row.mapKey][row.phase]
-                if not current or tostring(row.scenarioId) < tostring(current.scenarioId) then
+                local rowPriority = row.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1
+                local currentPriority = current
+                    and (current.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1) or 0
+                if not current or rowPriority > currentPriority
+                    or (rowPriority == currentPriority
+                        and tostring(row.scenarioId) < tostring(current.scenarioId)) then
                     phaseIndex[row.mapKey][row.phase] = row
                 end
             end
@@ -84477,7 +84486,13 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
 end
 
 function ScenarioExpertCorpus:Shared()
-    return KWR.Util:Copy(DATA.shared or {})
+    local shared = KWR.Util:Copy(DATA.shared or {})
+    shared.seasonPrepActivation = {
+        active = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true,
+        mode = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusMode() or "DISABLED",
+        safety = "Advisory corpus guidance never replaces live evidence or the Commander strategist.",
+    }
+    return shared
 end
 
 KWR:RegisterModule("ScenarioExpertCorpus", ScenarioExpertCorpus)

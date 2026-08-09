@@ -6,6 +6,9 @@
   maps now exposes fifteen theory-reviewed starting branches, including ten new
   friendly/enemy composition matchups and qualified-tier routes. They retain
   conservative fallbacks and require Retail validation before promotion.
+- Activated the Alpha40 season-prep scenario corpus and matrix as advisory
+  guidance. Its 1,000 pending entries can inform scenario review, but cannot
+  replace live evidence, Commander decisions, assignments, or safety gates.
 - Added managed Sentinel docking to the Commander LayoutCoordinator. When both
   addons run on one client, the execution card and status helper choose the
   lowest-overlap screen edge around active Commander surfaces; dragging either

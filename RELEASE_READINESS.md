@@ -18,8 +18,10 @@ for the active `Verite-Bladefist` character, so Sentinel's reviewed same-client
 reviewed bounded `KWRSync1` cross-client transport. Alpha 39 adds managed
 Sentinel docking beside active Commander UI. Alpha 40 expands every supported
 map to fifteen theory-reviewed opening branches, selected by friendly/enemy
-composition matchups and qualified roster tiers; it remains pending package
-deployment and Retail opening validation. The public prerelease remains
+composition matchups and qualified roster tiers. It also activates the
+1,000-entry season-prep matrix/corpus as explicitly pending, advisory guidance;
+it remains pending package deployment and Retail opening validation. The public
+prerelease remains
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
 CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
 workflow. Render production verification also passed: `kwr-sentinel-bot` is

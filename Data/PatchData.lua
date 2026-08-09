@@ -58,6 +58,12 @@ local PACKS = {
             },
         },
         disabledPlans = {},
+        seasonPrepCorpus = {
+            active = true,
+            mode = "ADVISORY",
+            activationAuthority = "USER_APPROVED_ALPHA40",
+            requiresRetailValidation = true,
+        },
         notes = {
             "Midnight secret-value safety enabled.",
             "Defensive baseline reviewed against field-tested PvP addons.",
@@ -87,6 +93,16 @@ end
 function PatchData:PlanEnabled(planID)
     local pack = self:Get()
     return not (pack and pack.disabledPlans[planID])
+end
+
+function PatchData:SeasonPrepCorpusActive()
+    local pack = self:Get()
+    return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.active == true
+end
+
+function PatchData:SeasonPrepCorpusMode()
+    local pack = self:Get()
+    return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.mode or "DISABLED"
 end
 
 function PatchData:Validate(interface)

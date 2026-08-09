@@ -1463,8 +1463,10 @@ assert(wsgExpertReview
     "Scenario expert corpus did not expose reviewed opening doctrine for Warsong Gulch.")
 assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "PENDING_SEASON_REVIEW",
     "Season-prep scenario corpus entry lost its pending-review guard.")
-assert(KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus ~= "PENDING_SEASON_REVIEW",
-    "Season-prep scenario entered live expert selection before review.")
+assert(KWR.PatchData:SeasonPrepCorpusActive() == true
+    and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "PENDING_SEASON_REVIEW"
+    and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "ADVISORY",
+    "Alpha40 did not activate the season-prep corpus as advisory guidance.")
 do
     for _, mapKey in ipairs({
         "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS",
@@ -1640,7 +1642,9 @@ assert(type(liveState.snapshot.strategy.scenarioAdversarialCalibration) == "tabl
     and type(liveState.snapshot.strategy.adversarialDisciplineRule) == "string",
     "Strategist did not attach adversarial scenario calibration.")
 assert(type(liveState.snapshot.strategy.scenarioExpertReview) == "table"
-    and liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 5
+    and (liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 5
+        or (liveState.snapshot.strategy.scenarioExpertReview.seasonStatus == "PENDING_SEASON_REVIEW"
+            and liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 1))
     and type(liveState.snapshot.strategy.expertPreferredAction) == "string"
     and type(liveState.snapshot.strategy.expertSafestCounter) == "string",
     "Strategist did not attach reviewed expert scenario guidance.")
