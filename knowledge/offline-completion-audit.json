@@ -1,14 +1,14 @@
 {
     "schema":  "kwr-offline-completion-audit",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-09T01:22:23Z",
+    "generatedAt":  "2026-08-09T01:34:50Z",
     "candidateVersion":  "6.1.0-alpha.37",
-    "offlinePrepared":  false,
+    "offlinePrepared":  true,
     "fieldTestingPrepared":  false,
     "offlineEvidence":  {
                             "supportedMaps":  10,
                             "baseScenarios":  200,
-                            "reviewedCorpus":  1003,
+                            "reviewedCorpus":  2003,
                             "adversarialCases":  201,
                             "reviewedScenarioCalibration":  200,
                             "adversarialScenarioCalibration":  200,

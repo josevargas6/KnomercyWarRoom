@@ -38,6 +38,16 @@ foreach ($path in @(
     }
 }
 
+function Get-ReportPath {
+    param([string]$Path)
+    $fullPath = [IO.Path]::GetFullPath($Path)
+    $rootPrefix = $root.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+    if ($fullPath.StartsWith($rootPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        return $fullPath.Substring($rootPrefix.Length).Replace('\', '/')
+    }
+    return Split-Path -Leaf $fullPath
+}
+
 function New-ArtifactReport {
     param(
         [Parameter(Mandatory = $true)]
@@ -48,7 +58,7 @@ function New-ArtifactReport {
     $hash = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToUpperInvariant()
     return [ordered]@{
         name = $item.Name
-        path = $item.FullName
+        path = Get-ReportPath -Path $item.FullName
         size = [int64]$item.Length
         sha256 = $hash
     }
@@ -70,7 +80,7 @@ if (Test-Path -LiteralPath $runtimePreflightPath) {
     $runtimePreflight = Get-Content -LiteralPath $runtimePreflightPath -Raw | ConvertFrom-Json
 }
 
-$workspaceNode = "C:\Users\josev\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe"
+$workspaceNode = Join-Path $env:USERPROFILE ".cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe"
 $packageAuditStatus = "BLOCKED_RUNTIME_DISCOVERY"
 $runtimeBlocker = if ($packageAudit -and $packageAudit.result -eq "PASS") {
     $packageAuditStatus = "CERTIFIED_IN_WORKSPACE"
@@ -92,22 +102,22 @@ $report = [ordered]@{
     schemaVersion = 1
     generatedAt = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
     candidateVersion = $version
-    buildOutputDirectory = $buildOutputRoot
+    buildOutputDirectory = Get-ReportPath -Path $buildOutputRoot
     distributionArtifact = $distributionArtifact
     developerArtifact = $developerArtifact
     hashManifest = [ordered]@{
-        path = $hashFile
+        path = Get-ReportPath -Path $hashFile
         lines = @($hashLines)
     }
     sourceManifest = [ordered]@{
-        path = $sourceManifestFile
+        path = Get-ReportPath -Path $sourceManifestFile
         distributionDigest = $sourceManifest.distribution.digest
         distributionEntryCount = $sourceManifest.distribution.entryCount
         developerDigest = $sourceManifest.developer.digest
         developerEntryCount = $sourceManifest.developer.entryCount
     }
     buildProvenance = [ordered]@{
-        path = $provenanceFile
+        path = Get-ReportPath -Path $provenanceFile
         builtAtUtc = $provenance.builtAtUtc
         sentinelIncluded = [bool]$provenance.sentinelIncluded
         powershellEdition = $provenance.tools.powershell.edition
@@ -118,7 +128,7 @@ $report = [ordered]@{
         gitAvailable = [bool]$provenance.git.available
     }
     reproducibility = [ordered]@{
-        path = $reproducibilityFile
+        path = Get-ReportPath -Path $reproducibilityFile
         result = $reproducibility.result
         distributionDigestMatch = [bool]$reproducibility.sourceDigestMatches.distribution
         developerDigestMatch = [bool]$reproducibility.sourceDigestMatches.developer
@@ -126,7 +136,7 @@ $report = [ordered]@{
     }
     packageAudit = if ($packageAudit) {
         [ordered]@{
-            path = $packageAuditFile
+            path = Get-ReportPath -Path $packageAuditFile
             auditedAtUtc = $packageAudit.auditedAtUtc
             result = $packageAudit.result
             hashesVerified = $packageAudit.hashesVerified
@@ -143,7 +153,9 @@ $report = [ordered]@{
         buildExecuted = $true
         packageAuditInThisWorkspace = $packageAuditStatus
         runtimeBlocker = $runtimeBlocker
-        runtimePreflightPath = if ($runtimePreflight) { $runtimePreflightPath } else { $null }
+        runtimePreflightPath = if ($runtimePreflight) {
+            Get-ReportPath -Path $runtimePreflightPath
+        } else { $null }
         notes = @(
             "The exact distribution and developer ZIPs were created in this workspace.",
             "The reproducibility report was created in this workspace.",
@@ -162,7 +174,7 @@ $report = [ordered]@{
         kwrInstallFolder = "World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom"
         savedVariablesFolder = "World of Warcraft\\_retail_\\WTF\\Account\\<ACCOUNT>\\SavedVariables"
         savedVariablesFilePattern = "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak"
-        backupFolderSuggestion = "World of Warcraft\\_retail_\\WTF\\Account\\<ACCOUNT>\\SavedVariables\\KWR_Backups\\6.1.0-alpha.29"
+        backupFolderSuggestion = "World of Warcraft\\_retail_\\WTF\\Account\\<ACCOUNT>\\SavedVariables\\KWR_Backups\\$version"
     }
     fieldEvidenceBinding = [ordered]@{
         candidateVersion = $version

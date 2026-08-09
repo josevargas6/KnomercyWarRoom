@@ -195,4 +195,14 @@ foreach ($workflowFile in $workflowFiles) {
         -Message "Workflow contains a moving major-version action tag: $($workflowFile.Name)"
 }
 
+$candidateReportTool = Get-Content -LiteralPath (
+    Join-Path $root "tools\candidate-package-report.ps1"
+) -Raw
+Assert-True `
+    -Condition ($candidateReportTool -notmatch 'C:\\Users\\') `
+    -Message "Candidate package reporting contains a machine-specific user path."
+Assert-True `
+    -Condition ($candidateReportTool -match 'backupFolderSuggestion.*\$version') `
+    -Message "Candidate package backup guidance is pinned to a stale version."
+
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"
