@@ -1,8 +1,8 @@
 {
     "schema":  "kwr-retail-field-certification",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-09T02:12:04Z",
-    "candidateVersion":  "6.1.0-alpha.37",
+    "generatedAt":  "2026-08-09T02:46:25Z",
+    "candidateVersion":  "6.1.0-alpha.38",
     "candidateSchema":  60129,
     "source":  {
                    "fileName":  "KnomercyWarRoom.lua",
@@ -17,7 +17,7 @@
                     "schemaMatches":  true,
                     "deploymentVersionMatches":  true,
                     "writtenAfterCertification":  false,
-                    "deploymentCertifiedAt":  "2026-08-09T02:11:28Z"
+                    "deploymentCertifiedAt":  "2026-08-09T02:45:52Z"
                 },
     "summary":  {
                     "completedMatches":  0,

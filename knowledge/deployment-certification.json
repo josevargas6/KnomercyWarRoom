@@ -1,21 +1,21 @@
 {
   "schema": "kwr-deployment-certification",
   "schemaVersion": 1,
-  "certifiedAt": "2026-08-09T02:11:28Z",
-  "candidateVersion": "6.1.0-alpha.37",
+  "certifiedAt": "2026-08-09T02:45:52Z",
+  "candidateVersion": "6.1.0-alpha.38",
   "releaseTag": null,
-  "releaseCommit": "907d81cd65e0a364a93189b79da8a17d954143f7",
+  "releaseCommit": "411c32c8f979444b0241c62ede95e09ddf4f6c70",
   "commander": {
-    "sha256": "DC335BCDA0C5AD7BE56FC9448397DEC17CCCB4E096A3C92B17BA98F55E7BAB35",
-    "packageDigest": "5AA8D1ABD4685D220CF150BFCF6BD4B16B2B5A43C1FC7C4C6D70EDF958440484",
-    "installedEntries": 388,
+    "sha256": "02CEEB29DCD2E9DC2C60E79838E2086A154529241C241C7A277BB84C3379191C",
+    "packageDigest": "DC073C96607292E1BC3D1EA2C6A4BB7BD25DC77064145D553AC01512ABE18FC9",
+    "installedEntries": 392,
     "missing": 0,
     "changed": 0,
     "extra": 0
   },
   "sentinel": {
-    "sha256": "E503988C16BB55945C5EF1BB0881D7BA97FEB03C4D64E1B7FFCDF1AAD002E300",
-    "packageDigest": "10CB21DFCC6B93E0200BCAC2E7E35E4365906B5B3912889C7604F9DC4485CBC4",
+    "sha256": "7D0C424196608C327881DBF3DBE3B3C6637A212DDD30FBB22FD80C106B962234",
+    "packageDigest": "63130666102623CD28A8661265B0F71807A62D05FC7D0A4C2D9FB90817998CBD",
     "installedEntries": 9,
     "missing": 0,
     "changed": 0,
@@ -29,13 +29,13 @@
   "sentinelBridge": {
     "loadFlag": "ENABLED",
     "character": "Verite-Bladefist",
-    "mode": "SAME_CLIENT",
-    "crossClientTransport": "DISABLED_BY_PROTOCOL_POLICY"
+    "mode": "SAME_CLIENT_AND_KWRSYNC1",
+    "crossClientTransport": "IMPLEMENTED_PENDING_RETAIL_PROOF"
   },
   "evidence": [
     "knowledge/candidate-package-report.json",
-    "docs/tasks/completed/KWR-047-pristine-source-of-truth.md",
-    "Exact Commander and Sentinel deployment-manifest receipts"
+    "docs/tasks/KWR-251-cross-client-sentinel-transport.md",
+    "Exact Alpha38 Commander and Sentinel deployment-manifest receipts"
   ],
   "result": "PASS"
 }
