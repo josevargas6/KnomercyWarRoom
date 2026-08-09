@@ -1,5 +1,5 @@
 ---
-id: KWR-043
+id: KWR-249
 title: Preserve live Commander UI corrections in reviewed source
 owner: unassigned
 priority: high
@@ -59,5 +59,5 @@ practical, and require visual/in-game evidence before a later public release.
 
 # Rollback
 
-Revert KWR-043 before the next candidate; Alpha 32 remains the immutable public
+Revert KWR-249 before the next candidate; Alpha 32 remains the immutable public
 baseline.

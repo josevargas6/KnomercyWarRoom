@@ -205,4 +205,20 @@ Assert-True `
     -Condition ($candidateReportTool -match 'backupFolderSuggestion.*\$version') `
     -Message "Candidate package backup guidance is pinned to a stale version."
 
+$taskContracts = @(Get-ChildItem -LiteralPath (Join-Path $root 'docs\tasks') -Recurse -File -Filter 'KWR-*.md')
+$taskIds = @($taskContracts | ForEach-Object {
+    $taskSource = Get-Content -LiteralPath $_.FullName -Raw
+    Assert-True `
+        -Condition ($taskSource -match '(?m)^id:\s*(KWR-(?:[A-Z]+-)?\d+)\s*$') `
+        -Message "Task contract lacks a valid ID: $($_.Name)"
+    $taskId = $Matches[1]
+    Assert-True `
+        -Condition ($_.Name.StartsWith($taskId + '-', [StringComparison]::OrdinalIgnoreCase)) `
+        -Message "Task filename does not match its declared ID: $($_.Name) -> $taskId"
+    $taskId
+})
+Assert-True `
+    -Condition (@($taskIds | Group-Object | Where-Object Count -gt 1).Count -eq 0) `
+    -Message "Authoritative task IDs must be unique across active and completed contracts."
+
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

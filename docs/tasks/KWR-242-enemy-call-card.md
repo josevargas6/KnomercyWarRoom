@@ -1,5 +1,5 @@
 ---
-id: KWR-032
+id: KWR-242
 title: Simplify the live enemy call card
 owner: unassigned
 priority: high
@@ -67,4 +67,4 @@ Hide competing health and badge elements for this mode, preserve the normal trac
 
 # Rollback
 
-Revert the KWR-032 changes to the CombatRoster call-card renderer, its state wiring, diagnostics expectation, smoke fixture, and changelog entry.
+Revert the KWR-242 changes to the CombatRoster call-card renderer, its state wiring, diagnostics expectation, smoke fixture, and changelog entry.

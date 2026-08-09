@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Added KWR-048 read-only SavedVariables certification, which found four
+- Added KWR-250 read-only SavedVariables certification, which found four
   completed Alpha 36-compatible Retail matches and four interruptions without
   exposing local account paths or player identities.
 - Fixed active-play replacement so a non-superior alternative remains held

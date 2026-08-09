@@ -1,5 +1,5 @@
 ---
-id: KWR-033
+id: KWR-243
 title: Rework the compact enemy target card
 owner: unassigned
 priority: high
@@ -7,7 +7,7 @@ risk: low
 status: in_progress
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies:
-  - KWR-032
+  - KWR-242
 affected_modules:
   - UI/CombatRoster.lua
   - UI/CombatRosterVisuals.lua
@@ -32,7 +32,7 @@ The narrow spotlight mixes a name, health value, two often-duplicated badges, de
 - Preserve health at the top right when available.
 - Translate casts, defensives, carriers, kill windows, and pressure into full action text.
 - Render an equally clear idle card when no enemy is selected.
-- Keep the KWR-032 CC/kill switch card as the higher-priority presentation when a coordinated call exists.
+- Keep the KWR-242 CC/kill switch card as the higher-priority presentation when a coordinated call exists.
 
 # Non-goals
 
@@ -61,4 +61,4 @@ The narrow spotlight mixes a name, health value, two often-duplicated badges, de
 
 # Rollback
 
-Revert the KWR-033 target-card renderer, idle-card layout, tests, and changelog entry.
+Revert the KWR-243 target-card renderer, idle-card layout, tests, and changelog entry.

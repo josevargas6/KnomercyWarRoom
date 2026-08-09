@@ -6,7 +6,7 @@ priority: critical
 risk: high
 status: completed
 authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
-dependencies: [KWR-043, KWR-SENTINEL-009]
+dependencies: [KWR-249, KWR-SENTINEL-009]
 affected_modules: [Core, UI, KWRSentinel, release automation, release documentation]
 ---
 

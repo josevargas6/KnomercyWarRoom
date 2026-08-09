@@ -1,5 +1,5 @@
 ---
-id: KWR-037
+id: KWR-247
 title: Prevent setup strategy text from being squeezed or clipped
 owner: unassigned
 priority: medium

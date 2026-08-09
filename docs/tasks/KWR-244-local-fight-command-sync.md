@@ -1,5 +1,5 @@
 ---
-id: KWR-034
+id: KWR-244
 title: Synchronize local fight truth with commander surfaces
 owner: unassigned
 priority: critical
@@ -7,8 +7,8 @@ risk: medium
 status: in_progress
 authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies:
-  - KWR-032
-  - KWR-033
+  - KWR-242
+  - KWR-243
 affected_modules:
   - Core/CommandView.lua
   - UI/CombatRosterVisuals.lua
@@ -63,4 +63,4 @@ The Enemy tracker can render abbreviated placeholder identities as `UNKNOWN`, an
 
 # Rollback
 
-Revert the KWR-034 CommandView override, Enemy call-card validity gate, deterministic assertions, changelog entry, and this task brief.
+Revert the KWR-244 CommandView override, Enemy call-card validity gate, deterministic assertions, changelog entry, and this task brief.

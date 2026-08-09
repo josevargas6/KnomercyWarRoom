@@ -31,7 +31,7 @@ four interrupted records across Deephaul, Deepwind, Gilneas, and Silvershard.
 All four completed matches report `FAIL_REVIEW` command stability, with 36-75
 replacements and 6-28 reversals. The records predate the exact deployment
 certification receipt and are therefore useful defect evidence but remain
-`UNBOUND` for promotion. KWR-048 owns deterministic candidate binding.
+`UNBOUND` for promotion. KWR-250 owns deterministic candidate binding.
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working

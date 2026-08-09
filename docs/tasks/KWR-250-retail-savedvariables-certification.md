@@ -1,5 +1,5 @@
 ---
-id: KWR-048
+id: KWR-250
 title: Bind Retail SavedVariables evidence to the deployed candidate
 owner: unassigned
 priority: high
