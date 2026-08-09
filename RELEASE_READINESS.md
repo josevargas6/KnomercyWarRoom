@@ -6,20 +6,23 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 37 is the current repair candidate; Alpha 36 remains the verified public prerelease.**
+**Alpha 37 is the installed repair candidate; Alpha 36 remains the verified public prerelease.**
 The recovery PR, KWR-047 source governance, package manifests, installed-folder
-comparisons, and protected release workflow passed on 2026-08-08. Alpha 36
-Commander and Sentinel are deployed from verified package manifests with no
-extra installed files; the public prerelease is
+comparisons, and protected release workflow passed on 2026-08-08. Alpha 37
+Commander and Sentinel were deployed together on 2026-08-09 from the certified
+candidate packages: Commander has 388 exact files and Sentinel has 9 exact
+files, with zero missing, changed, or extra entries. Both addons are enabled
+for the active `Verite-Bladefist` character, so Sentinel's reviewed same-client
+`KWR.SentinelBridge` will activate on the next client load. Cross-client addon
+messaging remains disabled by `PROTOCOL.md`. The public prerelease remains
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
 CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
 workflow. Render production verification also passed: `kwr-sentinel-bot` is
 deployed on its current `main` commit `8d84fef`, and the Render logs record its
 health endpoint and Discord session online.
 
-Stable promotion remains blocked by Alpha 37 deployment and fresh verification
-of the confirmed Alpha 36 command-stability defect repair,
-plus missing candidate-bound Retail evidence for live team truth,
+Stable promotion remains blocked by fresh verification of the confirmed Alpha
+36 command-stability defect repair, plus missing candidate-bound Retail evidence for live team truth,
 carrier-target behavior, supported resolutions, taint/blocked actions,
 lifecycle, field performance, and full map-family coverage. Offline, source,
 package, deployment, and platform-automation gates do not substitute for those
