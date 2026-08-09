@@ -28,14 +28,13 @@ workflow. Render production verification also passed: `kwr-sentinel-bot` is
 deployed on its current `main` commit `8d84fef`, and the Render logs record its
 health endpoint and Discord session online.
 
-The product owner attests that five complete Retail battlegrounds cleared
-`LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
-`LIVE-READABILITY` with zero observed errors. Those four field gates are no
-longer release blockers; the attestation is recorded in
-`knowledge/field-verification-attestation.json`. Candidate-bound journal
-telemetry remains an instrumentation debt because the local SavedVariables file
-did not retain the corresponding rows. Cross-PC Sentinel still requires its
-separate ten-client safety/value proof.
+Five complete Retail battlegrounds were reported with no observed errors, but
+they ran on an external PC. The evidence has not yet been imported into this
+repository, so `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
+`LIVE-READABILITY` remain blocked until the external SavedVariables journal and
+associated screenshots or logs are attached. The external-evidence record is
+`knowledge/field-verification-attestation.json`. Cross-PC Sentinel still
+requires its separate ten-client safety/value proof.
 
 The read-only SavedVariables audit in
 `knowledge/retail-field-certification.json` found four completed matches and

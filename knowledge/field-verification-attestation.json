@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "attestedAt": "2026-08-09T04:20:50Z",
   "attestedBy": "product-owner",
-  "result": "PASS",
+  "result": "PENDING_IMPORT",
   "completedBattlegrounds": 5,
   "errorsObserved": 0,
   "clearedGates": [
@@ -12,6 +12,7 @@
     "LIVE-CARRIER-TARGET",
     "LIVE-READABILITY"
   ],
-  "scope": "Retail field-verification baseline",
-  "notes": "Owner attests that all field verifications were cleared across five complete battlegrounds with no errors. The current SavedVariables journal has not retained candidate-bound telemetry rows; telemetry binding remains a separate instrumentation record."
+  "scope": "External Retail field-verification baseline",
+  "executionHost": "friend-pc",
+  "notes": "Owner reports five complete battlegrounds with no observed errors, executed on a separate PC. Import the external SavedVariables journal and the associated screenshots or logs before treating the field gates as certified in this repository."
 }
