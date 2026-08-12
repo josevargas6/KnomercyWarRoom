@@ -1,21 +1,21 @@
 {
   "schema": "kwr-deployment-certification",
   "schemaVersion": 1,
-  "certifiedAt": "2026-08-09T02:45:52Z",
-  "candidateVersion": "6.1.0-alpha.38",
+  "certifiedAt": "2026-08-12T01:29:51Z",
+  "candidateVersion": "6.1.0-alpha.41",
   "releaseTag": null,
-  "releaseCommit": "411c32c8f979444b0241c62ede95e09ddf4f6c70",
+  "releaseCommit": "9708700cb0cc8cbafec18b704cfca881a0d21fa9",
   "commander": {
-    "sha256": "02CEEB29DCD2E9DC2C60E79838E2086A154529241C241C7A277BB84C3379191C",
-    "packageDigest": "DC073C96607292E1BC3D1EA2C6A4BB7BD25DC77064145D553AC01512ABE18FC9",
+    "sha256": "7AE92609F02D56B62F7A21425E87B827965FF32C15ECA71EFBC556FC62F2632D",
+    "packageDigest": "E0D01AB3B72872F4D1A7368F8F68C6CF0F04048B2FA14718E43B69A28A85E8A6",
     "installedEntries": 392,
     "missing": 0,
     "changed": 0,
     "extra": 0
   },
   "sentinel": {
-    "sha256": "7D0C424196608C327881DBF3DBE3B3C6637A212DDD30FBB22FD80C106B962234",
-    "packageDigest": "63130666102623CD28A8661265B0F71807A62D05FC7D0A4C2D9FB90817998CBD",
+    "sha256": "01C69EDBCB3E6C815F4BB16532F9AD4B4E756366F672C0EC1182E9997B9E9039",
+    "packageDigest": "FFB9FBCB16A792E973089D23E02DD41ECAAC54712C5BCCF719FAFA787BC1040C",
     "installedEntries": 9,
     "missing": 0,
     "changed": 0,
@@ -33,9 +33,10 @@
     "crossClientTransport": "IMPLEMENTED_PENDING_RETAIL_PROOF"
   },
   "evidence": [
-    "knowledge/candidate-package-report.json",
-    "docs/tasks/KWR-251-cross-client-sentinel-transport.md",
-    "Exact Alpha38 Commander and Sentinel deployment-manifest receipts"
+    "artifacts/alpha41-retail-12_1-9708700/KWR_6_1_0_ALPHA_41_BUILD_PROVENANCE.json",
+    "artifacts/alpha41-retail-12_1-9708700/commander-deployment-receipt.json",
+    "artifacts/alpha41-retail-12_1-9708700/sentinel-deployment-receipt.json",
+    "docs/KWR_12_1_RETAIL_REFINEMENT_RELEASE_TASK_2026-08-11.md"
   ],
   "result": "PASS"
 }

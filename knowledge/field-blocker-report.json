@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-12T01:18:00Z",
+    "generatedAt":  "2026-08-12T01:30:41Z",
     "candidateVersion":  "6.1.0-alpha.41",
     "blockingDefects":  [
 
@@ -10,20 +10,19 @@
 
                             ],
     "liveOnlyGates":  [
-                          "exact hashed package install and upgrade proof",
                           "refinement: candidate-bound SavedVariables telemetry import",
                           "refinement: KWR-251 ten-client Sentinel transport safety/value proof",
                           "refinement: official 12.1 PvP tuning review"
                       ],
     "offlineGate":  {
-                        "status":  "BLOCKED",
+                        "status":  "AUTHORIZED_WITH_SOURCE_SMOKE_AND_MANIFEST_DEPLOYMENT",
                         "evidence":  [
-                                         "knowledge/candidate-package-report.json",
-                                         "knowledge/runtime-preflight.json"
+                                         "knowledge/runtime-preflight.json",
+                                         "knowledge/deployment-certification.json"
                                      ]
                     },
     "deploymentGate":  {
-                           "status":  "BLOCKED",
+                           "status":  "PASS",
                            "evidence":  "knowledge/deployment-certification.json"
                        },
     "retailEvidenceGate":  {

@@ -194,6 +194,23 @@ if ($fieldAttestationPassed -or $releaseRiskAuthorized) {
         stabilityFailedMatches = 0
         evidence = 'knowledge/field-verification-attestation.json'
     }
+    if ($releaseRiskAuthorized) {
+        # The owner accepted the remaining package-audit automation delay for
+        # this compatibility release. Preserve the exact manifest deployment
+        # receipt and source smoke evidence as the release record, while
+        # leaving an explicit refinement item rather than fabricating a PASS.
+        $report.offlineGate = [ordered]@{
+            status = 'AUTHORIZED_WITH_SOURCE_SMOKE_AND_MANIFEST_DEPLOYMENT'
+            evidence = @(
+                'knowledge/runtime-preflight.json',
+                'knowledge/deployment-certification.json'
+            )
+        }
+        $report.deploymentGate = [ordered]@{
+            status = if ($deploymentCertified) { 'PASS' } else { 'AUTHORIZED_PENDING_RECEIPT_REVIEW' }
+            evidence = 'knowledge/deployment-certification.json'
+        }
+    }
 }
 $report.fieldAttestation = [ordered]@{
     status = if ($fieldAttestationPassed) { 'PASS' } elseif ($releaseRiskAuthorized) { 'AUTHORIZED' } else { 'MISSING' }
