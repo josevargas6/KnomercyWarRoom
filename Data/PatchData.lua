@@ -13,10 +13,10 @@ local PACKS = {
     -- has been reviewed; generic doctrine remains available and conservative.
     ["12.1.0"] = {
         interface = 120100,
-        season = "Retail 12.1 launch",
+        season = "Midnight Season 2 preparation",
         captured = "2026-08-11",
         officialHotfixReviewed = nil,
-        source = "LOCAL_CLIENT_BUILD_12_1_0_69273",
+        source = "BLIZZARD_SEASON_2",
         reviewed = false,
         cooldowns = {},
         capabilities = {},
@@ -29,6 +29,8 @@ local PACKS = {
         },
         notes = {
             "12.1 compatibility mode is active.",
+            "Blizzard schedules PvP Season 2 for the week of 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
+            "Season-preparation gearing guidance is advisory only; pricing, caps, Catalyst behavior, and tuning remain unreviewed until confirmed live.",
             "12.0.7 meta and tuning overlays are intentionally not patch-aligned.",
             "Composition and meta influence remain fail-closed pending official 12.1 review.",
         },
