@@ -1,6 +1,7 @@
 {
   "schema": "kwr-field-verification-attestation",
   "schemaVersion": 1,
+  "candidateVersion": "6.1.0-alpha.41",
   "attestedAt": "2026-08-09T04:20:50Z",
   "attestedBy": "product-owner",
   "result": "OWNER_AUTHORIZED_RELEASE_RISK",

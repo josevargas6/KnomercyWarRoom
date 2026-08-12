@@ -57,6 +57,11 @@ local DEFAULTS = {
             enabled = true,
             angle = 225,
         },
+        transport = {
+            -- Cross-client traffic is opt-in until a raid leader enables it
+            -- for a deliberate team test.
+            enabled = false,
+        },
         loadMessage = true,
     },
 }
@@ -115,6 +120,11 @@ function Sentinel:InitializeDatabase()
     KWR_SENTINEL_DB = type(KWR_SENTINEL_DB) == "table" and KWR_SENTINEL_DB or {}
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
+end
+
+function Sentinel:TransportEnabled()
+    return self.db and self.db.profile and self.db.profile.transport
+        and self.db.profile.transport.enabled == true
 end
 
 function Sentinel:InitializeModules()

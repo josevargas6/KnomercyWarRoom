@@ -83,6 +83,20 @@ function Assert-SafeInstalledRoot {
     }
 }
 
+function Assert-PackageIdentity {
+    param([string]$PackagePath, [string]$InstalledPath)
+
+    $packageLeaf = Split-Path -Leaf $PackagePath
+    $installedLeaf = Split-Path -Leaf $InstalledPath
+    if ($packageLeaf -ne $installedLeaf) {
+        throw "Package root must match installed addon root: $packageLeaf -> $installedLeaf"
+    }
+    $toc = if ($installedLeaf -eq 'KnomercyWarRoom') { 'KnomercyWarRoom.toc' } else { 'KWRSentinel.toc' }
+    if (-not (Test-Path -LiteralPath (Join-Path $PackagePath $toc) -PathType Leaf)) {
+        throw "Package root does not contain expected addon manifest ${toc}: $PackagePath"
+    }
+}
+
 function Remove-SafeExtraFile {
     param([string]$TargetRoot, [string]$RelativePath)
 
@@ -97,6 +111,7 @@ function Remove-SafeExtraFile {
 $packageRoot = Resolve-ExistingDirectory -Path $PackageRoot -Label 'Package root'
 $installedRoot = Resolve-ExistingDirectory -Path $InstalledRoot -Label 'Installed root'
 Assert-SafeInstalledRoot -Path $installedRoot
+Assert-PackageIdentity -PackagePath $packageRoot -InstalledPath $installedRoot
 $before = Compare-Deployment -SourceRoot $packageRoot -TargetRoot $installedRoot
 
 if ($Synchronize) {

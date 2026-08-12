@@ -5,6 +5,7 @@ local Comm = {
     VERSION = "1",
     MAX_BYTES = 240,
     sequence = 0,
+    epoch = "",
     sentAt = {},
     diagnostics = { sent = 0, received = 0, rejected = 0, throttled = 0 },
 }
@@ -27,6 +28,20 @@ local function shortName(value)
     value = text(value, "", 64)
     local dash = value:find("-", 1, true)
     return (dash and value:sub(1, dash - 1) or value):lower()
+end
+
+local function identity(unit)
+    if type(UnitFullName) == "function" then
+        local name, realm = UnitFullName(unit)
+        if name and name ~= "" then
+            return realm and realm ~= "" and (name .. "-" .. realm) or name
+        end
+    end
+    return UnitName and UnitName(unit) or ""
+end
+
+local function canonical(value)
+    return text(value, "", 96):lower()
 end
 
 local function escape(value)
@@ -73,7 +88,7 @@ function Comm:Encode(kind, body)
         "v=" .. self.VERSION, "sid=" .. escape(self:SessionKey()),
         "seq=" .. tostring(self.sequence), "kind=" .. kind,
         "ts=" .. tostring(math.floor(now())),
-        "src=" .. escape(shortName(UnitName and UnitName("player"))),
+        "src=" .. escape(identity("player")),
         "body=" .. escape(body or ""),
     }, "|")
     return #payload <= self.MAX_BYTES and payload or nil
@@ -97,6 +112,7 @@ function Comm:Decode(payload)
 end
 
 function Comm:Send(kind, body)
+    if not Sentinel:TransportEnabled() then return false end
     local distribution = self:Distribution()
     local minimum = LIMITS[kind] or 0
     if not distribution or now() - (self.sentAt[kind] or -100) < minimum then
@@ -110,14 +126,36 @@ function Comm:Send(kind, body)
     return ok
 end
 
+function Comm:IsCommanderSender(sender)
+    local wanted = canonical(sender)
+    if wanted == "" then return false end
+    if canonical(identity("player")) == wanted then return false end
+    local units = {}
+    if IsInRaid and IsInRaid() then
+        for index = 1, GetNumGroupMembers() do units[#units + 1] = "raid" .. index end
+    elseif IsInGroup and IsInGroup() then
+        units[1] = "player"
+        for index = 1, GetNumSubgroupMembers() do units[#units + 1] = "party" .. index end
+    end
+    for _, unit in ipairs(units) do
+        if UnitExists(unit) and canonical(identity(unit)) == wanted
+            and ((UnitIsGroupLeader and UnitIsGroupLeader(unit))
+                or (UnitIsGroupAssistant and UnitIsGroupAssistant(unit))) then
+            return true
+        end
+    end
+    return false
+end
+
 function Comm:Receive(prefix, payload, distribution, sender)
     if prefix ~= self.PREFIX
         or (distribution ~= "INSTANCE_CHAT" and distribution ~= "RAID" and distribution ~= "PARTY") then
         return false
     end
     local packet = self:Decode(payload)
-    if not packet or packet.session ~= self:SessionKey()
-        or shortName(sender) ~= packet.source or not packet.kind:find("^RELAY_") then
+    if not Sentinel:TransportEnabled() or not packet or packet.session ~= self:SessionKey()
+        or canonical(sender) ~= canonical(packet.source) or not packet.kind:find("^RELAY_")
+        or not self:IsCommanderSender(sender) then
         self.diagnostics.rejected = self.diagnostics.rejected + 1
         return false
     end
@@ -130,6 +168,7 @@ function Comm:Receive(prefix, payload, distribution, sender)
 end
 
 function Comm:OnInitialize()
+    self.epoch = tostring(math.floor(now() * 1000))
     self.frame = CreateFrame("Frame", "KWRSentinel_CommFrame")
     self.frame:RegisterEvent("CHAT_MSG_ADDON")
     self.frame:SetScript("OnEvent", function(_, _, prefix, payload, distribution, sender)

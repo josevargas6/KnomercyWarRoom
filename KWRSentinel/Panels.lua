@@ -135,6 +135,10 @@ function Panels:Update(view)
         return
     end
     view = view or (Sentinel.Bridge and Sentinel.Bridge:BuildView()) or {}
+    local remote = Sentinel.Relay and Sentinel.Relay:View()
+    if remote then
+        for key, value in pairs(remote) do view[key] = value end
+    end
     self:UpdateStatus(view)
 end
 

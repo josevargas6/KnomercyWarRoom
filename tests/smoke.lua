@@ -577,12 +577,16 @@ assert(KWR.SafetyMonitor and KWR.SafetyMonitor.frame
     "Retail safety monitor did not register both restricted-action events.")
 KWR.SafetyMonitor.__testBefore = KWR.SafetyMonitor:Snapshot()
 KWR.SafetyMonitor.frame.scripts.OnEvent(
-    KWR.SafetyMonitor.frame, "ADDON_ACTION_BLOCKED", "tainted", "TargetUnit")
+    KWR.SafetyMonitor.frame, "ADDON_ACTION_BLOCKED", "KnomercyWarRoom", "TargetUnit")
 KWR.SafetyMonitor.__testAfter = KWR.SafetyMonitor:Snapshot()
 assert(KWR.SafetyMonitor.__testAfter.blocked == KWR.SafetyMonitor.__testBefore.blocked + 1
     and KWR.SafetyMonitor.__testAfter.total == KWR.SafetyMonitor.__testBefore.total + 1
     and KWR.SafetyMonitor.__testAfter.recent[#KWR.SafetyMonitor.__testAfter.recent].action == "TargetUnit",
     "Retail safety monitor did not capture bounded blocked-action evidence.")
+KWR.SafetyMonitor.frame.scripts.OnEvent(
+    KWR.SafetyMonitor.frame, "ADDON_ACTION_BLOCKED", "UnrelatedAddon", "TargetUnit")
+assert(KWR.SafetyMonitor:Snapshot().blocked == KWR.SafetyMonitor.__testAfter.blocked,
+    "Retail safety monitor must not attribute unrelated addon errors to KWR.")
 KWR.SafetyMonitor.__testBefore = nil
 KWR.SafetyMonitor.__testAfter = nil
 
@@ -1837,11 +1841,12 @@ assert(sentinelView.watch and sentinelView.watch.reason ~= ""
 do
     KWR_TEST_COMM = KWR.CommanderComm
     KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
+    KWR_TEST_ROSTER_SENDER = liveState.snapshot.roster[1].name
     KWR_TEST_PAYLOAD = table.concat({
         "v=1", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=OBS_VISIBLE", "ts=1",
-        "src=testplayer", "body=enemy=EnemyHealer;visible=1;range=1;engaged=0",
+        "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=enemy=EnemyHealer;visible=1;range=1;engaged=0",
     }, "|")
-    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", "TestPlayer"),
+    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
         "Commander rejected a valid roster-bound Sentinel observation.")
     assert(KWR.SentinelIngress.byEnemy.enemyhealer
         and KWR.SentinelIngress.diagnostics.accepted >= 1,
@@ -4862,8 +4867,8 @@ assert(killRow:GetAttribute("type1") == "macro"
     and killRow:GetAttribute("macrotext1")
         == "/cleartarget\n/targetexact Warrior-Z"
     and killRow:GetAttribute("macrotext2")
-        == "/targetexact [mod:shift] Warrior-Z\n/focus [mod:shift]\n/targetlasttarget [mod:shift]",
-    "Enemy tracker binding did not preserve left-click target and Shift+Right-Click focus only.")
+        == "/cleartarget [mod:shift]\n/targetexact [mod:shift] Warrior-Z\n/focus [mod:shift]\n/targetlasttarget [mod:shift]",
+    "Enemy tracker binding did not clear a stale target before Shift+Right-Click focus.")
 assert(killRow and killRow.detailText.value == "KILL"
     and controlRow and controlRow.detailText.value == "CC Knomercy"
     and killRow.detailIcon.texture ~= nil

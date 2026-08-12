@@ -32,8 +32,11 @@ $fieldAttestationPassed = $fieldAttestation -and
     $fieldAttestation.result -eq 'PASS' -and
     [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
     @($fieldAttestation.clearedGates).Count -ge 4
+$attestationCandidateBound = $fieldAttestation -and
+    $fieldAttestation.candidateVersion -eq $version
 $releaseRiskAuthorized = $fieldAttestation -and
     $fieldAttestation.result -eq 'OWNER_AUTHORIZED_RELEASE_RISK' -and
+    $attestationCandidateBound -and
     [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
     @($fieldAttestation.clearedGates).Count -ge 4
 $retailBinding = $retailCertification -and $retailCertification.binding.status -eq 'BOUND'

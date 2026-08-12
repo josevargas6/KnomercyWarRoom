@@ -505,6 +505,9 @@ try {
         }
     }
     $activeVersion = [regex]::Match($tocSource, "## Version:\s*(.+)").Groups[1].Value.Trim()
+    if ($candidatePackage.candidateVersion -ne $activeVersion) {
+        $errors.Add("Candidate package report version does not match the active TOC version.")
+    }
     if (-not $candidatePackage.distributionArtifact.sha256) {
         $errors.Add("Candidate package report is missing the distribution SHA256.")
     }

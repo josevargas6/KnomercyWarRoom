@@ -621,7 +621,7 @@ function CombatRosterVisuals:ApplyBinding(owner, row, data, team)
             desired.type1 = "macro"
             desired.type2 = "macro"
             desired.macrotext1 = "/cleartarget\n/targetexact " .. targetName
-            desired.macrotext2 = "/targetexact [mod:shift] " .. targetName
+            desired.macrotext2 = "/cleartarget [mod:shift]\n/targetexact [mod:shift] " .. targetName
                 .. "\n/focus [mod:shift]\n/targetlasttarget [mod:shift]"
         end
     end

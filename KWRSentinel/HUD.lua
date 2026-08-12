@@ -252,6 +252,9 @@ end
 local function winLine(view, winState)
     local command = view.command or {}
     local score = view.score or {}
+    if view.source == "REMOTE_KWR" and command.action and command.action ~= "" then
+        return compactLine(command.action, "Follow the commander action.", 62)
+    end
     if view.requirement and view.requirement.winLine then
         return compactLine(view.requirement.winLine, "Win the next objective exchange.", 62)
     end
@@ -628,6 +631,14 @@ function HUD:Update()
         return
     end
     local view = Sentinel.Bridge:BuildView() or {}
+    local remote = Sentinel.Relay and Sentinel.Relay:View()
+    if remote then
+        -- Keep locally-derived safety information, but let a validated remote
+        -- commander replace only the fields that it explicitly relays.
+        for key, value in pairs(remote) do
+            view[key] = value
+        end
+    end
     local frame = self:Create()
     local winState = deriveWinState(view)
     local trust = trustState(view)

@@ -1,49 +1,49 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-09T18:15:38Z",
-    "candidateVersion":  "6.1.0-alpha.40",
-    "buildOutputDirectory":  "artifacts/alpha40-friend-test",
+    "generatedAt":  "2026-08-12T06:57:23Z",
+    "candidateVersion":  "6.1.0-alpha.41",
+    "buildOutputDirectory":  "artifacts/candidate-package/alpha29",
     "distributionArtifact":  {
-                                 "name":  "KWR_6_1_0_ALPHA_40_DISTRIBUTION.zip",
-                                 "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_DISTRIBUTION.zip",
-                                 "size":  884074,
-                                 "sha256":  "B1DB6F80E8C2ED04283BA5C4B5F8AFA498B328445D0FD8D08ED828591C13DEE1"
+                                 "name":  "KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
+                                 "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
+                                 "size":  887069,
+                                 "sha256":  "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088"
                              },
     "developerArtifact":  {
-                              "name":  "KWR_6_1_0_ALPHA_40_DEVELOPER.zip",
-                              "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_DEVELOPER.zip",
-                              "size":  42489073,
-                              "sha256":  "C089C769C1A1E5B114204505395B0A1F503ACA542B80E16F56245AA215B21D2C"
+                              "name":  "KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
+                              "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
+                              "size":  42574035,
+                              "sha256":  "9E6955F2CF69B1DA17A76A7BCBFF5BFC8675D753A3AE42AD19A38BC8BF08BEB7"
                           },
     "hashManifest":  {
-                         "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_SHA256.txt",
+                         "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_SHA256.txt",
                          "lines":  [
-                                       "B1DB6F80E8C2ED04283BA5C4B5F8AFA498B328445D0FD8D08ED828591C13DEE1  KWR_6_1_0_ALPHA_40_DISTRIBUTION.zip",
-                                       "C089C769C1A1E5B114204505395B0A1F503ACA542B80E16F56245AA215B21D2C  KWR_6_1_0_ALPHA_40_DEVELOPER.zip",
-                                       "B438DB25FAFEAE2B24379DEACAD6909732CF238A4DAFC2231B6BB48DE9D0BD4B  KWRSentinel_6_1_0_ALPHA_40.zip"
+                                       "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088  KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
+                                       "9E6955F2CF69B1DA17A76A7BCBFF5BFC8675D753A3AE42AD19A38BC8BF08BEB7  KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
+                                       "AB21F03E6204A3BB7132548442364647059E8D417AE35DD4566D0E2F8978026B  KWRSentinel_6_1_0_ALPHA_41.zip"
                                    ]
                      },
     "sourceManifest":  {
-                           "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "124F4CAFDC0DCC8FDA3D180F6AED29F45B85CC8B97BD382DB15898CE9F9C5C16",
+                           "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "C29BFFF13FFC7FD0CF003BE10B4CA5A0C11B6069DE98B0A3AC3CEC1F4DB92F75",
                            "distributionEntryCount":  392,
-                           "developerDigest":  "662386FDCA63890D6769C3A6D35935BC26114899476669A48A6FE1AE8829F5E4",
-                           "developerEntryCount":  8946
+                           "developerDigest":  "DA53FC2C62C3DD1C0F7FB7135AF2FCC26DA7652DD6EC8AC0731F722CBE92B21D",
+                           "developerEntryCount":  8952
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-09T18:09:39.0934522Z",
+                            "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-12T06:55:51.5540072Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.8875",
-                            "nodeAvailableOnBuildPath":  false,
+                            "nodeAvailableOnBuildPath":  true,
                             "npmAvailableOnBuildPath":  false,
-                            "fengariAvailableOnBuildPath":  false,
+                            "fengariAvailableOnBuildPath":  true,
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/alpha40-friend-test/KWR_6_1_0_ALPHA_40_REPRODUCIBILITY.json",
+                            "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_REPRODUCIBILITY.json",
                             "result":  "PASS_WITH_DOCUMENTED_EXCEPTION",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -56,13 +56,13 @@
     "packageAudit":  null,
     "environmentCertification":  {
                                      "buildExecuted":  true,
-                                     "packageAuditInThisWorkspace":  "READY_TO_CERTIFY",
-                                     "runtimeBlocker":  "Runtime preflight found a readable deterministic Lua runtime. Package-audit can be rerun for final extracted-runtime certification.",
+                                     "packageAuditInThisWorkspace":  "BLOCKED_RUNTIME_FILE_ACCESS",
+                                     "runtimeBlocker":  "Package audit in this shell is currently blocked because the local Fengari package files exist but are not readable from this machine state.",
                                      "runtimePreflightPath":  "knowledge/runtime-preflight.json",
                                      "notes":  [
                                                    "The exact distribution and developer ZIPs were created in this workspace.",
                                                    "The reproducibility report was created in this workspace.",
-                                                   "Runtime discovery is ready; extracted-runtime package certification still needs a fresh package-audit run.",
+                                                   "The package-audit step stopped at runtime discovery instead of proving extracted-runtime certification here.",
                                                    "Live install and upgrade proof still require real client execution and field evidence."
                                                ]
                                  },
@@ -71,11 +71,11 @@
                           "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
                           "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
                           "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
-                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.0-alpha.40"
+                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.0-alpha.41"
                       },
     "fieldEvidenceBinding":  {
-                                 "candidateVersion":  "6.1.0-alpha.40",
-                                 "distributionSha256":  "B1DB6F80E8C2ED04283BA5C4B5F8AFA498B328445D0FD8D08ED828591C13DEE1",
+                                 "candidateVersion":  "6.1.0-alpha.41",
+                                 "distributionSha256":  "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088",
                                  "requiredProof":  [
                                                        "Screenshot or text capture of installed TOC version.",
                                                        "Recorded distribution ZIP SHA256 used for install.",

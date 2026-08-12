@@ -13,12 +13,15 @@ function SentinelMerge:Apply(snapshot)
     local remote = {}
     for _, record in pairs(KWR.SentinelIngress.byEnemy or {}) do
         local body = record.body or {}
+        local applied = KWR.EnemyIntel and KWR.EnemyIntel:ObserveRemote(
+            body, record.kind, record.sender) == true
         remote[#remote + 1] = {
             name = text(body.enemy or body.carrier, "unknown", 64),
             kind = record.kind,
             age = math.max(0, KWR.Util:Now() - (record.at or 0)),
             source = "REMOTE_SENTINEL",
             sender = record.sender,
+            applied = applied,
         }
     end
     snapshot.sentinelRemote = {

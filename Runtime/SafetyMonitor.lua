@@ -16,11 +16,13 @@ local EVENTS = {
 function SafetyMonitor:Record(event, subject, action)
     local counter = EVENTS[event]
     if not counter then return end
+    local addon = KWR.Util:Text(subject, "", 64)
+    if addon ~= "KnomercyWarRoom" and addon ~= "KWRSentinel" then return end
     self[counter] = (self[counter] or 0) + 1
     self.recent[#self.recent + 1] = {
         at = KWR.Util:Now(),
         event = event,
-        subject = KWR.Util:Text(subject, "unknown", 40),
+        subject = addon,
         action = KWR.Util:Text(action, "unknown", 100),
     }
     while #self.recent > self.maxRecent do

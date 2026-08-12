@@ -362,6 +362,8 @@ function AAR:Start(state)
             lastMemoryKB = nil,
             maxTransitionMs = 0,
             errors = 0,
+            errorBaseline = KWR.MatchRuntime and KWR.MatchRuntime.diagnostics
+                and (KWR.MatchRuntime.diagnostics.errors or 0) or 0,
         },
         safetyBaseline = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {},
         safety = { blocked = 0, forbidden = 0, total = 0 },
@@ -388,7 +390,8 @@ function AAR:CaptureRuntimeEvidence(active, state)
     performance.maxTransitionMs = math.max(
         performance.maxTransitionMs or 0,
         diagnostics.lastTransitionDurationMs or 0)
-    performance.errors = math.max(performance.errors or 0, diagnostics.errors or 0)
+    performance.errors = math.max(performance.errors or 0,
+        math.max(0, (diagnostics.errors or 0) - (performance.errorBaseline or 0)))
     active.performance = performance
 end
 

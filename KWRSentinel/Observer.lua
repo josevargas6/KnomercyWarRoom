@@ -27,36 +27,30 @@ local function castObservation()
 end
 
 function Observer:SendHello()
+    if not Sentinel:TransportEnabled() then return false end
     local _, class = UnitClass("player")
     Sentinel.Comm:Send("HELLO", "addon=" .. clean(Sentinel.version, 24)
-        .. ";class=" .. clean(class, 24) .. ";role=UNKNOWN;caps=1")
+        .. ";class=" .. clean(class, 24) .. ";role=UNKNOWN;caps=1;epoch="
+        .. clean(Sentinel.Comm.epoch, 32))
 end
 
 function Observer:Tick()
     -- Outside an instance/group channel no observation can be delivered.
     -- Skip the target/cast scans entirely instead of doing recurring work
     -- that Comm will discard.
-    if not Sentinel.Comm or not Sentinel.Comm:Distribution() then return end
+    if not Sentinel:TransportEnabled() or not Sentinel.Comm or not Sentinel.Comm:Distribution() then return end
     local dead = UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") == true
     local state = "alive=" .. (dead and "0" or "1") .. ";connected=1;reach=UNKNOWN"
-    if state ~= self.lastState then
-        Sentinel.Comm:Send("STATE", state)
-        self.lastState = state
-    else
-        Sentinel.Comm:Send("STATE", state)
-    end
+    Sentinel.Comm:Send("STATE", state)
+    self.lastState = state
     local visible = targetObservation()
-    if visible and visible ~= self.lastVisible then
-        Sentinel.Comm:Send("OBS_VISIBLE", visible)
-        self.lastVisible = visible
-    end
+    if visible then Sentinel.Comm:Send("OBS_VISIBLE", visible) end
+    self.lastVisible = visible or ""
     local cast = castObservation()
-    if cast and cast ~= self.lastCast then
-        Sentinel.Comm:Send("OBS_CAST", cast)
-        self.lastCast = cast
-    end
+    if cast then Sentinel.Comm:Send("OBS_CAST", cast) end
+    self.lastCast = cast or ""
     if visible then
-        Sentinel.Comm:Send("OBS_PRESSURE", "friendly=1;enemy=1;healer=UNKNOWN;state=WATCH;target=LOCAL")
+        Sentinel.Comm:Send("OBS_PRESSURE", "friendly=UNKNOWN;enemy=UNKNOWN;healer=UNKNOWN;state=WATCH;target=LOCAL")
     end
 end
 

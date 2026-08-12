@@ -11,9 +11,23 @@ local function shortName(value)
     return KWR.Util:ShortName(text(value, "", 64)):lower()
 end
 
+local function canonical(value)
+    return text(value, "", 96):lower()
+end
+
+local function escape(value)
+    return (text(value, "", 96):gsub("[^%w%._%-]", function(character)
+        return string.format("%%%02X", string.byte(character))
+    end))
+end
+
+local function field(key, value, fallback, maximum)
+    return key .. "=" .. escape(text(value, fallback, maximum))
+end
+
 local function assignmentFor(assignments, playerName)
     for _, assignment in ipairs(assignments or {}) do
-        if shortName(assignment.name or assignment.shortName) == shortName(playerName) then
+        if canonical(assignment.name or assignment.shortName) == canonical(playerName) then
             return assignment
         end
     end
@@ -28,22 +42,22 @@ function SentinelRelay:Build(playerName, state)
     local command = state.command or {}
     return {
         RELAY_ASSIGN = table.concat({
-            "to=" .. text(playerName, "", 64):gsub("[^%w%._%-]", "_"),
-            "role=" .. text(personal.role or assignment.role, "HOLD", 24),
-            "where=" .. text(personal.location or assignment.location, "UNKNOWN", 48),
-            "move=" .. text(personal.movement or assignment.movement, "STAY", 24),
+            field("to", playerName, "", 64),
+            field("role", personal.role or assignment.role, "HOLD", 24),
+            field("where", personal.location or assignment.location, "UNKNOWN", 48),
+            field("move", personal.movement or assignment.movement, "STAY", 24),
         }, ";"),
         RELAY_CONTROL = table.concat({
-            "to=" .. text(playerName, "", 64):gsub("[^%w%._%-]", "_"),
-            "target=" .. text(personal.target, "NONE", 64),
-            "mode=" .. text(personal.shortRole or personal.role, "WATCH", 24),
+            field("to", playerName, "", 64),
+            field("target", personal.target, "NONE", 64),
+            field("mode", personal.shortRole or personal.role, "WATCH", 24),
             "fixed=" .. ((assignment.fixed == true) and "1" or "0"),
         }, ";"),
         RELAY_ACTION = table.concat({
-            "to=" .. text(playerName, "", 64):gsub("[^%w%._%-]", "_"),
-            "action=" .. text(command.action, "HOLD", 96):gsub("[^%w%._%-]", "_"),
-            "when=" .. text(command.when, "NOW", 24),
-            "sig=" .. text(execution.signature, "", 48):gsub("[^%w%._%-]", "_"),
+            field("to", playerName, "", 64),
+            field("action", command.action, "HOLD", 96),
+            field("when", command.when, "NOW", 24),
+            field("sig", execution.signature, "", 48),
         }, ";"),
     }
 end

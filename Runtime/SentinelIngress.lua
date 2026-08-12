@@ -12,6 +12,10 @@ local function text(value, maximum)
     return KWR.Util:Text(value, "", maximum or 64)
 end
 
+local function senderKey(value)
+    return text(value, 96):lower()
+end
+
 local function parseBody(body)
     local result, count = {}, 0
     for field in tostring(body or ""):gmatch("[^;]+") do
@@ -29,19 +33,25 @@ function SentinelIngress:Accept(packet, sender, state)
         self.diagnostics.malformed = self.diagnostics.malformed + 1
         return false
     end
-    local key = KWR.Util:ShortName(sender):lower()
+    local key = senderKey(sender)
+    local record = self.byPlayer[key] or { packets = {} }
+    local helloEpoch = packet.kind == "HELLO" and text(body.epoch, 32) or ""
+    if helloEpoch ~= "" and helloEpoch ~= record.epoch then
+        record.packets = {}
+        self.lastSeqBySender[key] = 0
+        record.epoch = helloEpoch
+    end
     local previous = self.lastSeqBySender[key] or 0
     if packet.sequence <= previous then
         self.diagnostics.duplicate = self.diagnostics.duplicate + 1
         return false
     end
-    local record = self.byPlayer[key] or { packets = {} }
     local lastAt = record.packets[packet.kind] or 0
     if KWR.Util:Now() - lastAt < LIMITS[packet.kind] then
         self.diagnostics.throttled = self.diagnostics.throttled + 1
         return false
     end
-    record.name = KWR.Util:ShortName(sender)
+    record.name = text(sender, 96)
     record.updatedAt = KWR.Util:Now()
     record.packets[packet.kind] = record.updatedAt
     record[packet.kind] = { body = body, at = record.updatedAt }

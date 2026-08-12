@@ -355,6 +355,32 @@ function EnemyIntel:ForgetToken(unit)
     if unit ~= "" then self.observedTokens[unit] = nil end
 end
 
+function EnemyIntel:ObserveRemote(body, kind, sender)
+    body = type(body) == "table" and body or {}
+    local name = KWR.Util:Text(body.enemy or body.carrier, "", 64)
+    if name == "" then return false end
+    local canonicalName = KWR.Util:CanonicalName(name)
+    local match
+    for _, record in pairs(self.records) do
+        if KWR.Util:CanonicalName(KWR.Util:Text(record.name, "", 64)) == canonicalName then
+            if match then return false end -- Never guess between duplicate short names.
+            match = record
+        end
+    end
+    if not match then return false end -- Remote reports cannot create enemy identities.
+    match.remoteObservation = {
+        kind = KWR.Util:Text(kind, "OBS_VISIBLE", 24),
+        source = KWR.Util:Text(sender, "remote", 96),
+        at = KWR.Util:Now(),
+    }
+    if kind == "OBS_CAST" then
+        match.remoteCast = KWR.Util:Text(body.spell, "", 64)
+    elseif kind == "OBS_CARRIER" then
+        match.remoteCarrier = true
+    end
+    return true
+end
+
 function EnemyIntel:Upsert(data, visible)
     local name = KWR.Util:Text(data.name, "", 48)
     if name == "" then return end

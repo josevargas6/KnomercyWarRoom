@@ -48,6 +48,20 @@ local function shortName(value)
     return KWR.Util:ShortName(text(value, "", 64)):lower()
 end
 
+local function identity(unit)
+    if type(UnitFullName) == "function" then
+        local name, realm = UnitFullName(unit)
+        if name and name ~= "" then
+            return realm and realm ~= "" and (name .. "-" .. realm) or name
+        end
+    end
+    return UnitName and UnitName(unit) or ""
+end
+
+local function canonical(value)
+    return text(value, "", 96):lower()
+end
+
 function CommanderComm:SessionKey(state)
     local context = state and state.snapshot and state.snapshot.context or {}
     if context.inPvP ~= true then return "world" end
@@ -64,7 +78,7 @@ function CommanderComm:Encode(kind, body, state)
         "seq=" .. tostring(self.sequence),
         "kind=" .. kind,
         "ts=" .. tostring(math.floor(now())),
-        "src=" .. escape(shortName(UnitName and UnitName("player"))),
+        "src=" .. escape(identity("player")),
         "body=" .. escape(body or ""),
     }
     local payload = table.concat(fields, "|")
@@ -104,10 +118,10 @@ function CommanderComm:Decode(payload)
 end
 
 function CommanderComm:IsRosterSender(sender, state)
-    local wanted = shortName(sender)
+    local wanted = canonical(sender)
     if wanted == "" then return false end
     for _, row in ipairs(state and state.snapshot and state.snapshot.roster or {}) do
-        if wanted == shortName(row.name or row.shortName) then return true end
+        if wanted == canonical(row.name) then return true end
     end
     return false
 end
@@ -140,7 +154,7 @@ function CommanderComm:Receive(prefix, payload, distribution, sender)
     local state = KWR.Store and KWR.Store:Get() or nil
     if not packet or not state or packet.kind:find("^RELAY_")
         or packet.session ~= self:SessionKey(state)
-        or shortName(sender) ~= packet.source
+        or canonical(sender) ~= canonical(packet.source)
         or not self:IsRosterSender(sender, state) then
         self.diagnostics.rejected = self.diagnostics.rejected + 1
         return false, reason or "sender"
@@ -159,7 +173,7 @@ function CommanderComm:Relay(state)
     for _, player in ipairs(state.snapshot and state.snapshot.roster or {}) do
         local playerName = text(player.name or player.shortName, "", 64)
         local sentinel = KWR.SentinelIngress and KWR.SentinelIngress.byPlayer
-            and KWR.SentinelIngress.byPlayer[shortName(playerName)]
+            and KWR.SentinelIngress.byPlayer[canonical(playerName)]
         if sentinel and sentinel.HELLO then
             local relay = KWR.SentinelRelay:Build(playerName, state)
             for kind, body in pairs(relay or {}) do
