@@ -43,16 +43,24 @@ foreach ($productSection in @('Commander', 'Sentinel')) {
     }
 }
 
-$releaseUpdates = Get-Content -LiteralPath 'docs/KWR_COMMANDER_DISCORD_CHANNEL_UPDATES.md' -Raw
-$releaseUpdates += Get-Content -LiteralPath 'docs/SENTINEL_DISCORD_CHANNEL_UPDATES.md' -Raw
-foreach ($staleVersion in @('6.1.0-alpha.32', '6.1.0-alpha.29', '6.1.0-alpha.25')) {
-    if ($releaseUpdates -match [regex]::Escape($staleVersion)) {
-        throw "Release channel copy contains stale candidate version: $staleVersion"
-    }
-}
-foreach ($staleReceipt in @('8558795', '8558797')) {
-    if ($releaseUpdates -match [regex]::Escape($staleReceipt)) {
-        throw "Release channel copy contains stale CurseForge receipt: $staleReceipt"
+# These are active release surfaces, not historical changelog records. Every
+# version reference must resolve to the current TOC candidate so a version bump
+# cannot leave a stale download, Discord, or CurseForge instruction behind.
+$activeReleaseFiles = @(
+    'CURSEFORGE_UPLOAD.md',
+    'KWRSentinel/CURSEFORGE_UPLOAD.md',
+    'docs/KWR_COMMANDER_DISCORD_CHANNEL_UPDATES.md',
+    'docs/SENTINEL_DISCORD_CHANNEL_UPDATES.md'
+)
+foreach ($path in $activeReleaseFiles) {
+    $content = Get-Content -LiteralPath $path -Raw
+    $versions = [regex]::Matches($content, '6\.1\.0-alpha\.\d+') |
+        ForEach-Object { $_.Value } |
+        Select-Object -Unique
+    foreach ($foundVersion in @($versions)) {
+        if ($foundVersion -cne $version) {
+            throw "Active release surface $path contains stale version: $foundVersion (expected $version)."
+        }
     }
 }
 

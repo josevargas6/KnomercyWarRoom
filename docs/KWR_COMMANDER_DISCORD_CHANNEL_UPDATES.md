@@ -2,7 +2,7 @@
 
 Status: ready-to-post
 
-Date: 2026-08-02
+Date: 2026-08-11
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -25,10 +25,10 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0-alpha.33 is available for alpha testing.
+Knomercy War Room Commander 6.1.0-alpha.41 is available for alpha testing.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -60,7 +60,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander alpha.33 field-test focus:
+KWR Commander alpha.41 refinement focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -77,7 +77,7 @@ Remaining release work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.0-alpha.33 distribution receipt
+KWR Commander 6.1.0-alpha.41 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -86,13 +86,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.33
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
 
 Certified artifact:
-KWR_6_1_0_ALPHA_33_DISTRIBUTION.zip
+KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip
 
 SHA-256 manifest:
-KWR_6_1_0_ALPHA_33_SHA256.txt on the GitHub prerelease
+KWR_6_1_0_ALPHA_41_SHA256.txt on the GitHub prerelease
 
 Validation:
 - validate.ps1 passed

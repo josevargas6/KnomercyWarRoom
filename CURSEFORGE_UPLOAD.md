@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-artifacts\live-automation-check\KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip
+artifacts\KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip
 ```
 
 Project:
@@ -14,12 +14,12 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Required upload fields:
 
-- File: `KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip`
-- Display name: `Knomercy War Room 6.1.0-alpha.29`
+- File: `KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip`
+- Display name: `Knomercy War Room 6.1.0-alpha.41`
 - Release type: `Alpha` for current candidate testing
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
-- Supported game version: `12.0.7` / interface `120007`
+- Supported game versions: `12.1.0` / interface `120100` and `12.0.7` / interface `120007`
 - Changelog source: `CHANGELOG.md`
 - Description source: `CURSEFORGE_DESCRIPTION.md`
 
@@ -29,7 +29,7 @@ Guarded API upload command:
 $env:CURSEFORGE_PROJECT_ID = "<project id>"
 $env:CURSEFORGE_API_TOKEN = "<author token>"
 $env:CURSEFORGE_GAME_VERSION_IDS = "<comma-separated Retail version ids>"
-$artifact = "C:\Users\josev\Desktop\KWR\Builds\KWR_6_1_0_ALPHA_29_DISTRIBUTION.zip"
+$artifact = "<absolute path to certified KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip>"
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -DryRun
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact
 ```
@@ -42,15 +42,15 @@ Package evidence:
 - ZIP root folder: `KnomercyWarRoom/`
 - TOC file: `KnomercyWarRoom/KnomercyWarRoom.toc`
 - TOC basename matches parent folder.
-- Interface number: `120007`
+- Interface numbers: `120100`, `120007`
 - Package audit: passed by the certified build gate.
-- Certified ZIP hash: use the generated `KWR_6_1_0_ALPHA_29_SHA256.txt`
+- Certified ZIP hash: use the generated `KWR_6_1_0_ALPHA_41_SHA256.txt`
   manifest next to the built artifact. Rebuild the package before final upload
   if the source changes.
 
 Do not upload:
 
-- `KWR_6_1_0_ALPHA_29_DEVELOPER.zip`
+- `KWR_6_1_0_ALPHA_41_DEVELOPER.zip`
 - `KWRSentinel_*.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
