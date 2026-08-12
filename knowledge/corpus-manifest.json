@@ -12,7 +12,8 @@
                     "goldenLabels":  2001,
                     "replayResults":  2000,
                     "outcomeReviews":  2000,
-                    "adversarialCases":  201
+                    "adversarialCases":  201,
+                    "season2SimulationCases":  5000
                 },
     "profiles":  [
                      {

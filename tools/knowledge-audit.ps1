@@ -25,6 +25,7 @@ $required = @(
     "knowledge\schemas\scenario-calibration-schema.json",
     "knowledge\schemas\scenario-adversarial-calibration-schema.json",
     "knowledge\schemas\scenario-expert-corpus-schema.json",
+    "knowledge\schemas\season2-rbg-simulation-corpus-schema.json",
     "knowledge\schemas\runtime-preflight-schema.json",
     "knowledge\schemas\field-test-readiness-schema.json",
     "knowledge\schemas\field-blocker-report-schema.json",
@@ -36,6 +37,7 @@ $required = @(
     "knowledge\scenario-calibration.json",
     "knowledge\scenario-adversarial-calibration.json",
     "knowledge\scenario-expert-corpus.json",
+    "knowledge\season2-rbg-simulation-corpus.json",
     "knowledge\runtime-preflight.json",
     "knowledge\field-test-readiness.json",
     "knowledge\field-blocker-report.json",
@@ -527,6 +529,13 @@ try {
     }
 } catch {
     $errors.Add("Offline completion audit JSON is invalid: $($_.Exception.Message)")
+}
+
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "tools\season2-rbg-simulation-audit.ps1")
+    if ($LASTEXITCODE -ne 0) { $errors.Add("Season 2 simulation corpus audit failed.") }
+} catch {
+    $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
 }
 
 $deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"

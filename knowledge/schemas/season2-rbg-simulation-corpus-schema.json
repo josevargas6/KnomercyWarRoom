@@ -1,0 +1,5 @@
+{
+  "schema": "kwr-season2-rbg-simulation-corpus-schema",
+  "schemaVersion": 1,
+  "required": ["schema", "schemaVersion", "generatedAt", "patch", "status", "casesPerMap", "casesPerPhasePerMap", "totalCases", "activation", "cases"]
+}
