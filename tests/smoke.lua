@@ -1856,8 +1856,17 @@ do
     assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
         "Commander rejected a valid roster-bound Sentinel observation.")
     assert(KWR.SentinelIngress.byEnemy.enemyhealer
+        and KWR.SentinelIngress.byEnemy.enemyhealer.OBS_VISIBLE
         and KWR.SentinelIngress.diagnostics.accepted >= 1,
         "Commander ingress did not retain bounded remote enemy evidence.")
+    KWR_TEST_CAST_PAYLOAD = table.concat({
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=2", "kind=OBS_CAST", "ts=2", "ep=testepoch",
+        "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=enemy=EnemyHealer;spell=Polymorph;state=START",
+    }, "|")
+    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_CAST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER)
+        and KWR.SentinelIngress.byEnemy.enemyhealer.OBS_VISIBLE
+        and KWR.SentinelIngress.byEnemy.enemyhealer.OBS_CAST,
+        "Commander ingress discarded a concurrent Sentinel observation family.")
     assert(not KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", "TestPlayer"),
         "Commander accepted a duplicate Sentinel sequence.")
     assert(not KWR_TEST_COMM:Receive("KWRSync1", "v=2|sid=x", "INSTANCE_CHAT", "TestPlayer"),

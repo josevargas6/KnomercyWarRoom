@@ -388,9 +388,10 @@ function EnemyIntel:ObserveRemote(body, kind, sender)
                 }
             end
         end
-    elseif kind == "OBS_CARRIER" then
-        match.carrier = true
     end
+    -- Carrier state is applied to the current snapshot by SentinelMerge only.
+    -- It must expire with the three-second remote observation, never persist
+    -- on the long-lived EnemyIntel record.
     return true
 end
 

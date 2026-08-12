@@ -11,7 +11,9 @@ function SentinelMerge:Apply(snapshot)
     if not snapshot or not KWR.SentinelIngress then return snapshot end
     KWR.SentinelIngress:Expire()
     local remote = {}
-    for _, record in pairs(KWR.SentinelIngress.byEnemy or {}) do
+    for _, families in pairs(KWR.SentinelIngress.byEnemy or {}) do
+        for _, senders in pairs(families) do
+            for _, record in pairs(senders) do
         local body = record.body or {}
         local applied = KWR.EnemyIntel and KWR.EnemyIntel:ObserveRemote(
             body, record.kind, record.sender) == true
@@ -40,6 +42,8 @@ function SentinelMerge:Apply(snapshot)
             sender = record.sender,
             applied = applied,
         }
+            end
+        end
     end
     snapshot.sentinelRemote = {
         count = #remote,

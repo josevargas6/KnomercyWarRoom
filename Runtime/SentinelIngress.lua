@@ -105,7 +105,15 @@ function SentinelIngress:Accept(packet, sender, state)
     self.lastSeqBySender[key] = packet.sequence
     local enemy = text(body.enemy or body.carrier, 64)
     if enemy ~= "" and packet.kind:find("^OBS_") then
-        self.byEnemy[enemy:lower()] = { body = body, kind = packet.kind, at = record.updatedAt, sender = key }
+        -- Preserve each observation family and reporter independently. A
+        -- target scan can publish visibility and a cast in the same tick;
+        -- neither may overwrite the other before the merge consumes them.
+        local enemyKey = enemy:lower()
+        self.byEnemy[enemyKey] = self.byEnemy[enemyKey] or {}
+        self.byEnemy[enemyKey][packet.kind] = self.byEnemy[enemyKey][packet.kind] or {}
+        self.byEnemy[enemyKey][packet.kind][key] = {
+            body = body, kind = packet.kind, at = record.updatedAt, sender = key,
+        }
     end
     self.diagnostics.accepted = self.diagnostics.accepted + 1
     return true
@@ -116,8 +124,14 @@ function SentinelIngress:Expire()
     for key, record in pairs(self.byPlayer) do
         if now - (record.updatedAt or 0) > 10 then self.byPlayer[key] = nil end
     end
-    for key, record in pairs(self.byEnemy) do
-        if now - (record.at or 0) > 3 then self.byEnemy[key] = nil end
+    for enemyKey, families in pairs(self.byEnemy) do
+        for kind, senders in pairs(families) do
+            for sender, record in pairs(senders) do
+                if now - (record.at or 0) > 3 then senders[sender] = nil end
+            end
+            if not next(senders) then families[kind] = nil end
+        end
+        if not next(families) then self.byEnemy[enemyKey] = nil end
     end
 end
 
