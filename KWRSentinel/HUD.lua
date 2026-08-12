@@ -683,7 +683,10 @@ function HUD:OnInitialize()
     self.pulse.elapsed = 0
     self.pulse:SetScript("OnUpdate", function(_, elapsed)
         HUD.pulse.elapsed = HUD.pulse.elapsed + elapsed
-        if HUD.pulse.elapsed >= 0.25 then
+        -- Preserve the responsive 4 Hz battlefield card, but avoid spending
+        -- the same CPU in town or while a Blizzard panel suppresses overlays.
+        local interval = select(2, IsInInstance()) == "pvp" and 0.25 or 1.0
+        if HUD.pulse.elapsed >= interval then
             HUD.pulse.elapsed = 0
             HUD:Update()
         end

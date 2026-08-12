@@ -12,8 +12,10 @@ local function targetObservation()
     local name = clean(UnitName("target"), 64)
     if name == "" then return nil end
     local visible = UnitIsVisible and UnitIsVisible("target") and "1" or "0"
-    local range = CheckInteractDistance and CheckInteractDistance("target", 3) and "1" or "0"
-    return "enemy=" .. name .. ";visible=" .. visible .. ";range=" .. range .. ";engaged=0"
+    -- Retail can protect range checks. Commander already treats reach as
+    -- evidence-limited, so preserve that truth rather than poll a protected
+    -- API every observer tick.
+    return "enemy=" .. name .. ";visible=" .. visible .. ";range=UNKNOWN;engaged=0"
 end
 
 local function castObservation()
@@ -31,7 +33,10 @@ function Observer:SendHello()
 end
 
 function Observer:Tick()
-    if not Sentinel.Comm then return end
+    -- Outside an instance/group channel no observation can be delivered.
+    -- Skip the target/cast scans entirely instead of doing recurring work
+    -- that Comm will discard.
+    if not Sentinel.Comm or not Sentinel.Comm:Distribution() then return end
     local dead = UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") == true
     local state = "alive=" .. (dead and "0" or "1") .. ";connected=1;reach=UNKNOWN"
     if state ~= self.lastState then
