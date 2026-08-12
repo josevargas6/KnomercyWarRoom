@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Added Alpha 41 Retail 12.1 compatibility mode. The detected 12.1.0 client
+  now fails closed on the prior 12.0.7 meta and capability overlays until
+  official tuning is reviewed; generic doctrine and advisory season-prep
+  review remain available.
+- Recorded product-owner authorization to move the four outstanding live-proof
+  items from release blockers into the refinement queue. This does not claim
+  candidate-bound field evidence or cross-PC Sentinel proof was completed.
 - Added KWR-253 composition-aware opening coverage. Each of the ten supported
   maps now exposes fifteen theory-reviewed starting branches, including ten new
   friendly/enemy composition matchups and qualified-tier routes. They retain

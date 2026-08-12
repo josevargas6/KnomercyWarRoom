@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.40
+# Release Readiness - 6.1.0-alpha.41
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,8 +6,10 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 40 is the composition-aware opener candidate; Alpha 39 is the deployed
-managed-Sentinel-layout candidate; Alpha 36 remains the verified public prerelease.**
+**Alpha 41 is the authorized Retail 12.1 compatibility release and the product
+has entered refinement mode.** Alpha 40 remains the composition-aware opener
+baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
+the last verified public prerelease.
 The recovery PR, KWR-047 source governance, package manifests, installed-folder
 comparisons, and protected release workflow passed on 2026-08-08. Alpha 37
 Commander and Sentinel were deployed together on 2026-08-09 from the certified
@@ -29,12 +31,13 @@ deployed on its current `main` commit `8d84fef`, and the Render logs record its
 health endpoint and Discord session online.
 
 Five complete Retail battlegrounds were reported with no observed errors, but
-they ran on an external PC. The evidence has not yet been imported into this
-repository, so `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
-`LIVE-READABILITY` remain blocked until the external SavedVariables journal and
-associated screenshots or logs are attached. The external-evidence record is
-`knowledge/field-verification-attestation.json`. Cross-PC Sentinel still
-requires its separate ten-client safety/value proof.
+they ran on an external PC. On 2026-08-11 the product owner authorized this
+evidence gap for the Alpha 41 release: `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
+`LIVE-CARRIER-TARGET`, and `LIVE-READABILITY` are no longer release blockers.
+They are refinement telemetry until the external SavedVariables journal and
+associated screenshots or logs are imported. This authorization is recorded in
+`knowledge/field-verification-attestation.json`; it does not certify cross-PC
+Sentinel, which retains its separate ten-client safety/value refinement proof.
 
 The read-only SavedVariables audit in
 `knowledge/retail-field-certification.json` found four completed matches and
@@ -86,9 +89,10 @@ Current repo state:
   evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
 - the default release package now excludes the optional Sentinel bundle unless
   `tools/build.ps1 -IncludeSentinel` is used intentionally;
-- remaining promotion gates are Retail-only: live stability, taint/safety,
-  field-performance proof, screenshot matrix, supported-map certification, and
-  release-presentation proof;
+- no internal release blockers remain under the explicit Alpha 41 product-owner
+  authorization; live stability, taint/safety, field-performance proof,
+  screenshot matrix, supported-map certification, official 12.1 tuning review,
+  and release presentation are refinement telemetry;
 - `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
   `LIVE-READABILITY` are the field-gate identifiers in
   `knowledge/field-blocker-report.json`; implementation task IDs are not reused

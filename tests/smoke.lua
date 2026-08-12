@@ -1628,8 +1628,11 @@ assert(type(liveState.snapshot.reporter.trust) == "table"
     "Reporter did not expose a trust profile.")
 assert(type(liveState.snapshot.knowledgeStatus) == "table"
     and type(liveState.snapshot.knowledgeStatus.label) == "string"
-    and liveState.snapshot.knowledgeStatus.patchAligned == true,
-    "Knowledge status did not expose patch-aligned certainty.")
+    and liveState.snapshot.knowledgeStatus.patchAligned == false
+    and liveState.snapshot.knowledgeStatus.reviewed == false
+    and liveState.snapshot.knowledgeStatus.compositionAuthorized == false
+    and liveState.snapshot.knowledgeStatus.metaInfluenceAllowed == false,
+    "Retail 12.1 compatibility mode did not fail closed on stale tuning data.")
 assert(type(liveState.snapshot.strategy.trust) == "table"
     and type(liveState.snapshot.strategy.trust.mode) == "string",
     "Strategist did not expose a strategy trust model.")

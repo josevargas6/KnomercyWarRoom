@@ -1,13 +1,38 @@
 local _, KWR = ...
 
 local PatchData = {
-    activePatch = "12.0.7",
+    activePatch = "12.1.0",
 }
 KWR.PatchData = PatchData
 
 -- New patches should add or replace a data pack here. Runtime engines consume
 -- the normalized pack and do not require strategy code rewrites.
 local PACKS = {
+    -- The installed Retail client is 12.1.0. Keep the 12.0.7 capability
+    -- overlays out of command scoring until the new season's official tuning
+    -- has been reviewed; generic doctrine remains available and conservative.
+    ["12.1.0"] = {
+        interface = 120100,
+        season = "Retail 12.1 launch",
+        captured = "2026-08-11",
+        officialHotfixReviewed = nil,
+        source = "LOCAL_CLIENT_BUILD_12_1_0_69273",
+        reviewed = false,
+        cooldowns = {},
+        capabilities = {},
+        disabledPlans = {},
+        seasonPrepCorpus = {
+            active = true,
+            mode = "ADVISORY",
+            activationAuthority = "USER_APPROVED_ALPHA40",
+            requiresRetailValidation = true,
+        },
+        notes = {
+            "12.1 compatibility mode is active.",
+            "12.0.7 meta and tuning overlays are intentionally not patch-aligned.",
+            "Composition and meta influence remain fail-closed pending official 12.1 review.",
+        },
+    },
     ["12.0.7"] = {
         interface = 120007,
         season = "Midnight Season 1",

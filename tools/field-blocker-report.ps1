@@ -32,6 +32,10 @@ $fieldAttestationPassed = $fieldAttestation -and
     $fieldAttestation.result -eq 'PASS' -and
     [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
     @($fieldAttestation.clearedGates).Count -ge 4
+$releaseRiskAuthorized = $fieldAttestation -and
+    $fieldAttestation.result -eq 'OWNER_AUTHORIZED_RELEASE_RISK' -and
+    [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
+    @($fieldAttestation.clearedGates).Count -ge 4
 $retailBinding = $retailCertification -and $retailCertification.binding.status -eq 'BOUND'
 $observedStabilityFailures = if ($retailCertification) {
     if ($null -ne $retailCertification.summary.observedStabilityFailedMatches) {
@@ -171,7 +175,7 @@ $report = [ordered]@{
     }
 }
 
-if ($fieldAttestationPassed) {
+if ($fieldAttestationPassed -or $releaseRiskAuthorized) {
     # The owner has confirmed the live sessions, but the read-only journal did
     # not retain candidate-bound rows. Keep that instrumentation debt visible
     # without retaining the completed field gates as release blockers.
@@ -179,20 +183,21 @@ if ($fieldAttestationPassed) {
     $report.recommendedSessions = @()
     $report.liveOnlyGates = @(
         if (-not $deploymentCertified) { "exact hashed package install and upgrade proof" }
-        "candidate-bound SavedVariables telemetry import"
-        "KWR-251 ten-client Sentinel transport safety/value proof"
+        "refinement: candidate-bound SavedVariables telemetry import"
+        "refinement: KWR-251 ten-client Sentinel transport safety/value proof"
+        "refinement: official 12.1 PvP tuning review"
     )
     $report.retailEvidenceGate = [ordered]@{
-        status = 'PASS'
-        binding = 'OWNER_ATTESTED'
+        status = if ($fieldAttestationPassed) { 'PASS' } else { 'AUTHORIZED_WITH_UNVERIFIED_EVIDENCE' }
+        binding = if ($fieldAttestationPassed) { 'OWNER_ATTESTED' } else { 'OWNER_AUTHORIZED_UNVERIFIED' }
         completedMatches = [int]$fieldAttestation.completedBattlegrounds
         stabilityFailedMatches = 0
         evidence = 'knowledge/field-verification-attestation.json'
     }
 }
 $report.fieldAttestation = [ordered]@{
-    status = if ($fieldAttestationPassed) { 'PASS' } else { 'MISSING' }
-    evidence = if ($fieldAttestationPassed) {
+    status = if ($fieldAttestationPassed) { 'PASS' } elseif ($releaseRiskAuthorized) { 'AUTHORIZED' } else { 'MISSING' }
+    evidence = if ($fieldAttestationPassed -or $releaseRiskAuthorized) {
         'knowledge/field-verification-attestation.json'
     } else { $null }
 }

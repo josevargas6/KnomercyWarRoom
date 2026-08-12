@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "attestedAt": "2026-08-09T04:20:50Z",
   "attestedBy": "product-owner",
-  "result": "PENDING_IMPORT",
+  "result": "OWNER_AUTHORIZED_RELEASE_RISK",
   "completedBattlegrounds": 5,
   "errorsObserved": 0,
   "clearedGates": [
@@ -14,5 +14,16 @@
   ],
   "scope": "External Retail field-verification baseline",
   "executionHost": "friend-pc",
-  "notes": "Owner reports five complete battlegrounds with no observed errors, executed on a separate PC. Import the external SavedVariables journal and the associated screenshots or logs before treating the field gates as certified in this repository."
+  "notes": "Owner reports five complete battlegrounds with no observed errors, executed on a separate PC. The product owner authorized this evidence gap for the Alpha 41 Retail compatibility release on 2026-08-11. Import the external SavedVariables journal and associated screenshots or logs during refinement; this authorization is not a replacement for candidate-bound field proof.",
+  "releaseAuthorization": {
+    "authorizedAt": "2026-08-11",
+    "authorizedBy": "product-owner",
+    "scope": "Alpha 41 Retail 12.1 compatibility release",
+    "effect": "Convert outstanding live proof from release blockers to refinement telemetry",
+    "doesNotAssert": [
+      "candidate-bound SavedVariables import",
+      "ten-client Sentinel transport safety/value proof",
+      "official 12.1 PvP tuning review"
+    ]
+  }
 }

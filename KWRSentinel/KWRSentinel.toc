@@ -2,7 +2,7 @@
 ## Title: |cff7fd7ffKWR Sentinel|r
 ## Notes: Compact commander-linked player execution card and target confirmation for Rated Battlegrounds.
 ## Author: Jose / Knomercy War Room Project
-## Version: 6.1.0-alpha.40
+## Version: 6.1.0-alpha.41
 ## SavedVariables: KWR_SENTINEL_DB
 ## IconTexture: Interface\Icons\Ability_Rogue_TricksOftheTrade
 ## Category: PvP
