@@ -621,6 +621,12 @@ function HUD:Update()
         if Sentinel.Panels then Sentinel.Panels:Update(nil) end
         return
     end
+    if Sentinel:OverlaySuppressed() then
+        if self.frame then self.frame:Hide() end
+        if self.targetCue then self.targetCue:Hide() end
+        if Sentinel.Panels then Sentinel.Panels:Update(nil) end
+        return
+    end
     local view = Sentinel.Bridge:BuildView() or {}
     local frame = self:Create()
     local winState = deriveWinState(view)

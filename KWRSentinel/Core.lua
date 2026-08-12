@@ -9,6 +9,24 @@ Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
 
+-- Keep Sentinel out of the way of Blizzard's full-screen and major utility
+-- panels. This intentionally mirrors KWR's main overlay window list.
+local BLIZZARD_OVERLAY_WINDOWS = {
+    "SettingsPanel", "InterfaceOptionsFrame", "PlayerSpellsFrame", "SpellBookFrame",
+    "WorldMapFrame", "QuestLogFrame", "QuestMapFrame", "CharacterFrame",
+    "DressUpFrame", "CollectionsJournal", "EncounterJournal", "GameMenuFrame",
+}
+
+function Sentinel:OverlaySuppressed()
+    for _, name in ipairs(BLIZZARD_OVERLAY_WINDOWS) do
+        local frame = _G[name]
+        if frame and frame.IsShown and frame:IsShown() then
+            return true
+        end
+    end
+    return false
+end
+
 local DEFAULTS = {
     profile = {
         hud = {

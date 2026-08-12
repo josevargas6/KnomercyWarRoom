@@ -114,7 +114,7 @@ end
 
 function Panels:UpdateStatus(view)
     local frame = self:CreateStatus()
-    if canShow(frame, "status") ~= true then
+    if Sentinel:OverlaySuppressed() or canShow(frame, "status") ~= true then
         frame:Hide()
         return
     end
