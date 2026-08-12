@@ -132,7 +132,10 @@ function CommanderComm:Send(kind, body, state)
 end
 
 function CommanderComm:Receive(prefix, payload, distribution, sender)
-    if prefix ~= self.PREFIX or distribution == "WHISPER" then return false end
+    if prefix ~= self.PREFIX
+        or (distribution ~= "INSTANCE_CHAT" and distribution ~= "RAID" and distribution ~= "PARTY") then
+        return false
+    end
     local packet, reason = self:Decode(payload)
     local state = KWR.Store and KWR.Store:Get() or nil
     if not packet or not state or packet.kind:find("^RELAY_")

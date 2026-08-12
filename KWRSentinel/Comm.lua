@@ -44,8 +44,14 @@ local function now()
     return GetTime and GetTime() or 0
 end
 
+local function instanceContext()
+    if type(IsInInstance) ~= "function" then return false, "none" end
+    local inside, kind = IsInInstance()
+    return inside == true, kind or "none"
+end
+
 function Comm:SessionKey()
-    local inside, kind = IsInInstance and IsInInstance() or false, "none"
+    local inside, kind = instanceContext()
     if not inside or kind ~= "pvp" then return "world" end
     local _, _, _, _, _, _, _, instance = GetInstanceInfo()
     local mapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player") or 0
@@ -53,7 +59,7 @@ function Comm:SessionKey()
 end
 
 function Comm:Distribution()
-    local inside, kind = IsInInstance and IsInInstance() or false, "none"
+    local inside, kind = instanceContext()
     if inside and kind == "pvp" then return "INSTANCE_CHAT" end
     if IsInRaid and IsInRaid() then return "RAID" end
     if IsInGroup and IsInGroup() then return "PARTY" end
@@ -82,7 +88,9 @@ function Comm:Decode(payload)
         fields[key], count = value, count + 1
     end
     if count ~= 7 or fields.v ~= self.VERSION or not ALLOWED[fields.kind]
-        or not fields.seq:match("^%d+$") or not fields.ts:match("^%d+$") then return nil end
+        or not fields.sid or not fields.seq or not fields.ts or not fields.src
+        or fields.body == nil or not fields.seq:match("^%d+$")
+        or not fields.ts:match("^%d+$") then return nil end
     local packet = { kind = fields.kind, session = unescape(fields.sid),
         sequence = tonumber(fields.seq), source = unescape(fields.src), body = unescape(fields.body) }
     return packet.session and packet.source and packet.body and packet or nil
@@ -103,7 +111,10 @@ function Comm:Send(kind, body)
 end
 
 function Comm:Receive(prefix, payload, distribution, sender)
-    if prefix ~= self.PREFIX or distribution == "WHISPER" then return false end
+    if prefix ~= self.PREFIX
+        or (distribution ~= "INSTANCE_CHAT" and distribution ~= "RAID" and distribution ~= "PARTY") then
+        return false
+    end
     local packet = self:Decode(payload)
     if not packet or packet.session ~= self:SessionKey()
         or shortName(sender) ~= packet.source or not packet.kind:find("^RELAY_") then
