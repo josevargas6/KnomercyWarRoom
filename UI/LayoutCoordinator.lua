@@ -290,6 +290,14 @@ function LayoutCoordinator:ApplySentinel()
 end
 
 function LayoutCoordinator:Apply()
+    -- Layout changes re-anchor frames and scroll containers. Retail can mark
+    -- those operations protected while combat is active, so no periodic or
+    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingApply = true
+        return false
+    end
+    self.pendingApply = nil
     self:ApplyStrata()
     self:ApplyMainWindow()
     self:ApplyHUD()
@@ -297,9 +305,14 @@ function LayoutCoordinator:Apply()
     self:ApplySentinel()
     local launcher = KWR.MainWindow and KWR.MainWindow.launcherMenu
     self:Clamp(launcher, self:Profile().margin)
+    return true
 end
 
 function LayoutCoordinator:Reset()
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingReset = true
+        return false
+    end
     if KWR.db and KWR.db.profile then
         local profile = KWR.db.profile
         profile.main.point, profile.main.relativePoint, profile.main.x, profile.main.y = "CENTER", "CENTER", 0, 0
@@ -341,13 +354,22 @@ function LayoutCoordinator:Reset()
         end
     end
     self:Apply()
+    return true
 end
 
 function LayoutCoordinator:OnInitialize()
     self.eventFrame = CreateFrame("Frame", "KWR_LayoutCoordinatorEvents")
     self.eventFrame:RegisterEvent("DISPLAY_SIZE_CHANGED")
     self.eventFrame:RegisterEvent("UI_SCALE_CHANGED")
-    self.eventFrame:SetScript("OnEvent", function() LayoutCoordinator:Apply() end)
+    self.eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self.eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "PLAYER_REGEN_ENABLED" and LayoutCoordinator.pendingReset then
+            LayoutCoordinator.pendingReset = nil
+            LayoutCoordinator:Reset()
+            return
+        end
+        LayoutCoordinator:Apply()
+    end)
     self.eventFrame:SetScript("OnUpdate", function(_, elapsed)
         self.elapsed = (self.elapsed or 0) + elapsed
         if self.elapsed < 0.25 then return end
