@@ -122,7 +122,11 @@ local function formationCompLabel(comp, fallback)
     end
     local tier = KWR.Util:Text(comp.tier, "", 16)
     local name = KWR.Util:Text(comp.name, fallback or "Balanced Team Fight", 96)
-    return tier ~= "" and (tier .. " " .. name) or name
+    local label = tier ~= "" and (tier .. " " .. name) or name
+    if comp.metaStatus == "ADVISORY_PRE_LIVE" then
+        label = label .. " [WATCH]"
+    end
+    return label
 end
 
 local function formationNeedSummary(formation)
@@ -349,6 +353,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
                 .. (comp.mapFit and "" or "|cff8ea3bb")
                 .. tostring(comp.tier or "")
                 .. " " .. tostring(comp.name or "")
+                .. (comp.metaStatus == "ADVISORY_PRE_LIVE" and " |cff8ea3bbWATCH|r" or "")
                 .. (active and "|r  |cff49dd49SELECTED|r"
                     or (comp.mapFit and "|r" or "|r  |cff8ea3bbOFF-MAP|r"))
         end
@@ -372,6 +377,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             .. "NEED: " .. formationNeedSummary(formation) .. "\n"
             .. "CURRENT ROSTER: " .. currentLabel .. "\n"
             .. "TARGET BUILD: " .. targetLabel
+            .. ((buildTarget and buildTarget.seasonNote) and ("\n|cff8ea3bb" .. buildTarget.seasonNote .. "|r") or "")
             .. "\n" .. targetSummary)
         page.battlefieldCard.formation.autoButton:SetSelected(formation.selectedCompID == nil)
         page.battlefieldCard.formation.recruits:SetText(table.concat(choiceLines, "\n")

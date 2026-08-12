@@ -1468,6 +1468,17 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
     and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "ADVISORY",
     "Alpha40 did not activate the season-prep corpus as advisory guidance.")
 do
+    local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
+    assert(seasonTwoTargets[1]
+        and seasonTwoTargets[1].id == "S2_HUNTER_DK_PRESSURE"
+        and seasonTwoTargets[1].metaStatus == "ADVISORY_PRE_LIVE",
+        "Season 2 formation targets did not prioritize the provisional live-watch shell.")
+    local seasonTwoComp = KWR.Compositions:FindTier("S2_ARMS_AFFLICTION_CONTROL")
+    assert(seasonTwoComp and seasonTwoComp.seasonPriority > 0
+        and seasonTwoComp.source == "SEASON_2_EARLY_META_WATCH_2026_08_11",
+        "Season 2 formation comp did not retain advisory source provenance.")
+end
+do
     for _, mapKey in ipairs({
         "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS",
         "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING",
