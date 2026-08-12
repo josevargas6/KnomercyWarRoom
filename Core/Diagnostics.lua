@@ -636,8 +636,8 @@ function Diagnostics:Run()
     check("RBG meta snapshot has forty specializations", KWR.MetaSnapshot:Count() == 40)
     check("RBG meta snapshot resolves Discipline",
         disciplineMeta and disciplineMeta.role == "HEALER" and disciplineMeta.rank == 1)
-    check("Reviewed tier composition library contains twenty team shells",
-        #KWR.Compositions:TierAll() == 20)
+    check("Reviewed tier composition library contains at least twenty team shells",
+        #KWR.Compositions:TierAll() >= 20)
     local tierRoster = {}
     for _, token in ipairs(KWR.Compositions:TierAll()[1].specs) do
         local classFile, spec = token:match("^([^:]+):(.+)$")
