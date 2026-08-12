@@ -142,9 +142,11 @@ function Comm:IsCommanderSender(sender)
         for index = 1, GetNumSubgroupMembers() do units[#units + 1] = "party" .. index end
     end
     for _, unit in ipairs(units) do
+        -- There is one relay authority per group: its leader.  Accepting all
+        -- assistants lets independently running Commander clients interleave
+        -- incompatible relay families in one Sentinel view.
         if UnitExists(unit) and canonical(identity(unit)) == wanted
-            and ((UnitIsGroupLeader and UnitIsGroupLeader(unit))
-                or (UnitIsGroupAssistant and UnitIsGroupAssistant(unit))) then
+            and UnitIsGroupLeader and UnitIsGroupLeader(unit) then
             return true
         end
     end

@@ -1499,10 +1499,17 @@ do
     local tierOpening = KWR.OpenerDoctrine:Select("ARATHI", {
         ourComposition = { id = "BALANCED" },
         enemyComposition = { id = "STEALTH" },
-        ourTier = { id = "NODE_LOCKDOWN" },
+        ourTier = { id = "NODE_LOCKDOWN", qualified = true, mapFit = true },
     })
     assert(tierOpening.id == "ARATHI_OPEN_NODE_LOCKDOWN_VS_STEALTH",
         "Opener doctrine did not select the qualified roster-tier branch.")
+    local partialTierOpening = KWR.OpenerDoctrine:Select("ARATHI", {
+        ourComposition = { id = "BALANCED" },
+        enemyComposition = { id = "STEALTH" },
+        ourTier = { id = "NODE_LOCKDOWN", qualified = false, mapFit = true },
+    })
+    assert(partialTierOpening.id ~= "ARATHI_OPEN_NODE_LOCKDOWN_VS_STEALTH",
+        "Opener doctrine selected a tier branch for an unqualified roster.")
 end
 local tpMapExpertReview = KWR.ScenarioExpertCorpus:GetMapSummary("TWINPEAKS")
 assert(tpMapExpertReview

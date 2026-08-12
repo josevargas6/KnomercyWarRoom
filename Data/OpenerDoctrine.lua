@@ -184,7 +184,12 @@ function OpenerDoctrine:Select(mapKey, context)
     local ourComposition = context and context.ourComposition and context.ourComposition.id
     local compThreat = context and context.compThreat and context.compThreat.id
     local defenseModel = context and context.enemyDefenseModel and context.enemyDefenseModel.id
-    local ourTier = context and context.ourTier and context.ourTier.id
+    local tierMatch = context and context.ourTier
+    -- Tier-specific openings are evidence-backed only for a complete roster
+    -- match on a map supported by that tier. A partial nearest match remains
+    -- useful as formation advice, but must not choose specialized doctrine.
+    local ourTier = tierMatch and tierMatch.qualified and tierMatch.mapFit
+        and tierMatch.id or nil
     if ourTier == "NODE_LOCKDOWN" and enemyComposition == "STEALTH" then
         return KWR.Util:Copy(use[13])
     end

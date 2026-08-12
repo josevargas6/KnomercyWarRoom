@@ -36,9 +36,46 @@ local function parseBody(body)
     return count > 0 and result or nil
 end
 
+local REQUIRED = {
+    HELLO = { addon = true, class = true, role = true, caps = true, epoch = true },
+    STATE = { alive = true, connected = true, reach = true },
+    OBS_VISIBLE = { enemy = true, visible = true, range = true, engaged = true },
+    OBS_CAST = { enemy = true, spell = true, state = true },
+    OBS_CARRIER = { carrier = true, kind = true, label = true, source = true },
+    OBS_PRESSURE = { friendly = true, enemy = true, healer = true, state = true, target = true },
+}
+
+local function validBoolean(value)
+    return value == "0" or value == "1"
+end
+
+local function validBody(kind, body)
+    local required = REQUIRED[kind]
+    if not required then return false end
+    local count = 0
+    for key, value in pairs(body) do
+        if not required[key] or value == "" then return false end
+        count = count + 1
+    end
+    local expected = 0
+    for key in pairs(required) do
+        if body[key] == nil then return false end
+        expected = expected + 1
+    end
+    if count ~= expected then return false end
+    if kind == "STATE" then
+        return validBoolean(body.alive) and validBoolean(body.connected)
+    end
+    if kind == "OBS_VISIBLE" then
+        return validBoolean(body.visible) and validBoolean(body.engaged)
+    end
+    if kind == "OBS_CAST" then return body.state == "START" end
+    return true
+end
+
 function SentinelIngress:Accept(packet, sender, state)
     local body = parseBody(packet.body)
-    if not body or not LIMITS[packet.kind] then
+    if not body or not LIMITS[packet.kind] or not validBody(packet.kind, body) then
         self.diagnostics.malformed = self.diagnostics.malformed + 1
         return false
     end

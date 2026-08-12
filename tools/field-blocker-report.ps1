@@ -8,6 +8,8 @@ $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $outPath = Join-Path $root $OutFile
 $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
 $version = [regex]::Match($toc, "## Version:\s*(.+)").Groups[1].Value.Trim()
+$addonSource = Get-Content -LiteralPath (Join-Path $root "Core\Addon.lua") -Raw
+$activeSchema = [int]([regex]::Match($addonSource, "KWR\.schemaVersion\s*=\s*(\d+)").Groups[1].Value)
 $packageReportPath = Join-Path $root "knowledge\candidate-package-report.json"
 $runtimePreflightPath = Join-Path $root "knowledge\runtime-preflight.json"
 $packageReport = if (Test-Path -LiteralPath $packageReportPath) {
@@ -40,7 +42,10 @@ $releaseRiskAuthorized = $fieldAttestation -and
     $attestationCandidateBound -and
     [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
     @($fieldAttestation.clearedGates).Count -ge 4
-$retailBinding = $retailCertification -and $retailCertification.binding.status -eq 'BOUND'
+$retailBinding = $retailCertification -and
+    $retailCertification.binding.status -eq 'BOUND' -and
+    $retailCertification.candidateVersion -eq $version -and
+    [int]$retailCertification.candidateSchema -eq $activeSchema
 $observedStabilityFailures = if ($retailCertification) {
     if ($null -ne $retailCertification.summary.observedStabilityFailedMatches) {
         [int]$retailCertification.summary.observedStabilityFailedMatches
