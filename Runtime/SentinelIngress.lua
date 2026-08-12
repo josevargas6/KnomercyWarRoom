@@ -46,8 +46,8 @@ function SentinelIngress:Accept(packet, sender, state)
         self.diagnostics.duplicate = self.diagnostics.duplicate + 1
         return false
     end
-    local lastAt = record.packets[packet.kind] or 0
-    if KWR.Util:Now() - lastAt < LIMITS[packet.kind] then
+    local lastAt = record.packets[packet.kind]
+    if lastAt and KWR.Util:Now() - lastAt < LIMITS[packet.kind] then
         self.diagnostics.throttled = self.diagnostics.throttled + 1
         return false
     end
