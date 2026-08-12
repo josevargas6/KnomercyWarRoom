@@ -318,6 +318,14 @@ if ($hasSentinel) {
     if ($sentinelEntries -notcontains "KWRSentinel/KWRSentinel.toc") {
         throw "Sentinel ZIP is missing the addon TOC."
     }
+    $sentinelTocRuntimeFiles = Get-Content -LiteralPath (Join-Path $sentinelRoot "KWRSentinel.toc") |
+        Where-Object { $_ -and $_ -notmatch '^##' }
+    foreach ($runtimeFile in $sentinelTocRuntimeFiles) {
+        $archivePath = "KWRSentinel/" + $runtimeFile.Replace("\", "/")
+        if ($sentinelEntries -notcontains $archivePath) {
+            throw "Sentinel ZIP is missing the TOC-required runtime file: $runtimeFile"
+        }
+    }
 }
 if (@($distributionEntries | Where-Object { $_ -match "(^|/)(tests|tools|knowledge)/" }).Count -gt 0) {
     throw "Distribution ZIP contains developer-only directories."
