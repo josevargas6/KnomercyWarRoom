@@ -357,6 +357,7 @@ function AAR:Start(state)
             samples = 0,
             maxRefreshMs = 0,
             maxP95Ms = 0,
+            refreshSamples = {},
             maxMemoryKB = 0,
             firstMemoryKB = nil,
             lastMemoryKB = nil,
@@ -375,17 +376,21 @@ function AAR:CaptureRuntimeEvidence(active, state)
     local diagnostics = type(state.diagnostics) == "table" and state.diagnostics or {}
     local performance = active.performance or {}
     performance.samples = (performance.samples or 0) + 1
-    performance.maxRefreshMs = math.max(
-        performance.maxRefreshMs or 0, diagnostics.lastDurationMs or 0)
-    performance.maxP95Ms = math.max(
-        performance.maxP95Ms or 0, diagnostics.p95DurationMs or 0)
-    performance.maxMemoryKB = math.max(
-        performance.maxMemoryKB or 0, diagnostics.memoryKB or 0)
-    if performance.firstMemoryKB == nil and diagnostics.memoryKB ~= nil then
-        performance.firstMemoryKB = diagnostics.memoryKB
+    local duration = KWR.Util:Number(diagnostics.lastDurationMs, nil)
+    if duration and duration >= 0 then
+        performance.maxRefreshMs = math.max(performance.maxRefreshMs or 0, duration)
+        local samples = performance.refreshSamples or {}
+        samples[#samples + 1] = duration
+        if #samples > 120 then table.remove(samples, 1) end
+        performance.refreshSamples = samples
     end
-    if diagnostics.memoryKB ~= nil then
-        performance.lastMemoryKB = diagnostics.memoryKB
+    local memory = KWR.Util:Number(diagnostics.memoryKB, nil)
+    if memory and memory > 0 then
+        performance.maxMemoryKB = math.max(performance.maxMemoryKB or 0, memory)
+        if performance.firstMemoryKB == nil then
+            performance.firstMemoryKB = memory
+        end
+        performance.lastMemoryKB = memory
     end
     performance.maxTransitionMs = math.max(
         performance.maxTransitionMs or 0,
@@ -396,6 +401,15 @@ function AAR:CaptureRuntimeEvidence(active, state)
 end
 
 function AAR:FinalizeRuntimeEvidence(active)
+    local performance = active.performance or {}
+    local samples = performance.refreshSamples or {}
+    if #samples > 0 then
+        table.sort(samples)
+        local index = math.max(1, math.ceil(#samples * 0.95))
+        performance.maxP95Ms = samples[index] or 0
+    end
+    performance.refreshSamples = nil
+    active.performance = performance
     local baseline = active.safetyBaseline or {}
     local current = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {}
     active.safety = {
