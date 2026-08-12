@@ -19,8 +19,13 @@ function SentinelMerge:Apply(snapshot)
         for _, enemy in ipairs(snapshot.enemies or {}) do
             if observedName ~= "" and KWR.Util:CanonicalName(enemy.name or "") == observedName then
                 if record.kind == "OBS_VISIBLE" then
-                    enemy.visible = body.visible == "1"
-                    if enemy.visible then enemy.lastSeenAt = record.at end
+                    -- Remote visibility can enrich a stale/unknown row but
+                    -- may never negate the stronger local sensor result that
+                    -- was already captured for this snapshot.
+                    if body.visible == "1" then
+                        enemy.visible = true
+                        enemy.lastSeenAt = record.at
+                    end
                 elseif record.kind == "OBS_CARRIER" then
                     enemy.carrier = true
                 end

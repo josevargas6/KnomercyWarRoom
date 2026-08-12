@@ -2,9 +2,10 @@ local _, KWR = ...
 
 local CommanderComm = {
     PREFIX = "KWRSync1",
-    VERSION = "1",
+    VERSION = "2",
     MAX_BYTES = 240,
     sequence = 0,
+    epoch = "",
     relay = {},
     diagnostics = { received = 0, rejected = 0, sent = 0 },
 }
@@ -81,6 +82,7 @@ function CommanderComm:Encode(kind, body, state)
         "seq=" .. tostring(self.sequence),
         "kind=" .. kind,
         "ts=" .. tostring(math.floor(now())),
+        "ep=" .. escape(self.epoch),
         "src=" .. escape(identity("player")),
         "body=" .. escape(body or ""),
     }
@@ -99,9 +101,9 @@ function CommanderComm:Decode(payload)
         values[key] = value
         count = count + 1
     end
-    if count ~= 7 or values.v ~= self.VERSION or not ALLOWED_KIND[values.kind]
+    if count ~= 8 or values.v ~= self.VERSION or not ALLOWED_KIND[values.kind]
         or not values.sid or not values.seq:match("^%d+$")
-        or not values.ts:match("^%d+$") or not values.src or values.body == nil then
+        or not values.ts:match("^%d+$") or not values.ep or not values.src or values.body == nil then
         return nil, "schema"
     end
     local decoded = {
@@ -110,10 +112,11 @@ function CommanderComm:Decode(payload)
         sequence = tonumber(values.seq),
         kind = values.kind,
         timestamp = tonumber(values.ts),
+        epoch = unescape(values.ep),
         source = unescape(values.src),
         body = unescape(values.body),
     }
-    if not decoded.session or not decoded.source or decoded.body == nil
+    if not decoded.session or not decoded.epoch or not decoded.source or decoded.body == nil
         or decoded.source == "" then
         return nil, "encoding"
     end
@@ -198,6 +201,7 @@ function CommanderComm:Relay(state)
 end
 
 function CommanderComm:OnInitialize()
+    self.epoch = tostring(math.floor(now() * 1000))
     self.frame = CreateFrame("Frame", "KWR_CommanderCommFrame")
     self.frame:RegisterEvent("CHAT_MSG_ADDON")
     self.frame:SetScript("OnEvent", function(_, _, prefix, payload, distribution, sender)

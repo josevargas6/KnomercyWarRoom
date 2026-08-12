@@ -2,7 +2,7 @@ local _, Sentinel = ...
 
 local Comm = {
     PREFIX = "KWRSync1",
-    VERSION = "1",
+    VERSION = "2",
     MAX_BYTES = 240,
     sequence = 0,
     epoch = "",
@@ -89,6 +89,7 @@ function Comm:Encode(kind, body)
         "v=" .. self.VERSION, "sid=" .. escape(self:SessionKey()),
         "seq=" .. tostring(self.sequence), "kind=" .. kind,
         "ts=" .. tostring(math.floor(now())),
+        "ep=" .. escape(self.epoch),
         "src=" .. escape(identity("player")),
         "body=" .. escape(body or ""),
     }, "|")
@@ -103,14 +104,15 @@ function Comm:Decode(payload)
         if not key or fields[key] ~= nil then return nil end
         fields[key], count = value, count + 1
     end
-    if count ~= 7 or fields.v ~= self.VERSION or not ALLOWED[fields.kind]
-        or not fields.sid or not fields.seq or not fields.ts or not fields.src
+    if count ~= 8 or fields.v ~= self.VERSION or not ALLOWED[fields.kind]
+        or not fields.sid or not fields.seq or not fields.ts or not fields.ep or not fields.src
         or fields.body == nil or not fields.seq:match("^%d+$")
         or not fields.ts:match("^%d+$") then return nil end
     local packet = { kind = fields.kind, session = unescape(fields.sid),
         sequence = tonumber(fields.seq), timestamp = tonumber(fields.ts),
+        epoch = unescape(fields.ep),
         source = unescape(fields.src), body = unescape(fields.body) }
-    return packet.session and packet.source and packet.body and packet or nil
+    return packet.session and packet.epoch and packet.source and packet.body and packet or nil
 end
 
 function Comm:Send(kind, body)
@@ -166,8 +168,7 @@ function Comm:Receive(prefix, payload, distribution, sender)
     -- GetTime restarts after a UI reload, which safely establishes a fresh
     -- Commander sequence epoch without accepting delayed packets in a live
     -- epoch. Otherwise require strict monotonic delivery.
-    if previous and packet.sequence <= previous.sequence
-        and packet.timestamp >= previous.timestamp then
+    if previous and packet.epoch == previous.epoch and packet.sequence <= previous.sequence then
         self.diagnostics.rejected = self.diagnostics.rejected + 1
         return false
     end
@@ -175,6 +176,7 @@ function Comm:Receive(prefix, payload, distribution, sender)
         self.relaySequence[senderKey] = {
             sequence = packet.sequence,
             timestamp = packet.timestamp,
+            epoch = packet.epoch,
         }
         self.diagnostics.received = self.diagnostics.received + 1
         return true

@@ -1843,7 +1843,7 @@ do
     KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
     KWR_TEST_ROSTER_SENDER = liveState.snapshot.roster[1].name
     KWR_TEST_PAYLOAD = table.concat({
-        "v=1", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=OBS_VISIBLE", "ts=1",
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=OBS_VISIBLE", "ts=1", "ep=testepoch",
         "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=enemy=EnemyHealer;visible=1;range=1;engaged=0",
     }, "|")
     assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
@@ -1860,7 +1860,7 @@ do
     for KWR_TEST_SENDER_INDEX = 1, 10 do
         KWR_TEST_SENDER = "Sentinel" .. tostring(KWR_TEST_SENDER_INDEX)
         KWR_TEST_PACKET = table.concat({
-            "v=1", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=STATE", "ts=1",
+            "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=STATE", "ts=1", "ep=testepoch",
             "src=" .. KWR_TEST_SENDER:lower(), "body=alive=1;connected=1;reach=UNKNOWN",
         }, "|")
         assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PACKET, "INSTANCE_CHAT", KWR_TEST_SENDER),
