@@ -27,7 +27,10 @@ local function text(value, fallback, maximum)
 end
 
 local function escape(value)
-    return (text(value, "", 120):gsub("[^%w%._%-]", function(character)
+    -- Bound the finished envelope in Encode. Truncating an individual field
+    -- can cut a percent escape or silently turn a complete relay into a
+    -- different command.
+    return (tostring(value or ""):gsub("[^%w%._%-]", function(character)
         return string.format("%%%02X", string.byte(character))
     end))
 end

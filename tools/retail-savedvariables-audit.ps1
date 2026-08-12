@@ -183,6 +183,11 @@ $safeMatches = @($completed | Where-Object {
 })
 $performanceMatches = @($completed | Where-Object {
     $_.performance.samples -gt 0 -and
+    $_.performance.maxRefreshMs -gt 0 -and
+    $_.performance.maxP95Ms -gt 0 -and
+    $_.performance.maxMemoryKB -gt 0 -and
+    $_.performance.firstMemoryKB -gt 0 -and
+    $_.performance.lastMemoryKB -gt 0 -and
     $_.performance.maxP95Ms -lt 2 -and
     $_.performance.maxRefreshMs -lt 10 -and
     $_.performance.maxMemoryKB -le (25 * 1024) -and

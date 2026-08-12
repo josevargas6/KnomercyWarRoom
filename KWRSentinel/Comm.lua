@@ -7,6 +7,7 @@ local Comm = {
     sequence = 0,
     epoch = "",
     sentAt = {},
+    relaySequence = {},
     diagnostics = { sent = 0, received = 0, rejected = 0, throttled = 0 },
 }
 Sentinel.Comm = Comm
@@ -45,7 +46,7 @@ local function canonical(value)
 end
 
 local function escape(value)
-    return (text(value, "", 120):gsub("[^%w%._%-]", function(character)
+    return (tostring(value or ""):gsub("[^%w%._%-]", function(character)
         return string.format("%%%02X", string.byte(character))
     end))
 end
@@ -159,7 +160,21 @@ function Comm:Receive(prefix, payload, distribution, sender)
         self.diagnostics.rejected = self.diagnostics.rejected + 1
         return false
     end
+    local senderKey = canonical(sender)
+    local previous = self.relaySequence[senderKey]
+    -- GetTime restarts after a UI reload, which safely establishes a fresh
+    -- Commander sequence epoch without accepting delayed packets in a live
+    -- epoch. Otherwise require strict monotonic delivery.
+    if previous and packet.sequence <= previous.sequence
+        and packet.timestamp >= previous.timestamp then
+        self.diagnostics.rejected = self.diagnostics.rejected + 1
+        return false
+    end
     if Sentinel.Relay and Sentinel.Relay:Accept(packet, sender) then
+        self.relaySequence[senderKey] = {
+            sequence = packet.sequence,
+            timestamp = packet.timestamp,
+        }
         self.diagnostics.received = self.diagnostics.received + 1
         return true
     end
