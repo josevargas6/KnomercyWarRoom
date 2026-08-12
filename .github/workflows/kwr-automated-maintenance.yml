@@ -65,8 +65,10 @@ jobs:
   maintenance:
     runs-on: windows-latest
     timeout-minutes: 30
+    # Read-only reconciliation must be runnable from a review branch. External
+    # publication remains bound to the protected production environment.
     environment:
-      name: production
+      name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'external' && 'production' || 'maintenance-dry-run' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
