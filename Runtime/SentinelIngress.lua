@@ -16,11 +16,20 @@ local function senderKey(value)
     return text(value, 96):lower()
 end
 
+local function unescape(value)
+    if type(value) ~= "string" or value:find("%%[^%x]", 1) or value:find("%%$", 1) then return nil end
+    return value:gsub("%%(%x%x)", function(hex)
+        return string.char(tonumber(hex, 16))
+    end)
+end
+
 local function parseBody(body)
     local result, count = {}, 0
     for field in tostring(body or ""):gmatch("[^;]+") do
-        local key, value = field:match("^([a-z_]+)=([%w%._%-]+)$")
+        local key, value = field:match("^([a-z_]+)=([%w%._%%%-]+)$")
         if not key or result[key] ~= nil then return nil end
+        value = unescape(value)
+        if value == nil then return nil end
         result[key] = value
         count = count + 1
     end

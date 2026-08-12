@@ -30,6 +30,7 @@ $fieldAttestation = if (Test-Path -LiteralPath $attestationPath) {
 } else { $null }
 $fieldAttestationPassed = $fieldAttestation -and
     $fieldAttestation.result -eq 'PASS' -and
+    $fieldAttestation.candidateVersion -eq $version -and
     [int]$fieldAttestation.completedBattlegrounds -ge 5 -and
     @($fieldAttestation.clearedGates).Count -ge 4
 $attestationCandidateBound = $fieldAttestation -and

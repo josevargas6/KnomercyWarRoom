@@ -445,10 +445,10 @@ function Runtime:Refresh(reason)
                 self.diagnostics.averageDurationMs = #ordered > 0 and total / #ordered or 0
                 local p95 = math.max(1, math.ceil(#ordered * 0.95))
                 self.diagnostics.p95DurationMs = ordered[p95] or 0
-                if type(collectgarbage) == "function" then
-                    local memory = KWR.Util:Call(collectgarbage, "count")
-                    self.diagnostics.memoryKB = KWR.Util:Number(memory, self.diagnostics.memoryKB) or 0
-                end
+                local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.MeasureMB
+                    and KWR.MemoryBudget:MeasureMB() or nil
+                self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
+                    and (memoryMB * 1024) or 0
             end
         end
         self.lastRefreshAt = KWR.Util:Now()

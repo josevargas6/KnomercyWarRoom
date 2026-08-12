@@ -7,9 +7,16 @@ local function clean(value, maximum)
     return tostring(value or ""):gsub("[^%w%._%-]", "_"):sub(1, maximum or 64)
 end
 
+local function encode(value, maximum)
+    value = tostring(value or ""):sub(1, maximum or 64)
+    return (value:gsub("[^%w%._%-]", function(character)
+        return string.format("%%%02X", string.byte(character))
+    end))
+end
+
 local function targetObservation()
     if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
-    local name = clean(UnitName("target"), 64)
+    local name = encode(UnitName("target"), 64)
     if name == "" then return nil end
     local visible = UnitIsVisible and UnitIsVisible("target") and "1" or "0"
     -- Retail can protect range checks. Commander already treats reach as
@@ -23,7 +30,7 @@ local function castObservation()
     local name = UnitCastingInfo("target")
     if not name then name = UnitChannelInfo("target") end
     if not name then return nil end
-    return "enemy=" .. clean(UnitName("target"), 64) .. ";spell=" .. clean(name, 64) .. ";state=START"
+    return "enemy=" .. encode(UnitName("target"), 64) .. ";spell=" .. encode(name, 64) .. ";state=START"
 end
 
 function Observer:SendHello()
@@ -56,7 +63,7 @@ end
 
 function Observer:ObserveCarrier(name, kind, label, source)
     if not Sentinel.Comm then return false end
-    return Sentinel.Comm:Send("OBS_CARRIER", "carrier=" .. clean(name, 64)
+    return Sentinel.Comm:Send("OBS_CARRIER", "carrier=" .. encode(name, 64)
         .. ";kind=" .. clean(kind, 16) .. ";label=" .. clean(label, 32)
         .. ";source=" .. clean(source, 24))
 end
