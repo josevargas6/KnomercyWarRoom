@@ -373,10 +373,23 @@ function EnemyIntel:ObserveRemote(body, kind, sender)
         source = KWR.Util:Text(sender, "remote", 96),
         at = KWR.Util:Now(),
     }
-    if kind == "OBS_CAST" then
-        match.remoteCast = KWR.Util:Text(body.spell, "", 64)
+    if kind == "OBS_VISIBLE" then
+        match.visible = body.visible == "1"
+        if match.visible then match.lastSeenAt = KWR.Util:Now() end
+    elseif kind == "OBS_CAST" then
+        local spellName = KWR.Util:Text(body.spell, "", 64)
+        if spellName ~= "" and KWR.CombatIntel and KWR.CombatIntel.GetRecord then
+            local combatRecord = KWR.CombatIntel:GetRecord(match.guid, match.name, true)
+            if combatRecord then
+                combatRecord.currentCast = {
+                    name = spellName, priority = "REMOTE", response = "REVIEW",
+                    eventType = "REMOTE_SENTINEL", observedAt = KWR.Util:Now(),
+                    expiresAt = KWR.Util:Now() + 3,
+                }
+            end
+        end
     elseif kind == "OBS_CARRIER" then
-        match.remoteCarrier = true
+        match.carrier = true
     end
     return true
 end

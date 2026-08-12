@@ -108,7 +108,8 @@ function Comm:Decode(payload)
         or fields.body == nil or not fields.seq:match("^%d+$")
         or not fields.ts:match("^%d+$") then return nil end
     local packet = { kind = fields.kind, session = unescape(fields.sid),
-        sequence = tonumber(fields.seq), source = unescape(fields.src), body = unescape(fields.body) }
+        sequence = tonumber(fields.seq), timestamp = tonumber(fields.ts),
+        source = unescape(fields.src), body = unescape(fields.body) }
     return packet.session and packet.source and packet.body and packet or nil
 end
 
