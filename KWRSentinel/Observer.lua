@@ -14,9 +14,20 @@ local function encode(value, maximum)
     end))
 end
 
+local function unitIdentity(unit)
+    if type(UnitFullName) == "function" then
+        local name, realm = UnitFullName(unit)
+        if name and name ~= "" then
+            return realm and realm ~= "" and (name .. "-" .. realm) or name
+        end
+    end
+    local name, realm = UnitName(unit)
+    return name and realm and realm ~= "" and (name .. "-" .. realm) or name
+end
+
 local function targetObservation()
     if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
-    local name = encode(UnitName("target"), 64)
+    local name = encode(unitIdentity("target"), 64)
     if name == "" then return nil end
     local visible = UnitIsVisible and UnitIsVisible("target") and "1" or "0"
     -- Retail can protect range checks. Commander already treats reach as
@@ -30,7 +41,7 @@ local function castObservation()
     local name = UnitCastingInfo("target")
     if not name then name = UnitChannelInfo("target") end
     if not name then return nil end
-    return "enemy=" .. encode(UnitName("target"), 64) .. ";spell=" .. encode(name, 64) .. ";state=START"
+    return "enemy=" .. encode(unitIdentity("target"), 64) .. ";spell=" .. encode(name, 64) .. ";state=START"
 end
 
 function Observer:SendHello()
