@@ -98,6 +98,16 @@ Assert-True `
     -Condition ($releaseWorkflow -match 'codex_handoff\s*=\s*"github-review-only"') `
     -Message "Release dispatch does not declare the GitHub-review-only Codex boundary."
 
+$sentinelBridge = Get-Content -LiteralPath (
+    Join-Path $root "KWRSentinel\Bridge.lua"
+) -Raw
+Assert-True `
+    -Condition ($sentinelBridge -notmatch 'C_Spell\.GetSpellCooldown|(?<![A-Za-z_])GetSpellCooldown\s*\(') `
+    -Message "Sentinel Bridge must not calculate Retail cooldown values that can be secret/tainted."
+Assert-True `
+    -Condition ($sentinelBridge -notmatch 'GetReleaseTimeRemaining|GetCorpseRecoveryDelay') `
+    -Message "Sentinel Bridge must not calculate Retail release timers that can be secret/tainted."
+
 $maintenanceScript = Get-Content -LiteralPath (
     Join-Path $root "tools\kwr-maintenance-schedule.ps1"
 ) -Raw

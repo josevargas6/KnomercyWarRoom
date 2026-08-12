@@ -47,22 +47,11 @@ local function spellName(spellID)
     return nil
 end
 
-local function spellCooldownSeconds(spellID)
-    if not spellID then return nil end
-    if type(C_Spell) == "table" and type(C_Spell.GetSpellCooldown) == "function" then
-        local info = C_Spell.GetSpellCooldown(spellID)
-        if type(info) == "table" and info.startTime and info.duration then
-            local remaining = math.max(0, (info.startTime + info.duration) - GetTime())
-            return remaining > 1.5 and remaining or 0
-        end
-    end
-    if type(GetSpellCooldown) == "function" then
-        local startTime, duration = GetSpellCooldown(spellID)
-        if startTime and duration then
-            local remaining = math.max(0, (startTime + duration) - GetTime())
-            return remaining > 1.5 and remaining or 0
-        end
-    end
+local function spellCooldownSeconds(_)
+    -- Retail may return secret cooldown fields. Addons cannot safely do math,
+    -- compare, format, or branch on those values after they enter this call
+    -- path. Sentinel is advisory, so an explicit unknown is safer than a
+    -- tainted countdown or a misleading ready state.
     return nil
 end
 
@@ -167,22 +156,8 @@ local function healerStatus()
 end
 
 local function releaseTimeRemaining()
-    local candidates = {
-        type(GetReleaseTimeRemaining) == "function" and GetReleaseTimeRemaining or nil,
-        type(GetCorpseRecoveryDelay) == "function" and GetCorpseRecoveryDelay or nil,
-    }
-    for _, fn in ipairs(candidates) do
-        if fn then
-            local ok, value = pcall(fn)
-            value = ok and tonumber(value or 0) or nil
-            if value and value > 0 then
-                if value > 1000 then
-                    value = value / 1000
-                end
-                return value
-            end
-        end
-    end
+    -- See spellCooldownSeconds: release timers can also be secret in Retail.
+    -- Do not derive a countdown from protected values in addon Lua.
     return nil
 end
 
