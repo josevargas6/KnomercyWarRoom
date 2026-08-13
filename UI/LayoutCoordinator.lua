@@ -65,7 +65,7 @@ end
 
 function LayoutCoordinator:Clamp(frame, margin)
     if not frame or not frame.IsShown or not frame:IsShown() then return end
-    if frame.IsMoving and frame:IsMoving() then return end
+    if frame.KWRDragging then return end
     local width, height = screenSize()
     local left, right = frame:GetLeft(), frame:GetRight()
     local bottom, top = frame:GetBottom(), frame:GetTop()
@@ -211,8 +211,8 @@ function LayoutCoordinator:ApplySentinel()
 
     local hudProfile = sentinelProfile.hud
     local panelsProfile = sentinelProfile.panels
-    local hudMoving = hud.IsMoving and hud:IsMoving()
-    local statusMoving = status and status.IsMoving and status:IsMoving()
+    local hudMoving = hud.KWRDragging == true
+    local statusMoving = status and status.KWRDragging == true
     -- Do not replace anchors or clamp a Sentinel panel during a live drag.
     -- The drop handler owns persistence for that movement.
     local manageHud = hudProfile.layoutManaged ~= false and not hudMoving

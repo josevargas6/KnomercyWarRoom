@@ -490,10 +490,12 @@ function HUD:Create()
     frame:SetScript("OnDragStart", function(selfFrame)
         if Sentinel.db.profile.hud.locked then return end
         profile.layoutManaged = false
+        selfFrame.KWRDragging = true
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
         selfFrame:StopMovingOrSizing()
+        selfFrame.KWRDragging = nil
         local point, _, relativePoint, x, y = selfFrame:GetPoint(1)
         profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
     end)

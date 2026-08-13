@@ -847,6 +847,26 @@ do
         "Store reconciliation did not detect an exact nested snapshot change or suppressed it incorrectly.")
 end
 do
+    local savedNow = KWR.Util.Now
+    KWR.Util.Now = function() return 100 end
+    KWR.ObjectiveIntel:Reset("WSG:true")
+    KWR.ObjectiveIntel:ObserveRemoteCarrier({ label = "Alliance Flag", kind = "FLAG", carrier = "RemoteCarrier" }, 100)
+    local remoteSnapshot = KWR.Util:Copy(KWR.Store:Get().snapshot)
+    remoteSnapshot.context = { mapKey = "WSG", inPvP = true }
+    remoteSnapshot.objectives = { rows = {}, flags = {} }
+    KWR.ObjectiveIntel:Apply(remoteSnapshot)
+    assert(#remoteSnapshot.objectives.carriers == 1,
+        "Fresh remote carrier observation was not applied.")
+    KWR.Util.Now = function() return 104 end
+    local expiredSnapshot = KWR.Util:Copy(remoteSnapshot)
+    expiredSnapshot.objectives = { rows = {}, flags = {} }
+    KWR.ObjectiveIntel:Apply(expiredSnapshot)
+    assert(#expiredSnapshot.objectives.carriers == 0
+        and KWR.ObjectiveIntel.carriers["Alliance Flag"] == nil,
+        "Expired remote carrier observation remained in ObjectiveIntel.")
+    KWR.Util.Now = savedNow
+end
+do
     KWR.ObjectiveIntel:Reset("WSG:true")
     KWR.ObjectiveIntel.carriers = {
         ["Alliance Flag"] = {

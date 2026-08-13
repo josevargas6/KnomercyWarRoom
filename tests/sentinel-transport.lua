@@ -42,8 +42,10 @@ C_ChatInfo = {
     RegisterAddonMessagePrefix = function(prefix) registered[prefix] = true end,
     SendAddonMessage = function(prefix, payload, distribution)
         sent[#sent + 1] = { prefix = prefix, payload = payload, distribution = distribution }
+        return 0
     end,
 }
+Enum = { SendAddonMessageResult = { Success = 0 } }
 
 function CreateFrame()
     return {
@@ -132,6 +134,12 @@ clock = clock + 1
 assert(Comm:Send("STATE", "x=1"), "first state observation was not sent")
 assert(not Comm:Send("STATE", "x=2"), "rate-limited state observation was sent")
 assert(#sent == 1 and sent[1].distribution == "INSTANCE_CHAT", "outbound transport used an unexpected route")
+
+-- A protected API rejection must not consume the per-family send budget.
+C_ChatInfo.SendAddonMessage = function() return 1 end
+clock = clock + 1
+assert(not Comm:Send("HELLO", "x=1"), "failed addon-message result was recorded as sent")
+assert(Comm.sentAt.HELLO == nil, "failed addon-message result advanced the family throttle")
 
 print("KWR_SENTINEL_TRANSPORT_PASS accepted=" .. tostring(Comm.diagnostics.received)
     .. " rejected=" .. tostring(Comm.diagnostics.rejected)

@@ -387,6 +387,9 @@ function ObjectiveIntel:ObserveRemoteCarrier(body, observedAt)
         observedAt = KWR.Util:Number(observedAt, KWR.Util:Now()) or KWR.Util:Now(),
         source = "REMOTE_SENTINEL",
     }
+    -- A relay observation is advisory, not an authoritative flag-state event.
+    -- It must disappear with the ingress observation when no newer packet arrives.
+    carrier.expiresAt = carrier.observedAt + 3
     self.carriers[objective] = carrier
     return KWR.Util:Copy(carrier)
 end
@@ -487,7 +490,11 @@ function ObjectiveIntel:Apply(snapshot)
     end
 
     local carriers = {}
+    local now = KWR.Util:Now()
     for objective, stored in pairs(self.carriers) do
+        if stored.expiresAt and stored.expiresAt <= now then
+            self.carriers[objective] = nil
+        else
         local carrier = KWR.Util:Copy(stored)
         local entity, owner = findEntity(snapshot, carrier.playerKey)
         carrier.owner = owner or "UNKNOWN"
@@ -525,12 +532,12 @@ function ObjectiveIntel:Apply(snapshot)
                 end
             end
         end
+        end
     end
     table.sort(carriers, function(a, b) return a.objective < b.objective end)
     snapshot.objectives.carriers = carriers
     snapshot.objectives.events = KWR.Util:Copy(self.events)
     snapshot.objectives.timers = {}
-    local now = KWR.Util:Now()
     for node, timer in pairs(self.timers) do
         local copy = KWR.Util:Copy(timer)
         copy.remaining = math.max(0, (copy.endsAt or now) - now)

@@ -125,9 +125,11 @@ function Comm:Send(kind, body)
     end
     local payload = self:Encode(kind, body)
     if not payload or not C_ChatInfo or type(C_ChatInfo.SendAddonMessage) ~= "function" then return false end
-    local ok = pcall(C_ChatInfo.SendAddonMessage, self.PREFIX, payload, distribution)
-    if ok then self.sentAt[kind], self.diagnostics.sent = now(), self.diagnostics.sent + 1 end
-    return ok
+    local ok, result = pcall(C_ChatInfo.SendAddonMessage, self.PREFIX, payload, distribution)
+    local success = ok and (result == true
+        or (Enum and Enum.SendAddonMessageResult and result == Enum.SendAddonMessageResult.Success))
+    if success then self.sentAt[kind], self.diagnostics.sent = now(), self.diagnostics.sent + 1 end
+    return success
 end
 
 function Comm:CommanderIdentity()
