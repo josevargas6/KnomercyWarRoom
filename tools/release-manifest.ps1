@@ -38,13 +38,16 @@ function Get-ProductionPackageFiles {
 function Get-SentinelProductionFiles {
     return @(
         'Bridge.lua',
+        'Comm.lua',
         'Core.lua',
         'HUD.lua',
         'KWRSentinel.toc',
         'MinimapButton.lua',
         'NativeUI.lua',
+        'Observer.lua',
         'Options.lua',
         'Panels.lua',
+        'Relay.lua',
         'Theme.lua'
     )
 }

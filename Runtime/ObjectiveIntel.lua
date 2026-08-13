@@ -372,6 +372,32 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
     addEvent(self, "SYSTEM", message)
 end
 
+function ObjectiveIntel:ObserveRemoteCarrier(body, observedAt)
+    body = type(body) == "table" and body or {}
+    local objective = KWR.Util:Text(body.label, "", 64)
+    local player = KWR.Util:Text(body.carrier, "", 64)
+    local kind = KWR.Util:Upper(body.kind, "", 16)
+    if objective == "" or player == "" or (kind ~= "FLAG" and kind ~= "ORB") then return nil end
+    local existing = self.carriers[objective]
+    if existing and existing.source == "BG_SYSTEM" then
+        return KWR.Util:Copy(existing)
+    end
+    local carrier = {
+        objective = objective,
+        kind = kind,
+        color = objective:gsub(" Flag$", ""):gsub(" Orb$", ""),
+        player = player,
+        playerKey = normalizeName(player),
+        observedAt = KWR.Util:Number(observedAt, KWR.Util:Now()) or KWR.Util:Now(),
+        source = "REMOTE_SENTINEL",
+    }
+    -- A relay observation is advisory, not an authoritative flag-state event.
+    -- It must disappear with the ingress observation when no newer packet arrives.
+    carrier.expiresAt = carrier.observedAt + 3
+    self.carriers[objective] = carrier
+    return KWR.Util:Copy(carrier)
+end
+
 local function findEntity(snapshot, playerKey)
     for _, entity in ipairs(snapshot.roster or {}) do
         if normalizeName(entity.name) == playerKey then return entity, "FRIENDLY" end
@@ -468,7 +494,11 @@ function ObjectiveIntel:Apply(snapshot)
     end
 
     local carriers = {}
+    local now = KWR.Util:Now()
     for objective, stored in pairs(self.carriers) do
+        if stored.expiresAt and stored.expiresAt <= now then
+            self.carriers[objective] = nil
+        else
         local carrier = KWR.Util:Copy(stored)
         local entity, owner = findEntity(snapshot, carrier.playerKey)
         carrier.owner = owner or "UNKNOWN"
@@ -506,12 +536,12 @@ function ObjectiveIntel:Apply(snapshot)
                 end
             end
         end
+        end
     end
     table.sort(carriers, function(a, b) return a.objective < b.objective end)
     snapshot.objectives.carriers = carriers
     snapshot.objectives.events = KWR.Util:Copy(self.events)
     snapshot.objectives.timers = {}
-    local now = KWR.Util:Now()
     for node, timer in pairs(self.timers) do
         local copy = KWR.Util:Copy(timer)
         copy.remaining = math.max(0, (copy.endsAt or now) - now)

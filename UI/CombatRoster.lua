@@ -787,6 +787,18 @@ function CombatRoster:PersistedEnemyShown()
 end
 
 function CombatRoster:RequestVisibility(teamShown, enemyShown, persist)
+    -- These frames contain secure rows. Retail protects visibility changes in
+    -- combat, including an automatic hide when we leave a supported context.
+    -- Queue every visibility request before inspecting that context so neither
+    -- Hide nor SetShown can taint the addon during combat.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pending = {
+            teamShown = teamShown,
+            enemyShown = enemyShown,
+            persist = persist,
+        }
+        return false
+    end
     local state = currentState(self.lastState)
     if not KWR.Util:AllowsCompactBattlefieldSurfaces(state)
         or KWR.Util:IsArenaContext(state) then
@@ -795,25 +807,7 @@ function CombatRoster:RequestVisibility(teamShown, enemyShown, persist)
         self.autoVisible = false
         return false
     end
-    if not self.teamFrame and InCombatLockdown and InCombatLockdown() then
-        self.pending = {
-            teamShown = teamShown,
-            enemyShown = enemyShown,
-            persist = persist,
-        }
-        KWR:Print("Combat roster creation queued until combat ends.", true)
-        return false
-    end
     self:Create()
-    if InCombatLockdown and InCombatLockdown() then
-        self.pending = {
-            teamShown = teamShown,
-            enemyShown = enemyShown,
-            persist = persist,
-        }
-        KWR:Print("Combat roster layout change queued until combat ends.", true)
-        return false
-    end
 
     local profile = KWR.db.profile.combatRoster
     if persist == false then
@@ -875,9 +869,7 @@ function CombatRoster:Toggle(mode)
     local state = currentState(self.lastState)
     if not KWR.Util:AllowsCompactBattlefieldSurfaces(state)
         or KWR.Util:IsArenaContext(state) then
-        if self.teamFrame then self.teamFrame:Hide() end
-        if self.enemyFrame then self.enemyFrame:Hide() end
-        return false
+        return self:RequestVisibility(false, false, false)
     end
     if mode == "TEAM" then
         return self:RequestVisibility(not self:IsShown("TEAM"), self:IsShown("ENEMY"), true)

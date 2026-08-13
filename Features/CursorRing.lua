@@ -51,14 +51,8 @@ local ROLE_BADGES = {
     DAMAGER = "X",
 }
 
-local ROLE_ICON_TEXTURE = "Interface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES"
 local CLASS_ICON_TEXTURE = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
 local ORB_ICON_TEXTURE = "Interface\\Icons\\INV_Misc_Orb_05"
-local ROLE_ICON_COORDS = {
-    TANK = { 0 / 64, 19 / 64, 22 / 64, 41 / 64 },
-    HEALER = { 20 / 64, 39 / 64, 1 / 64, 20 / 64 },
-    DAMAGER = { 20 / 64, 39 / 64, 22 / 64, 41 / 64 },
-}
 local CARRIER_COLORS = {
     ALLIANCE = { 0.22, 0.55, 1.00 },
     HORDE = { 0.95, 0.18, 0.16 },
@@ -66,6 +60,12 @@ local CARRIER_COLORS = {
     GREEN = { 0.18, 0.88, 0.36 },
     ORANGE = { 1.00, 0.46, 0.08 },
     PURPLE = { 0.68, 0.34, 0.96 },
+}
+
+local MARKER_MODES = {
+    NATIVE = true,
+    TACTICAL_ONLY = true,
+    OFF = true,
 }
 
 local function sameTargetRecord(record)
@@ -233,11 +233,11 @@ function CursorRing:CreateOrbFrame(unit)
     frame:SetFrameStrata("TOOLTIP")
     frame:SetFrameLevel(9040)
     frame:EnableMouse(false)
-    frame:SetSize(78, 24)
+    frame:SetSize(78, 56)
     frame:Hide()
 
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
-    frame.ring:SetPoint("TOPLEFT", 1, -1)
+    frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
     frame.ring:SetSize(22, 22)
     frame.ring:SetTexture("Interface\\Cooldown\\ping4")
     frame.ring:SetBlendMode("ADD")
@@ -252,13 +252,13 @@ function CursorRing:CreateOrbFrame(unit)
     frame.badge:SetHeight(12)
 
     frame.name = KWR.Theme:Font(frame, 9, "white", "LEFT", "OUTLINE")
-    frame.name:SetPoint("LEFT", frame.ring, "RIGHT", 3, 0)
-    frame.name:SetWidth(48)
+    frame.name:SetPoint("TOP", frame.ring, "BOTTOM", 0, -3)
+    frame.name:SetWidth(78)
     frame.name:SetHeight(14)
 
     frame.health = CreateFrame("StatusBar", nil, frame)
-    frame.health:SetPoint("TOPLEFT", frame.ring, "BOTTOMLEFT", 0, -1)
-    frame.health:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -2, -31)
+    frame.health:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 8, 9)
+    frame.health:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -8, 9)
     frame.health:SetHeight(4)
     frame.health:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
     frame.health:SetMinMaxValues(0, 100)
@@ -290,9 +290,34 @@ function CursorRing:CreateOrbFrame(unit)
     return frame
 end
 
+function CursorRing:CreateTacticalBadgeFrame(unit)
+    self.tacticalBadgeFrames = self.tacticalBadgeFrames or {}
+    local frame = self.tacticalBadgeFrames[unit]
+    if frame then return frame end
+
+    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    frame:SetFrameStrata("TOOLTIP")
+    frame:SetFrameLevel(9041)
+    frame:EnableMouse(false)
+    frame:SetSize(64, 14)
+    KWR.Theme:Style(frame, "panel", "borderHi")
+    frame:SetBackdropColor(0, 0, 0, 0.64)
+    frame.text = KWR.Theme:Title(frame, 8, "CENTER")
+    frame.text:SetAllPoints()
+    frame:Hide()
+    self.tacticalBadgeFrames[unit] = frame
+    return frame
+end
+
 function CursorRing:HideOrb(unit)
     if self.orbFrames and self.orbFrames[unit] then
         self.orbFrames[unit]:Hide()
+    end
+end
+
+function CursorRing:HideTacticalBadge(unit)
+    if self.tacticalBadgeFrames and self.tacticalBadgeFrames[unit] then
+        self.tacticalBadgeFrames[unit]:Hide()
     end
 end
 
@@ -300,6 +325,7 @@ function CursorRing:HideAllOrbs()
     if not self.orbFrames then return end
     self.orbVisibleCount = 0
     for _, frame in pairs(self.orbFrames) do frame:Hide() end
+    for _, frame in pairs(self.tacticalBadgeFrames or {}) do frame:Hide() end
 end
 
 function CursorRing:FindFriendlyRecord(unit, state)
@@ -323,6 +349,49 @@ function CursorRing:AssignmentFor(name)
     local key = KWR.Util:Text(name, "", 64):lower()
     if key == "" then return nil end
     return self.assignmentIndex[key]
+end
+
+function CursorRing:ResolveMarkerMode()
+    local profile = KWR.db.profile.cursor or {}
+    local mode = KWR.Util:Upper(profile.markerMode, "NATIVE", 20)
+    return MARKER_MODES[mode] and mode or "NATIVE"
+end
+
+local function assignmentBadgeText(assignment)
+    local role = KWR.Util:Upper(assignment and assignment.role, "", 48)
+    local job = KWR.Util:Upper(assignment and assignment.job, "", 24)
+    if role:find("CARRIER", 1, true) then return "CARRY" end
+    if role:find("DEFEND", 1, true) or job == "DEFEND" then return "DEFEND" end
+    if role:find("HEAL", 1, true) or job == "HEAL" then return "HEAL" end
+    if role:find("ESCORT", 1, true) then return "ESCORT" end
+    if role:find("RESERVE", 1, true) then return "RESERVE" end
+    if role:find("ROTAT", 1, true) or job == "ROTATE" then return "ROTATE" end
+    if role:find("ASSAULT", 1, true) or role:find("STRIKE", 1, true)
+        or job == "FIGHT" or job == "SPIN" then
+        return "STRIKE"
+    end
+    return ""
+end
+
+function CursorRing:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
+    local profile = KWR.db.profile.cursor or {}
+    local frame = self:CreateTacticalBadgeFrame(unit)
+    if profile.battlefieldOrbs == false or profile.assignmentBadges == false
+        or mode == "OFF" or not isFriend or not record then
+        frame:Hide()
+        return
+    end
+    local assignment = self:AssignmentFor(record.name)
+        or self:AssignmentFor(record.shortName)
+    local text = assignmentBadgeText(assignment)
+    if text == "" then
+        frame:Hide()
+        return
+    end
+    frame:ClearAllPoints()
+    frame:SetPoint("TOP", plate, "BOTTOM", 0, -2)
+    frame.text:SetText(text)
+    frame:SetShown(true)
 end
 
 function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
@@ -353,12 +422,15 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         model.ringColor = carrier.colors
         model.badge = carrier.texture and nil or carrier.badge
     elseif isFriend then
-        model.kind = "ROLE"
-        model.texCoords = ROLE_ICON_COORDS[role]
-        model.texture = model.texCoords and ROLE_ICON_TEXTURE or nil
-        model.ringColor = (ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role]
-            or ORB_COLORS.TEAM).outer
-        model.badge = model.texCoords and nil or (ROLE_BADGES[role] or "?")
+        -- A class token is stable at a glance and remains useful when a player
+        -- is not currently healing or tanking. The compact role badge adds the
+        -- battlefield-critical distinction without replacing that identity.
+        model.kind = "CLASS"
+        model.texCoords = type(CLASS_ICON_TCOORDS) == "table"
+            and CLASS_ICON_TCOORDS[classFile] or nil
+        model.texture = model.texCoords and CLASS_ICON_TEXTURE or nil
+        model.ringColor = { classColor(classFile) }
+        model.badge = ROLE_BADGES[role] or "?"
     else
         model.kind = "CLASS"
         model.texCoords = type(CLASS_ICON_TCOORDS) == "table"
@@ -442,27 +514,32 @@ function CursorRing:RefreshOrbForUnit(unit, state)
         frame:Hide()
         return false
     end
-    frame:SetParent(plate)
-    frame:ClearAllPoints()
-    frame:SetPoint("BOTTOM", plate, "TOP", 0, 14)
-
     local isFriend = type(UnitIsFriend) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
+    local record = isFriend and self:FindFriendlyRecord(unit, state)
+        or self:FindEnemyRecord(unit, state)
+    local mode = self:ResolveMarkerMode()
+    self:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
+    if mode == "OFF" or mode == "TACTICAL_ONLY" then
+        frame:Hide()
+        return false
+    end
+    frame:SetParent(plate)
+    frame:ClearAllPoints()
+    frame:SetPoint("CENTER", plate, "CENTER", 0, 0)
     if isFriend then
-        local player = self:FindFriendlyRecord(unit, state)
-        if not player then
+        if not record then
             frame:Hide()
             return false
         end
         self:ApplyIdentifierVisual(frame,
-            self:BuildIdentifierModel(player, true, state, false), nil)
+            self:BuildIdentifierModel(record, true, state, false), nil)
     else
-        local enemy = self:FindEnemyRecord(unit, state)
-        if not enemy then
+        if not record then
             frame:Hide()
             return false
         end
-        local currentTarget = sameTargetRecord(enemy)
+        local currentTarget = sameTargetRecord(record)
         local percent = nil
         if currentTarget then
             local health = KWR.Util:Number(KWR.Util:Call(UnitHealth, unit), nil)
@@ -472,7 +549,7 @@ function CursorRing:RefreshOrbForUnit(unit, state)
             end
         end
         self:ApplyIdentifierVisual(frame,
-            self:BuildIdentifierModel(enemy, false, state, currentTarget), percent)
+            self:BuildIdentifierModel(record, false, state, currentTarget), percent)
     end
 
     frame:Show()
@@ -819,6 +896,8 @@ local function updateToken(_, state)
             false,
             KWR.db.profile.cursor.reticleEnabled,
             KWR.db.profile.cursor.battlefieldOrbs,
+            KWR.db.profile.cursor.markerMode,
+            KWR.db.profile.cursor.assignmentBadges,
         })
     end
     local snapshot = state and state.snapshot or {}
@@ -841,6 +920,8 @@ local function updateToken(_, state)
         execution.actionOpportunity and execution.actionOpportunity.action,
         execution.recovery and execution.recovery.open,
         target.key or target.name,
+        KWR.db.profile.cursor.markerMode,
+        KWR.db.profile.cursor.assignmentBadges,
     })
 end
 
@@ -912,6 +993,12 @@ function CursorRing:SetBattlefieldOrbs(enabled)
     self:RefreshDriver()
 end
 
+function CursorRing:SetAssignmentBadges(enabled)
+    KWR.db.profile.cursor.assignmentBadges = enabled == true
+    self:RefreshOrbs()
+    self:RefreshDriver()
+end
+
 function CursorRing:ToggleReticle()
     self:SetReticleEnabled(KWR.db.profile.cursor.reticleEnabled == false)
     KWR:Print("Command reticle "
@@ -933,6 +1020,7 @@ function CursorRing:OnEvent(event, unit)
         elseif event == "NAME_PLATE_UNIT_REMOVED" and unit then
             self.activePlates[unit] = nil
             self:HideOrb(unit)
+            self:HideTacticalBadge(unit)
         end
         self:RefreshReticle()
         self:RefreshOrbs()

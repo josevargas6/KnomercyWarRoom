@@ -1,38 +1,41 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-03T05:50:42Z",
-    "candidateVersion":  "6.1.0-alpha.33",
+    "generatedAt":  "2026-08-13T02:51:40Z",
+    "candidateVersion":  "6.1.0-alpha.41",
     "blockingDefects":  [
                             {
-                                "id":  "KWR-032",
+                                "id":  "LIVE-TEAM-TRUTH",
                                 "priority":  "P1",
-                                "status":  "OPEN",
+                                "status":  "OFFLINE_OPEN",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Expanded Team health and specialization provenance",
                                 "liveProofNeeded":  "one live battleground screenshot proving expanded Team health plus compact/expanded HIST agreement",
                                 "bestMap":  "TWINPEAKS",
                                 "bestSession":  "TP-TEAM-TRUTH"
                             },
                             {
-                                "id":  "KWR-033",
+                                "id":  "LIVE-STABILITY",
                                 "priority":  "P1",
-                                "status":  "OPEN",
+                                "status":  "CONFIRMED_DEFECT",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Flag-map command churn and AAR stability reporting",
                                 "liveProofNeeded":  "one complete clean flag match with /kwr verify, /kwr perf, and AAR showing stability pass",
                                 "bestMap":  "TWINPEAKS",
                                 "bestSession":  "TP-STABILITY"
                             },
                             {
-                                "id":  "KWR-034",
+                                "id":  "LIVE-CARRIER-TARGET",
                                 "priority":  "P1",
-                                "status":  "OPEN",
+                                "status":  "OFFLINE_OPEN",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Raw flag-event prose entering the command-target path",
                                 "liveProofNeeded":  "one carrier state-change capture showing canonical route/carrier target instead of prose",
                                 "bestMap":  "TWINPEAKS",
                                 "bestSession":  "TP-CARRIER-TARGET"
                             },
                             {
-                                "id":  "TP-D03",
+                                "id":  "LIVE-READABILITY",
                                 "priority":  "P2",
                                 "status":  "OPEN",
                                 "title":  "Supported-resolution readability remains open",
@@ -49,7 +52,7 @@
                                                  "TWINPEAKS"
                                              ],
                                     "clears":  [
-                                                   "KWR-032"
+                                                   "LIVE-TEAM-TRUTH"
                                                ]
                                 },
                                 {
@@ -60,7 +63,7 @@
                                                  "WSG"
                                              ],
                                     "clears":  [
-                                                   "KWR-033"
+                                                   "LIVE-STABILITY"
                                                ]
                                 },
                                 {
@@ -71,7 +74,7 @@
                                                  "WSG"
                                              ],
                                     "clears":  [
-                                                   "KWR-034"
+                                                   "LIVE-CARRIER-TARGET"
                                                ]
                                 },
                                 {
@@ -102,11 +105,32 @@
                                 }
                             ],
     "liveOnlyGates":  [
-                          "exact hashed package install and upgrade proof",
                           "taint and blocked-action safety proof",
                           "lifecycle stability proof",
                           "field performance budgets",
                           "map-family battlefield proof",
                           "evidence-backed decision quality"
-                      ]
+                      ],
+    "offlineGate":  {
+                        "status":  "BLOCKED",
+                        "evidence":  [
+                                         "knowledge/candidate-package-report.json",
+                                         "knowledge/runtime-preflight.json"
+                                     ]
+                    },
+    "deploymentGate":  {
+                           "status":  "PASS",
+                           "evidence":  "knowledge/deployment-certification.json"
+                       },
+    "retailEvidenceGate":  {
+                               "status":  "BLOCKED",
+                               "binding":  "UNBOUND",
+                               "completedMatches":  0,
+                               "stabilityFailedMatches":  4,
+                               "evidence":  "knowledge/retail-field-certification.json"
+                           },
+    "fieldAttestation":  {
+                             "status":  "AUTHORIZED",
+                             "evidence":  "knowledge/field-verification-attestation.json"
+                         }
 }

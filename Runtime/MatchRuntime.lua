@@ -185,6 +185,7 @@ function Runtime:ResetTransientTruth()
     if KWR.Commander and KWR.Commander.ResetSession then
         KWR.Commander:ResetSession()
     end
+    if KWR.SentinelIngress then KWR.SentinelIngress:Reset() end
     if KWR.EncounterHistory then
         KWR.EncounterHistory.sessionKey = nil
         KWR.EncounterHistory.sessionSeen = {}
@@ -374,6 +375,9 @@ function Runtime:Refresh(reason)
         end
         snapshot.context.matchComplete = self.matchComplete == true
         snapshot = self:ApplyMatchCompleteFallback(snapshot)
+        if KWR.SentinelMerge then
+            snapshot = KWR.SentinelMerge:Apply(snapshot)
+        end
         snapshot = KWR.EncounterHistory:Enrich(snapshot)
         if KWR.KnowledgeManifest and KWR.KnowledgeManifest.Status then
             snapshot.knowledgeStatus = KWR.KnowledgeManifest:Status(snapshot)
@@ -441,10 +445,10 @@ function Runtime:Refresh(reason)
                 self.diagnostics.averageDurationMs = #ordered > 0 and total / #ordered or 0
                 local p95 = math.max(1, math.ceil(#ordered * 0.95))
                 self.diagnostics.p95DurationMs = ordered[p95] or 0
-                if type(collectgarbage) == "function" then
-                    local memory = KWR.Util:Call(collectgarbage, "count")
-                    self.diagnostics.memoryKB = KWR.Util:Number(memory, self.diagnostics.memoryKB) or 0
-                end
+                local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.MeasureMB
+                    and KWR.MemoryBudget:MeasureMB() or nil
+                self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
+                    and (memoryMB * 1024) or 0
             end
         end
         self.lastRefreshAt = KWR.Util:Now()
@@ -452,6 +456,7 @@ function Runtime:Refresh(reason)
             local published = KWR.Store:Publish(
                 snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
             if KWR.CommandAudio then KWR.CommandAudio:Observe(published) end
+            if KWR.CommanderComm then KWR.CommanderComm:Relay(published) end
         end
     end, runtimeErrorHandler)
     if not ok then

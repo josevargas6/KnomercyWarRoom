@@ -84,7 +84,26 @@ if ($readiness -notmatch [regex]::Escape($tocVersion)) {
     Add-AuditError "RELEASE_READINESS.md does not name TOC version $tocVersion."
 }
 
-$taskFiles = @(Get-ChildItem -LiteralPath (Join-Path $root 'docs\tasks') -File -Filter 'KWR-*.md')
+$taskRoot = Join-Path $root 'docs\tasks'
+$taskFiles = @(Get-ChildItem -LiteralPath $taskRoot -File -Filter 'KWR-*.md')
+$taskContractFiles = @(Get-ChildItem -LiteralPath $taskRoot -Recurse -File -Filter 'KWR-*.md')
+$taskIds = New-Object System.Collections.Generic.List[object]
+foreach ($task in $taskContractFiles) {
+    $taskText = Get-Content -LiteralPath $task.FullName -Raw
+    if ($taskText -notmatch '(?m)^id:\s*(KWR-(?:[A-Z]+-)?\d+)\s*$') {
+        Add-AuditError "Task contract lacks a valid ID: $($task.FullName.Substring($root.Length + 1))"
+        continue
+    }
+    $taskId = $Matches[1]
+    $taskIds.Add([pscustomobject]@{ id = $taskId; path = $task.FullName })
+    if (-not $task.Name.StartsWith($taskId + '-', [StringComparison]::OrdinalIgnoreCase)) {
+        Add-AuditError "Task filename does not match its ID: $($task.FullName.Substring($root.Length + 1)) declares $taskId"
+    }
+}
+foreach ($duplicate in @($taskIds | Group-Object id | Where-Object Count -gt 1)) {
+    $paths = @($duplicate.Group | ForEach-Object { $_.path.Substring($root.Length + 1) }) -join ', '
+    Add-AuditError "Task ID is reused inside the authoritative task registry: $($duplicate.Name) -> $paths"
+}
 foreach ($task in $taskFiles) {
     $taskText = Get-Content -LiteralPath $task.FullName -Raw
     if ($taskText -notmatch '(?m)^status:\s*(in_progress|blocked|completed|planned)\s*$') {

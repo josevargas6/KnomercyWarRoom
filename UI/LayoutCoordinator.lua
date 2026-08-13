@@ -65,6 +65,7 @@ end
 
 function LayoutCoordinator:Clamp(frame, margin)
     if not frame or not frame.IsShown or not frame:IsShown() then return end
+    if frame.KWRDragging then return end
     local width, height = screenSize()
     local left, right = frame:GetLeft(), frame:GetRight()
     local bottom, top = frame:GetBottom(), frame:GetTop()
@@ -82,6 +83,33 @@ end
 local function shown(name)
     local frame = _G[name]
     return frame and frame.IsShown and frame:IsShown()
+end
+
+local function intersectionArea(a, b)
+    local left = math.max(a.left, b.left)
+    local right = math.min(a.right, b.right)
+    local bottom = math.max(a.bottom, b.bottom)
+    local top = math.min(a.top, b.top)
+    if left >= right or bottom >= top then return 0 end
+    return (right - left) * (top - bottom)
+end
+
+local function frameRect(frame)
+    if not frame or not frame.IsShown or not frame:IsShown() then return nil end
+    local left, right = frame:GetLeft(), frame:GetRight()
+    local bottom, top = frame:GetBottom(), frame:GetTop()
+    if not left or not right or not bottom or not top then return nil end
+    return { left = left, right = right, bottom = bottom, top = top }
+end
+
+local function setSentinelAnchor(settings, point, x, y)
+    if not settings or (settings.point == point and settings.relativePoint == point
+        and settings.x == x and settings.y == y) then return false end
+    settings.point = point
+    settings.relativePoint = point
+    settings.x = x
+    settings.y = y
+    return true
 end
 
 function LayoutCoordinator:BlizzardOptionsOpen()
@@ -173,16 +201,123 @@ function LayoutCoordinator:ApplyOptions()
     self:Clamp(options, profile.margin)
 end
 
+function LayoutCoordinator:ApplySentinel()
+    local sentinel = _G.KWRSentinel
+    local sentinelProfile = sentinel and sentinel.db and sentinel.db.profile
+    if not sentinelProfile or not sentinel.HUD or not sentinel.Panels then return end
+    local hud = sentinel.HUD.frame
+    local status = sentinel.Panels.statusFrame
+    if not hud then return end
+
+    local hudProfile = sentinelProfile.hud
+    local panelsProfile = sentinelProfile.panels
+    local hudMoving = hud.KWRDragging == true
+    local statusMoving = status and status.KWRDragging == true
+    -- Do not replace anchors or clamp a Sentinel panel during a live drag.
+    -- The drop handler owns persistence for that movement.
+    local manageHud = hudProfile.layoutManaged ~= false and not hudMoving
+    local manageStatus = status and panelsProfile.layoutManaged ~= false and not statusMoving
+    if not manageHud and not manageStatus then
+        self:Clamp(hud, self:Profile().margin)
+        self:Clamp(status, self:Profile().margin)
+        return
+    end
+
+    local width, height = screenSize()
+    local margin = self:Profile().margin
+    local hudWidth, hudHeight = hud:GetWidth(), hud:GetHeight()
+    local statusWidth = status and status:GetWidth() or 320
+    local statusHeight = status and status:GetHeight() or 168
+    local gap = 12
+    local occupied = {}
+    for _, frame in ipairs({
+        KWR.MainWindow and KWR.MainWindow.frame,
+        KWR.MainWindow and KWR.MainWindow.launcherMenu,
+        KWR.HUD and KWR.HUD.frame,
+        KWR.CombatRoster and KWR.CombatRoster.teamFrame,
+        KWR.CombatRoster and KWR.CombatRoster.enemyFrame,
+    }) do
+        local rect = frameRect(frame)
+        if rect then occupied[#occupied + 1] = rect end
+    end
+    if not manageHud then
+        local rect = frameRect(hud)
+        if rect then occupied[#occupied + 1] = rect end
+    end
+    if status and not manageStatus then
+        local rect = frameRect(status)
+        if rect then occupied[#occupied + 1] = rect end
+    end
+
+    local candidates = {
+        { side = "RIGHT", top = height - margin },
+        { side = "LEFT", top = height - margin },
+        { side = "RIGHT", top = hudHeight + statusHeight + gap + margin },
+        { side = "LEFT", top = hudHeight + statusHeight + gap + margin },
+    }
+    local best
+    for _, candidate in ipairs(candidates) do
+        local hudLeft = candidate.side == "RIGHT" and width - margin - hudWidth or margin
+        local statusLeft = candidate.side == "RIGHT" and width - margin - statusWidth or margin
+        local statusTop = candidate.top - hudHeight - gap
+        local hudRect = { left = hudLeft, right = hudLeft + hudWidth,
+            bottom = candidate.top - hudHeight, top = candidate.top }
+        local statusRect = { left = statusLeft, right = statusLeft + statusWidth,
+            bottom = statusTop - statusHeight, top = statusTop }
+        local overlap = manageHud and manageStatus
+            and intersectionArea(hudRect, statusRect) or 0
+        for _, rect in ipairs(occupied) do
+            if manageHud then overlap = overlap + intersectionArea(hudRect, rect) end
+            if manageStatus then overlap = overlap + intersectionArea(statusRect, rect) end
+        end
+        if not best or overlap < best.overlap then
+            best = { overlap = overlap, hud = hudRect, status = statusRect }
+        end
+    end
+    if not best then return end
+    if manageHud then
+        if setSentinelAnchor(hudProfile, "TOPLEFT", best.hud.left, best.hud.top - height) then
+            hud:ClearAllPoints()
+            hud:SetPoint(hudProfile.point, UIParent, hudProfile.relativePoint,
+                hudProfile.x, hudProfile.y)
+        end
+    end
+    if manageStatus then
+        local statusProfile = panelsProfile.status
+        if setSentinelAnchor(statusProfile, "TOPLEFT", best.status.left, best.status.top - height) then
+            status:ClearAllPoints()
+            status:SetPoint(statusProfile.point, UIParent, statusProfile.relativePoint,
+                statusProfile.x, statusProfile.y)
+        end
+    end
+    self:Clamp(hud, margin)
+    self:Clamp(status, margin)
+end
+
 function LayoutCoordinator:Apply()
+    -- Layout changes re-anchor frames and scroll containers. Retail can mark
+    -- those operations protected while combat is active, so no periodic or
+    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingApply = true
+        return false
+    end
+    self.pendingApply = nil
     self:ApplyStrata()
     self:ApplyMainWindow()
     self:ApplyHUD()
     self:ApplyOptions()
+    self:ApplySentinel()
     local launcher = KWR.MainWindow and KWR.MainWindow.launcherMenu
     self:Clamp(launcher, self:Profile().margin)
+    return true
 end
 
 function LayoutCoordinator:Reset()
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingReset = true
+        return false
+    end
     if KWR.db and KWR.db.profile then
         local profile = KWR.db.profile
         profile.main.point, profile.main.relativePoint, profile.main.x, profile.main.y = "CENTER", "CENTER", 0, 0
@@ -224,13 +359,22 @@ function LayoutCoordinator:Reset()
         end
     end
     self:Apply()
+    return true
 end
 
 function LayoutCoordinator:OnInitialize()
     self.eventFrame = CreateFrame("Frame", "KWR_LayoutCoordinatorEvents")
     self.eventFrame:RegisterEvent("DISPLAY_SIZE_CHANGED")
     self.eventFrame:RegisterEvent("UI_SCALE_CHANGED")
-    self.eventFrame:SetScript("OnEvent", function() LayoutCoordinator:Apply() end)
+    self.eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self.eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "PLAYER_REGEN_ENABLED" and LayoutCoordinator.pendingReset then
+            LayoutCoordinator.pendingReset = nil
+            LayoutCoordinator:Reset()
+            return
+        end
+        LayoutCoordinator:Apply()
+    end)
     self.eventFrame:SetScript("OnUpdate", function(_, elapsed)
         self.elapsed = (self.elapsed or 0) + elapsed
         if self.elapsed < 0.25 then return end

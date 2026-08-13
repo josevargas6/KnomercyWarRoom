@@ -169,6 +169,22 @@ function Get-FengariInvocation {
     }
 
     $luaToolsRoot = Join-Path $env:LOCALAPPDATA "Temp\kwr-lua-tools"
+    $standardNodeModules = Join-Path $luaToolsRoot "node_modules"
+    $standardCli = Join-Path $standardNodeModules "fengari-node-cli\src\lua-cli.js"
+    $standardFengariPackage = Join-Path $standardNodeModules "fengari\package.json"
+    if ((Test-Path -LiteralPath $standardCli -PathType Leaf) -and
+        (Test-Path -LiteralPath $standardFengariPackage -PathType Leaf)) {
+        $nodePath = Get-NodeExecutablePath
+        if (-not $nodePath) {
+            throw "Node.js is required for Fengari package-audit smoke tests."
+        }
+        return @{
+            Command = $nodePath
+            Arguments = @($standardCli)
+            NodePath = $standardNodeModules
+        }
+    }
+
     $pnpmRoot = Join-Path $luaToolsRoot "node_modules\.pnpm"
     $sharedNodeModules = Join-Path $pnpmRoot "node_modules"
     $cliScript = Get-ChildItem -LiteralPath $pnpmRoot -Recurse -Filter "lua-cli.js" -ErrorAction SilentlyContinue |
@@ -318,6 +334,14 @@ if ($hasSentinel) {
     if ($sentinelEntries -notcontains "KWRSentinel/KWRSentinel.toc") {
         throw "Sentinel ZIP is missing the addon TOC."
     }
+    $sentinelTocRuntimeFiles = Get-Content -LiteralPath (Join-Path $sentinelRoot "KWRSentinel.toc") |
+        Where-Object { $_ -and $_ -notmatch '^##' }
+    foreach ($runtimeFile in $sentinelTocRuntimeFiles) {
+        $archivePath = "KWRSentinel/" + $runtimeFile.Replace("\", "/")
+        if ($sentinelEntries -notcontains $archivePath) {
+            throw "Sentinel ZIP is missing the TOC-required runtime file: $runtimeFile"
+        }
+    }
 }
 if (@($distributionEntries | Where-Object { $_ -match "(^|/)(tests|tools|knowledge)/" }).Count -gt 0) {
     throw "Distribution ZIP contains developer-only directories."
@@ -377,6 +401,22 @@ try {
     $distributionSoakExit = Invoke-FengariScript -Invocation $fengari `
         -ScriptPath $distributionSoakHarness -ExpectedMarker "KWR_SOAK_PASS"
     if ($distributionSoakExit -ne 0) { throw "Extracted distribution soak test failed." }
+
+    if ($hasSentinel) {
+        $sentinelExtract = Join-Path $tempRoot "sentinel"
+        Expand-Archive -LiteralPath $sentinelZip -DestinationPath $sentinelExtract
+        $sentinelAddonRoot = Join-Path $sentinelExtract "KWRSentinel"
+        $sentinelHarness = Join-Path $tempRoot "sentinel-transport.lua"
+        $sentinelTestPath = (Join-Path $root "tests\sentinel-transport.lua").Replace("\", "/")
+        $sentinelRootPath = $sentinelAddonRoot.Replace("\", "/")
+        Set-Content -LiteralPath $sentinelHarness -Encoding UTF8 -Value @(
+            "KWR_SENTINEL_TEST_ROOT = [[$sentinelRootPath]]",
+            "dofile([[$sentinelTestPath]])"
+        )
+        $sentinelTransportExit = Invoke-FengariScript -Invocation $fengari `
+            -ScriptPath $sentinelHarness -ExpectedMarker "KWR_SENTINEL_TRANSPORT_PASS"
+        if ($sentinelTransportExit -ne 0) { throw "Extracted Sentinel transport test failed." }
+    }
 } finally {
     if (Test-Path -LiteralPath $tempRoot) {
         $resolved = [IO.Path]::GetFullPath($tempRoot)
@@ -392,6 +432,7 @@ if (@($developerEntries | Where-Object { $_ -notlike "KnomercyWarRoom-Developer/
 }
 foreach ($required in @(
     "KnomercyWarRoom-Developer/src/KnomercyWarRoom/tests/smoke.lua",
+    "KnomercyWarRoom-Developer/src/KnomercyWarRoom/tests/sentinel-transport.lua",
     "KnomercyWarRoom-Developer/src/KnomercyWarRoom/tests/soak.lua",
     "KnomercyWarRoom-Developer/src/KnomercyWarRoom/tools/validate.ps1",
     "KnomercyWarRoom-Developer/src/KnomercyWarRoom/BATTLEGROUND_VERIFICATION.md"

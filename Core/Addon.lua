@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.36"
+KWR.version = "6.1.0-alpha.41"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -73,6 +73,8 @@ local DEFAULTS = {
             reticleAlpha = 0.84,
             reticleGuides = true,
             battlefieldOrbs = true,
+            markerMode = "NATIVE",
+            assignmentBadges = true,
         },
         launcher = {
             point = "CENTER",
@@ -134,6 +136,7 @@ local DEFAULTS = {
             enabled = true,
             autoOpen = true,
         },
+        sentinelTransportEnabled = true,
         guidanceMode = "COMMAND",
     },
     journal = {
@@ -266,6 +269,13 @@ local function normalizeProfile(profile)
         profile.cursor.reticleGuides, defaults.cursor.reticleGuides)
     profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
         profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
+    local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
+    if markerMode ~= "NATIVE" and markerMode ~= "TACTICAL_ONLY" and markerMode ~= "OFF" then
+        markerMode = defaults.cursor.markerMode
+    end
+    profile.cursor.markerMode = markerMode
+    profile.cursor.assignmentBadges = KWR.Util:Boolean(
+        profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
     profile.combatRoster = normalizePointBucket(profile.combatRoster, defaults.combatRoster)
     if migrateRosterLayout then
         local legacyAnchor
@@ -352,6 +362,8 @@ local function normalizeProfile(profile)
     profile.aar = normalizeAgainstDefaults(profile.aar, defaults.aar)
     profile.aar.enabled = KWR.Util:Boolean(profile.aar.enabled, defaults.aar.enabled)
     profile.aar.autoOpen = KWR.Util:Boolean(profile.aar.autoOpen, defaults.aar.autoOpen)
+    profile.sentinelTransportEnabled = KWR.Util:Boolean(
+        profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
     return profile
 end

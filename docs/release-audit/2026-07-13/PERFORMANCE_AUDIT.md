@@ -17,7 +17,7 @@ The repository contains conflicting targets:
 
 | Source | Average | p95 | Maximum | Other |
 |---|---:|---:|---:|---|
-| `ALPHA_S_TIER_MASTER_PLAN.md` and `S_TIER_EXECUTION_SCORECARD.md` | <=1.5 ms | <=4 ms | fail >6 ms | CPU average <=1%, repeated peak <=3%; memory 25/28/32 MB |
+| `docs/audits/historical-plans/ALPHA_S_TIER_MASTER_PLAN.md` and `docs/audits/historical-plans/S_TIER_EXECUTION_SCORECARD.md` | <=1.5 ms | <=4 ms | fail >6 ms | CPU average <=1%, repeated peak <=3%; memory 25/28/32 MB |
 | `PRODUCT_ROADMAP.md`, `PROJECT_HANDOFF.md`, and `QA_CHECKLIST.md` | Not stated | <2 ms | routine <4 ms | <1 MB growth over 30 minutes; median FPS loss <1%; 1% low loss <3% |
 
 **Owner decision required:** adopt one authoritative release budget. For controlled external testing, this audit recommends p95 <=2 ms, routine maximum <4 ms, warning for any refresh >6 ms, hard stop for any refresh >10 ms, less than 1 MB retained growth over 30 minutes, median FPS loss <1%, and 1% low FPS loss <3% relative to the addon-disabled baseline.

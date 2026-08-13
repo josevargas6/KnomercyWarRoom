@@ -98,6 +98,16 @@ Assert-True `
     -Condition ($releaseWorkflow -match 'codex_handoff\s*=\s*"github-review-only"') `
     -Message "Release dispatch does not declare the GitHub-review-only Codex boundary."
 
+$sentinelBridge = Get-Content -LiteralPath (
+    Join-Path $root "KWRSentinel\Bridge.lua"
+) -Raw
+Assert-True `
+    -Condition ($sentinelBridge -notmatch 'C_Spell\.GetSpellCooldown|(?<![A-Za-z_])GetSpellCooldown\s*\(') `
+    -Message "Sentinel Bridge must not calculate Retail cooldown values that can be secret/tainted."
+Assert-True `
+    -Condition ($sentinelBridge -notmatch 'GetReleaseTimeRemaining|GetCorpseRecoveryDelay') `
+    -Message "Sentinel Bridge must not calculate Retail release timers that can be secret/tainted."
+
 $maintenanceScript = Get-Content -LiteralPath (
     Join-Path $root "tools\kwr-maintenance-schedule.ps1"
 ) -Raw
@@ -107,6 +117,14 @@ Assert-True `
 Assert-True `
     -Condition ($maintenanceScript -match 'codex_handoff\s*=\s*"github-review-only"') `
     -Message "Maintenance dispatch does not declare the GitHub-review-only Codex boundary."
+Assert-True `
+    -Condition ($maintenanceScript -match 'Invoke-OfflineCertificationGate') `
+    -Message "Maintenance does not use the unified offline certification gate."
+
+$ciWorkflow = Get-Content -LiteralPath (Join-Path $root ".github\workflows\ci.yml") -Raw
+Assert-True `
+    -Condition ($ciWorkflow -match 'certify-offline\.ps1\s+-SkipBuild') `
+    -Message "CI does not execute the unified offline certification gate."
 
 foreach ($workflow in @(
     "ci.yml",
@@ -194,5 +212,31 @@ foreach ($workflowFile in $workflowFiles) {
         -Condition ($workflowSource -notmatch '(?m)^\s*uses:\s+[^\s#]+@v\d+(?:\s|$)') `
         -Message "Workflow contains a moving major-version action tag: $($workflowFile.Name)"
 }
+
+$candidateReportTool = Get-Content -LiteralPath (
+    Join-Path $root "tools\candidate-package-report.ps1"
+) -Raw
+Assert-True `
+    -Condition ($candidateReportTool -notmatch 'C:\\Users\\') `
+    -Message "Candidate package reporting contains a machine-specific user path."
+Assert-True `
+    -Condition ($candidateReportTool -match 'backupFolderSuggestion.*\$version') `
+    -Message "Candidate package backup guidance is pinned to a stale version."
+
+$taskContracts = @(Get-ChildItem -LiteralPath (Join-Path $root 'docs\tasks') -Recurse -File -Filter 'KWR-*.md')
+$taskIds = @($taskContracts | ForEach-Object {
+    $taskSource = Get-Content -LiteralPath $_.FullName -Raw
+    Assert-True `
+        -Condition ($taskSource -match '(?m)^id:\s*(KWR-(?:[A-Z]+-)?\d+)\s*$') `
+        -Message "Task contract lacks a valid ID: $($_.Name)"
+    $taskId = $Matches[1]
+    Assert-True `
+        -Condition ($_.Name.StartsWith($taskId + '-', [StringComparison]::OrdinalIgnoreCase)) `
+        -Message "Task filename does not match its declared ID: $($_.Name) -> $taskId"
+    $taskId
+})
+Assert-True `
+    -Condition (@($taskIds | Group-Object | Where-Object Count -gt 1).Count -eq 0) `
+    -Message "Authoritative task IDs must be unique across active and completed contracts."
 
 Write-Output "KWR_AUTOMATION_TEST_PASS checks=$checks"

@@ -6,7 +6,7 @@ on:
       version:
         description: Exact published candidate version.
         required: true
-        default: 6.1.0-alpha.33
+        default: ""
       post_discord:
         description: Post corrected announcement and ops receipts.
         required: true
@@ -34,6 +34,9 @@ jobs:
       - name: Checkout reviewed source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          # Receipts must describe immutable published content, never the
+          # workflow-dispatch branch that happened to start this run.
+          ref: v${{ inputs.version }}
           persist-credentials: false
 
       - name: Validate exact release copy
@@ -41,8 +44,9 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
-          if ($env:RELEASE_VERSION -cne "6.1.0-alpha.33") {
-              throw "This receipt is certified only for 6.1.0-alpha.33."
+          $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          if ($env:RELEASE_VERSION -cne $tocVersion) {
+              throw "Receipt version mismatch. Expected TOC version $tocVersion but got $env:RELEASE_VERSION."
           }
           ./tools/test-social-copy.ps1
           ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $env:RELEASE_VERSION -DryRun

@@ -1910,7 +1910,6 @@ function Commander:Compose(snapshot, prediction, assignments)
     local retainedActivePlay = updatedPreviousPlay and updatedPreviousPlay.id
         and invalidation == nil
         and canReplace ~= true
-        and (updatedPreviousPlay.minimumCommitUntil or 0) > now
     local activePlay = candidatePlay
     if retainedActivePlay then
         activePlay = updatedPreviousPlay
@@ -2180,6 +2179,10 @@ function Commander:Compose(snapshot, prediction, assignments)
         }
         while #recent > 6 do table.remove(recent, 1) end
     end
+    local publishedCreatedAt = previousCommand
+        and previousCommand.signature == publishedSignature
+        and previousCommand.createdAt or command.createdAt
+    command.createdAt = publishedCreatedAt
     self.lastCommand = {
         mapKey = snapshot.context.mapKey,
         status = status,
@@ -2187,7 +2190,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         action = command.action,
         who = command.who,
         signature = publishedSignature,
-        createdAt = command.createdAt,
+        createdAt = publishedCreatedAt,
         decisionAt = command.decisionAt,
         stabilizationSignature = stabilizationSignature,
     }

@@ -15,6 +15,13 @@ plan, counter, and community-signal changes enter through reviewed data files.
 
 A lower tier never overwrites a higher tier.
 
+## Season 2 simulation corpus
+
+`season2-rbg-simulation-corpus.json` contains 5,000 deterministic pre-live
+cases: 500 per supported map and 100 per map phase. It is
+`SIMULATION_ONLY`, used for offline coverage and regression checks, and cannot
+be treated as live outcomes, reviewed labels, meta proof, or runtime tactics.
+
 ## Patch update
 
 1. Copy `patch-template.json` and fill in the new patch metadata.

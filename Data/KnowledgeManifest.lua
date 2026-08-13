@@ -2,13 +2,14 @@ local _, KWR = ...
 
 local KnowledgeManifest = {
     schema = 2,
-    patch = "12.0.7",
-    season = "Midnight Season 1",
-    reviewedAt = "2026-06-30",
+    patch = "12.1.0",
+    season = "Midnight Season 2 preparation",
+    reviewedAt = "2026-08-11",
     sources = {
         "Blizzard in-game public APIs",
         "Battle.net Game Data/Profile reference",
         "Official World of Warcraft hotfix notes",
+        "Official Midnight Season 2 schedule and PvP rewards",
         "Murlok RBG meta snapshot",
         "Field-tested addon architecture review",
         "KWR curated RBG doctrine",

@@ -38,6 +38,7 @@ $fengariPs1OnPath = Get-Command "fengari.ps1" -ErrorAction SilentlyContinue
 $localLuaToolsRoot = Join-Path $env:LOCALAPPDATA "Temp\kwr-lua-tools"
 
 $candidateCliPaths = @(
+    (Join-Path $localLuaToolsRoot "node_modules\fengari-node-cli\src\lua-cli.js"),
     (Join-Path $localLuaToolsRoot "node_modules\.pnpm\fengari-node-cli@0.1.0\node_modules\fengari-node-cli\src\lua-cli.js"),
     (Join-Path $localLuaToolsRoot "node_modules\.bin\fengari.CMD"),
     (Join-Path $localLuaToolsRoot "node_modules\.bin\fengari.ps1"),
@@ -59,15 +60,16 @@ foreach ($path in $candidateCliPaths) {
 }
 
 $packagePaths = @(
+    (Join-Path $localLuaToolsRoot "node_modules\fengari-node-cli\package.json"),
+    (Join-Path $localLuaToolsRoot "node_modules\fengari\package.json"),
     (Join-Path $localLuaToolsRoot "node_modules\.pnpm\fengari-node-cli@0.1.0\node_modules\fengari-node-cli\package.json"),
     (Join-Path $localLuaToolsRoot "node_modules\.pnpm\fengari@0.1.4\node_modules\fengari\package.json")
 )
-$packageReadable = $true
-foreach ($path in $packagePaths) {
-    if (-not (Test-ReadableFile -Path $path)) {
-        $packageReadable = $false
-    }
-}
+$standardPackagesReadable = (Test-ReadableFile -Path $packagePaths[0]) -and
+    (Test-ReadableFile -Path $packagePaths[1])
+$pnpmPackagesReadable = (Test-ReadableFile -Path $packagePaths[2]) -and
+    (Test-ReadableFile -Path $packagePaths[3])
+$packageReadable = $standardPackagesReadable -or $pnpmPackagesReadable
 
 $bundledNodeReadable = Test-ReadableFile -Path $bundledNodePath
 $cliReadable = $accessibleCliPaths.Count -gt 0

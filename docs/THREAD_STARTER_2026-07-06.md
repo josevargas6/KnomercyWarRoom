@@ -10,7 +10,7 @@ Use this prompt bundle to resume KWR in a fresh Codex thread with minimal drift.
 
 1. `docs/CURRENT_STATE_HANDOFF_2026-07-06.md`
 2. `docs/WORKFLOW_NOW.md`
-3. `PILLAR_EXECUTION_SHEET.md`
+3. `docs/audits/historical-plans/PILLAR_EXECUTION_SHEET.md`
 4. `PROJECT_HANDOFF.md`
 5. `RELEASE_READINESS.md`
 

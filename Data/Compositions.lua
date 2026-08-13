@@ -48,7 +48,8 @@ local ARCHETYPES = {
     },
 }
 
-local function tierComp(id, tier, name, specs, win, assignments, counter, maps)
+local function tierComp(id, tier, name, specs, win, assignments, counter, maps, options)
+    options = options or {}
     return {
         id = id,
         tier = tier,
@@ -58,7 +59,10 @@ local function tierComp(id, tier, name, specs, win, assignments, counter, maps)
         assignments = assignments,
         counter = counter,
         maps = maps or {},
-        source = "USER_REVIEWED_2026_06_29",
+        source = options.source or "USER_REVIEWED_2026_06_29",
+        metaStatus = options.metaStatus or "HISTORICAL_REVALIDATE",
+        seasonPriority = options.seasonPriority or 0,
+        seasonNote = options.seasonNote,
     }
 end
 
@@ -223,9 +227,63 @@ local TIER_COMPS = {
         "Guardian anchors; Disc fights; MW floats; Pres saves; Rogue floats; Balance/Hunters defend; DK/Mage kill.",
         "Pressure the weakest sitter and force communication-heavy rotations.",
         { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING" }),
+    tierComp("S2_HUNTER_DK_PRESSURE", "S2 WATCH S", "Season 2 Hunter / DK Pressure",
+        { "DRUID:Guardian", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
+          "HUNTER:Beast Mastery", "HUNTER:Marksmanship", "DEATHKNIGHT:Unholy",
+          "ROGUE:Subtlety", "WARLOCK:Affliction", "DRUID:Balance" },
+        "Use Hunter pressure and DK grips to create repeated cross-map kill windows while Affliction/Balance tax long fights.",
+        "Guardian anchors or carries; Resto/Holy stabilize; Disc attacks; Rogue floats; Hunters hold sightlines; DK grips the call.",
+        "Break Hunter sightlines, spread before grips, and make the ranged core move before committing a full team fight.",
+        { "ARATHI", "GILNEAS", "DEEPWIND", "WSG", "TWINPEAKS", "SEETHING" }, {
+            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
+            metaStatus = "ADVISORY_PRE_LIVE",
+            seasonPriority = 30,
+            seasonNote = "Early Season 2 watch: validate from live outcomes before treating as a preferred roster.",
+        }),
+    tierComp("S2_ARMS_AFFLICTION_CONTROL", "S2 WATCH S", "Season 2 Arms / Affliction Control",
+        { "WARRIOR:Protection", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
+          "WARRIOR:Arms", "WARLOCK:Affliction", "ROGUE:Subtlety", "HUNTER:Beast Mastery",
+          "PALADIN:Retribution", "DRUID:Balance" },
+        "Pressure through sustained Arms/Affliction damage, then convert one coordinated control sequence into the objective break.",
+        "Tank fronts the objective; Resto/Holy rotate externals; Disc joins offense; Rogue controls the reset; Arms calls the train.",
+        "Force movement and short rotations; deny free Affliction casts and punish the melee core when it leaves healer range.",
+        { "GILNEAS", "TEMPLE", "EOTS", "SILVERSHARD", "DEEPHAUL" }, {
+            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
+            metaStatus = "ADVISORY_PRE_LIVE",
+            seasonPriority = 29,
+            seasonNote = "Early Season 2 watch: sustained-pressure shell, not a confirmed ladder ranking.",
+        }),
+    tierComp("S2_HUNTER_RET_TEMPO", "S2 WATCH A", "Season 2 Hunter / Ret Tempo",
+        { "DEMONHUNTER:Vengeance", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
+          "HUNTER:Beast Mastery", "HUNTER:Marksmanship", "PALADIN:Retribution", "ROGUE:Subtlety",
+          "DEATHKNIGHT:Unholy", "MAGE:Frost" },
+        "Win first arrivals and weak-side swaps, then use Hunter/Ret pressure to finish before the enemy rotation stabilizes.",
+        "Vengeance starts rotations; Rogue scouts; Hunters defend lanes; Ret protects the exposed objective player; DK/Mage lock the kill.",
+        "Slow the map, pair vulnerable sitters, and punish the first unsupported dive rather than chasing every feint.",
+        { "ARATHI", "DEEPWIND", "WSG", "TWINPEAKS", "SEETHING" }, {
+            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
+            metaStatus = "ADVISORY_PRE_LIVE",
+            seasonPriority = 20,
+            seasonNote = "Early Season 2 watch: mobility and immunity value require live map proof.",
+        }),
+    tierComp("S2_ROGUE_AFFLICTION_SPLIT", "S2 WATCH A", "Season 2 Rogue / Affliction Split",
+        { "DRUID:Guardian", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
+          "ROGUE:Subtlety", "ROGUE:Assassination", "WARLOCK:Affliction", "HUNTER:Beast Mastery",
+          "DRUID:Balance", "DEATHKNIGHT:Unholy" },
+        "Create uneven node fights through Rogue pressure while the Affliction core wins the main fight through sustained control and rot.",
+        "Guardian anchors; one Rogue scouts/pressures; one Rogue creates the kill; Affliction/Balance own the main-fight clock; DK confirms swaps.",
+        "Use paired sitters and anti-stealth coverage; refuse panic rotations and force the ranged core to abandon its established position.",
+        { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS" }, {
+            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
+            metaStatus = "ADVISORY_PRE_LIVE",
+            seasonPriority = 19,
+            seasonNote = "Early Season 2 watch: only select with real stealth coordination and disciplined defenders.",
+        }),
 }
 
 local TIER_ORDER = {
+    ["S2 WATCH S"] = 7,
+    ["S2 WATCH A"] = 6,
     ["S+"] = 5,
     ["S"] = 4,
     ["S-"] = 3,
@@ -376,6 +434,10 @@ function Compositions:BuildTargets(mapKey)
     end
     table.sort(targets, function(a, b)
         if a.mapFit ~= b.mapFit then return a.mapFit end
+        local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
+        local aPriority = seasonPrepActive and (a.seasonPriority or 0) or 0
+        local bPriority = seasonPrepActive and (b.seasonPriority or 0) or 0
+        if aPriority ~= bPriority then return aPriority > bPriority end
         if tierWeight(a.tier) ~= tierWeight(b.tier) then
             return tierWeight(a.tier) > tierWeight(b.tier)
         end

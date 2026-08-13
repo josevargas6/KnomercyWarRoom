@@ -76,10 +76,13 @@ local function createShell(name, title, width, height, setting)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(selfFrame)
         if Sentinel.db.profile.panels.locked == true then return end
+        Sentinel.db.profile.panels.layoutManaged = false
+        selfFrame.KWRDragging = true
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
         selfFrame:StopMovingOrSizing()
+        selfFrame.KWRDragging = nil
         saveAnchor(selfFrame, setting)
     end)
     return frame
@@ -100,20 +103,21 @@ end
 
 function Panels:CreateStatus()
     if self.statusFrame then return self.statusFrame end
-    local frame = createShell("KWRSentinel_StatusPanel", "SENTINEL STATUS", 320, 168, "status")
+    local frame = createShell("KWRSentinel_StatusPanel", "SENTINEL STATUS", 320, 190, "status")
     frame.assignment = makeKeyValue(frame, "ASSIGN", -40)
     frame.stage = makeKeyValue(frame, "STAGE", -62)
     frame.trinket = makeKeyValue(frame, "TRINKET", -84)
     frame.kick = makeKeyValue(frame, "KICK", -106)
     frame.cc = makeKeyValue(frame, "CC", -128)
     frame.rez = makeKeyValue(frame, "RESPAWN", -150)
+    frame.proof = makeKeyValue(frame, "BRIDGE", -172)
     self.statusFrame = frame
     return frame
 end
 
 function Panels:UpdateStatus(view)
     local frame = self:CreateStatus()
-    if canShow(frame, "status") ~= true then
+    if Sentinel:OverlaySuppressed() or canShow(frame, "status") ~= true then
         frame:Hide()
         return
     end
@@ -126,6 +130,9 @@ function Panels:UpdateStatus(view)
     frame.kick:SetText(short(status.kick, "UNKNOWN", 26))
     frame.cc:SetText(short(status.cc, "UNKNOWN", 26))
     frame.rez:SetText(short(status.rez, "ALIVE", 20))
+    local proof = view and view.proof or {}
+    frame.proof:SetText(short((proof.bridge or "STANDALONE") .. " | "
+        .. (proof.transport or "DISABLED") .. " | REJ " .. tostring(proof.rejected or 0), "STANDALONE", 42))
     frame:Show()
 end
 
@@ -134,6 +141,10 @@ function Panels:Update(view)
         return
     end
     view = view or (Sentinel.Bridge and Sentinel.Bridge:BuildView()) or {}
+    local remote = Sentinel.Relay and Sentinel.Relay:View()
+    if remote then
+        for key, value in pairs(remote) do view[key] = value end
+    end
     self:UpdateStatus(view)
 end
 
@@ -144,6 +155,7 @@ function Panels:ResetPositions()
     if not defaults then return end
     local source = defaults.status
     local target = Sentinel.db.profile.panels.status
+    Sentinel.db.profile.panels.layoutManaged = true
     target.point = source.point
     target.relativePoint = source.relativePoint
     target.x = source.x

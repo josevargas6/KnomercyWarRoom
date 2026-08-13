@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.36
+# Release Readiness - 6.1.0-alpha.41
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,16 +6,46 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 36 is the current GitHub prerelease. The recovery PR, KWR-047 source
-governance, package manifest, installed-folder comparison, and protected
-release workflow all passed on 2026-08-08. Commander and Sentinel are deployed
-from the verified package manifests; the public prerelease is
+**Alpha 41 is the authorized Retail 12.1 compatibility release and the product
+has entered refinement mode.** Alpha 40 remains the composition-aware opener
+baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
+the last verified public prerelease.
+The recovery PR, KWR-047 source governance, package manifests, installed-folder
+comparisons, and protected release workflow passed on 2026-08-08. Alpha 37
+Commander and Sentinel were deployed together on 2026-08-09 from the certified
+candidate packages: Commander has 388 exact files and Sentinel has 9 exact
+files, with zero missing, changed, or extra entries. Both addons are enabled
+for the active `Verite-Bladefist` character, so Sentinel's reviewed same-client
+`KWR.SentinelBridge` will activate on the next client load. Alpha 38 adds the
+reviewed bounded `KWRSync1` cross-client transport. Alpha 39 adds managed
+Sentinel docking beside active Commander UI. Alpha 40 expands every supported
+map to fifteen theory-reviewed opening branches, selected by friendly/enemy
+composition matchups and qualified roster tiers. It also activates the
+1,000-entry season-prep matrix/corpus as explicitly pending, advisory guidance;
+it remains pending package deployment and Retail opening validation. The public
+prerelease remains
 [`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
 CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
 workflow. Render production verification also passed: `kwr-sentinel-bot` is
 deployed on its current `main` commit `8d84fef`, and the Render logs record its
-health endpoint and Discord session online. Any further promotion still
-requires new owner approval and fresh field evidence.**
+health endpoint and Discord session online.
+
+Five complete Retail battlegrounds were reported with no observed errors, but
+they ran on an external PC. On 2026-08-11 the product owner authorized this
+evidence gap for the Alpha 41 release: `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
+`LIVE-CARRIER-TARGET`, and `LIVE-READABILITY` are no longer release blockers.
+They are refinement telemetry until the external SavedVariables journal and
+associated screenshots or logs are imported. This authorization is recorded in
+`knowledge/field-verification-attestation.json`; it does not certify cross-PC
+Sentinel, which retains its separate ten-client safety/value refinement proof.
+
+The read-only SavedVariables audit in
+`knowledge/retail-field-certification.json` found four completed matches and
+four interrupted records across Deephaul, Deepwind, Gilneas, and Silvershard.
+All four completed matches report `FAIL_REVIEW` command stability, with 36-75
+replacements and 6-28 reversals. The records predate the exact deployment
+certification receipt and are therefore useful defect evidence but remain
+`UNBOUND` for promotion. KWR-250 owns deterministic candidate binding.
 
 The first preserved Twin Peaks screenshot pass is recorded at
 `docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
@@ -38,11 +68,12 @@ It also adds two P1 command blockers:
 - `KWR-034`: the prior candidate allowed raw flag-event prose into a tactical
   target.
 
-The Commander is now a field defect-repair candidate. Additional random-map
-testing remains useful for evidence collection, but broader promotion is
-Those three implementation blockers are now closed offline on Alpha 33. Their
-remaining acceptance items are live-only and remain open until final Retail
-evidence is captured.
+The Team and carrier-target implementation repairs remain closed offline. The
+command-stability repair is reopened by real AAR evidence: after the minimum
+commitment window, a non-superior alternative could replace an active play
+despite a negative replacement decision. The closure branch now retains the
+active play until superiority or an explicit invalidation is proven; fresh
+candidate-bound Retail evidence is required to verify the repair.
 
 Current repo state:
 
@@ -58,12 +89,14 @@ Current repo state:
   evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
 - the default release package now excludes the optional Sentinel bundle unless
   `tools/build.ps1 -IncludeSentinel` is used intentionally;
-- remaining blockers are Retail-only gates: live stability, taint/safety,
-  field-performance proof, screenshot matrix, supported-map certification, and
-  release-presentation proof;
-- `KWR-032`, `KWR-033`, and `KWR-034` have evidence-derived `LIVE_ONLY`
-  status in `knowledge/field-blocker-report.json`; their deterministic/code
-  criteria are complete.
+- no internal release blockers remain under the explicit Alpha 41 product-owner
+  authorization; live stability, taint/safety, field-performance proof,
+  screenshot matrix, supported-map certification, official 12.1 tuning review,
+  and release presentation are refinement telemetry;
+- `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
+  `LIVE-READABILITY` are the field-gate identifiers in
+  `knowledge/field-blocker-report.json`; implementation task IDs are not reused
+  as live evidence IDs.
 
 ## Alpha engineering gate
 
@@ -203,5 +236,5 @@ not get hidden by the aggregate score.
 - Predictions for public widgets not exposed by Blizzard remain low-confidence or unknown.
 
 Promotion requires the live sections of `QA_CHECKLIST.md` to pass with captured evidence.
-Use `WINNING_STATE_RELEASE_GATES.md` as the current gate board for what is
-already proven offline versus what still requires Retail field proof.
+This document is the current gate board; prior gate plans are retained only under
+`docs/audits/historical-plans/` for provenance.

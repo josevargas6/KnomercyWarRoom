@@ -21,6 +21,12 @@ local SOURCES = {
         url = "https://worldofwarcraft.blizzard.com/en-us/news/24276957",
         use = "Build-time PvP tuning and API/mechanics review; live observations remain authoritative.",
     },
+    BLIZZARD_SEASON_2 = {
+        authority = "REFERENCE",
+        name = "Official Midnight Season 2 schedule and PvP rewards",
+        url = "https://news.blizzard.com/en-us/article/24294369/the-shadows-deepen-midnight-season-2-begins-august-18",
+        use = "Build-time season schedule and published PvP reward confirmation; it does not approve gameplay tuning or vendor assumptions.",
+    },
     MURLOK = {
         authority = "META",
         name = "Murlok RBG Meta",

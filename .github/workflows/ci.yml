@@ -13,7 +13,10 @@ permissions:
 jobs:
   certify:
     runs-on: windows-latest
-    timeout-minutes: 15
+    # The release build performs a clean reproducibility build plus extracted
+    # package smoke/soak. Keep the complete certification gate, but allow the
+    # Windows runner enough time to finish it under normal runner contention.
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -26,41 +29,28 @@ jobs:
       - name: Install Lua test runtime
         run: npm install --global fengari-node-cli
 
-      - name: Validate architecture and release files
-        shell: pwsh
-        run: ./tools/validate.ps1
-
-      - name: Audit document and source authority
-        shell: pwsh
-        run: |
-          ./tools/document-authority-audit.ps1
-          ./tools/source-drift-audit.ps1
-
       - name: Scan workspace for committed credentials
         shell: pwsh
         run: ./tools/security-audit.ps1
 
-      - name: Audit knowledge data
+      - name: Run autonomous offline certification
         shell: pwsh
-        run: ./tools/knowledge-audit.ps1
+        run: ./tools/certify-offline.ps1 -SkipBuild
 
       - name: Test release automation contracts
         shell: pwsh
-        run: ./tools/test-automation.ps1
+        run: |
+          ./tools/test-automation.ps1
+          ./tools/test-deployment-manifest.ps1
+          ./tools/test-retail-savedvariables-audit.ps1
 
       - name: Test public social copy
         shell: pwsh
         run: ./tools/test-social-copy.ps1
 
-      - name: Run deterministic diagnostics
-        run: fengari tests/smoke.lua
-
-      - name: Run bounded-state soak
-        run: fengari tests/soak.lua
-
       - name: Build and extract-audit packages
         shell: pwsh
-        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts"
+        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
 
       - name: Upload certified packages
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -636,8 +636,8 @@ function Diagnostics:Run()
     check("RBG meta snapshot has forty specializations", KWR.MetaSnapshot:Count() == 40)
     check("RBG meta snapshot resolves Discipline",
         disciplineMeta and disciplineMeta.role == "HEALER" and disciplineMeta.rank == 1)
-    check("Reviewed tier composition library contains twenty team shells",
-        #KWR.Compositions:TierAll() == 20)
+    check("Reviewed tier composition library contains at least twenty team shells",
+        #KWR.Compositions:TierAll() >= 20)
     local tierRoster = {}
     for _, token in ipairs(KWR.Compositions:TierAll()[1].specs) do
         local classFile, spec = token:match("^([^:]+):(.+)$")
@@ -746,9 +746,10 @@ function Diagnostics:Run()
             and deathbringer.jobs.ASSASSIN == math.min(100, baseUnholy.jobs.ASSASSIN + 10)
             and KWR.Capabilities:Get("DEATHKNIGHT", "Unholy").heroTalent == nil)
     local marksmanship = KWR.Capabilities:Get("HUNTER", "Marksmanship")
-    check("Current patch overlay updates capability inputs without branching engines",
-        marksmanship and marksmanship.ratings.burst == 4
-            and marksmanship.ratings.killConfirm == 4)
+    check("Retail 12.1 compatibility rejects stale capability overlays",
+        marksmanship
+            and KWR.PatchData:Capability("HUNTER:marksmanship") == nil
+            and KWR.PatchData:Validate(120100) == false)
     local cachedA = KWR.Capabilities:Resolve("DRUID", "Guardian")
     local cachedB = KWR.Capabilities:Resolve("DRUID", "Guardian")
     local copiedCapability = KWR.Capabilities:Get("DRUID", "Guardian")
@@ -1712,7 +1713,8 @@ function Diagnostics:Run()
             and widgetSnapshot.objectives.enemyIncoming == 0)
     check("Battle-plan repository covers every supported map",
         KWR.BattlePlans:Count() >= 20)
-    check("Patch data matches Retail interface", KWR.PatchData:Validate(120007) == true)
+    check("Retail 12.1 patch data remains fail-closed pending review",
+        KWR.PatchData:Validate(120100) == false)
     check("Learning repository is bounded and available",
         type(KWR.Learning:Summary()) == "table")
     check("Learning rejects reviews without qualified score and team truth",

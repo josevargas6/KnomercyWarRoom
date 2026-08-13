@@ -12,14 +12,21 @@ $readiness = Get-Content -LiteralPath (Join-Path $root "knowledge\field-test-rea
 $blockers = Get-Content -LiteralPath (Join-Path $root "knowledge\field-blocker-report.json") -Raw | ConvertFrom-Json
 $candidatePackage = Get-Content -LiteralPath (Join-Path $root "knowledge\candidate-package-report.json") -Raw | ConvertFrom-Json
 $runtimePreflight = Get-Content -LiteralPath (Join-Path $root "knowledge\runtime-preflight.json") -Raw | ConvertFrom-Json
+$offlinePrepared = $blockers.offlineGate.status -eq 'PASS' -and
+    $candidatePackage.candidateVersion -eq $version -and
+    $runtimePreflight.candidateVersion -eq $version
+$fieldTestingPrepared = $offlinePrepared -and $blockers.deploymentGate.status -eq 'PASS'
+$remainingBlockers = @(
+    $blockers.blockingDefects | ForEach-Object { $_.id }
+) + @($blockers.liveOnlyGates)
 
 $report = [ordered]@{
     schema = "kwr-offline-completion-audit"
     schemaVersion = 1
     generatedAt = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
     candidateVersion = $version
-    offlinePrepared = $true
-    fieldTestingPrepared = $true
+    offlinePrepared = $offlinePrepared
+    fieldTestingPrepared = $fieldTestingPrepared
     offlineEvidence = [ordered]@{
         supportedMaps = $readiness.offlineStatus.supportedMaps
         baseScenarios = $readiness.offlineStatus.baseScenarios
@@ -36,10 +43,7 @@ $report = [ordered]@{
         corpusAuditPassed = $readiness.offlineStatus.corpusAuditPassed
         decisionBenchmarkPassed = $readiness.offlineStatus.decisionBenchmarkPassed
     }
-    remainingLiveOnlyBlockers = @(
-        @($blockers.blockingDefects | ForEach-Object { $_.id }),
-        @($blockers.liveOnlyGates)
-    ) | Select-Object -Unique
+    remainingLiveOnlyBlockers = @($remainingBlockers | Select-Object -Unique)
     environmentLimits = @(
         "Lua, LuaJIT, and Fengari are not directly on PATH in this Codex environment.",
         "The repository Lua runner discovers the readable cached Node and Fengari runtime without changing PATH.",

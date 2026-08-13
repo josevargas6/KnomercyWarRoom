@@ -25,6 +25,7 @@ $required = @(
     "knowledge\schemas\scenario-calibration-schema.json",
     "knowledge\schemas\scenario-adversarial-calibration-schema.json",
     "knowledge\schemas\scenario-expert-corpus-schema.json",
+    "knowledge\schemas\season2-rbg-simulation-corpus-schema.json",
     "knowledge\schemas\runtime-preflight-schema.json",
     "knowledge\schemas\field-test-readiness-schema.json",
     "knowledge\schemas\field-blocker-report-schema.json",
@@ -36,6 +37,7 @@ $required = @(
     "knowledge\scenario-calibration.json",
     "knowledge\scenario-adversarial-calibration.json",
     "knowledge\scenario-expert-corpus.json",
+    "knowledge\season2-rbg-simulation-corpus.json",
     "knowledge\runtime-preflight.json",
     "knowledge\field-test-readiness.json",
     "knowledge\field-blocker-report.json",
@@ -530,6 +532,64 @@ try {
     }
 } catch {
     $errors.Add("Offline completion audit JSON is invalid: $($_.Exception.Message)")
+}
+
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "tools\season2-rbg-simulation-audit.ps1")
+    if ($LASTEXITCODE -ne 0) { $errors.Add("Season 2 simulation corpus audit failed.") }
+} catch {
+    $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
+}
+
+$deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
+try {
+    $deploymentCertification = Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
+    foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'releaseTag', 'commander', 'sentinel', 'upgradeProof', 'result')) {
+        if ($null -eq $deploymentCertification.PSObject.Properties[$key]) {
+            $errors.Add("Deployment certification missing required field: $key")
+        }
+    }
+    $activeVersion = [regex]::Match($tocSource, "## Version:\s*(.+)").Groups[1].Value.Trim()
+    if ($deploymentCertification.candidateVersion -eq $activeVersion) {
+        if ($deploymentCertification.result -ne 'PASS') {
+            $errors.Add('Current-candidate deployment certification is not PASS.')
+        }
+        foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
+            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
+                $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
+            }
+        }
+        if ($deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -ne 'PASS' -or
+            $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -ne 'PASS') {
+            $errors.Add('Deployment certification lacks upgrade and future-schema proof.')
+        }
+    }
+} catch {
+    $errors.Add("Deployment certification JSON is invalid: $($_.Exception.Message)")
+}
+
+$retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
+try {
+    $retailCertification = Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
+    foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'candidateSchema', 'source', 'binding', 'summary', 'matches', 'provenGates', 'missingGates', 'result')) {
+        if ($null -eq $retailCertification.PSObject.Properties[$key]) {
+            $errors.Add("Retail field certification missing required field: $key")
+        }
+    }
+    if ($retailCertification.source.PSObject.Properties.Name -contains 'path') {
+        $errors.Add('Retail field certification exposes a local SavedVariables path.')
+    }
+    if ($retailCertification.result -notin @('PASS', 'BLOCKED')) {
+        $errors.Add('Retail field certification result is neither PASS nor BLOCKED.')
+    }
+    if ($retailCertification.binding.status -eq 'BOUND' -and
+        (-not $retailCertification.binding.schemaMatches -or
+         -not $retailCertification.binding.deploymentVersionMatches -or
+         -not $retailCertification.binding.writtenAfterCertification)) {
+        $errors.Add('Retail field certification claims BOUND without all binding conditions.')
+    }
+} catch {
+    $errors.Add("Retail field certification JSON is invalid: $($_.Exception.Message)")
 }
 
 Write-Output "KWR knowledge audit"

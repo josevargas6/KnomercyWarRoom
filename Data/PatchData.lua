@@ -1,13 +1,40 @@
 local _, KWR = ...
 
 local PatchData = {
-    activePatch = "12.0.7",
+    activePatch = "12.1.0",
 }
 KWR.PatchData = PatchData
 
 -- New patches should add or replace a data pack here. Runtime engines consume
 -- the normalized pack and do not require strategy code rewrites.
 local PACKS = {
+    -- The installed Retail client is 12.1.0. Keep the 12.0.7 capability
+    -- overlays out of command scoring until the new season's official tuning
+    -- has been reviewed; generic doctrine remains available and conservative.
+    ["12.1.0"] = {
+        interface = 120100,
+        season = "Midnight Season 2 preparation",
+        captured = "2026-08-11",
+        officialHotfixReviewed = nil,
+        source = "BLIZZARD_SEASON_2",
+        reviewed = false,
+        cooldowns = {},
+        capabilities = {},
+        disabledPlans = {},
+        seasonPrepCorpus = {
+            active = true,
+            mode = "ADVISORY",
+            activationAuthority = "USER_APPROVED_ALPHA40",
+            requiresRetailValidation = true,
+        },
+        notes = {
+            "12.1 compatibility mode is active.",
+            "Blizzard schedules PvP Season 2 for the week of 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
+            "Season-preparation gearing guidance is advisory only; pricing, caps, Catalyst behavior, and tuning remain unreviewed until confirmed live.",
+            "12.0.7 meta and tuning overlays are intentionally not patch-aligned.",
+            "Composition and meta influence remain fail-closed pending official 12.1 review.",
+        },
+    },
     ["12.0.7"] = {
         interface = 120007,
         season = "Midnight Season 1",
@@ -58,6 +85,12 @@ local PACKS = {
             },
         },
         disabledPlans = {},
+        seasonPrepCorpus = {
+            active = true,
+            mode = "ADVISORY",
+            activationAuthority = "USER_APPROVED_ALPHA40",
+            requiresRetailValidation = true,
+        },
         notes = {
             "Midnight secret-value safety enabled.",
             "Defensive baseline reviewed against field-tested PvP addons.",
@@ -87,6 +120,16 @@ end
 function PatchData:PlanEnabled(planID)
     local pack = self:Get()
     return not (pack and pack.disabledPlans[planID])
+end
+
+function PatchData:SeasonPrepCorpusActive()
+    local pack = self:Get()
+    return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.active == true
+end
+
+function PatchData:SeasonPrepCorpusMode()
+    local pack = self:Get()
+    return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.mode or "DISABLED"
 end
 
 function PatchData:Validate(interface)

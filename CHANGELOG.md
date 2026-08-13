@@ -2,6 +2,34 @@
 
 ## Unreleased
 
+- Added Alpha 41 Retail 12.1 compatibility mode. The detected 12.1.0 client
+  now fails closed on the prior 12.0.7 meta and capability overlays until
+  official tuning is reviewed; generic doctrine and advisory season-prep
+  review remain available.
+- Recorded product-owner authorization to move the four outstanding live-proof
+  items from release blockers into the refinement queue. This does not claim
+  candidate-bound field evidence or cross-PC Sentinel proof was completed.
+- Added KWR-253 composition-aware opening coverage. Each of the ten supported
+  maps now exposes fifteen theory-reviewed starting branches, including ten new
+  friendly/enemy composition matchups and qualified-tier routes. They retain
+  conservative fallbacks and require Retail validation before promotion.
+- Activated the Alpha40 season-prep scenario corpus and matrix as advisory
+  guidance. Its 1,000 pending entries can inform scenario review, but cannot
+  replace live evidence, Commander decisions, assignments, or safety gates.
+- Added managed Sentinel docking to the Commander LayoutCoordinator. When both
+  addons run on one client, the execution card and status helper choose the
+  lowest-overlap screen edge around active Commander surfaces; dragging either
+  Sentinel surface preserves its player-selected placement.
+- Added Alpha 38's reviewed `KWRSync1` cross-client Sentinel transport. Commander
+  remains the only strategic brain; Sentinel sends bounded observations and
+  receives addressed assignment, control, and action relays with protocol,
+  session, sender, sequence, rate, and expiry validation.
+- Added KWR-250 read-only SavedVariables certification, which found four
+  completed Alpha 36-compatible Retail matches and four interruptions without
+  exposing local account paths or player identities.
+- Fixed active-play replacement so a non-superior alternative remains held
+  after the minimum commitment window; command issuance timestamps now remain
+  anchored to the published command instead of resetting every evaluation.
 - Added KWR-053 with 1,000 evenly distributed, deterministic season-prep
   scenarios and corpus fixtures (100 per supported battleground). Every new
   entry is pending season review and excluded from runtime expert selection
@@ -139,9 +167,8 @@ the final packaged visual recheck.
 - Repaired the combat-roster visual cache so a changed synchronized assignment
   updates its health row immediately even when optional observation fields are
   unavailable.
-- Established `RELEASE_VISION.md` as the single authority for KWR suite scope,
-  component boundaries, recovery sequencing, and promotion direction after
-  local-to-GitHub version drift was confirmed.
+- Recorded the former suite-scope vision now retained under
+  `docs/audits/historical-plans/` after local-to-GitHub version drift was confirmed.
 - Classified Commander, Sentinel, Beacon, the Discord bot, Maps, and ScoreCard
   as separate release lanes under one product vision rather than one merged
   runtime, ZIP, or version.

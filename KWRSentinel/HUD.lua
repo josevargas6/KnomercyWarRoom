@@ -252,6 +252,9 @@ end
 local function winLine(view, winState)
     local command = view.command or {}
     local score = view.score or {}
+    if view.source == "REMOTE_KWR" and command.action and command.action ~= "" then
+        return compactLine(command.action, "Follow the commander action.", 62)
+    end
     if view.requirement and view.requirement.winLine then
         return compactLine(view.requirement.winLine, "Win the next objective exchange.", 62)
     end
@@ -262,6 +265,11 @@ local function winLine(view, winState)
 end
 
 local function footerLine(view)
+    if view.degraded == true then return "REMOTE STALE - LOCAL FALLBACK" end
+    local proof = view.proof or {}
+    if proof.bridge == "REMOTE" and proof.packetAge ~= nil then
+        return "REMOTE " .. tostring(math.floor(proof.packetAge + 0.5)) .. "s | REJ " .. tostring(proof.rejected or 0)
+    end
     local healer = view.healer or {}
     local watch = view.watch or {}
     if healer.range == "OUT OF RANGE" then
@@ -481,10 +489,13 @@ function HUD:Create()
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(selfFrame)
         if Sentinel.db.profile.hud.locked then return end
+        profile.layoutManaged = false
+        selfFrame.KWRDragging = true
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
         selfFrame:StopMovingOrSizing()
+        selfFrame.KWRDragging = nil
         local point, _, relativePoint, x, y = selfFrame:GetPoint(1)
         profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
     end)
@@ -498,6 +509,7 @@ function HUD:ResetPosition()
         return
     end
     local profile = Sentinel.db.profile.hud
+    profile.layoutManaged = true
     profile.point = defaults.point
     profile.relativePoint = defaults.relativePoint
     profile.x = defaults.x
@@ -619,7 +631,21 @@ function HUD:Update()
         if Sentinel.Panels then Sentinel.Panels:Update(nil) end
         return
     end
+    if Sentinel:OverlaySuppressed() then
+        if self.frame then self.frame:Hide() end
+        if self.targetCue then self.targetCue:Hide() end
+        if Sentinel.Panels then Sentinel.Panels:Update(nil) end
+        return
+    end
     local view = Sentinel.Bridge:BuildView() or {}
+    local remote = Sentinel.Relay and Sentinel.Relay:View()
+    if remote then
+        -- Keep locally-derived safety information, but let a validated remote
+        -- commander replace only the fields that it explicitly relays.
+        for key, value in pairs(remote) do
+            view[key] = value
+        end
+    end
     local frame = self:Create()
     local winState = deriveWinState(view)
     local trust = trustState(view)
@@ -675,7 +701,10 @@ function HUD:OnInitialize()
     self.pulse.elapsed = 0
     self.pulse:SetScript("OnUpdate", function(_, elapsed)
         HUD.pulse.elapsed = HUD.pulse.elapsed + elapsed
-        if HUD.pulse.elapsed >= 0.25 then
+        -- Preserve the responsive 4 Hz battlefield card, but avoid spending
+        -- the same CPU in town or while a Blizzard panel suppresses overlays.
+        local interval = select(2, IsInInstance()) == "pvp" and 0.25 or 1.0
+        if HUD.pulse.elapsed >= interval then
             HUD.pulse.elapsed = 0
             HUD:Update()
         end

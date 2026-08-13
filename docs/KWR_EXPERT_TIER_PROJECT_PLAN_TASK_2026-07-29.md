@@ -10,8 +10,8 @@ dependencies:
   - KWR-034
   - KWR-035
 affected_modules:
-  - EXPERT_TIER_BATTLEFIELD_MASTER_PLAN.md
-  - RELEASE_VISION.md
+  - docs/audits/historical-plans/EXPERT_TIER_BATTLEFIELD_MASTER_PLAN.md
+  - docs/audits/historical-plans/RELEASE_VISION.md
   - PROJECT_HANDOFF.md
   - README.md
   - docs/WORKFLOW_NOW.md
@@ -49,7 +49,7 @@ that:
 
 # Required behavior
 
-- Preserve `RELEASE_VISION.md` as the suite and release-scope authority.
+- Preserve `docs/audits/historical-plans/RELEASE_VISION.md` as the suite and release-scope authority.
 - Preserve the existing single-owner runtime and human-in-the-loop safety
   contract.
 - Record the current alpha baseline and unresolved field blockers.
@@ -97,14 +97,14 @@ that:
       information or automatic play.
 - [x] The plan defines evidence required before using expert-tier and
       2400-competitive language.
-- [x] `RELEASE_VISION.md` and `PROJECT_HANDOFF.md` point to the plan without
+- [x] `docs/audits/historical-plans/RELEASE_VISION.md` and `PROJECT_HANDOFF.md` point to the plan without
       losing their existing authority.
 
 # Verification
 
-1. Review the plan against `AGENTS.md`, `RELEASE_VISION.md`,
+1. Review the plan against `AGENTS.md`, `docs/audits/historical-plans/RELEASE_VISION.md`,
    `ARCHITECTURE.md`, `DESIGN_CONTRACT.md`, `PRODUCT_ROADMAP.md`,
-   `PILLAR_EXECUTION_SHEET.md`, `RELEASE_READINESS.md`, and active task briefs.
+   `docs/audits/historical-plans/PILLAR_EXECUTION_SHEET.md`, `RELEASE_READINESS.md`, and active task briefs.
 2. Verify every proposed runtime responsibility has one existing owner or an
    explicitly named extension point.
 3. Verify no requirement depends on hidden combat information, network access

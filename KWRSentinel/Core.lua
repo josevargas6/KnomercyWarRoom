@@ -4,16 +4,35 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.0-alpha.36"
+Sentinel.version = "6.1.0-alpha.41"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
+
+-- Keep Sentinel out of the way of Blizzard's full-screen and major utility
+-- panels. This intentionally mirrors KWR's main overlay window list.
+local BLIZZARD_OVERLAY_WINDOWS = {
+    "SettingsPanel", "InterfaceOptionsFrame", "PlayerSpellsFrame", "SpellBookFrame",
+    "WorldMapFrame", "QuestLogFrame", "QuestMapFrame", "CharacterFrame",
+    "DressUpFrame", "CollectionsJournal", "EncounterJournal", "GameMenuFrame",
+}
+
+function Sentinel:OverlaySuppressed()
+    for _, name in ipairs(BLIZZARD_OVERLAY_WINDOWS) do
+        local frame = _G[name]
+        if frame and frame.IsShown and frame:IsShown() then
+            return true
+        end
+    end
+    return false
+end
 
 local DEFAULTS = {
     profile = {
         hud = {
             enabled = true,
             locked = false,
+            layoutManaged = true,
             point = "CENTER",
             relativePoint = "CENTER",
             x = 360,
@@ -25,6 +44,7 @@ local DEFAULTS = {
         },
         panels = {
             locked = false,
+            layoutManaged = true,
             status = {
                 enabled = true,
                 point = "CENTER",
@@ -36,6 +56,11 @@ local DEFAULTS = {
         minimap = {
             enabled = true,
             angle = 225,
+        },
+        transport = {
+            -- Cross-client traffic is opt-in until a raid leader enables it
+            -- for a deliberate team test.
+            enabled = false,
         },
         loadMessage = true,
     },
@@ -93,8 +118,28 @@ end
 
 function Sentinel:InitializeDatabase()
     KWR_SENTINEL_DB = type(KWR_SENTINEL_DB) == "table" and KWR_SENTINEL_DB or {}
+    -- Before layoutManaged existed, saved anchors were necessarily intentional.
+    -- Mark only those legacy profiles unmanaged before defaults are merged, so
+    -- an upgrade never repositions a player's HUD or status helper.
+    local profile = type(KWR_SENTINEL_DB.profile) == "table" and KWR_SENTINEL_DB.profile or {}
+    local hud = type(profile.hud) == "table" and profile.hud or nil
+    if hud and hud.layoutManaged == nil
+        and (hud.point ~= nil or hud.relativePoint ~= nil or hud.x ~= nil or hud.y ~= nil) then
+        hud.layoutManaged = false
+    end
+    local panels = type(profile.panels) == "table" and profile.panels or nil
+    local status = panels and type(panels.status) == "table" and panels.status or nil
+    if panels and panels.layoutManaged == nil and status
+        and (status.point ~= nil or status.relativePoint ~= nil or status.x ~= nil or status.y ~= nil) then
+        panels.layoutManaged = false
+    end
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
+end
+
+function Sentinel:TransportEnabled()
+    return self.db and self.db.profile and self.db.profile.transport
+        and self.db.profile.transport.enabled == true
 end
 
 function Sentinel:InitializeModules()

@@ -4,6 +4,7 @@ param(
     [string]$LiveRoot,
     [Parameter(Mandatory = $true)]
     [string]$RollbackSnapshot,
+    [string]$PackageRoot = '',
     [string]$OutputPath = (Join-Path $PSScriptRoot '..\artifacts\repository-disposition.md')
 )
 
@@ -18,10 +19,11 @@ function Get-FileMap {
 
     $map = @{}
     foreach ($file in Get-ChildItem -LiteralPath $BasePath -Recurse -File -Force) {
-        if ($file.FullName -match $excludedPattern) {
+        $relative = $file.FullName.Substring($BasePath.Length + 1).Replace('\\', '/')
+        $relativeForFilter = '\\' + $relative.Replace('/', '\\')
+        if ($relativeForFilter -match $excludedPattern) {
             continue
         }
-        $relative = $file.FullName.Substring($BasePath.Length + 1).Replace('\\', '/')
         $map[$relative] = [pscustomobject]@{
             size = [int64]$file.Length
             sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToUpperInvariant()
@@ -31,7 +33,14 @@ function Get-FileMap {
 }
 
 function Get-Disposition {
-    param([string]$Path, [bool]$Canonical, [bool]$Live, [bool]$SameHash)
+    param(
+        [string]$Path,
+        [bool]$Canonical,
+        [bool]$Live,
+        [bool]$SameHash,
+        [bool]$Package,
+        [bool]$SamePackageHash
+    )
 
     if ($Path -match '^tmp_.*\.txt$') {
         return [pscustomobject]@{
@@ -74,6 +83,14 @@ function Get-Disposition {
             risk = 'low'
         }
     }
+    if ($Live -and $Package -and $SamePackageHash) {
+        return [pscustomobject]@{
+            disposition = 'DEPLOYMENT_ONLY'
+            reason = 'Matches the verified production package by SHA-256; source form differs through an approved package transform or later canonical documentation.'
+            replacement = 'Verified package manifest and GitHub committed source.'
+            risk = 'low'
+        }
+    }
     if ($Canonical -and -not $Live) {
         return [pscustomobject]@{
             disposition = 'KEEP'
@@ -92,17 +109,29 @@ function Get-Disposition {
 
 $canonical = Get-FileMap -BasePath $root
 $live = Get-FileMap -BasePath $liveRoot
+$package = if ($PackageRoot) {
+    $resolvedPackageRoot = [IO.Path]::GetFullPath($PackageRoot)
+    if (-not (Test-Path -LiteralPath $resolvedPackageRoot -PathType Container)) {
+        throw "Package root is missing: $resolvedPackageRoot"
+    }
+    Get-FileMap -BasePath $resolvedPackageRoot
+} else {
+    @{}
+}
 $paths = @($canonical.Keys + $live.Keys | Sort-Object -Unique)
 $rows = foreach ($path in $paths) {
     $isCanonical = $canonical.ContainsKey($path)
     $isLive = $live.ContainsKey($path)
     $sameHash = $isCanonical -and $isLive -and $canonical[$path].sha256 -eq $live[$path].sha256
-    $classification = Get-Disposition -Path $path -Canonical:$isCanonical -Live:$isLive -SameHash:$sameHash
+    $isPackage = $package.ContainsKey($path)
+    $samePackageHash = $isPackage -and $isLive -and $package[$path].sha256 -eq $live[$path].sha256
+    $classification = Get-Disposition -Path $path -Canonical:$isCanonical -Live:$isLive -SameHash:$sameHash -Package:$isPackage -SamePackageHash:$samePackageHash
     [pscustomobject]@{
         path = $path
         disposition = $classification.disposition
         canonical = $isCanonical
         live = $isLive
+        package = $isPackage
         reason = $classification.reason
         replacementAuthority = $classification.replacement
         risk = $classification.risk
@@ -129,9 +158,9 @@ $summary = @(
 foreach ($group in $rows | Group-Object disposition | Sort-Object Name) {
     $summary += "| $($group.Name) | $($group.Count) |"
 }
-$summary += @('', '| Path | Disposition | Canonical | Live | Reason | Replacement authority | Risk | Rollback |', '| --- | --- | --- | --- | --- | --- | --- | --- |')
+$summary += @('', '| Path | Disposition | Canonical | Live | Package | Reason | Replacement authority | Risk | Rollback |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- |')
 foreach ($row in $rows) {
-    $summary += "| $($row.path) | $($row.disposition) | $($row.canonical) | $($row.live) | $($row.reason) | $($row.replacementAuthority) | $($row.risk) | $($row.rollback) |"
+    $summary += "| $($row.path) | $($row.disposition) | $($row.canonical) | $($row.live) | $($row.package) | $($row.reason) | $($row.replacementAuthority) | $($row.risk) | $($row.rollback) |"
 }
 $summary | Set-Content -LiteralPath $OutputPath -Encoding UTF8
 Write-Output "Repository disposition: $OutputPath"

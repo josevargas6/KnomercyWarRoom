@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-C:\Users\josev\Desktop\KWR\Builds\KWRSentinel_6_1_0_ALPHA_33.zip
+<absolute path to certified KWRSentinel_6_1_0_ALPHA_41.zip>
 ```
 
 Project:
@@ -14,8 +14,8 @@ https://www.curseforge.com/wow/addons/kwr-sentinel
 
 Required upload fields:
 
-- File: `KWRSentinel_6_1_0_ALPHA_33.zip`
-- Display name: `KWR Sentinel 6.1.0-alpha.33`
+- File: `KWRSentinel_6_1_0_ALPHA_41.zip`
+- Display name: `KWR Sentinel 6.1.0-alpha.41`
 - Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
@@ -54,14 +54,14 @@ Package evidence:
 - Interface numbers: `120100`, `120007`
 - Package audit: passed.
 - Sentinel ZIP SHA-256: use the generated
-  `KWR_6_1_0_ALPHA_33_SHA256.txt` manifest next to the built artifact. The
+  `KWR_6_1_0_ALPHA_41_SHA256.txt` manifest next to the built artifact. The
   exact hash is intentionally not embedded here because this file is packaged
   inside the ZIP.
 
 Do not upload:
 
-- `KWR_6_1_0_ALPHA_33_DISTRIBUTION.zip`
-- `KWR_6_1_0_ALPHA_33_DEVELOPER.zip`
+- `KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip`
+- `KWR_6_1_0_ALPHA_41_DEVELOPER.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
 - workspace-only temp files

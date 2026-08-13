@@ -1,5 +1,22 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.40 - 2026-08-09
+
+- Aligns Sentinel metadata with Commander's composition-aware opening candidate.
+
+## 6.1.0-alpha.39 - 2026-08-09
+
+- Uses the Commander LayoutCoordinator for managed screen-edge docking when
+  both addons run locally, preventing the execution card and status helper
+  from covering active KWR surfaces. Dragging keeps a manual layout; `/kwrs
+  reset` restores managed docking.
+
+## 6.1.0-alpha.38 - 2026-08-09
+
+- Adds bounded cross-client `KWRSync1` Commander relay and observation transport.
+- Keeps same-client bridge and standalone fallback intact.
+- Does not add targeting, focus, casting, macros, movement, or visible-chat transport.
+
 ## 6.1.0-alpha.33 - 2026-08-01
 
 - Restores the complete execution card, target cue, status helper, options, and minimap runtime to standalone source.

@@ -19,12 +19,10 @@ personal instruction instead of a second command dashboard.
 ## Current Alpha Scope
 
 This alpha uses the same-client `KnomercyWarRoom` bridge when KWR is installed
-locally. If KWR is not present, Sentinel falls back safely and does not invent
-assignments, match state, or target calls.
-
-Cross-player addon-channel relay is not enabled in this build. It remains gated
-by the reviewed `SENTINEL_TRANSPORT_SPEC.md` protocol, validator, soak, and live
-field-test requirements.
+locally and can receive bounded `KWRSync1` relays from a Commander in the same
+battleground group. If neither bridge is available, Sentinel falls back safely
+and does not invent assignments, match state, or target calls. Retail ten-client
+soak, taint, and field-value evidence remains required before promotion.
 
 ## Safety
 

@@ -64,7 +64,7 @@ Passing offline validation does not override a failed correctness or safety gate
 
 | Gate | Requirement | Method | Pass condition | Current status | Evidence location |
 |---|---|---|---|---|---|
-| RG-033 | One authoritative release performance budget exists | Owner approves thresholds and docs align | Validator-enforced single budget | DECISION | Conflicting `ALPHA_S_TIER_MASTER_PLAN.md`, `S_TIER_EXECUTION_SCORECARD.md`, `PRODUCT_ROADMAP.md`, and QA thresholds; `PERFORMANCE_AUDIT.md` |
+| RG-033 | One authoritative release performance budget exists | Owner approves thresholds and docs align | Validator-enforced single budget | DECISION | Conflicting `docs/audits/historical-plans/ALPHA_S_TIER_MASTER_PLAN.md`, `docs/audits/historical-plans/S_TIER_EXECUTION_SCORECARD.md`, `PRODUCT_ROADMAP.md`, and QA thresholds; `PERFORMANCE_AUDIT.md` |
 | RG-034 | Full runtime meets frame-time budget | Retail 10-player and worst-case instrumented runs | p95 <= adopted target; routine max and hard max pass | NOT RUN | No Retail profile; current soak timing invalid |
 | RG-035 | Addon meets FPS impact budget | Matched addon-disabled/enabled trials | Median and 1% low deltas meet adopted targets | NOT RUN | No FPS captures |
 | RG-036 | Retained memory remains bounded over 30 minutes | Warm-up plus minute samples | Growth < adopted threshold and caches stay capped | NOT RUN | No Retail memory trace; MemoryBudget callback defective |

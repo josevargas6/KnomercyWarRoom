@@ -85,16 +85,27 @@ function Options:Create()
     self.checks[#self.checks + 1] = createCheck(utility, "Show minimap button", 8, -30,
         function() return Sentinel.db.profile.minimap.enabled == true end,
         function(value) Sentinel.db.profile.minimap.enabled = value; Sentinel.MinimapButton:Refresh() end)
-    self.checks[#self.checks + 1] = createCheck(utility, "Show HUD map/score buttons", 8, -58,
+    self.checks[#self.checks + 1] = createCheck(utility, "Enable team transport (test)", 8, -54,
+        function() return Sentinel:TransportEnabled() end,
+        function(value)
+            Sentinel.db.profile.transport.enabled = value
+            if value and Sentinel.Observer then
+                Sentinel.Observer:SendHello()
+            elseif Sentinel.Relay then
+                Sentinel.Relay:Clear()
+                Sentinel.HUD:Update()
+            end
+        end)
+    self.checks[#self.checks + 1] = createCheck(utility, "Show HUD map/score buttons", 8, -78,
         function() return Sentinel.db.profile.hud.utilityButtons ~= false end,
         function(value) Sentinel.db.profile.hud.utilityButtons = value; Sentinel.HUD:Update() end)
-    self.checks[#self.checks + 1] = createCheck(utility, "Lock execution card", 8, -86,
+    self.checks[#self.checks + 1] = createCheck(utility, "Lock execution card", 8, -102,
         function() return Sentinel.db.profile.hud.locked == true end,
         function(value) Sentinel.db.profile.hud.locked = value end)
-    self.checks[#self.checks + 1] = createCheck(utility, "Lock helper panels", 8, -114,
+    self.checks[#self.checks + 1] = createCheck(utility, "Lock helper panels", 8, -126,
         function() return Sentinel.db.profile.panels.locked == true end,
         function(value) Sentinel.db.profile.panels.locked = value end)
-    self.checks[#self.checks + 1] = createCheck(utility, "Show login message", 8, -142,
+    self.checks[#self.checks + 1] = createCheck(utility, "Show login message", 8, -150,
         function() return Sentinel.db.profile.loadMessage ~= false end,
         function(value) Sentinel.db.profile.loadMessage = value end)
 
