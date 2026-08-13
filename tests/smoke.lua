@@ -868,6 +868,19 @@ do
 end
 do
     KWR.ObjectiveIntel:Reset("WSG:true")
+    KWR.ObjectiveIntel.carriers["Alliance Flag"] = {
+        objective = "Alliance Flag", kind = "FLAG", color = "Alliance",
+        player = "SystemCarrier", playerKey = "systemcarrier", source = "BG_SYSTEM",
+    }
+    local retained = KWR.ObjectiveIntel:ObserveRemoteCarrier({
+        label = "Alliance Flag", kind = "FLAG", carrier = "RemoteCarrier",
+    })
+    assert(retained and retained.player == "SystemCarrier"
+        and KWR.ObjectiveIntel.carriers["Alliance Flag"].source == "BG_SYSTEM",
+        "Remote carrier evidence replaced authoritative battleground state.")
+end
+do
+    KWR.ObjectiveIntel:Reset("WSG:true")
     KWR.ObjectiveIntel.carriers = {
         ["Alliance Flag"] = {
             objective = "Alliance Flag",

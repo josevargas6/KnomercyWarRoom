@@ -8,6 +8,13 @@ $corpus = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
 $schemaPath = Join-Path $root "knowledge\schemas\season2-rbg-simulation-corpus-schema.json"
 $schema = Get-Content -LiteralPath $schemaPath -Raw | ConvertFrom-Json
 $errors = [System.Collections.Generic.List[string]]::new()
+function Get-ContentHash {
+    param([Parameter(Mandatory = $true)][string]$Text)
+
+    $bytes = [Text.Encoding]::UTF8.GetBytes($Text)
+    $hash = [Security.Cryptography.SHA256]::Create().ComputeHash($bytes)
+    return -join ($hash | ForEach-Object { $_.ToString("x2") })
+}
 if ($corpus.schema -ne "kwr-season2-rbg-simulation-corpus" -or $corpus.status -ne "SIMULATION_ONLY") {
     $errors.Add("Season 2 simulation corpus must remain explicitly simulation-only.")
 }
@@ -49,6 +56,10 @@ foreach ($case in @($corpus.cases)) {
     }
     if ([string]::IsNullOrWhiteSpace([string]$case.sourceScenarioId)) {
         $errors.Add("Simulation case $($case.caseId) is not linked to a canonical scenario.")
+        break
+    }
+    if ([string]$case.contentHash -ne (Get-ContentHash ([string]$case.canonicalKey))) {
+        $errors.Add("Simulation case $($case.caseId) content hash does not match its canonical key.")
         break
     }
     if (@($case.requiredLiveEvidence).Count -eq 0 -or @($case.invalidatedBy).Count -eq 0) {

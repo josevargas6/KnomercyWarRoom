@@ -378,6 +378,10 @@ function ObjectiveIntel:ObserveRemoteCarrier(body, observedAt)
     local player = KWR.Util:Text(body.carrier, "", 64)
     local kind = KWR.Util:Upper(body.kind, "", 16)
     if objective == "" or player == "" or (kind ~= "FLAG" and kind ~= "ORB") then return nil end
+    local existing = self.carriers[objective]
+    if existing and existing.source == "BG_SYSTEM" then
+        return KWR.Util:Copy(existing)
+    end
     local carrier = {
         objective = objective,
         kind = kind,

@@ -9,6 +9,10 @@ local CARRIER_AURAS = {
     [23333] = { kind = "FLAG", label = "Alliance Flag" },
     [23335] = { kind = "FLAG", label = "Horde Flag" },
     [34976] = { kind = "FLAG", label = "Netherstorm Flag" },
+    [121164] = { kind = "ORB", label = "Blue Orb" },
+    [121175] = { kind = "ORB", label = "Green Orb" },
+    [121176] = { kind = "ORB", label = "Orange Orb" },
+    [121177] = { kind = "ORB", label = "Purple Orb" },
 }
 
 local function clean(value, maximum)
@@ -65,6 +69,9 @@ function Observer:Tick()
     -- Skip the target/cast scans entirely instead of doing recurring work
     -- that Comm will discard.
     if not Sentinel:TransportEnabled() or not Sentinel.Comm or not Sentinel.Comm:Distribution() then return end
+    -- Commander may reload without the remote client receiving a roster event.
+    -- Comm's HELLO throttle keeps this bounded while restoring its handshake.
+    self:SendHello()
     local dead = UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") == true
     local state = "alive=" .. (dead and "0" or "1") .. ";connected=1;reach=UNKNOWN"
     Sentinel.Comm:Send("STATE", state)
