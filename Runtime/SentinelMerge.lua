@@ -16,7 +16,7 @@ function SentinelMerge:Apply(snapshot)
             for _, record in pairs(senders) do
         local body = record.body or {}
         local applied = KWR.EnemyIntel and KWR.EnemyIntel:ObserveRemote(
-            body, record.kind, record.sender) == true
+            body, record.kind, record.sender, record.at) == true
         local observedName = KWR.Util:CanonicalName(text(body.enemy or body.carrier, "", 64))
         for _, enemy in ipairs(snapshot.enemies or {}) do
             if observedName ~= "" and KWR.Util:CanonicalName(enemy.name or "") == observedName then

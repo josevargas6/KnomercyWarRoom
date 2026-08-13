@@ -14,7 +14,7 @@ Sentinel.Comm = Comm
 
 local ALLOWED = {
     HELLO = true, STATE = true, OBS_VISIBLE = true, OBS_CAST = true,
-    OBS_CARRIER = true, OBS_PRESSURE = true, RELAY_ASSIGN = true,
+    OBS_CARRIER = true, RELAY_ASSIGN = true,
     RELAY_CONTROL = true, RELAY_ACTION = true,
 }
 local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1, OBS_PRESSURE = 2 }

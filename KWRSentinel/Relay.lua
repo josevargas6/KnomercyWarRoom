@@ -31,12 +31,34 @@ local function parse(body)
         if value == nil then return nil end
         result[key] = value
     end
-    return result.to and result or nil
+    return result
+end
+
+local REQUIRED = {
+    RELAY_ASSIGN = { to = true, role = true, where = true, move = true },
+    RELAY_CONTROL = { to = true, target = true, mode = true, fixed = true },
+    RELAY_ACTION = { to = true, action = true, when = true, sig = true },
+}
+
+local function valid(kind, body)
+    local required = REQUIRED[kind]
+    if not required then return false end
+    local count, expected = 0, 0
+    for key, value in pairs(body) do
+        if not required[key] or value == "" then return false end
+        count = count + 1
+    end
+    for key in pairs(required) do
+        if body[key] == nil then return false end
+        expected = expected + 1
+    end
+    return count == expected and (kind ~= "RELAY_CONTROL" or body.fixed == "0" or body.fixed == "1")
 end
 
 function Relay:Accept(packet)
     local body = parse(packet.body)
-    if not body or canonical(body.to) ~= canonical(identity("player")) then return false end
+    if not body or not valid(packet.kind, body)
+        or canonical(body.to) ~= canonical(identity("player")) then return false end
     self.state[packet.kind] = { body = body, at = GetTime and GetTime() or 0 }
     self.receivedAt = GetTime and GetTime() or 0
     if Sentinel.HUD then Sentinel.HUD:Update() end

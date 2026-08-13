@@ -17,7 +17,6 @@ local ALLOWED_KIND = {
     OBS_VISIBLE = true,
     OBS_CAST = true,
     OBS_CARRIER = true,
-    OBS_PRESSURE = true,
     RELAY_ASSIGN = true,
     RELAY_CONTROL = true,
     RELAY_ACTION = true,

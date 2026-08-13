@@ -6,7 +6,7 @@ local SentinelIngress = {
 }
 KWR.SentinelIngress = SentinelIngress
 
-local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1, OBS_PRESSURE = 2 }
+local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1 }
 
 local function text(value, maximum)
     return KWR.Util:Text(value, "", maximum or 64)
@@ -42,7 +42,6 @@ local REQUIRED = {
     OBS_VISIBLE = { enemy = true, visible = true, range = true, engaged = true },
     OBS_CAST = { enemy = true, spell = true, state = true },
     OBS_CARRIER = { carrier = true, kind = true, label = true, source = true },
-    OBS_PRESSURE = { friendly = true, enemy = true, healer = true, state = true, target = true },
 }
 
 local function validBoolean(value)

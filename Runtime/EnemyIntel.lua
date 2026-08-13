@@ -355,7 +355,7 @@ function EnemyIntel:ForgetToken(unit)
     if unit ~= "" then self.observedTokens[unit] = nil end
 end
 
-function EnemyIntel:ObserveRemote(body, kind, sender)
+function EnemyIntel:ObserveRemote(body, kind, sender, observedAt)
     body = type(body) == "table" and body or {}
     local name = KWR.Util:Text(body.enemy or body.carrier, "", 64)
     if name == "" then return false end
@@ -377,14 +377,17 @@ function EnemyIntel:ObserveRemote(body, kind, sender)
         match.visible = body.visible == "1"
         if match.visible then match.lastSeenAt = KWR.Util:Now() end
     elseif kind == "OBS_CAST" then
-        local spellName = KWR.Util:Text(body.spell, "", 64)
-        if spellName ~= "" and KWR.CombatIntel and KWR.CombatIntel.GetRecord then
+        local spellID = KWR.Util:Number(body.spell, nil)
+        local cast = spellID and KWR.CombatSpells and KWR.CombatSpells:GetCast(spellID)
+        if cast and KWR.CombatIntel and KWR.CombatIntel.GetRecord then
             local combatRecord = KWR.CombatIntel:GetRecord(match.guid, match.name, true)
             if combatRecord then
+                local at = KWR.Util:Number(observedAt, KWR.Util:Now()) or KWR.Util:Now()
                 combatRecord.currentCast = {
-                    name = spellName, priority = "REMOTE", response = "REVIEW",
+                    spellID = cast.spellID, name = cast.name,
+                    priority = cast.priority, response = cast.response,
                     eventType = "REMOTE_SENTINEL", observedAt = KWR.Util:Now(),
-                    expiresAt = KWR.Util:Now() + 3,
+                    expiresAt = at + KWR.Util:Clamp(cast.duration or 2, 0.5, 3) + 0.5,
                 }
             end
         end

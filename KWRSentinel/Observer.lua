@@ -38,10 +38,10 @@ end
 
 local function castObservation()
     if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
-    local name = UnitCastingInfo("target")
-    if not name then name = UnitChannelInfo("target") end
-    if not name then return nil end
-    return "enemy=" .. encode(unitIdentity("target"), 64) .. ";spell=" .. encode(name, 64) .. ";state=START"
+    local _, _, _, _, _, _, _, spellID = UnitCastingInfo("target")
+    if not spellID then _, _, _, _, _, _, _, spellID = UnitChannelInfo("target") end
+    if not tonumber(spellID) then return nil end
+    return "enemy=" .. encode(unitIdentity("target"), 64) .. ";spell=" .. tostring(spellID) .. ";state=START"
 end
 
 function Observer:SendHello()
@@ -67,9 +67,8 @@ function Observer:Tick()
     local cast = castObservation()
     if cast then Sentinel.Comm:Send("OBS_CAST", cast) end
     self.lastCast = cast or ""
-    if visible then
-        Sentinel.Comm:Send("OBS_PRESSURE", "friendly=UNKNOWN;enemy=UNKNOWN;healer=UNKNOWN;state=WATCH;target=LOCAL")
-    end
+    -- OBS_PRESSURE remains disabled until a measured local-fight collector
+    -- exists; never publish fabricated pressure into Commander truth.
 end
 
 function Observer:ObserveCarrier(name, kind, label, source)
