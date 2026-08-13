@@ -459,6 +459,10 @@ try {
             }
             Invoke-OfflineCertificationGate
             Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
+            # Readiness includes a candidate-package report. Build the exact
+            # Commander and Sentinel archives first so this lane never audits
+            # a nonexistent placeholder path on a clean hosted runner.
+            Invoke-CertifiedBuild
             Invoke-ReadinessReports
             Invoke-DiscordStatus
             Invoke-BotNotification
