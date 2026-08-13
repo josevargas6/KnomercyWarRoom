@@ -65,6 +65,11 @@ function Relay:Accept(packet)
     return true
 end
 
+function Relay:Clear()
+    self.state = {}
+    self.receivedAt = 0
+end
+
 function Relay:View()
     local now = GetTime and GetTime() or 0
     local assign = self.state.RELAY_ASSIGN

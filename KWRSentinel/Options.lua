@@ -89,7 +89,12 @@ function Options:Create()
         function() return Sentinel:TransportEnabled() end,
         function(value)
             Sentinel.db.profile.transport.enabled = value
-            if value and Sentinel.Observer then Sentinel.Observer:SendHello() end
+            if value and Sentinel.Observer then
+                Sentinel.Observer:SendHello()
+            elseif Sentinel.Relay then
+                Sentinel.Relay:Clear()
+                Sentinel.HUD:Update()
+            end
         end)
     self.checks[#self.checks + 1] = createCheck(utility, "Show HUD map/score buttons", 8, -78,
         function() return Sentinel.db.profile.hud.utilityButtons ~= false end,

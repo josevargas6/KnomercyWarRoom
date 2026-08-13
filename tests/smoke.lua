@@ -1910,6 +1910,14 @@ do
     assert(KWR_TEST_RELAYS.RELAY_ASSIGN:find("to=TestPlayer", 1, true)
         and KWR_TEST_RELAYS.RELAY_ACTION:find("action=", 1, true),
         "Commander did not build player-addressed assignment and action relays.")
+    KWR_TEST_SEND = C_ChatInfo.SendAddonMessage
+    KWR_TEST_ENUM = Enum
+    Enum = { SendAddonMessageResult = { Success = 0 } }
+    C_ChatInfo.SendAddonMessage = function() return 0 end
+    assert(KWR_TEST_COMM:Send("STATE", "alive=1;connected=1;reach=UNKNOWN", liveState),
+        "Commander did not accept Retail's numeric addon-message success result.")
+    C_ChatInfo.SendAddonMessage = KWR_TEST_SEND
+    Enum = KWR_TEST_ENUM
 end
 local clearedOK = KWR.AssignmentOverrides:Clear(pinnedName)
 assert(clearedOK == true, "Commander override clear did not remove the active player lock.")

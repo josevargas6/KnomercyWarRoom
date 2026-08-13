@@ -145,9 +145,13 @@ function CommanderComm:Send(kind, body, state)
     if not payload or not C_ChatInfo or type(C_ChatInfo.SendAddonMessage) ~= "function" then
         return false
     end
-    local ok = KWR.Util:Call(C_ChatInfo.SendAddonMessage, self.PREFIX, payload, distribution)
-    if ok then self.diagnostics.sent = self.diagnostics.sent + 1 end
-    return ok == true
+    local result = KWR.Util:Call(C_ChatInfo.SendAddonMessage, self.PREFIX, payload, distribution)
+    -- Retail returns Enum.SendAddonMessageResult.Success (currently 0), not
+    -- boolean true. Treat both valid success representations as sent.
+    local success = result == true
+        or (Enum and Enum.SendAddonMessageResult and result == Enum.SendAddonMessageResult.Success)
+    if success then self.diagnostics.sent = self.diagnostics.sent + 1 end
+    return success
 end
 
 function CommanderComm:Receive(prefix, payload, distribution, sender)

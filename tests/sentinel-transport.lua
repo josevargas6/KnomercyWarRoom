@@ -123,6 +123,9 @@ assert(Relay:Status().state == "REMOTE LIVE", "live relay status was not reporte
 clock = clock + 13
 assert(Relay:View() == nil, "expired relay remained visible")
 assert(Relay:Status().state == "REMOTE STALE", "expired relay did not enter stale state")
+Relay:Clear()
+assert(Relay:View() == nil and Relay:Status().state == "NO REMOTE",
+    "relay clear did not immediately remove cached remote state")
 
 -- Outbound sends are bounded by kind-specific limits even during rapid refresh.
 clock = clock + 1

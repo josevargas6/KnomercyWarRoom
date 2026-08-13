@@ -311,7 +311,7 @@ local function augmentWatch(view)
 end
 
 function Bridge:BuildView()
-    local remote = Sentinel.Relay and Sentinel.Relay:View()
+    local remote = Sentinel:TransportEnabled() and Sentinel.Relay and Sentinel.Relay:View() or nil
     local kwr = _G.KWR
     local view = remote or (kwr and kwr.SentinelBridge and kwr.ready
         and kwr.SentinelBridge:BuildView(shortName(UnitName("player")))
