@@ -79,10 +79,17 @@ function Relay:View()
     if assign and now - assign.at > 10 then assign = nil; self.state.RELAY_ASSIGN = nil end
     if control and now - control.at > 10 then control = nil; self.state.RELAY_CONTROL = nil end
     if not assign and not control and not action then return nil end
-    return { assignment = assign and { role = assign.body.role, location = assign.body.where, movement = assign.body.move } or {},
-        watch = control and { name = control.body.target, mode = control.body.mode } or {},
-        command = action and { action = action.body.action, when = action.body.when } or {},
-        trustState = "REMOTE COMMANDER", source = "REMOTE_KWR" }
+    local view = { trustState = "REMOTE COMMANDER", source = "REMOTE_KWR" }
+    if assign then
+        view.assignment = { role = assign.body.role, location = assign.body.where, movement = assign.body.move }
+    end
+    if control then
+        view.watch = { name = control.body.target, mode = control.body.mode }
+    end
+    if action then
+        view.command = { action = action.body.action, when = action.body.when }
+    end
+    return view
 end
 
 function Relay:Status()

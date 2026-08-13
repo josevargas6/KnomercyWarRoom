@@ -313,9 +313,18 @@ end
 function Bridge:BuildView()
     local remote = Sentinel:TransportEnabled() and Sentinel.Relay and Sentinel.Relay:View() or nil
     local kwr = _G.KWR
-    local view = remote or (kwr and kwr.SentinelBridge and kwr.ready
+    -- Remote relays are deliberately partial. Overlay only their received
+    -- families onto the complete local/standalone view so a lost packet never
+    -- blanks score pace, the local target, or an actionable local command.
+    local view = (kwr and kwr.SentinelBridge and kwr.ready
         and kwr.SentinelBridge:BuildView(shortName(UnitName("player")))
         or fallbackView())
+    if remote then
+        for _, field in ipairs({ "assignment", "watch", "command" }) do
+            if remote[field] then view[field] = remote[field] end
+        end
+        view.trustState, view.source = remote.trustState, remote.source
+    end
     view.healer = healerStatus()
     view.playerStatus = localStatus(view)
     local relayStatus = Sentinel.Relay and Sentinel.Relay:Status() or {

@@ -372,6 +372,25 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
     addEvent(self, "SYSTEM", message)
 end
 
+function ObjectiveIntel:ObserveRemoteCarrier(body, observedAt)
+    body = type(body) == "table" and body or {}
+    local objective = KWR.Util:Text(body.label, "", 64)
+    local player = KWR.Util:Text(body.carrier, "", 64)
+    local kind = KWR.Util:Upper(body.kind, "", 16)
+    if objective == "" or player == "" or (kind ~= "FLAG" and kind ~= "ORB") then return nil end
+    local carrier = {
+        objective = objective,
+        kind = kind,
+        color = objective:gsub(" Flag$", ""):gsub(" Orb$", ""),
+        player = player,
+        playerKey = normalizeName(player),
+        observedAt = KWR.Util:Number(observedAt, KWR.Util:Now()) or KWR.Util:Now(),
+        source = "REMOTE_SENTINEL",
+    }
+    self.carriers[objective] = carrier
+    return KWR.Util:Copy(carrier)
+end
+
 local function findEntity(snapshot, playerKey)
     for _, entity in ipairs(snapshot.roster or {}) do
         if normalizeName(entity.name) == playerKey then return entity, "FRIENDLY" end
