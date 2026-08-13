@@ -34,6 +34,9 @@ jobs:
       - name: Checkout reviewed source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          # Receipts must describe immutable published content, never the
+          # workflow-dispatch branch that happened to start this run.
+          ref: v${{ inputs.version }}
           persist-credentials: false
 
       - name: Validate exact release copy

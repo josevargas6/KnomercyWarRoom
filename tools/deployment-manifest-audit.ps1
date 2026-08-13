@@ -108,6 +108,37 @@ function Remove-SafeExtraFile {
     Remove-Item -LiteralPath $path -Force
 }
 
+function Copy-RollbackSnapshot {
+    param([string]$SnapshotParent, [string]$InstalledPath, [object]$Before)
+
+    $addonName = Split-Path -Leaf $InstalledPath
+    $snapshotRoot = Join-Path $SnapshotParent $addonName
+    if (Test-Path -LiteralPath $snapshotRoot) {
+        if (-not (Test-Path -LiteralPath $snapshotRoot -PathType Container)) {
+            throw "Rollback snapshot target is not a directory: $snapshotRoot"
+        }
+        $existing = Compare-Deployment -SourceRoot $InstalledPath -TargetRoot $snapshotRoot
+        if ($existing.missing.Count -ne 0 -or $existing.changed.Count -ne 0 -or $existing.extra.Count -ne 0) {
+            throw "Rollback snapshot must be empty or match the pre-sync installed manifest: $snapshotRoot"
+        }
+        return $snapshotRoot
+    }
+
+    [IO.Directory]::CreateDirectory($snapshotRoot) | Out-Null
+    foreach ($file in Get-ChildItem -LiteralPath $InstalledPath -Recurse -File) {
+        $relative = Get-NormalizedRelativePath -RootPath $InstalledPath -FullPath $file.FullName
+        $destination = Join-Path $snapshotRoot $relative
+        [IO.Directory]::CreateDirectory((Split-Path -Parent $destination)) | Out-Null
+        Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
+    }
+    $verified = Compare-Deployment -SourceRoot $InstalledPath -TargetRoot $snapshotRoot
+    if ($verified.missing.Count -ne 0 -or $verified.changed.Count -ne 0 -or $verified.extra.Count -ne 0 -or
+        $verified.installedDigest -cne $Before.installedDigest) {
+        throw "Rollback snapshot verification failed: $snapshotRoot"
+    }
+    return $snapshotRoot
+}
+
 $packageRoot = Resolve-ExistingDirectory -Path $PackageRoot -Label 'Package root'
 $installedRoot = Resolve-ExistingDirectory -Path $InstalledRoot -Label 'Installed root'
 Assert-SafeInstalledRoot -Path $installedRoot
@@ -118,10 +149,11 @@ if ($Synchronize) {
     if ($ConfirmSynchronize -cne 'DEPLOY') {
         throw 'Synchronize requires ConfirmSynchronize=DEPLOY.'
     }
-    $snapshot = Resolve-ExistingDirectory -Path $RollbackSnapshot -Label 'Rollback snapshot'
+    $snapshotParent = Resolve-ExistingDirectory -Path $RollbackSnapshot -Label 'Rollback snapshot'
     if ((Get-Process -Name 'Wow' -ErrorAction SilentlyContinue).Count -gt 0) {
         throw 'World of Warcraft is running. Exit the client before synchronizing addon files.'
     }
+    $snapshot = Copy-RollbackSnapshot -SnapshotParent $snapshotParent -InstalledPath $installedRoot -Before $before
 
     foreach ($entry in @($before.extra)) {
         Remove-SafeExtraFile -TargetRoot $installedRoot -RelativePath $entry

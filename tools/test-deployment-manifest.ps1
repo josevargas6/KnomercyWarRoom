@@ -43,6 +43,10 @@ try {
     if ((Get-Content -LiteralPath (Join-Path $installed 'Core.lua') -Raw).Trim() -ne 'package') {
         throw 'Deployment synchronization did not restore package content.'
     }
+    if ((Get-Content -LiteralPath (Join-Path $snapshot 'KnomercyWarRoom\Core.lua') -Raw).Trim() -ne 'changed' -or
+        -not (Test-Path -LiteralPath (Join-Path $snapshot 'KnomercyWarRoom\stale.lua'))) {
+        throw 'Deployment synchronization did not create a verified pre-sync rollback snapshot.'
+    }
     Write-Output 'KWR_DEPLOYMENT_MANIFEST_TEST_PASS'
 } finally {
     if (Test-Path -LiteralPath $fixtureRoot) {
