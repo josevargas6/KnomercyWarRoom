@@ -1,8 +1,8 @@
 # Historical: Automated Maintenance Schedule
 
 This schedule is the operational bridge between the existing maintenance plan,
-GitHub Actions, Discord server updates, optional Sentinel Discord bot dispatch,
-CurseForge readiness checks, and Codex-assisted upkeep.
+GitHub Actions, Discord server updates, CurseForge readiness checks, and
+Codex-assisted upkeep.
 
 Production authority remains unchanged: GitHub is the source of truth,
 CurseForge receives only certified release artifacts, Discord is an operator
@@ -17,17 +17,17 @@ release, rotate credentials, or publish stable builds.
 | GitHub scheduled automation | `.github/workflows/kwr-automated-maintenance.yml` | Runs `auto` lane and uploads evidence artifacts |
 | GitHub manual dispatch | `KWR Automated Maintenance Schedule` | Selects one lane; external writes require `PUBLISH` |
 | Discord server | Existing webhook scripts | Status and release notices only |
-| Sentinel Discord bot | Optional GitHub repository dispatch | Notification only; bot decides its own handling |
+| Sentinel Discord bot | Discord interaction service | Support and structured intake only; it is not a release-delivery receiver |
 | CurseForge | Existing upload scripts in dry-run during maintenance | Uploads remain release workflow only |
 
 ## Lanes
 
 | Lane | Cadence | Main work |
 |---|---|---|
-| `daily` | Daily 10:17 and 16:17 Central | Validate, security audit, knowledge audit, deterministic Lua tests, certified build, readiness reports, Discord dry-run, optional bot notification |
+| `daily` | Daily 10:17 and 16:17 Central | Validate, security audit, knowledge audit, deterministic Lua tests, certified build, readiness reports, Discord dry-run |
 | `patch-preflight` | Monday 16:30 Central | Credential capability check, validation, security audit, knowledge audit, ops status |
-| `patch-baseline` | Tuesday 08:47 Central | Baseline validation, build certification, Discord patch-watch dry-run, optional bot notification |
-| `patch-watch` | Tuesday every 15 minutes from 09:07 through 14:52 Central | Fast validation, knowledge audit, ops heartbeat, optional bot notification |
+| `patch-baseline` | Tuesday 08:47 Central | Baseline validation, build certification, Discord patch-watch dry-run |
+| `patch-watch` | Tuesday every 15 minutes from 09:07 through 14:52 Central | Fast validation, knowledge audit, ops heartbeat |
 | `extended-reconciliation` | Tuesday afternoon through Wednesday 12:17 Central | Full daily lane plus release dry-run checks when artifacts exist |
 | `weekly-reconciliation` | Wednesday 13:17 Central | Full dry-run, readiness reports, evidence artifact upload |
 | `biweekly-trends` | Every Thursday 10:17 Central, active on alternating ISO-style week parity | Full dry-run plus trend note for maintainers |
@@ -47,7 +47,7 @@ External writes require all of these:
 
 - `mode=external`
 - `confirm_external_writes=PUBLISH`
-- the specific action flag, such as `post_discord=true` or `notify_bot=true`
+- the specific action flag, `post_discord=true`
 - the matching secret configured in the protected GitHub environment or local
   shell
 
@@ -75,8 +75,6 @@ the numeric ID shown on each public project page.
 | `DISCORD_WEBHOOK_ANNOUNCEMENTS` | Release announcement dry-run or manual post |
 | `DISCORD_WEBHOOK_SUPPORT` | Sentinel support release notice |
 | `DISCORD_WEBHOOK_FIELD_TESTING` | Sentinel field-test release notice |
-| `KWR_BOT_REPOSITORY` | Optional Sentinel Discord bot repository dispatch target |
-| `KWR_BOT_DISPATCH_TOKEN` | Optional token for repository dispatch |
 | `CURSEFORGE_API_TOKEN` | CurseForge release workflow |
 | `CURSEFORGE_GAME_VERSION_IDS` | CurseForge game-version metadata |
 
@@ -98,8 +96,8 @@ instructions.
 ## Rollback
 
 1. Disable `KWR Automated Maintenance Schedule` in GitHub Actions.
-2. Remove or rotate the affected webhook, bot dispatch token, or CurseForge
-   token if an external write was incorrect.
+2. Remove or rotate the affected webhook or CurseForge token if an external
+   write was incorrect.
 3. Re-run `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\kwr-maintenance-schedule.ps1 -Lane status` and
    `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate.ps1`.
 4. Record the incident and corrected release path in the next task brief or

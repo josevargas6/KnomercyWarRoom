@@ -19,10 +19,7 @@ param(
     [string]$Mode = "dry-run",
     [string]$ConfirmExternalWrites = "",
     [switch]$PostDiscord,
-    [switch]$NotifyBot,
-    [string]$OutputDirectory = "artifacts\scheduled-maintenance",
-    [string]$BotRepository = $env:KWR_BOT_REPOSITORY,
-    [string]$BotDispatchToken = $env:KWR_BOT_DISPATCH_TOKEN
+    [string]$OutputDirectory = "artifacts\scheduled-maintenance"
 )
 
 $ErrorActionPreference = "Stop"
@@ -294,54 +291,6 @@ function Invoke-ReleaseDryRun {
     }
 }
 
-function Invoke-BotNotification {
-    if (-not $NotifyBot) {
-        return
-    }
-
-    $payload = [ordered]@{
-        event_type = "kwr_maintenance_schedule"
-        client_payload = [ordered]@{
-            automation_role = "discord-execution-transport"
-            codex_authority = "implementation-and-publication"
-            codex_handoff = "github-review-only"
-            payload_version = 1
-            lane = $Lane
-            mode = $Mode
-            source = "KnomercyWarRoom maintenance scheduler"
-            started_at = $runStarted.ToString("yyyy-MM-ddTHH:mm:ssZ")
-        }
-    }
-
-    if ($Mode -ne "external") {
-        Invoke-Step "Sentinel Discord bot dispatch dry-run" {
-            Write-Output ($payload | ConvertTo-Json -Depth 5)
-        }
-        return
-    }
-    if ($ConfirmExternalWrites -cne "PUBLISH") {
-        throw "Bot dispatch requires ConfirmExternalWrites=PUBLISH."
-    }
-    if ([string]::IsNullOrWhiteSpace($BotRepository) -or [string]::IsNullOrWhiteSpace($BotDispatchToken)) {
-        throw "Bot dispatch requires KWR_BOT_REPOSITORY and KWR_BOT_DISPATCH_TOKEN."
-    }
-
-    Invoke-Step "Notify Sentinel Discord bot repository" {
-        $headers = @{
-            Authorization = "Bearer $BotDispatchToken"
-            Accept = "application/vnd.github+json"
-            "X-GitHub-Api-Version" = "2022-11-28"
-        }
-        $body = $payload | ConvertTo-Json -Depth 5
-        Invoke-RestMethod `
-            -Method Post `
-            -Uri "https://api.github.com/repos/$BotRepository/dispatches" `
-            -Headers $headers `
-            -ContentType "application/json" `
-            -Body $body | Out-Null
-    }
-}
-
 function Write-Status {
     Write-Output "KWR automated maintenance schedule"
     Write-Output "Root: $root"
@@ -360,8 +309,6 @@ function Write-Status {
         "DISCORD_WEBHOOK_ANNOUNCEMENTS",
         "DISCORD_WEBHOOK_SUPPORT",
         "DISCORD_WEBHOOK_FIELD_TESTING",
-        "KWR_BOT_REPOSITORY",
-        "KWR_BOT_DISPATCH_TOKEN",
         "CURSEFORGE_COMMANDER_PROJECT_ID",
         "CURSEFORGE_SENTINEL_PROJECT_ID",
         "CURSEFORGE_API_TOKEN",
@@ -413,19 +360,16 @@ try {
             Invoke-CertifiedBuild
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "patch-preflight" {
             Invoke-Step "Capability status" { Write-Status }
             Invoke-ValidationGate
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "patch-baseline" {
             Invoke-ValidationGate
             Invoke-CertifiedBuild
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "patch-watch" {
             Invoke-Step "Fast validation" {
@@ -435,7 +379,6 @@ try {
                 Invoke-RepoScript -ScriptName "knowledge-audit.ps1"
             }
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "extended-reconciliation" {
             Invoke-OfflineCertificationGate
@@ -443,7 +386,6 @@ try {
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "weekly-reconciliation" {
             Invoke-OfflineCertificationGate
@@ -451,7 +393,6 @@ try {
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "biweekly-trends" {
             Invoke-Step "Biweekly trend anchor" {
@@ -465,7 +406,6 @@ try {
             Invoke-CertifiedBuild
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "monthly-maintenance" {
             Invoke-Step "Capability status" { Write-Status }
@@ -474,13 +414,11 @@ try {
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
         }
         "release-dry-run" {
             Invoke-OfflineCertificationGate
             Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
-            Invoke-BotNotification
         }
         "full-dry-run" {
             Invoke-OfflineCertificationGate
@@ -488,7 +426,6 @@ try {
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
-            Invoke-BotNotification
             Invoke-Step "Capability status" { Write-Status }
         }
     }

@@ -119,8 +119,7 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
         run: |
           if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
-              Write-Output "Discord announcement skipped: webhook secret is not configured."
-              exit 0
+              throw "Discord release announcement is not configured: add DISCORD_WEBHOOK_ANNOUNCEMENTS or WEBHOOK_ANNOUNCEMENTS to the production environment secrets."
           }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           ./tools/kwr-commander-discord-announce.ps1 -Section announcements -Version $version
@@ -131,52 +130,8 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
         run: |
           if ([string]::IsNullOrWhiteSpace($env:DISCORD_WEBHOOK_URL)) {
-              Write-Output "Discord announcement skipped: webhook secret is not configured."
-              exit 0
+              throw "Discord release announcement is not configured: add DISCORD_WEBHOOK_ANNOUNCEMENTS or WEBHOOK_ANNOUNCEMENTS to the production environment secrets."
           }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $version
-
-      - name: Mint KWR Automation installation token
-        id: kwr-app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ vars.KWR_AUTOMATION_APP_ID || secrets.KWR_AUTOMATION_APP_ID }}
-          private-key: ${{ secrets.KWR_AUTOMATION_APP_PRIVATE_KEY }}
-          owner: josevargas6
-          repositories: kwr-sentinel-bot
-
-      - name: Notify KWR Sentinel Discord bot
-        shell: pwsh
-        env:
-          BOT_DISPATCH_TOKEN: ${{ steps.kwr-app-token.outputs.token }}
-          BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:BOT_DISPATCH_TOKEN) -or [string]::IsNullOrWhiteSpace($env:BOT_REPOSITORY)) {
-              throw "Sentinel bot notification blocked: GitHub App dispatch credentials are not configured."
-          }
-          $headers = @{
-              Authorization = "Bearer $env:BOT_DISPATCH_TOKEN"
-              Accept = "application/vnd.github+json"
-              "X-GitHub-Api-Version" = "2022-11-28"
-          }
-          $payload = @{
-              event_type = "kwr_release_published"
-              client_payload = @{
-                  automation_role = "discord-execution-transport"
-                  codex_authority = "implementation-and-publication"
-                  codex_handoff = "github-review-only"
-                  payload_version = 1
-                  commander_version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-                  sentinel_version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-                  release_tag = "${{ inputs.release_tag || github.ref_name }}"
-                  release_url = "https://github.com/${{ github.repository }}/releases/tag/${{ inputs.release_tag || github.ref_name }}"
-                  source_urls = @(
-                      "https://github.com/${{ github.repository }}"
-                      "https://www.curseforge.com/wow/addons/knomercy-war-room"
-                      "https://www.curseforge.com/wow/addons/kwr-sentinel"
-                  )
-                  confidence = "confirmed"
-              }
-          } | ConvertTo-Json -Depth 5
-          Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$env:BOT_REPOSITORY/dispatches" -Headers $headers -ContentType "application/json" -Body $payload
+          $commanderVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          ./tools/sentinel-discord-announce.ps1 -Section announcements -Version $version -CommanderVersion $commanderVersion

@@ -78,9 +78,6 @@ Assert-True `
 Assert-True `
     -Condition ($maintenanceWorkflow -match '\$postDiscord\s*=\s*\$false') `
     -Message "Scheduled maintenance defaults to a Discord write."
-Assert-True `
-    -Condition ($maintenanceWorkflow -match '\$notifyBot\s*=\s*\$false') `
-    -Message "Scheduled maintenance defaults to a bot dispatch."
 
 $releaseWorkflow = Get-Content -LiteralPath (
     Join-Path $root ".github\workflows\release.yml"
@@ -92,11 +89,14 @@ Assert-True `
     -Condition ($releaseWorkflow -match 'CURSEFORGE_PROJECT_ID:\s*"1614463"') `
     -Message "Sentinel release workflow does not use public project id 1614463."
 Assert-True `
-    -Condition ($releaseWorkflow -match 'automation_role\s*=\s*"discord-execution-transport"') `
-    -Message "Release dispatch does not declare the constrained Discord execution role."
+    -Condition ($releaseWorkflow -notmatch 'repository_dispatch|/dispatches|BOT_DISPATCH_TOKEN|BOT_REPOSITORY') `
+    -Message "Release workflow contains an unverified bot dispatch."
 Assert-True `
-    -Condition ($releaseWorkflow -match 'codex_handoff\s*=\s*"github-review-only"') `
-    -Message "Release dispatch does not declare the GitHub-review-only Codex boundary."
+    -Condition ($releaseWorkflow -match 'throw "Discord release announcement is not configured') `
+    -Message "Release workflow can pass without the required Discord release announcement webhook."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'sentinel-discord-announce\.ps1 -Section announcements -Version \$version -CommanderVersion \$commanderVersion') `
+    -Message "Release workflow does not pass the current Commander version to the Sentinel announcement."
 
 $sentinelBridge = Get-Content -LiteralPath (
     Join-Path $root "KWRSentinel\Bridge.lua"
@@ -112,11 +112,8 @@ $maintenanceScript = Get-Content -LiteralPath (
     Join-Path $root "tools\kwr-maintenance-schedule.ps1"
 ) -Raw
 Assert-True `
-    -Condition ($maintenanceScript -match 'automation_role\s*=\s*"discord-execution-transport"') `
-    -Message "Maintenance dispatch does not declare the constrained Discord execution role."
-Assert-True `
-    -Condition ($maintenanceScript -match 'codex_handoff\s*=\s*"github-review-only"') `
-    -Message "Maintenance dispatch does not declare the GitHub-review-only Codex boundary."
+    -Condition ($maintenanceScript -notmatch 'repository_dispatch|/dispatches|BotDispatch|BotRepository|NotifyBot') `
+    -Message "Maintenance includes an unverified bot dispatch."
 Assert-True `
     -Condition ($maintenanceScript -match 'Invoke-OfflineCertificationGate') `
     -Message "Maintenance does not use the unified offline certification gate."
