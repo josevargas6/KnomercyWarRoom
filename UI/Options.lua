@@ -197,6 +197,13 @@ function Options:Create()
             unavailableText = "WoW text-to-speech playback is unavailable on this client.",
             allowToggleWhenUnavailable = true,
         })
+    createCheck(self, commandCard,
+        "sentinelTransport",
+        "Enable Sentinel team bridge",
+        "Accepts roster-validated Sentinel observations and sends personal relays. Turning it off clears all remote bridge state immediately.",
+        -322,
+        function() return KWR.CommanderComm and KWR.CommanderComm:TransportEnabled() end,
+        function(value) return KWR.CommanderComm and KWR.CommanderComm:SetTransportEnabled(value) end)
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",

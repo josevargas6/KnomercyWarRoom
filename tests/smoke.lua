@@ -1901,8 +1901,14 @@ do
     KWR_TEST_COMM = KWR.CommanderComm
     KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
     KWR_TEST_ROSTER_SENDER = liveState.snapshot.roster[1].name
+    KWR_TEST_HELLO = table.concat({
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=HELLO", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=testepoch",
+        "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=addon=KWRSentinel;class=DEATHKNIGHT;role=UNKNOWN;caps=1;epoch=testepoch",
+    }, "|")
+    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_HELLO, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
+        "Commander rejected a valid Sentinel handshake.")
     KWR_TEST_PAYLOAD = table.concat({
-        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=OBS_VISIBLE", "ts=1", "ep=testepoch",
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=2", "kind=OBS_VISIBLE", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=testepoch",
         "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=enemy=EnemyHealer;visible=1;range=1;engaged=0",
     }, "|")
     assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
@@ -1911,8 +1917,17 @@ do
         and KWR.SentinelIngress.byEnemy.enemyhealer.OBS_VISIBLE
         and KWR.SentinelIngress.diagnostics.accepted >= 1,
         "Commander ingress did not retain bounded remote enemy evidence.")
+    KWR_TEST_TRANSPORT = KWR.db.profile.sentinelTransportEnabled
+    assert(KWR_TEST_COMM:SetTransportEnabled(false)
+        and not KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER)
+        and next(KWR.SentinelIngress.byPlayer) == nil,
+        "Commander transport rollback did not reject ingress and clear cached state.")
+    KWR_TEST_COMM:SetTransportEnabled(KWR_TEST_TRANSPORT ~= false)
+    assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_HELLO, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER)
+        and KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
+        "Commander transport did not resume after explicit re-enable.")
     KWR_TEST_CAST_PAYLOAD = table.concat({
-        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=2", "kind=OBS_CAST", "ts=2", "ep=testepoch",
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=3", "kind=OBS_CAST", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=testepoch",
         "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=enemy=EnemyHealer;spell=Polymorph;state=START",
     }, "|")
     assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_CAST_PAYLOAD, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER)
@@ -1923,12 +1938,24 @@ do
         "Commander accepted a duplicate Sentinel sequence.")
     assert(not KWR_TEST_COMM:Receive("KWRSync1", "v=2|sid=x", "INSTANCE_CHAT", "TestPlayer"),
         "Commander accepted a malformed or future-version Sentinel envelope.")
+    KWR_TEST_STALE_EPOCH = table.concat({
+        "v=2", "sid=" .. KWR_TEST_SESSION, "seq=4", "kind=STATE", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=wrongepoch",
+        "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=alive=1;connected=1;reach=UNKNOWN",
+    }, "|")
+    assert(not KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_STALE_EPOCH, "INSTANCE_CHAT", KWR_TEST_ROSTER_SENDER),
+        "Commander accepted a stale Sentinel epoch.")
     KWR_TEST_ROSTER_CHECK = KWR_TEST_COMM.IsRosterSender
     KWR_TEST_COMM.IsRosterSender = function() return true end
     for KWR_TEST_SENDER_INDEX = 1, 10 do
         KWR_TEST_SENDER = "Sentinel" .. tostring(KWR_TEST_SENDER_INDEX)
         KWR_TEST_PACKET = table.concat({
-            "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=STATE", "ts=1", "ep=testepoch",
+            "v=2", "sid=" .. KWR_TEST_SESSION, "seq=1", "kind=HELLO", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=testepoch",
+            "src=" .. KWR_TEST_SENDER:lower(), "body=addon=KWRSentinel;class=DEATHKNIGHT;role=UNKNOWN;caps=1;epoch=testepoch",
+        }, "|")
+        assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PACKET, "INSTANCE_CHAT", KWR_TEST_SENDER),
+            "Commander rejected Sentinel handshake " .. tostring(KWR_TEST_SENDER_INDEX))
+        KWR_TEST_PACKET = table.concat({
+            "v=2", "sid=" .. KWR_TEST_SESSION, "seq=2", "kind=STATE", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=testepoch",
             "src=" .. KWR_TEST_SENDER:lower(), "body=alive=1;connected=1;reach=UNKNOWN",
         }, "|")
         assert(KWR_TEST_COMM:Receive("KWRSync1", KWR_TEST_PACKET, "INSTANCE_CHAT", KWR_TEST_SENDER),

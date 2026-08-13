@@ -7,6 +7,7 @@ local SentinelIngress = {
 KWR.SentinelIngress = SentinelIngress
 
 local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1 }
+local MAX_PACKET_AGE = 15
 
 local function text(value, maximum)
     return KWR.Util:Text(value, "", maximum or 64)
@@ -80,14 +81,28 @@ function SentinelIngress:Accept(packet, sender, state)
     end
     local key = senderKey(sender)
     local record = self.byPlayer[key] or { packets = {} }
+    local receiptAt = KWR.Util:Now()
+    if math.abs(receiptAt - (packet.timestamp or 0)) > MAX_PACKET_AGE then
+        self.diagnostics.malformed = self.diagnostics.malformed + 1
+        return false
+    end
     local helloEpoch = packet.kind == "HELLO" and text(body.epoch, 32) or ""
     if helloEpoch ~= "" and helloEpoch ~= record.epoch then
         record.packets = {}
         self.lastSeqBySender[key] = 0
         record.epoch = helloEpoch
+        record.lastTimestamp = 0
+    end
+    if packet.kind ~= "HELLO" and (not record.epoch or packet.epoch ~= record.epoch) then
+        self.diagnostics.malformed = self.diagnostics.malformed + 1
+        return false
     end
     local previous = self.lastSeqBySender[key] or 0
     if packet.sequence <= previous then
+        self.diagnostics.duplicate = self.diagnostics.duplicate + 1
+        return false
+    end
+    if packet.timestamp < (record.lastTimestamp or 0) then
         self.diagnostics.duplicate = self.diagnostics.duplicate + 1
         return false
     end
@@ -97,7 +112,8 @@ function SentinelIngress:Accept(packet, sender, state)
         return false
     end
     record.name = text(sender, 96)
-    record.updatedAt = KWR.Util:Now()
+    record.updatedAt = receiptAt
+    record.lastTimestamp = packet.timestamp
     record.packets[packet.kind] = record.updatedAt
     record[packet.kind] = { body = body, at = record.updatedAt }
     self.byPlayer[key] = record

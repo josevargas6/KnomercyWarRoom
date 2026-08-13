@@ -46,7 +46,15 @@ function SentinelMerge:Apply(snapshot)
         end
     end
     for _, senders in pairs(KWR.SentinelIngress.byObjective or {}) do
+        local newest
         for _, record in pairs(senders) do
+            if not newest or record.at > newest.at
+                or (record.at == newest.at and tostring(record.sender) < tostring(newest.sender)) then
+                newest = record
+            end
+        end
+        if newest then
+            local record = newest
             local body = record.body or {}
             local carrier = KWR.ObjectiveIntel and KWR.ObjectiveIntel:ObserveRemoteCarrier(body, record.at)
             if carrier then

@@ -136,6 +136,7 @@ local DEFAULTS = {
             enabled = true,
             autoOpen = true,
         },
+        sentinelTransportEnabled = true,
         guidanceMode = "COMMAND",
     },
     journal = {
@@ -361,6 +362,8 @@ local function normalizeProfile(profile)
     profile.aar = normalizeAgainstDefaults(profile.aar, defaults.aar)
     profile.aar.enabled = KWR.Util:Boolean(profile.aar.enabled, defaults.aar.enabled)
     profile.aar.autoOpen = KWR.Util:Boolean(profile.aar.autoOpen, defaults.aar.autoOpen)
+    profile.sentinelTransportEnabled = KWR.Util:Boolean(
+        profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
     return profile
 end

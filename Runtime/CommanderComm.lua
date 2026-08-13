@@ -139,6 +139,17 @@ function CommanderComm:Distribution(state)
     return nil
 end
 
+function CommanderComm:TransportEnabled()
+    return not KWR.db or not KWR.db.profile or KWR.db.profile.sentinelTransportEnabled ~= false
+end
+
+function CommanderComm:SetTransportEnabled(enabled)
+    if not KWR.db or not KWR.db.profile then return false end
+    KWR.db.profile.sentinelTransportEnabled = enabled == true
+    if not enabled and KWR.SentinelIngress then KWR.SentinelIngress:Reset() end
+    return true
+end
+
 function CommanderComm:Send(kind, body, state)
     local distribution = self:Distribution(state)
     local payload = distribution and self:Encode(kind, body, state)
@@ -155,7 +166,7 @@ function CommanderComm:Send(kind, body, state)
 end
 
 function CommanderComm:Receive(prefix, payload, distribution, sender)
-    if prefix ~= self.PREFIX
+    if not self:TransportEnabled() or prefix ~= self.PREFIX
         or (distribution ~= "INSTANCE_CHAT" and distribution ~= "RAID" and distribution ~= "PARTY") then
         return false
     end
