@@ -73,6 +73,8 @@ local DEFAULTS = {
             reticleAlpha = 0.84,
             reticleGuides = true,
             battlefieldOrbs = true,
+            markerMode = "NATIVE",
+            assignmentBadges = true,
         },
         launcher = {
             point = "CENTER",
@@ -266,6 +268,13 @@ local function normalizeProfile(profile)
         profile.cursor.reticleGuides, defaults.cursor.reticleGuides)
     profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
         profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
+    local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
+    if markerMode ~= "NATIVE" and markerMode ~= "TACTICAL_ONLY" and markerMode ~= "OFF" then
+        markerMode = defaults.cursor.markerMode
+    end
+    profile.cursor.markerMode = markerMode
+    profile.cursor.assignmentBadges = KWR.Util:Boolean(
+        profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
     profile.combatRoster = normalizePointBucket(profile.combatRoster, defaults.combatRoster)
     if migrateRosterLayout then
         local legacyAnchor

@@ -265,6 +265,11 @@ local function winLine(view, winState)
 end
 
 local function footerLine(view)
+    if view.degraded == true then return "REMOTE STALE - LOCAL FALLBACK" end
+    local proof = view.proof or {}
+    if proof.bridge == "REMOTE" and proof.packetAge ~= nil then
+        return "REMOTE " .. tostring(math.floor(proof.packetAge + 0.5)) .. "s | REJ " .. tostring(proof.rejected or 0)
+    end
     local healer = view.healer or {}
     local watch = view.watch or {}
     if healer.range == "OUT OF RANGE" then

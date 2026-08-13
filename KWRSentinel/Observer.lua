@@ -3,6 +3,14 @@ local _, Sentinel = ...
 local Observer = { lastState = "", lastVisible = "", lastCast = "" }
 Sentinel.Observer = Observer
 
+-- Retail objective auras are stable spell identifiers.  We intentionally use
+-- IDs rather than localized aura names and emit only an observed carrier.
+local CARRIER_AURAS = {
+    [23333] = { kind = "FLAG", label = "Alliance Flag" },
+    [23335] = { kind = "FLAG", label = "Horde Flag" },
+    [34976] = { kind = "FLAG", label = "Netherstorm Flag" },
+}
+
 local function clean(value, maximum)
     return tostring(value or ""):gsub("[^%w%._%-]", "_"):sub(1, maximum or 64)
 end
@@ -78,11 +86,33 @@ function Observer:ObserveCarrier(name, kind, label, source)
         .. ";source=" .. clean(source, 24))
 end
 
+function Observer:ObserveCarrierUnit(unit, source)
+    if not Sentinel:TransportEnabled() or not UnitExists(unit) or not UnitIsPlayer(unit) then return false end
+    local identity = unitIdentity(unit)
+    if not identity then return false end
+    for index = 1, 40 do
+        local aura = C_UnitAuras and C_UnitAuras.GetAuraDataByIndex
+            and C_UnitAuras.GetAuraDataByIndex(unit, index, "HELPFUL") or nil
+        if not aura then break end
+        local carrier = CARRIER_AURAS[aura.spellId]
+        if carrier then
+            return self:ObserveCarrier(identity, carrier.kind, carrier.label, source or "UNIT_AURA")
+        end
+    end
+    return false
+end
+
 function Observer:OnInitialize()
     self.frame = CreateFrame("Frame", "KWRSentinel_ObserverFrame")
     self.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     self.frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    self.frame:SetScript("OnEvent", function()
+    self.frame:RegisterEvent("UNIT_AURA")
+    self.frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+    self.frame:SetScript("OnEvent", function(_, event, unit)
+        if event == "UNIT_AURA" or event == "NAME_PLATE_UNIT_ADDED" then
+            Observer:ObserveCarrierUnit(unit, event)
+            return
+        end
         Observer:SendHello()
     end)
 end

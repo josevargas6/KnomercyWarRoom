@@ -179,6 +179,16 @@ function Invoke-LuaGate {
     }
 }
 
+function Invoke-OfflineCertificationGate {
+    Invoke-Step "Autonomous offline certification" {
+        # This is the single local support gate: runtime discovery, lifecycle
+        # compilation, source/knowledge safety, Commander/Sentinel tests, and
+        # performance receipt. Package construction remains a separate step so
+        # maintenance receipts can distinguish code health from release output.
+        Invoke-RepoScript -ScriptName "certify-offline.ps1" -Arguments @("-SkipBuild")
+    }
+}
+
 function Invoke-CertifiedBuild {
     Invoke-Step "Build Commander and Sentinel packages" {
         New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
@@ -398,8 +408,8 @@ try {
             Invoke-Step "Capability status" { Write-Status }
         }
         "daily" {
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-CertifiedBuild
             Invoke-ReadinessReports
             Invoke-DiscordStatus
@@ -428,16 +438,16 @@ try {
             Invoke-BotNotification
         }
         "extended-reconciliation" {
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
             Invoke-BotNotification
         }
         "weekly-reconciliation" {
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
@@ -447,30 +457,30 @@ try {
             Invoke-Step "Biweekly trend anchor" {
                 Write-Output "Biweekly trend lane active. Compare this receipt against the previous active Thursday receipt."
             }
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReadinessReports
             Invoke-DiscordStatus
             Invoke-BotNotification
         }
         "monthly-maintenance" {
             Invoke-Step "Capability status" { Write-Status }
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus
             Invoke-BotNotification
         }
         "release-dry-run" {
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
             Invoke-BotNotification
         }
         "full-dry-run" {
-            Invoke-ValidationGate
-            Invoke-LuaGate
+            Invoke-OfflineCertificationGate
+            Invoke-Step "Security audit" { Invoke-RepoScript -ScriptName "security-audit.ps1" }
             Invoke-ReleaseDryRun
             Invoke-ReadinessReports
             Invoke-DiscordStatus

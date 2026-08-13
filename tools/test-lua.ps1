@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet("All", "Smoke", "Soak", "Replay")]
+    [ValidateSet("All", "Smoke", "Soak", "Replay", "Sentinel")]
     [string]$Suite = "All",
     [string]$ReplayPath = "tests/replays/twin_peaks_recovery_sample.json",
     [string]$ReplayLabelPath,
@@ -80,6 +80,8 @@ function Find-CachedFengari {
     $candidates.Add($globalCli)
 
     $luaToolsRoot = Join-Path $env:LOCALAPPDATA "Temp\kwr-lua-tools"
+    $standardCli = Join-Path $luaToolsRoot "node_modules\fengari-node-cli\src\lua-cli.js"
+    $candidates.Add($standardCli)
     $pnpmRoot = Join-Path $luaToolsRoot "node_modules\.pnpm"
     if (Test-Path -LiteralPath $pnpmRoot -PathType Container) {
         Get-ChildItem -LiteralPath $pnpmRoot -Recurse -Filter "lua-cli.js" -ErrorAction SilentlyContinue |
@@ -98,16 +100,17 @@ function Find-CachedFengari {
 
 function Get-CachedNodePath {
     $luaToolsRoot = Join-Path $env:LOCALAPPDATA "Temp\kwr-lua-tools"
+    $standardNodeModules = Join-Path $luaToolsRoot "node_modules"
     $pnpmRoot = Join-Path $luaToolsRoot "node_modules\.pnpm"
-    if (-not (Test-Path -LiteralPath $pnpmRoot -PathType Container)) {
-        return $null
+    $nodePaths = @($standardNodeModules)
+    if (Test-Path -LiteralPath $pnpmRoot -PathType Container) {
+        $nodePaths += @(
+            (Join-Path $pnpmRoot "node_modules")
+            Get-ChildItem -LiteralPath $pnpmRoot -Directory -ErrorAction SilentlyContinue |
+                ForEach-Object { Join-Path $_.FullName "node_modules" }
+        )
     }
-
-    $nodePaths = @(
-        (Join-Path $pnpmRoot "node_modules")
-        Get-ChildItem -LiteralPath $pnpmRoot -Directory -ErrorAction SilentlyContinue |
-            ForEach-Object { Join-Path $_.FullName "node_modules" }
-    ) | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Container) } |
+    $nodePaths = $nodePaths | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Container) } |
         Select-Object -Unique
 
     return $nodePaths -join ";"
@@ -221,6 +224,11 @@ try {
     if ($Suite -eq "All" -or $Suite -eq "Smoke") {
         Invoke-LuaCheck -Runtime $runtime -Arguments @("tests/smoke.lua") `
             -ExpectedMarker "KWR_SMOKE_PASS" -Name "smoke"
+    }
+
+    if ($Suite -eq "All" -or $Suite -eq "Sentinel") {
+        Invoke-LuaCheck -Runtime $runtime -Arguments @("tests/sentinel-transport.lua") `
+            -ExpectedMarker "KWR_SENTINEL_TRANSPORT_PASS" -Name "Sentinel transport"
     }
 
     if ($Suite -eq "All" -or $Suite -eq "Soak") {

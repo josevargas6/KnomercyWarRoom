@@ -118,6 +118,21 @@ end
 
 function Sentinel:InitializeDatabase()
     KWR_SENTINEL_DB = type(KWR_SENTINEL_DB) == "table" and KWR_SENTINEL_DB or {}
+    -- Before layoutManaged existed, saved anchors were necessarily intentional.
+    -- Mark only those legacy profiles unmanaged before defaults are merged, so
+    -- an upgrade never repositions a player's HUD or status helper.
+    local profile = type(KWR_SENTINEL_DB.profile) == "table" and KWR_SENTINEL_DB.profile or {}
+    local hud = type(profile.hud) == "table" and profile.hud or nil
+    if hud and hud.layoutManaged == nil
+        and (hud.point ~= nil or hud.relativePoint ~= nil or hud.x ~= nil or hud.y ~= nil) then
+        hud.layoutManaged = false
+    end
+    local panels = type(profile.panels) == "table" and profile.panels or nil
+    local status = panels and type(panels.status) == "table" and panels.status or nil
+    if panels and panels.layoutManaged == nil and status
+        and (status.point ~= nil or status.relativePoint ~= nil or status.x ~= nil or status.y ~= nil) then
+        panels.layoutManaged = false
+    end
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
 end

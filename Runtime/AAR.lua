@@ -10,6 +10,7 @@ local AAR = {
     maxDecisionReviews = 12,
     maxPlayerLocations = 8,
     maxPlayerNotes = 6,
+    maxReviewQueue = 10,
 }
 KWR.AAR = AAR
 
@@ -778,6 +779,28 @@ function AAR:BuildDecisionReviews(commands, result)
     return reviews
 end
 
+function AAR:BuildReviewQueue(entry)
+    local queue, performance, stability = {}, entry.performance or {}, entry.commandStability or {}
+    local function add(kind, detail, priority)
+        queue[#queue + 1] = { kind = kind, detail = clean(detail, "Review required.", 160), priority = priority }
+    end
+    if (performance.errors or 0) > 0 then
+        add("RUNTIME_ERROR", "Runtime errors recorded: " .. tostring(performance.errors), "HIGH")
+    end
+    if (performance.maxP95Ms or 0) >= 2 or (performance.maxRefreshMs or 0) >= 10 then
+        add("PERFORMANCE", string.format("Refresh p95 %.2f ms / max %.2f ms", performance.maxP95Ms or 0, performance.maxRefreshMs or 0), "HIGH")
+    end
+    if (stability.reversals or 0) > 0 or (stability.invalidationsAfterCommitment or 0) > 0 then
+        add("COMMAND_STABILITY", "Reversals " .. tostring(stability.reversals or 0) .. "; late invalidations " .. tostring(stability.invalidationsAfterCommitment or 0), "MEDIUM")
+    end
+    for _, review in ipairs(entry.decisionReviews or {}) do
+        if review.outcomeAligned == false then
+            add("OUTCOME_MISMATCH", "Plan " .. clean(review.recommendation, "Unknown", 72) .. " contradicted match outcome.", "MEDIUM")
+        end
+    end
+    return trimList(queue, self.maxReviewQueue)
+end
+
 function AAR:BuildCommandStabilitySummary()
     local metrics = KWR.Commander and KWR.Commander.GetStabilityMetrics
         and KWR.Commander:GetStabilityMetrics() or {}
@@ -861,6 +884,7 @@ function AAR:CompactEntry(entry)
         entry.objectiveTimeline or {}, self.maxObjectiveTimeline)
     entry.decisionReviews = trimList(
         entry.decisionReviews or {}, self.maxDecisionReviews)
+    entry.reviewQueue = trimList(entry.reviewQueue or {}, self.maxReviewQueue)
     entry.playerEvidence = type(entry.playerEvidence) == "table"
         and entry.playerEvidence or {}
     for key, evidence in pairs(entry.playerEvidence) do
@@ -949,6 +973,7 @@ function AAR:CommitInterrupted(reason)
     entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
     entry.commandStability = self:BuildCommandStabilitySummary()
     self:FinalizeRuntimeEvidence(entry)
+    entry.reviewQueue = self:BuildReviewQueue(entry)
     KWR.db.journal.history[#KWR.db.journal.history + 1] = entry
     KWR.db.journal.history = trimList(KWR.db.journal.history, self.maxHistory)
     self.lastCompleted = entry
@@ -986,6 +1011,7 @@ function AAR:Finish(state)
     entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
     entry.commandStability = self:BuildCommandStabilitySummary()
     self:FinalizeRuntimeEvidence(entry)
+    entry.reviewQueue = self:BuildReviewQueue(entry)
     entry.outcomeAttribution = entry.decisionReviews[#entry.decisionReviews]
         and KWR.Util:Copy(entry.decisionReviews[#entry.decisionReviews]) or nil
     if KWR.OpponentModels and KWR.OpponentModels.RecordMatch then

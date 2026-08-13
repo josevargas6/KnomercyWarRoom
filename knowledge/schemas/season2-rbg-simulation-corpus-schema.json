@@ -1,5 +1,6 @@
 {
   "schema": "kwr-season2-rbg-simulation-corpus-schema",
   "schemaVersion": 1,
-  "required": ["schema", "schemaVersion", "generatedAt", "patch", "status", "casesPerMap", "casesPerPhasePerMap", "totalCases", "activation", "cases"]
+  "required": ["schema", "schemaVersion", "generatedAt", "patch", "status", "generatorVersion", "casesPerMap", "casesPerPhasePerMap", "totalCases", "activation", "cases"],
+  "caseRequired": ["caseId", "canonicalKey", "contentHash", "mapKey", "mapProfile", "phase", "scenarioFamily", "compWatch", "scoreState", "counterResponse", "evidenceState", "outcomeBranch", "sourceScenarioId", "status", "source", "objective", "requiredLiveEvidence", "invalidatedBy"]
 }

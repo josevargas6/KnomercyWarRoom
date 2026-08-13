@@ -117,6 +117,14 @@ Assert-True `
 Assert-True `
     -Condition ($maintenanceScript -match 'codex_handoff\s*=\s*"github-review-only"') `
     -Message "Maintenance dispatch does not declare the GitHub-review-only Codex boundary."
+Assert-True `
+    -Condition ($maintenanceScript -match 'Invoke-OfflineCertificationGate') `
+    -Message "Maintenance does not use the unified offline certification gate."
+
+$ciWorkflow = Get-Content -LiteralPath (Join-Path $root ".github\workflows\ci.yml") -Raw
+Assert-True `
+    -Condition ($ciWorkflow -match 'certify-offline\.ps1\s+-SkipBuild') `
+    -Message "CI does not execute the unified offline certification gate."
 
 foreach ($workflow in @(
     "ci.yml",

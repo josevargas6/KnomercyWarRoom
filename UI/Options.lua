@@ -239,15 +239,22 @@ function Options:Create()
     createCheck(self, targetCard,
         "battlefieldOrbs",
         "Show compact battlefield identifiers",
-        "Shows role icons for teammates and class icons for enemies. Carriers replace the normal icon; health appears only on your target.",
+        "Shows class icons with healer/tank badges for teammates and class icons for enemies. Carriers replace the normal icon; health appears only on your target.",
         -234,
         function() return KWR.db.profile.cursor.battlefieldOrbs ~= false end,
         function(value) KWR.CursorRing:SetBattlefieldOrbs(value) end)
     createCheck(self, targetCard,
+        "assignmentBadges",
+        "Show tactical assignment badges",
+        "Shows a compact DEFEND, STRIKE, ESCORT, ROTATE, RESERVE, HEAL, or CARRY badge on assigned friendly nameplates.",
+        -288,
+        function() return KWR.db.profile.cursor.assignmentBadges ~= false end,
+        function(value) KWR.CursorRing:SetAssignmentBadges(value) end)
+    createCheck(self, targetCard,
         "combatVisuals",
         "Show target spotlight and cast accents",
         "Enables kill-target glow and must-stop cast accents on the roster.",
-        -288,
+        -342,
         function() return KWR.db.profile.combatRoster.combatVisuals ~= false end,
         function(value)
             KWR.db.profile.combatRoster.combatVisuals = value

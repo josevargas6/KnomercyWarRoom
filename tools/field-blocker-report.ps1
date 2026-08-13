@@ -184,7 +184,7 @@ $report = [ordered]@{
     }
 }
 
-if ($fieldAttestationPassed -or $releaseRiskAuthorized) {
+if ($fieldAttestationPassed -or ($releaseRiskAuthorized -and $observedStabilityFailures -eq 0)) {
     # The owner has confirmed the live sessions, but the read-only journal did
     # not retain candidate-bound rows. Keep that instrumentation debt visible
     # without retaining the completed field gates as release blockers.

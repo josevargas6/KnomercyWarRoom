@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-runtime-preflight",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-12T01:18:15Z",
+    "generatedAt":  "2026-08-13T02:30:52Z",
     "candidateVersion":  "6.1.0-alpha.41",
     "node":  {
                  "nodeOnPath":  false,
@@ -13,7 +13,9 @@
                     "fengariCmdOnPath":  null,
                     "fengariPs1OnPath":  null,
                     "accessibleCliPaths":  [
-
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\fengari-node-cli\\src\\lua-cli.js",
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.CMD",
+                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\.bin\\fengari.ps1"
                                            ],
                     "blockedCliPaths":  [
 
@@ -22,9 +24,9 @@
     "localLuaTools":  {
                           "rootPath":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools",
                           "present":  true,
-                          "cliReadable":  false,
-                          "packageReadable":  false
+                          "cliReadable":  true,
+                          "packageReadable":  true
                       },
-    "packageAuditReady":  false,
-    "recommendedNextStep":  "Replace or reinstall the local Fengari runtime into a readable location, then rerun runtime-preflight.ps1 and package-audit.ps1."
+    "packageAuditReady":  true,
+    "recommendedNextStep":  "Run package-audit.ps1 against the current candidate artifacts."
 }

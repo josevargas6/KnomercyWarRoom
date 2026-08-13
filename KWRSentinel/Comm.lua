@@ -130,10 +130,7 @@ function Comm:Send(kind, body)
     return ok
 end
 
-function Comm:IsCommanderSender(sender)
-    local wanted = canonical(sender)
-    if wanted == "" then return false end
-    if canonical(identity("player")) == wanted then return false end
+function Comm:CommanderIdentity()
     local units = {}
     if IsInRaid and IsInRaid() then
         for index = 1, GetNumGroupMembers() do units[#units + 1] = "raid" .. index end
@@ -145,12 +142,17 @@ function Comm:IsCommanderSender(sender)
         -- There is one relay authority per group: its leader.  Accepting all
         -- assistants lets independently running Commander clients interleave
         -- incompatible relay families in one Sentinel view.
-        if UnitExists(unit) and canonical(identity(unit)) == wanted
-            and UnitIsGroupLeader and UnitIsGroupLeader(unit) then
-            return true
+        if UnitExists(unit) and UnitIsGroupLeader and UnitIsGroupLeader(unit) then
+            return canonical(identity(unit))
         end
     end
-    return false
+    return ""
+end
+
+function Comm:IsCommanderSender(sender)
+    local wanted = canonical(sender)
+    return wanted ~= "" and wanted ~= canonical(identity("player"))
+        and wanted == self:CommanderIdentity()
 end
 
 function Comm:Receive(prefix, payload, distribution, sender)
@@ -166,6 +168,13 @@ function Comm:Receive(prefix, payload, distribution, sender)
         return false
     end
     local senderKey = canonical(sender)
+    -- There is exactly one trusted relay authority.  When group leadership
+    -- changes, discard the old authority's sequence cache so ten-client
+    -- rotations cannot retain stale relay identities indefinitely.
+    if self.relayAuthority ~= senderKey then
+        self.relayAuthority = senderKey
+        self.relaySequence = {}
+    end
     local previous = self.relaySequence[senderKey]
     -- GetTime restarts after a UI reload, which safely establishes a fresh
     -- Commander sequence epoch without accepting delayed packets in a live

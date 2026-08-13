@@ -3,6 +3,12 @@
 
 unpack = unpack or table.unpack
 SlashCmdList = {}
+CLASS_ICON_TCOORDS = {
+    WARRIOR = { 0, 0.25, 0, 0.25 },
+    PRIEST = { 0.25, 0.5, 0, 0.25 },
+    MAGE = { 0.5, 0.75, 0, 0.25 },
+    DRUID = { 0.75, 1, 0, 0.25 },
+}
 KWR_DB = {
     schemaVersion = 60001,
     profile = {
@@ -437,6 +443,7 @@ local files = {
     "Data/ScenarioCalibration.lua",
     "Data/ScenarioAdversarialCalibration.lua",
     "Data/ScenarioExpertCorpus.lua",
+    "Data/Season2CorpusLifecycle.lua",
     "Data/CompThreats.lua",
     "Data/EnemyDefenseModels.lua",
     "Data/OpenerDoctrine.lua",
@@ -589,6 +596,18 @@ assert(KWR.SafetyMonitor:Snapshot().blocked == KWR.SafetyMonitor.__testAfter.blo
     "Retail safety monitor must not attribute unrelated addon errors to KWR.")
 KWR.SafetyMonitor.__testBefore = nil
 KWR.SafetyMonitor.__testAfter = nil
+
+assert(KWR.Season2CorpusLifecycle and KWR.Season2CorpusLifecycle:Count() == 0,
+    "Simulation-only Season 2 corpus must compile to zero live runtime entries.")
+do
+    local reviewQueue = KWR.AAR:BuildReviewQueue({
+        performance = { errors = 1, maxP95Ms = 2.1, maxRefreshMs = 10.1 },
+        commandStability = { reversals = 1, invalidationsAfterCommitment = 1 },
+        decisionReviews = { { outcomeAligned = false, recommendation = "Unsafe pivot" } },
+    })
+    assert(#reviewQueue == 4 and reviewQueue[1].kind == "RUNTIME_ERROR",
+        "AAR review queue did not isolate high-value refinement evidence.")
+end
 
 local function smokeBootstrapExports()
     return {
@@ -5505,16 +5524,18 @@ local friendlyHealerIdentifier = KWR.CursorRing:BuildIdentifierModel({
     classFile = "PRIEST",
     healthPercent = 41,
 }, true, identifierState, false)
-assert(friendlyHealerIdentifier.kind == "ROLE"
+assert(friendlyHealerIdentifier.kind == "CLASS"
+    and friendlyHealerIdentifier.texture ~= nil
+    and friendlyHealerIdentifier.badge == "+"
     and friendlyHealerIdentifier.showHealth == false
     and friendlyHealerIdentifier.showCast == false,
-    "Friendly battlefield identifier did not stay role-and-name only.")
+    "Friendly battlefield identifier did not render a class token with a healer badge.")
 local friendlyUnknownIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Friendly-Unknown",
 }, true, identifierState, false)
 assert(friendlyUnknownIdentifier.texture == nil
     and friendlyUnknownIdentifier.badge == "?",
-    "Unknown friendly role fabricated a role icon instead of degrading safely.")
+    "Unknown friendly class fabricated an icon instead of degrading safely.")
 local orbCarrierIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Orb-Carrier",
     role = "DAMAGER",
@@ -5588,6 +5609,60 @@ local flagCarrierIdentifier = KWR.CursorRing:BuildIdentifierModel({
 assert(flagCarrierIdentifier.kind == "FLAG"
     and flagCarrierIdentifier.texture ~= nil,
     "Flag carrier identifier did not replace the enemy class marker.")
+
+do
+    local previousNamePlateApi = C_NamePlate
+    local nativePlate = CreateFrame("Frame")
+    C_NamePlate = {
+        GetNamePlateForUnit = function(unit)
+            return unit == "player" and nativePlate or nil
+        end,
+    }
+    KWR.db.profile.cursor.battlefieldOrbs = true
+    KWR.db.profile.cursor.markerMode = "NATIVE"
+    KWR.db.profile.cursor.assignmentBadges = true
+    KWR.CursorRing.assignmentIndex = {
+        testplayer = { role = "Anchor Defender", job = "defend" },
+    }
+    local markerState = {
+        snapshot = {
+            context = { inPvP = true },
+            combat = {},
+            roster = {
+                {
+                    name = "TestPlayer-TestRealm",
+                    shortName = "TestPlayer",
+                    classFile = "WARRIOR",
+                    role = "HEALER",
+                },
+            },
+            enemies = {},
+        },
+    }
+    assert(KWR.CursorRing:RefreshOrbForUnit("player", markerState),
+        "Standalone native marker did not render on a visible friendly plate.")
+    local nativeMarker = KWR.CursorRing.orbFrames.player
+    local markerPoint = nativeMarker.points and nativeMarker.points[1]
+    assert(nativeMarker:IsShown()
+        and markerPoint and markerPoint[1] == "CENTER"
+        and markerPoint[2] == nativePlate and markerPoint[3] == "CENTER",
+        "Standalone native marker was not centered on the same nameplate anchor as the reticle.")
+    local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player
+    assert(assignmentBadge and assignmentBadge:IsShown()
+        and assignmentBadge.text.value == "DEFEND",
+        "Friendly assignment marker did not expose the authoritative DEFEND badge.")
+    KWR.db.profile.cursor.markerMode = "TACTICAL_ONLY"
+    assert(not KWR.CursorRing:RefreshOrbForUnit("player", markerState)
+        and not nativeMarker:IsShown() and assignmentBadge:IsShown(),
+        "Tactical-only mode did not suppress the native token while retaining the KWR assignment badge.")
+    KWR.db.profile.cursor.markerMode = "OFF"
+    KWR.CursorRing:RefreshOrbForUnit("player", markerState)
+    assert(not nativeMarker:IsShown() and not assignmentBadge:IsShown(),
+        "Disabled marker mode left a stale native token or assignment badge.")
+    KWR.CursorRing:HideAllOrbs()
+    C_NamePlate = previousNamePlateApi
+    KWR.db.profile.cursor.markerMode = "NATIVE"
+end
 end
 if previewState and previewState.snapshot and previewState.snapshot.context
     and previewState.snapshot.context.preview == true then

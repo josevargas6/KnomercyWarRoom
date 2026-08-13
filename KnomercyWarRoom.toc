@@ -42,6 +42,7 @@ Data\ScenarioLibrary.lua
 Data\ScenarioCalibration.lua
 Data\ScenarioAdversarialCalibration.lua
 Data\ScenarioExpertCorpus.lua
+Data\Season2CorpusLifecycle.lua
 Data\CompThreats.lua
 Data\EnemyDefenseModels.lua
 Data\OpenerDoctrine.lua

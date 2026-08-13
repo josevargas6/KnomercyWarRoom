@@ -318,6 +318,28 @@ function Bridge:BuildView()
         or fallbackView())
     view.healer = healerStatus()
     view.playerStatus = localStatus(view)
+    local relayStatus = Sentinel.Relay and Sentinel.Relay:Status() or {
+        connected = false, state = "NO REMOTE", age = nil, expiresIn = 0,
+    }
+    local comm = Sentinel.Comm and Sentinel.Comm.diagnostics or {}
+    view.proof = {
+        bridge = remote and "REMOTE" or (kwr and kwr.ready and "LOCAL" or "STANDALONE"),
+        transport = Sentinel:TransportEnabled() and relayStatus.state or "DISABLED",
+        packetAge = relayStatus.age,
+        expiresIn = relayStatus.expiresIn,
+        received = comm.received or 0,
+        rejected = comm.rejected or 0,
+        throttled = comm.throttled or 0,
+        corpus = kwr and kwr.Season2CorpusLifecycle
+            and ("PROMOTED " .. tostring(kwr.Season2CorpusLifecycle:Count())) or "LOCAL ONLY",
+    }
+    if Sentinel:TransportEnabled() and relayStatus.state == "REMOTE STALE" then
+        view.degraded = true
+        view.trustState = "STALE"
+        view.command = view.command or {}
+        view.command.action = "REMOTE EXPIRED - USE LOCAL GUIDANCE"
+        view.command.when = "NOW"
+    end
     return augmentWatch(view)
 end
 

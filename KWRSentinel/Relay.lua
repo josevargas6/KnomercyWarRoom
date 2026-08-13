@@ -80,4 +80,16 @@ function Relay:View()
         trustState = "REMOTE COMMANDER", source = "REMOTE_KWR" }
 end
 
+function Relay:Status()
+    local now = GetTime and GetTime() or 0
+    local view = self:View()
+    local age = self.receivedAt > 0 and math.max(0, now - self.receivedAt) or nil
+    return {
+        connected = view ~= nil,
+        state = view and "REMOTE LIVE" or (self.receivedAt > 0 and "REMOTE STALE" or "NO REMOTE"),
+        age = age,
+        expiresIn = view and math.max(0, 10 - (age or 0)) or 0,
+    }
+end
+
 Sentinel:RegisterModule("Relay", Relay)

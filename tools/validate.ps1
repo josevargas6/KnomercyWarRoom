@@ -222,7 +222,10 @@ $forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-
 $commOwners = @(
     (Join-Path $root "Runtime\CommanderComm.lua"),
     (Join-Path $root "KWRSentinel\Comm.lua"),
-    (Join-Path $root "tests\smoke.lua")
+    (Join-Path $root "tests\smoke.lua"),
+    # The deterministic recipient harness mocks the same restricted API only
+    # to prove the production owner rejects unsafe packets.
+    (Join-Path $root "tests\sentinel-transport.lua")
 )
 $forbiddenHits = @($luaFiles | Select-String -Pattern $forbiddenPattern |
     Where-Object {
