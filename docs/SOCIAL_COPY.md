@@ -28,7 +28,7 @@ The `6.1.0-alpha.43` field-test copy applies to the optional Sentinel companion.
 It can receive Commander `KWRSync1` relays from another team member or work as
 a safe standalone fallback when no Commander relay is available.
 
-Official source and release history: [GitHub](https://github.com/josevargas6/KWRSentinel).
+Official source and release history: [GitHub](https://github.com/josevargas6/KnomercyWarRoom/tree/main/KWRSentinel).
 Player downloads: [CurseForge](https://www.curseforge.com/wow/addons/kwr-sentinel).
 
 ## Support and testing
