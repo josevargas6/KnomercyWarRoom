@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-<absolute path to certified KWRSentinel_6_1_0_ALPHA_42.zip>
+<absolute path to certified KWRSentinel_6_1_0_ALPHA_43.zip>
 ```
 
 Project:
@@ -14,8 +14,8 @@ https://www.curseforge.com/wow/addons/kwr-sentinel
 
 Required upload fields:
 
-- File: `KWRSentinel_6_1_0_ALPHA_42.zip`
-- Display name: `KWR Sentinel 6.1.0-alpha.42`
+- File: `KWRSentinel_6_1_0_ALPHA_43.zip`
+- Display name: `KWR Sentinel 6.1.0-alpha.43`
 - Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`

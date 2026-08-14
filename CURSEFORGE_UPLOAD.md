@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-artifacts\KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip
+artifacts\KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip
 ```
 
 Project:
@@ -14,8 +14,8 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Required upload fields:
 
-- File: `KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip`
-- Display name: `Knomercy War Room 6.1.0-alpha.42`
+- File: `KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip`
+- Display name: `Knomercy War Room 6.1.0-alpha.43`
 - Release type: `Alpha` for current candidate testing
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`

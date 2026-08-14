@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.42
+# Release Readiness - 6.1.0-alpha.43
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,9 +6,9 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 42 is the authorized Retail 12.1 field-test candidate, pending this
-exact GitHub/CourseForge/Discord publication sequence; it is not a stable
-promotion.** Alpha 41 remains immutable historical evidence. Alpha 40 remains the composition-aware opener
+**Alpha 43 is the authorized Retail 12.1 field-test candidate, pending this
+exact GitHub/CurseForge/Discord publication sequence; it is not a stable
+promotion.** Alpha 42 remains immutable published evidence. Alpha 41 remains historical evidence. Alpha 40 remains the composition-aware opener
 baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
 the last verified public prerelease.
 The recovery PR, KWR-047 source governance, package manifests, installed-folder

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 6.1.0-alpha.43 - 2026-08-14
+
+- Added native class markers for enemies and square role/objective badges for teammates without duplicating Blizzard nameplate identity, health, or cast panels.
+- Kept the target reticle above the native nameplate, preserved actionable cast details, and prevented marker/reticle overlap.
+- Added lightweight arena and world-PvP context handling: RBG Commander surfaces stay hidden outside battlegrounds, enemy-player reticles remain available, and the full cursor ring restores on battleground entry.
+- Added native Retail role-atlas coordinates, bounded marker sizing, target preference handling, and idle-driver cleanup for lower CPU use.
+
 - Prepared the Alpha 42 certified field-test candidate from the reviewed main
   source. It carries the Sentinel secret-value guards, larger compact
   battlefield identifiers, settled Team/Enemy roster presentation, preview
