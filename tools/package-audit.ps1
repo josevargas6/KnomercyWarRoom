@@ -27,12 +27,13 @@ if (Test-Path -LiteralPath $sentinelRoot) {
 }
 $hasSentinel = $sentinelZip -ne $null
 $hashFile = Join-Path $outputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
+$developerHashFile = Join-Path $outputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)
 $sourceManifestFile = Join-Path $outputRoot ("KWR_{0}_SOURCE_MANIFEST.json" -f $safeVersion)
 $provenanceFile = Join-Path $outputRoot ("KWR_{0}_BUILD_PROVENANCE.json" -f $safeVersion)
 $reproducibilityFile = Join-Path $outputRoot ("KWR_{0}_REPRODUCIBILITY.json" -f $safeVersion)
 $packageAuditFile = Join-Path $outputRoot ("KWR_{0}_PACKAGE_AUDIT.json" -f $safeVersion)
 
-foreach ($path in @($distributionZip, $developerZip, $hashFile, $sourceManifestFile, $provenanceFile)) {
+foreach ($path in @($distributionZip, $developerZip, $hashFile, $developerHashFile, $sourceManifestFile, $provenanceFile)) {
     if (-not $path) {
         continue
     }
@@ -48,6 +49,12 @@ $expectedHashes = @{}
 foreach ($line in Get-Content -LiteralPath $hashFile) {
     if ($line -match "^([A-Fa-f0-9]{64})\s+(.+)$") {
         $expectedHashes[$matches[2].Trim()] = $matches[1].ToUpperInvariant()
+    }
+}
+$developerHashes = @{}
+foreach ($line in Get-Content -LiteralPath $developerHashFile) {
+    if ($line -match "^([A-Fa-f0-9]{64})\s+(.+)$") {
+        $developerHashes[$matches[2].Trim()] = $matches[1].ToUpperInvariant()
     }
 }
 if ($sentinelZip) {
@@ -442,7 +449,7 @@ foreach ($required in @(
     }
 }
 
-foreach ($path in @($distributionZip, $developerZip, $sentinelZip)) {
+foreach ($path in @($distributionZip, $sentinelZip)) {
     if (-not $path) {
         continue
     }
@@ -451,6 +458,11 @@ foreach ($path in @($distributionZip, $developerZip, $sentinelZip)) {
     if ($expectedHashes[$name] -ne $actual) {
         throw "SHA-256 mismatch for $name"
     }
+}
+$developerName = [IO.Path]::GetFileName($developerZip)
+$developerActual = (Get-FileHash -LiteralPath $developerZip -Algorithm SHA256).Hash
+if ($developerHashes[$developerName] -ne $developerActual) {
+    throw "SHA-256 mismatch for $developerName"
 }
 
 $sourceManifest = Get-Content -LiteralPath $sourceManifestFile -Raw | ConvertFrom-Json
