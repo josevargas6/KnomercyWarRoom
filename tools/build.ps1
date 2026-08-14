@@ -31,6 +31,25 @@ function New-ArtifactSummary {
     }
 }
 
+function New-KwrArchive {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDirectory,
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath
+    )
+
+    # Compress-Archive serializes thousands of files slowly on Windows hosts.
+    # ZipFile uses the native .NET implementation, retains the same top-level
+    # directory layout, and keeps clean-build/reproducibility manifests intact.
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [IO.Compression.ZipFile]::CreateFromDirectory(
+        $SourceDirectory,
+        $DestinationPath,
+        [IO.Compression.CompressionLevel]::Optimal,
+        $true)
+}
+
 function Write-JsonFile {
     param(
         [Parameter(Mandatory = $true)]
@@ -158,7 +177,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         Rename-Item -LiteralPath $devToc -NewName 'KWR_Commander_Dev.toc'
         Convert-DevelopmentSource -RootPath $devAddonRoot -BuildChannel $Channel
         $devZip = Join-Path $outputRoot ("KWR_Commander_Dev_{0}.zip" -f $safeVersion)
-        Compress-Archive -LiteralPath $devAddonRoot -DestinationPath $devZip -CompressionLevel Optimal
+        New-KwrArchive -SourceDirectory $devAddonRoot -DestinationPath $devZip
         if ($hasSentinel) {
             $devSentinelRoot = Join-Path $tempRoot "development\KWR_Sentinel_Dev"
             Copy-Item -LiteralPath $sentinelDistributionRoot -Destination $devSentinelRoot -Recurse
@@ -169,7 +188,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
             Rename-Item -LiteralPath $sentinelDevToc -NewName 'KWR_Sentinel_Dev.toc'
             Convert-DevelopmentSource -RootPath $devSentinelRoot -BuildChannel $Channel
             $sentinelDevZip = Join-Path $outputRoot ("KWR_Sentinel_Dev_{0}.zip" -f $sentinelSafeVersion)
-            Compress-Archive -LiteralPath $devSentinelRoot -DestinationPath $sentinelDevZip -CompressionLevel Optimal
+            New-KwrArchive -SourceDirectory $devSentinelRoot -DestinationPath $sentinelDevZip
             Write-Output "Sentinel development: $sentinelDevZip"
         }
         Write-Output "Development: $devZip"
@@ -199,6 +218,12 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     )) {
         Remove-Item -LiteralPath (Join-Path $developerSource (Join-Path "knowledge" $generatedReceipt)) -Force -ErrorAction SilentlyContinue
     }
+    # Field screenshots are immutable Git evidence, not executable developer
+    # source. Keeping them in this archive adds tens of megabytes to every
+    # clean reproducibility build and extracted-runtime audit without helping
+    # an addon developer validate, test, or modify the package.
+    $developerFieldEvidence = Join-Path $developerSource "docs\field-evidence"
+    Remove-Item -LiteralPath $developerFieldEvidence -Recurse -Force -ErrorAction SilentlyContinue
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
     foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile)) {
@@ -211,12 +236,12 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     }
 
     Write-Output "KWR build checkpoint: compressing distribution archive"
-    Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip -CompressionLevel Optimal
+    New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip
     Write-Output "KWR build checkpoint: compressing developer archive"
-    Compress-Archive -LiteralPath (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip -CompressionLevel Optimal
+    New-KwrArchive -SourceDirectory (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip
     if ($hasSentinel) {
         Write-Output "KWR build checkpoint: compressing Sentinel archive"
-        Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip -CompressionLevel Optimal
+        New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip
     }
 
     $distributionHash = Get-FileHash -LiteralPath $distributionZip -Algorithm SHA256
