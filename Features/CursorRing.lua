@@ -101,6 +101,14 @@ local function isPreviewPvPTrainingDummy(state, unit)
     return PVP_TRAINING_DUMMY_IDS[creatureIDFromGUID(guid)] == true
 end
 
+-- Nameplate markers must remain legible in battleground movement and against
+-- the default health-bar scale. Keep these centralized so the ring, icon,
+-- label, and health strip scale as one visual unit.
+local ORB_RING_SIZE = 36
+local ORB_ICON_SIZE = 24
+local ORB_FRAME_WIDTH = 104
+local ORB_FRAME_HEIGHT = 76
+
 local function sameTargetRecord(record)
     if not record then return false end
     if record.unit and type(UnitIsUnit) == "function"
@@ -266,33 +274,33 @@ function CursorRing:CreateOrbFrame(unit)
     frame:SetFrameStrata("TOOLTIP")
     frame:SetFrameLevel(9040)
     frame:EnableMouse(false)
-    frame:SetSize(78, 56)
+    frame:SetSize(ORB_FRAME_WIDTH, ORB_FRAME_HEIGHT)
     frame:Hide()
 
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
     frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
-    frame.ring:SetSize(22, 22)
+    frame.ring:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
     frame.ring:SetTexture("Interface\\Cooldown\\ping4")
     frame.ring:SetBlendMode("ADD")
 
     frame.icon = frame:CreateTexture(nil, "OVERLAY")
     frame.icon:SetPoint("CENTER", frame.ring, "CENTER")
-    frame.icon:SetSize(14, 14)
+    frame.icon:SetSize(ORB_ICON_SIZE, ORB_ICON_SIZE)
 
-    frame.badge = KWR.Theme:Title(frame, 8, "CENTER")
+    frame.badge = KWR.Theme:Title(frame, 10, "CENTER")
     frame.badge:SetPoint("CENTER", frame.ring, "CENTER", 0, 0)
-    frame.badge:SetWidth(16)
-    frame.badge:SetHeight(12)
+    frame.badge:SetWidth(24)
+    frame.badge:SetHeight(16)
 
-    frame.name = KWR.Theme:Font(frame, 9, "white", "LEFT", "OUTLINE")
+    frame.name = KWR.Theme:Font(frame, 10, "white", "LEFT", "OUTLINE")
     frame.name:SetPoint("TOP", frame.ring, "BOTTOM", 0, -3)
-    frame.name:SetWidth(78)
-    frame.name:SetHeight(14)
+    frame.name:SetWidth(ORB_FRAME_WIDTH)
+    frame.name:SetHeight(16)
 
     frame.health = CreateFrame("StatusBar", nil, frame)
-    frame.health:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 8, 9)
-    frame.health:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -8, 9)
-    frame.health:SetHeight(4)
+    frame.health:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 10, 11)
+    frame.health:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -10, 11)
+    frame.health:SetHeight(5)
     frame.health:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
     frame.health:SetMinMaxValues(0, 100)
     frame.health:SetValue(0)
@@ -306,7 +314,7 @@ function CursorRing:CreateOrbFrame(unit)
     frame.cast = CreateFrame("StatusBar", nil, frame)
     frame.cast:SetPoint("TOPLEFT", frame.health, "BOTTOMLEFT", 0, -1)
     frame.cast:SetPoint("TOPRIGHT", frame.health, "BOTTOMRIGHT", 0, -1)
-    frame.cast:SetHeight(3)
+    frame.cast:SetHeight(4)
     frame.cast:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
     frame.cast:SetStatusBarColor(0.86, 0.38, 1.00, 0.88)
     frame.cast:SetMinMaxValues(0, 8)
@@ -315,8 +323,8 @@ function CursorRing:CreateOrbFrame(unit)
 
     frame.castText = KWR.Theme:Font(frame, 7, "gold", "LEFT", "OUTLINE")
     frame.castText:SetPoint("BOTTOMLEFT", frame.cast, "TOPLEFT", 0, 1)
-    frame.castText:SetWidth(72)
-    frame.castText:SetHeight(9)
+    frame.castText:SetWidth(84)
+    frame.castText:SetHeight(10)
     frame.castText:Hide()
 
     self.orbFrames[unit] = frame
@@ -521,7 +529,8 @@ function CursorRing:ApplyIdentifierVisual(frame, model, percent)
         frame.cast:SetMinMaxValues(0, 8)
         frame.cast:SetValue(remaining)
     end
-    frame:SetSize(78, cast and 31 or (showHealth and 27 or 22))
+    frame:SetSize(ORB_FRAME_WIDTH,
+        cast and 38 or (showHealth and 33 or ORB_FRAME_HEIGHT))
 end
 
 function CursorRing:RefreshOrbForUnit(unit, state)

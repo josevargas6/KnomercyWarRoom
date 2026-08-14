@@ -1415,6 +1415,39 @@ assert(KWR.MatchRuntime:ForceRefresh("smoke-party-leader-reset"),
 mockPvP = true
 mockInstanceType = "pvp"
 mockMercenary = true
+do
+    local savedNow = KWR.Util.Now
+    local presentationSnapshot = {
+        context = {
+            inPvP = true,
+            sessionKey = "presentation-settle-test",
+            rosterHydration = { expected = 2 },
+        },
+        roster = {
+            { unitStable = true },
+            { unitStable = false },
+        },
+    }
+    KWR.MatchRuntime.rosterPresentation = nil
+    KWR.Util.Now = function() return 100 end
+    KWR.MatchRuntime:AnnotateRosterPresentation(presentationSnapshot)
+    assert(presentationSnapshot.context.rosterPresentation.ready ~= true
+        and presentationSnapshot.context.rosterPresentation.reason == "hydrating",
+        "Roster presentation exposed a provisional battleground roster.")
+    KWR.Util.Now = function() return 108 end
+    KWR.MatchRuntime:AnnotateRosterPresentation(presentationSnapshot)
+    assert(presentationSnapshot.context.rosterPresentation.ready == true
+        and presentationSnapshot.context.rosterPresentation.reason == "timeout",
+        "Roster presentation did not release after its bounded settle timeout.")
+    presentationSnapshot.context.sessionKey = "presentation-complete-test"
+    presentationSnapshot.roster[2].unitStable = true
+    KWR.MatchRuntime:AnnotateRosterPresentation(presentationSnapshot)
+    assert(presentationSnapshot.context.rosterPresentation.ready == true
+        and presentationSnapshot.context.rosterPresentation.reason == "complete",
+        "Roster presentation did not release a complete stable roster.")
+    KWR.Util.Now = savedNow
+    KWR.MatchRuntime.rosterPresentation = nil
+end
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp"), "PvP pipeline refresh failed.")
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp-team-confirm"), "PvP team confirmation refresh failed.")
 assert(scoreRequests >= 1, "PvP capture did not request fresh scoreboard identity data.")
@@ -4588,10 +4621,10 @@ do
     KWR.CombatRoster:Update(boundState)
     local loadingState = KWR.Util:Copy(boundState)
     loadingState.snapshot.context.rosterHydration = { expected = 3 }
+    loadingState.snapshot.context.rosterPresentation = { ready = false }
     KWR.CombatRoster:Update(loadingState)
-    assert(KWR.CombatRoster.teamFrame.heading.value:find("2/3", 1, true)
-        and not KWR.CombatRoster.teamFrame.heading.value:find("LOADING", 1, true),
-        "Combat roster added technical hydration language to the team count.")
+    assert(KWR.CombatRoster.teamFrame.heading.value:find("0/3", 1, true),
+        "Combat roster displayed partial team rows while roster hydration was pending.")
     KWR.CombatRoster:Update(boundState)
     assert(KWR.CombatRoster.teamFrame.heading.value:find("2/2", 1, true)
         and not KWR.CombatRoster.teamFrame.heading.value:find("UP", 1, true),
@@ -5364,6 +5397,21 @@ local optionsAudit = KWR.Options:LayoutAudit()
 assert(#optionsInventory >= 12 and optionsAudit.ok == true,
     "Options window did not expose a complete auditable inventory or clean card geometry.")
 do
+    local launcher = KWR.MainWindow.launcherMenu
+    if not launcher then
+        KWR.MainWindow:ToggleLauncherMenu()
+        launcher = KWR.MainWindow.launcherMenu
+    end
+    KWR.Options:Close()
+    launcher:Show()
+    KWR.Options:Toggle()
+    assert(not launcher:IsShown(),
+        "Options modal left the KWR command launcher visible underneath it.")
+    KWR.Options.frame.closeButton.scripts.OnClick(KWR.Options.frame.closeButton)
+    assert(not KWR.Options.frame:IsShown(),
+        "Options close control did not close the panel directly.")
+end
+do
     local originalRecords = KWR.Util:Copy(KWR.EnemyIntel.records)
     local originalNotes = KWR.Util:Copy(KWR.db.enemyNotes)
     local originalProfiles = KWR.Util:Copy(KWR.db.opponentModels.players)
@@ -5731,6 +5779,9 @@ do
         and markerPoint and markerPoint[1] == "CENTER"
         and markerPoint[2] == nativePlate and markerPoint[3] == "CENTER",
         "Standalone native marker was not centered on the same nameplate anchor as the reticle.")
+    assert(nativeMarker.ring.width >= 36 and nativeMarker.ring.height >= 36
+        and nativeMarker.icon.width >= 24 and nativeMarker.icon.height >= 24,
+        "Battlefield identifier did not retain the readable nameplate marker scale.")
     local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player
     assert(assignmentBadge and assignmentBadge:IsShown()
         and assignmentBadge.text.value == "DEFEND",
