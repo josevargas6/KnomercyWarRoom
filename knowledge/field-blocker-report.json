@@ -1,14 +1,14 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-13T02:51:40Z",
-    "candidateVersion":  "6.1.0-alpha.41",
+    "generatedAt":  "2026-08-14T14:23:15Z",
+    "candidateVersion":  "6.1.0-alpha.43",
     "blockingDefects":  [
                             {
                                 "id":  "LIVE-TEAM-TRUTH",
                                 "priority":  "P1",
-                                "status":  "OFFLINE_OPEN",
-                                "offlineStatus":  "BLOCKED",
+                                "status":  "LIVE_ONLY",
+                                "offlineStatus":  "PASS",
                                 "title":  "Expanded Team health and specialization provenance",
                                 "liveProofNeeded":  "one live battleground screenshot proving expanded Team health plus compact/expanded HIST agreement",
                                 "bestMap":  "TWINPEAKS",
@@ -18,7 +18,7 @@
                                 "id":  "LIVE-STABILITY",
                                 "priority":  "P1",
                                 "status":  "CONFIRMED_DEFECT",
-                                "offlineStatus":  "BLOCKED",
+                                "offlineStatus":  "PASS",
                                 "title":  "Flag-map command churn and AAR stability reporting",
                                 "liveProofNeeded":  "one complete clean flag match with /kwr verify, /kwr perf, and AAR showing stability pass",
                                 "bestMap":  "TWINPEAKS",
@@ -27,8 +27,8 @@
                             {
                                 "id":  "LIVE-CARRIER-TARGET",
                                 "priority":  "P1",
-                                "status":  "OFFLINE_OPEN",
-                                "offlineStatus":  "BLOCKED",
+                                "status":  "LIVE_ONLY",
+                                "offlineStatus":  "PASS",
                                 "title":  "Raw flag-event prose entering the command-target path",
                                 "liveProofNeeded":  "one carrier state-change capture showing canonical route/carrier target instead of prose",
                                 "bestMap":  "TWINPEAKS",
@@ -105,6 +105,7 @@
                                 }
                             ],
     "liveOnlyGates":  [
+                          "exact hashed package install and upgrade proof",
                           "taint and blocked-action safety proof",
                           "lifecycle stability proof",
                           "field performance budgets",
@@ -112,14 +113,14 @@
                           "evidence-backed decision quality"
                       ],
     "offlineGate":  {
-                        "status":  "BLOCKED",
+                        "status":  "PASS",
                         "evidence":  [
                                          "knowledge/candidate-package-report.json",
                                          "knowledge/runtime-preflight.json"
                                      ]
                     },
     "deploymentGate":  {
-                           "status":  "PASS",
+                           "status":  "BLOCKED",
                            "evidence":  "knowledge/deployment-certification.json"
                        },
     "retailEvidenceGate":  {
@@ -130,7 +131,7 @@
                                "evidence":  "knowledge/retail-field-certification.json"
                            },
     "fieldAttestation":  {
-                             "status":  "AUTHORIZED",
-                             "evidence":  "knowledge/field-verification-attestation.json"
+                             "status":  "MISSING",
+                             "evidence":  null
                          }
 }

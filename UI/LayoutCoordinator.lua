@@ -388,6 +388,7 @@ function LayoutCoordinator:OnInitialize()
         if self.elapsed < 1.0 then return end
         self.elapsed = 0
         local active = (KWR.MainWindow and KWR.MainWindow.frame and KWR.MainWindow.frame:IsShown())
+            or (KWR.MainWindow and KWR.MainWindow.launcher and KWR.MainWindow.launcher:IsShown())
             or (KWR.MainWindow and KWR.MainWindow.launcherMenu and KWR.MainWindow.launcherMenu:IsShown())
             or (KWR.HUD and KWR.HUD.frame and KWR.HUD.frame:IsShown())
             or (KWR.Options and KWR.Options.frame and KWR.Options.frame:IsShown())
