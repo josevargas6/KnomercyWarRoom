@@ -22,11 +22,12 @@ a glance.
 
 # User outcome
 
-- Enemy players have a 42-pixel class icon, matching the readable scale of the
-  supplied reference addon, without a duplicate KWR name or health strip.
-- Friendly players have a role icon: healer shield/cross, tank shield, or DPS
-  crossed swords. Objective carriers replace that role icon with the coloured
-  orb or flag appropriate to the battleground.
+- Enemy players have a 42-pixel class icon in a circular native orb, matching
+  the readable scale of the supplied reference addon, without a duplicate KWR
+  name or health strip.
+- Friendly players have a square role badge: healer shield/cross, tank shield,
+  or DPS crossed swords. Objective carriers replace that role icon with the
+  coloured orb or flag appropriate to the battleground.
 - The target reticle remains KWR-native and restrained: its class icon is in
   the centre, while the tactical cue stays to the left. The ordinary target
   nameplate stays visible below it.
@@ -39,8 +40,8 @@ nameplate and has more visual weight than required during live combat.
 
 # Required behavior
 
-- Render enemy class icons at exactly 42 by 42 pixels.
-- Render friendly role icons instead of friendly class icons.
+- Render enemy class icons at exactly 42 by 42 pixels inside a circular orb.
+- Render friendly role icons inside a square badge instead of friendly class icons.
 - Continue using the existing carrier icon and colour logic for orb and flag
   maps.
 - Anchor the compact marker above the native nameplate; never hide, replace,

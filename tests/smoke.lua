@@ -5689,9 +5689,12 @@ local enemyIdentifier = KWR.CursorRing:BuildIdentifierModel({
 }, false, identifierState, false)
 assert(enemyIdentifier.kind == "CLASS"
     and enemyIdentifier.iconSize == 42
+    and enemyIdentifier.frameShape == "CIRCLE"
     and enemyIdentifier.showHealth == false
     and enemyIdentifier.showCast == false,
     "Enemy battlefield identifier exposed default health or cast clutter.")
+assert(friendlyHealerIdentifier.frameShape == "SQUARE",
+    "Friendly role identifier did not select the distinct square badge shape.")
 local reviewedEnemy = {
     key = "shared-palette-target",
     name = "Enemy-Warrior",
@@ -5784,6 +5787,8 @@ do
         "Standalone native marker was not anchored above its Blizzard nameplate.")
     assert(nativeMarker.ring.width >= 42 and nativeMarker.ring.height >= 42
         and nativeMarker.icon.width == 32 and nativeMarker.icon.height == 32
+        and nativeMarker.square:IsShown()
+        and not nativeMarker.ring:IsShown()
         and not nativeMarker.name:IsShown(),
         "Friendly role identifier did not keep the normal Blizzard nameplate clear.")
     local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player

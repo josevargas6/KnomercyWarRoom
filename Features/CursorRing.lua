@@ -54,6 +54,8 @@ local ROLE_ICON_TCOORDS = {
 local CLASS_ICON_TEXTURE = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
 local ROLE_ICON_TEXTURE = "Interface\\LFGFRAME\\UI-LFG-ICON-ROLES"
 local ORB_ICON_TEXTURE = "Interface\\Icons\\INV_Misc_Orb_05"
+local ENEMY_RING_ATLAS = "charactercreate-ring-select"
+local TEAM_BADGE_TEXTURE = "Interface\\Buttons\\UI-Quickslot2"
 local CARRIER_COLORS = {
     ALLIANCE = { 0.22, 0.55, 1.00 },
     HORDE = { 0.95, 0.18, 0.16 },
@@ -110,6 +112,16 @@ local FRIENDLY_ROLE_ICON_SIZE = 32
 local ORB_RING_SIZE = 48
 local ORB_FRAME_WIDTH = 52
 local ORB_FRAME_HEIGHT = 52
+
+local function applyEnemyRingTexture(texture)
+    -- This Retail atlas is the native circular selection ring. Fall back to a
+    -- built-in round texture on clients or test harnesses without atlas APIs.
+    if type(texture.SetAtlas) == "function"
+        and pcall(texture.SetAtlas, texture, ENEMY_RING_ATLAS, true) then
+        return
+    end
+    texture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+end
 
 local function sameTargetRecord(record)
     if not record then return false end
@@ -287,8 +299,15 @@ function CursorRing:CreateOrbFrame(unit)
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
     frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
     frame.ring:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
-    frame.ring:SetTexture("Interface\\Cooldown\\ping4")
+    applyEnemyRingTexture(frame.ring)
     frame.ring:SetBlendMode("ADD")
+
+    frame.square = frame:CreateTexture(nil, "ARTWORK")
+    frame.square:SetPoint("CENTER", frame.ring, "CENTER")
+    frame.square:SetSize(42, 42)
+    frame.square:SetTexture(TEAM_BADGE_TEXTURE)
+    frame.square:SetBlendMode("ADD")
+    frame.square:Hide()
 
     frame.icon = frame:CreateTexture(nil, "OVERLAY")
     frame.icon:SetPoint("CENTER", frame.ring, "CENTER")
@@ -458,6 +477,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         texCoords = nil,
         iconTint = { 1, 1, 1 },
         iconSize = isFriend and FRIENDLY_ROLE_ICON_SIZE or ENEMY_ICON_SIZE,
+        frameShape = isFriend and "SQUARE" or "CIRCLE",
         ringColor = ORB_COLORS.STALE.outer,
         nameColor = { classColor(classFile) },
         -- The Blizzard nameplate retains identity and health information. KWR
@@ -501,6 +521,9 @@ end
 function CursorRing:ApplyIdentifierVisual(frame, model, percent)
     local ring = model.ringColor or ORB_COLORS.STALE.outer
     frame.ring:SetVertexColor(ring[1], ring[2], ring[3], 0.92)
+    frame.square:SetVertexColor(ring[1], ring[2], ring[3], 0.96)
+    frame.ring:SetShown(model.frameShape ~= "SQUARE")
+    frame.square:SetShown(model.frameShape == "SQUARE")
     frame.name:Hide()
 
     if model.texture then
