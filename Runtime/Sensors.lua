@@ -773,7 +773,7 @@ local function captureRoster(mapID)
         end
     end
 
-    local seenIdentity, seenName = {}, {}
+    local seenIdentity, seenName, seenUnstableShortName = {}, {}, {}
     local seenPlayerUnit = false
     for unitIndex, unit in ipairs(units) do
         local unitName = Util:UnitName(unit)
@@ -818,11 +818,22 @@ local function captureRoster(mapID)
                     or "NONE")
             local identity = guid ~= "" and guid or name:lower()
             local normalizedName = name:lower()
+            local unstableShortName = not unitStable
+                and Util:CanonicalShortName(name) or ""
             local duplicate = seenIdentity[identity] == true
                 or seenName[normalizedName] == true
+                -- During token hydration, realm-qualified placeholders can
+                -- describe one player under different full names. Without a
+                -- stable unit or GUID, omit later rows rather than assign one
+                -- player multiple jobs.
+                or (unstableShortName ~= ""
+                    and seenUnstableShortName[unstableShortName] == true)
             if not duplicate then
                 seenIdentity[identity] = true
                 seenName[normalizedName] = true
+                if unstableShortName ~= "" then
+                    seenUnstableShortName[unstableShortName] = true
+                end
                 if type(UnitIsUnit) == "function"
                     and Util:Boolean(Util:Call(UnitIsUnit, unit, "player"), false) then
                     seenPlayerUnit = true
