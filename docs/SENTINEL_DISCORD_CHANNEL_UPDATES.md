@@ -34,14 +34,14 @@ GitHub Actions route:
 ## #announcements
 
 ```text
-KWR Sentinel 6.1.0-alpha.41 is available for alpha testing as the synchronized
-execution-card companion for Commander 6.1.0-alpha.41.
+KWR Sentinel 6.1.0-alpha.42 is available for alpha testing as the synchronized
+execution-card companion for Commander 6.1.0-alpha.42.
 
 Download:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.41/KWRSentinel_6_1_0_ALPHA_41.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.42/KWRSentinel_6_1_0_ALPHA_42.zip
 
 Release page:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.42
 
 Install folder:
 World of Warcraft/_retail_/Interface/AddOns/KWRSentinel
@@ -83,7 +83,7 @@ Bug reports should include:
 ## #kwr-field-testing
 
 ```text
-KWR Sentinel 6.1.0-alpha.41 refinement targets:
+KWR Sentinel 6.1.0-alpha.42 refinement targets:
 
 1. Enter a Retail battleground with KWR and KWRSentinel installed on the same client.
 2. Confirm the card shows LOCAL KWR when commander bridge data is available.
@@ -98,19 +98,19 @@ Report any taint, Lua errors, unreadable text, repeated alerts, or incorrect tar
 ## Restricted Ops Thread
 
 ```text
-KWR Sentinel 6.1.0-alpha.41 distribution receipt
+KWR Sentinel 6.1.0-alpha.42 distribution receipt
 
 GitHub repo:
 https://github.com/josevargas6/KWRSentinel
 
 GitHub prerelease:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.42
 
 ZIP:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.41/KWRSentinel_6_1_0_ALPHA_41.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.42/KWRSentinel_6_1_0_ALPHA_42.zip
 
 SHA-256 manifest:
-KWR_6_1_0_ALPHA_41_SHA256.txt on the GitHub prerelease
+KWR_6_1_0_ALPHA_42_SHA256.txt on the GitHub prerelease
 
 Validation:
 - validate.ps1 passed

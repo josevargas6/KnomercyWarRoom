@@ -25,10 +25,10 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0-alpha.41 is available for alpha testing.
+Knomercy War Room Commander 6.1.0-alpha.42 is available for alpha testing.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.42
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -77,7 +77,7 @@ Remaining release work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.0-alpha.41 distribution receipt
+KWR Commander 6.1.0-alpha.42 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -86,13 +86,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.41
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.42
 
 Certified artifact:
-KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip
+KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip
 
 SHA-256 manifest:
-KWR_6_1_0_ALPHA_41_SHA256.txt on the GitHub prerelease
+KWR_6_1_0_ALPHA_42_SHA256.txt on the GitHub prerelease
 
 Validation:
 - validate.ps1 passed

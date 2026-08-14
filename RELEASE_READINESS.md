@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.41
+# Release Readiness - 6.1.0-alpha.42
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns

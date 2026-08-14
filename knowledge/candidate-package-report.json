@@ -1,49 +1,49 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-12T06:57:23Z",
-    "candidateVersion":  "6.1.0-alpha.41",
-    "buildOutputDirectory":  "artifacts/candidate-package/alpha29",
+    "generatedAt":  "2026-08-14T04:07:18Z",
+    "candidateVersion":  "6.1.0-alpha.42",
+    "buildOutputDirectory":  "artifacts/candidate-package/alpha42",
     "distributionArtifact":  {
-                                 "name":  "KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
-                                 "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
-                                 "size":  887069,
-                                 "sha256":  "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088"
+                                 "name":  "KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip",
+                                 "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip",
+                                 "size":  893446,
+                                 "sha256":  "6B3603D66340E0331B6E6704C67C6E59E61C42024F7B4EA838C99115B1A98224"
                              },
     "developerArtifact":  {
-                              "name":  "KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
-                              "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
-                              "size":  42574035,
-                              "sha256":  "9E6955F2CF69B1DA17A76A7BCBFF5BFC8675D753A3AE42AD19A38BC8BF08BEB7"
+                              "name":  "KWR_6_1_0_ALPHA_42_DEVELOPER.zip",
+                              "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_DEVELOPER.zip",
+                              "size":  42993510,
+                              "sha256":  "78659C5494957DBD6924FAB545B40C7320F0954397C40823D5F6D0790A10BE69"
                           },
     "hashManifest":  {
-                         "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_SHA256.txt",
+                         "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_SHA256.txt",
                          "lines":  [
-                                       "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088  KWR_6_1_0_ALPHA_41_DISTRIBUTION.zip",
-                                       "9E6955F2CF69B1DA17A76A7BCBFF5BFC8675D753A3AE42AD19A38BC8BF08BEB7  KWR_6_1_0_ALPHA_41_DEVELOPER.zip",
-                                       "AB21F03E6204A3BB7132548442364647059E8D417AE35DD4566D0E2F8978026B  KWRSentinel_6_1_0_ALPHA_41.zip"
+                                       "6B3603D66340E0331B6E6704C67C6E59E61C42024F7B4EA838C99115B1A98224  KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip",
+                                       "78659C5494957DBD6924FAB545B40C7320F0954397C40823D5F6D0790A10BE69  KWR_6_1_0_ALPHA_42_DEVELOPER.zip",
+                                       "3C6FBA6F36DBBE0AE51137E384B1C8044F685B9D21BBAFB737D28F996100A4E8  KWRSentinel_6_1_0_ALPHA_42.zip"
                                    ]
                      },
     "sourceManifest":  {
-                           "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "C29BFFF13FFC7FD0CF003BE10B4CA5A0C11B6069DE98B0A3AC3CEC1F4DB92F75",
-                           "distributionEntryCount":  392,
-                           "developerDigest":  "DA53FC2C62C3DD1C0F7FB7135AF2FCC26DA7652DD6EC8AC0731F722CBE92B21D",
-                           "developerEntryCount":  8952
+                           "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "ABE0DE1A33083E66D05B59B26207E97C08D489AF5AE9DDE90ED41A8E55450040",
+                           "distributionEntryCount":  393,
+                           "developerDigest":  "D0A5DEE1F116961F302150BBCB9571EB0FF717991C1A9BC6849130FAEE08AD27",
+                           "developerEntryCount":  8964
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-12T06:55:51.5540072Z",
+                            "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-14T03:57:39.0776362Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
-                            "powershellVersion":  "5.1.26100.8875",
-                            "nodeAvailableOnBuildPath":  true,
+                            "powershellVersion":  "5.1.26100.9168",
+                            "nodeAvailableOnBuildPath":  false,
                             "npmAvailableOnBuildPath":  false,
-                            "fengariAvailableOnBuildPath":  true,
+                            "fengariAvailableOnBuildPath":  false,
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/candidate-package/alpha29/KWR_6_1_0_ALPHA_41_REPRODUCIBILITY.json",
+                            "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_REPRODUCIBILITY.json",
                             "result":  "PASS_WITH_DOCUMENTED_EXCEPTION",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -53,16 +53,26 @@
                                           "Package audit still validated the extracted payload, release exclusions, and extracted runtime smoke/soak on the primary build."
                                       ]
                         },
-    "packageAudit":  null,
+    "packageAudit":  {
+                         "path":  "artifacts/candidate-package/alpha42/KWR_6_1_0_ALPHA_42_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-08-14T04:07:18.3261583Z",
+                         "result":  "PASS",
+                         "hashesVerified":  3,
+                         "distributionEntries":  396,
+                         "developerEntries":  8973,
+                         "extractedDistributionRuntime":  "PASS",
+                         "extractedDeveloperRuntime":  "PASS",
+                         "reproducibilityCheck":  "PASS_COMPATIBLE"
+                     },
     "environmentCertification":  {
                                      "buildExecuted":  true,
-                                     "packageAuditInThisWorkspace":  "BLOCKED_RUNTIME_FILE_ACCESS",
-                                     "runtimeBlocker":  "Package audit in this shell is currently blocked because the local Fengari package files exist but are not readable from this machine state.",
+                                     "packageAuditInThisWorkspace":  "CERTIFIED_IN_WORKSPACE",
+                                     "runtimeBlocker":  null,
                                      "runtimePreflightPath":  "knowledge/runtime-preflight.json",
                                      "notes":  [
                                                    "The exact distribution and developer ZIPs were created in this workspace.",
                                                    "The reproducibility report was created in this workspace.",
-                                                   "The package-audit step stopped at runtime discovery instead of proving extracted-runtime certification here.",
+                                                   "Extracted-runtime package certification was completed in this workspace.",
                                                    "Live install and upgrade proof still require real client execution and field evidence."
                                                ]
                                  },
@@ -71,11 +81,11 @@
                           "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
                           "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
                           "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
-                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.0-alpha.41"
+                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.0-alpha.42"
                       },
     "fieldEvidenceBinding":  {
-                                 "candidateVersion":  "6.1.0-alpha.41",
-                                 "distributionSha256":  "DC5A59EB6778DEF497F9514BB8316424F6D43CCFF9BF6CFCB9C72DF270A7D088",
+                                 "candidateVersion":  "6.1.0-alpha.42",
+                                 "distributionSha256":  "6B3603D66340E0331B6E6704C67C6E59E61C42024F7B4EA838C99115B1A98224",
                                  "requiredProof":  [
                                                        "Screenshot or text capture of installed TOC version.",
                                                        "Recorded distribution ZIP SHA256 used for install.",
