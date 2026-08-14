@@ -6,9 +6,9 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 43 is the authorized Retail 12.1 field-test candidate, pending this
-exact GitHub/CurseForge/Discord publication sequence; it is not a stable
-promotion.** Alpha 42 remains immutable published evidence. Alpha 41 remains historical evidence. Alpha 40 remains the composition-aware opener
+**Alpha 43 is the authorized Retail 12.1 field-test candidate, published as a
+GitHub prerelease and not a stable promotion.** Alpha 42 remains immutable
+published evidence. Alpha 41 remains historical evidence. Alpha 40 remains the composition-aware opener
 baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
 the last verified public prerelease.
 The recovery PR, KWR-047 source governance, package manifests, installed-folder
@@ -24,12 +24,31 @@ map to fifteen theory-reviewed opening branches, selected by friendly/enemy
 composition matchups and qualified roster tiers. It also activates the
 1,000-entry season-prep matrix/corpus as explicitly pending, advisory guidance;
 it remains pending package deployment and Retail opening validation. The public
-prerelease remains
-[`v6.1.0-alpha.36`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.36).
-CurseForge, Discord, and the Sentinel-bot dispatch passed in the protected
-workflow. Render production verification also passed: `kwr-sentinel-bot` is
-deployed on its current `main` commit `8d84fef`, and the Render logs record its
-health endpoint and Discord session online.
+prerelease is
+[`v6.1.0-alpha.43`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43),
+created from annotated tag `v6.1.0-alpha.43` at commit
+`734254c98371cf9dc00235a58ed884de3000ec69`. The protected production run
+completed successfully on 2026-08-14: CurseForge accepted Commander file
+`8650550` and Sentinel file `8650551`, and both Commander and Sentinel Discord
+announcement posts succeeded. Render is deployed from Sentinel-bot commit
+`5ffdb7d2f60be3e673d284b62adf49a8f8d1727b`; `/readyz` returned HTTP 200 with
+Discord ready while GitHub issue creation and AI are both disabled. All 13
+guild slash commands were registered after the deploy.
+
+## Public artifact contract
+
+The release page is player-facing and contains exactly the Commander runtime
+ZIP, Sentinel runtime ZIP, `SHA256` checksums, `PUBLIC_MANIFEST.json`, and
+`INSTALL.md`. It never contains a developer ZIP, source manifest, generated
+certification/reproducibility report, screenshot, or field evidence.
+
+Developer packages and generated diagnostic evidence are CI artifacts only,
+with a 30-day retention policy. The five most recent successful release runs
+are the operational rebuild/diagnosis window; durable source history is held
+by immutable Git tags and GitHub releases, not by player or developer ZIP
+bundles. The release workflow uses an explicit public-asset allowlist and the
+CI workflow uploads public and developer artifacts separately, so a wildcard
+upload cannot reintroduce internal evidence to player downloads.
 
 Five complete Retail battlegrounds were reported with no observed errors, but
 they ran on an external PC. On 2026-08-11 the product owner authorized this
