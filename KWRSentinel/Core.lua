@@ -32,11 +32,13 @@ function Sentinel:OverlaySuppressed()
     if commander then
         local main = commander.MainWindow
         local options = commander.Options
+        local copyDialog = commander.CopyDialog
         local function isShown(frame)
             return frame and frame.IsShown and frame:IsShown()
         end
         if (main and (isShown(main.frame) or isShown(main.launcherMenu)))
-            or (options and isShown(options.frame)) then
+            or (options and isShown(options.frame))
+            or (copyDialog and isShown(copyDialog.frame)) then
             return true
         end
     end

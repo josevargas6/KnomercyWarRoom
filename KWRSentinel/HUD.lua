@@ -700,7 +700,10 @@ end
 
 function HUD:Toggle()
     local frame = self:Create()
-    if frame:IsShown() then
+    -- Suppression can hide a still-enabled card while an interactive Commander
+    -- surface is open. The saved preference, rather than temporary frame
+    -- visibility, is the authoritative meaning of the slash-command toggle.
+    if Sentinel.db.profile.hud.enabled == true then
         Sentinel.db.profile.hud.enabled = false
         frame:Hide()
         if self.targetCue then self.targetCue:Hide() end

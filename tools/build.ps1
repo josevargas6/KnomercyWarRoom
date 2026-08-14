@@ -186,9 +186,19 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
         Copy-Item -LiteralPath $item.FullName -Destination $developerSource -Recurse
     }
-    # This report contains hashes of the archive being built. Including it in
-    # that archive makes the evidence self-referential and necessarily stale.
-    Remove-Item -LiteralPath (Join-Path $developerSource "knowledge\candidate-package-report.json") -Force -ErrorAction SilentlyContinue
+    # Release-evidence receipts are generated from the final archive and refer
+    # to that exact artifact. Excluding all of them keeps the developer source
+    # package non-self-referential; package-audit explicitly validates this
+    # omission mode while the checkout audit validates the receipts themselves.
+    foreach ($generatedReceipt in @(
+        "runtime-preflight.json",
+        "field-test-readiness.json",
+        "field-blocker-report.json",
+        "candidate-package-report.json",
+        "offline-completion-audit.json"
+    )) {
+        Remove-Item -LiteralPath (Join-Path $developerSource (Join-Path "knowledge" $generatedReceipt)) -Force -ErrorAction SilentlyContinue
+    }
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
     foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile)) {

@@ -185,7 +185,7 @@ $report = [ordered]@{
         canonicalArtifact = if ($EvidenceScope -eq 'release') {
             [IO.Path]::GetFileName($outPath)
         } else {
-            "Generated tagged-release evidence artifact"
+            $distributionArtifact.name
         }
         requiredProof = @(
             "Screenshot or text capture of installed TOC version.",
