@@ -85,6 +85,11 @@ local function shown(name)
     return frame and frame.IsShown and frame:IsShown()
 end
 
+local function moduleSurfaceShown(name)
+    local module = KWR[name]
+    return module and module.frame and module.frame.IsShown and module.frame:IsShown()
+end
+
 local function intersectionArea(a, b)
     local left = math.max(a.left, b.left)
     local right = math.min(a.right, b.right)
@@ -377,8 +382,24 @@ function LayoutCoordinator:OnInitialize()
     end)
     self.eventFrame:SetScript("OnUpdate", function(_, elapsed)
         self.elapsed = (self.elapsed or 0) + elapsed
-        if self.elapsed < 0.25 then return end
+        -- Layout is event-driven for scale/display changes.  Keep a slow
+        -- safety clamp for frames moved by Blizzard, rather than re-running
+        -- every quarter second while the addon is idle.
+        if self.elapsed < 1.0 then return end
         self.elapsed = 0
+        local active = (KWR.MainWindow and KWR.MainWindow.frame and KWR.MainWindow.frame:IsShown())
+            or (KWR.MainWindow and KWR.MainWindow.launcher and KWR.MainWindow.launcher:IsShown())
+            or (KWR.MainWindow and KWR.MainWindow.launcherMenu and KWR.MainWindow.launcherMenu:IsShown())
+            or (KWR.HUD and KWR.HUD.frame and KWR.HUD.frame:IsShown())
+            or (KWR.Options and KWR.Options.frame and KWR.Options.frame:IsShown())
+            or moduleSurfaceShown("AARWindow")
+            or moduleSurfaceShown("CopyDialog")
+            or (_G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame
+                and _G.KWRSentinel.HUD.frame:IsShown())
+            or (_G.KWRSentinel and _G.KWRSentinel.Panels
+                and _G.KWRSentinel.Panels.statusFrame
+                and _G.KWRSentinel.Panels.statusFrame:IsShown())
+        if not active then return end
         self:Apply()
     end)
 end

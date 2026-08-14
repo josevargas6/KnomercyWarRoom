@@ -4,7 +4,7 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.0-alpha.42"
+Sentinel.version = "6.1.0-alpha.43"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
@@ -21,6 +21,24 @@ function Sentinel:OverlaySuppressed()
     for _, name in ipairs(BLIZZARD_OVERLAY_WINDOWS) do
         local frame = _G[name]
         if frame and frame.IsShown and frame:IsShown() then
+            return true
+        end
+    end
+    -- Commander owns interactive planning space. Sentinel is the compact
+    -- execution fallback, so it yields to Commander windows and menus, but
+    -- not to the persistent Commander HUD: the two compact readouts can
+    -- coexist when they are not occupying the same workspace.
+    local commander = _G.KWR
+    if commander then
+        local main = commander.MainWindow
+        local options = commander.Options
+        local copyDialog = commander.CopyDialog
+        local function isShown(frame)
+            return frame and frame.IsShown and frame:IsShown()
+        end
+        if (main and (isShown(main.frame) or isShown(main.launcherMenu)))
+            or (options and isShown(options.frame))
+            or (copyDialog and isShown(copyDialog.frame)) then
             return true
         end
     end

@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.42
+# Release Readiness - 6.1.0-alpha.43
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,9 +6,9 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 42 is the authorized Retail 12.1 field-test candidate, pending this
-exact GitHub/CourseForge/Discord publication sequence; it is not a stable
-promotion.** Alpha 41 remains immutable historical evidence. Alpha 40 remains the composition-aware opener
+**Alpha 43 is the authorized Retail 12.1 field-test candidate, pending this
+exact GitHub/CurseForge/Discord publication sequence; it is not a stable
+promotion.** Alpha 42 remains immutable published evidence. Alpha 41 remains historical evidence. Alpha 40 remains the composition-aware opener
 baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
 the last verified public prerelease.
 The recovery PR, KWR-047 source governance, package manifests, installed-folder
@@ -239,3 +239,158 @@ not get hidden by the aggregate score.
 Promotion requires the live sections of `QA_CHECKLIST.md` to pass with captured evidence.
 This document is the current gate board; prior gate plans are retained only under
 `docs/audits/historical-plans/` for provenance.
+
+## Season 2 cutover and autonomous-maintenance authority
+
+### Goal
+
+Before the next Season 2 reset, deliver one evidence-bound, Retail 12.1
+Commander/Sentinel release that helps an RBG leader make a clearer next call
+without fabricating game state, automating gameplay, or turning community input
+into unreviewed doctrine. The product target is one dependable loop:
+
+```text
+public game truth -> one explained team call -> player-confirmed execution
+                         ^
+official patch data + reviewed field evidence + bounded community reports
+```
+
+`KnomercyWarRoom` is the sole source and release authority. Its embedded
+`KWRSentinel` is the only Sentinel package that may ship with a Commander
+release; both TOCs, runtime constants, package manifests, hashes, tag, GitHub
+release, CurseForge files, and Discord copy must name the same version and
+commit. The installed AddOns folders are runtime evidence, never source control.
+
+### Truth as of 2026-08-14
+
+- `release-alpha43` is the active candidate PR. Its required `certify` check
+  passed, but the PR has not merged; therefore Alpha 43 is **not** a stable
+  release and must not be called one.
+- `main` is Alpha 42. The canonical local checkout now tracks the active Alpha
+  43 release branch; the prior local branch tracked a deleted remote branch and
+  is historical only.
+- The separate `KWRSentinel` repository still contains Alpha 33-oriented
+  release automation. It is not release-authoritative for Alpha 43 and is a
+  drift risk until it is explicitly archived as a standalone historical lane or
+  regenerated from the embedded package.
+- The Sentinel Discord bot local checkout was behind its remote `main` by two
+  commits at audit time. Render has a worker manifest and health endpoint, but
+  automatic Render deploys are intentionally disabled; a release receipt must
+  prove the deployed commit and ready Discord session.
+- The scheduled maintenance workflow performs certification and dry-run
+  reporting by design. It does not publish to CurseForge, Discord, Render, or
+  GitHub from a timer. That is correct: scheduled unattended work may discover
+  and prepare a change, but may not publish unreviewed player input or modify
+  production.
+
+### Required control plane
+
+| Lane | Required operating rule | Completion evidence |
+| --- | --- | --- |
+| GitHub | `main` is protected by the `certify` check, linear history, resolved conversations, and no force-push/delete. Merge only a green, reviewed candidate; tag only that merge commit. | PR merge receipt, exact annotated tag, clean `git status --branch`, and `HEAD == origin/main`. |
+| Source hygiene | Fetch/prune every working clone before a release. Keep historical branches until their ancestry is reconciled; then remove only branches/worktrees proven merged or intentionally archived. Never use the installed WoW folder as a Git checkout. | Branch/worktree inventory with no active branch tracking a deleted remote and no uncommitted release files. |
+| Commander + Sentinel | Build both packages from the same tagged canonical checkout. The standalone Sentinel repository is release-frozen until its versioned source-parity check is regenerated for the current package. | TOC/runtime parity, extracted manifest parity, SHA-256 manifests, and package install comparison for both addons. |
+| CurseForge | Upload only the certified tagged ZIPs with explicit Retail game-version IDs. Verify the returned file IDs, file type, version, hash, and public download resolution before announcing. | GitHub workflow receipt plus captured public file IDs and hashes. |
+| Discord | Announce only a verified immutable GitHub release and matching CurseForge file IDs. Webhooks are notifications, not feedback intake or a deployment control plane. | Dry-run copy equals posted copy; announcement receipt links to the exact tag and files. |
+| Bot + Render | Keep Render as a least-privilege Discord intake worker. Deploy only the reviewed bot `main` commit, run a post-deploy `/readyz` check, and record the commit, deployment ID, ready time, and command-registration result. | Render deployment receipt and a private health result proving `discordReady: true`; no secret or user identifier in the receipt. |
+
+### P0 cutover register — complete before public Season 2 promotion
+
+| ID | Gap to close | Required action | Done only when |
+| --- | --- | --- | --- |
+| GIT-01 | Alpha 43 is an open candidate, not a clean stable baseline. | Resolve PR #45 only after the required check is green on its final head; fast-forward local canonical `main`, create the matching tag, and fetch/prune all release worktrees. | `main`, tag, GitHub prerelease assets, and local checkout resolve to one commit with no ahead/behind or uncommitted state. |
+| GIT-02 | Historical local branches track deleted remotes. | Inventory ancestry, preserve any unmerged work under a named archive/ref, then remove only merged or explicitly retired worktrees and stale tracking refs. | No active worktree follows `[gone]`; a retained archive explains every unmerged historical branch. |
+| REL-01 | A standalone Alpha 33 Sentinel release lane conflicts with the embedded Alpha 43 package. | Freeze the standalone release workflow and public claims, or regenerate it from the current embedded Sentinel source and exact package contract. Do not ship both lanes. | One documented Sentinel release owner; parity test accepts the current version; no workflow has hard-coded Alpha 25/33 artifacts. |
+| REL-02 | Publication must be proven end-to-end, not inferred from a green build. | Run the protected tagged-release workflow once, then verify GitHub assets, Commander and Sentinel CurseForge file IDs/version/channel, Discord announcement URLs, and installed-folder manifests. | One signed evidence bundle binds tag, commit, two ZIP hashes, two CurseForge files, Discord receipts, and installation manifests. |
+| BOT-01 | Render configuration exists, but current deployment and command freshness are not a release invariant. | Fast-forward bot source, run its locked dependency/smoke/test/audit gate, deploy the reviewed commit, register guild commands, and capture private readiness. Keep Render auto-deploy off for unreviewed commits. | Bot commit equals approved remote `main`; `/readyz` returns 200 after Discord is ready; issue creation and AI stay disabled unless separately approved. |
+| RBG-01 | Alpha 43 command stability and cross-client Sentinel value need current field proof. | Capture bounded live evidence for each map family and both win/loss states over time; before promotion, run the focused Alpha 43 smoke set: command replacement/expiry, team identity, carrier target grammar, secure clicks, taint/blocked-action, CPU/memory, and ten-client relay leadership/reload/packet-loss tests. | Evidence is version- and package-hash-bound; a failure opens a labeled issue and blocks only the affected promotion claim. |
+| META-01 | Static meta data can become stale between official tuning and player evidence. | Use a development-only intake pipeline: official Blizzard notes first, at least two independent trend sources second, human review third, versioned data/fixtures fourth, PR + deterministic test last. The addon never fetches data in-game. | Every changed recommendation records patch, sources, reviewer, confidence, expiry, affected maps/specs, and a passing fixture; unreviewed trends remain `PENDING` and cannot influence live calls. |
+| SOCIAL-01 | Feedback exists, but needs a measurable closed loop. | Make `/bug`, `/diag`, `/aar`, `/strat`, and `/suggest` create structured, deduplicated GitHub intake only when the least-privilege issue integration is enabled. Add `status:needs-review`, `needs-repro`, `needs-field-test`, `accepted`, `declined`, and `shipped` response paths. | A test submission reaches the correct private Discord channel and labeled issue, receives an acknowledgement, contains no secret/identifier by default, and cannot trigger merge, release, deploy, or doctrine changes. |
+
+### Product refinements that earn “go-to RBG addon” status
+
+Prioritize decision quality and trust over more panels or simulated omniscience:
+
+1. **Command stability and explanation.** One call must persist until a
+   superior, materially changed, or invalidated fact is proven. Show the
+   replacing evidence, confidence, success condition, abort condition, and
+   personal assignment delta.
+2. **Role-aware, map-aware routing.** Maintain reviewed capability and
+   composition data, but only permit it to refine a public-objective plan when
+   roster certainty and patch freshness meet the gate. Otherwise fall back to
+   map fundamentals.
+3. **Sentinel must be smaller and more reliable than Commander.** It should
+   show the recipient's job, target/watch, expiry, transport trust state, and
+   local safe facts. It must fail visibly to local guidance, never become a
+   second commander, and never require cross-client transport to be useful.
+4. **AAR-to-fixture learning.** Convert reproducible reports into anonymized,
+   bounded fixtures. Do not train or self-modify live doctrine from outcomes;
+   a reviewed PR must promote every change.
+5. **Performance and accessibility.** Maintain combat-safe layout behavior,
+   zero unbounded allocations in hot paths, scalable contrast-safe surfaces,
+   and a per-release taint/CPU/memory receipt on common UI scales.
+
+### Discord follower and outside-input system
+
+Use Discord as a community front door, not the truth engine. Create visible
+`#announcements`, `#known-issues`, `#field-testing`, `#strategy-lab`,
+`#install-help`, and `#release-notes` channels plus private moderation and
+ops channels. Pin a short evidence standard: version, map/bracket, team side,
+time, exact KWR call, observed result, `/kwr verify`/error text, and optional
+redacted screenshot. Ask every field tester for one high-signal question:
+“What call was unclear, late, or wrong, and what public fact would have made
+it better?”
+
+The bot should acknowledge submissions immediately, provide the issue link or
+receipt, publish a weekly anonymized “heard / investigating / shipped” digest,
+and offer a monthly opt-in playtest/strategy review. Rate-limit intake, retain
+only the minimum report data, redact character/account identifiers by default,
+and never let votes determine tactical truth. Popularity can prioritize a test;
+only evidence can change doctrine.
+
+### Codex scheduler: permitted autonomous operation
+
+Codex automation is the operational auditor and maintainer, not an unattended
+production publisher. Run it in an isolated worktree whenever it may propose a
+change. Its durable jobs are:
+
+| Cadence | Autonomous job | Required output / stop rule |
+| --- | --- | --- |
+| Daily through Season 2 launch | Fetch/prune source state; inspect Alpha 43 PR/checks, release/tag parity, package manifests, bot remote drift, Render-ready receipt availability, open issue intake, and official patch/news deltas. | A concise `READY`/`NOT READY` report with exact blockers. Stop before external writes, merge, deploy, publication, or secret access. |
+| Patch day | Run preflight before maintenance, then repeated read-only patch watch and a post-maintenance regression report. | A versioned patch-impact issue/PR proposal only; no doctrine change without reviewed sources and passing fixtures. |
+| Weekly | Run the existing readiness/security audit across source, installed addons, workflows, public distribution evidence, bot, and Beacon. | Evidence-backed risk register; escalate missing credentials, failed health, version drift, or failed CI immediately. |
+| Biweekly | Compare reviewed meta sources and closed AAR/field reports; cluster duplicate reports and propose fixture/data changes. | A human-reviewable PR or issue, never a direct data/release mutation. |
+| Monthly | Verify action pinning, dependency advisories, branch/worktree hygiene, secrets inventory by presence only, retention policy, and rollback rehearsal. | Signed-off maintenance receipt and rollback readiness result. |
+
+Every autonomous run must be idempotent, preserve uncommitted user work,
+produce a receipt, and report “no change” quietly. It may create a draft
+finding or a reviewed PR only if the task explicitly grants that authority. It
+must never merge, tag, upload, deploy, post an announcement, change a
+CurseForge channel, alter Discord permissions, or enable bot AI/GitHub-write
+credentials on its own.
+
+### Completion test
+
+The Season 2 system is implemented and complete only when all P0 rows above
+have their evidence bundle, the latest release branch is merged and tagged,
+all required CI/release checks are green, and the following command-level
+checks pass without exceptions:
+
+```text
+git status --short --branch                    -> clean and synchronized
+tools/validate.ps1                             -> VALIDATION PASSED
+tools/security-audit.ps1                       -> pass
+tools/knowledge-audit.ps1                      -> pass
+tools/test-automation.ps1                      -> pass
+tools/certify-offline.ps1                      -> pass
+tools/build.ps1 -IncludeSentinel               -> two certified archives
+installed-folder manifest comparison           -> zero missing/changed/extra
+bot npm ci && smoke && test && high audit      -> pass
+Render ready receipt + Discord command check   -> current approved commit
+```
+
+Any missing receipt, stale version, failed check, unbound field evidence,
+unreviewed external trend, or open release-critical issue is `NOT READY`.
+This gate is intentionally stricter than “the addon loads”: reliable RBG
+leadership requires accurate facts, calm calls, clear personal execution, and
+a release chain that can be audited and rolled back.

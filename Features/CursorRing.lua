@@ -301,14 +301,16 @@ function CursorRing:CreateReticleFrame()
     frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
     frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.labelPlate:SetPoint("RIGHT", frame, "LEFT", -8, 0)
+    -- Keep the command label above the target lock, not in the melee lane to
+    -- its left where damage numbers and nameplates constantly overwrite it.
+    frame.labelPlate:SetPoint("BOTTOM", frame, "TOP", 0, 8)
     frame.labelPlate:SetSize(78, 16)
     frame.label = KWR.Theme:Title(frame.labelPlate, 9, "RIGHT")
     frame.label:SetAllPoints()
     frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.detailPlate, "panel", "border")
     frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.detailPlate:SetPoint("RIGHT", frame.labelPlate, "LEFT", -4, 0)
+    frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 3)
     frame.detailPlate:SetSize(126, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
     frame.detail:SetAllPoints()
@@ -426,6 +428,42 @@ function CursorRing:HideAllOrbs()
     self.orbVisibleCount = 0
     for _, frame in pairs(self.orbFrames) do frame:Hide() end
     for _, frame in pairs(self.tacticalBadgeFrames or {}) do frame:Hide() end
+    for unit in pairs(self.activePlates or {}) do
+        local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
+            and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
+        self:RestoreFocusReadout(plate)
+    end
+end
+
+local function nameplateReadoutWidgets(plate)
+    local unitFrame = plate and plate.UnitFrame
+    if not unitFrame then return {} end
+    return { unitFrame.healthBar, unitFrame.name, unitFrame.nameText }
+end
+
+function CursorRing:RestoreFocusReadout(plate)
+    if not plate or not plate.KWRFocusReadout then return end
+    for widget, alpha in pairs(plate.KWRFocusReadout) do
+        if widget and widget.SetAlpha then widget:SetAlpha(alpha) end
+    end
+    plate.KWRFocusReadout = nil
+end
+
+function CursorRing:ApplyFocusReadout(plate, suppress)
+    if not plate then return end
+    if not suppress then
+        self:RestoreFocusReadout(plate)
+        return
+    end
+    if plate.KWRFocusReadout then return end
+    local saved = {}
+    for _, widget in ipairs(nameplateReadoutWidgets(plate)) do
+        if widget and widget.GetAlpha and widget.SetAlpha then
+            saved[widget] = widget:GetAlpha()
+            widget:SetAlpha(0)
+        end
+    end
+    plate.KWRFocusReadout = saved
 end
 
 function CursorRing:FindFriendlyRecord(unit, state)
@@ -667,8 +705,21 @@ function CursorRing:RefreshOrbs()
         self:HideAllOrbs()
         return
     end
+    local focusMode = KWR.db.profile.cursor.focusNameplates ~= false
+    local hasEnemyTarget = type(UnitExists) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
+        and type(UnitCanAttack) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
     self.orbVisibleCount = 0
     for unit in pairs(self.activePlates or {}) do
+        local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
+            and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
+        local isFriend = type(UnitIsFriend) == "function"
+            and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
+        local isCurrentTarget = unit == "target"
+            or (type(UnitIsUnit) == "function"
+                and KWR.Util:Boolean(KWR.Util:Call(UnitIsUnit, unit, "target"), false))
+        self:ApplyFocusReadout(plate, focusMode and hasEnemyTarget and not isFriend and not isCurrentTarget)
         if self:RefreshOrbForUnit(unit, state) then
             self.orbVisibleCount = self.orbVisibleCount + 1
         end
@@ -742,8 +793,10 @@ function CursorRing:ApplyReticle()
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
     local visualSize = math.floor(size * 0.84)
     frame:SetSize(visualSize, visualSize)
-    frame.hLine:SetSize(1600, 3)
-    frame.vLine:SetSize(3, 1200)
+    -- Guides deliberately frame the lock rather than bisecting the whole
+    -- screen. A target cue must survive spell clutter, not add to it.
+    frame.hLine:SetSize(math.floor(visualSize * 1.35), 3)
+    frame.vLine:SetSize(3, math.floor(visualSize * 1.35))
     frame.outer:SetSize(visualSize, visualSize)
     frame.inner:SetSize(math.floor(visualSize * 0.58), math.floor(visualSize * 0.58))
     frame.pulse:SetSize(math.floor(visualSize * 0.74), math.floor(visualSize * 0.74))
@@ -922,6 +975,16 @@ function CursorRing:RefreshReticle()
     local profile = KWR.db.profile.cursor or {}
     local state = currentState(self.lastState)
     local previewDummy = isPreviewPvPTrainingDummy(state, "target")
+    -- Options is an inspection/configuration surface. Never let an active
+    -- combat target lock draw across its controls; keep a retry marker so the
+    -- cue returns automatically as soon as the panel closes.
+    local options = KWR.Options and KWR.Options.frame
+    if options and options.IsShown and options:IsShown() then
+        self.reticle:Hide()
+        self.reticlePlate = nil
+        self.reticlePending = true
+        return
+    end
     if not self:AllowsReticleContext(state)
         or (KWR.Util:IsArenaContext(state) and not self:AllowsLightweightArena(state)) then
         self.reticle:Hide()

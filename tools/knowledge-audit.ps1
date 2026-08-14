@@ -40,11 +40,11 @@ $required = @(
     "knowledge\scenario-adversarial-calibration.json",
     "knowledge\scenario-expert-corpus.json",
     "knowledge\season2-rbg-simulation-corpus.json",
-    "knowledge\runtime-preflight.json",
-    "knowledge\field-test-readiness.json",
-    "knowledge\field-blocker-report.json",
+    $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\runtime-preflight.json" }),
+    $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\field-test-readiness.json" }),
+    $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\field-blocker-report.json" }),
     $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\candidate-package-report.json" }),
-    "knowledge\offline-completion-audit.json",
+    $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\offline-completion-audit.json" }),
     "knowledge\fixtures\replay-template.json",
     "knowledge\fixtures\golden-label-template.json",
     "knowledge\fixtures\adversarial-replay-template.json",
@@ -372,6 +372,7 @@ try {
 }
 
 $runtimePreflightSchemaPath = Join-Path $root "knowledge\schemas\runtime-preflight-schema.json"
+if (-not $AllowGeneratedEvidenceOmission) {
 $runtimePreflightPath = Join-Path $root "knowledge\runtime-preflight.json"
 try {
     $runtimePreflightSchema = Get-Content -LiteralPath $runtimePreflightSchemaPath -Raw | ConvertFrom-Json
@@ -536,6 +537,7 @@ try {
     }
 } catch {
     $errors.Add("Offline completion audit JSON is invalid: $($_.Exception.Message)")
+}
 }
 
 try {

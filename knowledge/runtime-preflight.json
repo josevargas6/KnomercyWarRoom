@@ -1,8 +1,8 @@
 {
     "schema":  "kwr-runtime-preflight",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-14T03:40:35Z",
-    "candidateVersion":  "6.1.0-alpha.42",
+    "generatedAt":  "2026-08-14T21:45:09Z",
+    "candidateVersion":  "6.1.0-alpha.43",
     "node":  {
                  "nodeOnPath":  false,
                  "nodeOnPathSource":  null,

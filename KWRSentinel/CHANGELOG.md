@@ -1,5 +1,10 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.43 - 2026-08-14
+
+- Keeps the Sentinel execution layer available in lightweight arena and world-PvP contexts while Commander battleground surfaces remain suppressed.
+- Retains safe unknown-state handling and direct nameplate-token validation from Alpha 42.
+
 ## 6.1.0-alpha.42 - 2026-08-14
 
 - Guards supported observation, cast, and HUD paths against Blizzard secret

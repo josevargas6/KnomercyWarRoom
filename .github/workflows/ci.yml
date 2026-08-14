@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: kwr-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   certify:
     runs-on: windows-latest
@@ -50,6 +54,10 @@ jobs:
 
       - name: Build and extract-audit packages
         shell: pwsh
+        # The build includes a clean reproducibility pass and extracts the
+        # developer archive for runtime proof. A bounded step produces a
+        # visible failure instead of indefinitely holding the merge policy.
+        timeout-minutes: 25
         run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
 
       - name: Upload certified packages

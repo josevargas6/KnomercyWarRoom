@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0-alpha.42"
+KWR.version = "6.1.0-alpha.43"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -71,7 +71,14 @@ local DEFAULTS = {
             reticleEnabled = true,
             reticleSize = 92,
             reticleAlpha = 0.84,
-            reticleGuides = true,
+            -- Full-screen ruler lines disappear under spell effects and make
+            -- target labels harder to parse. The lock ring is the default;
+            -- compact guides remain an opt-in accessibility aid.
+            reticleGuides = false,
+            -- In a target call, preserve one native health bar: the current
+            -- enemy. Other hostile plates keep only KWR's compact class/color
+            -- shield so the battlefield remains readable.
+            focusNameplates = true,
             battlefieldOrbs = true,
             markerMode = "NATIVE",
             assignmentBadges = true,

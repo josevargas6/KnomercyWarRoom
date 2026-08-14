@@ -31,6 +31,25 @@ function New-ArtifactSummary {
     }
 }
 
+function New-KwrArchive {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDirectory,
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath
+    )
+
+    # Compress-Archive serializes thousands of files slowly on Windows hosts.
+    # ZipFile uses the native .NET implementation, retains the same top-level
+    # directory layout, and keeps clean-build/reproducibility manifests intact.
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [IO.Compression.ZipFile]::CreateFromDirectory(
+        $SourceDirectory,
+        $DestinationPath,
+        [IO.Compression.CompressionLevel]::Optimal,
+        $true)
+}
+
 function Write-JsonFile {
     param(
         [Parameter(Mandatory = $true)]
@@ -158,7 +177,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         Rename-Item -LiteralPath $devToc -NewName 'KWR_Commander_Dev.toc'
         Convert-DevelopmentSource -RootPath $devAddonRoot -BuildChannel $Channel
         $devZip = Join-Path $outputRoot ("KWR_Commander_Dev_{0}.zip" -f $safeVersion)
-        Compress-Archive -LiteralPath $devAddonRoot -DestinationPath $devZip -CompressionLevel Optimal
+        New-KwrArchive -SourceDirectory $devAddonRoot -DestinationPath $devZip
         if ($hasSentinel) {
             $devSentinelRoot = Join-Path $tempRoot "development\KWR_Sentinel_Dev"
             Copy-Item -LiteralPath $sentinelDistributionRoot -Destination $devSentinelRoot -Recurse
@@ -169,7 +188,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
             Rename-Item -LiteralPath $sentinelDevToc -NewName 'KWR_Sentinel_Dev.toc'
             Convert-DevelopmentSource -RootPath $devSentinelRoot -BuildChannel $Channel
             $sentinelDevZip = Join-Path $outputRoot ("KWR_Sentinel_Dev_{0}.zip" -f $sentinelSafeVersion)
-            Compress-Archive -LiteralPath $devSentinelRoot -DestinationPath $sentinelDevZip -CompressionLevel Optimal
+            New-KwrArchive -SourceDirectory $devSentinelRoot -DestinationPath $sentinelDevZip
             Write-Output "Sentinel development: $sentinelDevZip"
         }
         Write-Output "Development: $devZip"
@@ -186,9 +205,25 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
         Copy-Item -LiteralPath $item.FullName -Destination $developerSource -Recurse
     }
-    # This report contains hashes of the archive being built. Including it in
-    # that archive makes the evidence self-referential and necessarily stale.
-    Remove-Item -LiteralPath (Join-Path $developerSource "knowledge\candidate-package-report.json") -Force -ErrorAction SilentlyContinue
+    # Release-evidence receipts are generated from the final archive and refer
+    # to that exact artifact. Excluding all of them keeps the developer source
+    # package non-self-referential; package-audit explicitly validates this
+    # omission mode while the checkout audit validates the receipts themselves.
+    foreach ($generatedReceipt in @(
+        "runtime-preflight.json",
+        "field-test-readiness.json",
+        "field-blocker-report.json",
+        "candidate-package-report.json",
+        "offline-completion-audit.json"
+    )) {
+        Remove-Item -LiteralPath (Join-Path $developerSource (Join-Path "knowledge" $generatedReceipt)) -Force -ErrorAction SilentlyContinue
+    }
+    # Field screenshots are immutable Git evidence, not executable developer
+    # source. Keeping them in this archive adds tens of megabytes to every
+    # clean reproducibility build and extracted-runtime audit without helping
+    # an addon developer validate, test, or modify the package.
+    $developerFieldEvidence = Join-Path $developerSource "docs\field-evidence"
+    Remove-Item -LiteralPath $developerFieldEvidence -Recurse -Force -ErrorAction SilentlyContinue
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
     foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile)) {
@@ -200,10 +235,13 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
     }
 
-    Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip -CompressionLevel Optimal
-    Compress-Archive -LiteralPath (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip -CompressionLevel Optimal
+    Write-Output "KWR build checkpoint: compressing distribution archive"
+    New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip
+    Write-Output "KWR build checkpoint: compressing developer archive"
+    New-KwrArchive -SourceDirectory (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip
     if ($hasSentinel) {
-        Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip -CompressionLevel Optimal
+        Write-Output "KWR build checkpoint: compressing Sentinel archive"
+        New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip
     }
 
     $distributionHash = Get-FileHash -LiteralPath $distributionZip -Algorithm SHA256
@@ -302,6 +340,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         $reproTempRoot = Join-Path $tempBase ("kwr-repro-" + [guid]::NewGuid().ToString("N"))
         [IO.Directory]::CreateDirectory($reproTempRoot) | Out-Null
         try {
+            Write-Output "KWR build checkpoint: starting clean reproducibility build"
             Invoke-NestedBuildForReproducibility `
                 -BuildScriptPath (Join-Path $PSScriptRoot "build.ps1") `
                 -NestedOutputDirectory $reproTempRoot `
@@ -380,6 +419,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
                 artifacts = $comparison
             }
             Write-JsonFile -Path $reproducibilityFile -Data $reproducibility
+            Write-Output "KWR build checkpoint: reproducibility source comparison passed"
         } finally {
             if (Test-Path -LiteralPath $reproTempRoot) {
                 $resolvedRepro = [IO.Path]::GetFullPath($reproTempRoot)
@@ -406,6 +446,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     }
 
     if (-not $SkipPackageAudit) {
+        Write-Output "KWR build checkpoint: starting extracted-package audit"
         & (Join-Path $PSScriptRoot "package-audit.ps1") `
             -OutputDirectory $outputRoot `
             -SkipReproducibilityCheck:$SkipReproducibilityAudit
