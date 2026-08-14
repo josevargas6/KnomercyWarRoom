@@ -23,7 +23,8 @@ Sentinel docking beside active Commander UI. Alpha 40 expands every supported
 map to fifteen theory-reviewed opening branches, selected by friendly/enemy
 composition matchups and qualified roster tiers. It also activates the
 1,000-entry season-prep matrix/corpus as explicitly pending, advisory guidance;
-it remains pending package deployment and Retail opening validation. The public
+it is packaged in Alpha 43 and remains pending Retail opening validation before
+it can influence promoted strategy. The public
 prerelease is
 [`v6.1.0-alpha.43`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43),
 created from annotated tag `v6.1.0-alpha.43` at commit
