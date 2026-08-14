@@ -52,7 +52,7 @@ local ROLE_ICON_TCOORDS = {
 }
 
 local CLASS_ICON_TEXTURE = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
-local ROLE_ICON_TEXTURE = "Interface\\LFGFRAME\\UI-LFG-ICON-ROLES"
+local ROLE_ICON_TEXTURE = "Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES"
 local ORB_ICON_TEXTURE = "Interface\\Icons\\INV_Misc_Orb_05"
 local ENEMY_RING_ATLAS = "charactercreate-ring-select"
 local TEAM_BADGE_TEXTURE = "Interface\\Buttons\\UI-Quickslot2"
@@ -599,7 +599,8 @@ function CursorRing:RefreshOrbForUnit(unit, state)
     -- The target reticle is the single authoritative target identifier. Keep
     -- the ordinary enemy marker hidden for that unit so the two 28/42px
     -- tokens never stack over the native nameplate.
-    if not isFriend and record and sameTargetRecord(record) then
+    if not isFriend and record and sameTargetRecord(record)
+        and profile.reticleEnabled ~= false then
         frame:Hide()
         return false
     end
