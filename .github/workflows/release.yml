@@ -63,6 +63,10 @@ jobs:
 
       - name: Build and certify packages
         shell: pwsh
+        # Mirrors CI's bounded package gate. The build script emits archive,
+        # reproducibility, extraction, smoke, and soak checkpoints so a
+        # production approval never waits on an opaque long-running step.
+        timeout-minutes: 25
         run: |
           ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
