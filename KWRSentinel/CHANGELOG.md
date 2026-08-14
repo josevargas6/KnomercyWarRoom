@@ -1,5 +1,12 @@
 # KWR Sentinel Changelog
 
+## 6.1.0-alpha.42 - 2026-08-14
+
+- Guards supported observation, cast, and HUD paths against Blizzard secret
+  values and degrades unavailable facts to safe unknown state.
+- Restricts nameplate lookup to legal direct nameplate unit tokens so group,
+  arena, and compound tokens cannot trigger protected API errors.
+
 ## 6.1.0-alpha.40 - 2026-08-09
 
 - Aligns Sentinel metadata with Commander's composition-aware opening candidate.

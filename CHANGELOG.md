@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Prepared the Alpha 42 certified field-test candidate from the reviewed main
+  source. It carries the Sentinel secret-value guards, larger compact
+  battlefield identifiers, settled Team/Enemy roster presentation, preview
+  reticle support for approved PvP training dummies, and combat-safe Options
+  closing behavior.
+
 - Added Alpha 41 Retail 12.1 compatibility mode. The detected 12.1.0 client
   now fails closed on the prior 12.0.7 meta and capability overlays until
   official tuning is reviewed; generic doctrine and advisory season-prep
