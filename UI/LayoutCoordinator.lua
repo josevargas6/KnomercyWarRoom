@@ -377,8 +377,17 @@ function LayoutCoordinator:OnInitialize()
     end)
     self.eventFrame:SetScript("OnUpdate", function(_, elapsed)
         self.elapsed = (self.elapsed or 0) + elapsed
-        if self.elapsed < 0.25 then return end
+        -- Layout is event-driven for scale/display changes.  Keep a slow
+        -- safety clamp for frames moved by Blizzard, rather than re-running
+        -- every quarter second while the addon is idle.
+        if self.elapsed < 1.0 then return end
         self.elapsed = 0
+        local active = (KWR.MainWindow and KWR.MainWindow.frame and KWR.MainWindow.frame:IsShown())
+            or (KWR.HUD and KWR.HUD.frame and KWR.HUD.frame:IsShown())
+            or (KWR.Options and KWR.Options.frame and KWR.Options.frame:IsShown())
+            or (_G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame
+                and _G.KWRSentinel.HUD.frame:IsShown())
+        if not active then return end
         self:Apply()
     end)
 end

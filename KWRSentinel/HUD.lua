@@ -19,6 +19,14 @@ local TRUST_TONES = {
 }
 
 local MAX_LINE = 64
+-- Reuse the fixed unit-token list on every cue refresh.  Allocating this
+-- table inside targetCueNameplate ran once per HUD pulse and created needless
+-- garbage during long battlegrounds.
+local CUE_UNIT_TOKENS = { "target", "focus", "mouseover" }
+local CUE_NAMEPLATE_TOKENS = {}
+for index = 1, 40 do
+    CUE_NAMEPLATE_TOKENS[index] = "nameplate" .. tostring(index)
+end
 
 local function isSecret(value)
     if type(issecretvalue) ~= "function" then return false end
@@ -368,13 +376,12 @@ local function targetCueNameplate(view)
     if unitMatchesExpected(watch.unit, expected) then
         return nameplateForUnit(watch.unit)
     end
-    for _, unit in ipairs({ "target", "focus", "mouseover" }) do
+    for _, unit in ipairs(CUE_UNIT_TOKENS) do
         if unitMatchesExpected(unit, expected) then
             return nameplateForUnit(unit)
         end
     end
-    for index = 1, 40 do
-        local unit = "nameplate" .. tostring(index)
+    for index, unit in ipairs(CUE_NAMEPLATE_TOKENS) do
         if unitMatchesExpected(unit, expected) then
             return nameplateForUnit(unit)
         end
