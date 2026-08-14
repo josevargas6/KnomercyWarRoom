@@ -1,39 +1,39 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-14T13:59:28Z",
+    "generatedAt":  "2026-08-14T14:45:01Z",
     "candidateVersion":  "6.1.0-alpha.43",
     "buildOutputDirectory":  "artifacts/candidate-package/alpha43",
     "distributionArtifact":  {
                                  "name":  "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
                                  "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                 "size":  922624,
-                                 "sha256":  "7AA2B0E6EFD5B736E2A4A99B36B5592292C9A62A65D8AE5294756A79704350E2"
+                                 "size":  922679,
+                                 "sha256":  "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
                               "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                              "size":  42888774,
-                              "sha256":  "CE85E946CC69A5AD5C46F73B4539D6C90324E787584CEDF203A0C0019F88145D"
+                              "size":  42888831,
+                              "sha256":  "AF5A543FE77A518050DBB0DDBBB8D710EB8EC1830CB6339A181344DF86FD892A"
                           },
     "hashManifest":  {
                          "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_SHA256.txt",
                          "lines":  [
-                                       "7AA2B0E6EFD5B736E2A4A99B36B5592292C9A62A65D8AE5294756A79704350E2  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                       "CE85E946CC69A5AD5C46F73B4539D6C90324E787584CEDF203A0C0019F88145D  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                                       "F6628E7968CB1F67BB9BC8CF7BFFCFB8A496B0D2E83CC440D1589E11FBB7C5A8  KWRSentinel_6_1_0_ALPHA_43.zip"
+                                       "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+                                       "AF5A543FE77A518050DBB0DDBBB8D710EB8EC1830CB6339A181344DF86FD892A  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
+                                       "49EF8E974731C8D41BF2980DFF90E5182D95F06AF6220C6B538742646A3223B1  KWRSentinel_6_1_0_ALPHA_43.zip"
                                    ]
                      },
     "sourceManifest":  {
                            "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "23EF4E9585914679CE08F9A5E39037A6AA6A51AF10F17BC7F70FFDF11D39F184",
+                           "distributionDigest":  "3675721814F1B563B4555725C9D58743C033B2F8FB38F0BB046CD6316A647C59",
                            "distributionEntryCount":  393,
-                           "developerDigest":  "0FEA13E0FBB323EDB013AD821B162323647CF6D6FEFB43929A85A93DC2812396",
+                           "developerDigest":  "33094C0ABB7EEEB80C57AC9F0D195C36162661FBB992F3E752AFF8A28532C682",
                            "developerEntryCount":  8965
                        },
     "buildProvenance":  {
                             "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-14T13:41:26.3225421Z",
+                            "builtAtUtc":  "2026-08-14T14:29:41.0035371Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Core",
                             "powershellVersion":  "7.6.4",
@@ -55,7 +55,7 @@
                         },
     "packageAudit":  {
                          "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-14T13:53:39.4592105Z",
+                         "auditedAtUtc":  "2026-08-14T14:40:36.0209929Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
                          "distributionEntries":  396,
@@ -85,7 +85,7 @@
                       },
     "fieldEvidenceBinding":  {
                                  "candidateVersion":  "6.1.0-alpha.43",
-                                 "distributionSha256":  "7AA2B0E6EFD5B736E2A4A99B36B5592292C9A62A65D8AE5294756A79704350E2",
+                                 "distributionSha256":  "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78",
                                  "evidenceScope":  "candidate",
                                  "canonicalArtifact":  "Generated tagged-release evidence artifact",
                                  "requiredProof":  [
