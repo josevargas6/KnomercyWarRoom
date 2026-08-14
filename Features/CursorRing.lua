@@ -131,6 +131,7 @@ end
 function CursorRing:AllowsReticleContext(state)
     local context = state and state.snapshot and state.snapshot.context or {}
     return context.inPvP == true
+        or self:AllowsLightweightArena(state)
         or isPreviewPvPTrainingDummy(state, "target")
         or self:AllowsWorldPvPReticle(state)
 end
@@ -932,6 +933,7 @@ function CursorRing:RefreshReticle()
     if profile.reticleEnabled == false then
         self.reticle:Hide()
         self.reticlePlate = nil
+        self.reticlePending = false
         self:RefreshDriver()
         return
     end
@@ -944,6 +946,7 @@ function CursorRing:RefreshReticle()
     if not exists or not attackable or (not isPlayerTarget and not previewDummy) then
         self.reticle:Hide()
         self.reticlePlate = nil
+        self.reticlePending = false
         self:RefreshDriver()
         return
     end
@@ -993,6 +996,9 @@ function CursorRing:Update(state)
         return
     end
     self.assignmentIndex = {}
+    if self.frame and KWR.db.profile.cursor.enabled == true then
+        self.frame:Show()
+    end
     for _, assignment in ipairs(state.assignments or {}) do
         local full = KWR.Util:Text(assignment.name, "", 64):lower()
         local short = KWR.Util:Text(assignment.shortName, "", 64):lower()
