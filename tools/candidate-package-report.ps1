@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
     [string]$BuildOutputDirectory = "artifacts\candidate-package\alpha29",
-    [string]$OutFile = "knowledge\candidate-package-report.json"
+    [string]$OutFile = "knowledge\candidate-package-report.json",
+    [ValidateSet('candidate', 'release')]
+    [string]$EvidenceScope = 'candidate'
 )
 
 $ErrorActionPreference = "Stop"
@@ -179,6 +181,12 @@ $report = [ordered]@{
     fieldEvidenceBinding = [ordered]@{
         candidateVersion = $version
         distributionSha256 = $distributionArtifact.sha256
+        evidenceScope = $EvidenceScope
+        canonicalArtifact = if ($EvidenceScope -eq 'release') {
+            [IO.Path]::GetFileName($outPath)
+        } else {
+            "Generated tagged-release evidence artifact"
+        }
         requiredProof = @(
             "Screenshot or text capture of installed TOC version.",
             "Recorded distribution ZIP SHA256 used for install.",
@@ -194,6 +202,7 @@ $json = $report | ConvertTo-Json -Depth 8
 
 Write-Output "KWR candidate package report"
 Write-Output "Candidate: $version"
+Write-Output "Evidence scope: $EvidenceScope"
 Write-Output "Build output: $buildOutputRoot"
 Write-Output "Distribution SHA256: $($report.distributionArtifact.sha256)"
 Write-Output "Output: $outPath"

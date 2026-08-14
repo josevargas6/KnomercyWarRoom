@@ -63,7 +63,14 @@ jobs:
 
       - name: Build and certify packages
         shell: pwsh
-        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
+        run: |
+          ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
+          $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          ./tools/candidate-package-report.ps1 `
+            -BuildOutputDirectory "${{ github.workspace }}/artifacts" `
+            -OutFile "artifacts/KWR_${safe}_RELEASE_EVIDENCE.json" `
+            -EvidenceScope release
 
       - name: Create GitHub prerelease
         shell: pwsh
