@@ -117,7 +117,8 @@ local function applyEnemyRingTexture(texture)
     -- This Retail atlas is the native circular selection ring. Fall back to a
     -- built-in round texture on clients or test harnesses without atlas APIs.
     if type(texture.SetAtlas) == "function"
-        and pcall(texture.SetAtlas, texture, ENEMY_RING_ATLAS, true) then
+        and pcall(texture.SetAtlas, texture, ENEMY_RING_ATLAS, false) then
+        texture:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
         return
     end
     texture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
@@ -512,7 +513,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
     if not isFriend and (sameEntity(record, combat.localTarget)
         or sameEntity(record, combat.killTarget)) then
         model.ringColor = ORB_COLORS.KILL.outer
-    elseif model.showCast then
+    elseif priorityCast then
         model.ringColor = ORB_COLORS.STOP.outer
     end
     return model
@@ -759,8 +760,9 @@ function CursorRing:ApplyReticleState(state)
     frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], 0.94)
     frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], 0.72)
     frame.label:SetText(KWR.Util:Text(state.label, "TARGET", 24))
-    frame.detail:SetText("")
-    frame.detailPlate:Hide()
+    local detail = KWR.Util:Text(state.detail, "", 64)
+    frame.detail:SetText(detail)
+    frame.detailPlate:SetShown(detail ~= "")
     frame.pulseActive = state.pulse == true
     self.reticleState = state
 end
@@ -920,7 +922,9 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    self.reticle:SetPoint("CENTER", plate, "CENTER", 0, 2)
+    -- The centered class icon belongs above the native nameplate, not on top
+    -- of Blizzard's target name/health information.
+    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()
