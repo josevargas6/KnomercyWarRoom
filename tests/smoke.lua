@@ -6636,6 +6636,7 @@ do
         KWR.AARWindow and KWR.AARWindow.frame,
         KWR.CopyDialog and KWR.CopyDialog.frame,
         _G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame,
+        _G.KWRSentinel and _G.KWRSentinel.Panels and _G.KWRSentinel.Panels.statusFrame,
     }) do
         if frame and frame.Hide then frame:Hide() end
     end

@@ -396,6 +396,9 @@ function LayoutCoordinator:OnInitialize()
             or moduleSurfaceShown("CopyDialog")
             or (_G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame
                 and _G.KWRSentinel.HUD.frame:IsShown())
+            or (_G.KWRSentinel and _G.KWRSentinel.Panels
+                and _G.KWRSentinel.Panels.statusFrame
+                and _G.KWRSentinel.Panels.statusFrame:IsShown())
         if not active then return end
         self:Apply()
     end)
