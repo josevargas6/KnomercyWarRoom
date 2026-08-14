@@ -71,6 +71,15 @@ local MARKER_MODES = {
     OFF = true,
 }
 
+local function roleIconCoords(role)
+    if type(GetTexCoordsForRoleSmallCircle) == "function" then
+        local left, right, top, bottom = KWR.Util:Call(
+            GetTexCoordsForRoleSmallCircle, role)
+        if left then return { left, right, top, bottom } end
+    end
+    return ROLE_ICON_TCOORDS[role]
+end
+
 -- These are explicit PvP practice NPCs, not a broad training-dummy name
 -- match. The IDs keep the preview exception locale-independent and prevent
 -- the reticle from appearing on ordinary PvE targets.
@@ -495,7 +504,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         model.badge = carrier.texture and nil or carrier.badge
     elseif isFriend then
         model.kind = "ROLE"
-        model.texCoords = ROLE_ICON_TCOORDS[role] or nil
+        model.texCoords = roleIconCoords(role)
         model.texture = model.texCoords and ROLE_ICON_TEXTURE or nil
         model.ringColor = ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role]
             and ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role].outer
@@ -584,6 +593,13 @@ function CursorRing:RefreshOrbForUnit(unit, state)
     local mode = self:ResolveMarkerMode()
     self:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
     if mode == "OFF" or mode == "TACTICAL_ONLY" then
+        frame:Hide()
+        return false
+    end
+    -- The target reticle is the single authoritative target identifier. Keep
+    -- the ordinary enemy marker hidden for that unit so the two 28/42px
+    -- tokens never stack over the native nameplate.
+    if not isFriend and record and sameTargetRecord(record) then
         frame:Hide()
         return false
     end
