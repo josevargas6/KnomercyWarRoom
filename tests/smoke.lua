@@ -5731,6 +5731,9 @@ do
         and markerPoint and markerPoint[1] == "CENTER"
         and markerPoint[2] == nativePlate and markerPoint[3] == "CENTER",
         "Standalone native marker was not centered on the same nameplate anchor as the reticle.")
+    assert(nativeMarker.ring.width >= 36 and nativeMarker.ring.height >= 36
+        and nativeMarker.icon.width >= 24 and nativeMarker.icon.height >= 24,
+        "Battlefield identifier did not retain the readable nameplate marker scale.")
     local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player
     assert(assignmentBadge and assignmentBadge:IsShown()
         and assignmentBadge.text.value == "DEFEND",
