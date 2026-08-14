@@ -35,6 +35,7 @@ KWR.MatchRuntime = Runtime
 
 local MIN_REFRESH_INTERVAL = 0.40
 local MAX_CHAINED_FOLLOWUPS = 1
+local ROSTER_PRESENTATION_TIMEOUT = 8
 
 local function firstLine(value)
     local text = tostring(value or "unknown runtime refresh error")
@@ -164,6 +165,7 @@ end
 function Runtime:ResetTransientTruth()
     self.lastFriendlyHealthSyncAt = nil
     self.postMatchTruth = nil
+    self.rosterPresentation = nil
     if KWR.Sensors then
         KWR.Sensors.scoreSession = nil
     end
@@ -196,6 +198,51 @@ function Runtime:ResetTransientTruth()
     if KWR.Assignments and KWR.Assignments.integrity then
         KWR.Assignments.integrity = { sessionKey = nil, records = {} }
     end
+end
+
+function Runtime:AnnotateRosterPresentation(snapshot)
+    local context = snapshot and snapshot.context or {}
+    if context.inPvP ~= true or context.preview == true then
+        self.rosterPresentation = nil
+        context.rosterPresentation = { ready = true, reason = "not_pvp" }
+        return
+    end
+
+    local now = KWR.Util:Now()
+    local sessionKey = KWR.Util:Text(context.sessionKey, "", 96)
+    local presentation = self.rosterPresentation
+    if not presentation or presentation.sessionKey ~= sessionKey then
+        presentation = {
+            sessionKey = sessionKey,
+            startedAt = now,
+        }
+        self.rosterPresentation = presentation
+    end
+
+    local roster = snapshot.roster or {}
+    local hydration = type(context.rosterHydration) == "table"
+        and context.rosterHydration or {}
+    local expected = math.max(#roster,
+        KWR.Util:Number(hydration.expected, #roster) or #roster)
+    local stable = #roster > 0
+    for _, player in ipairs(roster) do
+        if player.unitStable ~= true then
+            stable = false
+            break
+        end
+    end
+    local complete = expected > 0 and #roster >= expected and stable
+    local timedOut = now - (presentation.startedAt or now)
+        >= ROSTER_PRESENTATION_TIMEOUT
+    local ready = complete or timedOut
+    context.rosterPresentation = {
+        ready = ready,
+        reason = complete and "complete" or (timedOut and "timeout" or "hydrating"),
+        expected = expected,
+        observed = #roster,
+        stable = stable,
+        startedAt = presentation.startedAt,
+    }
 end
 
 function Runtime:RememberQualifiedTruth(snapshot)
@@ -375,6 +422,7 @@ function Runtime:Refresh(reason)
         end
         snapshot.context.matchComplete = self.matchComplete == true
         snapshot = self:ApplyMatchCompleteFallback(snapshot)
+        self:AnnotateRosterPresentation(snapshot)
         if KWR.SentinelMerge then
             snapshot = KWR.SentinelMerge:Apply(snapshot)
         end
