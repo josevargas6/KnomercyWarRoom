@@ -975,6 +975,16 @@ function CursorRing:RefreshReticle()
     local profile = KWR.db.profile.cursor or {}
     local state = currentState(self.lastState)
     local previewDummy = isPreviewPvPTrainingDummy(state, "target")
+    -- Options is an inspection/configuration surface. Never let an active
+    -- combat target lock draw across its controls; keep a retry marker so the
+    -- cue returns automatically as soon as the panel closes.
+    local options = KWR.Options and KWR.Options.frame
+    if options and options.IsShown and options:IsShown() then
+        self.reticle:Hide()
+        self.reticlePlate = nil
+        self.reticlePending = true
+        return
+    end
     if not self:AllowsReticleContext(state)
         or (KWR.Util:IsArenaContext(state) and not self:AllowsLightweightArena(state)) then
         self.reticle:Hide()

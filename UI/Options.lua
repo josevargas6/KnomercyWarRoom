@@ -229,7 +229,7 @@ function Options:Create()
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
         "Cursor ring, reticle, guide lines, and live nameplate overlays.",
-        366, 0, 342, 486)
+        366, 0, 342, 550)
     createCheck(self, targetCard,
         "cursorEnabled",
         "Enable cursor ring",
@@ -283,21 +283,21 @@ function Options:Create()
         "battlefieldOrbs",
         "Show compact battlefield identifiers",
         "Shows role icons for teammates and 42-pixel class icons for enemies. Orb and flag carriers replace the normal teammate role icon; Blizzard nameplates remain visible.",
-        -234,
+        -288,
         function() return KWR.db.profile.cursor.battlefieldOrbs ~= false end,
         function(value) KWR.CursorRing:SetBattlefieldOrbs(value) end)
     createCheck(self, targetCard,
         "assignmentBadges",
         "Show tactical assignment badges",
         "Shows a compact DEFEND, STRIKE, ESCORT, ROTATE, RESERVE, HEAL, or CARRY badge on assigned friendly nameplates.",
-        -288,
+        -342,
         function() return KWR.db.profile.cursor.assignmentBadges ~= false end,
         function(value) KWR.CursorRing:SetAssignmentBadges(value) end)
     createCheck(self, targetCard,
         "combatVisuals",
         "Show target spotlight and cast accents",
         "Enables kill-target glow and must-stop cast accents on the roster.",
-        -342,
+        -396,
         function() return KWR.db.profile.combatRoster.combatVisuals ~= false end,
         function(value)
             KWR.db.profile.combatRoster.combatVisuals = value
@@ -309,14 +309,14 @@ function Options:Create()
         "arenaLightweight",
         "Keep lightweight target layer in arenas",
         "Hides Commander boards and rosters while retaining only legal player nameplate markers and the target reticle.",
-        -396,
+        -450,
         function() return KWR.db.profile.cursor.arenaLightweight ~= false end,
         function(value) KWR.CursorRing:SetArenaLightweight(value) end)
     createCheck(self, targetCard,
         "worldPvPReticle",
         "Keep target reticle in world PvP",
         "Shows the KWR target reticle only for attackable player targets outside instances. It never changes TAB bindings or targets mobs/pets.",
-        -450,
+        -504,
         function() return KWR.db.profile.cursor.worldPvPReticle ~= false end,
         function(value) KWR.CursorRing:SetWorldPvPReticle(value) end)
 
@@ -392,7 +392,7 @@ function Options:Create()
     local rosterCard = createOptionCard(content,
         "Combat Roster",
         "Controls the combat-roster auto-show owner and position locks.",
-        366, -510, 342, 216)
+        366, -574, 342, 216)
     createCheck(self, rosterCard,
         "rosterAutoShow",
         "Auto-show combat roster when battleground begins",
@@ -410,7 +410,7 @@ function Options:Create()
     local utilityCard = createOptionCard(content,
         "Utilities",
         "Reset the saved positions for KWR-owned windows.",
-        366, -804, 342, 170)
+        366, -868, 342, 170)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
         if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
             KWR.LayoutCoordinator:Reset()
@@ -460,7 +460,7 @@ function Options:Create()
     local footerCard = createOptionCard(content,
         "Policy",
         "KWR safety and visibility rules stay fixed regardless of battleground setup.",
-        0, -1022, 708, 112)
+        0, -1086, 708, 112)
     frame.note = KWR.Theme:Font(footerCard, 9, "muted")
     frame.note:SetPoint("TOPLEFT", 10, -40)
     frame.note:SetPoint("TOPRIGHT", -10, -40)
