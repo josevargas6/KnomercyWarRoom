@@ -687,6 +687,8 @@ do
         and KWR.db.profile.cursor.enabled == false
         and KWR.db.profile.cursor.reticleEnabled == true
         and KWR.db.profile.cursor.battlefieldOrbs == true
+        and KWR.db.profile.cursor.arenaLightweight == true
+        and KWR.db.profile.cursor.worldPvPReticle == true
         and KWR.db.profile.combatRoster.layoutVersion == 3
         and KWR.db.profile.combatRoster.panes == nil
         and KWR.db.profile.combatRoster.splitToolbar == nil
@@ -5644,6 +5646,37 @@ assert(KWR.ReporterMap == nil,
 end
 RunLateSmokeChecks()
 do
+(function()
+local arenaLightweightState = {
+    snapshot = {
+        context = { inPvP = true, instanceType = "arena" },
+    },
+}
+local worldPvPState = {
+    snapshot = {
+        context = { inPvP = false, instanceType = "none" },
+    },
+}
+local pveInstanceState = {
+    snapshot = {
+        context = { inPvP = false, instanceType = "party" },
+    },
+}
+assert(KWR.CursorRing:AllowsLightweightArena(arenaLightweightState)
+    and KWR.CursorRing:AllowsReticleContext(arenaLightweightState),
+    "Arena context did not retain the explicitly lightweight target layer.")
+assert(KWR.CursorRing:AllowsWorldPvPReticle(worldPvPState)
+    and KWR.CursorRing:AllowsReticleContext(worldPvPState),
+    "World PvP target layer was not enabled outside instances.")
+assert(not KWR.CursorRing:AllowsWorldPvPReticle(pveInstanceState),
+    "World PvP target layer leaked into a PvE instance.")
+local savedArenaLightweight = KWR.db.profile.cursor.arenaLightweight
+KWR.db.profile.cursor.arenaLightweight = false
+assert(not KWR.CursorRing:AllowsLightweightArena(arenaLightweightState),
+    "Arena target layer did not respect its reversible preference.")
+KWR.db.profile.cursor.arenaLightweight = savedArenaLightweight
+end)()
+
 local identifierState = {
     snapshot = {
         combat = {},

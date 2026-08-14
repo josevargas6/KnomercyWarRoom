@@ -113,6 +113,28 @@ local function isPreviewPvPTrainingDummy(state, unit)
     return PVP_TRAINING_DUMMY_IDS[creatureIDFromGUID(guid)] == true
 end
 
+function CursorRing:AllowsLightweightArena(state)
+    return KWR.Util:IsArenaContext(state)
+        and KWR.db.profile.cursor.arenaLightweight ~= false
+end
+
+function CursorRing:AllowsWorldPvPReticle(state)
+    if KWR.db.profile.cursor.worldPvPReticle == false
+        or KWR.Util:IsArenaContext(state)
+        or KWR.Util:IsPvEInstanceContext(state) then
+        return false
+    end
+    local context = state and state.snapshot and state.snapshot.context or {}
+    return KWR.Util:Text(context.instanceType, "none", 16) == "none"
+end
+
+function CursorRing:AllowsReticleContext(state)
+    local context = state and state.snapshot and state.snapshot.context or {}
+    return context.inPvP == true
+        or isPreviewPvPTrainingDummy(state, "target")
+        or self:AllowsWorldPvPReticle(state)
+end
+
 -- Nameplate markers must remain legible in battleground movement and against
 -- the default health-bar scale. Keep these centralized so the ring, icon,
 -- label, and health strip scale as one visual unit.
@@ -681,19 +703,18 @@ end
 
 function CursorRing:RefreshDriver()
     if not self.driver then return end
-    if KWR.Util:IsArenaContext(currentState(self.lastState)) then
-        self.driver:Hide()
-        return
-    end
     local cursorEnabled = KWR.db.profile.cursor.enabled == true
     local reticleEnabled = KWR.db.profile.cursor.reticleEnabled ~= false
     local state = currentState(self.lastState)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
-    local reticleAllowed = inPvP or isPreviewPvPTrainingDummy(state, "target")
+    local context = state and state.snapshot and state.snapshot.context or {}
+    local isArena = KWR.Util:IsArenaContext(state)
+    local isWorld = KWR.Util:Text(context.instanceType, "none", 16) == "none"
+    local cursorAllowed = cursorEnabled and not isArena and not isWorld
+    local reticleAllowed = self:AllowsReticleContext(state)
+        and (not isArena or self:AllowsLightweightArena(state))
     local hasTarget = reticleAllowed and reticleEnabled and type(UnitExists) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
-    self.driver:SetShown(cursorEnabled
+    self.driver:SetShown(cursorAllowed
         or self.reticlePending == true
         or (self.reticle and self.reticle:IsShown())
         or hasTarget
@@ -899,10 +920,9 @@ function CursorRing:RefreshReticle()
     if not self.reticle then return end
     local profile = KWR.db.profile.cursor or {}
     local state = currentState(self.lastState)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
     local previewDummy = isPreviewPvPTrainingDummy(state, "target")
-    if not inPvP and not previewDummy then
+    if not self:AllowsReticleContext(state)
+        or (KWR.Util:IsArenaContext(state) and not self:AllowsLightweightArena(state)) then
         self.reticle:Hide()
         self.reticlePlate = nil
         self.reticlePending = false
@@ -949,10 +969,26 @@ end
 
 function CursorRing:Update(state)
     self.lastState = state
-    if KWR.Util:IsArenaContext(state) then
+    local arena = KWR.Util:IsArenaContext(state)
+    if arena and not self:AllowsLightweightArena(state) then
         if self.frame then self.frame:Hide() end
         if self.reticle then self.reticle:Hide() end
         self:HideAllOrbs()
+        self:RefreshDriver()
+        return
+    end
+    if arena then
+        if self.frame then self.frame:Hide() end
+        self.assignmentIndex = {}
+        self:RefreshReticle()
+        self:RefreshOrbs()
+        self:RefreshDriver()
+        return
+    end
+    if self:AllowsWorldPvPReticle(state) then
+        if self.frame then self.frame:Hide() end
+        self:HideAllOrbs()
+        self:RefreshReticle()
         self:RefreshDriver()
         return
     end
@@ -1003,6 +1039,8 @@ local function updateToken(_, state)
             KWR.db.profile.cursor.battlefieldOrbs,
             KWR.db.profile.cursor.markerMode,
             KWR.db.profile.cursor.assignmentBadges,
+            KWR.db.profile.cursor.arenaLightweight,
+            KWR.db.profile.cursor.worldPvPReticle,
         })
     end
     local snapshot = state and state.snapshot or {}
@@ -1027,6 +1065,8 @@ local function updateToken(_, state)
         target.key or target.name,
         KWR.db.profile.cursor.markerMode,
         KWR.db.profile.cursor.assignmentBadges,
+        KWR.db.profile.cursor.arenaLightweight,
+        KWR.db.profile.cursor.worldPvPReticle,
     })
 end
 
@@ -1102,6 +1142,16 @@ function CursorRing:SetAssignmentBadges(enabled)
     KWR.db.profile.cursor.assignmentBadges = enabled == true
     self:RefreshOrbs()
     self:RefreshDriver()
+end
+
+function CursorRing:SetArenaLightweight(enabled)
+    KWR.db.profile.cursor.arenaLightweight = enabled == true
+    self:Update(currentState())
+end
+
+function CursorRing:SetWorldPvPReticle(enabled)
+    KWR.db.profile.cursor.worldPvPReticle = enabled == true
+    self:Update(currentState())
 end
 
 function CursorRing:ToggleReticle()
