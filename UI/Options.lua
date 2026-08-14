@@ -265,6 +265,21 @@ function Options:Create()
             allowToggleWhenUnavailable = true,
         })
     createCheck(self, targetCard,
+        "focusNameplates",
+        "Focus target health bar only",
+        "Hides non-target hostile health/name readouts and keeps class shields visible.",
+        -234,
+        function() return KWR.db.profile.cursor.focusNameplates ~= false end,
+        function(value)
+            KWR.db.profile.cursor.focusNameplates = value == true
+            KWR.CursorRing:RefreshOrbs()
+        end,
+        {
+            available = function() return KWR.db.profile.cursor.enabled == true end,
+            unavailableText = "Requires cursor ring.",
+            allowToggleWhenUnavailable = true,
+        })
+    createCheck(self, targetCard,
         "battlefieldOrbs",
         "Show compact battlefield identifiers",
         "Shows role icons for teammates and 42-pixel class icons for enemies. Orb and flag carriers replace the normal teammate role icon; Blizzard nameplates remain visible.",

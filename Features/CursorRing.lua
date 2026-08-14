@@ -428,6 +428,42 @@ function CursorRing:HideAllOrbs()
     self.orbVisibleCount = 0
     for _, frame in pairs(self.orbFrames) do frame:Hide() end
     for _, frame in pairs(self.tacticalBadgeFrames or {}) do frame:Hide() end
+    for unit in pairs(self.activePlates or {}) do
+        local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
+            and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
+        self:RestoreFocusReadout(plate)
+    end
+end
+
+local function nameplateReadoutWidgets(plate)
+    local unitFrame = plate and plate.UnitFrame
+    if not unitFrame then return {} end
+    return { unitFrame.healthBar, unitFrame.name, unitFrame.nameText }
+end
+
+function CursorRing:RestoreFocusReadout(plate)
+    if not plate or not plate.KWRFocusReadout then return end
+    for widget, alpha in pairs(plate.KWRFocusReadout) do
+        if widget and widget.SetAlpha then widget:SetAlpha(alpha) end
+    end
+    plate.KWRFocusReadout = nil
+end
+
+function CursorRing:ApplyFocusReadout(plate, suppress)
+    if not plate then return end
+    if not suppress then
+        self:RestoreFocusReadout(plate)
+        return
+    end
+    if plate.KWRFocusReadout then return end
+    local saved = {}
+    for _, widget in ipairs(nameplateReadoutWidgets(plate)) do
+        if widget and widget.GetAlpha and widget.SetAlpha then
+            saved[widget] = widget:GetAlpha()
+            widget:SetAlpha(0)
+        end
+    end
+    plate.KWRFocusReadout = saved
 end
 
 function CursorRing:FindFriendlyRecord(unit, state)
@@ -669,8 +705,21 @@ function CursorRing:RefreshOrbs()
         self:HideAllOrbs()
         return
     end
+    local focusMode = KWR.db.profile.cursor.focusNameplates ~= false
+    local hasEnemyTarget = type(UnitExists) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
+        and type(UnitCanAttack) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
     self.orbVisibleCount = 0
     for unit in pairs(self.activePlates or {}) do
+        local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
+            and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
+        local isFriend = type(UnitIsFriend) == "function"
+            and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
+        local isCurrentTarget = unit == "target"
+            or (type(UnitIsUnit) == "function"
+                and KWR.Util:Boolean(KWR.Util:Call(UnitIsUnit, unit, "target"), false))
+        self:ApplyFocusReadout(plate, focusMode and hasEnemyTarget and not isFriend and not isCurrentTarget)
         if self:RefreshOrbForUnit(unit, state) then
             self.orbVisibleCount = self.orbVisibleCount + 1
         end

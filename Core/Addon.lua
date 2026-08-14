@@ -75,6 +75,10 @@ local DEFAULTS = {
             -- target labels harder to parse. The lock ring is the default;
             -- compact guides remain an opt-in accessibility aid.
             reticleGuides = false,
+            -- In a target call, preserve one native health bar: the current
+            -- enemy. Other hostile plates keep only KWR's compact class/color
+            -- shield so the battlefield remains readable.
+            focusNameplates = true,
             battlefieldOrbs = true,
             markerMode = "NATIVE",
             assignmentBadges = true,
