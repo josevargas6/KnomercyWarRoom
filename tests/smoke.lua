@@ -5801,6 +5801,37 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     assert(reticleObserved.label == "TARGET"
         and reticleObserved.detail ~= "",
         "Reticle did not carry observed target-state context when no command target applied.")
+    do
+        local previousNamePlateApi = C_NamePlate
+        local previousUnitIsPlayer = UnitIsPlayer
+        local previewDummyPlate = CreateFrame("Frame")
+        C_NamePlate = {
+            GetNamePlateForUnit = function(unit)
+                return unit == "target" and previewDummyPlate or nil
+            end,
+        }
+        UnitIsPlayer = function(unit)
+            if unit == "target" then return false end
+            return previousUnitIsPlayer(unit)
+        end
+        mockLiveEnemies.target = {
+            name = "PvP Training Dummy",
+            realm = "",
+            guid = "Creature-0-0-0-0-219250-0000000001",
+            className = "Mechanical",
+            classFile = "WARRIOR",
+        }
+        KWR.CursorRing.lastState = reticlePreviewState
+        KWR.CursorRing:RefreshReticle()
+        assert(KWR.CursorRing.reticle:IsShown(),
+            "Preview reticle did not render for a reviewed PvP training dummy.")
+        mockLiveEnemies.target.guid = "Creature-0-0-0-0-999999-0000000001"
+        KWR.CursorRing:RefreshReticle()
+        assert(not KWR.CursorRing.reticle:IsShown(),
+            "Preview reticle rendered for an unreviewed non-PvP NPC target.")
+        C_NamePlate = previousNamePlateApi
+        UnitIsPlayer = previousUnitIsPlayer
+    end
     mockLiveEnemies.target = nil
 end
 KWR.MainWindow:ToggleLauncherMenu()
