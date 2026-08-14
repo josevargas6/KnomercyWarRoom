@@ -20,12 +20,20 @@ local TRUST_TONES = {
 
 local MAX_LINE = 64
 
+local function isSecret(value)
+    if type(issecretvalue) ~= "function" then return false end
+    local ok, result = pcall(issecretvalue, value)
+    return ok and result == true
+end
+
 local function clean(value, fallback)
-    value = value ~= nil and tostring(value) or ""
-    if value == "" then
-        return fallback or ""
-    end
-    return value
+    local ok, result = pcall(function()
+        if value == nil or isSecret(value) then return fallback or "" end
+        local output = tostring(value)
+        if isSecret(output) or output == "" then return fallback or "" end
+        return output
+    end)
+    return ok and result or (fallback or "")
 end
 
 local function upper(value, fallback)
@@ -343,7 +351,12 @@ local function nameplateForUnit(unit)
         or type(C_NamePlate.GetNamePlateForUnit) ~= "function" then
         return nil
     end
-    return C_NamePlate.GetNamePlateForUnit(unit)
+    if unit ~= "target" and unit ~= "focus" and unit ~= "mouseover"
+        and not unit:match("^nameplate%d+$") then
+        return nil
+    end
+    local ok, plate = pcall(C_NamePlate.GetNamePlateForUnit, unit)
+    return ok and plate or nil
 end
 
 local function targetCueNameplate(view)

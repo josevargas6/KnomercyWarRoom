@@ -15,26 +15,45 @@ local CARRIER_AURAS = {
     [121177] = { kind = "ORB", label = "Purple Orb" },
 }
 
+local function safeText(value, fallback, maximum)
+    local ok, result = pcall(function()
+        if type(issecretvalue) == "function" and issecretvalue(value) then
+            return fallback or ""
+        end
+        local text = tostring(value or "")
+        return text:sub(1, maximum or 64)
+    end)
+    return ok and result or (fallback or "")
+end
+
 local function clean(value, maximum)
-    return tostring(value or ""):gsub("[^%w%._%-]", "_"):sub(1, maximum or 64)
+    local value = safeText(value, "", maximum)
+    return value:gsub("[^%w%._%-]", "_"):sub(1, maximum or 64)
 end
 
 local function encode(value, maximum)
-    value = tostring(value or ""):sub(1, maximum or 64)
+    value = safeText(value, "", maximum)
     return (value:gsub("[^%w%._%-]", function(character)
         return string.format("%%%02X", string.byte(character))
     end))
 end
 
 local function unitIdentity(unit)
-    if type(UnitFullName) == "function" then
-        local name, realm = UnitFullName(unit)
-        if name and name ~= "" then
-            return realm and realm ~= "" and (name .. "-" .. realm) or name
+    local ok, identity = pcall(function()
+        if type(UnitFullName) == "function" then
+            local name, realm = UnitFullName(unit)
+            name = safeText(name)
+            realm = safeText(realm)
+            if name ~= "" then
+                return realm ~= "" and (name .. "-" .. realm) or name
+            end
         end
-    end
-    local name, realm = UnitName(unit)
-    return name and realm and realm ~= "" and (name .. "-" .. realm) or name
+        local name, realm = UnitName(unit)
+        name = safeText(name)
+        realm = safeText(realm)
+        return name ~= "" and (realm ~= "" and (name .. "-" .. realm) or name) or nil
+    end)
+    return ok and identity or nil
 end
 
 local function targetObservation()

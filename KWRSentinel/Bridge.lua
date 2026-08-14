@@ -19,16 +19,24 @@ local INTERRUPTS = {
     EVOKER = { kick = 351338, cc = 360806 },
 }
 
+local function isSecret(value)
+    if type(issecretvalue) ~= "function" then return false end
+    local ok, result = pcall(issecretvalue, value)
+    return ok and result == true
+end
+
 local function text(value, fallback, maximum)
     if type(_G.KWR) == "table" and _G.KWR.Util and _G.KWR.Util.Text then
         return _G.KWR.Util:Text(value, fallback or "", maximum or 180)
     end
-    value = value ~= nil and tostring(value) or ""
-    if value == "" then return fallback or "" end
-    if maximum and #value > maximum then
-        return value:sub(1, maximum)
-    end
-    return value
+    local ok, result = pcall(function()
+        if value == nil or isSecret(value) then return fallback or "" end
+        local output = tostring(value)
+        if isSecret(output) or output == "" then return fallback or "" end
+        if maximum and #output > maximum then return output:sub(1, maximum) end
+        return output
+    end)
+    return ok and result or (fallback or "")
 end
 
 local function shortName(value)
@@ -71,6 +79,7 @@ end
 
 local function playerSpells()
     local _, class = UnitClass("player")
+    class = text(class, "", 24)
     local profile = INTERRUPTS[class]
     if not profile then
         return { kickName = nil, ccName = nil }
@@ -98,22 +107,26 @@ local function inRangeForSpell(spell, unit)
 end
 
 local function castInfo(unit)
-    if not unit or not UnitExists(unit) then return nil end
-    local name, _, _, _, endMS, _, _, notInterruptible = UnitCastingInfo(unit)
-    local channel = false
-    if not name then
-        name, _, _, _, endMS, _, notInterruptible = UnitChannelInfo(unit)
-        channel = name ~= nil
-    end
-    if not name then return nil end
-    local nowMS = GetTime() * 1000
-    local remaining = endMS and math.max(0, (endMS - nowMS) / 1000) or nil
-    return {
-        name = name,
-        remaining = remaining,
-        notInterruptible = notInterruptible == true,
-        channel = channel,
-    }
+    local ok, result = pcall(function()
+        if not unit or not UnitExists(unit) then return nil end
+        local name, _, _, _, endMS, _, _, notInterruptible = UnitCastingInfo(unit)
+        local channel = false
+        if not name then
+            name, _, _, _, endMS, _, notInterruptible = UnitChannelInfo(unit)
+            channel = name ~= nil
+        end
+        if not name or isSecret(name) or isSecret(endMS)
+            or isSecret(notInterruptible) then return nil end
+        local nowMS = GetTime() * 1000
+        local remaining = endMS and math.max(0, (endMS - nowMS) / 1000) or nil
+        return {
+            name = text(name, "", 64),
+            remaining = remaining,
+            notInterruptible = notInterruptible == true,
+            channel = channel,
+        }
+    end)
+    return ok and result or nil
 end
 
 local function iterateGroupUnits()
@@ -172,7 +185,11 @@ local function localStatus(view)
         and INTERRUPTS[select(2, UnitClass("player"))].kick) or nil)
     local cc = spellCooldownSeconds((select(2, UnitClass("player")) and INTERRUPTS[select(2, UnitClass("player"))]
         and INTERRUPTS[select(2, UnitClass("player"))].cc) or nil)
-    local dead = UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") == true
+    local dead = false
+    if UnitIsDeadOrGhost then
+        local ok, value = pcall(UnitIsDeadOrGhost, "player")
+        dead = ok and not isSecret(value) and value == true
+    end
     local stage = assignment.location
     if assignment.movement ~= "FLOAT" and assignment.movement ~= "MOVE"
         and assignment.movement ~= "COLLAPSE" then
