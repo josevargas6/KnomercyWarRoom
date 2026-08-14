@@ -267,7 +267,7 @@ function Options:Create()
     createCheck(self, targetCard,
         "battlefieldOrbs",
         "Show compact battlefield identifiers",
-        "Shows class icons with healer/tank badges for teammates and class icons for enemies. Carriers replace the normal icon; health appears only on your target.",
+        "Shows role icons for teammates and 42-pixel class icons for enemies. Orb and flag carriers replace the normal teammate role icon; Blizzard nameplates remain visible.",
         -234,
         function() return KWR.db.profile.cursor.battlefieldOrbs ~= false end,
         function(value) KWR.CursorRing:SetBattlefieldOrbs(value) end)

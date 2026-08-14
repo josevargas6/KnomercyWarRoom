@@ -5656,18 +5656,20 @@ local friendlyHealerIdentifier = KWR.CursorRing:BuildIdentifierModel({
     classFile = "PRIEST",
     healthPercent = 41,
 }, true, identifierState, false)
-assert(friendlyHealerIdentifier.kind == "CLASS"
+assert(friendlyHealerIdentifier.kind == "ROLE"
     and friendlyHealerIdentifier.texture ~= nil
-    and friendlyHealerIdentifier.badge == "+"
+    and friendlyHealerIdentifier.texCoords ~= nil
+    and friendlyHealerIdentifier.iconSize == 32
+    and friendlyHealerIdentifier.badge == nil
     and friendlyHealerIdentifier.showHealth == false
     and friendlyHealerIdentifier.showCast == false,
-    "Friendly battlefield identifier did not render a class token with a healer badge.")
+    "Friendly battlefield identifier did not render the dedicated healer role icon.")
 local friendlyUnknownIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Friendly-Unknown",
 }, true, identifierState, false)
 assert(friendlyUnknownIdentifier.texture == nil
-    and friendlyUnknownIdentifier.badge == "?",
-    "Unknown friendly class fabricated an icon instead of degrading safely.")
+    and friendlyUnknownIdentifier.badge == nil,
+    "Unknown friendly role fabricated an icon instead of degrading safely.")
 local orbCarrierIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Orb-Carrier",
     role = "DAMAGER",
@@ -5686,9 +5688,13 @@ local enemyIdentifier = KWR.CursorRing:BuildIdentifierModel({
     healthPercent = 72,
 }, false, identifierState, false)
 assert(enemyIdentifier.kind == "CLASS"
+    and enemyIdentifier.iconSize == 42
+    and enemyIdentifier.frameShape == "CIRCLE"
     and enemyIdentifier.showHealth == false
     and enemyIdentifier.showCast == false,
     "Enemy battlefield identifier exposed default health or cast clutter.")
+assert(friendlyHealerIdentifier.frameShape == "SQUARE",
+    "Friendly role identifier did not select the distinct square badge shape.")
 local reviewedEnemy = {
     key = "shared-palette-target",
     name = "Enemy-Warrior",
@@ -5722,9 +5728,12 @@ local activeCastIdentifier = KWR.CursorRing:BuildIdentifierModel({
     classFile = "PRIEST",
     priorityCast = { name = "Priority Cast", remaining = 2.4 },
 }, false, identifierState, true)
-assert(activeCastIdentifier.showHealth == true
-    and activeCastIdentifier.showCast == true,
-    "Current priority-cast target did not enable the bounded health and cast strips.")
+assert(activeCastIdentifier.showHealth == false
+    and activeCastIdentifier.showCast == false
+    and activeCastIdentifier.ringColor[1] == KWR.Theme.combatColors.STOP.outer[1]
+    and activeCastIdentifier.ringColor[2] == KWR.Theme.combatColors.STOP.outer[2]
+    and activeCastIdentifier.ringColor[3] == KWR.Theme.combatColors.STOP.outer[3],
+    "Enemy identifier reintroduced duplicate health or cast clutter.")
 local expiredCastIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Enemy-Priest",
     classFile = "PRIEST",
@@ -5776,12 +5785,15 @@ do
     local nativeMarker = KWR.CursorRing.orbFrames.player
     local markerPoint = nativeMarker.points and nativeMarker.points[1]
     assert(nativeMarker:IsShown()
-        and markerPoint and markerPoint[1] == "CENTER"
-        and markerPoint[2] == nativePlate and markerPoint[3] == "CENTER",
-        "Standalone native marker was not centered on the same nameplate anchor as the reticle.")
-    assert(nativeMarker.ring.width >= 36 and nativeMarker.ring.height >= 36
-        and nativeMarker.icon.width >= 24 and nativeMarker.icon.height >= 24,
-        "Battlefield identifier did not retain the readable nameplate marker scale.")
+        and markerPoint and markerPoint[1] == "BOTTOM"
+        and markerPoint[2] == nativePlate and markerPoint[3] == "TOP",
+        "Standalone native marker was not anchored above its Blizzard nameplate.")
+    assert(nativeMarker.ring.width >= 42 and nativeMarker.ring.height >= 42
+        and nativeMarker.icon.width == 32 and nativeMarker.icon.height == 32
+        and nativeMarker.square:IsShown()
+        and not nativeMarker.ring:IsShown()
+        and not nativeMarker.name:IsShown(),
+        "Friendly role identifier did not keep the normal Blizzard nameplate clear.")
     local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player
     assert(assignmentBadge and assignmentBadge:IsShown()
         and assignmentBadge.text.value == "DEFEND",
@@ -5807,6 +5819,7 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     targetEnemy.priorityCast = nil
     targetEnemy.defensivesActive = nil
     targetEnemy.carrier = nil
+    targetEnemy.classFile = targetEnemy.classFile or "PRIEST"
     pivotEnemy.priorityCast = nil
     pivotEnemy.defensivesActive = nil
     pivotEnemy.carrier = nil
@@ -5834,10 +5847,12 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         and KWR.CursorRing.reticle.outer.vertexColor[3]
             == KWR.Theme.combatColors.KILL.outer[3],
         "Target reticle kill color diverged from the shared crosshair palette.")
+    assert(KWR.CursorRing.reticle.targetIcon.texture ~= nil,
+        "Target reticle did not place the target class icon at its centre.")
     KWR.CursorRing:ApplyReticle()
-    assert(KWR.CursorRing.reticle.labelPlate.width >= 150
-        and KWR.CursorRing.reticle.detailPlate.width >= 210,
-        "Reticle polish did not provision readable caption plates.")
+    assert(KWR.CursorRing.reticle.labelPlate.width >= 78
+        and KWR.CursorRing.reticle.detailPlate.width >= 126,
+        "Reticle polish did not retain a compact left-side tactical cue.")
     assert(KWR.CursorRing.reticle.labelPlate.backdropColor[4] == 0
         and KWR.CursorRing.reticle.detailPlate.backdropColor[4] == 0,
         "Reticle caption plates painted an opaque background over the battlefield.")
@@ -5852,6 +5867,10 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     assert(reticleObserved.label == "TARGET"
         and reticleObserved.detail ~= "",
         "Reticle did not carry observed target-state context when no command target applied.")
+    KWR.CursorRing:ApplyReticleState(reticleObserved)
+    assert(KWR.CursorRing.reticle.detailPlate:IsShown()
+        and KWR.CursorRing.reticle.detail.value == reticleObserved.detail,
+        "Reticle discarded the actionable detail behind its compact target cue.")
     do
         local previousNamePlateApi = C_NamePlate
         local previousUnitIsPlayer = UnitIsPlayer
@@ -5876,6 +5895,11 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         KWR.CursorRing:RefreshReticle()
         assert(KWR.CursorRing.reticle:IsShown(),
             "Preview reticle did not render for a reviewed PvP training dummy.")
+        local reticlePoint = KWR.CursorRing.reticle.points
+            and KWR.CursorRing.reticle.points[1]
+        assert(reticlePoint and reticlePoint[1] == "BOTTOM"
+            and reticlePoint[2] == previewDummyPlate and reticlePoint[3] == "TOP",
+            "Target class reticle was not placed above the native nameplate.")
         mockLiveEnemies.target.guid = "Creature-0-0-0-0-999999-0000000001"
         KWR.CursorRing:RefreshReticle()
         assert(not KWR.CursorRing.reticle:IsShown(),

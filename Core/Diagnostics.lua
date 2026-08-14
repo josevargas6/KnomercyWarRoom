@@ -146,16 +146,16 @@ function Diagnostics:Run()
 
         KWR.CursorRing:Create()
         KWR.CursorRing:ApplyReticle()
-        check("Reticle captions reserve readable premium plates",
+        check("Reticle retains a compact left-side tactical cue",
             KWR.CursorRing.reticle
                 and KWR.CursorRing.reticle.labelPlate
                 and KWR.Util:Number(KWR.Util:Call(
                     KWR.CursorRing.reticle.labelPlate.GetWidth,
-                    KWR.CursorRing.reticle.labelPlate), 0) >= 150
+                    KWR.CursorRing.reticle.labelPlate), 0) >= 78
                 and KWR.CursorRing.reticle.detailPlate
                 and KWR.Util:Number(KWR.Util:Call(
                     KWR.CursorRing.reticle.detailPlate.GetWidth,
-                    KWR.CursorRing.reticle.detailPlate), 0) >= 210)
+                    KWR.CursorRing.reticle.detailPlate), 0) >= 126)
     end
 
     local mapOrder = {

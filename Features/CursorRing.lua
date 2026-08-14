@@ -45,14 +45,17 @@ local ORB_COLORS = {
     STALE = COMBAT_COLORS.STALE,
 }
 
-local ROLE_BADGES = {
-    TANK = "T",
-    HEALER = "+",
-    DAMAGER = "X",
+local ROLE_ICON_TCOORDS = {
+    TANK = { 0 / 256, 65 / 256, 0 / 256, 66 / 256 },
+    HEALER = { 67 / 256, 132 / 256, 0 / 256, 66 / 256 },
+    DAMAGER = { 134 / 256, 199 / 256, 0 / 256, 66 / 256 },
 }
 
 local CLASS_ICON_TEXTURE = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
+local ROLE_ICON_TEXTURE = "Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES"
 local ORB_ICON_TEXTURE = "Interface\\Icons\\INV_Misc_Orb_05"
+local ENEMY_RING_ATLAS = "charactercreate-ring-select"
+local TEAM_BADGE_TEXTURE = "Interface\\Buttons\\UI-Quickslot2"
 local CARRIER_COLORS = {
     ALLIANCE = { 0.22, 0.55, 1.00 },
     HORDE = { 0.95, 0.18, 0.16 },
@@ -67,6 +70,15 @@ local MARKER_MODES = {
     TACTICAL_ONLY = true,
     OFF = true,
 }
+
+local function roleIconCoords(role)
+    if type(GetTexCoordsForRoleSmallCircle) == "function" then
+        local left, right, top, bottom = KWR.Util:Call(
+            GetTexCoordsForRoleSmallCircle, role)
+        if left then return { left, right, top, bottom } end
+    end
+    return ROLE_ICON_TCOORDS[role]
+end
 
 -- These are explicit PvP practice NPCs, not a broad training-dummy name
 -- match. The IDs keep the preview exception locale-independent and prevent
@@ -104,10 +116,22 @@ end
 -- Nameplate markers must remain legible in battleground movement and against
 -- the default health-bar scale. Keep these centralized so the ring, icon,
 -- label, and health strip scale as one visual unit.
-local ORB_RING_SIZE = 36
-local ORB_ICON_SIZE = 24
-local ORB_FRAME_WIDTH = 104
-local ORB_FRAME_HEIGHT = 76
+local ENEMY_ICON_SIZE = 42
+local FRIENDLY_ROLE_ICON_SIZE = 32
+local ORB_RING_SIZE = 48
+local ORB_FRAME_WIDTH = 52
+local ORB_FRAME_HEIGHT = 52
+
+local function applyEnemyRingTexture(texture)
+    -- This Retail atlas is the native circular selection ring. Fall back to a
+    -- built-in round texture on clients or test harnesses without atlas APIs.
+    if type(texture.SetAtlas) == "function"
+        and pcall(texture.SetAtlas, texture, ENEMY_RING_ATLAS, false) then
+        texture:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
+        return
+    end
+    texture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+end
 
 local function sameTargetRecord(record)
     if not record then return false end
@@ -241,6 +265,11 @@ function CursorRing:CreateReticleFrame()
     frame.inner:SetTexture("Interface\\Cooldown\\star4")
     frame.inner:SetBlendMode("ADD")
 
+    frame.targetIcon = frame:CreateTexture(nil, "OVERLAY")
+    frame.targetIcon:SetPoint("CENTER")
+    frame.targetIcon:SetSize(28, 28)
+    frame.targetIcon:Hide()
+
     frame.pulse = frame:CreateTexture(nil, "OVERLAY")
     frame.pulse:SetPoint("CENTER")
     frame.pulse:SetTexture("Interface\\Cooldown\\star4")
@@ -249,15 +278,15 @@ function CursorRing:CreateReticleFrame()
     frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
     frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.labelPlate:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-    frame.labelPlate:SetSize(132, 16)
-    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "CENTER")
+    frame.labelPlate:SetPoint("RIGHT", frame, "LEFT", -8, 0)
+    frame.labelPlate:SetSize(78, 16)
+    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "RIGHT")
     frame.label:SetAllPoints()
     frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.detailPlate, "panel", "border")
     frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.detailPlate:SetPoint("TOP", frame, "BOTTOM", 0, -1)
-    frame.detailPlate:SetSize(176, 14)
+    frame.detailPlate:SetPoint("RIGHT", frame.labelPlate, "LEFT", -4, 0)
+    frame.detailPlate:SetSize(126, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
     frame.detail:SetAllPoints()
 
@@ -280,12 +309,19 @@ function CursorRing:CreateOrbFrame(unit)
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
     frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
     frame.ring:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
-    frame.ring:SetTexture("Interface\\Cooldown\\ping4")
+    applyEnemyRingTexture(frame.ring)
     frame.ring:SetBlendMode("ADD")
+
+    frame.square = frame:CreateTexture(nil, "ARTWORK")
+    frame.square:SetPoint("CENTER", frame.ring, "CENTER")
+    frame.square:SetSize(42, 42)
+    frame.square:SetTexture(TEAM_BADGE_TEXTURE)
+    frame.square:SetBlendMode("ADD")
+    frame.square:Hide()
 
     frame.icon = frame:CreateTexture(nil, "OVERLAY")
     frame.icon:SetPoint("CENTER", frame.ring, "CENTER")
-    frame.icon:SetSize(ORB_ICON_SIZE, ORB_ICON_SIZE)
+    frame.icon:SetSize(ENEMY_ICON_SIZE, ENEMY_ICON_SIZE)
 
     frame.badge = KWR.Theme:Title(frame, 10, "CENTER")
     frame.badge:SetPoint("CENTER", frame.ring, "CENTER", 0, 0)
@@ -450,10 +486,14 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         texture = nil,
         texCoords = nil,
         iconTint = { 1, 1, 1 },
+        iconSize = isFriend and FRIENDLY_ROLE_ICON_SIZE or ENEMY_ICON_SIZE,
+        frameShape = isFriend and "SQUARE" or "CIRCLE",
         ringColor = ORB_COLORS.STALE.outer,
         nameColor = { classColor(classFile) },
-        showHealth = isFriend ~= true and currentTarget == true,
-        showCast = isFriend ~= true and priorityCast ~= nil,
+        -- The Blizzard nameplate retains identity and health information. KWR
+        -- adds one compact, non-duplicating tactical token above it.
+        showHealth = false,
+        showCast = false,
         cast = priorityCast,
     }
     if carrier then
@@ -463,15 +503,13 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         model.ringColor = carrier.colors
         model.badge = carrier.texture and nil or carrier.badge
     elseif isFriend then
-        -- A class token is stable at a glance and remains useful when a player
-        -- is not currently healing or tanking. The compact role badge adds the
-        -- battlefield-critical distinction without replacing that identity.
-        model.kind = "CLASS"
-        model.texCoords = type(CLASS_ICON_TCOORDS) == "table"
-            and CLASS_ICON_TCOORDS[classFile] or nil
-        model.texture = model.texCoords and CLASS_ICON_TEXTURE or nil
-        model.ringColor = { classColor(classFile) }
-        model.badge = ROLE_BADGES[role] or "?"
+        model.kind = "ROLE"
+        model.texCoords = roleIconCoords(role)
+        model.texture = model.texCoords and ROLE_ICON_TEXTURE or nil
+        model.ringColor = ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role]
+            and ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role].outer
+            or ORB_COLORS.TEAM.outer
+        model.badge = nil
     else
         model.kind = "CLASS"
         model.texCoords = type(CLASS_ICON_TCOORDS) == "table"
@@ -484,7 +522,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
     if not isFriend and (sameEntity(record, combat.localTarget)
         or sameEntity(record, combat.killTarget)) then
         model.ringColor = ORB_COLORS.KILL.outer
-    elseif model.showCast then
+    elseif priorityCast then
         model.ringColor = ORB_COLORS.STOP.outer
     end
     return model
@@ -493,11 +531,15 @@ end
 function CursorRing:ApplyIdentifierVisual(frame, model, percent)
     local ring = model.ringColor or ORB_COLORS.STALE.outer
     frame.ring:SetVertexColor(ring[1], ring[2], ring[3], 0.92)
-    frame.name:SetText(model.name)
-    frame.name:SetTextColor(model.nameColor[1], model.nameColor[2], model.nameColor[3], 1)
+    frame.square:SetVertexColor(ring[1], ring[2], ring[3], 0.96)
+    frame.ring:SetShown(model.frameShape ~= "SQUARE")
+    frame.square:SetShown(model.frameShape == "SQUARE")
+    frame.name:Hide()
 
     if model.texture then
         frame.icon:SetTexture(model.texture)
+        local iconSize = KWR.Util:Clamp(model.iconSize or ENEMY_ICON_SIZE, 16, ENEMY_ICON_SIZE)
+        frame.icon:SetSize(iconSize, iconSize)
         if model.texCoords then
             frame.icon:SetTexCoord(unpack(model.texCoords))
         else
@@ -511,26 +553,14 @@ function CursorRing:ApplyIdentifierVisual(frame, model, percent)
     frame.badge:SetText(KWR.Util:Text(model.badge, "", 4))
     frame.badge:SetShown(model.badge ~= nil)
 
-    local showHealth = model.showHealth and percent ~= nil
-    frame.health:SetShown(showHealth)
+    local showHealth = false
+    frame.health:Hide()
     frame.healthText:SetShown(false)
-    if showHealth then
-        local hr, hg, hb = healthBarColor(percent, ring)
-        frame.health:SetStatusBarColor(hr, hg, hb, 0.88)
-        frame.health:SetMinMaxValues(0, 100)
-        frame.health:SetValue(percent)
-    end
 
-    local cast = model.showCast and model.cast or nil
-    frame.cast:SetShown(cast ~= nil)
+    local cast = nil
+    frame.cast:Hide()
     frame.castText:SetShown(false)
-    if cast then
-        local remaining = KWR.Util:Clamp(cast.remaining or 0, 0, 8)
-        frame.cast:SetMinMaxValues(0, 8)
-        frame.cast:SetValue(remaining)
-    end
-    frame:SetSize(ORB_FRAME_WIDTH,
-        cast and 38 or (showHealth and 33 or ORB_FRAME_HEIGHT))
+    frame:SetSize(ORB_FRAME_WIDTH, ORB_FRAME_HEIGHT)
 end
 
 function CursorRing:RefreshOrbForUnit(unit, state)
@@ -566,9 +596,17 @@ function CursorRing:RefreshOrbForUnit(unit, state)
         frame:Hide()
         return false
     end
+    -- The target reticle is the single authoritative target identifier. Keep
+    -- the ordinary enemy marker hidden for that unit so the two 28/42px
+    -- tokens never stack over the native nameplate.
+    if not isFriend and record and sameTargetRecord(record)
+        and profile.reticleEnabled ~= false then
+        frame:Hide()
+        return false
+    end
     frame:SetParent(plate)
     frame:ClearAllPoints()
-    frame:SetPoint("CENTER", plate, "CENTER", 0, 0)
+    frame:SetPoint("BOTTOM", plate, "TOP", 0, 4)
     if isFriend then
         if not record then
             frame:Hide()
@@ -687,8 +725,8 @@ function CursorRing:ApplyReticle()
     frame.outer:SetSize(visualSize, visualSize)
     frame.inner:SetSize(math.floor(visualSize * 0.58), math.floor(visualSize * 0.58))
     frame.pulse:SetSize(math.floor(visualSize * 0.74), math.floor(visualSize * 0.74))
-    frame.labelPlate:SetSize(math.max(150, math.floor(visualSize * 1.70)), 16)
-    frame.detailPlate:SetSize(math.max(210, math.floor(visualSize * 2.32)), 14)
+    frame.labelPlate:SetSize(math.max(78, math.floor(visualSize * 0.92)), 16)
+    frame.detailPlate:SetSize(math.max(126, math.floor(visualSize * 1.46)), 14)
     frame.baseAlpha = alpha
     frame.hLine:SetShown(profile.reticleGuides ~= false)
     frame.vLine:SetShown(profile.reticleGuides ~= false)
@@ -725,11 +763,23 @@ function CursorRing:ApplyReticleState(state)
         math.min(1, math.max(colors.alpha or alpha, alpha * 0.90)))
     frame.inner:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.68)
     frame.pulse:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.24)
+    local classFile = KWR.Util:Upper(state.classFile, "", 24)
+    local texCoords = type(CLASS_ICON_TCOORDS) == "table"
+        and CLASS_ICON_TCOORDS[classFile] or nil
+    if texCoords then
+        frame.targetIcon:SetTexture(CLASS_ICON_TEXTURE)
+        frame.targetIcon:SetTexCoord(unpack(texCoords))
+        frame.targetIcon:SetVertexColor(1, 1, 1, alpha)
+        frame.targetIcon:Show()
+    else
+        frame.targetIcon:Hide()
+    end
     frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], 0.94)
     frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], 0.72)
     frame.label:SetText(KWR.Util:Text(state.label, "TARGET", 24))
-    frame.detail:SetText(KWR.Util:Text(state.detail, "", 42))
-    frame.detailPlate:SetShown(state.detail and state.detail ~= "")
+    local detail = KWR.Util:Text(state.detail, "", 64)
+    frame.detail:SetText(detail)
+    frame.detailPlate:SetShown(detail ~= "")
     frame.pulseActive = state.pulse == true
     self.reticleState = state
 end
@@ -754,6 +804,7 @@ function CursorRing:ResolveReticleState(state)
     local cast = targetRecord and targetRecord.priorityCast or nil
     local defensive = targetRecord and targetRecord.defensivesActive
         and targetRecord.defensivesActive[1] or nil
+    local targetClass = KWR.Util:Upper(targetRecord and targetRecord.classFile, "", 24)
 
     if defensive then
         return {
@@ -761,6 +812,7 @@ function CursorRing:ResolveReticleState(state)
             label = "DEF UP",
             detail = KWR.Util:Text(defensive.name, "DEFENSIVE", 30),
             pulse = true,
+            classFile = targetClass,
         }
     end
     if cast then
@@ -769,6 +821,7 @@ function CursorRing:ResolveReticleState(state)
             label = "CAST",
             detail = KWR.Util:Text(cast.name, "FREE CAST", 30),
             pulse = cast.priority == "MUST_STOP",
+            classFile = targetClass,
         }
     end
     if targetRecord and targetRecord.carrier then
@@ -779,6 +832,7 @@ function CursorRing:ResolveReticleState(state)
                 and ("Stacks x" .. tostring(targetRecord.carrierStacks))
                 or "Objective carrier"),
             pulse = true,
+            classFile = targetClass,
         }
     end
     if localKill then
@@ -788,6 +842,7 @@ function CursorRing:ResolveReticleState(state)
             detail = KWR.Util:Text(combat.localTargetReason or combat.killReason,
                 "Local kill target", 32),
             pulse = true,
+            classFile = targetClass,
         }
     end
     if commandKill then
@@ -797,6 +852,7 @@ function CursorRing:ResolveReticleState(state)
             detail = KWR.Util:Text(combat.killReason or combat.localTargetReason,
                 "Priority target", 32),
             pulse = true,
+            classFile = targetClass,
         }
     end
     if wrongLocal then
@@ -806,6 +862,7 @@ function CursorRing:ResolveReticleState(state)
             detail = "Suggested: " .. KWR.Util:Text(
                 localTarget and localTarget.shortName, "local target", 20),
             pulse = true,
+            classFile = targetClass,
         }
     end
     if wrongCommand then
@@ -815,6 +872,7 @@ function CursorRing:ResolveReticleState(state)
             detail = "Suggested: " .. KWR.Util:Text(
                 commandTarget and commandTarget.shortName, "command target", 20),
             pulse = true,
+            classFile = targetClass,
         }
     end
     local observed = KWR.Util:Text(targetRecord and targetRecord.spec, "Observed target", 24)
@@ -833,6 +891,7 @@ function CursorRing:ResolveReticleState(state)
         label = "TARGET",
         detail = KWR.Util:Text(observed, "Observed target", 28),
         pulse = false,
+        classFile = targetClass,
     }
 end
 
@@ -880,7 +939,9 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    self.reticle:SetPoint("CENTER", plate, "CENTER", 0, 2)
+    -- The centered class icon belongs above the native nameplate, not on top
+    -- of Blizzard's target name/health information.
+    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()
