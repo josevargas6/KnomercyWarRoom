@@ -5364,6 +5364,21 @@ local optionsAudit = KWR.Options:LayoutAudit()
 assert(#optionsInventory >= 12 and optionsAudit.ok == true,
     "Options window did not expose a complete auditable inventory or clean card geometry.")
 do
+    local launcher = KWR.MainWindow.launcherMenu
+    if not launcher then
+        KWR.MainWindow:ToggleLauncherMenu()
+        launcher = KWR.MainWindow.launcherMenu
+    end
+    KWR.Options:Close()
+    launcher:Show()
+    KWR.Options:Toggle()
+    assert(not launcher:IsShown(),
+        "Options modal left the KWR command launcher visible underneath it.")
+    KWR.Options.frame.closeButton.scripts.OnClick(KWR.Options.frame.closeButton)
+    assert(not KWR.Options.frame:IsShown(),
+        "Options close control did not close the panel directly.")
+end
+do
     local originalRecords = KWR.Util:Copy(KWR.EnemyIntel.records)
     local originalNotes = KWR.Util:Copy(KWR.db.enemyNotes)
     local originalProfiles = KWR.Util:Copy(KWR.db.opponentModels.players)
