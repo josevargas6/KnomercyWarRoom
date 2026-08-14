@@ -68,6 +68,39 @@ local MARKER_MODES = {
     OFF = true,
 }
 
+-- These are explicit PvP practice NPCs, not a broad training-dummy name
+-- match. The IDs keep the preview exception locale-independent and prevent
+-- the reticle from appearing on ordinary PvE targets.
+local PVP_TRAINING_DUMMY_IDS = {
+    [114832] = true,
+    [114840] = true,
+    [197834] = true,
+    [219250] = true,
+    [219251] = true,
+    [243211] = true,
+    [243212] = true,
+    [255824] = true,
+    [255825] = true,
+}
+
+local function creatureIDFromGUID(guid)
+    if type(guid) ~= "string" or not guid:find("^Creature%-") then
+        return nil
+    end
+    local parts = {}
+    for part in guid:gmatch("[^%-]+") do parts[#parts + 1] = part end
+    return tonumber(parts[#parts - 1])
+end
+
+local function isPreviewPvPTrainingDummy(state, unit)
+    local context = state and state.snapshot and state.snapshot.context or {}
+    if context.preview ~= true or unit ~= "target" or type(UnitGUID) ~= "function" then
+        return false
+    end
+    local guid = KWR.Util:Call(UnitGUID, unit)
+    return PVP_TRAINING_DUMMY_IDS[creatureIDFromGUID(guid)] == true
+end
+
 local function sameTargetRecord(record)
     if not record then return false end
     if record.unit and type(UnitIsUnit) == "function"
@@ -607,10 +640,11 @@ function CursorRing:RefreshDriver()
     end
     local cursorEnabled = KWR.db.profile.cursor.enabled == true
     local reticleEnabled = KWR.db.profile.cursor.reticleEnabled ~= false
-    local inPvP = self.lastState and self.lastState.snapshot
-        and self.lastState.snapshot.context
-        and self.lastState.snapshot.context.inPvP == true
-    local hasTarget = inPvP and reticleEnabled and type(UnitExists) == "function"
+    local state = currentState(self.lastState)
+    local inPvP = state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true
+    local reticleAllowed = inPvP or isPreviewPvPTrainingDummy(state, "target")
+    local hasTarget = reticleAllowed and reticleEnabled and type(UnitExists) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
     self.driver:SetShown(cursorEnabled
         or self.reticlePending == true
@@ -796,10 +830,11 @@ end
 function CursorRing:RefreshReticle()
     if not self.reticle then return end
     local profile = KWR.db.profile.cursor or {}
-    local inPvP = self.lastState and self.lastState.snapshot
-        and self.lastState.snapshot.context
-        and self.lastState.snapshot.context.inPvP == true
-    if not inPvP then
+    local state = currentState(self.lastState)
+    local inPvP = state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true
+    local previewDummy = isPreviewPvPTrainingDummy(state, "target")
+    if not inPvP and not previewDummy then
         self.reticle:Hide()
         self.reticlePlate = nil
         self.reticlePending = false
@@ -818,7 +853,7 @@ function CursorRing:RefreshReticle()
         and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
     local isPlayerTarget = type(UnitIsPlayer) ~= "function"
         or KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, "target"), false)
-    if not exists or not attackable or not isPlayerTarget then
+    if not exists or not attackable or (not isPlayerTarget and not previewDummy) then
         self.reticle:Hide()
         self.reticlePlate = nil
         self:RefreshDriver()
