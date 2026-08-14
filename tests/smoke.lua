@@ -1286,6 +1286,22 @@ assert(#missingSlotRoster == 2
     and missingSlotHydration.expected == 3,
     "Missing raid-roster identity was filled with a transient player unit.")
 
+-- Battleground entry may temporarily return several realm-qualified rows for
+-- the local player before group unit identity is stable. Keep one provisional
+-- row instead of exposing duplicate Team tracker assignments.
+do
+    mockRaidNames = { "Verite-Area52", "Verite-Illidan", "Charlie" }
+    assert(KWR.MatchRuntime:ForceRefresh("smoke-raid-provisional-short-duplicate"),
+        "Provisional same-short-name raid capture failed.")
+    local provisionalRoster = KWR.Store:Get().snapshot.roster
+    local provisionalVeriteCount = 0
+    for _, player in ipairs(provisionalRoster) do
+        if player.shortName == "Verite" then provisionalVeriteCount = provisionalVeriteCount + 1 end
+    end
+    assert(#provisionalRoster == 2 and provisionalVeriteCount == 1,
+        "Provisional roster exposed duplicate same-player Team tracker rows.")
+end
+
 mockRaidNames = { "Alpha-OtherRealm", "Bravo", "Charlie" }
 assert(KWR.MatchRuntime:ForceRefresh("smoke-raid-realm-mismatch"),
     "Realm-mismatched raid capture failed.")
