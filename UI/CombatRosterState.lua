@@ -173,6 +173,10 @@ function CombatRosterState:Update(owner, state, helpers)
     local enemyShown = owner:IsShown("ENEMY")
     local roster = KWR.TeamResolver:NormalizePublishedRoster(
         state.snapshot.roster or {})
+    local presentation = context.rosterPresentation or {}
+    -- Older saved/debug snapshots predate the presentation contract and should
+    -- retain their complete roster rather than appearing permanently pending.
+    local rosterReady = presentation.ready ~= false
     local friendlyScoreFaction = state.snapshot.context and state.snapshot.context.team
         and state.snapshot.context.team.scoreFaction
     local enemies = KWR.EnemyIntel:FilterPublishedTruth(
@@ -180,16 +184,18 @@ function CombatRosterState:Update(owner, state, helpers)
         state.snapshot.enemies,
         friendlyScoreFaction)
     local stableEnemies = self:StableEnemyRows(owner, enemies)
+    local displayedRoster = rosterReady and roster or {}
+    local displayedEnemies = rosterReady and stableEnemies or {}
     owner:UpdateSpotlight(enemies, state.snapshot.combat,
         state.snapshot.executionCommand and state.snapshot.executionCommand.localFight,
         state.snapshot.executionCommand and state.snapshot.executionCommand.countdown)
-    local assignments = friendlyAssignments(state, roster)
-    local fightCalls = enemyCalls(state.snapshot, enemies)
+    local assignments = friendlyAssignments(state, displayedRoster)
+    local fightCalls = enemyCalls(state.snapshot, displayedEnemies)
     local alive, localEnemies, visibleEnemies, staleEnemies = 0, 0, 0, 0
-    for _, player in ipairs(roster) do
+    for _, player in ipairs(displayedRoster) do
         if not player.dead and player.connected ~= false then alive = alive + 1 end
     end
-    for _, enemy in ipairs(enemies) do
+    for _, enemy in ipairs(displayedEnemies) do
         if enemy.localRange and not enemy.dead then localEnemies = localEnemies + 1 end
         if enemy.visible and not enemy.dead then visibleEnemies = visibleEnemies + 1 end
         if enemy.visible ~= true and enemy.age and enemy.age > 8 then staleEnemies = staleEnemies + 1 end
@@ -208,9 +214,9 @@ function CombatRosterState:Update(owner, state, helpers)
             break
         end
     end
-    local rosterLoading = inPvP
-        and (#roster < expectedRoster or not rosterBindingsStable)
-    local headingCount = rosterLoading and #roster or alive
+    local rosterLoading = inPvP and (not rosterReady
+        or #roster < expectedRoster or not rosterBindingsStable)
+    local headingCount = rosterLoading and 0 or alive
     local teamHeading = helpers.formatTeamHeading(
         headingCount, expectedRoster)
     if owner.teamHeadingSignature ~= teamHeading then
@@ -224,16 +230,16 @@ function CombatRosterState:Update(owner, state, helpers)
         owner.enemyFrame.heading:SetText(enemyHeading)
     end
     if InCombatLockdown and InCombatLockdown() then
-        owner:UpdateBoundRows(owner.teamRows, roster, "TEAM", state.snapshot.combat, assignments)
+        owner:UpdateBoundRows(owner.teamRows, displayedRoster, "TEAM", state.snapshot.combat, assignments)
         owner:UpdateBoundRows(
-            owner.enemyRows, stableEnemies, "ENEMY",
+            owner.enemyRows, displayedEnemies, "ENEMY",
             state.snapshot.combat, fightCalls)
         return
     end
     owner.rebindPending = false
-    owner:UpdateRows(owner.teamRows, roster, "TEAM", state.snapshot.combat,
+    owner:UpdateRows(owner.teamRows, displayedRoster, "TEAM", state.snapshot.combat,
         assignments, true, teamShown)
-    owner:UpdateRows(owner.enemyRows, stableEnemies, "ENEMY", state.snapshot.combat,
+    owner:UpdateRows(owner.enemyRows, displayedEnemies, "ENEMY", state.snapshot.combat,
         fightCalls, true, enemyShown)
 end
 
