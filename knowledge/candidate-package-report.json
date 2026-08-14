@@ -1,49 +1,49 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-14T18:47:34Z",
+    "generatedAt":  "2026-08-14T21:45:10Z",
     "candidateVersion":  "6.1.0-alpha.43",
-    "buildOutputDirectory":  "artifacts/season2-final",
+    "buildOutputDirectory":  "kwr-31842645473-048e4adf4d90fb602ad4fa36824df22e5a2d7f9d",
     "distributionArtifact":  {
                                  "name":  "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                 "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                 "size":  900300,
-                                 "sha256":  "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C"
+                                 "path":  "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+                                 "size":  928577,
+                                 "sha256":  "84C3D18DB301F247CE78EBDA433FA3E73E6783830953A4A07D40C17A8E71C43A"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                              "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                              "size":  43004429,
-                              "sha256":  "993E5C8DBCC5BE36FAFED9780CAAACCF32304F5C2C98C0C52F418EAF3A82AE1B"
+                              "path":  "KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
+                              "size":  15807380,
+                              "sha256":  "339A8D4E0D732616EAF3C1B7D97E7A478835C7364DCDF4F1EF249F1D89AFAC2A"
                           },
     "hashManifest":  {
-                         "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_SHA256.txt",
+                         "path":  "KWR_6_1_0_ALPHA_43_SHA256.txt",
                          "lines":  [
-                                       "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                       "993E5C8DBCC5BE36FAFED9780CAAACCF32304F5C2C98C0C52F418EAF3A82AE1B  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                                       "74097D5858B62A311B705C2DCB702DCCD55147051F3E4642AF5A1E465930CE66  KWRSentinel_6_1_0_ALPHA_43.zip"
+                                       "84C3D18DB301F247CE78EBDA433FA3E73E6783830953A4A07D40C17A8E71C43A  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+                                       "339A8D4E0D732616EAF3C1B7D97E7A478835C7364DCDF4F1EF249F1D89AFAC2A  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
+                                       "71AD28F8812926A37DB617E6496C1368E5EA076CDA42F1B7741696F625F8B2AA  KWRSentinel_6_1_0_ALPHA_43.zip"
                                    ]
                      },
     "sourceManifest":  {
-                           "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "9B854055179C30B26A0CE79851F99A80FBEF13267BE72BA5321D4C62F19A26DA",
+                           "path":  "KWR_6_1_0_ALPHA_43_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "B56817DAA8AB4BF1E69F30049DAE3790ED65B86D0622E562F38C35EC333E4C7D",
                            "distributionEntryCount":  393,
-                           "developerDigest":  "238078957FEAE0C59F02E0B3951CD63ECDE9F520E111923DB4AD16D45C098926",
-                           "developerEntryCount":  8966
+                           "developerDigest":  "CC4C9F8386E540CDFA301C03BC40A17D1660BECFE3C5D47AFC01CC72B47B149E",
+                           "developerEntryCount":  8947
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-14T18:36:47.4788550Z",
+                            "path":  "KWR_6_1_0_ALPHA_43_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-14T21:36:06.2451827Z",
                             "sentinelIncluded":  true,
-                            "powershellEdition":  "Desktop",
-                            "powershellVersion":  "5.1.26100.9168",
-                            "nodeAvailableOnBuildPath":  false,
-                            "npmAvailableOnBuildPath":  false,
-                            "fengariAvailableOnBuildPath":  false,
+                            "powershellEdition":  "Core",
+                            "powershellVersion":  "7.6.4",
+                            "nodeAvailableOnBuildPath":  true,
+                            "npmAvailableOnBuildPath":  true,
+                            "fengariAvailableOnBuildPath":  true,
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_REPRODUCIBILITY.json",
+                            "path":  "KWR_6_1_0_ALPHA_43_REPRODUCIBILITY.json",
                             "result":  "PASS_WITH_DOCUMENTED_EXCEPTION",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -54,12 +54,12 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-14T18:47:00.6761145Z",
+                         "path":  "KWR_6_1_0_ALPHA_43_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-08-14T21:44:20.4007301Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
-                         "distributionEntries":  396,
-                         "developerEntries":  8975,
+                         "distributionEntries":  393,
+                         "developerEntries":  8947,
                          "extractedDistributionRuntime":  "PASS",
                          "extractedDeveloperRuntime":  "PASS",
                          "reproducibilityCheck":  "PASS_COMPATIBLE"
@@ -85,9 +85,9 @@
                       },
     "fieldEvidenceBinding":  {
                                  "candidateVersion":  "6.1.0-alpha.43",
-                                 "distributionSha256":  "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C",
+                                 "distributionSha256":  "84C3D18DB301F247CE78EBDA433FA3E73E6783830953A4A07D40C17A8E71C43A",
                                  "evidenceScope":  "candidate",
-                                 "canonicalArtifact":  "Generated tagged-release evidence artifact",
+                                 "canonicalArtifact":  "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
                                  "requiredProof":  [
                                                        "Screenshot or text capture of installed TOC version.",
                                                        "Recorded distribution ZIP SHA256 used for install.",
