@@ -24,6 +24,23 @@ function Sentinel:OverlaySuppressed()
             return true
         end
     end
+    -- Commander owns interactive planning and setup space. Sentinel is the
+    -- compact execution fallback, so it must yield instead of competing with
+    -- a visible Commander workspace, menu, or setup/fight HUD.
+    local commander = _G.KWR
+    if commander then
+        local main = commander.MainWindow
+        local hud = commander.HUD
+        local options = commander.Options
+        local function isShown(frame)
+            return frame and frame.IsShown and frame:IsShown()
+        end
+        if (main and (isShown(main.frame) or isShown(main.launcherMenu)))
+            or (hud and isShown(hud.frame))
+            or (options and isShown(options.frame)) then
+            return true
+        end
+    end
     return false
 end
 

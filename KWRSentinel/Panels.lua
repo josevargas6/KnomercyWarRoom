@@ -117,7 +117,12 @@ end
 
 function Panels:UpdateStatus(view)
     local frame = self:CreateStatus()
-    if Sentinel:OverlaySuppressed() or canShow(frame, "status") ~= true then
+    -- The status helper repeats the execution card's assignment data. Show
+    -- only one Sentinel surface at a time; the helper is the fallback when
+    -- the card is intentionally disabled.
+    local hudEnabled = Sentinel.db and Sentinel.db.profile and Sentinel.db.profile.hud
+        and Sentinel.db.profile.hud.enabled == true
+    if Sentinel:OverlaySuppressed() or hudEnabled or canShow(frame, "status") ~= true then
         frame:Hide()
         return
     end
