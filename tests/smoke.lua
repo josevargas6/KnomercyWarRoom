@@ -5729,7 +5729,10 @@ local activeCastIdentifier = KWR.CursorRing:BuildIdentifierModel({
     priorityCast = { name = "Priority Cast", remaining = 2.4 },
 }, false, identifierState, true)
 assert(activeCastIdentifier.showHealth == false
-    and activeCastIdentifier.showCast == false,
+    and activeCastIdentifier.showCast == false
+    and activeCastIdentifier.ringColor[1] == KWR.Theme.combatColors.STOP.outer[1]
+    and activeCastIdentifier.ringColor[2] == KWR.Theme.combatColors.STOP.outer[2]
+    and activeCastIdentifier.ringColor[3] == KWR.Theme.combatColors.STOP.outer[3],
     "Enemy identifier reintroduced duplicate health or cast clutter.")
 local expiredCastIdentifier = KWR.CursorRing:BuildIdentifierModel({
     name = "Enemy-Priest",
@@ -5864,6 +5867,10 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     assert(reticleObserved.label == "TARGET"
         and reticleObserved.detail ~= "",
         "Reticle did not carry observed target-state context when no command target applied.")
+    KWR.CursorRing:ApplyReticleState(reticleObserved)
+    assert(KWR.CursorRing.reticle.detailPlate:IsShown()
+        and KWR.CursorRing.reticle.detail.value == reticleObserved.detail,
+        "Reticle discarded the actionable detail behind its compact target cue.")
     do
         local previousNamePlateApi = C_NamePlate
         local previousUnitIsPlayer = UnitIsPlayer
@@ -5888,6 +5895,11 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         KWR.CursorRing:RefreshReticle()
         assert(KWR.CursorRing.reticle:IsShown(),
             "Preview reticle did not render for a reviewed PvP training dummy.")
+        local reticlePoint = KWR.CursorRing.reticle.points
+            and KWR.CursorRing.reticle.points[1]
+        assert(reticlePoint and reticlePoint[1] == "BOTTOM"
+            and reticlePoint[2] == previewDummyPlate and reticlePoint[3] == "TOP",
+            "Target class reticle was not placed above the native nameplate.")
         mockLiveEnemies.target.guid = "Creature-0-0-0-0-999999-0000000001"
         KWR.CursorRing:RefreshReticle()
         assert(not KWR.CursorRing.reticle:IsShown(),
