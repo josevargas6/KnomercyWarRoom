@@ -6618,6 +6618,41 @@ assert(KWR.db.profile.launcher.angle == 225
     and KWR.db.profile.combatRoster.enemyMini.x == 170,
     "Coordinated layout reset did not restore launcher and combat-roster positions.")
 
+-- Layout polling must remain deterministic: every managed visible surface
+-- keeps strata/clamping alive, while a fully hidden/idle UI does no work.
+do
+    local coordinator = KWR.LayoutCoordinator
+    local eventFrame = coordinator.eventFrame
+    local onUpdate = eventFrame and eventFrame:GetScript("OnUpdate")
+    assert(type(onUpdate) == "function", "Layout coordinator did not install OnUpdate")
+    local oldApply = coordinator.Apply
+    local applyCount = 0
+    coordinator.Apply = function() applyCount = applyCount + 1 return true end
+    for _, frame in ipairs({
+        KWR.MainWindow and KWR.MainWindow.frame,
+        KWR.MainWindow and KWR.MainWindow.launcherMenu,
+        KWR.HUD and KWR.HUD.frame,
+        KWR.Options and KWR.Options.frame,
+        KWR.AARWindow and KWR.AARWindow.frame,
+        KWR.CopyDialog and KWR.CopyDialog.frame,
+        _G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame,
+    }) do
+        if frame and frame.Hide then frame:Hide() end
+    end
+    if KWR.MainWindow and KWR.MainWindow.launcher then
+        KWR.MainWindow.launcher:Show()
+    end
+    onUpdate(eventFrame, 1.0)
+    assert(applyCount == 1, "Visible launcher did not activate layout polling")
+    if KWR.MainWindow and KWR.MainWindow.launcher then
+        KWR.MainWindow.launcher:Hide()
+    end
+    onUpdate(eventFrame, 1.0)
+    assert(applyCount == 1, "Idle hidden surfaces still triggered layout polling")
+    coordinator.Apply = oldApply
+    KWR.LayoutCoordinator:Reset()
+end
+
 local result = { passed = 0, failed = 0 }
 if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
     result = KWR.Diagnostics:Run()
