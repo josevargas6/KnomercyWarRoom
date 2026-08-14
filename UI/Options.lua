@@ -229,7 +229,7 @@ function Options:Create()
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
         "Cursor ring, reticle, guide lines, and live nameplate overlays.",
-        366, 0, 342, 376)
+        366, 0, 342, 486)
     createCheck(self, targetCard,
         "cursorEnabled",
         "Enable cursor ring",
@@ -290,6 +290,20 @@ function Options:Create()
                 KWR.CombatRoster:Layout(KWR.db.profile.combatRoster.mode or "BOTH")
             end
         end)
+    createCheck(self, targetCard,
+        "arenaLightweight",
+        "Keep lightweight target layer in arenas",
+        "Hides Commander boards and rosters while retaining only legal player nameplate markers and the target reticle.",
+        -396,
+        function() return KWR.db.profile.cursor.arenaLightweight ~= false end,
+        function(value) KWR.CursorRing:SetArenaLightweight(value) end)
+    createCheck(self, targetCard,
+        "worldPvPReticle",
+        "Keep target reticle in world PvP",
+        "Shows the KWR target reticle only for attackable player targets outside instances. It never changes TAB bindings or targets mobs/pets.",
+        -450,
+        function() return KWR.db.profile.cursor.worldPvPReticle ~= false end,
+        function(value) KWR.CursorRing:SetWorldPvPReticle(value) end)
 
     local reviewCard = createOptionCard(content,
         "Review And AAR",
@@ -363,7 +377,7 @@ function Options:Create()
     local rosterCard = createOptionCard(content,
         "Combat Roster",
         "Controls the combat-roster auto-show owner and position locks.",
-        366, -398, 342, 216)
+        366, -510, 342, 216)
     createCheck(self, rosterCard,
         "rosterAutoShow",
         "Auto-show combat roster when battleground begins",
@@ -381,7 +395,7 @@ function Options:Create()
     local utilityCard = createOptionCard(content,
         "Utilities",
         "Reset the saved positions for KWR-owned windows.",
-        366, -692, 342, 170)
+        366, -804, 342, 170)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
         if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
             KWR.LayoutCoordinator:Reset()

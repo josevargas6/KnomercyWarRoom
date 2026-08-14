@@ -75,6 +75,8 @@ local DEFAULTS = {
             battlefieldOrbs = true,
             markerMode = "NATIVE",
             assignmentBadges = true,
+            arenaLightweight = true,
+            worldPvPReticle = true,
         },
         launcher = {
             point = "CENTER",
@@ -276,6 +278,10 @@ local function normalizeProfile(profile)
     profile.cursor.markerMode = markerMode
     profile.cursor.assignmentBadges = KWR.Util:Boolean(
         profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
+    profile.cursor.arenaLightweight = KWR.Util:Boolean(
+        profile.cursor.arenaLightweight, defaults.cursor.arenaLightweight)
+    profile.cursor.worldPvPReticle = KWR.Util:Boolean(
+        profile.cursor.worldPvPReticle, defaults.cursor.worldPvPReticle)
     profile.combatRoster = normalizePointBucket(profile.combatRoster, defaults.combatRoster)
     if migrateRosterLayout then
         local legacyAnchor
