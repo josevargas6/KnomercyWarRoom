@@ -104,6 +104,23 @@ function Options:Refresh()
     end
 end
 
+function Options:Close()
+    local frame = self.frame
+    if frame and frame:IsShown() then
+        frame:Hide()
+    end
+end
+
+function Options:PrepareModal()
+    -- The launcher is an optional command surface. Keeping it open behind the
+    -- settings dialog makes the two KWR windows compete for clicks and puts
+    -- the close button beneath unrelated UI during combat.
+    local launcher = KWR.MainWindow and KWR.MainWindow.launcherMenu
+    if launcher and launcher:IsShown() then
+        launcher:Hide()
+    end
+end
+
 function Options:Create()
     if self.frame then return self.frame end
 
@@ -126,6 +143,10 @@ function Options:Create()
     frame.subtitle:SetText("RBG-focused controls only. PvE and arena stay silent.")
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -4, -4)
+    close:SetScript("OnClick", function()
+        Options:Close()
+    end)
+    frame.closeButton = close
 
     frame.scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     frame.scroll:SetPoint("TOPLEFT", 14, -66)
@@ -419,8 +440,20 @@ function Options:Create()
     frame.footerCard = footerCard
 
     frame:SetScript("OnShow", function()
+        Options:PrepareModal()
         Options:Refresh()
     end)
+
+    if type(UISpecialFrames) == "table" then
+        local known = false
+        for _, name in ipairs(UISpecialFrames) do
+            if name == frame:GetName() then
+                known = true
+                break
+            end
+        end
+        if not known then table.insert(UISpecialFrames, frame:GetName()) end
+    end
 
     self.frame = frame
     return frame
@@ -471,8 +504,11 @@ end
 
 function Options:Toggle()
     local frame = self:Create()
-    frame:SetShown(not frame:IsShown())
     if frame:IsShown() then
+        self:Close()
+    else
+        self:PrepareModal()
+        frame:Show()
         self:Refresh()
     end
 end
