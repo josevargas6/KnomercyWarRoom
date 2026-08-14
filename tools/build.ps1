@@ -210,9 +210,12 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
     }
 
+    Write-Output "KWR build checkpoint: compressing distribution archive"
     Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip -CompressionLevel Optimal
+    Write-Output "KWR build checkpoint: compressing developer archive"
     Compress-Archive -LiteralPath (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip -CompressionLevel Optimal
     if ($hasSentinel) {
+        Write-Output "KWR build checkpoint: compressing Sentinel archive"
         Compress-Archive -LiteralPath (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip -CompressionLevel Optimal
     }
 
@@ -312,6 +315,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         $reproTempRoot = Join-Path $tempBase ("kwr-repro-" + [guid]::NewGuid().ToString("N"))
         [IO.Directory]::CreateDirectory($reproTempRoot) | Out-Null
         try {
+            Write-Output "KWR build checkpoint: starting clean reproducibility build"
             Invoke-NestedBuildForReproducibility `
                 -BuildScriptPath (Join-Path $PSScriptRoot "build.ps1") `
                 -NestedOutputDirectory $reproTempRoot `
@@ -390,6 +394,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
                 artifacts = $comparison
             }
             Write-JsonFile -Path $reproducibilityFile -Data $reproducibility
+            Write-Output "KWR build checkpoint: reproducibility source comparison passed"
         } finally {
             if (Test-Path -LiteralPath $reproTempRoot) {
                 $resolvedRepro = [IO.Path]::GetFullPath($reproTempRoot)
@@ -416,6 +421,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     }
 
     if (-not $SkipPackageAudit) {
+        Write-Output "KWR build checkpoint: starting extracted-package audit"
         & (Join-Path $PSScriptRoot "package-audit.ps1") `
             -OutputDirectory $outputRoot `
             -SkipReproducibilityCheck:$SkipReproducibilityAudit

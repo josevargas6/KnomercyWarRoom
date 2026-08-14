@@ -475,19 +475,24 @@ if ($reproducibility -and $reproducibility.result -notlike "PASS*") {
 $tempRoot = Join-Path $tempBase ("kwr-package-audit-dev-" + [guid]::NewGuid().ToString("N"))
 [IO.Directory]::CreateDirectory($tempRoot) | Out-Null
 try {
+    Write-Output "KWR package-audit checkpoint: extracting developer archive ($($developerEntries.Count) entries)"
     Expand-Archive -LiteralPath $developerZip -DestinationPath $tempRoot
     $source = Join-Path $tempRoot "KnomercyWarRoom-Developer\src\KnomercyWarRoom"
+    Write-Output "KWR package-audit checkpoint: validating extracted developer source"
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source "tools\validate.ps1")
     if ($LASTEXITCODE -ne 0) { throw "Extracted developer validation failed." }
+    Write-Output "KWR package-audit checkpoint: auditing extracted developer knowledge"
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source "tools\knowledge-audit.ps1") -AllowGeneratedEvidenceOmission
     if ($LASTEXITCODE -ne 0) { throw "Extracted developer knowledge audit failed." }
 
     $fengari = Get-FengariInvocation
     Push-Location $source
     try {
+        Write-Output "KWR package-audit checkpoint: running extracted developer smoke"
         $smokeExit = Invoke-FengariScript -Invocation $fengari `
             -ScriptPath "tests\smoke.lua" -ExpectedMarker "KWR_SMOKE_PASS"
         if ($smokeExit -ne 0) { throw "Extracted developer smoke test failed." }
+        Write-Output "KWR package-audit checkpoint: running extracted developer soak"
         $soakExit = Invoke-FengariScript -Invocation $fengari `
             -ScriptPath "tests\soak.lua" -ExpectedMarker "KWR_SOAK_PASS"
         if ($soakExit -ne 0) { throw "Extracted developer soak test failed." }
@@ -496,6 +501,7 @@ try {
     }
 } finally {
     if (Test-Path -LiteralPath $tempRoot) {
+        Write-Output "KWR package-audit checkpoint: removing extracted developer workspace"
         $resolved = [IO.Path]::GetFullPath($tempRoot)
         if (-not $resolved.StartsWith($tempBase, [StringComparison]::OrdinalIgnoreCase)) {
             throw "Refusing to remove unexpected audit path: $resolved"
