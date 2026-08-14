@@ -71,7 +71,10 @@ local DEFAULTS = {
             reticleEnabled = true,
             reticleSize = 92,
             reticleAlpha = 0.84,
-            reticleGuides = true,
+            -- Full-screen ruler lines disappear under spell effects and make
+            -- target labels harder to parse. The lock ring is the default;
+            -- compact guides remain an opt-in accessibility aid.
+            reticleGuides = false,
             battlefieldOrbs = true,
             markerMode = "NATIVE",
             assignmentBadges = true,
