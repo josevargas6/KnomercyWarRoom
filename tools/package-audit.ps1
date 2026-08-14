@@ -479,7 +479,7 @@ try {
     $source = Join-Path $tempRoot "KnomercyWarRoom-Developer\src\KnomercyWarRoom"
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source "tools\validate.ps1")
     if ($LASTEXITCODE -ne 0) { throw "Extracted developer validation failed." }
-    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source "tools\knowledge-audit.ps1")
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source "tools\knowledge-audit.ps1") -AllowGeneratedEvidenceOmission
     if ($LASTEXITCODE -ne 0) { throw "Extracted developer knowledge audit failed." }
 
     $fengari = Get-FengariInvocation

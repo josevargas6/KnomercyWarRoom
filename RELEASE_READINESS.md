@@ -6,8 +6,9 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 41 is the authorized Retail 12.1 compatibility release and the product
-has entered refinement mode.** Alpha 40 remains the composition-aware opener
+**Alpha 42 is the authorized Retail 12.1 field-test candidate, pending this
+exact GitHub/CourseForge/Discord publication sequence; it is not a stable
+promotion.** Alpha 41 remains immutable historical evidence. Alpha 40 remains the composition-aware opener
 baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
 the last verified public prerelease.
 The recovery PR, KWR-047 source governance, package manifests, installed-folder

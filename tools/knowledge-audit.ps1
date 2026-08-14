@@ -1,5 +1,7 @@
 [CmdletBinding()]
-param()
+param(
+    [switch]$AllowGeneratedEvidenceOmission
+)
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
@@ -41,7 +43,7 @@ $required = @(
     "knowledge\runtime-preflight.json",
     "knowledge\field-test-readiness.json",
     "knowledge\field-blocker-report.json",
-    "knowledge\candidate-package-report.json",
+    $(if (-not $AllowGeneratedEvidenceOmission) { "knowledge\candidate-package-report.json" }),
     "knowledge\offline-completion-audit.json",
     "knowledge\fixtures\replay-template.json",
     "knowledge\fixtures\golden-label-template.json",
@@ -463,6 +465,7 @@ try {
 
 $candidatePackageSchemaPath = Join-Path $root "knowledge\schemas\candidate-package-report-schema.json"
 $candidatePackagePath = Join-Path $root "knowledge\candidate-package-report.json"
+if (-not $AllowGeneratedEvidenceOmission) {
 try {
     $candidatePackageSchema = Get-Content -LiteralPath $candidatePackageSchemaPath -Raw | ConvertFrom-Json
     $candidatePackage = Get-Content -LiteralPath $candidatePackagePath -Raw | ConvertFrom-Json
@@ -513,6 +516,7 @@ try {
     }
 } catch {
     $errors.Add("Candidate package report JSON is invalid: $($_.Exception.Message)")
+}
 }
 
 $offlineCompletionSchemaPath = Join-Path $root "knowledge\schemas\offline-completion-audit-schema.json"
