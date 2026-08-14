@@ -186,19 +186,9 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
         Copy-Item -LiteralPath $item.FullName -Destination $developerSource -Recurse
     }
-    # These volatile release receipts are generated after a package audit. They
-    # must not be included in the developer archive, otherwise a later evidence
-    # refresh changes the source tree the archive claims to represent. The
-    # tagged release and knowledge directory remain their canonical location.
-    foreach ($receipt in @(
-        "candidate-package-report.json",
-        "runtime-preflight.json",
-        "field-test-readiness.json",
-        "field-blocker-report.json",
-        "offline-completion-audit.json"
-    )) {
-        Remove-Item -LiteralPath (Join-Path $developerSource ("knowledge\" + $receipt)) -Force -ErrorAction SilentlyContinue
-    }
+    # This report contains hashes of the archive being built. Including it in
+    # that archive makes the evidence self-referential and necessarily stale.
+    Remove-Item -LiteralPath (Join-Path $developerSource "knowledge\candidate-package-report.json") -Force -ErrorAction SilentlyContinue
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
     foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile)) {
