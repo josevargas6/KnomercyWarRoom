@@ -85,6 +85,11 @@ local function shown(name)
     return frame and frame.IsShown and frame:IsShown()
 end
 
+local function moduleSurfaceShown(name)
+    local module = KWR[name]
+    return module and module.frame and module.frame.IsShown and module.frame:IsShown()
+end
+
 local function intersectionArea(a, b)
     local left = math.max(a.left, b.left)
     local right = math.min(a.right, b.right)
@@ -383,8 +388,11 @@ function LayoutCoordinator:OnInitialize()
         if self.elapsed < 1.0 then return end
         self.elapsed = 0
         local active = (KWR.MainWindow and KWR.MainWindow.frame and KWR.MainWindow.frame:IsShown())
+            or (KWR.MainWindow and KWR.MainWindow.launcherMenu and KWR.MainWindow.launcherMenu:IsShown())
             or (KWR.HUD and KWR.HUD.frame and KWR.HUD.frame:IsShown())
             or (KWR.Options and KWR.Options.frame and KWR.Options.frame:IsShown())
+            or moduleSurfaceShown("AARWindow")
+            or moduleSurfaceShown("CopyDialog")
             or (_G.KWRSentinel and _G.KWRSentinel.HUD and _G.KWRSentinel.HUD.frame
                 and _G.KWRSentinel.HUD.frame:IsShown())
         if not active then return end

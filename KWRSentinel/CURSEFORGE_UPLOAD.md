@@ -54,14 +54,14 @@ Package evidence:
 - Interface numbers: `120100`, `120007`
 - Package audit: passed.
 - Sentinel ZIP SHA-256: use the generated
-  `KWR_6_1_0_ALPHA_42_SHA256.txt` manifest next to the built artifact. The
+  `KWR_6_1_0_ALPHA_43_SHA256.txt` manifest next to the built artifact. The
   exact hash is intentionally not embedded here because this file is packaged
   inside the ZIP.
 
 Do not upload:
 
-- `KWR_6_1_0_ALPHA_42_DISTRIBUTION.zip`
-- `KWR_6_1_0_ALPHA_42_DEVELOPER.zip`
+- `KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip`
+- `KWR_6_1_0_ALPHA_43_DEVELOPER.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
 - workspace-only temp files
