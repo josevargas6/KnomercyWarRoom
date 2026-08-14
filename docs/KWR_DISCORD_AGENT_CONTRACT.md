@@ -38,11 +38,12 @@ review, merge, release, and CurseForge publication.
 
 ## Codex handoff
 
-Codex receives structured issues and release/maintenance event receipts. It may
-prepare a branch, tests, and a pull request. Discord never approves a merge,
-publishes a release, uploads to CurseForge, or changes addon doctrine directly.
-The bot may post the resulting GitHub link, status, and user-facing summary
-back to the appropriate channel after the guarded workflow reports success.
+Codex receives structured issues and release/maintenance receipts from the
+guarded GitHub workflows. It may prepare a branch, tests, and a pull request.
+Discord never approves a merge, publishes a release, uploads to CurseForge, or
+changes addon doctrine directly. Public release and maintenance notices are
+posted by the guarded webhook workflows; the bot provides interactive support
+and intake only.
 
 ## Data boundaries
 
@@ -51,24 +52,9 @@ identifiers, or unrelated chat history. Submitter identity is withheld by
 default. Retain only the minimum diagnostic or research evidence needed for
 review, with a deletion path for voluntary submissions.
 
-## Event envelope
+## Release boundary
 
-Release and maintenance dispatches use this shape:
-
-```json
-{
-  "event_type": "kwr_release_published",
-  "client_payload": {
-    "automation_role": "discord-research-support",
-    "codex_handoff": "github-review-only",
-    "source_repository": "owner/repository",
-    "release_url": "https://github.com/...",
-    "source_urls": [],
-    "confidence": "confirmed"
-  }
-}
-```
-
-The bot must validate the event type, source repository, immutable release URL,
-and payload version before posting. Invalid or duplicate events become private
-health evidence, not public messages.
+The bot has no GitHub repository-dispatch receiver. Do not configure or rely
+on a bot-dispatch credential for release or maintenance delivery. A release is
+public only after the guarded workflow has verified its immutable GitHub
+release, certified CurseForge artifact, and Discord webhook response.

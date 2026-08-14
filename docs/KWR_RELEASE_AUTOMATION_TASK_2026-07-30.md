@@ -4,7 +4,7 @@ title: Synchronize Commander and Sentinel release publication
 owner: unassigned
 priority: high
 risk: medium
-dependencies: [GitHub release, CurseForge project secrets, Discord webhook, optional bot dispatch token]
+dependencies: [GitHub release, CurseForge project secrets, Discord webhook]
 affected_modules: [.github/workflows/release.yml, tools/curseforge-upload-sentinel.ps1, tools/*discord-announce.ps1]
 ---
 
@@ -25,13 +25,13 @@ text and separate CurseForge project credentials.
 - Publish the existing GitHub prerelease.
 - Upload each addon to its own CurseForge project.
 - Post version-correct Commander and Sentinel Discord announcements.
-- Notify the separate Discord bot repository with a signed GitHub API dispatch.
 
 # Non-goals
 
 - No automatic stable-release promotion.
 - No Discord token or CurseForge credential in source control.
-- Bot notification is optional and skipped when its protected secrets are absent.
+- The interactive Discord bot is not a release-delivery receiver; guarded
+  webhooks are the verified publication path.
 - No upload of the developer archive or repository documentation.
 
 # Acceptance criteria
@@ -39,7 +39,8 @@ text and separate CurseForge project credentials.
 - [ ] Sentinel upload display name is read from its TOC.
 - [ ] Discord scripts can rewrite release version and archive links.
 - [ ] Release workflow uses separate Commander and Sentinel project secrets.
-- [ ] Bot dispatch carries both addon versions and the immutable release URL.
+- [ ] Guarded Discord notices reference both addon versions and the immutable
+  release URL.
 - [ ] All validation and deterministic tests pass before release changes are published.
 
 # Verification

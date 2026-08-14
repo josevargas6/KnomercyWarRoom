@@ -4,13 +4,24 @@ param(
     [string]$Section = "announcements",
     [string]$WebhookUrl = $env:DISCORD_WEBHOOK_URL,
     [string]$Version = "",
-    [string]$CommanderVersion = "6.1.0-alpha.33",
+    [string]$CommanderVersion = "",
     [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $sourcePath = Join-Path $root "docs\SENTINEL_DISCORD_CHANNEL_UPDATES.md"
+
+if ([string]::IsNullOrWhiteSpace($CommanderVersion)) {
+    $commanderTocPath = Join-Path $root "KnomercyWarRoom.toc"
+    $commanderVersionLine = Get-Content -LiteralPath $commanderTocPath |
+        Where-Object { $_ -match "^## Version:" } |
+        Select-Object -First 1
+    if ([string]::IsNullOrWhiteSpace($commanderVersionLine)) {
+        throw "Could not determine Commander version from $commanderTocPath."
+    }
+    $CommanderVersion = ($commanderVersionLine -replace "^## Version:\s*", "").Trim()
+}
 
 if (-not (Test-Path -LiteralPath $sourcePath)) {
     throw "Missing Discord update source: $sourcePath"

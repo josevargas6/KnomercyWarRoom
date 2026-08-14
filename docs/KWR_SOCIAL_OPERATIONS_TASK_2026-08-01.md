@@ -27,8 +27,9 @@ leaking secrets or private operational details.
   and may not match the active alpha.
 - GitHub profile/repository metadata and CurseForge project presentation need a
   public-copy audit.
-- Discord scripts can post prepared text, but bot dispatch and health evidence
-  are not yet proven end to end.
+- Discord scripts post prepared text through guarded webhooks. The former bot
+  repository dispatch was retired because no receiver consumed it; bot health
+  remains a separate hosting concern.
 - The private bot repository and its secrets cannot be inferred from addon files
   alone.
 

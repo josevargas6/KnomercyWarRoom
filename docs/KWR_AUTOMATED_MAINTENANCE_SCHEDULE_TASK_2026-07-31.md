@@ -4,21 +4,21 @@ title: Codify automated maintenance schedule across Discord GitHub CurseForge an
 owner: unassigned
 priority: high
 risk: medium
-dependencies: [GitHub Actions, Discord webhooks, optional Sentinel bot repository dispatch, CurseForge project secrets]
+dependencies: [GitHub Actions, Discord webhooks, CurseForge project secrets]
 affected_modules: [.github/workflows/kwr-automated-maintenance.yml, tools/kwr-maintenance-schedule.ps1, docs/maintainers/AUTOMATED_MAINTENANCE_SCHEDULE.md]
 ---
 
 # Objective
 
 Create an executable maintenance schedule that coordinates the local addon
-checks, Discord status updates, optional Sentinel Discord bot notification,
-GitHub scheduled automation, and CurseForge release-readiness validation.
+checks, Discord status updates, GitHub scheduled automation, and CurseForge
+release-readiness validation.
 
 # User outcome
 
 Maintainers can run one documented schedule locally or through GitHub Actions
 and know which lane handles daily upkeep, patch-day checks, release dry-runs,
-Discord reporting, bot notification, and CurseForge readiness.
+Discord reporting and CurseForge readiness.
 
 # Current behavior
 
@@ -31,8 +31,8 @@ in schedule runner that executes those tools by maintenance lane.
 - Add a PowerShell maintenance runner with explicit schedule lanes.
 - Add a GitHub Actions workflow with cron triggers and manual dispatch.
 - Keep all external writes behind owner confirmation.
-- Generate dry-run evidence for Discord, bot dispatch, GitHub CI, and
-  CurseForge upload metadata without requiring production credentials.
+- Generate dry-run evidence for Discord, GitHub CI, and CurseForge upload
+  metadata without requiring production credentials.
 - Document the schedule, secrets, authority boundaries, and rollback path.
 
 # Non-goals
@@ -48,8 +48,9 @@ in schedule runner that executes those tools by maintenance lane.
 
 GitHub scheduled workflows run in UTC. The runner converts current time to
 Central time for schedule classification. Scheduled runs default to dry-run
-mode; external Discord posts and bot dispatches require a manual workflow
-dispatch with `confirm_external_writes=PUBLISH`.
+mode; external Discord posts require a manual workflow dispatch with
+`confirm_external_writes=PUBLISH`. Repository dispatch was retired because the
+bot repository has no receiver for those events.
 
 # Acceptance criteria
 
@@ -58,7 +59,7 @@ dispatch with `confirm_external_writes=PUBLISH`.
 - [ ] `.github/workflows/kwr-automated-maintenance.yml` runs the auto lane on
   the maintenance cadence and supports manual lane dispatch.
 - [ ] `docs/maintainers/AUTOMATED_MAINTENANCE_SCHEDULE.md` documents the full
-  Discord, bot, GitHub, CurseForge, and Codex operating model.
+  Discord, GitHub, CurseForge, and Codex operating model.
 - [ ] External writes are blocked unless explicitly confirmed by an owner.
 - [ ] Local validation passes.
 

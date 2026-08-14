@@ -44,11 +44,6 @@ on:
         required: true
         default: false
         type: boolean
-      notify_bot:
-        description: Dispatch a maintenance event to the Sentinel bot repository.
-        required: true
-        default: false
-        type: boolean
       confirm_external_writes:
         description: Type PUBLISH to allow external writes in external mode.
         required: false
@@ -96,8 +91,6 @@ jobs:
           DISCORD_WEBHOOK_ANNOUNCEMENTS: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS || secrets.WEBHOOK_ANNOUNCEMENTS }}
           DISCORD_WEBHOOK_SUPPORT: ${{ secrets.DISCORD_WEBHOOK_SUPPORT || secrets.WEBHOOK_SUPPORT }}
           DISCORD_WEBHOOK_FIELD_TESTING: ${{ secrets.DISCORD_WEBHOOK_FIELD_TESTING || secrets.FIELD_TESTING }}
-          KWR_BOT_REPOSITORY: ${{ vars.KWR_BOT_REPOSITORY || secrets.KWR_BOT_REPOSITORY }}
-          KWR_BOT_DISPATCH_TOKEN: ${{ secrets.KWR_BOT_DISPATCH_TOKEN }}
           CURSEFORGE_COMMANDER_PROJECT_ID: "1632632"
           CURSEFORGE_SENTINEL_PROJECT_ID: "1614463"
           CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN }}
@@ -114,7 +107,6 @@ jobs:
               $mode = "${{ inputs.mode }}"
               $confirm = "${{ inputs.confirm_external_writes }}"
               $postDiscord = [System.Convert]::ToBoolean("${{ inputs.post_discord }}")
-              $notifyBot = [System.Convert]::ToBoolean("${{ inputs.notify_bot }}")
           }
 
           $maintenanceParameters = @{
@@ -126,10 +118,6 @@ jobs:
           if ($postDiscord) {
               $maintenanceParameters.PostDiscord = $true
           }
-          if ($notifyBot) {
-              $maintenanceParameters.NotifyBot = $true
-          }
-
           ./tools/kwr-maintenance-schedule.ps1 @maintenanceParameters
 
       - name: Upload maintenance evidence

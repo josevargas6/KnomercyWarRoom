@@ -26,8 +26,6 @@ Required repository variables/secrets:
 
 | Name | Type | Purpose |
 | --- | --- | --- |
-| `KWR_BOT_REPOSITORY` | variable | `owner/kwr-sentinel-bot` dispatch target |
-| `KWR_BOT_DISPATCH_TOKEN` | secret | narrowly scoped repository-dispatch credential |
 | `CURSEFORGE_API_TOKEN` | environment secret | protected CurseForge upload |
 | `DISCORD_WEBHOOK_ANNOUNCEMENTS` | environment secret | public release posts |
 | `DISCORD_WEBHOOK_SUPPORT` | environment secret | support notices |
@@ -72,8 +70,9 @@ Run the protected GitHub workflow `KWR Automated Maintenance Schedule` with
 2. upload and receive CurseForge file IDs;
 3. verify the public CurseForge files;
 4. post announcement/support/field-test messages;
-5. dispatch the bot event;
-6. receive a bot health receipt and deduplicated event receipt.
+5. verify the Commander and Sentinel Discord release notices, including their
+   matching version and release link;
+6. record the successful release workflow receipt.
 
 Record the run URL, release URL, CurseForge file IDs, bot commit/image digest,
 and Discord message IDs in a private maintenance receipt. Do not paste any
@@ -81,8 +80,8 @@ secret values into that receipt.
 
 ## Rotation and recovery
 
-Rotate the CurseForge token, GitHub dispatch credential, Discord token, and
-webhooks independently. After rotation, rerun the dry-run and protected
+Rotate the CurseForge token and Discord webhooks independently. After
+rotation, rerun the dry-run and protected
 external verification. If any credential is suspected exposed, revoke it
 first, disable external workflows, rotate, then re-enable the production
 environment after a successful canary.

@@ -10,8 +10,6 @@ Set these as non-secret Actions variables:
 
 | Variable | Value |
 | --- | --- |
-| `KWR_BOT_REPOSITORY` | `josevargas6/kwr-sentinel-bot` |
-| `KWR_AUTOMATION_APP_ID` | `4459432` |
 | `CURSEFORGE_COMMANDER_PROJECT_ID` | `1632632` |
 | `CURSEFORGE_SENTINEL_PROJECT_ID` | `1614463` |
 | `KWR_RELEASE_CHANNEL` | `alpha` |
@@ -23,8 +21,6 @@ Create a GitHub Environment named `production` and add:
 | Secret | Scope |
 | --- | --- |
 | `CURSEFORGE_API_TOKEN` | CurseForge upload for both approved project IDs |
-| `KWR_AUTOMATION_APP_PRIVATE_KEY` | Short-lived App token minting for repository dispatch |
-| `KWR_BOT_DISPATCH_TOKEN` | Temporary rollback credential; remove after App-token canary |
 | `DISCORD_WEBHOOK_ANNOUNCEMENTS` | Public release announcements |
 | `DISCORD_WEBHOOK_SUPPORT` | Support notices |
 | `DISCORD_WEBHOOK_FIELD_TESTING` | Field-test coordination |
@@ -112,8 +108,9 @@ After configuration, run this sequence once:
 3. Bot `/ping` and one private test submission.
 4. Protected release workflow with an alpha artifact.
 5. Verify CurseForge public file visibility.
-6. Verify Discord message delivery and bot event deduplication.
-7. Record run URL, file IDs, message IDs, and bot commit/image digest.
+6. Verify Commander and Sentinel Discord message delivery with the matching
+   release version and URL.
+7. Record run URL, file IDs, and message IDs.
 
 After the canary passes, scheduled maintenance can run without routine owner
 approval. Rotate all credentials independently and rerun the canary after any

@@ -20,8 +20,9 @@ These items cannot be truthfully configured from this checkout:
   service is ready: `CURSEFORGE_API_TOKEN`, `CURSEFORGE_GAME_VERSION_IDS`, and
   `DISCORD_WEBHOOK_ANNOUNCEMENTS`. Project IDs are public numeric workflow
   configuration: Commander `1632632`, Sentinel `1614463`.
-- [ ] If Sentinel dispatch is enabled, add `KWR_BOT_DISPATCH_TOKEN` and
-  `KWR_BOT_REPOSITORY` only after verifying the destination repository.
+- [x] Do not configure `KWR_BOT_DISPATCH_TOKEN` or `KWR_BOT_REPOSITORY`:
+  the bot has no repository-dispatch receiver. Direct Discord webhook
+  publication is the verified release-notice path.
 - [ ] Create separate development Discord application, token, channels,
   webhooks, and allowlists.
 - [x] Confirm Commander `1632632` and Sentinel `1614463` CurseForge channel mapping.
