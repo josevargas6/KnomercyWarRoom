@@ -1,49 +1,49 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-14T14:45:01Z",
+    "generatedAt":  "2026-08-14T18:47:34Z",
     "candidateVersion":  "6.1.0-alpha.43",
-    "buildOutputDirectory":  "artifacts/candidate-package/alpha43",
+    "buildOutputDirectory":  "artifacts/season2-final",
     "distributionArtifact":  {
                                  "name":  "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                 "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                 "size":  922679,
-                                 "sha256":  "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78"
+                                 "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+                                 "size":  900300,
+                                 "sha256":  "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                              "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                              "size":  42888831,
-                              "sha256":  "AF5A543FE77A518050DBB0DDBBB8D710EB8EC1830CB6339A181344DF86FD892A"
+                              "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
+                              "size":  43004429,
+                              "sha256":  "993E5C8DBCC5BE36FAFED9780CAAACCF32304F5C2C98C0C52F418EAF3A82AE1B"
                           },
     "hashManifest":  {
-                         "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_SHA256.txt",
+                         "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_SHA256.txt",
                          "lines":  [
-                                       "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
-                                       "AF5A543FE77A518050DBB0DDBBB8D710EB8EC1830CB6339A181344DF86FD892A  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
-                                       "49EF8E974731C8D41BF2980DFF90E5182D95F06AF6220C6B538742646A3223B1  KWRSentinel_6_1_0_ALPHA_43.zip"
+                                       "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C  KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+                                       "993E5C8DBCC5BE36FAFED9780CAAACCF32304F5C2C98C0C52F418EAF3A82AE1B  KWR_6_1_0_ALPHA_43_DEVELOPER.zip",
+                                       "74097D5858B62A311B705C2DCB702DCCD55147051F3E4642AF5A1E465930CE66  KWRSentinel_6_1_0_ALPHA_43.zip"
                                    ]
                      },
     "sourceManifest":  {
-                           "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "3675721814F1B563B4555725C9D58743C033B2F8FB38F0BB046CD6316A647C59",
+                           "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "9B854055179C30B26A0CE79851F99A80FBEF13267BE72BA5321D4C62F19A26DA",
                            "distributionEntryCount":  393,
-                           "developerDigest":  "33094C0ABB7EEEB80C57AC9F0D195C36162661FBB992F3E752AFF8A28532C682",
-                           "developerEntryCount":  8965
+                           "developerDigest":  "238078957FEAE0C59F02E0B3951CD63ECDE9F520E111923DB4AD16D45C098926",
+                           "developerEntryCount":  8966
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-14T14:29:41.0035371Z",
+                            "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-14T18:36:47.4788550Z",
                             "sentinelIncluded":  true,
-                            "powershellEdition":  "Core",
-                            "powershellVersion":  "7.6.4",
-                            "nodeAvailableOnBuildPath":  true,
-                            "npmAvailableOnBuildPath":  true,
-                            "fengariAvailableOnBuildPath":  true,
+                            "powershellEdition":  "Desktop",
+                            "powershellVersion":  "5.1.26100.9168",
+                            "nodeAvailableOnBuildPath":  false,
+                            "npmAvailableOnBuildPath":  false,
+                            "fengariAvailableOnBuildPath":  false,
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_REPRODUCIBILITY.json",
+                            "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_REPRODUCIBILITY.json",
                             "result":  "PASS_WITH_DOCUMENTED_EXCEPTION",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -54,12 +54,12 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "artifacts/candidate-package/alpha43/KWR_6_1_0_ALPHA_43_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-14T14:40:36.0209929Z",
+                         "path":  "artifacts/season2-final/KWR_6_1_0_ALPHA_43_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-08-14T18:47:00.6761145Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
                          "distributionEntries":  396,
-                         "developerEntries":  8974,
+                         "developerEntries":  8975,
                          "extractedDistributionRuntime":  "PASS",
                          "extractedDeveloperRuntime":  "PASS",
                          "reproducibilityCheck":  "PASS_COMPATIBLE"
@@ -85,7 +85,7 @@
                       },
     "fieldEvidenceBinding":  {
                                  "candidateVersion":  "6.1.0-alpha.43",
-                                 "distributionSha256":  "8508094D1D9DC9B8C7F20CE919E1BD0D1602AE8D8193D253C6BEAAEB51CEFF78",
+                                 "distributionSha256":  "44AF4F41CE030EAFF2D3AEE40C224D536765AE4EA6C40F953E0F91D705FA378C",
                                  "evidenceScope":  "candidate",
                                  "canonicalArtifact":  "Generated tagged-release evidence artifact",
                                  "requiredProof":  [

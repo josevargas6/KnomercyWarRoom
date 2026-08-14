@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-offline-completion-audit",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-14T14:23:16Z",
+    "generatedAt":  "2026-08-14T18:47:35Z",
     "candidateVersion":  "6.1.0-alpha.43",
     "offlinePrepared":  true,
     "fieldTestingPrepared":  false,
