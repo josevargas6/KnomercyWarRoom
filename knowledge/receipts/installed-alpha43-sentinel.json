@@ -1,0 +1,40 @@
+{
+    "schema":  "kwr-deployment-manifest-audit",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-08-15T15:59:23.2663868+00:00",
+    "packageRoot":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-alpha43-cutover-20260815\\sentinel\\KWRSentinel",
+    "installedRoot":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KWRSentinel",
+    "synchronized":  false,
+    "rollbackSnapshot":  null,
+    "before":  {
+                   "packageEntries":  12,
+                   "installedEntries":  12,
+                   "missing":  [
+
+                               ],
+                   "changed":  [
+
+                               ],
+                   "extra":  [
+
+                             ],
+                   "packageDigest":  "13C6282D91B6FA7B2F57C7C05D73162753D420FD2F1CCDACABE8C8A3EB3F84E3",
+                   "installedDigest":  "13C6282D91B6FA7B2F57C7C05D73162753D420FD2F1CCDACABE8C8A3EB3F84E3"
+               },
+    "after":  {
+                  "packageEntries":  12,
+                  "installedEntries":  12,
+                  "missing":  [
+
+                              ],
+                  "changed":  [
+
+                              ],
+                  "extra":  [
+
+                            ],
+                  "packageDigest":  "13C6282D91B6FA7B2F57C7C05D73162753D420FD2F1CCDACABE8C8A3EB3F84E3",
+                  "installedDigest":  "13C6282D91B6FA7B2F57C7C05D73162753D420FD2F1CCDACABE8C8A3EB3F84E3"
+              },
+    "result":  "PASS"
+}

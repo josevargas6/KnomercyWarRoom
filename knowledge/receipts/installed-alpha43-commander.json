@@ -1,0 +1,41 @@
+{
+    "schema":  "kwr-deployment-manifest-audit",
+    "schemaVersion":  1,
+    "generatedAt":  "2026-08-15T15:59:22.9183744+00:00",
+    "packageRoot":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-alpha43-cutover-20260815\\distribution\\KnomercyWarRoom",
+    "installedRoot":  "D:\\Program Files\\World of Warcraft\\_retail_\\Interface\\AddOns\\KnomercyWarRoom",
+    "synchronized":  true,
+    "rollbackSnapshot":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-alpha43-pre-sync-backup\\KnomercyWarRoom",
+    "before":  {
+                   "packageEntries":  393,
+                   "installedEntries":  393,
+                   "missing":  [
+
+                               ],
+                   "changed":  [
+                                   "RELEASE_READINESS.md",
+                                   "Runtime/SentinelBridge.lua"
+                               ],
+                   "extra":  [
+
+                             ],
+                   "packageDigest":  "B56817DAA8AB4BF1E69F30049DAE3790ED65B86D0622E562F38C35EC333E4C7D",
+                   "installedDigest":  "6280AC3E63D5AEF1A9D55E2FD56841B8D79766F0F4552903DD7C409131782589"
+               },
+    "after":  {
+                  "packageEntries":  393,
+                  "installedEntries":  393,
+                  "missing":  [
+
+                              ],
+                  "changed":  [
+
+                              ],
+                  "extra":  [
+
+                            ],
+                  "packageDigest":  "B56817DAA8AB4BF1E69F30049DAE3790ED65B86D0622E562F38C35EC333E4C7D",
+                  "installedDigest":  "B56817DAA8AB4BF1E69F30049DAE3790ED65B86D0622E562F38C35EC333E4C7D"
+              },
+    "result":  "PASS"
+}
