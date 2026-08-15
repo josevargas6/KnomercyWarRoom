@@ -287,9 +287,8 @@ local function normalizeProfile(profile)
         and (savedReticleSize == nil or savedReticleSize == 92) then
         profile.cursor.reticleSize = defaults.cursor.reticleSize
     end
-    if savedReticlePresentation < defaults.cursor.reticlePresentationVersion then
-        profile.cursor.reticleGuides = true
-    end
+    -- Missing guide preferences inherit the new default through normalization;
+    -- an explicit opt-out remains authoritative across the version stamp.
     profile.cursor.reticlePresentationVersion = defaults.cursor.reticlePresentationVersion
     profile.cursor.reticleAlpha = KWR.Util:Number(
         profile.cursor.reticleAlpha, defaults.cursor.reticleAlpha)

@@ -712,6 +712,23 @@ do
 end
 do
     local savedDb = KWR.Util:Copy(KWR_DB)
+    KWR_DB = {
+        schemaVersion = 60129,
+        profile = {
+            cursor = {
+                reticleGuides = false,
+            },
+        },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.cursor.reticleGuides == false
+        and KWR.db.profile.cursor.reticlePresentationVersion == 3,
+        "Reticle presentation migration did not preserve an explicit guide opt-out.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
     for _, savedMode in ipairs({ "OFF", "TACTICAL_ONLY" }) do
         KWR_DB = {
             schemaVersion = 60129,

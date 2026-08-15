@@ -10,8 +10,8 @@
 - Included the reviewed field-test refinements for target-reticle clarity,
   protected Sentinel aura handling, compact battlefield identifiers, and
   stable roster/marker presentation.
-- Preserved explicit battlefield-marker and orb opt-outs when older profiles
-  receive the stable marker-presentation defaults.
+- Preserved explicit reticle-guide, battlefield-marker, and orb opt-outs when
+  older profiles receive the stable presentation defaults.
 - Made tagged publication choose GitHub and CurseForge release channels from
   the version: stable semantic versions publish as releases, while suffixed
   versions remain prereleases.
