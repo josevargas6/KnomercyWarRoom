@@ -678,8 +678,10 @@ function CursorRing:RefreshOrbForUnit(unit, state)
     -- Yield only the basic KWR icon on an active external overlay; retain KWR
     -- assignment badges and target reticle, which carry separate decisions.
     local externalIdentity = plate.EnjoyPvPIconsOverlay
-    if externalIdentity and (type(externalIdentity.IsShown) ~= "function"
-        or externalIdentity:IsShown()) then
+    local externalType = type(externalIdentity)
+    if (externalType == "table" or externalType == "userdata")
+        and (type(externalIdentity.IsShown) ~= "function"
+            or externalIdentity:IsShown()) then
         frame:Hide()
         return false
     end
