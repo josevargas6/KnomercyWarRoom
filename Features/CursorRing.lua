@@ -674,6 +674,15 @@ function CursorRing:RefreshOrbForUnit(unit, state)
         or self:FindEnemyRecord(unit, state)
     local mode = self:ResolveMarkerMode()
     self:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
+    -- EnjoyPvPIcons is the persistent player-identity layer when installed.
+    -- Yield only the basic KWR icon on an active external overlay; retain KWR
+    -- assignment badges and target reticle, which carry separate decisions.
+    local externalIdentity = plate.EnjoyPvPIconsOverlay
+    if externalIdentity and (type(externalIdentity.IsShown) ~= "function"
+        or externalIdentity:IsShown()) then
+        frame:Hide()
+        return false
+    end
     if mode == "OFF" or mode == "TACTICAL_ONLY" then
         frame:Hide()
         return false
