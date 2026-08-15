@@ -462,6 +462,18 @@ local function nameplateReadoutWidgets(plate)
     return { unitFrame.healthBar, unitFrame.name, unitFrame.nameText }
 end
 
+-- Blizzard's nameplate container can include large invisible bounds that vary
+-- by unit and client layout. Anchor KWR tokens to the visible health bar
+-- instead, so every player marker shares the same screen-space alignment.
+local IDENTITY_GAP = 8
+local function identityAnchor(plate)
+    local unitFrame = plate and plate.UnitFrame
+    local kind = type(unitFrame)
+    if kind ~= "table" and kind ~= "userdata" then return plate end
+    return unitFrame and (unitFrame.healthBar or unitFrame.name or unitFrame.nameText)
+        or plate
+end
+
 function CursorRing:RestoreFocusReadout(plate)
     if not plate or not plate.KWRFocusReadout then return end
     for widget, alpha in pairs(plate.KWRFocusReadout) do
@@ -567,8 +579,9 @@ function CursorRing:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, m
         frame:Hide()
         return
     end
+    local anchor = identityAnchor(plate)
     frame:ClearAllPoints()
-    frame:SetPoint("TOP", plate, "BOTTOM", 0, -2)
+    frame:SetPoint("TOP", anchor, "BOTTOM", 0, -4)
     frame.text:SetText(text)
     frame:SetShown(true)
 end
@@ -708,7 +721,7 @@ function CursorRing:RefreshOrbForUnit(unit, state)
     end
     frame:SetParent(plate)
     frame:ClearAllPoints()
-    frame:SetPoint("BOTTOM", plate, "TOP", 0, 4)
+    frame:SetPoint("BOTTOM", identityAnchor(plate), "TOP", 0, IDENTITY_GAP)
     if isFriend then
         if not record then
             frame:Hide()
@@ -1077,10 +1090,11 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    -- KWR owns the selected-target lock. Its centred class icon is the same
-    -- identity language as the always-on player markers, with no dependency
-    -- on another addon or an external frame.
-    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
+    -- Place the reticle centre exactly where this unit's regular identity
+    -- token would sit. A selected target therefore grows from the same icon
+    -- position into a target lock instead of jumping to a different anchor.
+    self.reticle:SetPoint("CENTER", identityAnchor(plate), "TOP", 0,
+        IDENTITY_GAP + (ORB_FRAME_HEIGHT / 2))
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()

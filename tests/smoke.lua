@@ -5932,9 +5932,9 @@ if previewState and previewState.snapshot and previewState.snapshot.context
             "Preview reticle did not render for a reviewed PvP training dummy.")
         local reticlePoint = KWR.CursorRing.reticle.points
             and KWR.CursorRing.reticle.points[1]
-        assert(reticlePoint and reticlePoint[1] == "BOTTOM"
+        assert(reticlePoint and reticlePoint[1] == "CENTER"
             and reticlePoint[2] == previewDummyPlate and reticlePoint[3] == "TOP",
-            "Target class reticle was not placed above the native nameplate.")
+            "Target class reticle was not aligned to the native nameplate anchor.")
         mockLiveEnemies.target.guid = "Creature-0-0-0-0-999999-0000000001"
         KWR.CursorRing:RefreshReticle()
         assert(not KWR.CursorRing.reticle:IsShown(),
