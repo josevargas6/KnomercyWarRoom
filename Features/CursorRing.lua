@@ -352,7 +352,10 @@ function CursorRing:CreateOrbFrame(unit)
     frame:Hide()
 
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
-    frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
+    -- Marker art and the selected-target reticle share the frame centre.
+    -- Do not add an inner visual offset here: it breaks the handoff from a
+    -- floating healer/class token into the target lock.
+    frame.ring:SetPoint("CENTER", frame, "CENTER")
     frame.ring:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
     applyEnemyRingTexture(frame.ring)
     frame.ring:SetBlendMode("ADD")
