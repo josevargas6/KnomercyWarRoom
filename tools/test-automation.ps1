@@ -107,10 +107,13 @@ Assert-True `
     -Condition ($commanderAnnouncement -match 'Retail 12\.1\.0 and 12\.0\.7') `
     -Message "Commander announcement rewrote supported WoW client versions."
 $sentinelAnnouncement = @(& (Join-Path $root "tools\sentinel-discord-announce.ps1") `
-    -Section announcements -Version "6.1.1-alpha.1" -CommanderVersion "6.1.1-alpha.1" -DryRun) -join "`n"
+    -Section announcements -Version "6.1.1-alpha.1" -CommanderVersion "6.0.9" -DryRun) -join "`n"
 Assert-True `
     -Condition ($sentinelAnnouncement -match 'Sentinel 6\.1\.1-alpha\.1') `
     -Message "Sentinel announcement did not substitute the requested addon version."
+Assert-True `
+    -Condition ($sentinelAnnouncement -match 'Commander 6\.0\.9') `
+    -Message "Sentinel announcement replaced a distinct Commander version with its own version."
 Assert-True `
     -Condition ($sentinelAnnouncement -match 'Retail 12\.1\.0 and 12\.0\.7') `
     -Message "Sentinel announcement rewrote supported WoW client versions."

@@ -52,13 +52,17 @@ if (-not $match.Success) {
 }
 
 $message = $match.Groups[1].Value.Trim()
+$commanderVersionPlaceholder = "__KWR_COMMANDER_VERSION__"
+$message = $message.Replace(
+    "Commander $sourceCommanderVersion",
+    "Commander $commanderVersionPlaceholder")
 if (-not [string]::IsNullOrWhiteSpace($Version)) {
     $message = $message.Replace($sourceVersion, $Version)
     $message = $message.Replace(
         $sourceVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_'),
         $Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
 }
-$message = $message.Replace("Commander $sourceCommanderVersion", "Commander $CommanderVersion")
+$message = $message.Replace($commanderVersionPlaceholder, $CommanderVersion)
 if ($DryRun -or [string]::IsNullOrWhiteSpace($WebhookUrl)) {
     Write-Output "DRY RUN: Discord section '$Section'"
     Write-Output $message

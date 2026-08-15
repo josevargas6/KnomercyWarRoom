@@ -14,7 +14,8 @@
   older profiles receive the stable presentation defaults.
 - Made tagged publication choose GitHub and CurseForge release channels from
   the version: stable semantic versions publish as releases, while suffixed
-  versions remain prereleases.
+  versions remain prereleases. Commander and Sentinel announcement versions
+  remain distinct when their release lanes differ.
 - Kept Retail 12.1 patch-dependent overlays fail-closed pending separately
   reviewed official tuning data; generic doctrine and safety fallbacks remain
   available.
