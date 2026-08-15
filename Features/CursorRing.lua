@@ -1063,9 +1063,20 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    -- The centered class icon belongs above the native nameplate, not on top
-    -- of Blizzard's target name/health information.
-    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
+    -- When EnjoyPvPIcons supplies the always-on identity token, lock the KWR
+    -- reticle directly to that icon. Otherwise preserve the native-nameplate
+    -- fallback. This keeps the targeted player as the one visual focal point:
+    -- class icon at centre, command ring around it, health bar below.
+    local externalIdentity = plate.EnjoyPvPIconsOverlay
+    local externalType = type(externalIdentity)
+    local externalIcon = (externalType == "table" or externalType == "userdata")
+        and externalIdentity.icon or nil
+    local iconType = type(externalIcon)
+    if iconType == "table" or iconType == "userdata" then
+        self.reticle:SetPoint("CENTER", externalIcon, "CENTER")
+    else
+        self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
+    end
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()
