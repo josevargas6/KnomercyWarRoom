@@ -712,6 +712,27 @@ do
 end
 do
     local savedDb = KWR.Util:Copy(KWR_DB)
+    for _, savedMode in ipairs({ "OFF", "TACTICAL_ONLY" }) do
+        KWR_DB = {
+            schemaVersion = 60129,
+            profile = {
+                cursor = {
+                    battlefieldOrbs = false,
+                    markerMode = savedMode,
+                },
+            },
+        }
+        KWR:InitializeDatabase()
+        assert(KWR.db.profile.cursor.battlefieldOrbs == false
+            and KWR.db.profile.cursor.markerMode == savedMode
+            and KWR.db.profile.cursor.markerPresentationVersion == 2,
+            "Marker presentation migration did not preserve an explicit opt-out.")
+    end
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
     KWR_DB = {
         schemaVersion = 60128,
         profile = {

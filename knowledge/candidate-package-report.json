@@ -1,44 +1,44 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-15T22:33:50Z",
+    "generatedAt":  "2026-08-15T22:59:32Z",
     "candidateVersion":  "6.1.0",
-    "buildOutputDirectory":  "kwr-stable-610-20260815-final",
+    "buildOutputDirectory":  "kwr-stable-610-20260815-reviewed",
     "distributionArtifact":  {
                                  "name":  "KWR_6_1_0_DISTRIBUTION.zip",
                                  "path":  "KWR_6_1_0_DISTRIBUTION.zip",
-                                 "size":  902893,
-                                 "sha256":  "A438F48695070EBB3E640271712B843E69E5DADD10F7D413BA1ABF4CCF32B7B9"
+                                 "size":  902918,
+                                 "sha256":  "8A02CD10BDBA7AA53540614DAFA7E6ABAEBFCBF933D382EBB2BEF62466280065"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_0_DEVELOPER.zip",
                               "path":  "KWR_6_1_0_DEVELOPER.zip",
-                              "size":  15944290,
-                              "sha256":  "58A89DE4EC0E89B521CD2A022AC3936A91364B796C84F8D5222D2E4DD506BC90"
+                              "size":  15944432,
+                              "sha256":  "18D6D9F10FC05220D1A55D7CCA2D23284853A167083306E73B0089F21C9E6CD9"
                           },
     "hashManifest":  {
                          "path":  "KWR_6_1_0_SHA256.txt",
                          "lines":  [
-                                       "A438F48695070EBB3E640271712B843E69E5DADD10F7D413BA1ABF4CCF32B7B9  KWR_6_1_0_DISTRIBUTION.zip",
+                                       "8A02CD10BDBA7AA53540614DAFA7E6ABAEBFCBF933D382EBB2BEF62466280065  KWR_6_1_0_DISTRIBUTION.zip",
                                        "66676778658E08F3CFE3CB9ED9BFF8CCE58B810C359A4DE358F519BD5B2D6C8E  KWRSentinel_6_1_0.zip"
                                    ]
                      },
     "developerHashManifest":  {
                                   "path":  "KWR_6_1_0_DEVELOPER_CHECKSUM.txt",
                                   "lines":  [
-                                                "58A89DE4EC0E89B521CD2A022AC3936A91364B796C84F8D5222D2E4DD506BC90  KWR_6_1_0_DEVELOPER.zip"
+                                                "18D6D9F10FC05220D1A55D7CCA2D23284853A167083306E73B0089F21C9E6CD9  KWR_6_1_0_DEVELOPER.zip"
                                             ]
                               },
     "sourceManifest":  {
                            "path":  "KWR_6_1_0_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "3EBBFF95BF3C2CEE15FB6A9C7F2AEC0FEAC115007309B2B848097FAFC6D9DE53",
+                           "distributionDigest":  "A710799FE70C47FDD5F76E88345F31134F5213EE65A02E0EB0184134740C74F3",
                            "distributionEntryCount":  393,
-                           "developerDigest":  "56DF96E15AFB4D08FE1D4A01393102FE619BF3F45D411D3775A761F601E2ACDA",
+                           "developerDigest":  "63A3C70FE37A6D21B35AC7D89AFE9099126EFD3DFA9DD572A4E6DA61AE3B17C9",
                            "developerEntryCount":  8952
                        },
     "buildProvenance":  {
                             "path":  "KWR_6_1_0_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-15T22:27:52.8325826Z",
+                            "builtAtUtc":  "2026-08-15T22:53:48.5599856Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.9168",
@@ -60,7 +60,7 @@
                         },
     "packageAudit":  {
                          "path":  "KWR_6_1_0_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-15T22:33:30.0833890Z",
+                         "auditedAtUtc":  "2026-08-15T22:59:22.0900753Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
                          "distributionEntries":  393,
@@ -90,7 +90,7 @@
                       },
     "fieldEvidenceBinding":  {
                                  "candidateVersion":  "6.1.0",
-                                 "distributionSha256":  "A438F48695070EBB3E640271712B843E69E5DADD10F7D413BA1ABF4CCF32B7B9",
+                                 "distributionSha256":  "8A02CD10BDBA7AA53540614DAFA7E6ABAEBFCBF933D382EBB2BEF62466280065",
                                  "evidenceScope":  "release",
                                  "canonicalArtifact":  "candidate-package-report.json",
                                  "requiredProof":  [
