@@ -85,6 +85,7 @@ local DEFAULTS = {
             focusNameplates = true,
             battlefieldOrbs = true,
             markerMode = "NATIVE",
+            markerPresentationVersion = 2,
             assignmentBadges = true,
             arenaLightweight = true,
             worldPvPReticle = true,
@@ -272,6 +273,8 @@ local function normalizeProfile(profile)
         and KWR.Util:Number(profile.cursor.reticlePresentationVersion, 0) or 0
     local savedReticleSize = type(profile.cursor) == "table"
         and KWR.Util:Number(profile.cursor.reticleSize, nil) or nil
+    local savedMarkerPresentation = type(profile.cursor) == "table"
+        and KWR.Util:Number(profile.cursor.markerPresentationVersion, 0) or 0
     profile.cursor = normalizeAgainstDefaults(profile.cursor, defaults.cursor)
     profile.cursor.enabled = KWR.Util:Boolean(profile.cursor.enabled, defaults.cursor.enabled)
     profile.cursor.size = KWR.Util:Number(profile.cursor.size, defaults.cursor.size)
@@ -298,6 +301,13 @@ local function normalizeProfile(profile)
         markerMode = defaults.cursor.markerMode
     end
     profile.cursor.markerMode = markerMode
+    -- KWR owns its player identity layer. Upgrade older profiles to the
+    -- always-on native marker mode once; the user can still opt out later.
+    if savedMarkerPresentation < defaults.cursor.markerPresentationVersion then
+        profile.cursor.battlefieldOrbs = true
+        profile.cursor.markerMode = "NATIVE"
+    end
+    profile.cursor.markerPresentationVersion = defaults.cursor.markerPresentationVersion
     profile.cursor.assignmentBadges = KWR.Util:Boolean(
         profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
     profile.cursor.arenaLightweight = KWR.Util:Boolean(

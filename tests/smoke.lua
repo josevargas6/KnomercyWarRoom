@@ -5726,8 +5726,8 @@ assert(enemyIdentifier.kind == "CLASS"
     and enemyIdentifier.showHealth == false
     and enemyIdentifier.showCast == false,
     "Enemy battlefield identifier exposed default health or cast clutter.")
-assert(friendlyHealerIdentifier.frameShape == "SQUARE",
-    "Friendly role identifier did not select the distinct square badge shape.")
+assert(friendlyHealerIdentifier.frameShape == "CIRCLE",
+    "Friendly healer identifier did not retain the shared circular PvP token shape.")
 local reviewedEnemy = {
     key = "shared-palette-target",
     name = "Enemy-Warrior",
@@ -5823,8 +5823,8 @@ do
         "Standalone native marker was not anchored above its Blizzard nameplate.")
     assert(nativeMarker.ring.width >= 58 and nativeMarker.ring.height >= 58
         and nativeMarker.icon.width == 38 and nativeMarker.icon.height == 38
-        and nativeMarker.square:IsShown()
-        and not nativeMarker.ring:IsShown()
+        and nativeMarker.ring:IsShown()
+        and not nativeMarker.square:IsShown()
         and not nativeMarker.name:IsShown(),
         "Friendly role identifier did not keep the normal Blizzard nameplate clear.")
     local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player

@@ -13,29 +13,6 @@ local function currentState(fallback)
     return nil
 end
 
-local function furyCrosshairOwnsTarget()
-    local addons = _G and _G.C_AddOns
-    local query = addons and addons.IsAddOnLoaded or (_G and _G.IsAddOnLoaded)
-    if not KWR.Util:Boolean(KWR.Util:Call(query, "FuryCrosshair"), false) then
-        return false
-    end
-    local settings = _G and _G.FuryCrosshairDB
-    if type(settings) == "table" and settings.enabled == false then
-        return false
-    end
-    local isPlayerTarget = type(UnitIsPlayer) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, "target"), false)
-    if not isPlayerTarget then
-        return type(settings) ~= "table" or settings.showEnemyNPC ~= false
-    end
-    local isEnemyTarget = type(UnitCanAttack) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
-    if isEnemyTarget then
-        return type(settings) ~= "table" or settings.showEnemyPlayer ~= false
-    end
-    return type(settings) ~= "table" or settings.showFriendlyPlayer ~= false
-end
-
 local COMBAT_COLORS = KWR.Theme.combatColors
 
 local MODE_COLORS = {
@@ -526,6 +503,26 @@ function CursorRing:FindEnemyRecord(unit, state)
     return nil
 end
 
+function CursorRing:ObservedPlayerRecord(unit, isFriend)
+    if not KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, unit), false) then
+        return nil
+    end
+    local name = KWR.Util:UnitName(unit)
+    if not name then return nil end
+    local _, classFile = KWR.Util:UnitClass(unit)
+    local role = KWR.Util:Upper(KWR.Util:Call(UnitGroupRolesAssigned, unit), "UNKNOWN", 12)
+    if role == "DAMAGE" then role = "DAMAGER" end
+    return {
+        unit = unit,
+        name = name,
+        shortName = KWR.Util:ShortName(name),
+        classFile = classFile,
+        -- Group role is meaningful for friendlies. Enemy identity remains
+        -- class-first when role data is unavailable or protected.
+        role = isFriend and role or "UNKNOWN",
+    }
+end
+
 function CursorRing:AssignmentFor(name)
     if not self.assignmentIndex then return nil end
     local key = KWR.Util:Text(name, "", 64):lower()
@@ -591,8 +588,8 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         texture = nil,
         texCoords = nil,
         iconTint = { 1, 1, 1 },
-        iconSize = isFriend and FRIENDLY_ROLE_ICON_SIZE or ENEMY_ICON_SIZE,
-        frameShape = isFriend and "SQUARE" or "CIRCLE",
+        iconSize = ENEMY_ICON_SIZE,
+        frameShape = "CIRCLE",
         ringColor = ORB_COLORS.STALE.outer,
         nameColor = { classColor(classFile) },
         -- The Blizzard nameplate retains identity and health information. KWR
@@ -607,13 +604,12 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         model.iconTint = carrier.tint
         model.ringColor = carrier.colors
         model.badge = carrier.texture and nil or carrier.badge
-    elseif isFriend then
+    elseif isFriend and role == "HEALER" then
         model.kind = "ROLE"
         model.texCoords = roleIconCoords(role)
         model.texture = model.texCoords and ROLE_ICON_TEXTURE or nil
-        model.ringColor = ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role]
-            and ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role].outer
-            or ORB_COLORS.TEAM.outer
+        model.iconSize = FRIENDLY_ROLE_ICON_SIZE
+        model.ringColor = ORB_COLORS.HEALER.outer
         model.badge = nil
     else
         model.kind = "CLASS"
@@ -621,7 +617,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
             and CLASS_ICON_TCOORDS[classFile] or nil
         model.texture = model.texCoords and CLASS_ICON_TEXTURE or nil
         model.ringColor = { classColor(classFile) }
-        model.badge = model.texCoords and nil or "?"
+        if not model.texCoords and not isFriend then model.badge = "?" end
     end
     local combat = state and state.snapshot and state.snapshot.combat or {}
     if not isFriend and (sameEntity(record, combat.localTarget)
@@ -695,19 +691,9 @@ function CursorRing:RefreshOrbForUnit(unit, state)
         and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
     local record = isFriend and self:FindFriendlyRecord(unit, state)
         or self:FindEnemyRecord(unit, state)
+    record = record or self:ObservedPlayerRecord(unit, isFriend)
     local mode = self:ResolveMarkerMode()
     self:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
-    -- EnjoyPvPIcons is the persistent player-identity layer when installed.
-    -- Yield only the basic KWR icon on an active external overlay; retain KWR
-    -- assignment badges and target reticle, which carry separate decisions.
-    local externalIdentity = plate.EnjoyPvPIconsOverlay
-    local externalType = type(externalIdentity)
-    if (externalType == "table" or externalType == "userdata")
-        and (type(externalIdentity.IsShown) ~= "function"
-            or externalIdentity:IsShown()) then
-        frame:Hide()
-        return false
-    end
     if mode == "OFF" or mode == "TACTICAL_ONLY" then
         frame:Hide()
         return false
@@ -1046,16 +1032,6 @@ function CursorRing:RefreshReticle()
         self.reticlePending = true
         return
     end
-    -- FuryCrosshair is the approved selected-target reticle renderer. KWR
-    -- retains target health focus and command state but must not draw a
-    -- competing ring or guides over its crosshair.
-    if furyCrosshairOwnsTarget() then
-        self.reticle:Hide()
-        self.reticlePlate = nil
-        self.reticlePending = false
-        self:RefreshDriver()
-        return
-    end
     if not self:AllowsReticleContext(state)
         or (KWR.Util:IsArenaContext(state) and not self:AllowsLightweightArena(state)) then
         self.reticle:Hide()
@@ -1096,20 +1072,10 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    -- When EnjoyPvPIcons supplies the always-on identity token, lock the KWR
-    -- reticle directly to that icon. Otherwise preserve the native-nameplate
-    -- fallback. This keeps the targeted player as the one visual focal point:
-    -- class icon at centre, command ring around it, health bar below.
-    local externalIdentity = plate.EnjoyPvPIconsOverlay
-    local externalType = type(externalIdentity)
-    local externalIcon = (externalType == "table" or externalType == "userdata")
-        and externalIdentity.icon or nil
-    local iconType = type(externalIcon)
-    if iconType == "table" or iconType == "userdata" then
-        self.reticle:SetPoint("CENTER", externalIcon, "CENTER")
-    else
-        self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
-    end
+    -- KWR owns the selected-target lock. Its centred class icon is the same
+    -- identity language as the always-on player markers, with no dependency
+    -- on another addon or an external frame.
+    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()
