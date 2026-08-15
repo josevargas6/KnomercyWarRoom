@@ -5821,8 +5821,8 @@ do
         and markerPoint and markerPoint[1] == "BOTTOM"
         and markerPoint[2] == nativePlate and markerPoint[3] == "TOP",
         "Standalone native marker was not anchored above its Blizzard nameplate.")
-    assert(nativeMarker.ring.width >= 42 and nativeMarker.ring.height >= 42
-        and nativeMarker.icon.width == 32 and nativeMarker.icon.height == 32
+    assert(nativeMarker.ring.width >= 58 and nativeMarker.ring.height >= 58
+        and nativeMarker.icon.width == 38 and nativeMarker.icon.height == 38
         and nativeMarker.square:IsShown()
         and not nativeMarker.ring:IsShown()
         and not nativeMarker.name:IsShown(),
