@@ -5721,7 +5721,7 @@ local enemyIdentifier = KWR.CursorRing:BuildIdentifierModel({
     healthPercent = 72,
 }, false, identifierState, false)
 assert(enemyIdentifier.kind == "CLASS"
-    and enemyIdentifier.iconSize == 42
+    and enemyIdentifier.iconSize == 50
     and enemyIdentifier.frameShape == "CIRCLE"
     and enemyIdentifier.showHealth == false
     and enemyIdentifier.showCast == false,
