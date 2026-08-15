@@ -13,10 +13,27 @@ local function currentState(fallback)
     return nil
 end
 
-local function furyCrosshairLoaded()
+local function furyCrosshairOwnsTarget()
     local addons = _G and _G.C_AddOns
     local query = addons and addons.IsAddOnLoaded or (_G and _G.IsAddOnLoaded)
-    return KWR.Util:Boolean(KWR.Util:Call(query, "FuryCrosshair"), false)
+    if not KWR.Util:Boolean(KWR.Util:Call(query, "FuryCrosshair"), false) then
+        return false
+    end
+    local settings = _G and _G.FuryCrosshairDB
+    if type(settings) == "table" and settings.enabled == false then
+        return false
+    end
+    local isPlayerTarget = type(UnitIsPlayer) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, "target"), false)
+    if not isPlayerTarget then
+        return type(settings) ~= "table" or settings.showEnemyNPC ~= false
+    end
+    local isEnemyTarget = type(UnitCanAttack) == "function"
+        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
+    if isEnemyTarget then
+        return type(settings) ~= "table" or settings.showEnemyPlayer ~= false
+    end
+    return type(settings) ~= "table" or settings.showFriendlyPlayer ~= false
 end
 
 local COMBAT_COLORS = KWR.Theme.combatColors
@@ -1032,7 +1049,7 @@ function CursorRing:RefreshReticle()
     -- FuryCrosshair is the approved selected-target reticle renderer. KWR
     -- retains target health focus and command state but must not draw a
     -- competing ring or guides over its crosshair.
-    if furyCrosshairLoaded() then
+    if furyCrosshairOwnsTarget() then
         self.reticle:Hide()
         self.reticlePlate = nil
         self.reticlePending = false
