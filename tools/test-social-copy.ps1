@@ -19,10 +19,11 @@ foreach ($path in $requiredFiles) {
 }
 
 $copy = ($requiredFiles | ForEach-Object { Get-Content -LiteralPath $_ -Raw }) -join "`n"
+$releasePhrase = if ($version -match '-') { 'field-test' } else { 'stable release' }
 $requiredPhrases = @(
     $version,
     'player-controlled',
-    'field-test',
+    $releasePhrase,
     'never auto-casts',
     'GitHub',
     'CurseForge',
@@ -54,7 +55,7 @@ $activeReleaseFiles = @(
 )
 foreach ($path in $activeReleaseFiles) {
     $content = Get-Content -LiteralPath $path -Raw
-    $versions = [regex]::Matches($content, '6\.1\.0-alpha\.\d+') |
+    $versions = [regex]::Matches($content, '6\.1\.0(?:-[0-9A-Za-z.-]+)?') |
         ForEach-Object { $_.Value } |
         Select-Object -Unique
     foreach ($foundVersion in @($versions)) {

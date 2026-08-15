@@ -18,8 +18,8 @@ jobs:
         shell: pwsh
         run: |
           $tocVersion = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
-          if (-not $tocVersion -or $tocVersion -notmatch '^\d+\.\d+\.\d+-alpha\.\d+$') {
-              throw "TOC Version must use the release format MAJOR.MINOR.PATCH-alpha.N; got '$tocVersion'."
+          if (-not $tocVersion -or $tocVersion -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
+              throw "TOC Version must use semantic release format MAJOR.MINOR.PATCH with an optional prerelease suffix; got '$tocVersion'."
           }
           if ("${{ github.event_name }}" -eq "push" -and "${{ github.ref_name }}" -ne "v$tocVersion") {
               throw "Release tag mismatch. Expected v$tocVersion but got ${{ github.ref_name }}."

@@ -1,4 +1,4 @@
-# Install Knomercy War Room Alpha 43
+# Install Knomercy War Room 6.1.0
 
 Download and extract both release ZIPs directly into:
 

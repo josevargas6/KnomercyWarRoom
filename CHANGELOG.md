@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 6.1.0 - 2026-08-15
+
+- Promoted the reconciled Commander and embedded Sentinel packages to the first
+  stable Season 2 release without moving or replacing the immutable Alpha 43
+  tag.
+- Included the reviewed field-test refinements for target-reticle clarity,
+  protected Sentinel aura handling, compact battlefield identifiers, and
+  stable roster/marker presentation.
+- Made tagged publication choose GitHub and CurseForge release channels from
+  the version: stable semantic versions publish as releases, while suffixed
+  versions remain prereleases.
+- Kept Retail 12.1 patch-dependent overlays fail-closed pending separately
+  reviewed official tuning data; generic doctrine and safety fallbacks remain
+  available.
+
 ## 6.1.0-alpha.43 - 2026-08-14
 
 - Added native class markers for enemies and square role/objective badges for teammates without duplicating Blizzard nameplate identity, health, or cast panels.

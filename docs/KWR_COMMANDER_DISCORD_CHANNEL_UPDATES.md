@@ -2,7 +2,7 @@
 
 Status: ready-to-post
 
-Date: 2026-08-11
+Date: 2026-08-15
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -25,10 +25,10 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0-alpha.43 is available for alpha testing.
+Knomercy War Room Commander 6.1.0 is available as the stable Season 2 release.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -36,8 +36,8 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 Current state:
 The guarded release gate publishes the exact reviewed GitHub artifact and
 submits the same build to CurseForge for Retail 12.1.0 and 12.0.7. CurseForge
-moderation visibility may lag. This remains a field-test candidate; current
-packaged in-game evidence still gates stable promotion.
+moderation visibility may lag. GitHub assets and their hashes remain the
+authoritative release record.
 
 What this addon is:
 Player-controlled Rated Battleground command, assignments, enemy tracking, tactical map, Fight Now HUD, and AAR support.
@@ -60,7 +60,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander alpha.43 refinement focus:
+KWR Commander 6.1.0 refinement focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -68,16 +68,16 @@ KWR Commander alpha.43 refinement focus:
 4. Confirm flag-map routing uses canonical carrier/route language instead of raw event prose.
 5. Capture /kwr verify, /kwr perf, AAR, and screenshots for any blocker or major win.
 
-Remaining release work:
-- verify the final packaged ZIPs install and upgrade cleanly
-- recheck readability from the packaged build across supported resolutions
-- attach final screenshots before stable promotion
+Ongoing field work:
+- verify upgrades and fresh installs across supported systems
+- recheck readability across supported resolutions
+- attach version- and package-bound evidence to any issue
 ```
 
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.0-alpha.43 distribution receipt
+KWR Commander 6.1.0 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -86,13 +86,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
 
 Certified artifact:
-KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip
+KWR_6_1_0_DISTRIBUTION.zip
 
 SHA-256 manifest:
-KWR_6_1_0_ALPHA_43_SHA256.txt on the GitHub prerelease
+KWR_6_1_0_SHA256.txt on the GitHub release
 
 Validation:
 - validate.ps1 passed
@@ -104,5 +104,5 @@ Validation:
 Current truth:
 - CurseForge receives the exact certified artifact for Retail 12.1.0 and 12.0.7
 - GitHub release assets and their public hashes are the authoritative published record
-- stable promotion remains gated by current packaged in-game evidence
+- CurseForge file type is Release for the stable semantic version
 ```

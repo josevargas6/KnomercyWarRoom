@@ -11,16 +11,25 @@ param(
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $sourcePath = Join-Path $root "docs\SENTINEL_DISCORD_CHANNEL_UPDATES.md"
+$sentinelTocPath = Join-Path $root "KWRSentinel\KWRSentinel.toc"
+$sourceVersionLine = Get-Content -LiteralPath $sentinelTocPath |
+    Where-Object { $_ -match "^## Version:" } |
+    Select-Object -First 1
+if ([string]::IsNullOrWhiteSpace($sourceVersionLine)) {
+    throw "Could not determine Sentinel version from $sentinelTocPath."
+}
+$sourceVersion = ($sourceVersionLine -replace "^## Version:\s*", "").Trim()
 
+$commanderTocPath = Join-Path $root "KnomercyWarRoom.toc"
+$commanderVersionLine = Get-Content -LiteralPath $commanderTocPath |
+    Where-Object { $_ -match "^## Version:" } |
+    Select-Object -First 1
+if ([string]::IsNullOrWhiteSpace($commanderVersionLine)) {
+    throw "Could not determine Commander version from $commanderTocPath."
+}
+$sourceCommanderVersion = ($commanderVersionLine -replace "^## Version:\s*", "").Trim()
 if ([string]::IsNullOrWhiteSpace($CommanderVersion)) {
-    $commanderTocPath = Join-Path $root "KnomercyWarRoom.toc"
-    $commanderVersionLine = Get-Content -LiteralPath $commanderTocPath |
-        Where-Object { $_ -match "^## Version:" } |
-        Select-Object -First 1
-    if ([string]::IsNullOrWhiteSpace($commanderVersionLine)) {
-        throw "Could not determine Commander version from $commanderTocPath."
-    }
-    $CommanderVersion = ($commanderVersionLine -replace "^## Version:\s*", "").Trim()
+    $CommanderVersion = $sourceCommanderVersion
 }
 
 if (-not (Test-Path -LiteralPath $sourcePath)) {
@@ -44,14 +53,12 @@ if (-not $match.Success) {
 
 $message = $match.Groups[1].Value.Trim()
 if (-not [string]::IsNullOrWhiteSpace($Version)) {
-    $message = $message -replace '\d+\.\d+\.\d+-alpha\.\d+', $Version
-    $message = $message -replace '\d+_\d+_\d+_ALPHA_\d+', ($Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
+    $message = $message.Replace($sourceVersion, $Version)
+    $message = $message.Replace(
+        $sourceVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_'),
+        $Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
 }
-$message = [regex]::Replace(
-    $message,
-    'Commander\s+\d+\.\d+\.\d+-alpha\.\d+',
-    "Commander $CommanderVersion"
-)
+$message = $message.Replace("Commander $sourceCommanderVersion", "Commander $CommanderVersion")
 if ($DryRun -or [string]::IsNullOrWhiteSpace($WebhookUrl)) {
     Write-Output "DRY RUN: Discord section '$Section'"
     Write-Output $message
