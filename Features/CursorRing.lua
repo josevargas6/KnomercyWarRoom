@@ -884,6 +884,16 @@ function CursorRing:ResolveReticleState(state)
     local defensive = targetRecord and targetRecord.defensivesActive
         and targetRecord.defensivesActive[1] or nil
     local targetClass = KWR.Util:Upper(targetRecord and targetRecord.classFile, "", 24)
+    -- Enemy roster snapshots can arrive a moment after a target/nameplate
+    -- update. The target's public class is the only identity fallback we need
+    -- for the centered icon; if it is unavailable, keep the ring honest and
+    -- leave the icon hidden rather than guessing.
+    if targetClass == "" or targetClass == "UNKNOWN" then
+        local _, observedClass = KWR.Util:UnitClass("target")
+        if observedClass ~= "UNKNOWN" then
+            targetClass = observedClass
+        end
+    end
 
     if defensive then
         return {
