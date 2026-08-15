@@ -156,6 +156,24 @@ local function applyEnemyRingTexture(texture)
     texture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 end
 
+-- Class/role art reads faster as a circular PvP token than as a square crop.
+-- This uses Blizzard's built-in scalable mask, so KWR remains self-contained
+-- and does not need to ship third-party media.
+local function addCircularIconMask(owner, texture)
+    if not owner or not texture or type(owner.CreateMaskTexture) ~= "function"
+        or type(texture.AddMaskTexture) ~= "function" then
+        return nil
+    end
+    local ok, mask = pcall(owner.CreateMaskTexture, owner)
+    if not ok or not mask then return nil end
+    if type(mask.SetTexture) == "function" then
+        mask:SetTexture("Interface\\Masks\\CircleMaskScalable",
+            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    end
+    if type(mask.SetAllPoints) == "function" then mask:SetAllPoints(texture) end
+    return pcall(texture.AddMaskTexture, texture, mask) and mask or nil
+end
+
 local function sameTargetRecord(record)
     if not record then return false end
     if record.unit and type(UnitIsUnit) == "function"
@@ -292,6 +310,7 @@ function CursorRing:CreateReticleFrame()
     frame.targetIcon = frame:CreateTexture(nil, "OVERLAY")
     frame.targetIcon:SetPoint("CENTER")
     frame.targetIcon:SetSize(28, 28)
+    frame.targetIconMask = addCircularIconMask(frame, frame.targetIcon)
     frame.targetIcon:Hide()
 
     frame.pulse = frame:CreateTexture(nil, "OVERLAY")
@@ -348,6 +367,7 @@ function CursorRing:CreateOrbFrame(unit)
     frame.icon = frame:CreateTexture(nil, "OVERLAY")
     frame.icon:SetPoint("CENTER", frame.ring, "CENTER")
     frame.icon:SetSize(ENEMY_ICON_SIZE, ENEMY_ICON_SIZE)
+    frame.iconMask = addCircularIconMask(frame, frame.icon)
 
     frame.badge = KWR.Theme:Title(frame, 10, "CENTER")
     frame.badge:SetPoint("CENTER", frame.ring, "CENTER", 0, 0)
