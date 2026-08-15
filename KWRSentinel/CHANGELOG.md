@@ -1,5 +1,11 @@
 # KWR Sentinel Changelog
 
+## Unreleased
+
+- Removes protected unit-aura enumeration from carrier observation. Retail
+  secret aura collections now degrade to no carrier inference instead of
+  tainting Sentinel or emitting a protected-action error.
+
 ## 6.1.0-alpha.43 - 2026-08-14
 
 - Keeps the Sentinel execution layer available in lightweight arena and world-PvP contexts while Commander battleground surfaces remain suppressed.

@@ -3,18 +3,6 @@ local _, Sentinel = ...
 local Observer = { lastState = "", lastVisible = "", lastCast = "" }
 Sentinel.Observer = Observer
 
--- Retail objective auras are stable spell identifiers.  We intentionally use
--- IDs rather than localized aura names and emit only an observed carrier.
-local CARRIER_AURAS = {
-    [23333] = { kind = "FLAG", label = "Alliance Flag" },
-    [23335] = { kind = "FLAG", label = "Horde Flag" },
-    [34976] = { kind = "FLAG", label = "Netherstorm Flag" },
-    [121164] = { kind = "ORB", label = "Blue Orb" },
-    [121175] = { kind = "ORB", label = "Green Orb" },
-    [121176] = { kind = "ORB", label = "Orange Orb" },
-    [121177] = { kind = "ORB", label = "Purple Orb" },
-}
-
 local function safeText(value, fallback, maximum)
     local ok, result = pcall(function()
         if type(issecretvalue) == "function" and issecretvalue(value) then
@@ -113,18 +101,13 @@ function Observer:ObserveCarrier(name, kind, label, source)
 end
 
 function Observer:ObserveCarrierUnit(unit, source)
-    if not Sentinel:TransportEnabled() or not UnitExists(unit) or not UnitIsPlayer(unit) then return false end
-    local identity = unitIdentity(unit)
-    if not identity then return false end
-    for index = 1, 40 do
-        local aura = C_UnitAuras and C_UnitAuras.GetAuraDataByIndex
-            and C_UnitAuras.GetAuraDataByIndex(unit, index, "HELPFUL") or nil
-        if not aura then break end
-        local carrier = CARRIER_AURAS[aura.spellId]
-        if carrier then
-            return self:ObserveCarrier(identity, carrier.kind, carrier.label, source or "UNIT_AURA")
-        end
-    end
+    -- Retail can mark unit aura collections secret before addon code sees an
+    -- individual aura. Calling GetAuraDataByIndex in that state taints the
+    -- caller and produces a protected-action error; checking the returned
+    -- value cannot make the call safe. Carrier truth must therefore come from
+    -- an explicitly supported objective source, never from aura enumeration.
+    -- Keep this no-op entry point for compatibility with any future legal
+    -- source, but do not touch the protected unit/aura APIs here.
     return false
 end
 
@@ -132,13 +115,7 @@ function Observer:OnInitialize()
     self.frame = CreateFrame("Frame", "KWRSentinel_ObserverFrame")
     self.frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     self.frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    self.frame:RegisterEvent("UNIT_AURA")
-    self.frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-    self.frame:SetScript("OnEvent", function(_, event, unit)
-        if event == "UNIT_AURA" or event == "NAME_PLATE_UNIT_ADDED" then
-            Observer:ObserveCarrierUnit(unit, event)
-            return
-        end
+    self.frame:SetScript("OnEvent", function()
         Observer:SendHello()
     end)
 end
