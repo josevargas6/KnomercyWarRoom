@@ -251,8 +251,8 @@ function Options:Create()
         })
     createCheck(self, targetCard,
         "reticleGuides",
-        "Show compact reticle guides",
-        "Shows short horizontal and vertical guides around the target lock.",
+        "Show target-axis guides",
+        "Shows one subtle horizontal and vertical axis through the selected target lock.",
         -180,
         function() return KWR.db.profile.cursor.reticleGuides ~= false end,
         function(value) KWR.CursorRing:SetReticleGuides(value) end,

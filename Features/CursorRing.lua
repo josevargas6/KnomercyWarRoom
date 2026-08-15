@@ -833,11 +833,16 @@ function CursorRing:ApplyReticle()
     local size = KWR.Util:Clamp(profile.reticleSize or 104, 56, 156)
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
     local visualSize = math.floor(size * 0.90)
+    local viewportWidth = KWR.Util:Number(UIParent and KWR.Util:Call(UIParent.GetWidth, UIParent), nil)
+    local viewportHeight = KWR.Util:Number(UIParent and KWR.Util:Call(UIParent.GetHeight, UIParent), nil)
+    viewportWidth = math.max(visualSize * 2, viewportWidth or visualSize * 12)
+    viewportHeight = math.max(visualSize * 2, viewportHeight or visualSize * 8)
     frame:SetSize(visualSize, visualSize)
-    -- Guides deliberately frame the lock rather than bisecting the whole
-    -- screen. A target cue must survive spell clutter, not add to it.
-    frame.hLine:SetSize(math.floor(visualSize * 0.62), 1)
-    frame.vLine:SetSize(1, math.floor(visualSize * 0.62))
+    -- The crosshair's axis guides establish a single target focal point.
+    -- They remain one-pixel, low-alpha lines so the class token and ring stay
+    -- dominant over the battlefield rather than becoming a screen overlay.
+    frame.hLine:SetSize(viewportWidth, 1)
+    frame.vLine:SetSize(1, viewportHeight)
     frame.outer:SetSize(visualSize, visualSize)
     frame.inner:SetSize(4, 4)
     local targetIconSize = math.max(26, math.floor(visualSize * 0.40))

@@ -73,12 +73,12 @@ local DEFAULTS = {
             -- distance. This is the Fury-style visual footprint, not the
             -- smaller cursor marker scale.
             reticleSize = 116,
-            reticlePresentationVersion = 2,
+            reticlePresentationVersion = 3,
             reticleAlpha = 0.84,
-            -- Full-screen ruler lines disappear under spell effects and make
-            -- target labels harder to parse. The lock ring is the default;
-            -- compact guides remain an opt-in accessibility aid.
-            reticleGuides = false,
+            -- The target lock uses full axis guides so a selected player is
+            -- readable through dense battleground effects. Players can still
+            -- disable them in Options.
+            reticleGuides = true,
             -- In a target call, preserve one native health bar: the current
             -- enemy. Other hostile plates keep only KWR's compact class/color
             -- shield so the battlefield remains readable.
@@ -288,6 +288,9 @@ local function normalizeProfile(profile)
     if savedReticlePresentation < defaults.cursor.reticlePresentationVersion
         and (savedReticleSize == nil or savedReticleSize == 92) then
         profile.cursor.reticleSize = defaults.cursor.reticleSize
+    end
+    if savedReticlePresentation < defaults.cursor.reticlePresentationVersion then
+        profile.cursor.reticleGuides = true
     end
     profile.cursor.reticlePresentationVersion = defaults.cursor.reticlePresentationVersion
     profile.cursor.reticleAlpha = KWR.Util:Number(
