@@ -60,10 +60,28 @@ jobs:
         timeout-minutes: 25
         run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
 
-      - name: Upload certified packages
+      - name: Upload public release evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: kwr-${{ github.run_id }}-${{ github.sha }}
-          path: artifacts/*
+          name: kwr-public-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            artifacts/KWR_*_DISTRIBUTION.zip
+            artifacts/KWRSentinel_*.zip
+            artifacts/KWR_*_SHA256.txt
+            artifacts/KWR_*_PUBLIC_MANIFEST.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Retain developer package and private certification evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: kwr-developer-${{ github.run_id }}-${{ github.sha }}
+          path: |
+            artifacts/KWR_*_DEVELOPER.zip
+            artifacts/KWR_*_DEVELOPER_CHECKSUM.txt
+            artifacts/KWR_*_SOURCE_MANIFEST.json
+            artifacts/KWR_*_BUILD_PROVENANCE.json
+            artifacts/KWR_*_REPRODUCIBILITY.json
+            artifacts/KWR_*_PACKAGE_AUDIT.json
           if-no-files-found: error
           retention-days: 30

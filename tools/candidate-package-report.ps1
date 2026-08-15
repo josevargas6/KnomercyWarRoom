@@ -22,6 +22,7 @@ $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 $distributionZip = Join-Path $buildOutputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
 $developerZip = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
 $hashFile = Join-Path $buildOutputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
+$developerHashFile = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)
 $sourceManifestFile = Join-Path $buildOutputRoot ("KWR_{0}_SOURCE_MANIFEST.json" -f $safeVersion)
 $provenanceFile = Join-Path $buildOutputRoot ("KWR_{0}_BUILD_PROVENANCE.json" -f $safeVersion)
 $reproducibilityFile = Join-Path $buildOutputRoot ("KWR_{0}_REPRODUCIBILITY.json" -f $safeVersion)
@@ -31,6 +32,7 @@ foreach ($path in @(
     $distributionZip,
     $developerZip,
     $hashFile,
+    $developerHashFile,
     $sourceManifestFile,
     $provenanceFile,
     $reproducibilityFile
@@ -72,6 +74,7 @@ $sourceManifest = Get-Content -LiteralPath $sourceManifestFile -Raw | ConvertFro
 $provenance = Get-Content -LiteralPath $provenanceFile -Raw | ConvertFrom-Json
 $reproducibility = Get-Content -LiteralPath $reproducibilityFile -Raw | ConvertFrom-Json
 $hashLines = [System.IO.File]::ReadAllLines($hashFile)
+$developerHashLines = [System.IO.File]::ReadAllLines($developerHashFile)
 $packageAudit = $null
 if (Test-Path -LiteralPath $packageAuditFile) {
     $packageAudit = Get-Content -LiteralPath $packageAuditFile -Raw | ConvertFrom-Json
@@ -110,6 +113,10 @@ $report = [ordered]@{
     hashManifest = [ordered]@{
         path = Get-ReportPath -Path $hashFile
         lines = @($hashLines)
+    }
+    developerHashManifest = [ordered]@{
+        path = Get-ReportPath -Path $developerHashFile
+        lines = @($developerHashLines)
     }
     sourceManifest = [ordered]@{
         path = Get-ReportPath -Path $sourceManifestFile

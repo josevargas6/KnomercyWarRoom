@@ -75,6 +75,7 @@ jobs:
             -BuildOutputDirectory "${{ github.workspace }}/artifacts" `
             -OutFile "artifacts/KWR_${safe}_RELEASE_EVIDENCE.json" `
             -EvidenceScope release
+          Copy-Item "docs/RELEASE_INSTALL.md" "artifacts/INSTALL.md"
 
       - name: Create GitHub prerelease
         shell: pwsh
@@ -82,12 +83,28 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $releaseTag = "${{ inputs.release_tag || github.ref_name }}"
+          $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          $sentinelVersion = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
+          $sentinelSafe = $sentinelVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          # Never publish developer sources, screenshots, field evidence, or
+          # generated certification reports to a player-facing release.
+          $publicAssets = @(
+            "artifacts/KWR_${safe}_DISTRIBUTION.zip",
+            "artifacts/KWRSentinel_${sentinelSafe}.zip",
+            "artifacts/KWR_${safe}_SHA256.txt",
+            "artifacts/KWR_${safe}_PUBLIC_MANIFEST.json",
+            "artifacts/INSTALL.md"
+          )
+          foreach ($asset in $publicAssets) {
+            if (-not (Test-Path -LiteralPath $asset)) { throw "Public release asset is missing: $asset" }
+          }
           gh release view $releaseTag *> $null
           if ($LASTEXITCODE -eq 0) {
-              gh release upload $releaseTag artifacts/* --clobber
+              gh release upload $releaseTag $publicAssets --clobber
               gh release edit $releaseTag --prerelease --title "Knomercy War Room $releaseTag"
           } else {
-              gh release create $releaseTag artifacts/* --prerelease --generate-notes --title "Knomercy War Room $releaseTag"
+              gh release create $releaseTag $publicAssets --prerelease --generate-notes --title "Knomercy War Room $releaseTag"
           }
 
       - name: Upload Commander to CurseForge

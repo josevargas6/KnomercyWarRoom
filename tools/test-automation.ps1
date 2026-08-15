@@ -189,6 +189,25 @@ Assert-True `
 Assert-True `
     -Condition ($releaseWorkflow -match 'git describe --tags --exact-match HEAD') `
     -Message "Release automation must prove that the checked-out commit is exactly tagged."
+Assert-True `
+    -Condition ($releaseWorkflow -match '\$publicAssets\s*=\s*@\(') `
+    -Message "Release automation must use an explicit player-facing asset allowlist."
+Assert-True `
+    -Condition ($releaseWorkflow -notmatch 'gh release (?:upload|create) \$releaseTag artifacts/\*') `
+    -Message "Release automation must never publish every build artifact."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'PUBLIC_MANIFEST\.json') `
+    -Message "Release automation must publish the player-facing manifest."
+
+Assert-True `
+    -Condition ($ciWorkflow -match 'name:\s*kwr-developer-') `
+    -Message "CI must retain developer packages in a separate private artifact."
+Assert-True `
+    -Condition ($ciWorkflow -match 'KWR_\*_DEVELOPER\.zip') `
+    -Message "CI developer artifact does not retain the developer ZIP."
+Assert-True `
+    -Condition ($ciWorkflow -match 'retention-days:\s*30') `
+    -Message "CI artifact retention must be bounded."
 
 $maintenanceWorkflow = Get-Content -LiteralPath (
     Join-Path $root ".github\workflows\kwr-automated-maintenance.yml"

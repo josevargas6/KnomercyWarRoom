@@ -118,6 +118,8 @@ if ($hasSentinel) {
     $sentinelZip = Join-Path $outputRoot ("KWRSentinel_{0}.zip" -f $sentinelSafeVersion)
 }
 $hashFile = Join-Path $outputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
+$developerHashFile = Join-Path $outputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)
+$publicManifestFile = Join-Path $outputRoot ("KWR_{0}_PUBLIC_MANIFEST.json" -f $safeVersion)
 
 $tempBase = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
 $tempRoot = Join-Path $tempBase ("kwr-build-" + [guid]::NewGuid().ToString("N"))
@@ -226,7 +228,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     Remove-Item -LiteralPath $developerFieldEvidence -Recurse -Force -ErrorAction SilentlyContinue
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
-    foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile)) {
+    foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile, $developerHashFile, $publicManifestFile)) {
         if (-not $path) {
             continue
         }
@@ -246,15 +248,18 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
 
     $distributionHash = Get-FileHash -LiteralPath $distributionZip -Algorithm SHA256
     $developerHash = Get-FileHash -LiteralPath $developerZip -Algorithm SHA256
+    # Player-facing checksums must name only player-facing downloads.  The
+    # developer ZIP and its checksum remain in the retention-bound CI artifact.
     $hashLines = @(
-        "$($distributionHash.Hash)  $([IO.Path]::GetFileName($distributionZip))",
-        "$($developerHash.Hash)  $([IO.Path]::GetFileName($developerZip))"
+        "$($distributionHash.Hash)  $([IO.Path]::GetFileName($distributionZip))"
     )
     if ($hasSentinel) {
         $sentinelHash = Get-FileHash -LiteralPath $sentinelZip -Algorithm SHA256
         $hashLines += "$($sentinelHash.Hash)  $([IO.Path]::GetFileName($sentinelZip))"
     }
     $hashLines | Set-Content -LiteralPath $hashFile -Encoding ASCII
+    @("$($developerHash.Hash)  $([IO.Path]::GetFileName($developerZip))") |
+        Set-Content -LiteralPath $developerHashFile -Encoding ASCII
 
     $distributionEntries = Get-DirectoryManifestEntries -RootPath $distributionRoot
     $developerEntries = Get-DirectoryManifestEntries -RootPath $developerRoot
@@ -308,6 +313,32 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         }
     }
     Write-JsonFile -Path $sourceManifestFile -Data $sourceManifest
+
+    $publicArtifacts = @(
+        New-ArtifactSummary -Path $distributionZip
+    )
+    if ($hasSentinel) {
+        $publicArtifacts += New-ArtifactSummary -Path $sentinelZip
+    }
+    $publicManifest = [pscustomobject]@{
+        schema = "kwr-public-release-manifest"
+        schemaVersion = 1
+        candidate = $version
+        artifacts = $publicArtifacts
+        distribution = [pscustomobject]@{
+            digest = $distributionDigest
+            entryCount = $distributionEntries.Count
+        }
+        sentinel = if ($hasSentinel) {
+            [pscustomobject]@{
+                digest = $sentinelDigest
+                entryCount = $sentinelEntries.Count
+            }
+        } else {
+            $null
+        }
+    }
+    Write-JsonFile -Path $publicManifestFile -Data $publicManifest
 
     $provenance = [pscustomobject]@{
         candidate = $version
