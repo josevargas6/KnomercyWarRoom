@@ -69,7 +69,11 @@ local DEFAULTS = {
             size = 96,
             alpha = 0.95,
             reticleEnabled = true,
-            reticleSize = 92,
+            -- A target lock needs to remain legible at battleground camera
+            -- distance. This is the Fury-style visual footprint, not the
+            -- smaller cursor marker scale.
+            reticleSize = 116,
+            reticlePresentationVersion = 2,
             reticleAlpha = 0.84,
             -- Full-screen ruler lines disappear under spell effects and make
             -- target labels harder to parse. The lock ring is the default;
@@ -264,6 +268,10 @@ local function normalizeProfile(profile)
         profile.formation.selectedCompID =
             KWR.Util:Text(profile.formation.selectedCompID, nil, 64)
     end
+    local savedReticlePresentation = type(profile.cursor) == "table"
+        and KWR.Util:Number(profile.cursor.reticlePresentationVersion, 0) or 0
+    local savedReticleSize = type(profile.cursor) == "table"
+        and KWR.Util:Number(profile.cursor.reticleSize, nil) or nil
     profile.cursor = normalizeAgainstDefaults(profile.cursor, defaults.cursor)
     profile.cursor.enabled = KWR.Util:Boolean(profile.cursor.enabled, defaults.cursor.enabled)
     profile.cursor.size = KWR.Util:Number(profile.cursor.size, defaults.cursor.size)
@@ -272,6 +280,13 @@ local function normalizeProfile(profile)
         profile.cursor.reticleEnabled, defaults.cursor.reticleEnabled)
     profile.cursor.reticleSize = KWR.Util:Number(
         profile.cursor.reticleSize, defaults.cursor.reticleSize)
+    -- Upgrade the old default only. Deliberately chosen custom sizes stay
+    -- untouched; the versioned migration runs once per saved profile.
+    if savedReticlePresentation < defaults.cursor.reticlePresentationVersion
+        and (savedReticleSize == nil or savedReticleSize == 92) then
+        profile.cursor.reticleSize = defaults.cursor.reticleSize
+    end
+    profile.cursor.reticlePresentationVersion = defaults.cursor.reticlePresentationVersion
     profile.cursor.reticleAlpha = KWR.Util:Number(
         profile.cursor.reticleAlpha, defaults.cursor.reticleAlpha)
     profile.cursor.reticleGuides = KWR.Util:Boolean(

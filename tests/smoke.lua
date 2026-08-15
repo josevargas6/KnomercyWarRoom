@@ -5692,7 +5692,7 @@ local friendlyHealerIdentifier = KWR.CursorRing:BuildIdentifierModel({
 assert(friendlyHealerIdentifier.kind == "ROLE"
     and friendlyHealerIdentifier.texture ~= nil
     and friendlyHealerIdentifier.texCoords ~= nil
-    and friendlyHealerIdentifier.iconSize == 32
+    and friendlyHealerIdentifier.iconSize == 38
     and friendlyHealerIdentifier.badge == nil
     and friendlyHealerIdentifier.showHealth == false
     and friendlyHealerIdentifier.showCast == false,
@@ -5886,6 +5886,8 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     assert(KWR.CursorRing.reticle.labelPlate.width >= 54
         and KWR.CursorRing.reticle.detailPlate.width >= 112,
         "Reticle polish did not retain a compact action-only tactical cue.")
+    assert(KWR.CursorRing.reticle.targetIcon.width >= 26,
+        "Target reticle did not retain a combat-legible central PvP icon.")
     assert(KWR.CursorRing.reticle.labelPlate.backdropColor[4] == 0
         and KWR.CursorRing.reticle.detailPlate.backdropColor[4] == 0,
         "Reticle caption plates painted an opaque background over the battlefield.")

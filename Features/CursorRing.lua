@@ -139,11 +139,11 @@ end
 -- Nameplate markers must remain legible in battleground movement and against
 -- the default health-bar scale. Keep these centralized so the ring, icon,
 -- label, and health strip scale as one visual unit.
-local ENEMY_ICON_SIZE = 42
-local FRIENDLY_ROLE_ICON_SIZE = 32
-local ORB_RING_SIZE = 48
-local ORB_FRAME_WIDTH = 52
-local ORB_FRAME_HEIGHT = 52
+local ENEMY_ICON_SIZE = 50
+local FRIENDLY_ROLE_ICON_SIZE = 38
+local ORB_RING_SIZE = 58
+local ORB_FRAME_WIDTH = 64
+local ORB_FRAME_HEIGHT = 58
 
 local function applyEnemyRingTexture(texture)
     -- This Retail atlas is the native circular selection ring. Fall back to a
@@ -340,7 +340,7 @@ function CursorRing:CreateOrbFrame(unit)
 
     frame.square = frame:CreateTexture(nil, "ARTWORK")
     frame.square:SetPoint("CENTER", frame.ring, "CENTER")
-    frame.square:SetSize(42, 42)
+    frame.square:SetSize(50, 50)
     frame.square:SetTexture(TEAM_BADGE_TEXTURE)
     frame.square:SetBlendMode("ADD")
     frame.square:Hide()
@@ -792,7 +792,7 @@ function CursorRing:ApplyReticle()
     local frame = self:CreateReticleFrame()
     local size = KWR.Util:Clamp(profile.reticleSize or 104, 56, 156)
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
-    local visualSize = math.floor(size * 0.84)
+    local visualSize = math.floor(size * 0.90)
     frame:SetSize(visualSize, visualSize)
     -- Guides deliberately frame the lock rather than bisecting the whole
     -- screen. A target cue must survive spell clutter, not add to it.
@@ -800,7 +800,8 @@ function CursorRing:ApplyReticle()
     frame.vLine:SetSize(1, math.floor(visualSize * 0.62))
     frame.outer:SetSize(visualSize, visualSize)
     frame.inner:SetSize(4, 4)
-    frame.targetIcon:SetSize(math.max(18, math.floor(visualSize * 0.28)), math.max(18, math.floor(visualSize * 0.28)))
+    local targetIconSize = math.max(26, math.floor(visualSize * 0.40))
+    frame.targetIcon:SetSize(targetIconSize, targetIconSize)
     frame.pulse:SetSize(math.floor(visualSize * 1.14), math.floor(visualSize * 1.14))
     frame.labelPlate:SetSize(math.max(54, math.floor(visualSize * 0.60)), 14)
     frame.detailPlate:SetSize(math.max(112, math.floor(visualSize * 1.20)), 14)
