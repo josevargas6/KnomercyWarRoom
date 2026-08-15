@@ -280,13 +280,14 @@ function CursorRing:CreateReticleFrame()
 
     frame.outer = frame:CreateTexture(nil, "ARTWORK")
     frame.outer:SetPoint("CENTER")
-    frame.outer:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-    frame.outer:SetBlendMode("ADD")
+    -- A native circular selection ring reads as a target lock. The old
+    -- minimap highlight plus starburst read like a spell effect and obscured
+    -- the target's actual identity in dense combat.
+    applyEnemyRingTexture(frame.outer)
 
     frame.inner = frame:CreateTexture(nil, "OVERLAY")
     frame.inner:SetPoint("CENTER")
-    frame.inner:SetTexture("Interface\\Cooldown\\star4")
-    frame.inner:SetBlendMode("ADD")
+    frame.inner:SetTexture("Interface\\Buttons\\WHITE8X8")
 
     frame.targetIcon = frame:CreateTexture(nil, "OVERLAY")
     frame.targetIcon:SetPoint("CENTER")
@@ -295,23 +296,23 @@ function CursorRing:CreateReticleFrame()
 
     frame.pulse = frame:CreateTexture(nil, "OVERLAY")
     frame.pulse:SetPoint("CENTER")
-    frame.pulse:SetTexture("Interface\\Cooldown\\star4")
-    frame.pulse:SetBlendMode("ADD")
+    applyEnemyRingTexture(frame.pulse)
 
     frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
     frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
-    -- Keep the command label above the target lock, not in the melee lane to
-    -- its left where damage numbers and nameplates constantly overwrite it.
+    -- Action text is deliberately absent for a neutral target. The native
+    -- nameplate already establishes identity; this compact tab appears only
+    -- when KWR has a specific action such as KILL, CAST, or SWAP.
     frame.labelPlate:SetPoint("BOTTOM", frame, "TOP", 0, 8)
-    frame.labelPlate:SetSize(78, 16)
-    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "RIGHT")
+    frame.labelPlate:SetSize(54, 14)
+    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "CENTER")
     frame.label:SetAllPoints()
     frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.detailPlate, "panel", "border")
     frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 3)
-    frame.detailPlate:SetSize(126, 14)
+    frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 2)
+    frame.detailPlate:SetSize(112, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
     frame.detail:SetAllPoints()
 
@@ -795,16 +796,17 @@ function CursorRing:ApplyReticle()
     frame:SetSize(visualSize, visualSize)
     -- Guides deliberately frame the lock rather than bisecting the whole
     -- screen. A target cue must survive spell clutter, not add to it.
-    frame.hLine:SetSize(math.floor(visualSize * 1.35), 3)
-    frame.vLine:SetSize(3, math.floor(visualSize * 1.35))
+    frame.hLine:SetSize(math.floor(visualSize * 0.62), 1)
+    frame.vLine:SetSize(1, math.floor(visualSize * 0.62))
     frame.outer:SetSize(visualSize, visualSize)
-    frame.inner:SetSize(math.floor(visualSize * 0.58), math.floor(visualSize * 0.58))
-    frame.pulse:SetSize(math.floor(visualSize * 0.74), math.floor(visualSize * 0.74))
-    frame.labelPlate:SetSize(math.max(78, math.floor(visualSize * 0.92)), 16)
-    frame.detailPlate:SetSize(math.max(126, math.floor(visualSize * 1.46)), 14)
+    frame.inner:SetSize(4, 4)
+    frame.targetIcon:SetSize(math.max(18, math.floor(visualSize * 0.28)), math.max(18, math.floor(visualSize * 0.28)))
+    frame.pulse:SetSize(math.floor(visualSize * 1.14), math.floor(visualSize * 1.14))
+    frame.labelPlate:SetSize(math.max(54, math.floor(visualSize * 0.60)), 14)
+    frame.detailPlate:SetSize(math.max(112, math.floor(visualSize * 1.20)), 14)
     frame.baseAlpha = alpha
-    frame.hLine:SetShown(profile.reticleGuides ~= false)
-    frame.vLine:SetShown(profile.reticleGuides ~= false)
+    frame.hLine:SetShown(profile.reticleGuides == true)
+    frame.vLine:SetShown(profile.reticleGuides == true)
     self:ApplyReticleState(self.reticleState or {
         mode = "TARGET",
         label = "TARGET",
@@ -831,13 +833,13 @@ function CursorRing:ApplyReticleState(state)
     local colors = RETICLE_COLORS[state.mode] or RETICLE_COLORS.TARGET
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
     frame.baseAlpha = alpha
-    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.34)
-    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.34)
+    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
+    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
     frame.outer:SetVertexColor(
         colors.outer[1], colors.outer[2], colors.outer[3],
         math.min(1, math.max(colors.alpha or alpha, alpha * 0.90)))
-    frame.inner:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.68)
-    frame.pulse:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.24)
+    frame.inner:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.78)
+    frame.pulse:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.18)
     local classFile = KWR.Util:Upper(state.classFile, "", 24)
     local texCoords = type(CLASS_ICON_TCOORDS) == "table"
         and CLASS_ICON_TCOORDS[classFile] or nil
@@ -849,12 +851,15 @@ function CursorRing:ApplyReticleState(state)
     else
         frame.targetIcon:Hide()
     end
-    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], 0.94)
-    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], 0.72)
-    frame.label:SetText(KWR.Util:Text(state.label, "TARGET", 24))
+    local label = KWR.Util:Text(state.label, "TARGET", 24)
+    local showAction = label ~= "TARGET"
+    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], showAction and 0.62 or 0)
+    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], showAction and 0.48 or 0)
+    frame.label:SetText(showAction and label or "")
     local detail = KWR.Util:Text(state.detail, "", 64)
-    frame.detail:SetText(detail)
-    frame.detailPlate:SetShown(detail ~= "")
+    frame.detail:SetText(showAction and detail or "")
+    frame.labelPlate:SetShown(showAction)
+    frame.detailPlate:SetShown(showAction and detail ~= "")
     frame.pulseActive = state.pulse == true
     self.reticleState = state
 end
@@ -862,7 +867,6 @@ end
 function CursorRing:ResolveReticleState(state)
     local snapshot = state and state.snapshot or {}
     local combat = snapshot.combat or {}
-    local mapKey = snapshot.context and snapshot.context.mapKey
     local targetRecord
     for _, enemy in ipairs(snapshot.enemies or {}) do
         if sameTargetRecord(enemy) then
@@ -950,21 +954,13 @@ function CursorRing:ResolveReticleState(state)
             classFile = targetClass,
         }
     end
-    local observed = KWR.Util:Text(targetRecord and targetRecord.spec, "Observed target", 24)
-    if targetRecord and targetRecord.location and mapKey then
-        observed = observed .. "  "
-            .. KWR.Maps:AbbreviateLocation(mapKey, targetRecord.location)
-    end
-    if targetRecord and targetRecord.locationState and targetRecord.locationState ~= "" then
-        observed = KWR.Util:Text(targetRecord.locationState, "OBSERVED", 14) .. "  " .. observed
-    end
-    if targetRecord and targetRecord.age and targetRecord.visible ~= true then
-        observed = observed .. "  " .. KWR.Util:Age(targetRecord.age)
-    end
     return {
         mode = "TARGET",
         label = "TARGET",
-        detail = KWR.Util:Text(observed, "Observed target", 28),
+        -- Keep neutral target identity in Blizzard's nameplate and the class
+        -- icon inside the ring. Repeating "Observed target" above it costs
+        -- visibility without improving the target decision.
+        detail = "",
         pulse = false,
         classFile = targetClass,
     }

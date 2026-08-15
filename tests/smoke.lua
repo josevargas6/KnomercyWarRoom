@@ -5883,9 +5883,9 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     assert(KWR.CursorRing.reticle.targetIcon.texture ~= nil,
         "Target reticle did not place the target class icon at its centre.")
     KWR.CursorRing:ApplyReticle()
-    assert(KWR.CursorRing.reticle.labelPlate.width >= 78
-        and KWR.CursorRing.reticle.detailPlate.width >= 126,
-        "Reticle polish did not retain a compact left-side tactical cue.")
+    assert(KWR.CursorRing.reticle.labelPlate.width >= 54
+        and KWR.CursorRing.reticle.detailPlate.width >= 112,
+        "Reticle polish did not retain a compact action-only tactical cue.")
     assert(KWR.CursorRing.reticle.labelPlate.backdropColor[4] == 0
         and KWR.CursorRing.reticle.detailPlate.backdropColor[4] == 0,
         "Reticle caption plates painted an opaque background over the battlefield.")
@@ -5898,12 +5898,12 @@ if previewState and previewState.snapshot and previewState.snapshot.context
     reticlePreviewState.snapshot.combat.killTarget = nil
     local reticleObserved = KWR.CursorRing:ResolveReticleState(reticlePreviewState)
     assert(reticleObserved.label == "TARGET"
-        and reticleObserved.detail ~= "",
-        "Reticle did not carry observed target-state context when no command target applied.")
+        and reticleObserved.detail == "",
+        "Neutral targets should retain the native nameplate without a redundant reticle caption.")
     KWR.CursorRing:ApplyReticleState(reticleObserved)
-    assert(KWR.CursorRing.reticle.detailPlate:IsShown()
-        and KWR.CursorRing.reticle.detail.value == reticleObserved.detail,
-        "Reticle discarded the actionable detail behind its compact target cue.")
+    assert(not KWR.CursorRing.reticle.labelPlate:IsShown()
+        and not KWR.CursorRing.reticle.detailPlate:IsShown(),
+        "Neutral target reticle left redundant caption plates on screen.")
     do
         local previousNamePlateApi = C_NamePlate
         local previousUnitIsPlayer = UnitIsPlayer

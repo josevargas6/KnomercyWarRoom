@@ -146,16 +146,16 @@ function Diagnostics:Run()
 
         KWR.CursorRing:Create()
         KWR.CursorRing:ApplyReticle()
-        check("Reticle retains a compact left-side tactical cue",
+        check("Reticle retains a compact action-only tactical cue",
             KWR.CursorRing.reticle
                 and KWR.CursorRing.reticle.labelPlate
                 and KWR.Util:Number(KWR.Util:Call(
                     KWR.CursorRing.reticle.labelPlate.GetWidth,
-                    KWR.CursorRing.reticle.labelPlate), 0) >= 78
+                    KWR.CursorRing.reticle.labelPlate), 0) >= 54
                 and KWR.CursorRing.reticle.detailPlate
                 and KWR.Util:Number(KWR.Util:Call(
                     KWR.CursorRing.reticle.detailPlate.GetWidth,
-                    KWR.CursorRing.reticle.detailPlate), 0) >= 126)
+                    KWR.CursorRing.reticle.detailPlate), 0) >= 112)
     end
 
     local mapOrder = {
