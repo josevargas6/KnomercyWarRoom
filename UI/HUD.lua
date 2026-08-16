@@ -640,7 +640,9 @@ function HUD:Update(state)
     local frame = self:Create()
     local snapshot, command = state.snapshot, state.command
     local formationMode = snapshot.context.inPvP ~= true
-    local focusMode = not formationMode and KWR.db.profile.hud.focusMode == true
+    local focusMode = not formationMode
+        and snapshot.context.matchComplete ~= true
+        and KWR.db.profile.hud.focusMode == true
     local formation = snapshot.formation or {}
     local sessionKey = KWR.Util:Text(snapshot and snapshot.context
         and snapshot.context.sessionKey,

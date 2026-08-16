@@ -5021,6 +5021,21 @@ assert(KWR.HUD.frame.height == 292
     and not KWR.HUD.frame.mine:IsShown()
     and not KWR.HUD.frame.caller:IsShown(),
     "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
+do
+    local completedFocusState = KWR.Util:Copy(localFightHudState)
+    completedFocusState.snapshot.context.matchComplete = true
+    completedFocusState.command.status = "COMPLETE"
+    completedFocusState.command.action = "Open Review / AAR"
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(completedFocusState)
+    assert(KWR.HUD.frame.height == 500
+        and KWR.HUD.frame.next.heading.value == "NOW"
+        and KWR.HUD.frame.kill.heading.value == "KILL / CC"
+        and KWR.HUD.frame.win:IsShown()
+        and KWR.HUD.frame.mine:IsShown()
+        and KWR.HUD.frame.caller:IsShown(),
+        "Completed match remained trapped in minimal focus mode instead of restoring the review-ready HUD.")
+end
 KWR.db.profile.hud.focusMode = false
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
