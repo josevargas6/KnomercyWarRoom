@@ -132,6 +132,19 @@ function Options:Refresh()
             end
         end
     end
+    for mode, button in pairs(self.layoutButtons or {}) do
+        button:SetSelected((KWR.db.profile.layoutMode or "AUTO") == mode)
+    end
+end
+
+function Options:SetLayoutMode(mode)
+    if mode ~= "AUTO" and mode ~= "COMPACT" and mode ~= "STANDARD" and mode ~= "LARGE" then
+        return false
+    end
+    KWR.db.profile.layoutMode = mode
+    if KWR.LayoutCoordinator then KWR.LayoutCoordinator:Apply() end
+    self:Refresh()
+    return true
 end
 
 function Options:Close()
@@ -191,7 +204,7 @@ function Options:Create()
     end
 
     frame.content = CreateFrame("Frame", nil, frame.scroll)
-    frame.content:SetSize(724, 1228)
+    frame.content:SetSize(724, 1366)
     frame.content.kwrCards = {}
     if frame.scroll.SetScrollChild then
         frame.scroll:SetScrollChild(frame.content)
@@ -450,7 +463,7 @@ function Options:Create()
     local utilityCard = createOptionCard(content,
         "Utilities",
         "Reset positions and tune readability for KWR-owned windows.",
-        366, -868, 342, 220)
+        366, -868, 342, 350)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
         if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
             KWR.LayoutCoordinator:Reset()
@@ -519,10 +532,31 @@ function Options:Create()
     end)
     diagnostics:SetPoint("TOPLEFT", 10, -174)
 
+    local layoutLabel = KWR.Theme:Font(utilityCard, 9, "soft", "LEFT")
+    layoutLabel:SetPoint("TOPLEFT", 10, -216)
+    layoutLabel:SetText("KWR window scale")
+    local layoutSummary = KWR.Theme:Font(utilityCard, 8, "muted", "LEFT")
+    layoutSummary:SetPoint("TOPLEFT", 10, -234)
+    layoutSummary:SetPoint("TOPRIGHT", -10, -234)
+    layoutSummary:SetText("Auto follows your effective WoW UI size. The other three stay fixed.")
+    self.layoutButtons = {}
+    local modes = {
+        { "AUTO", "AUTO" }, { "COMPACT", "COMPACT" },
+        { "STANDARD", "STANDARD" }, { "LARGE", "LARGE" },
+    }
+    for index, entry in ipairs(modes) do
+        local mode, label = entry[1], entry[2]
+        local button = KWR.Theme:Button(utilityCard, label, 76, 28, function()
+            Options:SetLayoutMode(mode)
+        end)
+        button:SetPoint("TOPLEFT", 10 + ((index - 1) * 81), -266)
+        self.layoutButtons[mode] = button
+    end
+
     local footerCard = createOptionCard(content,
         "Policy",
         "KWR safety and visibility rules stay fixed regardless of battleground setup.",
-        0, -1102, 708, 112)
+        0, -1240, 708, 112)
     frame.note = KWR.Theme:Font(footerCard, 9, "muted")
     frame.note:SetPoint("TOPLEFT", 10, -40)
     frame.note:SetPoint("TOPRIGHT", -10, -40)

@@ -4,10 +4,10 @@ local LayoutCoordinator = {}
 KWR.LayoutCoordinator = LayoutCoordinator
 
 local PROFILES = {
-    WIDE = { name = "WIDE", margin = 24, optionsWidth = 780 },
-    STANDARD = { name = "STANDARD", margin = 18, optionsWidth = 740 },
-    COMPACT = { name = "COMPACT", margin = 14, optionsWidth = 680 },
-    NARROW = { name = "NARROW", margin = 10, optionsWidth = 620 },
+    WIDE = { name = "WIDE", margin = 24, optionsWidth = 780, scale = 1.08 },
+    STANDARD = { name = "STANDARD", margin = 18, optionsWidth = 740, scale = 1.00 },
+    COMPACT = { name = "COMPACT", margin = 14, optionsWidth = 680, scale = 0.90 },
+    NARROW = { name = "NARROW", margin = 10, optionsWidth = 620, scale = 0.82 },
 }
 
 local BLIZZARD_WINDOWS = {
@@ -39,7 +39,7 @@ local function screenSize()
     return math.max(1, width), math.max(1, height)
 end
 
-function LayoutCoordinator:Profile()
+function LayoutCoordinator:AutoProfile()
     local width, height = screenSize()
     if width >= 2200 or width / height >= 2.15 then
         return PROFILES.WIDE
@@ -51,6 +51,31 @@ function LayoutCoordinator:Profile()
         return PROFILES.COMPACT
     end
     return PROFILES.NARROW
+end
+
+function LayoutCoordinator:Profile()
+    local mode = KWR.db and KWR.db.profile and KWR.db.profile.layoutMode or "AUTO"
+    if mode == "COMPACT" then return PROFILES.COMPACT end
+    if mode == "STANDARD" then return PROFILES.STANDARD end
+    if mode == "LARGE" then return PROFILES.WIDE end
+    return self:AutoProfile()
+end
+
+local function applyScale(frame, scale)
+    if not frame or not frame.SetScale then return end
+    if frame:GetScale() ~= scale then frame:SetScale(scale) end
+end
+
+local function visibleScale(frame, requested, margin)
+    if not frame or not frame.GetWidth or not frame.GetHeight then return requested end
+    local width, height = screenSize()
+    local frameWidth, frameHeight = frame:GetWidth(), frame:GetHeight()
+    if not frameWidth or not frameHeight or frameWidth <= 0 or frameHeight <= 0 then
+        return requested
+    end
+    local maximum = math.min((width - (margin * 2)) / frameWidth,
+        (height - (margin * 2)) / frameHeight)
+    return math.min(requested, maximum)
 end
 
 local function moveBy(frame, dx, dy)
@@ -161,13 +186,16 @@ function LayoutCoordinator:ApplyMainWindow()
     if not main then return end
     local width, height = screenSize()
     local profile = self:Profile()
-    local targetWidth = math.min(1240, math.max(1240, width - (profile.margin * 2)))
+    -- The internal command board is a fixed logical canvas. Scale the whole
+    -- canvas instead of squeezing cards and tabs into narrower columns.
+    local targetWidth = 1240
     -- Normal displays get enough vertical room for the complete card stack.
     -- Scrolling remains a deliberate compact-mode fallback only.
     local targetHeight = math.min(800, math.max(640, height - (profile.margin * 2)))
     if main:GetWidth() ~= targetWidth or main:GetHeight() ~= targetHeight then
         main:SetSize(targetWidth, targetHeight)
     end
+    applyScale(main, visibleScale(main, profile.scale, profile.margin))
     if KWR.MainWindow.contentViewport then
         KWR.MainWindow.contentViewport:SetPoint("TOPLEFT", 18, -124)
         KWR.MainWindow.contentViewport:SetPoint("BOTTOMRIGHT", -18, 20)
@@ -187,6 +215,7 @@ function LayoutCoordinator:ApplyHUD()
     local hud = KWR.HUD and KWR.HUD.frame
     if not hud then return end
     local profile = self:Profile()
+    applyScale(hud, visibleScale(hud, profile.scale, profile.margin))
     -- HUD.lua owns the deliberate 548px setup / 500px fight-mode sizes.
     -- The coordinator only keeps the active mode's frame inside the viewport.
     self:Clamp(hud, profile.margin)
@@ -203,6 +232,7 @@ function LayoutCoordinator:ApplyOptions()
     if options:GetWidth() ~= targetWidth or options:GetHeight() ~= targetHeight then
         options:SetSize(targetWidth, targetHeight)
     end
+    applyScale(options, visibleScale(options, profile.scale, profile.margin))
     self:Clamp(options, profile.margin)
 end
 
@@ -230,6 +260,8 @@ function LayoutCoordinator:ApplySentinel()
 
     local width, height = screenSize()
     local margin = self:Profile().margin
+    applyScale(hud, visibleScale(hud, self:Profile().scale, margin))
+    applyScale(status, visibleScale(status, self:Profile().scale, margin))
     local hudWidth, hudHeight = hud:GetWidth(), hud:GetHeight()
     local statusWidth = status and status:GetWidth() or 320
     local statusHeight = status and status:GetHeight() or 168

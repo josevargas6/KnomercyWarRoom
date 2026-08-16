@@ -62,6 +62,9 @@ local DEFAULTS = {
             y = 0,
             page = "TACTICAL",
         },
+        -- Four presentation choices keep the UI predictable without asking
+        -- players to tune separate scales for every KWR surface.
+        layoutMode = "AUTO",
         formation = {
             selectedCompID = nil,
         },
@@ -404,6 +407,11 @@ local function normalizeProfile(profile)
     profile.sentinelTransportEnabled = KWR.Util:Boolean(
         profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
+    profile.layoutMode = KWR.Util:Upper(profile.layoutMode, defaults.layoutMode, 16)
+    if profile.layoutMode ~= "AUTO" and profile.layoutMode ~= "COMPACT"
+        and profile.layoutMode ~= "STANDARD" and profile.layoutMode ~= "LARGE" then
+        profile.layoutMode = defaults.layoutMode
+    end
     return profile
 end
 
