@@ -409,6 +409,7 @@ function Verification:BuildEntry(state)
         expectedOutcome = strategy.expectedOutcome,
         opportunity = strategy.opportunity,
         strategyTrust = strategy.trust,
+        strategistNexus = strategy.nexus,
         scenarioCalibration = strategy.scenarioCalibration,
         scenarioAdversarialCalibration = strategy.scenarioAdversarialCalibration,
         enemyResponsePlan = strategy.enemyResponsePlan,
@@ -813,6 +814,19 @@ function Verification:Format(entry)
             value(entry.strategyTrust and entry.strategyTrust.mode, "VERIFY"),
             tostring(entry.strategyTrust and entry.strategyTrust.separation or "unknown"),
             value(entry.strategyTrust and entry.strategyTrust.reason, "Unknown")),
+        string.format("Strategist Nexus: %s -> fallback %s / %s / simulations %d %s / reviewed live %d",
+            value(entry.strategistNexus and entry.strategistNexus.primary
+                and entry.strategistNexus.primary.id, "VERIFY"),
+            value(entry.strategistNexus and entry.strategistNexus.fallback
+                and entry.strategistNexus.fallback.id, "HOLD"),
+            value(entry.strategistNexus and entry.strategistNexus.provenance
+                and entry.strategistNexus.provenance.sourceStatus, "UNAVAILABLE"),
+            entry.strategistNexus and entry.strategistNexus.provenance
+                and entry.strategistNexus.provenance.totalSimulationCases or 0,
+            value(entry.strategistNexus and entry.strategistNexus.provenance
+                and entry.strategistNexus.provenance.simulationAuthority, "UNAVAILABLE"),
+            entry.strategistNexus and entry.strategistNexus.provenance
+                and entry.strategistNexus.provenance.reviewedLearningSamples or 0),
         string.format("Execution: %s (%d) / commitment %s @ %s / pressure %s / rotation %s / collapse %s / organization %s %d",
             value(entry.executionAssessment
                 and entry.executionAssessment.actionOpportunity

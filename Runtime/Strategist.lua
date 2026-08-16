@@ -1137,6 +1137,9 @@ function Strategist:Evaluate(snapshot, prediction)
     applyDoctrineComparisonGuidance(result, doctrineComparison)
     applyDoctrineResponseGuidance(result, doctrineResponse)
     applyEnemyResponsePlanning(snapshot, prediction, result)
+    if KWR.StrategistNexus then
+        KWR.StrategistNexus:Rank(snapshot, prediction, result)
+    end
     local carriers = snapshot.objectives and snapshot.objectives.carriers or {}
     if snapshot.context.kind == "FLAG" then
         local friendlyCarrier, enemyCarrier
@@ -1223,6 +1226,9 @@ function Strategist:Evaluate(snapshot, prediction)
         if (result.switchIf == nil or result.switchIf == "") and adversarialCalibration.escalateWhen then
             result.switchIf = adversarialCalibration.escalateWhen
         end
+    end
+    if KWR.StrategistNexus then
+        result.nexus = KWR.StrategistNexus:Envelope(snapshot, prediction, result)
     end
     self.cache = {
         signature = signature,

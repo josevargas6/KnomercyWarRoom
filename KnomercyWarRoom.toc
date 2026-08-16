@@ -42,7 +42,8 @@ Data\ScenarioLibrary.lua
 Data\ScenarioCalibration.lua
 Data\ScenarioAdversarialCalibration.lua
 Data\ScenarioExpertCorpus.lua
-Data\Season2CorpusLifecycle.lua
+Data\StrategistNexusPolicy.lua
+Data\StrategistNexusCorpus.lua
 Data\CompThreats.lua
 Data\EnemyDefenseModels.lua
 Data\OpenerDoctrine.lua
@@ -52,6 +53,7 @@ Data\DoctrineComparisons.lua
 Data\ScenarioFixtures.lua
 Data\Counters.lua
 Data\KnowledgeManifest.lua
+Data\StrategistNexusKnowledge.lua
 
 Rulesets\Retail_Current.lua
 Rulesets\PTR_12_1.lua
@@ -100,6 +102,7 @@ Runtime\Reporter.lua
 Runtime\Predictor.lua
 Runtime\Preview.lua
 Runtime\EnemyResponsePlanner.lua
+Runtime\StrategistNexus.lua
 Runtime\Strategist.lua
 Runtime\AssignmentOverrides.lua
 Runtime\Assignments.lua

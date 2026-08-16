@@ -348,6 +348,9 @@ function Bridge:BuildView()
         connected = false, state = "NO REMOTE", age = nil, expiresIn = 0,
     }
     local comm = Sentinel.Comm and Sentinel.Comm.diagnostics or {}
+    local nexusKnowledge = kwr and kwr.StrategistNexusKnowledge
+    local liveEvidence = nexusKnowledge and nexusKnowledge.LiveEvidence
+        and nexusKnowledge:LiveEvidence() or {}
     view.proof = {
         bridge = remote and "REMOTE" or (kwr and kwr.ready and "LOCAL" or "STANDALONE"),
         transport = Sentinel:TransportEnabled() and relayStatus.state or "DISABLED",
@@ -356,8 +359,10 @@ function Bridge:BuildView()
         received = comm.received or 0,
         rejected = comm.rejected or 0,
         throttled = comm.throttled or 0,
-        corpus = kwr and kwr.Season2CorpusLifecycle
-            and ("PROMOTED " .. tostring(kwr.Season2CorpusLifecycle:Count())) or "LOCAL ONLY",
+        corpus = nexusKnowledge
+            and ("NEXUS " .. tostring(nexusKnowledge:Status())
+                .. " / REVIEWED " .. tostring(liveEvidence.reviewedLearningSamples or 0))
+            or "LOCAL ONLY",
     }
     if Sentinel:TransportEnabled() and relayStatus.state == "REMOTE STALE" then
         view.degraded = true

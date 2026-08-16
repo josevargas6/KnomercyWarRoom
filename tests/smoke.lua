@@ -461,7 +461,8 @@ local files = {
     "Data/ScenarioCalibration.lua",
     "Data/ScenarioAdversarialCalibration.lua",
     "Data/ScenarioExpertCorpus.lua",
-    "Data/Season2CorpusLifecycle.lua",
+    "Data/StrategistNexusPolicy.lua",
+    "Data/StrategistNexusCorpus.lua",
     "Data/CompThreats.lua",
     "Data/EnemyDefenseModels.lua",
     "Data/OpenerDoctrine.lua",
@@ -471,6 +472,7 @@ local files = {
     "Data/ScenarioFixtures.lua",
     "Data/Counters.lua",
     "Data/KnowledgeManifest.lua",
+    "Data/StrategistNexusKnowledge.lua",
     "Rulesets/Retail_Current.lua",
     "Rulesets/PTR_12_1.lua",
     "Rulesets/Strict_Future.lua",
@@ -513,6 +515,7 @@ local files = {
     "Runtime/Reporter.lua",
     "Runtime/Predictor.lua",
     "Runtime/EnemyResponsePlanner.lua",
+    "Runtime/StrategistNexus.lua",
     "Runtime/Strategist.lua",
     "Runtime/AssignmentOverrides.lua",
     "Runtime/Assignments.lua",
@@ -615,8 +618,6 @@ assert(KWR.SafetyMonitor:Snapshot().blocked == KWR.SafetyMonitor.__testAfter.blo
 KWR.SafetyMonitor.__testBefore = nil
 KWR.SafetyMonitor.__testAfter = nil
 
-assert(KWR.Season2CorpusLifecycle and KWR.Season2CorpusLifecycle:Count() == 0,
-    "Simulation-only Season 2 corpus must compile to zero live runtime entries.")
 do
     local reviewQueue = KWR.AAR:BuildReviewQueue({
         performance = { errors = 1, maxP95Ms = 2.1, maxRefreshMs = 10.1 },
@@ -1530,6 +1531,48 @@ assert(KWR.ScenarioAdversarialCalibration:Count() == 200,
     "Scenario adversarial calibration did not expose one fail-closed row per current base RBG scenario.")
 assert(KWR.ScenarioExpertCorpus:Count() == 1200,
     "Scenario expert corpus did not expose the current reviewed and season-prep scenario set.")
+assert(KWR.StrategistNexusCorpus:Count() == 5000
+    and KWR.StrategistNexusCorpus:Status() == "SIMULATION_ONLY"
+    and KWR.StrategistNexusCorpus:Patch() == "12.1.0",
+    "Strategist Nexus did not expose the complete simulation-only runtime corpus.")
+assert(KWR.StrategistNexusKnowledge:Status() == "PRODUCTION_ACTIVE"
+    and KWR.StrategistNexusKnowledge:Patch() == "12.1.0"
+    and KWR.StrategistNexusKnowledge:Shared().simulationAuthority == "COVERAGE_GUARD_ONLY",
+    "Strategist Nexus production knowledge contract is unavailable or unsafe.")
+do
+    local maps = {
+        "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG",
+        "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING",
+    }
+    local phases = { "OPENING", "STABILIZE", "PRESSURE", "RECOVERY", "ENDGAME" }
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            local coverage = KWR.StrategistNexusCorpus:Coverage(mapKey, phase, {})
+            assert(coverage.available == true
+                and coverage.phaseCases == 100
+                and coverage.mapCases == 500
+                and coverage.totalCases == 5000,
+                "Strategist Nexus coverage drifted for " .. mapKey .. " / " .. phase)
+            local knowledge = KWR.StrategistNexusKnowledge:Coverage(mapKey, phase)
+            assert(knowledge.available == true
+                and knowledge.reviewedLabels >= 5
+                and knowledge.reviewedCases >= 5
+                and knowledge.adversarialCases >= 1
+                and knowledge.doctrineComparisons == 20
+                and knowledge.doctrineResponses == 20,
+                "Strategist Nexus reviewed knowledge drifted for " .. mapKey .. " / " .. phase)
+        end
+    end
+    local branch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
+        family = "first-contact",
+        compWatch = "HUNTER_DK_PRESSURE",
+        scoreState = "SAFE_DEFAULT",
+        counterResponse = "EXPECTED",
+        evidenceState = "LIVE_KNOWN",
+    })
+    assert(branch.available == true and branch.marginalCases >= 19,
+        "Strategist Nexus did not retrieve bounded branch coverage.")
+end
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
 assert(KWR.DoctrineComparisons:CountResponses() == 200,
@@ -1560,6 +1603,16 @@ assert(liveStrategy.doctrineComparisonID
     and type(liveStrategy.comparisonChoice) == "string"
     and type(liveStrategy.safeCounterAction) == "string",
     "Strategist did not surface doctrine comparison and safe-counter guidance.")
+assert(type(liveStrategy.nexus) == "table"
+    and type(liveStrategy.nexus.primary) == "table"
+    and type(liveStrategy.nexus.fallback) == "table"
+    and type(liveStrategy.nexus.enemyResponse) == "table"
+    and liveStrategy.nexus.provenance.totalSimulationCases == 5000
+    and liveStrategy.nexus.provenance.sourceStatus == "PRODUCTION_ACTIVE"
+    and liveStrategy.nexus.provenance.simulationStatus == "SIMULATION_ONLY"
+    and liveStrategy.nexus.provenance.simulationAuthority == "COVERAGE_GUARD_ONLY"
+    and liveStrategy.nexus.provenance.livePromotion == "PLAYER_REVIEW_REQUIRED",
+    "Strategist did not surface the evidence-gated Nexus decision envelope.")
 local liveCommand = KWR.Store:Get().command or {}
 assert(type(liveCommand.branchChoice) == "string"
     and type(liveCommand.safeCounter) == "string"
@@ -1837,6 +1890,22 @@ assert(type(liveState.snapshot.strategy.enemyResponsePlan) == "table"
     and type(liveState.snapshot.strategy.enemyResponsePlan.safestReply) == "string"
     and type(liveState.snapshot.strategy.consequenceScore) == "number",
     "Strategist did not attach bounded enemy-response planning.")
+assert(type(liveState.snapshot.strategy.nexusContext) == "table"
+    and type(liveState.snapshot.strategy.nexusFallbackCandidate) == "table"
+    and type(liveState.snapshot.strategy.nexus) == "table"
+    and liveState.snapshot.strategy.nexus.provenance.reviewedLearningSamples >= 0,
+    "Strategist Nexus did not preserve reviewed live-learning provenance.")
+for _, candidate in ipairs(liveState.snapshot.strategy.simulations or {}) do
+    assert(type(candidate.nexus) == "table"
+        and math.abs(candidate.nexus.adjustment or 0) <= 16,
+        "Strategist Nexus candidate adjustment escaped its bounded policy.")
+    assert((candidate.nexus.coverageGuardAdjustment or 0) <= 0,
+        "Simulation coverage produced an unauthorized positive tactic score.")
+    if candidate.legal == false then
+        assert(candidate.nexus.adjustment == 0,
+            "Strategist Nexus adjusted an objective-rule-gated candidate.")
+    end
+end
 assert(type(liveState.snapshot.strategy.executionAssessment) == "table"
     and type(liveState.snapshot.strategy.executionAssessment.organization) == "table"
     and liveState.snapshot.strategy.executionAssessment.organization.uncovered

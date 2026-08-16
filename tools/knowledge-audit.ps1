@@ -547,6 +547,32 @@ try {
     $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
 }
 
+$nexusGeneratedPath = Join-Path $root "Data\StrategistNexusCorpus.lua"
+$nexusTempPath = Join-Path ([IO.Path]::GetTempPath()) (
+    "kwr-strategist-nexus-" + [guid]::NewGuid().ToString("N") + ".lua")
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (
+        Join-Path $root "tools\build-strategist-nexus-corpus.ps1") `
+        -OutputFile $nexusTempPath
+    if ($LASTEXITCODE -ne 0) {
+        $errors.Add("Strategist Nexus corpus compiler failed.")
+    } elseif (-not (Test-Path -LiteralPath $nexusGeneratedPath)) {
+        $errors.Add("Strategist Nexus generated runtime corpus is missing.")
+    } else {
+        $expectedHash = (Get-FileHash -LiteralPath $nexusGeneratedPath -Algorithm SHA256).Hash
+        $actualHash = (Get-FileHash -LiteralPath $nexusTempPath -Algorithm SHA256).Hash
+        if ($expectedHash -cne $actualHash) {
+            $errors.Add("Strategist Nexus runtime corpus is stale or non-deterministic.")
+        }
+    }
+} catch {
+    $errors.Add("Strategist Nexus corpus audit failed: $($_.Exception.Message)")
+} finally {
+    if (Test-Path -LiteralPath $nexusTempPath) {
+        Remove-Item -LiteralPath $nexusTempPath -Force
+    }
+}
+
 $deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
 try {
     $deploymentCertification = Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json

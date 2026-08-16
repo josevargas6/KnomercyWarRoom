@@ -19,8 +19,11 @@ A lower tier never overwrites a higher tier.
 
 `season2-rbg-simulation-corpus.json` contains 5,000 deterministic pre-live
 cases: 500 per supported map and 100 per map phase. It is
-`SIMULATION_ONLY`, used for offline coverage and regression checks, and cannot
-be treated as live outcomes, reviewed labels, meta proof, or runtime tactics.
+`SIMULATION_ONLY`. The production Nexus uses its compact index only to detect
+an unexercised decision branch. Synthetic counts never become a win rate or a
+positive tactic score. Reviewed doctrine and capability theory provide the
+baseline; only truth-qualified, player-reviewed AAR results may create bounded
+current-patch learning after the minimum sample gate.
 
 ## Patch update
 

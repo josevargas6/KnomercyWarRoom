@@ -18,6 +18,9 @@ function Get-ContentHash {
 if ($corpus.schema -ne "kwr-season2-rbg-simulation-corpus" -or $corpus.status -ne "SIMULATION_ONLY") {
     $errors.Add("Season 2 simulation corpus must remain explicitly simulation-only.")
 }
+if ($corpus.activation -ne "RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY") {
+    $errors.Add("Season 2 simulation corpus must remain coverage-guard-only in production.")
+}
 if ([int]$corpus.totalCases -ne 5000 -or @($corpus.cases).Count -ne 5000) {
     $errors.Add("Season 2 simulation corpus must contain exactly 5,000 cases.")
 }
@@ -68,6 +71,4 @@ foreach ($case in @($corpus.cases)) {
     }
 }
 if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_ -ErrorAction Continue }; exit 1 }
-& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "tools\compile-season2-rbg-lifecycle.ps1") -CorpusFile $CorpusFile -Check
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Output "KWR Season 2 simulation audit PASS cases=5000 maps=10 phases=5"

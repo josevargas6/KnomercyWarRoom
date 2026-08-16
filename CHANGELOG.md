@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Added the production Strategist Nexus: reviewed doctrine, capability and
+  composition theory, score-state discipline, and reversible fallbacks now
+  form one bounded decision envelope. The audited 5,000-case simulation index
+  guards branch coverage only, while player-reviewed AAR results refine plans
+  through existing patch and minimum-sample gates.
+- Removed the unused zero-row simulation promotion lifecycle so synthetic
+  records cannot be confused with observed match evidence.
 - Rewrote the CurseForge listing copy as concise plain text so the CurseForge
   client does not display raw Markdown markers; Sentinel now states its
   Commander requirement directly.

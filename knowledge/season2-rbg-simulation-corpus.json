@@ -8,7 +8,7 @@
     "casesPerMap":  500,
     "casesPerPhasePerMap":  100,
     "totalCases":  5000,
-    "activation":  "OFFLINE_COVERAGE_AND_REGRESSION_ONLY",
+    "activation":  "RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY",
     "cases":  [
                   {
                       "caseId":  "s2-sim-arathi-opening-001",
