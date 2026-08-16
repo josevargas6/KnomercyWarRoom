@@ -5477,6 +5477,11 @@ do
     assert(capacityState._normalTeamToken ~= KWR.Store.listeners[KWR.MainWindow].selector(
         KWR.MainWindow, capacityState),
         "Team-page invalidation token ignored a battleground mode capacity change.")
+    for index = 9, 12 do capacityState.snapshot.roster[index] = nil end
+    KWR.MainWindow:UpdateTeam(capacityState)
+    assert(KWR.MainWindow.pages.TEAM.summaryCard.value.value:find(
+        "8 / 8 PLAYERS", 1, true),
+        "Battleground Blitz roster did not use the eight-player capacity.")
     KWR.MainWindow:UpdateTeam(KWR.Store:Get())
 end
 assert(#KWR.MainWindow.pages.TEAM.rosterCard.rows == 15,

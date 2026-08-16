@@ -947,8 +947,10 @@ function MainWindowPages:RenderTeam(page, state, helpers)
         and state.snapshot.context.isRated ~= true
         and state.snapshot.context.isBlitz ~= true
         and definition and definition.normalTeamSize or nil
+    local modeCapacity = state.snapshot.context.isBlitz == true
+        and 8 or normalMapCapacity
     local displayCapacity = math.max(
-        #roster, normalMapCapacity or formation.targetSize or 0)
+        #roster, modeCapacity or formation.targetSize or 0)
     page.summaryCard.value:SetText(string.format(
         "%d / %d PLAYERS   |   %d TANK   |   %d HEALERS   |   %d DAMAGE",
         #roster, displayCapacity, tanks, healers, damage))
