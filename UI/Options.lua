@@ -3,6 +3,31 @@ local _, KWR = ...
 local Options = {}
 KWR.Options = Options
 
+local ACCESSIBILITY_RELOAD_POPUP = "KWR_ACCESSIBILITY_RELOAD"
+
+local function requestAccessibilityReload()
+    Options.reloadRequested = true
+    if type(StaticPopupDialogs) ~= "table" or type(StaticPopup_Show) ~= "function" then
+        KWR:Print("Reload the UI to apply high-contrast colors to every open KWR surface.", true)
+        return
+    end
+    if not StaticPopupDialogs[ACCESSIBILITY_RELOAD_POPUP] then
+        StaticPopupDialogs[ACCESSIBILITY_RELOAD_POPUP] = {
+            text = "Reload the UI now to apply high-contrast colors to every KWR window?",
+            button1 = ACCEPT or "Reload UI",
+            button2 = CANCEL or "Later",
+            OnAccept = function()
+                if type(ReloadUI) == "function" then ReloadUI() end
+            end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+            preferredIndex = 3,
+        }
+    end
+    StaticPopup_Show(ACCESSIBILITY_RELOAD_POPUP)
+end
+
 local function createOptionCard(parent, title, summary, x, y, width, height)
     local card = KWR.Theme:Card(parent, title)
     card:SetPoint("TOPLEFT", x, y)
@@ -469,10 +494,16 @@ function Options:Create()
     createCheck(self, utilityCard,
         "highContrast",
         "Use high-contrast text",
-        "Brightens secondary text and panel boundaries. Applies when KWR windows are next opened.",
+        "Brightens secondary text and panel boundaries. Requires a UI reload; KWR will ask first.",
         -120,
         function() return KWR.db.profile.accessibility.highContrast == true end,
-        function(value) KWR.db.profile.accessibility.highContrast = value == true end)
+        function(value)
+            value = value == true
+            if KWR.db.profile.accessibility.highContrast ~= value then
+                KWR.db.profile.accessibility.highContrast = value
+                requestAccessibilityReload()
+            end
+        end)
     local diagnostics = KWR.Theme:Button(utilityCard, "Copy Field Diagnostic", 168, 28, function()
         if KWR.Verification and KWR.Verification.FieldReport then
             KWR.CopyDialog:ShowText("KWR Field Diagnostic",

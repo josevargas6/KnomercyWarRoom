@@ -100,6 +100,29 @@ local function clampScroll(scroll, value)
     scroll._kwrClamping = false
 end
 
+function MainWindowPages:SetQuickCallsClosed(page, closed)
+    local callsCard = page and page.callsCard
+    if not callsCard then return false end
+    closed = closed == true
+    if InCombatLockdown and InCombatLockdown() then
+        callsCard.pendingClosed = closed
+        callsCard.pendingClosedQueued = true
+        return false
+    end
+    for _, button in ipairs(callsCard.buttons or {}) do
+        if closed then button:Disable() else button:Enable() end
+    end
+    callsCard.pendingClosed = closed
+    callsCard.pendingClosedQueued = false
+    return true
+end
+
+function MainWindowPages:FlushQuickCallState(page)
+    local callsCard = page and page.callsCard
+    if not callsCard or callsCard.pendingClosedQueued ~= true then return true end
+    return self:SetQuickCallsClosed(page, callsCard.pendingClosed)
+end
+
 local function updateLogicCardBody(card, fallbackHeight)
     if not card or not card.scroll or not card.body or not card.value then return end
     local width = math.max((card.scroll:GetWidth() or 0) - 12, 248)
@@ -612,9 +635,7 @@ function MainWindowPages:RenderObjectives(page, state, helpers)
         or (snapshot.context.inPvP
         and "LEFT SENDS  |  RIGHT COPIES"
         or "COPY ONLY OUTSIDE BATTLEGROUNDS"))
-    for _, button in ipairs(page.callsCard.buttons or {}) do
-        if complete then button:Disable() else button:Enable() end
-    end
+    self:SetQuickCallsClosed(page, complete)
     local definition = KWR.Maps:Get(snapshot.context.mapKey)
     local infoRows = {
         snapshot.context.mapName,

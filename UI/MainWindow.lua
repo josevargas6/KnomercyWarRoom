@@ -1801,6 +1801,9 @@ end
 
 function MainWindow:FlushCombatVisibility()
     if InCombatLockdown and InCombatLockdown() then return end
+    if KWR.MainWindowPages and self.pages and self.pages.OBJECTIVES then
+        KWR.MainWindowPages:FlushQuickCallState(self.pages.OBJECTIVES)
+    end
     local pendingPage = self.pendingPage
     self.pendingPage = nil
     local pending = self.pendingVisibility

@@ -163,6 +163,19 @@ assert(Comm:Encode("STATE", "x=1") == nil,
 UnitFullName = oldFullName
 assert((Comm.diagnostics.protected or 0) == protectedBefore + 3,
     "secret transport rejections were not diagnosed")
+
+local oldIsInInstance = IsInInstance
+IsInInstance = function() error("protected instance context") end
+assert(Comm:SessionKey() == nil and Comm:Distribution() == nil,
+    "errored instance context did not fail closed")
+local sentBeforeUnknownContext = #sent
+clock = clock + 100
+assert(not Comm:Send("STATE", "x=1") and #sent == sentBeforeUnknownContext,
+    "errored instance context reached addon transport")
+IsInInstance = function() return secret, "pvp" end
+assert(Comm:SessionKey() == nil and Comm:Distribution() == nil,
+    "secret instance context did not fail closed")
+IsInInstance = oldIsInInstance
 issecretvalue = nil
 
 print("KWR_SENTINEL_TRANSPORT_PASS accepted=" .. tostring(Comm.diagnostics.received)

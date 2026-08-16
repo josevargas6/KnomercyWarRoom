@@ -82,19 +82,24 @@ local function now()
 end
 
 local function instanceContext()
-    if type(IsInInstance) ~= "function" then return false, "none" end
+    if type(IsInInstance) ~= "function" then return nil, nil end
     local ok, inside, kind = pcall(IsInInstance)
-    if not ok or isSecret(inside) or isSecret(kind) then return false, "none" end
+    if not ok or isSecret(inside) or isSecret(kind) then return nil, nil end
     return inside == true, text(kind, "none", 16)
 end
 
 function Comm:SessionKey()
     local inside, kind = instanceContext()
+    if inside == nil then return nil end
     if not inside or kind ~= "pvp" then return "world" end
-    local _, _, _, _, _, _, _, instance = GetInstanceInfo()
+    if type(GetInstanceInfo) ~= "function" then return nil end
+    local instanceOK, _, _, _, _, _, _, _, instance = pcall(GetInstanceInfo)
+    if not instanceOK then return nil end
     local mapID = 0
     if C_Map and type(C_Map.GetBestMapForUnit) == "function" then
-        mapID = C_Map.GetBestMapForUnit("player")
+        local mapOK, result = pcall(C_Map.GetBestMapForUnit, "player")
+        if not mapOK then return nil end
+        mapID = result
     end
     if isSecret(instance) or isSecret(mapID) then return nil end
     return "pvp-" .. tostring(tonumber(mapID) or 0) .. "-" .. tostring(tonumber(instance) or 0)
@@ -102,6 +107,7 @@ end
 
 function Comm:Distribution()
     local inside, kind = instanceContext()
+    if inside == nil then return nil end
     if inside and kind == "pvp" then return "INSTANCE_CHAT" end
     if IsInRaid and IsInRaid() then return "RAID" end
     if IsInGroup and IsInGroup() then return "PARTY" end

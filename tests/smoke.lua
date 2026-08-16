@@ -29,6 +29,12 @@ local mockWidgetOverrides = {}
 local scoreRequests = 0
 function GetTime() return currentTime end
 function GetLocale() return mockLocale end
+StaticPopupDialogs = {}
+ACCEPT = "Reload UI"
+CANCEL = "Later"
+function StaticPopup_Show(key)
+    _G.KWR_TEST_POPUP_SHOWN = key
+end
 function debugprofilestop()
     local runtimeMs
     if type(os) == "table" and type(os.clock) == "function" then
@@ -5373,6 +5379,27 @@ do
         allEnabled = allEnabled and button:IsEnabled()
     end
     assert(allEnabled, "Objectives Quick Calls did not re-enable after leaving completed-match state.")
+
+    mockCombat = true
+    KWR.MainWindow:UpdateObjectives(completedObjectives)
+    allEnabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allEnabled = allEnabled and button:IsEnabled()
+    end
+    assert(allEnabled and calls.pendingClosed == true
+        and calls.pendingClosedQueued == true,
+        "Completed-match Quick Calls mutated protected button state during combat.")
+    mockCombat = false
+    KWR.MainWindow.lastState = completedObjectives
+    KWR.MainWindow:FlushCombatVisibility()
+    allDisabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allDisabled = allDisabled and not button:IsEnabled()
+    end
+    assert(allDisabled and calls.pendingClosedQueued == false,
+        "Deferred completed-match Quick Call state did not flush after combat.")
+    KWR.MainWindow.lastState = KWR.Store:Get()
+    KWR.MainWindow:UpdateObjectives(KWR.Store:Get())
 end
 KWR.MainWindow:Show("TEAM")
 KWR.MainWindow:UpdateTeam(KWR.Store:Get())
@@ -5482,6 +5509,14 @@ assert(KWR.Options.namedChecks.autoReporter == nil
     and KWR.Options.namedChecks.battlefieldOrbs.check.kwrDisabled == false
     and KWR.Options.namedChecks.aarAutoOpen.check.kwrDisabled == true,
     "Options window did not separate advisory overlay dependencies from hard dependencies.")
+KWR.Options.namedChecks.highContrast.check:SetChecked(true)
+KWR.Options.namedChecks.highContrast.check.scripts.OnClick(
+    KWR.Options.namedChecks.highContrast.check)
+assert(KWR.db.profile.accessibility.highContrast == true
+    and KWR.Options.reloadRequested == true
+    and _G.KWR_TEST_POPUP_SHOWN == "KWR_ACCESSIBILITY_RELOAD",
+    "High-contrast changes did not request the required UI reload.")
+KWR.db.profile.accessibility.highContrast = false
 KWR.Options.namedChecks.reticleEnabled.check:SetChecked(false)
 KWR.Options.namedChecks.reticleEnabled.check.scripts.OnClick(
     KWR.Options.namedChecks.reticleEnabled.check)
