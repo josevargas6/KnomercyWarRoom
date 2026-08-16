@@ -65,8 +65,8 @@ jobs:
         with:
           name: kwr-public-${{ github.run_id }}-${{ github.sha }}
           path: |
-            artifacts/KWR_*_DISTRIBUTION.zip
-            artifacts/KWRSentinel_*.zip
+            artifacts/KnomercyWarRoom-*.zip
+            artifacts/KWR-Sentinel-*.zip
             artifacts/KWR_*_SHA256.txt
             artifacts/KWR_*_PUBLIC_MANIFEST.json
           if-no-files-found: error

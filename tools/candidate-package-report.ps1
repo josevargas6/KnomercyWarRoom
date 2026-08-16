@@ -19,7 +19,7 @@ $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
 $version = [regex]::Match($toc, "## Version:\s*(.+)").Groups[1].Value.Trim()
 $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 
-$distributionZip = Join-Path $buildOutputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
+$distributionZip = Join-Path $buildOutputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
 $hashFile = Join-Path $buildOutputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
 $developerHashFile = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)

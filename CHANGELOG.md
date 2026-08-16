@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Rewrote the CurseForge listing copy as concise plain text so the CurseForge
+  client does not display raw Markdown markers; Sentinel now states its
+  Commander requirement directly.
+- Renamed future player downloads to `KnomercyWarRoom-<version>.zip` and
+  `KWR-Sentinel-<version>.zip`; the published v6.1.0 assets remain immutable.
 - Added an optional minimal live-combat HUD mode, high-contrast presentation
   tokens, a readable multiline manual-copy surface, and full 15-player roster
   capacity without reducing the normal Fight-Now kill/CC direction stack.

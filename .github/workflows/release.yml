@@ -91,8 +91,8 @@ jobs:
           # Never publish developer sources, screenshots, field evidence, or
           # generated certification reports to a player-facing release.
           $publicAssets = @(
-            "artifacts/KWR_${safe}_DISTRIBUTION.zip",
-            "artifacts/KWRSentinel_${sentinelSafe}.zip",
+            "artifacts/KnomercyWarRoom-$version.zip",
+            "artifacts/KWR-Sentinel-$sentinelVersion.zip",
             "artifacts/KWR_${safe}_SHA256.txt",
             "artifacts/KWR_${safe}_PUBLIC_MANIFEST.json",
             "artifacts/INSTALL.md"
@@ -132,7 +132,7 @@ jobs:
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
           $releaseType = if ($version.Contains('-')) { 'alpha' } else { 'release' }
-          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip" -ReleaseType $releaseType
+          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KnomercyWarRoom-$version.zip" -ReleaseType $releaseType
 
       - name: Upload Sentinel to CurseForge
         shell: pwsh
@@ -150,7 +150,7 @@ jobs:
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
           $releaseType = if ($version.Contains('-')) { 'alpha' } else { 'release' }
-          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip" -ReleaseType $releaseType
+          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR-Sentinel-$version.zip" -ReleaseType $releaseType
 
       - name: Publish Commander Discord announcement
         shell: pwsh

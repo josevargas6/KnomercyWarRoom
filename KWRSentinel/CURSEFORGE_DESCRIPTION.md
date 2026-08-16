@@ -1,36 +1,28 @@
-# KWR Sentinel
+KWR Sentinel
 
-KWR Sentinel is the compact player execution client for Knomercy War Room.
+KWR Sentinel is the focused companion for Knomercy War Room. It requires KWR
+and a Commander in your battleground group for synchronized assignments.
 
-It is built for non-commander Rated Battleground players who need one clear
-personal instruction instead of a second command dashboard.
+Your next action, at a glance
 
-## What It Shows
+Sentinel shows your assigned battlefield job, movement authority, reviewed
+target responsibility, score and win state, and the current hold or win call.
+Its target cue confirms the reviewed target and stays quiet when no trustworthy
+target is available.
 
-- Commander trust state: `LOCAL KWR`, `NO COMMANDER`, `STALE`, `MISMATCH`, or
-  future reviewed raid-commander binding.
-- Current battleground score/pace and win state.
-- Your job, movement authority, reviewed target responsibility, match state,
-  and the one hold/win instruction.
-- A small target confirmation cue: white for the reviewed target, red for the
-  wrong target, muted when no reviewed target exists.
-- One conservative pre-match readiness alert.
+Clear status, no guesswork
 
-## Current Alpha Scope
+The card makes its Commander trust state visible. If it cannot verify a
+Commander, assignment, match state, or target call, it fails safely and shows
+that information as unavailable rather than inventing it.
 
-This alpha uses the same-client `KnomercyWarRoom` bridge when KWR is installed
-locally and can receive bounded `KWRSync1` relays from a Commander in the same
-battleground group. If neither bridge is available, Sentinel falls back safely
-and does not invent assignments, match state, or target calls. Retail ten-client
-soak, taint, and field-value evidence remains required before promotion.
+Player-controlled, always
 
-## Safety
+Sentinel never targets, focuses, casts, runs macros, moves the player, changes
+keybindings, sends chat, or automates gameplay. It is a compact display and
+decision-support client only.
 
-KWR Sentinel never targets, focuses, casts, runs macros, moves the player, sends
-chat, or automates gameplay. It is a display and observation client only.
+Get started
 
-## Commands
-
-- `/sentinel` or `/kwrs` toggles the execution card.
-- `/kwrs map` toggles the Blizzard battlefield map.
-- `/kwrs score` toggles the Blizzard scoreboard.
+Use /sentinel or /kwrs to toggle the execution card. Use /kwrs map for the
+Blizzard battlefield map and /kwrs score for the scoreboard.

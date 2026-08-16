@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-artifacts\KWR_6_1_0_DISTRIBUTION.zip
+artifacts\KnomercyWarRoom-6.1.0.zip
 ```
 
 Project:
@@ -14,7 +14,7 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Required upload fields:
 
-- File: `KWR_6_1_0_DISTRIBUTION.zip`
+- File: `KnomercyWarRoom-6.1.0.zip`
 - Display name: `Knomercy War Room 6.1.0`
 - Release type: `Release`
 - Supported game: `World of Warcraft`
@@ -29,7 +29,7 @@ Guarded API upload command:
 $env:CURSEFORGE_PROJECT_ID = "<project id>"
 $env:CURSEFORGE_API_TOKEN = "<author token>"
 $env:CURSEFORGE_GAME_VERSION_IDS = "<comma-separated Retail version ids>"
-$artifact = "<absolute path to certified KWR_6_1_0_DISTRIBUTION.zip>"
+$artifact = "<absolute path to certified KnomercyWarRoom-6.1.0.zip>"
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType release -DryRun
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType release
 ```

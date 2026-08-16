@@ -107,7 +107,7 @@ $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 
 [IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
 $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
-$distributionZip = Join-Path $outputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
+$distributionZip = Join-Path $outputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $outputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
 $sentinelZip = $null
 $hasSentinel = $IncludeSentinel -and (Test-Path -LiteralPath $sentinelRoot)
@@ -115,7 +115,7 @@ if ($hasSentinel) {
     $sentinelToc = Get-Content -LiteralPath (Join-Path $sentinelRoot "KWRSentinel.toc")
     $sentinelVersion = (($sentinelToc | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
     $sentinelSafeVersion = $sentinelVersion.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
-    $sentinelZip = Join-Path $outputRoot ("KWRSentinel_{0}.zip" -f $sentinelSafeVersion)
+    $sentinelZip = Join-Path $outputRoot ("KWR-Sentinel-{0}.zip" -f $sentinelVersion)
 }
 $hashFile = Join-Path $outputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
 $developerHashFile = Join-Path $outputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)

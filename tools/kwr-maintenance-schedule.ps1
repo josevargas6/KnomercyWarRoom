@@ -253,8 +253,8 @@ function Invoke-DiscordStatus {
 
 function Invoke-ReleaseDryRun {
     Invoke-CertifiedBuild
-    $commanderArtifact = Get-LatestArtifact -Pattern "KWR_*_DISTRIBUTION.zip"
-    $sentinelArtifact = Get-LatestArtifact -Pattern "KWRSentinel_*.zip"
+    $commanderArtifact = Get-LatestArtifact -Pattern "KnomercyWarRoom-*.zip"
+    $sentinelArtifact = Get-LatestArtifact -Pattern "KWR-Sentinel-*.zip"
 
     if (-not $commanderArtifact) {
         throw "No Commander distribution artifact was found in $outputPath."
