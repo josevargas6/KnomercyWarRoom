@@ -330,6 +330,7 @@ function AARWindow:Show(entryID)
     frame.strength:SetValue(entry.feedback and entry.feedback.strength or nil)
     frame.heldBack:SetValue(entry.feedback and entry.feedback.heldBack or nil)
     frame:Show()
+    if KWR.CursorRing and KWR.CursorRing.RefreshReticle then KWR.CursorRing:RefreshReticle() end
 end
 
 function AARWindow:OnInitialize()

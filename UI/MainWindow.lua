@@ -1037,13 +1037,16 @@ function MainWindow:BuildTeamPage(page)
         roster.headers[#roster.headers + 1] = header
     end
     roster.rows = {}
-    for index = 1, 10 do
+    -- A random battleground can have fifteen players.  Keep the full roster
+    -- available in the fixed expanded page rather than silently omitting the
+    -- lower five entries that the normal RBG layout does not need.
+    for index = 1, 15 do
         local row = createListRow(
-            roster, index, -54 - ((index - 1) * 30),
-            1204, 27)
+            roster, index, -50 - ((index - 1) * 22),
+            1204, 20)
         row.icon = row:CreateTexture(nil, "ARTWORK")
         row.icon:SetPoint("LEFT", 7, 0)
-        row.icon:SetSize(20, 20)
+        row.icon:SetSize(18, 18)
         row.player = KWR.Theme:Font(row, 10, "white")
         row.player:SetPoint("LEFT", TEAM_COLUMNS[1].x, 0)
         row.player:SetWidth(TEAM_COLUMNS[1].width)

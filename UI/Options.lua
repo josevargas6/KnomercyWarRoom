@@ -172,7 +172,7 @@ function Options:Create()
     local commandCard = createOptionCard(content,
         "Command Surfaces",
         "Core commander windows, call density, and review text behavior.",
-        0, 0, 342, 336)
+        0, 0, 342, 390)
     createCheck(self, commandCard,
         "hudEnabled",
         "Show compact command center",
@@ -225,6 +225,16 @@ function Options:Create()
         -322,
         function() return KWR.CommanderComm and KWR.CommanderComm:TransportEnabled() end,
         function(value) return KWR.CommanderComm and KWR.CommanderComm:SetTransportEnabled(value) end)
+    createCheck(self, commandCard,
+        "hudFocusMode",
+        "Use minimal live combat mode",
+        "Shows only your next action and an actionable local target/peel cue during battleground combat.",
+        -372,
+        function() return KWR.db.profile.hud.focusMode == true end,
+        function(value)
+            KWR.db.profile.hud.focusMode = value == true
+            if KWR.HUD then KWR.HUD:Invalidate(); KWR.HUD:Update(KWR.Store:Get()) end
+        end)
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
@@ -323,7 +333,7 @@ function Options:Create()
     local reviewCard = createOptionCard(content,
         "Review And AAR",
         "Controls onboarding messages, manual evidence capture, and safe preview behavior.",
-        0, -354, 342, 316)
+        0, -408, 342, 316)
     createCheck(self, reviewCard,
         "showLoadMessage",
         "Show login message",
@@ -378,7 +388,7 @@ function Options:Create()
     local presentationCard = createOptionCard(content,
         "Battleground Auto-Show",
         "Auto-manages KWR command surfaces. Use Shift-M for the native battlefield map.",
-        0, -688, 342, 196)
+        0, -742, 342, 196)
     createCheck(self, presentationCard,
         "presentationEnabled",
         "Auto-manage compact battleground surfaces",
@@ -409,8 +419,8 @@ function Options:Create()
         function(value) KWR.db.profile.combatRoster.locked = value end)
     local utilityCard = createOptionCard(content,
         "Utilities",
-        "Reset the saved positions for KWR-owned windows.",
-        366, -868, 342, 170)
+        "Reset positions and tune readability for KWR-owned windows.",
+        366, -868, 342, 220)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
         if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
             KWR.LayoutCoordinator:Reset()
@@ -456,11 +466,27 @@ function Options:Create()
         end
     end)
     reset:SetPoint("TOPLEFT", 10, -74)
+    createCheck(self, utilityCard,
+        "highContrast",
+        "Use high-contrast text",
+        "Brightens secondary text and panel boundaries. Applies when KWR windows are next opened.",
+        -120,
+        function() return KWR.db.profile.accessibility.highContrast == true end,
+        function(value) KWR.db.profile.accessibility.highContrast = value == true end)
+    local diagnostics = KWR.Theme:Button(utilityCard, "Copy Field Diagnostic", 168, 28, function()
+        if KWR.Verification and KWR.Verification.FieldReport then
+            KWR.CopyDialog:ShowText("KWR Field Diagnostic",
+                KWR.Verification:FieldReport(), {
+                    note = "Local diagnostic only. It records data coverage, refresh health, and safe observation state for field testing.",
+                })
+        end
+    end)
+    diagnostics:SetPoint("TOPLEFT", 10, -174)
 
     local footerCard = createOptionCard(content,
         "Policy",
         "KWR safety and visibility rules stay fixed regardless of battleground setup.",
-        0, -1086, 708, 112)
+        0, -1102, 708, 112)
     frame.note = KWR.Theme:Font(footerCard, 9, "muted")
     frame.note:SetPoint("TOPLEFT", 10, -40)
     frame.note:SetPoint("TOPRIGHT", -10, -40)

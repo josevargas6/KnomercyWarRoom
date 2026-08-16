@@ -1698,12 +1698,12 @@ function Commander:Compose(snapshot, prediction, assignments)
     local integrity = snapshot.assignmentIntegrity or {}
     local urgentReassignment = integrity.reassignments and integrity.reassignments[1]
     local recovery = response.recovery or {}
-    if snapshot.context.inPvP and urgentReassignment then
+    if not finalStatus and snapshot.context.inPvP and urgentReassignment then
         local replacement = urgentReassignment.replacement or "nearest floater"
         action = "COVER " .. urgentReassignment.expected .. ": " .. replacement
             .. ". " .. action
     end
-    if snapshot.context.inPvP and recovery.criticalGap and recovery.releaseTarget then
+    if not finalStatus and snapshot.context.inPvP and recovery.criticalGap and recovery.releaseTarget then
         action = "SEND RELIEF TO " .. KWR.Maps:AbbreviateLocation(mapKey, recovery.criticalGap)
             .. "; PEEL EXCESS FROM "
             .. KWR.Maps:AbbreviateLocation(mapKey, recovery.releaseTarget)
@@ -1712,10 +1712,10 @@ function Commander:Compose(snapshot, prediction, assignments)
     action = KWR.Util:Text(action, "Play objective.", 180)
 
     local who = KWR.Assignments:SelectForCommand(assignments, prediction)
-    if snapshot.context.inPvP and response.qualified then
+    if not finalStatus and snapshot.context.inPvP and response.qualified then
         who = response.moverText or who
     end
-    if urgentReassignment and urgentReassignment.replacement then
+    if not finalStatus and urgentReassignment and urgentReassignment.replacement then
         who = urgentReassignment.replacement
     end
     if not snapshot.context.inPvP then
@@ -1729,7 +1729,7 @@ function Commander:Compose(snapshot, prediction, assignments)
             who = "Full team"
         end
     end
-    if snapshot.reassessment then
+    if not finalStatus and snapshot.reassessment then
         local changed = {}
         for index = 1, #(snapshot.reassessment.changes or {}) do
             changed[#changed + 1] =
@@ -1737,6 +1737,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         end
         if #changed > 0 then who = table.concat(changed, ", ") end
     end
+    if finalStatus then who = "Review / AAR" end
     action = KWR.Util:Text(action, "Play objective.", 220)
     local stabilizationSignature = KWR.Util:Signature({
         mapKey,
@@ -1823,7 +1824,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local command = {
         mapKey = mapKey,
         status = status,
-        urgency = prediction.urgency or 0,
+        urgency = finalStatus and 0 or (prediction.urgency or 0),
         action = action,
         who = who,
         when = when,

@@ -8,7 +8,7 @@ local Comm = {
     epoch = "",
     sentAt = {},
     relaySequence = {},
-    diagnostics = { sent = 0, received = 0, rejected = 0, throttled = 0 },
+    diagnostics = { sent = 0, received = 0, rejected = 0, throttled = 0, protected = 0 },
 }
 Sentinel.Comm = Comm
 
@@ -19,10 +19,20 @@ local ALLOWED = {
 }
 local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1, OBS_PRESSURE = 2 }
 
+local function isSecret(value)
+    if type(issecretvalue) ~= "function" then return false end
+    local ok, secret = pcall(issecretvalue, value)
+    return ok and secret == true
+end
+
 local function text(value, fallback, maximum)
-    value = value ~= nil and tostring(value) or ""
-    if value == "" then value = fallback or "" end
-    return value:sub(1, maximum or 96)
+    local rendered = ""
+    if value ~= nil and not isSecret(value) then
+        local ok, result = pcall(tostring, value)
+        if ok and not isSecret(result) then rendered = result end
+    end
+    if rendered == "" then rendered = fallback or "" end
+    return rendered:sub(1, maximum or 96)
 end
 
 local function shortName(value)
@@ -34,11 +44,19 @@ end
 local function identity(unit)
     if type(UnitFullName) == "function" then
         local name, realm = UnitFullName(unit)
+        if isSecret(name) or isSecret(realm) then return "" end
         if name and name ~= "" then
             return realm and realm ~= "" and (name .. "-" .. realm) or name
         end
     end
-    return UnitName and UnitName(unit) or ""
+    if type(UnitName) == "function" then
+        local name, realm = UnitName(unit)
+        if isSecret(name) or isSecret(realm) then return "" end
+        if name and name ~= "" then
+            return realm and realm ~= "" and (name .. "-" .. realm) or name
+        end
+    end
+    return ""
 end
 
 local function canonical(value)
@@ -46,7 +64,10 @@ local function canonical(value)
 end
 
 local function escape(value)
-    return (tostring(value or ""):gsub("[^%w%._%-]", function(character)
+    -- Secret values cannot be truth-tested, stringified, or indexed. Drop the
+    -- one protected packet while keeping normal observer transport available.
+    if isSecret(value) then return nil end
+    return (tostring(value ~= nil and value or ""):gsub("[^%w%._%-]", function(character)
         return string.format("%%%02X", string.byte(character))
     end))
 end
@@ -62,15 +83,20 @@ end
 
 local function instanceContext()
     if type(IsInInstance) ~= "function" then return false, "none" end
-    local inside, kind = IsInInstance()
-    return inside == true, kind or "none"
+    local ok, inside, kind = pcall(IsInInstance)
+    if not ok or isSecret(inside) or isSecret(kind) then return false, "none" end
+    return inside == true, text(kind, "none", 16)
 end
 
 function Comm:SessionKey()
     local inside, kind = instanceContext()
     if not inside or kind ~= "pvp" then return "world" end
     local _, _, _, _, _, _, _, instance = GetInstanceInfo()
-    local mapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player") or 0
+    local mapID = 0
+    if C_Map and type(C_Map.GetBestMapForUnit) == "function" then
+        mapID = C_Map.GetBestMapForUnit("player")
+    end
+    if isSecret(instance) or isSecret(mapID) then return nil end
     return "pvp-" .. tostring(tonumber(mapID) or 0) .. "-" .. tostring(tonumber(instance) or 0)
 end
 
@@ -83,15 +109,33 @@ function Comm:Distribution()
 end
 
 function Comm:Encode(kind, body)
+    if isSecret(kind) or isSecret(body) or isSecret(self.epoch) then
+        self.diagnostics.protected = (self.diagnostics.protected or 0) + 1
+        return nil
+    end
     if not ALLOWED[kind] then return nil end
+    local session = self:SessionKey()
+    local source = identity("player")
+    if session == nil or source == "" or isSecret(session) or isSecret(source) then
+        self.diagnostics.protected = (self.diagnostics.protected or 0) + 1
+        return nil
+    end
+    local escapedSession = escape(session)
+    local escapedEpoch = escape(self.epoch)
+    local escapedSource = escape(source)
+    local escapedBody = escape(body)
+    if not escapedSession or not escapedEpoch or not escapedSource or not escapedBody then
+        self.diagnostics.protected = (self.diagnostics.protected or 0) + 1
+        return nil
+    end
     self.sequence = self.sequence + 1
     local payload = table.concat({
-        "v=" .. self.VERSION, "sid=" .. escape(self:SessionKey()),
+        "v=" .. self.VERSION, "sid=" .. escapedSession,
         "seq=" .. tostring(self.sequence), "kind=" .. kind,
         "ts=" .. tostring(math.floor(now())),
-        "ep=" .. escape(self.epoch),
-        "src=" .. escape(identity("player")),
-        "body=" .. escape(body or ""),
+        "ep=" .. escapedEpoch,
+        "src=" .. escapedSource,
+        "body=" .. escapedBody,
     }, "|")
     return #payload <= self.MAX_BYTES and payload or nil
 end

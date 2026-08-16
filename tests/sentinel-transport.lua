@@ -141,6 +141,30 @@ clock = clock + 1
 assert(not Comm:Send("HELLO", "x=1"), "failed addon-message result was recorded as sent")
 assert(Comm.sentAt.HELLO == nil, "failed addon-message result advanced the family throttle")
 
+-- Secret values must fail closed before serialization or transport. This
+-- fixture marks opaque tables as protected without relying on Retail APIs.
+local secret = {}
+issecretvalue = function(value) return value == secret end
+local protectedBefore = Comm.diagnostics.protected or 0
+assert(Comm:Encode("STATE", secret) == nil,
+    "secret observer body was serialized")
+local oldMapForUnit = C_Map.GetBestMapForUnit
+C_Map.GetBestMapForUnit = function() return secret end
+assert(Comm:Encode("STATE", "x=1") == nil,
+    "secret battleground session identifier was serialized")
+C_Map.GetBestMapForUnit = oldMapForUnit
+local oldFullName = UnitFullName
+UnitFullName = function(unit)
+    if unit == "player" then return secret, nil end
+    return oldFullName(unit)
+end
+assert(Comm:Encode("STATE", "x=1") == nil,
+    "secret player identity was serialized")
+UnitFullName = oldFullName
+assert((Comm.diagnostics.protected or 0) == protectedBefore + 3,
+    "secret transport rejections were not diagnosed")
+issecretvalue = nil
+
 print("KWR_SENTINEL_TRANSPORT_PASS accepted=" .. tostring(Comm.diagnostics.received)
     .. " rejected=" .. tostring(Comm.diagnostics.rejected)
     .. " hud=" .. tostring(Sentinel.hudUpdates))
