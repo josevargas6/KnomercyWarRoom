@@ -936,12 +936,19 @@ function MainWindowPages:RenderTeam(page, state, helpers)
     end
     local formation = state.snapshot.formation or {}
     local mapKey = state.snapshot.context.mapKey
+    local definition = KWR.Maps:Get(mapKey)
     local assignmentByName = {}
     for _, assignment in ipairs(state.assignments or {}) do
         assignmentByName[assignment.name] = assignment
         assignmentByName[assignment.shortName] = assignment
     end
-    local displayCapacity = math.max(#roster, formation.targetSize or 0)
+    local normalMapCapacity = state.snapshot.context.inPvP
+        and state.snapshot.context.preview ~= true
+        and state.snapshot.context.isRated ~= true
+        and state.snapshot.context.isBlitz ~= true
+        and definition and definition.normalTeamSize or nil
+    local displayCapacity = math.max(
+        #roster, normalMapCapacity or formation.targetSize or 0)
     page.summaryCard.value:SetText(string.format(
         "%d / %d PLAYERS   |   %d TANK   |   %d HEALERS   |   %d DAMAGE",
         #roster, displayCapacity, tanks, healers, damage))

@@ -94,6 +94,11 @@ local function createCheck(self, parent, key, label, summary, y, getter, setter,
         check.summary:SetNonSpaceWrap(true)
     end
     check.summary:SetText(summary)
+    if parent and parent.kwrGeometry then
+        parent.kwrGeometry.childBottom = math.min(
+            parent.kwrGeometry.childBottom or (parent.kwrGeometry.y - parent.kwrGeometry.height),
+            parent.kwrGeometry.y + y - 48)
+    end
     registerCheck(self, key, check, getter, setter, {
         label = label,
         group = parent and parent.heading and parent.heading:GetText() or "",
@@ -197,7 +202,7 @@ function Options:Create()
     local commandCard = createOptionCard(content,
         "Command Surfaces",
         "Core commander windows, call density, and review text behavior.",
-        0, 0, 342, 390)
+        0, 0, 342, 440)
     createCheck(self, commandCard,
         "hudEnabled",
         "Show compact command center",
@@ -264,7 +269,7 @@ function Options:Create()
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
         "Cursor ring, reticle, guide lines, and live nameplate overlays.",
-        366, 0, 342, 550)
+        366, 0, 342, 556)
     createCheck(self, targetCard,
         "cursorEnabled",
         "Enable cursor ring",
@@ -358,7 +363,7 @@ function Options:Create()
     local reviewCard = createOptionCard(content,
         "Review And AAR",
         "Controls onboarding messages, manual evidence capture, and safe preview behavior.",
-        0, -408, 342, 316)
+        0, -458, 342, 316)
     createCheck(self, reviewCard,
         "showLoadMessage",
         "Show login message",
@@ -413,7 +418,7 @@ function Options:Create()
     local presentationCard = createOptionCard(content,
         "Battleground Auto-Show",
         "Auto-manages KWR command surfaces. Use Shift-M for the native battlefield map.",
-        0, -742, 342, 196)
+        0, -792, 342, 196)
     createCheck(self, presentationCard,
         "presentationEnabled",
         "Auto-manage compact battleground surfaces",
@@ -570,11 +575,17 @@ function Options:LayoutAudit()
     local issues = {}
     for i = 1, #cards do
         local a = cards[i]
+        local aBoxBottom = a.y - a.height
+        if a.childBottom and a.childBottom < aBoxBottom then
+            issues[#issues + 1] = a.title .. " content exceeds its card"
+        end
         for j = i + 1, #cards do
             local b = cards[j]
             local separateX = (a.x + a.width) <= b.x or (b.x + b.width) <= a.x
-            local aTop, aBottom = a.y, a.y - a.height
-            local bTop, bBottom = b.y, b.y - b.height
+            local aTop, aBottom = a.y, math.min(aBoxBottom, a.childBottom or aBoxBottom)
+            local bBoxBottom = b.y - b.height
+            local bTop, bBottom = b.y, math.min(
+                bBoxBottom, b.childBottom or bBoxBottom)
             local separateY = aBottom >= bTop or bBottom >= aTop
             if not separateX and not separateY then
                 issues[#issues + 1] = a.title .. " overlaps " .. b.title

@@ -5407,6 +5407,30 @@ assert(KWR.MainWindow.pages.TEAM.summaryCard.readyBadge.text.value ~= ""
     and KWR.MainWindow.pages.TEAM.summaryCard.openBadge.text.value ~= ""
     and KWR.MainWindow.pages.TEAM.readinessCard.stateBadge.text.value ~= "",
     "Team page did not surface the new readiness badges.")
+do
+    local capacityState = KWR.Util:Copy(KWR.Store:Get())
+    capacityState.snapshot.context.inPvP = true
+    capacityState.snapshot.context.preview = false
+    capacityState.snapshot.context.isRated = false
+    capacityState.snapshot.context.isBlitz = false
+    capacityState.snapshot.context.mapKey = "ARATHI"
+    capacityState.snapshot.formation.targetSize = 10
+    capacityState.snapshot.roster = {}
+    for index = 1, 12 do
+        capacityState.snapshot.roster[index] = {
+            name = "Capacity" .. tostring(index),
+            shortName = "Capacity" .. tostring(index),
+            role = "DAMAGER",
+            spec = "Arms",
+            connected = true,
+        }
+    end
+    KWR.MainWindow:UpdateTeam(capacityState)
+    assert(KWR.MainWindow.pages.TEAM.summaryCard.value.value:find(
+        "12 / 15 PLAYERS", 1, true),
+        "Normal 15-player battleground roster displayed a false full-team denominator.")
+    KWR.MainWindow:UpdateTeam(KWR.Store:Get())
+end
 assert(#KWR.MainWindow.pages.TEAM.rosterCard.rows == 15,
     "Expanded Team roster did not allocate all fifteen random-battleground rows.")
 KWR.MainWindow:Show("ASSIGNMENTS")
@@ -5535,7 +5559,8 @@ KWR.Options:Refresh()
 local optionsInventory = KWR.Options:Inventory()
 local optionsAudit = KWR.Options:LayoutAudit()
 assert(#optionsInventory >= 12 and optionsAudit.ok == true,
-    "Options window did not expose a complete auditable inventory or clean card geometry.")
+    "Options window did not expose a complete auditable inventory or clean card geometry: "
+        .. table.concat(optionsAudit.issues or {}, "; "))
 do
     local launcher = KWR.MainWindow.launcherMenu
     if not launcher then

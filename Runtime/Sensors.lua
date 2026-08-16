@@ -1042,6 +1042,10 @@ function Sensors:Capture(lastMessage)
     local directBlitz = inPvP and C_PvP
         and type(C_PvP.IsBrawlSoloRBG) == "function"
         and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false
+    local ratedProvider = C_PvP and type(C_PvP.IsRatedBattleground) == "function"
+        and C_PvP.IsRatedBattleground or IsRatedBattleground
+    local isRated = inPvP and type(ratedProvider) == "function"
+        and Util:Boolean(Util:Call(ratedProvider), false) or false
     local context = {
         inPvP = inPvP,
         instanceType = instanceType,
@@ -1052,6 +1056,7 @@ function Sensors:Capture(lastMessage)
         phase = inPvP and "ACTIVE" or "WORLD",
         instanceID = number(instanceID, nil),
         isBlitz = directBlitz,
+        isRated = isRated,
         capturedAt = Util:Now(),
     }
     context.sessionKey = Util:BattlefieldSessionKey(context)
