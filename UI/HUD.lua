@@ -681,6 +681,9 @@ function HUD:Update(state)
     elseif teamfight and teamfight.displayEligible == true then
         mine = mine or teamfightAssignment(teamfight)
     end
+    local personalAction = synchronizedMine and synchronizedMine.display
+        or (mine and KWR.Assignments:CompactLabel(
+            mine, snapshot.context.mapKey) or nil)
     local enemy = snapshot.combat and (snapshot.combat.localTarget
         or snapshot.combat.killTarget)
         or (snapshot.enemies and snapshot.enemies[1])
@@ -852,8 +855,8 @@ function HUD:Update(state)
         frame.next.value:SetText(KWR.Util:Text(
             command.action, "Open Review / AAR and capture the lesson.", 180))
     elseif focusMode then
-        frame.next.heading:SetText("MY NEXT ACTION")
-        frame.next.value:SetText(fightCallText(fightNow.current))
+        frame.next.heading:SetText(personalAction and "MY NEXT ACTION" or "TEAM CALL")
+        frame.next.value:SetText(personalAction or fightCallText(fightNow.current))
     else
         frame.next.heading:SetText("NOW")
         frame.next.value:SetText(fightCallText(fightNow.current))

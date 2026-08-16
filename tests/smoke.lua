@@ -5014,6 +5014,7 @@ KWR.HUD:Update(localFightHudState)
 assert(KWR.HUD.frame.height == 292
     and KWR.HUD.frame.next:IsShown()
     and KWR.HUD.frame.next.heading.value == "MY NEXT ACTION"
+    and KWR.HUD.frame.next.value.value ~= ""
     and KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.heading.value == "LOCAL ACTION"
     and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
@@ -5029,6 +5030,16 @@ do
     KWR.HUD:Update(teammateControlState)
     assert(not KWR.HUD.frame.kill:IsShown(),
         "Minimal focus mode presented another player's assigned control as the local peel action.")
+end
+do
+    local teamOnlyFocusState = KWR.Util:Copy(localFightHudState)
+    teamOnlyFocusState.snapshot.executionCommand.personalByKey = {}
+    teamOnlyFocusState.snapshot.executionCommand.personal = nil
+    teamOnlyFocusState.assignments = {}
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(teamOnlyFocusState)
+    assert(KWR.HUD.frame.next.heading.value == "TEAM CALL",
+        "Minimal focus mode mislabeled a team-wide call as the player's assignment.")
 end
 do
     local completedFocusState = KWR.Util:Copy(localFightHudState)
@@ -5460,6 +5471,12 @@ do
     assert(KWR.MainWindow.pages.TEAM.summaryCard.value.value:find(
         "12 / 15 PLAYERS", 1, true),
         "Normal 15-player battleground roster displayed a false full-team denominator.")
+    capacityState._normalTeamToken = KWR.Store.listeners[KWR.MainWindow].selector(
+        KWR.MainWindow, capacityState)
+    capacityState.snapshot.context.isBlitz = true
+    assert(capacityState._normalTeamToken ~= KWR.Store.listeners[KWR.MainWindow].selector(
+        KWR.MainWindow, capacityState),
+        "Team-page invalidation token ignored a battleground mode capacity change.")
     KWR.MainWindow:UpdateTeam(KWR.Store:Get())
 end
 assert(#KWR.MainWindow.pages.TEAM.rosterCard.rows == 15,

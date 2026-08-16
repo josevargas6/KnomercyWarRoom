@@ -196,6 +196,8 @@ local function updateToken(owner, state)
         context.inPvP,
         context.preview,
         context.matchComplete,
+        context.isRated,
+        context.isBlitz,
         snapshot.score and snapshot.score.friendly,
         snapshot.score and snapshot.score.enemy,
         state and state.command and state.command.signature,
