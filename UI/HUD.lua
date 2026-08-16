@@ -187,8 +187,12 @@ local function focusFightText(localFight, mapKey)
     end
     for _, control in ipairs(localFight.controls or {}) do
         if control.assigned == true then
-            return KWR.Theme:CombatText("STOP", "PEEL:") .. " "
-                .. KWR.Util:TextClip(control.target, "LOCAL TARGET", 24)
+            local actor = KWR.Util:CanonicalShortName(control.actor)
+            local player = KWR.Util:CanonicalShortName(KWR.Util:UnitName("player"))
+            if actor ~= "" and actor == player then
+                return KWR.Theme:CombatText("STOP", "PEEL:") .. " "
+                    .. KWR.Util:TextClip(control.target, "LOCAL TARGET", 24)
+            end
         end
     end
     return nil
@@ -640,8 +644,9 @@ function HUD:Update(state)
     local frame = self:Create()
     local snapshot, command = state.snapshot, state.command
     local formationMode = snapshot.context.inPvP ~= true
+    local matchComplete = snapshot.context.matchComplete == true
     local focusMode = not formationMode
-        and snapshot.context.matchComplete ~= true
+        and not matchComplete
         and KWR.db.profile.hud.focusMode == true
     local formation = snapshot.formation or {}
     local sessionKey = KWR.Util:Text(snapshot and snapshot.context
@@ -657,8 +662,10 @@ function HUD:Update(state)
     local teamfight = snapshot.teamfight
     local execution = snapshot.executionCommand or {}
     local localFight = execution.localFight or {}
-    local localFightCall = localFightText(localFight, snapshot.context.mapKey)
-    local focusFightCall = focusFightText(localFight, snapshot.context.mapKey)
+    local localFightCall = not matchComplete
+        and localFightText(localFight, snapshot.context.mapKey) or nil
+    local focusFightCall = not matchComplete
+        and focusFightText(localFight, snapshot.context.mapKey) or nil
     local fightNow = KWR.CommandView:FightNow(state)
     local synchronizedMine = executionAssignment(snapshot)
     local mine
@@ -781,6 +788,12 @@ function HUD:Update(state)
         frame.score:SetText("RBG SETUP")
         frame.status:SetText(string.format("FORMING  |  %d OPEN", formation.openSlots or 0))
         frame.status:SetTextColor(KWR.Theme:Color(KWR.CommandView:StatusColor(command.status)))
+    elseif matchComplete then
+        applyFightNowLayout(frame)
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", fightNow.score)
+            .. "  |  " .. KWR.Theme:CombatText(
+                fightNow.projectionTone, fightNow.projection))
+        frame.status:SetText("")
     elseif focusMode then
         applyFocusLayout(frame)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", fightNow.score)
@@ -803,15 +816,19 @@ function HUD:Update(state)
     frame.truthBadge.currentTag = truthTag
     frame.alert:SetText(KWR.CommandView:CompactMapText(snapshot.context.mapKey, alert, "", 64))
     frame.alert:SetTextColor(KWR.Theme:Color(alertColor))
-    frame.win.heading:SetText(formationMode and "SETUP GOAL" or "WIN PATH")
-    frame.win.value:SetText(formationMode
+    frame.win.heading:SetText(formationMode and "SETUP GOAL"
+        or (matchComplete and "RESULT" or "WIN PATH"))
+    frame.win.value:SetText(matchComplete
+        and KWR.Util:Text(command.action,
+            "Match complete. Open Review / AAR.", 180)
+        or (formationMode
         and (formation.complete
             and "Roster complete. Confirm leaders and queue readiness."
             or "Build to 10 players, assign leaders, then queue.")
         or (KWR.Theme:CombatText("CARRY", "TO WIN:")
             .. " " .. fightNow.winPath
             .. "\n" .. KWR.Theme:CombatText("MOVE", "NEXT:")
-            .. " " .. fightNow.nextObjective))
+            .. " " .. fightNow.nextObjective)))
     local learning = KWR.db.profile.guidanceMode == "LEARNING"
     if formationMode then
         local currentComp = formation.currentComp or formation.archetype or {}
@@ -830,6 +847,10 @@ function HUD:Update(state)
             nextRecruit and ("NEXT: " .. nextRecruit.label .. " (" .. nextRecruit.role .. ")")
                 or "NEXT: Confirm roster readiness",
         }, "\n"))
+    elseif matchComplete then
+        frame.next.heading:SetText("REVIEW / AAR")
+        frame.next.value:SetText(KWR.Util:Text(
+            command.action, "Open Review / AAR and capture the lesson.", 180))
     elseif focusMode then
         frame.next.heading:SetText("MY NEXT ACTION")
         frame.next.value:SetText(fightCallText(fightNow.current))
@@ -847,6 +868,11 @@ function HUD:Update(state)
         frame.caller.heading:SetText("QUEUE CHECK")
         frame.caller.value:SetText(
             "Target caller + backup\nBase / route lead\nVoice / talents / gear\nQueue leader")
+    elseif matchComplete then
+        frame.mine.heading:SetText("NEXT STEP")
+        frame.mine.value:SetText("Capture the result, key swing, and adjustment before the next queue.")
+        frame.caller.heading:SetText("POST MATCH")
+        frame.caller.value:SetText("Open Review / AAR\nSave evidence\nRecord the lesson")
     elseif focusMode then
         frame.kill.heading:SetText("LOCAL ACTION")
         frame.kill.value:SetText(focusFightCall or "")
@@ -858,12 +884,15 @@ function HUD:Update(state)
     end
 
     frame.kill.heading:SetText(formationMode and "NEXT STEP"
-        or (focusMode and "LOCAL ACTION" or "KILL / CC"))
+        or (matchComplete and "MATCH COMPLETE"
+        or (focusMode and "LOCAL ACTION" or "KILL / CC")))
     if formationMode then
         frame.kill.value:SetText(formation.complete
             and "Confirm setup, then queue for an RBG."
             or ("Recruit " .. (formation.needText or "the open roles")
                 .. ".\n|cff8ea3bbOpen Command Center for the full setup plan.|r"))
+    elseif matchComplete then
+        frame.kill.value:SetText("Tactical calls closed. Capture the AAR before the next queue.")
     elseif focusMode then
         frame:SetHeight(HUD_FOCUS_HEIGHT)
         frame.win:Hide()

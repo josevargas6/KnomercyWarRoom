@@ -5022,6 +5022,15 @@ assert(KWR.HUD.frame.height == 292
     and not KWR.HUD.frame.caller:IsShown(),
     "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
 do
+    local teammateControlState = KWR.Util:Copy(localFightHudState)
+    teammateControlState.snapshot.executionCommand.localFight.kill = nil
+    teammateControlState.snapshot.executionCommand.localFight.controls[1].actor = "Teammate-Z"
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(teammateControlState)
+    assert(not KWR.HUD.frame.kill:IsShown(),
+        "Minimal focus mode presented another player's assigned control as the local peel action.")
+end
+do
     local completedFocusState = KWR.Util:Copy(localFightHudState)
     completedFocusState.snapshot.context.matchComplete = true
     completedFocusState.command.status = "COMPLETE"
@@ -5029,8 +5038,15 @@ do
     KWR.HUD:Invalidate()
     KWR.HUD:Update(completedFocusState)
     assert(KWR.HUD.frame.height == 500
-        and KWR.HUD.frame.next.heading.value == "NOW"
-        and KWR.HUD.frame.kill.heading.value == "KILL / CC"
+        and KWR.HUD.frame.next.heading.value == "REVIEW / AAR"
+        and KWR.HUD.frame.next.value.value:find("Open Review / AAR", 1, true)
+        and KWR.HUD.frame.kill.heading.value == "MATCH COMPLETE"
+        and not KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+        and not KWR.HUD.frame.kill.value.value:find("CC:", 1, true)
+        and KWR.HUD.frame.win.heading.value == "RESULT"
+        and KWR.HUD.frame.win.value.value:find("Open Review / AAR", 1, true)
+        and KWR.HUD.frame.mine.heading.value == "NEXT STEP"
+        and KWR.HUD.frame.caller.heading.value == "POST MATCH"
         and KWR.HUD.frame.win:IsShown()
         and KWR.HUD.frame.mine:IsShown()
         and KWR.HUD.frame.caller:IsShown(),
