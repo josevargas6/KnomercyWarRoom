@@ -53,7 +53,9 @@ local FAMILIES = {
 }
 
 local RESPONSE_CATEGORIES = {
-    STANDARD_REINFORCE = "EXPECTED",
+    HOLD_SECOND_LANE_PRESSURE = "EXPECTED",
+    ROTATION_MIRROR = "EXPECTED",
+    TEAMFIGHT_REINFORCE = "EXPECTED",
     MULTI_POINT_PRESSURE = "OVERCOMMIT",
     SCORE_FLOOR_BREAK = "BAIT",
     TRUTH_BAIT_OVERCOMMIT = "BAIT",
@@ -118,6 +120,7 @@ end
 function StrategistNexusPolicy:Shared()
     return {
         schemaVersion = 1,
+        activation = "IMMEDIATE_THEORY_FIRST",
         maxCapabilityAdjustment = 8,
         maxTotalAdjustment = 16,
         candidateFocus = CANDIDATE_FOCUS,

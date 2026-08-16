@@ -42,7 +42,7 @@ The Nexus:
 The deterministic compiler owns the full 5,000-case JSON. The addon packages only an
 aggregate Lua index keyed by map and phase with categorical counts and a schema
 version. Generated evidence remains marked `SIMULATION_ONLY` and
-`COVERAGE_GUARD_ONLY`. It is never promoted in place. Live refinement uses the
+`THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL`. It is never promoted in place. Live refinement uses the
 separate reviewed AAR learning path, which requires truth-qualified completed
 matches, explicit player feedback, current-patch data, and at least five
 samples before any bounded adjustment.
@@ -50,6 +50,19 @@ samples before any bounded adjustment.
 Composition matching uses KWR's capability vectors and reviewed archetypes.
 Exact spec templates remain useful examples but are not required for the Nexus
 to reason about off-meta rosters.
+
+### Immediate theory-first activation
+
+Developer approval on 2026-08-16 activates the complete reviewed theory model
+for every supported legal branch immediately. Live evidence refines or
+disproves the model; it is not an activation prerequisite. When battlefield
+truth is thin, KWR must retain the best theoretical primary and counterplan
+while marking commitment unauthorized and listing the evidence required to
+execute it. Generic VERIFY text may not replace an available legal theory.
+
+The simulation index activates and proves coverage of theory branches. Its
+categorical counts and generated outcome labels remain non-empirical and do
+not become win-rate evidence.
 
 ## Consequences
 

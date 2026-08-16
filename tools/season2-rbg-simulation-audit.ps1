@@ -18,8 +18,8 @@ function Get-ContentHash {
 if ($corpus.schema -ne "kwr-season2-rbg-simulation-corpus" -or $corpus.status -ne "SIMULATION_ONLY") {
     $errors.Add("Season 2 simulation corpus must remain explicitly simulation-only.")
 }
-if ($corpus.activation -ne "RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY") {
-    $errors.Add("Season 2 simulation corpus must remain coverage-guard-only in production.")
+if ($corpus.activation -ne "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION") {
+    $errors.Add("Season 2 simulation corpus must activate theory branches without claiming empirical outcomes.")
 }
 if ([int]$corpus.totalCases -ne 5000 -or @($corpus.cases).Count -ne 5000) {
     $errors.Add("Season 2 simulation corpus must contain exactly 5,000 cases.")

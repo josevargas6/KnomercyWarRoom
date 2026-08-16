@@ -254,6 +254,7 @@ local function strategicState(snapshot, prediction)
     end
     if prediction.status == "WIN" then return "STABILIZE" end
     if prediction.status == "TIE" then return "CONTEST" end
+    if prediction.status == "WAITING" then return "PRESSURE" end
     return prediction.status
 end
 
@@ -579,6 +580,14 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
     local definition = KWR.Maps:Get(snapshot.context and snapshot.context.mapKey)
     local profile = KWR.Maps:OperationalProfile(
         snapshot.context and snapshot.context.mapKey)
+    local faction = snapshot.context and snapshot.context.team
+        and snapshot.context.team.faction
+    local homeTarget = definition and definition.home and faction
+        and definition.home[faction]
+    local theoryTarget = homeTarget
+        or (definition and definition.priorities and definition.priorities[1])
+        or (definition and definition.title)
+        or "the current scoring objective"
     local friendly, enemy, available = {}, {}, {}
     for _, objective in ipairs(snapshot.objectives
         and snapshot.objectives.rows or {}) do
@@ -604,7 +613,7 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
             and definition.priorities[1])
     local threatenedTarget = reporter.hotspot
         and reporter.hotspot.owner == "FRIENDLY"
-        and reporter.hotspot.label or friendly[1]
+        and reporter.hotspot.label or friendly[1] or theoryTarget
     local function etaFor(target)
         for _, eta in ipairs(reporter.etas or {}) do
             if eta.label == target then return eta end
@@ -629,7 +638,7 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
         {
             id = "HOLD",
             target = #friendly > 0 and table.concat(friendly, " + ")
-                or "current scoring requirement",
+                or theoryTarget,
             probability = 48 + holdValue
                 + ((ratings.nodeDefense or 1) - 2) * 4
                 + (budget.score < 50 and 10 or 0)
@@ -869,12 +878,6 @@ function Strategist:Evaluate(snapshot, prediction)
     end
     local currentState = strategicState(snapshot, prediction)
     result.state = currentState
-    if prediction.status == "WAITING" and currentState ~= "OPENING" then
-        result.reason = "Live battleground data is incomplete; no active plan is selected."
-        result.confidence = "NONE"
-        return result
-    end
-
     for _, battlePlan in ipairs(KWR.BattlePlans:Get(snapshot.context.mapKey)) do
         local feasible, missing = requirementFit(ourSummary, battlePlan.requires)
         local score = 0
@@ -1174,36 +1177,56 @@ function Strategist:Evaluate(snapshot, prediction)
     end
     local truth = snapshot.truth or {}
     result.trust = trustModel(snapshot, prediction, budget, simulations, result.selectedAction)
+    result.theoryActive = true
+    result.projectionBasis = "IMMEDIATE_THEORY_FIRST"
+    local gateReason
+    local requiredEvidence = {}
     if (budget.score < 40 or truth.coreFresh == false)
         and currentState ~= "OPENING" then
-        result.action = "Protect the current scoring requirement, verify enemy movement, then reassess."
-        result.reason = truth.conservativeReason
+        gateReason = truth.conservativeReason
             or "Evidence coverage is too low for an aggressive commitment."
-        result.stop = "Do not commit a split or long rotation from unverified information."
-        result.recommendationMode = "HOLD"
-        result.expectedOutcome = "Preserve score while rebuilding battlefield confidence."
-        result.projectedWinProbability = nil
-        result.decisionScore = simulations[1]
-            and simulations[1].decisionScore or nil
+        requiredEvidence = {
+            "authoritative objective state",
+            "fresh score state",
+            "enemy movement confirmation",
+        }
     elseif snapshot.knowledgeStatus
         and snapshot.knowledgeStatus.compositionAuthorized == false
         and currentState ~= "OPENING" then
-        result.action = "Play the map, protect coverage, and avoid composition-dependent commits until specs are verified."
-        result.reason = snapshot.knowledgeStatus.reason
-        result.stop = "Do not force comp-specific swaps or split calls from historical or incomplete spec truth."
-        result.recommendationMode = "VERIFY"
-        result.expectedOutcome = "Stabilize around map fundamentals while composition certainty improves."
+        gateReason = snapshot.knowledgeStatus.reason
+        requiredEvidence = {
+            "verified enemy specializations",
+            "enemy capability coverage",
+            "composition counter confirmation",
+        }
     elseif result.trust and result.trust.commitAuthorized == false
         and currentState ~= "OPENING" then
-        result.action = "Verify enemy movement, protect the score floor, and probe with reversible movement only."
-        result.reason = result.trust.reason
-        result.stop = "Do not split or hard-commit from thin movement confidence."
-        result.recommendationMode = "VERIFY"
-        result.expectedOutcome = "Reduce uncertainty before the next decisive commit."
+        gateReason = result.trust.reason
+        requiredEvidence = {
+            "objective conflict resolution",
+            "enemy movement confirmation",
+            "local arrival-time advantage",
+        }
     elseif opportunity.open and budget.score >= 55
         and result.recommendationMode == "TEAMFIGHT" then
         result.reason = result.reason .. " WINDOW: "
             .. table.concat(opportunity.evidence, ", ") .. "."
+    end
+    result.executionGate = {
+        status = gateReason and "VERIFY_BEFORE_COMMIT" or "COMMIT_ALLOWED",
+        reason = gateReason or "Live truth supports the theoretical branch.",
+        requiredEvidence = KWR.Util:Copy(requiredEvidence),
+        theoreticalPrimary = result.recommendationMode,
+        target = result.selectedAction and result.selectedAction.target,
+    }
+    if gateReason then
+        result.reason = KWR.Util:Text(result.reason, "", 220)
+        if result.reason ~= "" then result.reason = result.reason .. " " end
+        result.reason = result.reason .. "THEORY ACTIVE: " .. gateReason
+        result.stop = KWR.Util:Text(result.stop, "", 220)
+        if result.stop ~= "" then result.stop = result.stop .. " " end
+        result.stop = result.stop
+            .. "Do not hard-commit until the execution gate evidence is confirmed."
     end
     if adversarialCalibration and (
         (result.trust and result.trust.commitAuthorized == false)

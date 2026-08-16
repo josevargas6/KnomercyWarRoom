@@ -96,7 +96,7 @@ $document = [ordered]@{
     casesPerMap = $CasesPerMap
     casesPerPhasePerMap = $perPhase
     totalCases = $cases.Count
-    activation = "RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY"
+    activation = "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
     cases = $cases.ToArray()
 }
 

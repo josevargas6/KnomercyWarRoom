@@ -814,13 +814,17 @@ function Verification:Format(entry)
             value(entry.strategyTrust and entry.strategyTrust.mode, "VERIFY"),
             tostring(entry.strategyTrust and entry.strategyTrust.separation or "unknown"),
             value(entry.strategyTrust and entry.strategyTrust.reason, "Unknown")),
-        string.format("Strategist Nexus: %s -> fallback %s / %s / simulations %d %s / reviewed live %d",
+        string.format("Strategist Nexus: %s -> fallback %s / %s / %s / gate %s / simulations %d %s / reviewed live %d",
             value(entry.strategistNexus and entry.strategistNexus.primary
                 and entry.strategistNexus.primary.id, "VERIFY"),
             value(entry.strategistNexus and entry.strategistNexus.fallback
                 and entry.strategistNexus.fallback.id, "HOLD"),
             value(entry.strategistNexus and entry.strategistNexus.provenance
                 and entry.strategistNexus.provenance.sourceStatus, "UNAVAILABLE"),
+            value(entry.strategistNexus and entry.strategistNexus.provenance
+                and entry.strategistNexus.provenance.activation, "UNAVAILABLE"),
+            value(entry.strategistNexus and entry.strategistNexus.executionGate
+                and entry.strategistNexus.executionGate.status, "UNAVAILABLE"),
             entry.strategistNexus and entry.strategistNexus.provenance
                 and entry.strategistNexus.provenance.totalSimulationCases or 0,
             value(entry.strategistNexus and entry.strategistNexus.provenance

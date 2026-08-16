@@ -60,12 +60,13 @@ The repository currently declares:
 - 5,000 Season 2 deterministic simulation cases: 500 per map and 100 per phase
   for `OPENING`, `STABILIZE`, `PRESSURE`, `RECOVERY`, and `ENDGAME`;
 - those 5,000 Season 2 cases as `SIMULATION_ONLY` and
-  `RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY`; their compact production index is a
-  missing-coverage guard, never an empirical outcome model.
+  `IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION`; their compact production
+  index activates covered theory branches, never an empirical outcome model.
 
 The 5,000 cases are an existing coverage target, not 5,000 independent proofs
-that a tactic wins. Their counts may not reward a tactic; the Nexus may only
-penalize a branch that the audited corpus did not exercise. One normalized
+that a tactic wins. Their counts may not reward a tactic; the Nexus activates
+the reviewed theory mapped to covered branches and penalizes any branch the
+audited corpus did not exercise. One normalized
 scenario case is the truth record; the scenario matrix,
 coverage totals, calibration tables, compact Lua data, and audit reports are
 derived views of those records. No mirrored hand-maintained corpus and matrix

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Activated the full Strategist Nexus theory immediately across every
+  supported legal branch. Weak or conflicting live truth now gates commitment
+  and names the evidence required without replacing the map-specific primary,
+  fallback, or counterplan with generic HOLD/VERIFY text.
+- Replaced the generic default enemy reinforce assumption with explicit HOLD,
+  ROTATE, TRADE, TEAMFIGHT, and SPLIT countertheory. Live AAR evidence now
+  refines or disproves active theory rather than unlocking it gradually.
 - Added the production Strategist Nexus: reviewed doctrine, capability and
   composition theory, score-state discipline, and reversible fallbacks now
   form one bounded decision envelope. The audited 5,000-case simulation index

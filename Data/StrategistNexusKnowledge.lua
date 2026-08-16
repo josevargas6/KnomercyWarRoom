@@ -9,7 +9,9 @@ local CONTRACT = {
     authority = "REVIEWED_KNOWLEDGE_WITH_BOUNDED_SIMULATION_COVERAGE_AND_GATED_LIVE_AAR",
     developerGate = "APPROVED_2026_08_16",
     patch = "12.1.0",
-    simulationAuthority = "COVERAGE_GUARD_ONLY",
+    activation = "IMMEDIATE_THEORY_FIRST",
+    simulationAuthority = "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL",
+    liveEvidenceRole = "REFINE_OR_DISPROVE_NOT_ACTIVATE",
     livePromotion = "PLAYER_REVIEW_REQUIRED",
     sources = {
         "ObjectiveRules",

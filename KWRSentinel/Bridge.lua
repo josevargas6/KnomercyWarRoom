@@ -361,6 +361,7 @@ function Bridge:BuildView()
         throttled = comm.throttled or 0,
         corpus = nexusKnowledge
             and ("NEXUS " .. tostring(nexusKnowledge:Status())
+                .. " / THEORY " .. tostring(nexusKnowledge:Shared().activation)
                 .. " / REVIEWED " .. tostring(liveEvidence.reviewedLearningSamples or 0))
             or "LOCAL ONLY",
     }

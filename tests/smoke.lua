@@ -1533,11 +1533,17 @@ assert(KWR.ScenarioExpertCorpus:Count() == 1200,
     "Scenario expert corpus did not expose the current reviewed and season-prep scenario set.")
 assert(KWR.StrategistNexusCorpus:Count() == 5000
     and KWR.StrategistNexusCorpus:Status() == "SIMULATION_ONLY"
+    and KWR.StrategistNexusCorpus:Activation()
+        == "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
     and KWR.StrategistNexusCorpus:Patch() == "12.1.0",
     "Strategist Nexus did not expose the complete simulation-only runtime corpus.")
 assert(KWR.StrategistNexusKnowledge:Status() == "PRODUCTION_ACTIVE"
     and KWR.StrategistNexusKnowledge:Patch() == "12.1.0"
-    and KWR.StrategistNexusKnowledge:Shared().simulationAuthority == "COVERAGE_GUARD_ONLY",
+    and KWR.StrategistNexusKnowledge:Shared().activation == "IMMEDIATE_THEORY_FIRST"
+    and KWR.StrategistNexusKnowledge:Shared().simulationAuthority
+        == "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL"
+    and KWR.StrategistNexusKnowledge:Shared().liveEvidenceRole
+        == "REFINE_OR_DISPROVE_NOT_ACTIVATE",
     "Strategist Nexus production knowledge contract is unavailable or unsafe.")
 do
     local maps = {
@@ -1609,8 +1615,12 @@ assert(type(liveStrategy.nexus) == "table"
     and type(liveStrategy.nexus.enemyResponse) == "table"
     and liveStrategy.nexus.provenance.totalSimulationCases == 5000
     and liveStrategy.nexus.provenance.sourceStatus == "PRODUCTION_ACTIVE"
+    and liveStrategy.nexus.provenance.activation == "IMMEDIATE_THEORY_FIRST"
     and liveStrategy.nexus.provenance.simulationStatus == "SIMULATION_ONLY"
-    and liveStrategy.nexus.provenance.simulationAuthority == "COVERAGE_GUARD_ONLY"
+    and liveStrategy.nexus.provenance.simulationActivation
+        == "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
+    and liveStrategy.nexus.provenance.simulationAuthority
+        == "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL"
     and liveStrategy.nexus.provenance.livePromotion == "PLAYER_REVIEW_REQUIRED",
     "Strategist did not surface the evidence-gated Nexus decision envelope.")
 local liveCommand = KWR.Store:Get().command or {}
@@ -1870,6 +1880,13 @@ assert(type(liveState.snapshot.knowledgeStatus) == "table"
 assert(type(liveState.snapshot.strategy.trust) == "table"
     and type(liveState.snapshot.strategy.trust.mode) == "string",
     "Strategist did not expose a strategy trust model.")
+assert(liveState.snapshot.strategy.theoryActive == true
+    and liveState.snapshot.strategy.projectionBasis == "IMMEDIATE_THEORY_FIRST"
+    and liveState.snapshot.strategy.recommendationMode ~= "VERIFY"
+    and type(liveState.snapshot.strategy.executionGate) == "table"
+    and liveState.snapshot.strategy.executionGate.status == "VERIFY_BEFORE_COMMIT"
+    and liveState.snapshot.strategy.trust.commitAuthorized == false,
+    "Stale composition truth replaced the active theory instead of gating commitment.")
 assert(type(liveState.snapshot.strategy.scenarioCalibration) == "table"
     and liveState.snapshot.strategy.scenarioCalibration.reviewedCases >= 5
     and type(liveState.snapshot.strategy.reviewDisciplineRule) == "string",
@@ -1901,6 +1918,10 @@ for _, candidate in ipairs(liveState.snapshot.strategy.simulations or {}) do
         "Strategist Nexus candidate adjustment escaped its bounded policy.")
     assert((candidate.nexus.coverageGuardAdjustment or 0) <= 0,
         "Simulation coverage produced an unauthorized positive tactic score.")
+    assert(candidate.nexus.activation == "IMMEDIATE_THEORY_FIRST"
+        and candidate.nexus.theoryActivated == true
+        and candidate.enemyResponsePlan.responseID ~= "STANDARD_REINFORCE",
+        "A supported candidate did not activate complete countertheory.")
     if candidate.legal == false then
         assert(candidate.nexus.adjustment == 0,
             "Strategist Nexus adjusted an objective-rule-gated candidate.")
@@ -1932,7 +1953,10 @@ local conflictedStrategy = KWR.Strategist:Evaluate(
     conflictedSnapshot, KWR.Predictor:Evaluate(conflictedSnapshot))
 assert(conflictedStrategy.trust
     and conflictedStrategy.trust.commitAuthorized == false
-    and conflictedStrategy.trust.reason == "Objective truth has conflicting public signals.",
+    and conflictedStrategy.trust.reason == "Objective truth has conflicting public signals."
+    and conflictedStrategy.theoryActive == true
+    and conflictedStrategy.recommendationMode ~= "VERIFY"
+    and conflictedStrategy.executionGate.status == "VERIFY_BEFORE_COMMIT",
     "Strategist did not suppress hard commits when objective evidence conflicted.")
 assert(liveState.assignments[1].backupRole == "Defense Floater"
     and liveState.assignments[1].assignmentConfidence == "HIGH"

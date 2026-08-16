@@ -105,7 +105,7 @@ function StrategistNexus:Rank(snapshot, prediction, result)
 
     for _, candidate in ipairs(result.simulations) do
         local responseID = candidate.enemyResponsePlan
-            and candidate.enemyResponsePlan.responseID or "STANDARD_REINFORCE"
+            and candidate.enemyResponsePlan.responseID or "ROTATION_MIRROR"
         local counterResponse = KWR.StrategistNexusPolicy:ResponseCategory(responseID)
         local family = KWR.StrategistNexusPolicy:Family(phase, candidate.id)
         local simulationCoverage = KWR.StrategistNexusCorpus:Coverage(
@@ -158,6 +158,9 @@ function StrategistNexus:Rank(snapshot, prediction, result)
             evidenceState = liveEvidence,
             simulationCoverage = KWR.Util:Copy(simulationCoverage),
             knowledgeCoverage = KWR.Util:Copy(knowledgeCoverage),
+            theoryActivated = simulationCoverage.available == true
+                and knowledgeCoverage.available == true,
+            activation = "IMMEDIATE_THEORY_FIRST",
             authority = "THEORY_POLICY_WITH_REVIEWED_KNOWLEDGE",
         }
     end
@@ -203,6 +206,7 @@ function StrategistNexus:Rank(snapshot, prediction, result)
         knowledgeCoverage = KWR.Util:Copy(knowledgeCoverage),
         liveEvidence = KWR.StrategistNexusKnowledge:LiveEvidence(),
         simulationStatus = KWR.StrategistNexusCorpus:Status(),
+        simulationActivation = KWR.StrategistNexusCorpus:Activation(),
         simulationCases = KWR.StrategistNexusCorpus:Count(),
         simulationPatch = KWR.StrategistNexusCorpus:Patch(),
     }
@@ -227,16 +231,19 @@ function StrategistNexus:Envelope(snapshot, prediction, result)
             target = selected.target,
             score = result.decisionScore,
             outcome = result.expectedOutcome or selected.outcome,
+            basis = result.projectionBasis or "IMMEDIATE_THEORY_FIRST",
         },
         fallback = {
             id = fallback.id or "HOLD",
             target = fallback.target,
             action = response.safestReply or result.switchIf
-                or "Protect the score floor and verify the next movement.",
+                or ("Execute " .. tostring(fallback.id or "HOLD")
+                    .. " at " .. tostring(fallback.target or selected.target
+                        or "the mapped objective") .. " if the primary aborts."),
             score = fallback.decisionScore,
         },
         enemyResponse = {
-            id = response.responseID or "STANDARD_REINFORCE",
+            id = response.responseID or "ROTATION_MIRROR",
             pattern = response.enemyPattern or contract.likelyCounter,
             trigger = response.trigger,
             safestReply = response.safestReply or contract.counterResponse,
@@ -247,13 +254,17 @@ function StrategistNexus:Envelope(snapshot, prediction, result)
         requiredEvidence = KWR.Util:Copy(contract.requiredEvidence or {}),
         confidence = result.trust and result.trust.label or result.confidence or "NONE",
         commitAuthorized = result.trust and result.trust.commitAuthorized == true,
+        executionGate = KWR.Util:Copy(result.executionGate or {}),
         provenance = {
             sourceStatus = context.productionStatus or "UNAVAILABLE",
             authority = nexusContract.authority,
             developerGate = nexusContract.developerGate,
+            activation = nexusContract.activation or "IMMEDIATE_THEORY_FIRST",
+            liveEvidenceRole = nexusContract.liveEvidenceRole,
             simulationStatus = context.simulationStatus or "UNAVAILABLE",
+            simulationActivation = context.simulationActivation,
             simulationAuthority = nexusContract.simulationAuthority
-                or "COVERAGE_GUARD_ONLY",
+                or "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL",
             totalSimulationCases = context.simulationCases or 0,
             marginalCases = selected.nexus and selected.nexus.simulationCoverage
                 and selected.nexus.simulationCoverage.marginalCases or 0,

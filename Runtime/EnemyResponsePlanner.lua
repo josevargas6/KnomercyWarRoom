@@ -31,6 +31,68 @@ local function objectivePressure(snapshot)
     }
 end
 
+local function baselineResponse(candidate, target)
+    target = text(target, "the scoring objective", 48)
+    if candidate.id == "HOLD" then
+        return {
+            id = "HOLD_SECOND_LANE_PRESSURE",
+            enemyPattern = "Enemy tests a second lane while the team holds " .. target .. ".",
+            danger = 11,
+            trigger = "the reserve stays static after enemy movement leaves the held lane",
+            scoreFloorRisk = "MEDIUM",
+            punishWindow = "WINDOW",
+            responsePressure = "MEDIUM",
+            attributionHint = "PRESSURE_SPLIT",
+        }
+    end
+    if candidate.id == "ROTATE" then
+        return {
+            id = "ROTATION_MIRROR",
+            enemyPattern = "Enemy mirrors the route to " .. target .. " and tests the arrival edge.",
+            danger = 12,
+            trigger = "enemy movement matches the rotation before local parity improves",
+            scoreFloorRisk = "MEDIUM",
+            punishWindow = "FAST",
+            responsePressure = "MEDIUM",
+            attributionHint = "ENEMY_COUNTER_WINDOW",
+        }
+    end
+    if candidate.id == "TRADE" then
+        return {
+            id = "COUNTER_TRADE_RACE",
+            enemyPattern = "Enemy races the opposite score event while the team commits to " .. target .. ".",
+            danger = 14,
+            trigger = "the enemy conversion resolves before the called trade",
+            scoreFloorRisk = "HIGH",
+            punishWindow = "FAST",
+            responsePressure = "MEDIUM",
+            attributionHint = "WINDOW_CONVERSION",
+        }
+    end
+    if candidate.id == "TEAMFIGHT" then
+        return {
+            id = "TEAMFIGHT_REINFORCE",
+            enemyPattern = "Enemy reinforces " .. target .. " and peels the first kill window.",
+            danger = 13,
+            trigger = "enemy support connects before crowd control converts objective value",
+            scoreFloorRisk = "MEDIUM",
+            punishWindow = "FAST",
+            responsePressure = "HIGH",
+            attributionHint = "CONTESTED_LINE",
+        }
+    end
+    return {
+        id = "SPLIT_COLLAPSE_PUNISH",
+        enemyPattern = "Enemy identifies and collapses the weaker pressure lane near " .. target .. ".",
+        danger = 16,
+        trigger = "the split loses healer, defender, or arrival-time connection",
+        scoreFloorRisk = "MEDIUM",
+        punishWindow = "FAST",
+        responsePressure = "HIGH",
+        attributionHint = "EXECUTION_BREAK",
+    }
+end
+
 local function classifyEnemyResponse(snapshot, prediction, candidate, context)
     local pressure = objectivePressure(snapshot)
     local flags = context.doctrineFlags or {}
@@ -163,16 +225,7 @@ local function classifyEnemyResponse(snapshot, prediction, candidate, context)
             attributionHint = "LOW_TRUTH_STATE",
         }
     end
-    return {
-        id = "STANDARD_REINFORCE",
-        enemyPattern = "Enemy reinforces the called objective and tests commitment discipline.",
-        danger = 10,
-        trigger = "the call arrives into equal or worse numbers",
-        scoreFloorRisk = "LOW",
-        punishWindow = "WINDOW",
-        responsePressure = "MEDIUM",
-        attributionHint = "CONTESTED_LINE",
-    }
+    return baselineResponse(candidate, target)
 end
 
 local function chooseSafestReply(enemyResponse, context)
@@ -212,6 +265,15 @@ local function chooseSafestReply(enemyResponse, context)
     end
     if enemyResponse.id == "SPAWN_VALUE_RACE" then
         return "Protect the live objective and move only when the next value window is ours."
+    end
+    if enemyResponse.id == "HOLD_SECOND_LANE_PRESSURE" then
+        return "Keep minimum control at the held lane and pivot the reserve toward confirmed pressure."
+    end
+    if enemyResponse.id == "ROTATION_MIRROR" then
+        return "Take the route only with the arrival edge; otherwise replant the vacated score floor."
+    end
+    if enemyResponse.id == "TEAMFIGHT_REINFORCE" then
+        return "Control the incoming support wave, preserve healer connection, and convert the first clean window."
     end
     return preferred
 end

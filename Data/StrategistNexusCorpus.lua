@@ -10,7 +10,7 @@ local DATA = {
     sourceSchemaVersion = 1,
     patch = "12.1.0",
     sourceStatus = "SIMULATION_ONLY",
-    activation = "RUNTIME_COVERAGE_GUARD_AND_REGRESSION_ONLY",
+    activation = "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION",
     totalCases = 5000,
     maps = {
         ["ARATHI"] = {
@@ -2534,6 +2534,7 @@ end
 
 function StrategistNexusCorpus:Count() return DATA.totalCases end
 function StrategistNexusCorpus:Status() return DATA.sourceStatus end
+function StrategistNexusCorpus:Activation() return DATA.activation end
 function StrategistNexusCorpus:Patch() return DATA.patch end
 function StrategistNexusCorpus:Map(mapKey) return DATA.maps[mapKey] end
 
