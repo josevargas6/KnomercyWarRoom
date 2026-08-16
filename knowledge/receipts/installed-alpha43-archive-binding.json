@@ -1,0 +1,31 @@
+{
+  "schema": "kwr-installed-archive-binding",
+  "schemaVersion": 1,
+  "verifiedAtUtc": "2026-08-15T15:59:23Z",
+  "release": {
+    "tag": "v6.1.0-alpha.43",
+    "commit": "734254c98371cf9dc00235a58ed884de3000ec69",
+    "url": "https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43"
+  },
+  "artifacts": [
+    {
+      "addon": "KnomercyWarRoom",
+      "asset": "KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+      "url": "https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.43/KWR_6_1_0_ALPHA_43_DISTRIBUTION.zip",
+      "sha256": "5885cd4bbc208fa12f77f0064f66fde00cb929464acf4e63f95f51604a75f02c",
+      "installedManifestReceipt": "knowledge/receipts/installed-alpha43-commander.json",
+      "payloadDigest": "B56817DAA8AB4BF1E69F30049DAE3790ED65B86D0622E562F38C35EC333E4C7D",
+      "result": "PASS"
+    },
+    {
+      "addon": "KWRSentinel",
+      "asset": "KWRSentinel_6_1_0_ALPHA_43.zip",
+      "url": "https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.43/KWRSentinel_6_1_0_ALPHA_43.zip",
+      "sha256": "9ae91a5d5e94f3e621f756289d61c5471058759986606fbad6f9b65ce28b4dfd",
+      "installedManifestReceipt": "knowledge/receipts/installed-alpha43-sentinel.json",
+      "payloadDigest": "13C6282D91B6FA7B2F57C7C05D73162753D420FD2F1CCDACABE8C8A3EB3F84E3",
+      "result": "PASS"
+    }
+  ],
+  "verification": "Each official release asset was downloaded, SHA-256 verified, extracted, and compared byte-for-byte to its installed addon folder."
+}

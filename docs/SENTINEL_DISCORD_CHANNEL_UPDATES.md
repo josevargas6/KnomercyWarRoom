@@ -2,7 +2,7 @@
 
 Status: ready-to-post
 
-Date: 2026-08-11
+Date: 2026-08-15
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -34,14 +34,14 @@ GitHub Actions route:
 ## #announcements
 
 ```text
-KWR Sentinel 6.1.0-alpha.43 is available for alpha testing as the synchronized
-execution-card companion for Commander 6.1.0-alpha.43.
+KWR Sentinel 6.1.0 is available as the synchronized stable execution-card
+companion for Commander 6.1.0.
 
 Download:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.43/KWRSentinel_6_1_0_ALPHA_43.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0/KWRSentinel_6_1_0.zip
 
 Release page:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
 
 Install folder:
 World of Warcraft/_retail_/Interface/AddOns/KWRSentinel
@@ -52,11 +52,11 @@ Compact player execution card, commander trust badge, target confirmation cue, a
 Distribution state:
 The guarded release gate publishes the exact reviewed GitHub artifact and
 submits the same build to CurseForge for Retail 12.1.0 and 12.0.7. CurseForge
-moderation visibility may lag. Current packaged in-game evidence still gates
-stable promotion.
+moderation visibility may lag. GitHub assets and their hashes remain the
+authoritative release record.
 
 Current limitation:
-KWRSync1 cross-player relay is enabled as a bounded, conservative alpha path;
+KWRSync1 cross-player relay is enabled as a bounded, conservative path;
 same-client bridge remains the fallback. Team-scale transport proof remains in
 the refinement queue.
 ```
@@ -64,12 +64,12 @@ the refinement queue.
 ## #kwr-support
 
 ```text
-KWR Sentinel alpha support notes:
+KWR Sentinel stable support notes:
 
 - Use /sentinel or /kwrs to toggle the execution card.
 - Use /kwrs map for the Blizzard battlefield map.
 - Use /kwrs score for the Blizzard scoreboard.
-- If no commander data appears, confirm KnomercyWarRoom is installed on the same client for this alpha.
+- If no commander data appears, confirm KnomercyWarRoom is installed on the same client.
 - Sentinel does not target, focus, cast, move, send chat, or automate gameplay.
 
 Bug reports should include:
@@ -83,7 +83,7 @@ Bug reports should include:
 ## #kwr-field-testing
 
 ```text
-KWR Sentinel 6.1.0-alpha.43 refinement targets:
+KWR Sentinel 6.1.0 refinement targets:
 
 1. Enter a Retail battleground with KWR and KWRSentinel installed on the same client.
 2. Confirm the card shows LOCAL KWR when commander bridge data is available.
@@ -98,19 +98,19 @@ Report any taint, Lua errors, unreadable text, repeated alerts, or incorrect tar
 ## Restricted Ops Thread
 
 ```text
-KWR Sentinel 6.1.0-alpha.43 distribution receipt
+KWR Sentinel 6.1.0 distribution receipt
 
 GitHub repo:
 https://github.com/josevargas6/KWRSentinel
 
-GitHub prerelease:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43
+GitHub release:
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
 
 ZIP:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0-alpha.43/KWRSentinel_6_1_0_ALPHA_43.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.0/KWRSentinel_6_1_0.zip
 
 SHA-256 manifest:
-KWR_6_1_0_ALPHA_43_SHA256.txt on the GitHub prerelease
+KWR_6_1_0_SHA256.txt on the GitHub release
 
 Validation:
 - validate.ps1 passed

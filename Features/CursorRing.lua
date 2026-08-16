@@ -139,11 +139,11 @@ end
 -- Nameplate markers must remain legible in battleground movement and against
 -- the default health-bar scale. Keep these centralized so the ring, icon,
 -- label, and health strip scale as one visual unit.
-local ENEMY_ICON_SIZE = 42
-local FRIENDLY_ROLE_ICON_SIZE = 32
-local ORB_RING_SIZE = 48
-local ORB_FRAME_WIDTH = 52
-local ORB_FRAME_HEIGHT = 52
+local ENEMY_ICON_SIZE = 50
+local FRIENDLY_ROLE_ICON_SIZE = 38
+local ORB_RING_SIZE = 58
+local ORB_FRAME_WIDTH = 64
+local ORB_FRAME_HEIGHT = 58
 
 local function applyEnemyRingTexture(texture)
     -- This Retail atlas is the native circular selection ring. Fall back to a
@@ -154,6 +154,24 @@ local function applyEnemyRingTexture(texture)
         return
     end
     texture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+end
+
+-- Class/role art reads faster as a circular PvP token than as a square crop.
+-- This uses Blizzard's built-in scalable mask, so KWR remains self-contained
+-- and does not need to ship third-party media.
+local function addCircularIconMask(owner, texture)
+    if not owner or not texture or type(owner.CreateMaskTexture) ~= "function"
+        or type(texture.AddMaskTexture) ~= "function" then
+        return nil
+    end
+    local ok, mask = pcall(owner.CreateMaskTexture, owner)
+    if not ok or not mask then return nil end
+    if type(mask.SetTexture) == "function" then
+        mask:SetTexture("Interface\\Masks\\CircleMaskScalable",
+            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    end
+    if type(mask.SetAllPoints) == "function" then mask:SetAllPoints(texture) end
+    return pcall(texture.AddMaskTexture, texture, mask) and mask or nil
 end
 
 local function sameTargetRecord(record)
@@ -280,38 +298,40 @@ function CursorRing:CreateReticleFrame()
 
     frame.outer = frame:CreateTexture(nil, "ARTWORK")
     frame.outer:SetPoint("CENTER")
-    frame.outer:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-    frame.outer:SetBlendMode("ADD")
+    -- A native circular selection ring reads as a target lock. The old
+    -- minimap highlight plus starburst read like a spell effect and obscured
+    -- the target's actual identity in dense combat.
+    applyEnemyRingTexture(frame.outer)
 
     frame.inner = frame:CreateTexture(nil, "OVERLAY")
     frame.inner:SetPoint("CENTER")
-    frame.inner:SetTexture("Interface\\Cooldown\\star4")
-    frame.inner:SetBlendMode("ADD")
+    frame.inner:SetTexture("Interface\\Buttons\\WHITE8X8")
 
     frame.targetIcon = frame:CreateTexture(nil, "OVERLAY")
     frame.targetIcon:SetPoint("CENTER")
     frame.targetIcon:SetSize(28, 28)
+    frame.targetIconMask = addCircularIconMask(frame, frame.targetIcon)
     frame.targetIcon:Hide()
 
     frame.pulse = frame:CreateTexture(nil, "OVERLAY")
     frame.pulse:SetPoint("CENTER")
-    frame.pulse:SetTexture("Interface\\Cooldown\\star4")
-    frame.pulse:SetBlendMode("ADD")
+    applyEnemyRingTexture(frame.pulse)
 
     frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
     frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
-    -- Keep the command label above the target lock, not in the melee lane to
-    -- its left where damage numbers and nameplates constantly overwrite it.
+    -- Action text is deliberately absent for a neutral target. The native
+    -- nameplate already establishes identity; this compact tab appears only
+    -- when KWR has a specific action such as KILL, CAST, or SWAP.
     frame.labelPlate:SetPoint("BOTTOM", frame, "TOP", 0, 8)
-    frame.labelPlate:SetSize(78, 16)
-    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "RIGHT")
+    frame.labelPlate:SetSize(54, 14)
+    frame.label = KWR.Theme:Title(frame.labelPlate, 9, "CENTER")
     frame.label:SetAllPoints()
     frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     KWR.Theme:Style(frame.detailPlate, "panel", "border")
     frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
-    frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 3)
-    frame.detailPlate:SetSize(126, 14)
+    frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 2)
+    frame.detailPlate:SetSize(112, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
     frame.detail:SetAllPoints()
 
@@ -332,14 +352,17 @@ function CursorRing:CreateOrbFrame(unit)
     frame:Hide()
 
     frame.ring = frame:CreateTexture(nil, "ARTWORK")
-    frame.ring:SetPoint("CENTER", frame, "CENTER", 0, 8)
+    -- Marker art and the selected-target reticle share the frame centre.
+    -- Do not add an inner visual offset here: it breaks the handoff from a
+    -- floating healer/class token into the target lock.
+    frame.ring:SetPoint("CENTER", frame, "CENTER")
     frame.ring:SetSize(ORB_RING_SIZE, ORB_RING_SIZE)
     applyEnemyRingTexture(frame.ring)
     frame.ring:SetBlendMode("ADD")
 
     frame.square = frame:CreateTexture(nil, "ARTWORK")
     frame.square:SetPoint("CENTER", frame.ring, "CENTER")
-    frame.square:SetSize(42, 42)
+    frame.square:SetSize(50, 50)
     frame.square:SetTexture(TEAM_BADGE_TEXTURE)
     frame.square:SetBlendMode("ADD")
     frame.square:Hide()
@@ -347,6 +370,7 @@ function CursorRing:CreateOrbFrame(unit)
     frame.icon = frame:CreateTexture(nil, "OVERLAY")
     frame.icon:SetPoint("CENTER", frame.ring, "CENTER")
     frame.icon:SetSize(ENEMY_ICON_SIZE, ENEMY_ICON_SIZE)
+    frame.iconMask = addCircularIconMask(frame, frame.icon)
 
     frame.badge = KWR.Theme:Title(frame, 10, "CENTER")
     frame.badge:SetPoint("CENTER", frame.ring, "CENTER", 0, 0)
@@ -441,6 +465,18 @@ local function nameplateReadoutWidgets(plate)
     return { unitFrame.healthBar, unitFrame.name, unitFrame.nameText }
 end
 
+-- Blizzard's nameplate container can include large invisible bounds that vary
+-- by unit and client layout. Anchor KWR tokens to the visible health bar
+-- instead, so every player marker shares the same screen-space alignment.
+local IDENTITY_GAP = 8
+local function identityAnchor(plate)
+    local unitFrame = plate and plate.UnitFrame
+    local kind = type(unitFrame)
+    if kind ~= "table" and kind ~= "userdata" then return plate end
+    return unitFrame and (unitFrame.healthBar or unitFrame.name or unitFrame.nameText)
+        or plate
+end
+
 function CursorRing:RestoreFocusReadout(plate)
     if not plate or not plate.KWRFocusReadout then return end
     for widget, alpha in pairs(plate.KWRFocusReadout) do
@@ -480,6 +516,26 @@ function CursorRing:FindEnemyRecord(unit, state)
         if sameRecordUnit(enemy, unit) then return enemy end
     end
     return nil
+end
+
+function CursorRing:ObservedPlayerRecord(unit, isFriend)
+    if not KWR.Util:Boolean(KWR.Util:Call(UnitIsPlayer, unit), false) then
+        return nil
+    end
+    local name = KWR.Util:UnitName(unit)
+    if not name then return nil end
+    local _, classFile = KWR.Util:UnitClass(unit)
+    local role = KWR.Util:Upper(KWR.Util:Call(UnitGroupRolesAssigned, unit), "UNKNOWN", 12)
+    if role == "DAMAGE" then role = "DAMAGER" end
+    return {
+        unit = unit,
+        name = name,
+        shortName = KWR.Util:ShortName(name),
+        classFile = classFile,
+        -- Group role is meaningful for friendlies. Enemy identity remains
+        -- class-first when role data is unavailable or protected.
+        role = isFriend and role or "UNKNOWN",
+    }
 end
 
 function CursorRing:AssignmentFor(name)
@@ -526,8 +582,9 @@ function CursorRing:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, m
         frame:Hide()
         return
     end
+    local anchor = identityAnchor(plate)
     frame:ClearAllPoints()
-    frame:SetPoint("TOP", plate, "BOTTOM", 0, -2)
+    frame:SetPoint("TOP", anchor, "BOTTOM", 0, -4)
     frame.text:SetText(text)
     frame:SetShown(true)
 end
@@ -547,8 +604,8 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         texture = nil,
         texCoords = nil,
         iconTint = { 1, 1, 1 },
-        iconSize = isFriend and FRIENDLY_ROLE_ICON_SIZE or ENEMY_ICON_SIZE,
-        frameShape = isFriend and "SQUARE" or "CIRCLE",
+        iconSize = ENEMY_ICON_SIZE,
+        frameShape = "CIRCLE",
         ringColor = ORB_COLORS.STALE.outer,
         nameColor = { classColor(classFile) },
         -- The Blizzard nameplate retains identity and health information. KWR
@@ -563,13 +620,12 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         model.iconTint = carrier.tint
         model.ringColor = carrier.colors
         model.badge = carrier.texture and nil or carrier.badge
-    elseif isFriend then
+    elseif isFriend and role == "HEALER" then
         model.kind = "ROLE"
         model.texCoords = roleIconCoords(role)
         model.texture = model.texCoords and ROLE_ICON_TEXTURE or nil
-        model.ringColor = ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role]
-            and ORB_COLORS[role == "DAMAGER" and "DAMAGE" or role].outer
-            or ORB_COLORS.TEAM.outer
+        model.iconSize = FRIENDLY_ROLE_ICON_SIZE
+        model.ringColor = ORB_COLORS.HEALER.outer
         model.badge = nil
     else
         model.kind = "CLASS"
@@ -577,7 +633,7 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
             and CLASS_ICON_TCOORDS[classFile] or nil
         model.texture = model.texCoords and CLASS_ICON_TEXTURE or nil
         model.ringColor = { classColor(classFile) }
-        model.badge = model.texCoords and nil or "?"
+        if not model.texCoords and not isFriend then model.badge = "?" end
     end
     local combat = state and state.snapshot and state.snapshot.combat or {}
     if not isFriend and (sameEntity(record, combat.localTarget)
@@ -651,6 +707,7 @@ function CursorRing:RefreshOrbForUnit(unit, state)
         and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
     local record = isFriend and self:FindFriendlyRecord(unit, state)
         or self:FindEnemyRecord(unit, state)
+    record = record or self:ObservedPlayerRecord(unit, isFriend)
     local mode = self:ResolveMarkerMode()
     self:RefreshTacticalBadgeForUnit(unit, plate, record, isFriend, mode)
     if mode == "OFF" or mode == "TACTICAL_ONLY" then
@@ -667,7 +724,7 @@ function CursorRing:RefreshOrbForUnit(unit, state)
     end
     frame:SetParent(plate)
     frame:ClearAllPoints()
-    frame:SetPoint("BOTTOM", plate, "TOP", 0, 4)
+    frame:SetPoint("BOTTOM", identityAnchor(plate), "TOP", 0, IDENTITY_GAP)
     if isFriend then
         if not record then
             frame:Hide()
@@ -791,20 +848,27 @@ function CursorRing:ApplyReticle()
     local frame = self:CreateReticleFrame()
     local size = KWR.Util:Clamp(profile.reticleSize or 104, 56, 156)
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
-    local visualSize = math.floor(size * 0.84)
+    local visualSize = math.floor(size * 0.90)
+    local viewportWidth = KWR.Util:Number(UIParent and KWR.Util:Call(UIParent.GetWidth, UIParent), nil)
+    local viewportHeight = KWR.Util:Number(UIParent and KWR.Util:Call(UIParent.GetHeight, UIParent), nil)
+    viewportWidth = math.max(visualSize * 2, viewportWidth or visualSize * 12)
+    viewportHeight = math.max(visualSize * 2, viewportHeight or visualSize * 8)
     frame:SetSize(visualSize, visualSize)
-    -- Guides deliberately frame the lock rather than bisecting the whole
-    -- screen. A target cue must survive spell clutter, not add to it.
-    frame.hLine:SetSize(math.floor(visualSize * 1.35), 3)
-    frame.vLine:SetSize(3, math.floor(visualSize * 1.35))
+    -- The crosshair's axis guides establish a single target focal point.
+    -- They remain one-pixel, low-alpha lines so the class token and ring stay
+    -- dominant over the battlefield rather than becoming a screen overlay.
+    frame.hLine:SetSize(viewportWidth, 1)
+    frame.vLine:SetSize(1, viewportHeight)
     frame.outer:SetSize(visualSize, visualSize)
-    frame.inner:SetSize(math.floor(visualSize * 0.58), math.floor(visualSize * 0.58))
-    frame.pulse:SetSize(math.floor(visualSize * 0.74), math.floor(visualSize * 0.74))
-    frame.labelPlate:SetSize(math.max(78, math.floor(visualSize * 0.92)), 16)
-    frame.detailPlate:SetSize(math.max(126, math.floor(visualSize * 1.46)), 14)
+    frame.inner:SetSize(4, 4)
+    local targetIconSize = math.max(26, math.floor(visualSize * 0.40))
+    frame.targetIcon:SetSize(targetIconSize, targetIconSize)
+    frame.pulse:SetSize(math.floor(visualSize * 1.14), math.floor(visualSize * 1.14))
+    frame.labelPlate:SetSize(math.max(54, math.floor(visualSize * 0.60)), 14)
+    frame.detailPlate:SetSize(math.max(112, math.floor(visualSize * 1.20)), 14)
     frame.baseAlpha = alpha
-    frame.hLine:SetShown(profile.reticleGuides ~= false)
-    frame.vLine:SetShown(profile.reticleGuides ~= false)
+    frame.hLine:SetShown(profile.reticleGuides == true)
+    frame.vLine:SetShown(profile.reticleGuides == true)
     self:ApplyReticleState(self.reticleState or {
         mode = "TARGET",
         label = "TARGET",
@@ -831,13 +895,13 @@ function CursorRing:ApplyReticleState(state)
     local colors = RETICLE_COLORS[state.mode] or RETICLE_COLORS.TARGET
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
     frame.baseAlpha = alpha
-    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.34)
-    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.34)
+    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
+    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
     frame.outer:SetVertexColor(
         colors.outer[1], colors.outer[2], colors.outer[3],
         math.min(1, math.max(colors.alpha or alpha, alpha * 0.90)))
-    frame.inner:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.68)
-    frame.pulse:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.24)
+    frame.inner:SetVertexColor(colors.inner[1], colors.inner[2], colors.inner[3], alpha * 0.78)
+    frame.pulse:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.18)
     local classFile = KWR.Util:Upper(state.classFile, "", 24)
     local texCoords = type(CLASS_ICON_TCOORDS) == "table"
         and CLASS_ICON_TCOORDS[classFile] or nil
@@ -849,12 +913,15 @@ function CursorRing:ApplyReticleState(state)
     else
         frame.targetIcon:Hide()
     end
-    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], 0.94)
-    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], 0.72)
-    frame.label:SetText(KWR.Util:Text(state.label, "TARGET", 24))
+    local label = KWR.Util:Text(state.label, "TARGET", 24)
+    local showAction = label ~= "TARGET"
+    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], showAction and 0.62 or 0)
+    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], showAction and 0.48 or 0)
+    frame.label:SetText(showAction and label or "")
     local detail = KWR.Util:Text(state.detail, "", 64)
-    frame.detail:SetText(detail)
-    frame.detailPlate:SetShown(detail ~= "")
+    frame.detail:SetText(showAction and detail or "")
+    frame.labelPlate:SetShown(showAction)
+    frame.detailPlate:SetShown(showAction and detail ~= "")
     frame.pulseActive = state.pulse == true
     self.reticleState = state
 end
@@ -862,7 +929,6 @@ end
 function CursorRing:ResolveReticleState(state)
     local snapshot = state and state.snapshot or {}
     local combat = snapshot.combat or {}
-    local mapKey = snapshot.context and snapshot.context.mapKey
     local targetRecord
     for _, enemy in ipairs(snapshot.enemies or {}) do
         if sameTargetRecord(enemy) then
@@ -880,6 +946,16 @@ function CursorRing:ResolveReticleState(state)
     local defensive = targetRecord and targetRecord.defensivesActive
         and targetRecord.defensivesActive[1] or nil
     local targetClass = KWR.Util:Upper(targetRecord and targetRecord.classFile, "", 24)
+    -- Enemy roster snapshots can arrive a moment after a target/nameplate
+    -- update. The target's public class is the only identity fallback we need
+    -- for the centered icon; if it is unavailable, keep the ring honest and
+    -- leave the icon hidden rather than guessing.
+    if targetClass == "" or targetClass == "UNKNOWN" then
+        local _, observedClass = KWR.Util:UnitClass("target")
+        if observedClass ~= "UNKNOWN" then
+            targetClass = observedClass
+        end
+    end
 
     if defensive then
         return {
@@ -950,21 +1026,13 @@ function CursorRing:ResolveReticleState(state)
             classFile = targetClass,
         }
     end
-    local observed = KWR.Util:Text(targetRecord and targetRecord.spec, "Observed target", 24)
-    if targetRecord and targetRecord.location and mapKey then
-        observed = observed .. "  "
-            .. KWR.Maps:AbbreviateLocation(mapKey, targetRecord.location)
-    end
-    if targetRecord and targetRecord.locationState and targetRecord.locationState ~= "" then
-        observed = KWR.Util:Text(targetRecord.locationState, "OBSERVED", 14) .. "  " .. observed
-    end
-    if targetRecord and targetRecord.age and targetRecord.visible ~= true then
-        observed = observed .. "  " .. KWR.Util:Age(targetRecord.age)
-    end
     return {
         mode = "TARGET",
         label = "TARGET",
-        detail = KWR.Util:Text(observed, "Observed target", 28),
+        -- Keep neutral target identity in Blizzard's nameplate and the class
+        -- icon inside the ring. Repeating "Observed target" above it costs
+        -- visibility without improving the target decision.
+        detail = "",
         pulse = false,
         classFile = targetClass,
     }
@@ -1025,9 +1093,11 @@ function CursorRing:RefreshReticle()
     self.reticlePending = false
     self.reticlePlate = plate
     self.reticle:ClearAllPoints()
-    -- The centered class icon belongs above the native nameplate, not on top
-    -- of Blizzard's target name/health information.
-    self.reticle:SetPoint("BOTTOM", plate, "TOP", 0, 6)
+    -- Place the reticle centre exactly where this unit's regular identity
+    -- token would sit. A selected target therefore grows from the same icon
+    -- position into a target lock instead of jumping to a different anchor.
+    self.reticle:SetPoint("CENTER", identityAnchor(plate), "TOP", 0,
+        IDENTITY_GAP + (ORB_FRAME_HEIGHT / 2))
     self:ApplyReticleState(self:ResolveReticleState(currentState(self.lastState)))
     self.reticle:SetShown(true)
     self:RefreshDriver()

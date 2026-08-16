@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$Repository = "josevargas6/KnomercyWarRoom",
-    [string]$ReleaseTag = "v6.1.0-alpha.30"
+    [string]$ReleaseTag = "v6.1.0"
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,7 +18,10 @@ function Add-Finding {
 }
 
 $release = Invoke-RestMethod -Headers $headers -Uri "$apiRoot/releases/tags/$ReleaseTag"
-if (-not $release.prerelease) { Add-Finding "Release $ReleaseTag is not marked prerelease." }
+$expectsPrerelease = $ReleaseTag.Substring(1) -match '-'
+if ([bool]$release.prerelease -ne $expectsPrerelease) {
+    Add-Finding "Release $ReleaseTag channel does not match its semantic version."
+}
 if ($release.assets.Count -lt 1) { Add-Finding "Release $ReleaseTag has no GitHub assets." }
 
 $workflowResponse = Invoke-RestMethod -Headers $headers -Uri "$apiRoot/contents/.github/workflows/release.yml?ref=main"

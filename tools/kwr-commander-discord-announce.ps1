@@ -10,6 +10,14 @@ param(
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $sourcePath = Join-Path $root "docs\KWR_COMMANDER_DISCORD_CHANNEL_UPDATES.md"
+$tocPath = Join-Path $root "KnomercyWarRoom.toc"
+$sourceVersionLine = Get-Content -LiteralPath $tocPath |
+    Where-Object { $_ -match "^## Version:" } |
+    Select-Object -First 1
+if ([string]::IsNullOrWhiteSpace($sourceVersionLine)) {
+    throw "Could not determine Commander version from $tocPath."
+}
+$sourceVersion = ($sourceVersionLine -replace "^## Version:\s*", "").Trim()
 
 if (-not (Test-Path -LiteralPath $sourcePath)) {
     throw "Missing Discord update source: $sourcePath"
@@ -32,8 +40,10 @@ if (-not $match.Success) {
 
 $message = $match.Groups[1].Value.Trim()
 if (-not [string]::IsNullOrWhiteSpace($Version)) {
-    $message = $message -replace '\d+\.\d+\.\d+-alpha\.\d+', $Version
-    $message = $message -replace '\d+_\d+_\d+_ALPHA_\d+', ($Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
+    $message = $message.Replace($sourceVersion, $Version)
+    $message = $message.Replace(
+        $sourceVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_'),
+        $Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
 }
 if ($DryRun -or [string]::IsNullOrWhiteSpace($WebhookUrl)) {
     Write-Output "DRY RUN: Discord section '$Section'"

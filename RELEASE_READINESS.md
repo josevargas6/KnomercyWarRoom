@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0-alpha.43
+# Release Readiness - 6.1.0
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,35 +6,29 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**Alpha 43 is the authorized Retail 12.1 field-test candidate, published as a
-GitHub prerelease and not a stable promotion.** Alpha 42 remains immutable
-published evidence. Alpha 41 remains historical evidence. Alpha 40 remains the composition-aware opener
-baseline; Alpha 39 remains the managed-Sentinel-layout baseline; Alpha 36 is
-the last verified public prerelease.
-The recovery PR, KWR-047 source governance, package manifests, installed-folder
-comparisons, and protected release workflow passed on 2026-08-08. Alpha 37
-Commander and Sentinel were deployed together on 2026-08-09 from the certified
-candidate packages: Commander has 388 exact files and Sentinel has 9 exact
-files, with zero missing, changed, or extra entries. Both addons are enabled
-for the active `Verite-Bladefist` character, so Sentinel's reviewed same-client
-`KWR.SentinelBridge` will activate on the next client load. Alpha 38 adds the
-reviewed bounded `KWRSync1` cross-client transport. Alpha 39 adds managed
-Sentinel docking beside active Commander UI. Alpha 40 expands every supported
-map to fifteen theory-reviewed opening branches, selected by friendly/enemy
-composition matchups and qualified roster tiers. It also activates the
-1,000-entry season-prep matrix/corpus as explicitly pending, advisory guidance;
-it is packaged in Alpha 43 and remains pending Retail opening validation before
-it can influence promoted strategy. The public
-prerelease is
-[`v6.1.0-alpha.43`](https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0-alpha.43),
-created from annotated tag `v6.1.0-alpha.43` at commit
-`734254c98371cf9dc00235a58ed884de3000ec69`. The protected production run
-completed successfully on 2026-08-14: CurseForge accepted Commander file
-`8650550` and Sentinel file `8650551`, and both Commander and Sentinel Discord
-announcement posts succeeded. Render is deployed from Sentinel-bot commit
-`5ffdb7d2f60be3e673d284b62adf49a8f8d1727b`; `/readyz` returned HTTP 200 with
-Discord ready while GitHub issue creation and AI are both disabled. All 13
-guild slash commands were registered after the deploy.
+**6.1.0 is the owner-authorized stable Season 2 release target.** It reconciles
+the reviewed post-Alpha 43 Commander and embedded Sentinel field-test work on a
+new semantic version and tag; the existing annotated `v6.1.0-alpha.43` tag and
+its five public assets remain immutable historical evidence. Publication is
+authorized only from the merged, green stable-release commit through the
+protected `production` workflow.
+
+The 2026-08-15 owner direction explicitly accepts promotion with the previously
+recorded live-evidence gaps carried as refinement telemetry. It does not assert
+new candidate-bound battleground sessions, ten-client Sentinel transport proof,
+or reviewed Retail 12.1 PvP tuning. Patch-dependent 12.1 overlays therefore
+remain fail-closed. The stable package must still pass validation, deterministic
+Lua tests, package extraction/audit, Commander/Sentinel version parity,
+checksums, protected production approval, and rollback-artifact creation.
+
+Alpha 43 remains the last published prerelease baseline. Its protected run
+completed on 2026-08-14 from commit
+`734254c98371cf9dc00235a58ed884de3000ec69`; CurseForge accepted Commander file
+`8650550` and Sentinel file `8650551`, and both release announcements succeeded.
+The stable cutover must generate new receipts and must not reuse those IDs or
+hashes. Render remains separately evidenced at Sentinel-bot commit
+`5ffdb7d2f60be3e673d284b62adf49a8f8d1727b`; this addon release does not alter
+bot deployment, Discord settings, GitHub issue integration, or AI integration.
 
 ## Public artifact contract
 
@@ -281,16 +275,15 @@ release; both TOCs, runtime constants, package manifests, hashes, tag, GitHub
 release, CurseForge files, and Discord copy must name the same version and
 commit. The installed AddOns folders are runtime evidence, never source control.
 
-### Truth as of 2026-08-14
+### Truth as of 2026-08-15
 
-- `release-alpha43` is the active candidate PR. Its required `certify` check
-  passed, but the PR has not merged; therefore Alpha 43 is **not** a stable
-  release and must not be called one.
-- `main` is Alpha 42. The canonical local checkout now tracks the active Alpha
-  43 release branch; the prior local branch tracked a deleted remote branch and
-  is historical only.
+- `main` contains the merged Alpha 43 line plus subsequent maintenance; the
+  stable cutover branch reconciles the reviewed field-test commits without
+  moving any prior tag.
+- `v6.1.0-alpha.43` is immutable prerelease evidence. The new stable tag is
+  `v6.1.0` and may be created only at the green merged cutover commit.
 - The separate `KWRSentinel` repository still contains Alpha 33-oriented
-  release automation. It is not release-authoritative for Alpha 43 and is a
+  release automation. It is not release-authoritative for 6.1.0 and is a
   drift risk until it is explicitly archived as a standalone historical lane or
   regenerated from the embedded package.
 - The Sentinel Discord bot local checkout was behind its remote `main` by two
@@ -318,12 +311,12 @@ commit. The installed AddOns folders are runtime evidence, never source control.
 
 | ID | Gap to close | Required action | Done only when |
 | --- | --- | --- | --- |
-| GIT-01 | Alpha 43 is an open candidate, not a clean stable baseline. | Resolve PR #45 only after the required check is green on its final head; fast-forward local canonical `main`, create the matching tag, and fetch/prune all release worktrees. | `main`, tag, GitHub prerelease assets, and local checkout resolve to one commit with no ahead/behind or uncommitted state. |
+| GIT-01 | Stable metadata and the reconciled field-test source require one reviewed merge commit. | Merge the 6.1.0 cutover only after the required `certify` check is green; create a new annotated `v6.1.0` tag at that merge without altering Alpha 43. | `main`, stable tag, GitHub release assets, and canonical checkout resolve to one commit with no ahead/behind or uncommitted state. |
 | GIT-02 | Historical local branches track deleted remotes. | Inventory ancestry, preserve any unmerged work under a named archive/ref, then remove only merged or explicitly retired worktrees and stale tracking refs. | No active worktree follows `[gone]`; a retained archive explains every unmerged historical branch. |
-| REL-01 | A standalone Alpha 33 Sentinel release lane conflicts with the embedded Alpha 43 package. | Freeze the standalone release workflow and public claims, or regenerate it from the current embedded Sentinel source and exact package contract. Do not ship both lanes. | One documented Sentinel release owner; parity test accepts the current version; no workflow has hard-coded Alpha 25/33 artifacts. |
+| REL-01 | A standalone Alpha 33 Sentinel release lane conflicts with the embedded 6.1.0 package. | Keep the standalone lane release-frozen; ship only the embedded Sentinel package built from the Commander tag. | One documented Sentinel release owner; parity test accepts 6.1.0; no standalone workflow publishes a competing package. |
 | REL-02 | Publication must be proven end-to-end, not inferred from a green build. | Run the protected tagged-release workflow once, then verify GitHub assets, Commander and Sentinel CurseForge file IDs/version/channel, Discord announcement URLs, and installed-folder manifests. | One signed evidence bundle binds tag, commit, two ZIP hashes, two CurseForge files, Discord receipts, and installation manifests. |
 | BOT-01 | Render configuration exists, but current deployment and command freshness are not a release invariant. | Fast-forward bot source, run its locked dependency/smoke/test/audit gate, deploy the reviewed commit, register guild commands, and capture private readiness. Keep Render auto-deploy off for unreviewed commits. | Bot commit equals approved remote `main`; `/readyz` returns 200 after Discord is ready; issue creation and AI stay disabled unless separately approved. |
-| RBG-01 | Alpha 43 command stability and cross-client Sentinel value need current field proof. | Capture bounded live evidence for each map family and both win/loss states over time; before promotion, run the focused Alpha 43 smoke set: command replacement/expiry, team identity, carrier target grammar, secure clicks, taint/blocked-action, CPU/memory, and ten-client relay leadership/reload/packet-loss tests. | Evidence is version- and package-hash-bound; a failure opens a labeled issue and blocks only the affected promotion claim. |
+| RBG-01 | Stable command quality and cross-client Sentinel value retain unverified field claims. | Capture bounded 6.1.0 evidence for each map family and both win/loss states: command replacement/expiry, team identity, carrier grammar, secure clicks, taint/blocked-action, CPU/memory, and ten-client relay leadership/reload/packet-loss. | Evidence is version- and package-hash-bound; any failure opens a labeled issue and drives a new patch release rather than rewriting 6.1.0. |
 | META-01 | Static meta data can become stale between official tuning and player evidence. | Use a development-only intake pipeline: official Blizzard notes first, at least two independent trend sources second, human review third, versioned data/fixtures fourth, PR + deterministic test last. The addon never fetches data in-game. | Every changed recommendation records patch, sources, reviewer, confidence, expiry, affected maps/specs, and a passing fixture; unreviewed trends remain `PENDING` and cannot influence live calls. |
 | SOCIAL-01 | Feedback exists, but needs a measurable closed loop. | Make `/bug`, `/diag`, `/aar`, `/strat`, and `/suggest` create structured, deduplicated GitHub intake only when the least-privilege issue integration is enabled. Add `status:needs-review`, `needs-repro`, `needs-field-test`, `accepted`, `declined`, and `shipped` response paths. | A test submission reaches the correct private Discord channel and labeled issue, receives an acknowledgement, contains no secret/identifier by default, and cannot trigger merge, release, deploy, or doctrine changes. |
 
@@ -376,7 +369,7 @@ change. Its durable jobs are:
 
 | Cadence | Autonomous job | Required output / stop rule |
 | --- | --- | --- |
-| Daily through Season 2 launch | Fetch/prune source state; inspect Alpha 43 PR/checks, release/tag parity, package manifests, bot remote drift, Render-ready receipt availability, open issue intake, and official patch/news deltas. | A concise `READY`/`NOT READY` report with exact blockers. Stop before external writes, merge, deploy, publication, or secret access. |
+| Daily through Season 2 launch | Fetch/prune source state; inspect the active stable release, tag parity, package manifests, bot remote drift, Render-ready receipt availability, open issue intake, and official patch/news deltas. | A concise `READY`/`NOT READY` report with exact blockers. Stop before external writes, merge, deploy, publication, or secret access. |
 | Patch day | Run preflight before maintenance, then repeated read-only patch watch and a post-maintenance regression report. | A versioned patch-impact issue/PR proposal only; no doctrine change without reviewed sources and passing fixtures. |
 | Weekly | Run the existing readiness/security audit across source, installed addons, workflows, public distribution evidence, bot, and Beacon. | Evidence-backed risk register; escalate missing credentials, failed health, version drift, or failed CI immediately. |
 | Biweekly | Compare reviewed meta sources and closed AAR/field reports; cluster duplicate reports and propose fixture/data changes. | A human-reviewable PR or issue, never a direct data/release mutation. |

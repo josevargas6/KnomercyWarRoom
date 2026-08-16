@@ -98,6 +98,26 @@ Assert-True `
     -Condition ($releaseWorkflow -match 'sentinel-discord-announce\.ps1 -Section announcements -Version \$version -CommanderVersion \$commanderVersion') `
     -Message "Release workflow does not pass the current Commander version to the Sentinel announcement."
 
+$commanderAnnouncement = @(& (Join-Path $root "tools\kwr-commander-discord-announce.ps1") `
+    -Section announcements -Version "6.1.1-alpha.1" -DryRun) -join "`n"
+Assert-True `
+    -Condition ($commanderAnnouncement -match 'Commander 6\.1\.1-alpha\.1') `
+    -Message "Commander announcement did not substitute the requested addon version."
+Assert-True `
+    -Condition ($commanderAnnouncement -match 'Retail 12\.1\.0 and 12\.0\.7') `
+    -Message "Commander announcement rewrote supported WoW client versions."
+$sentinelAnnouncement = @(& (Join-Path $root "tools\sentinel-discord-announce.ps1") `
+    -Section announcements -Version "6.1.1-alpha.1" -CommanderVersion "6.0.9" -DryRun) -join "`n"
+Assert-True `
+    -Condition ($sentinelAnnouncement -match 'Sentinel 6\.1\.1-alpha\.1') `
+    -Message "Sentinel announcement did not substitute the requested addon version."
+Assert-True `
+    -Condition ($sentinelAnnouncement -match 'Commander 6\.0\.9') `
+    -Message "Sentinel announcement replaced a distinct Commander version with its own version."
+Assert-True `
+    -Condition ($sentinelAnnouncement -match 'Retail 12\.1\.0 and 12\.0\.7') `
+    -Message "Sentinel announcement rewrote supported WoW client versions."
+
 $sentinelBridge = Get-Content -LiteralPath (
     Join-Path $root "KWRSentinel\Bridge.lua"
 ) -Raw
@@ -198,6 +218,18 @@ Assert-True `
 Assert-True `
     -Condition ($releaseWorkflow -match 'PUBLIC_MANIFEST\.json') `
     -Message "Release automation must publish the player-facing manifest."
+Assert-True `
+    -Condition ($releaseWorkflow -match '\$isPrerelease\s*=\s*\$version\.Contains\(''-''\)') `
+    -Message "Release automation must derive GitHub channel from the semantic version."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'gh release edit \$releaseTag --prerelease=false --latest') `
+    -Message "Stable publication must clear prerelease state and mark the release latest."
+Assert-True `
+    -Condition ($releaseWorkflow -match 'gh release create \$releaseTag \$publicAssets --latest') `
+    -Message "Stable publication must create a latest GitHub release."
+Assert-True `
+    -Condition (([regex]::Matches($releaseWorkflow, '-ReleaseType \$releaseType')).Count -eq 2) `
+    -Message "Commander and Sentinel CurseForge uploads must receive the derived release type."
 
 Assert-True `
     -Condition ($ciWorkflow -match 'name:\s*kwr-developer-') `

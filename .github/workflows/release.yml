@@ -1,4 +1,4 @@
-name: KWR Tagged Prerelease
+name: KWR Tagged Release
 
 on:
   push:
@@ -77,7 +77,7 @@ jobs:
             -EvidenceScope release
           Copy-Item "docs/RELEASE_INSTALL.md" "artifacts/INSTALL.md"
 
-      - name: Create GitHub prerelease
+      - name: Create GitHub release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -87,6 +87,7 @@ jobs:
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
           $sentinelVersion = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $sentinelSafe = $sentinelVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
+          $isPrerelease = $version.Contains('-')
           # Never publish developer sources, screenshots, field evidence, or
           # generated certification reports to a player-facing release.
           $publicAssets = @(
@@ -102,9 +103,17 @@ jobs:
           gh release view $releaseTag *> $null
           if ($LASTEXITCODE -eq 0) {
               gh release upload $releaseTag $publicAssets --clobber
-              gh release edit $releaseTag --prerelease --title "Knomercy War Room $releaseTag"
+              if ($isPrerelease) {
+                  gh release edit $releaseTag --prerelease --latest=false --title "Knomercy War Room $releaseTag"
+              } else {
+                  gh release edit $releaseTag --prerelease=false --latest --title "Knomercy War Room $releaseTag"
+              }
           } else {
-              gh release create $releaseTag $publicAssets --prerelease --generate-notes --title "Knomercy War Room $releaseTag"
+              if ($isPrerelease) {
+                  gh release create $releaseTag $publicAssets --prerelease --latest=false --generate-notes --title "Knomercy War Room $releaseTag"
+              } else {
+                  gh release create $releaseTag $publicAssets --latest --generate-notes --title "Knomercy War Room $releaseTag"
+              }
           }
 
       - name: Upload Commander to CurseForge
@@ -122,7 +131,8 @@ jobs:
           }
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
-          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip"
+          $releaseType = if ($version.Contains('-')) { 'alpha' } else { 'release' }
+          ./tools/curseforge-upload-commander.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWR_${safe}_DISTRIBUTION.zip" -ReleaseType $releaseType
 
       - name: Upload Sentinel to CurseForge
         shell: pwsh
@@ -139,7 +149,8 @@ jobs:
           }
           $version = ((Get-Content "KWRSentinel\KWRSentinel.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
-          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip"
+          $releaseType = if ($version.Contains('-')) { 'alpha' } else { 'release' }
+          ./tools/curseforge-upload-sentinel.ps1 -ArtifactPath "${{ github.workspace }}\artifacts\KWRSentinel_${safe}.zip" -ReleaseType $releaseType
 
       - name: Publish Commander Discord announcement
         shell: pwsh
