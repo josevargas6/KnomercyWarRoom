@@ -100,6 +100,29 @@ local function clampScroll(scroll, value)
     scroll._kwrClamping = false
 end
 
+function MainWindowPages:SetQuickCallsClosed(page, closed)
+    local callsCard = page and page.callsCard
+    if not callsCard then return false end
+    closed = closed == true
+    if InCombatLockdown and InCombatLockdown() then
+        callsCard.pendingClosed = closed
+        callsCard.pendingClosedQueued = true
+        return false
+    end
+    for _, button in ipairs(callsCard.buttons or {}) do
+        if closed then button:Disable() else button:Enable() end
+    end
+    callsCard.pendingClosed = closed
+    callsCard.pendingClosedQueued = false
+    return true
+end
+
+function MainWindowPages:FlushQuickCallState(page)
+    local callsCard = page and page.callsCard
+    if not callsCard or callsCard.pendingClosedQueued ~= true then return true end
+    return self:SetQuickCallsClosed(page, callsCard.pendingClosed)
+end
+
 local function updateLogicCardBody(card, fallbackHeight)
     if not card or not card.scroll or not card.body or not card.value then return end
     local width = math.max((card.scroll:GetWidth() or 0) - 12, 248)
@@ -513,17 +536,20 @@ end
 
 function MainWindowPages:RenderObjectives(page, state, helpers)
     local snapshot, prediction = state.snapshot, state.prediction
+    local complete = snapshot.context and snapshot.context.matchComplete == true
+    local finalStatus = complete and KWR.Util:Text(state.command and state.command.status,
+        "COMPLETE", 16) or nil
     local friendly, enemy, friendlyIncoming, enemyIncoming =
         helpers.objectiveCounts(snapshot)
     page.statusCard.heading:SetText(snapshot.context.isBlitz
         and "MAP STATUS - BLITZ" or "MAP STATUS - STANDARD")
-    page.summaryCard.heading:SetText(((snapshot.objectives.carriers
+    page.summaryCard.heading:SetText(complete and "MATCH COMPLETE" or ((snapshot.objectives.carriers
         and #snapshot.objectives.carriers > 0)
         or (snapshot.objectives.timers and #snapshot.objectives.timers > 0))
         and "MAP SUMMARY - LIVE OBJECTIVES" or "MAP SUMMARY - QUIET")
-    page.scoreCard.stateBadge:SetTone(snapshot.context.inPvP
-        and helpers.statusColor(prediction.status) or "muted")
-    page.scoreCard.stateBadge:SetText(tostring(prediction.status or "WAIT"))
+    page.scoreCard.stateBadge:SetTone(complete and helpers.statusColor(finalStatus)
+        or (snapshot.context.inPvP and helpers.statusColor(prediction.status) or "muted"))
+    page.scoreCard.stateBadge:SetText(finalStatus or tostring(prediction.status or "WAIT"))
     local objectiveTruth = helpers.truthLabel(snapshot.objectives.source)
     page.scoreCard.truthBadge:SetTone(objectiveTruth == "LIVE" and "green"
         or (objectiveTruth == "OBSERVED" and "yellow" or "muted"))
@@ -552,10 +578,10 @@ function MainWindowPages:RenderObjectives(page, state, helpers)
         row:SetText(statusRows[index] or "")
     end
     local summaryLines = {
-        "MATCH STATE: " .. tostring(prediction.status),
-        "Friendly clock: " .. (prediction.friendlyTime and KWR.Util:Clock(prediction.friendlyTime) or "NO DATA"),
-        "Enemy clock: " .. (prediction.enemyTime and KWR.Util:Clock(prediction.enemyTime) or "NO DATA"),
-        "Urgency: " .. tostring(prediction.urgency or 0),
+        "MATCH STATE: " .. (finalStatus or tostring(prediction.status)),
+        "Friendly clock: " .. (complete and "FINAL" or (prediction.friendlyTime and KWR.Util:Clock(prediction.friendlyTime) or "NO DATA")),
+        "Enemy clock: " .. (complete and "FINAL" or (prediction.enemyTime and KWR.Util:Clock(prediction.enemyTime) or "NO DATA")),
+        complete and "Next step: Open Review / AAR" or ("Urgency: " .. tostring(prediction.urgency or 0)),
         "Confidence: " .. tostring(prediction.confidence or "NONE"),
     }
     for _, carrier in ipairs(snapshot.objectives.carriers or {}) do
@@ -586,24 +612,30 @@ function MainWindowPages:RenderObjectives(page, state, helpers)
     end
     page.truthCard.empty:SetShown(not snapshot.context.inPvP
         or not snapshot.objectives.rows or #snapshot.objectives.rows == 0)
-    page.conditionCard.urgencyBadge:SetTone(helpers.urgencyTone(prediction.urgency))
-    page.conditionCard.urgencyBadge:SetText("URG " .. tostring(prediction.urgency or 0))
+    page.conditionCard.urgencyBadge:SetTone(complete and "green" or helpers.urgencyTone(prediction.urgency))
+    page.conditionCard.urgencyBadge:SetText(complete and "FINAL" or ("URG " .. tostring(prediction.urgency or 0)))
     page.conditionCard.confidenceBadge:SetTone(prediction.confidence == "HIGH" and "green"
         or (prediction.confidence == "MEDIUM" and "yellow"
         or (prediction.confidence == "LOW" and "orange" or "muted")))
     page.conditionCard.confidenceBadge:SetText(tostring(prediction.confidence or "NONE"))
-    page.conditionCard.value:SetText((prediction.condition or "Waiting.")
-        .. "\n\n|cffffd05a" .. (prediction.action or "") .. "|r")
-    page.callsCard.helper:SetText(snapshot.context.preview and "PREVIEW CALLS - SAFE TO TEST"
+    page.conditionCard.value:SetText(complete
+        and ("Match complete.\n\n|cff49dd49" .. (finalStatus or "FINAL")
+            .. " - open Review / AAR to capture the lesson.|r")
+        or ((prediction.condition or "Waiting.")
+            .. "\n\n|cffffd05a" .. (prediction.action or "") .. "|r"))
+    page.callsCard.helper:SetText(complete and "MATCH COMPLETE - REVIEW / AAR NEXT"
+        or (snapshot.context.preview and "PREVIEW CALLS - SAFE TO TEST"
         or (snapshot.context.inPvP and "CLICK TO SEND OR COPY"
-            or "SETUP CALLS - COPY ONLY"))
-    page.callsCard.statusBadge:SetTone(snapshot.context.inPvP and "green"
-        or (snapshot.context.preview and "orange" or "muted"))
-    page.callsCard.statusBadge:SetText(snapshot.context.inPvP and "LIVE"
-        or (snapshot.context.preview and "PREVIEW" or "READY"))
-    page.callsCard.statusText:SetText(snapshot.context.inPvP
+            or "SETUP CALLS - COPY ONLY")))
+    page.callsCard.statusBadge:SetTone(complete and "muted" or (snapshot.context.inPvP and "green"
+        or (snapshot.context.preview and "orange" or "muted")))
+    page.callsCard.statusBadge:SetText(complete and "CLOSED" or (snapshot.context.inPvP and "LIVE"
+        or (snapshot.context.preview and "PREVIEW" or "READY")))
+    page.callsCard.statusText:SetText(complete and "TACTICAL CALLS CLOSED AFTER MATCH END"
+        or (snapshot.context.inPvP
         and "LEFT SENDS  |  RIGHT COPIES"
-        or "COPY ONLY OUTSIDE BATTLEGROUNDS")
+        or "COPY ONLY OUTSIDE BATTLEGROUNDS"))
+    self:SetQuickCallsClosed(page, complete)
     local definition = KWR.Maps:Get(snapshot.context.mapKey)
     local infoRows = {
         snapshot.context.mapName,
@@ -904,14 +936,24 @@ function MainWindowPages:RenderTeam(page, state, helpers)
     end
     local formation = state.snapshot.formation or {}
     local mapKey = state.snapshot.context.mapKey
+    local definition = KWR.Maps:Get(mapKey)
     local assignmentByName = {}
     for _, assignment in ipairs(state.assignments or {}) do
         assignmentByName[assignment.name] = assignment
         assignmentByName[assignment.shortName] = assignment
     end
+    local normalMapCapacity = state.snapshot.context.inPvP
+        and state.snapshot.context.preview ~= true
+        and state.snapshot.context.isRated ~= true
+        and state.snapshot.context.isBlitz ~= true
+        and definition and definition.normalTeamSize or nil
+    local modeCapacity = state.snapshot.context.isBlitz == true
+        and 8 or normalMapCapacity
+    local displayCapacity = math.max(
+        #roster, modeCapacity or formation.targetSize or 0)
     page.summaryCard.value:SetText(string.format(
         "%d / %d PLAYERS   |   %d TANK   |   %d HEALERS   |   %d DAMAGE",
-        #roster, formation.targetSize or 10, tanks, healers, damage))
+        #roster, displayCapacity, tanks, healers, damage))
     page.summaryCard.readyBadge:SetTone(helpers.readinessTone(dead, formation.openSlots))
     page.summaryCard.readyBadge:SetText(dead == 0 and "READY" or (tostring(dead) .. " UNAVAILABLE"))
     page.summaryCard.openBadge:SetTone((formation.openSlots or 0) > 0 and "yellow" or "green")

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Added an optional minimal live-combat HUD mode, high-contrast presentation
+  tokens, a readable multiline manual-copy surface, and full 15-player roster
+  capacity without reducing the normal Fight-Now kill/CC direction stack.
+- Closed tactical calls cleanly at match completion, directed players into
+  Review/AAR, and suppressed the target reticle over Options, copy, and AAR
+  modal surfaces while restoring it after those surfaces close.
+- Hardened embedded Sentinel identity, session, cast, and payload handling so
+  protected secret values fail closed before serialization or transport.
+- Added deterministic coverage for focus-mode restoration, match-complete call
+  closure, high contrast, modal reticle recovery, 15-player roster capacity,
+  and protected Sentinel transport inputs.
+
 ## 6.1.0 - 2026-08-15
 
 - Promoted the reconciled Commander and embedded Sentinel packages to the first

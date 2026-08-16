@@ -20,6 +20,7 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
+            focusMode = false,
             point = "CENTER",
             relativePoint = "CENTER",
             x = -440,
@@ -89,6 +90,9 @@ local DEFAULTS = {
             assignmentBadges = true,
             arenaLightweight = true,
             worldPvPReticle = true,
+        },
+        accessibility = {
+            highContrast = false,
         },
         launcher = {
             point = "CENTER",

@@ -29,6 +29,12 @@ local mockWidgetOverrides = {}
 local scoreRequests = 0
 function GetTime() return currentTime end
 function GetLocale() return mockLocale end
+StaticPopupDialogs = {}
+ACCEPT = "Reload UI"
+CANCEL = "Later"
+function StaticPopup_Show(key)
+    _G.KWR_TEST_POPUP_SHOWN = key
+end
 function debugprofilestop()
     local runtimeMs
     if type(os) == "table" and type(os.clock) == "function" then
@@ -102,6 +108,18 @@ Object.__index = function(tableValue, key)
         return function(self, checked) self.checked = checked == true end
     elseif key == "GetChecked" then
         return function(self) return self.checked == true end
+    elseif key == "Disable" then
+        return function(self)
+            self.disabled = true
+            self.kwrDisabled = true
+        end
+    elseif key == "Enable" then
+        return function(self)
+            self.disabled = false
+            self.kwrDisabled = false
+        end
+    elseif key == "IsEnabled" then
+        return function(self) return self.disabled ~= true end
     elseif key == "GetPoint" then
         return function(self, index)
             local points = rawget(self, "points")
@@ -4468,6 +4486,9 @@ if not releaseOnly then
         and perfText:find("Latest override:", 1, true)
         and perfText:find("Latest suppression:", 1, true),
         "Performance payload did not expose command-stability and active-play telemetry.")
+    KWR.AARWindow.frame:Hide()
+    assert(not KWR.AARWindow.frame:IsShown(),
+        "AAR test left a modal review surface open over later battlefield checks.")
 else
     assert(type(KWR.AAR:GetHistory()) == "table",
         "Release-pruned package did not expose a bounded AAR history collection.")
@@ -4987,6 +5008,67 @@ assert(KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.value.value:find(
         KWR.Theme.combatColors.STOP.hex, 1, true),
     "Live local-fight card did not render synchronized kill and CC actors.")
+KWR.db.profile.hud.focusMode = true
+KWR.HUD:Invalidate()
+KWR.HUD:Update(localFightHudState)
+assert(KWR.HUD.frame.height == 292
+    and KWR.HUD.frame.next:IsShown()
+    and KWR.HUD.frame.next.heading.value == "MY NEXT ACTION"
+    and KWR.HUD.frame.next.value.value ~= ""
+    and KWR.HUD.frame.kill:IsShown()
+    and KWR.HUD.frame.kill.heading.value == "LOCAL ACTION"
+    and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+    and not KWR.HUD.frame.win:IsShown()
+    and not KWR.HUD.frame.mine:IsShown()
+    and not KWR.HUD.frame.caller:IsShown(),
+    "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
+do
+    local teammateControlState = KWR.Util:Copy(localFightHudState)
+    teammateControlState.snapshot.executionCommand.localFight.kill = nil
+    teammateControlState.snapshot.executionCommand.localFight.controls[1].actor = "Teammate-Z"
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(teammateControlState)
+    assert(not KWR.HUD.frame.kill:IsShown(),
+        "Minimal focus mode presented another player's assigned control as the local peel action.")
+end
+do
+    local teamOnlyFocusState = KWR.Util:Copy(localFightHudState)
+    teamOnlyFocusState.snapshot.executionCommand.personalByKey = {}
+    teamOnlyFocusState.snapshot.executionCommand.personal = nil
+    teamOnlyFocusState.assignments = {}
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(teamOnlyFocusState)
+    assert(KWR.HUD.frame.next.heading.value == "TEAM CALL",
+        "Minimal focus mode mislabeled a team-wide call as the player's assignment.")
+end
+do
+    local completedFocusState = KWR.Util:Copy(localFightHudState)
+    completedFocusState.snapshot.context.matchComplete = true
+    completedFocusState.command.status = "COMPLETE"
+    completedFocusState.command.action = "Open Review / AAR"
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(completedFocusState)
+    assert(KWR.HUD.frame.height == 500
+        and KWR.HUD.frame.next.heading.value == "REVIEW / AAR"
+        and KWR.HUD.frame.next.value.value:find("Open Review / AAR", 1, true)
+        and KWR.HUD.frame.kill.heading.value == "MATCH COMPLETE"
+        and not KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+        and not KWR.HUD.frame.kill.value.value:find("CC:", 1, true)
+        and KWR.HUD.frame.win.heading.value == "RESULT"
+        and KWR.HUD.frame.win.value.value:find("Open Review / AAR", 1, true)
+        and KWR.HUD.frame.mine.heading.value == "NEXT STEP"
+        and KWR.HUD.frame.caller.heading.value == "POST MATCH"
+        and KWR.HUD.frame.win:IsShown()
+        and KWR.HUD.frame.mine:IsShown()
+        and KWR.HUD.frame.caller:IsShown(),
+        "Completed match remained trapped in minimal focus mode instead of restoring the review-ready HUD.")
+end
+KWR.db.profile.hud.focusMode = false
+KWR.HUD:Invalidate()
+KWR.HUD:Update(localFightHudState)
+assert(KWR.HUD.frame.height == 500 and KWR.HUD.frame.caller:IsShown()
+    and KWR.HUD.frame.kill.value.value:find("CC:", 1, true),
+    "Leaving minimal live combat mode did not restore the full Fight-Now stack.")
 KWR.CombatRoster:Update(localFightHudState)
 assert(KWR.CombatRoster.enemyFrame.targetSpotlight.nameText.value
     == "Knomercy CC - Priest P"
@@ -5317,12 +5399,93 @@ assert(KWR.MainWindow.pages.OBJECTIVES.scoreCard.stateBadge.text.value ~= ""
     and KWR.MainWindow.pages.OBJECTIVES.conditionCard.urgencyBadge.text.value ~= ""
     and KWR.MainWindow.pages.OBJECTIVES.conditionCard.confidenceBadge.text.value ~= "",
     "Objectives page did not surface the new state/urgency/confidence badges.")
+do
+    local completedObjectives = KWR.Util:Copy(KWR.Store:Get())
+    completedObjectives.snapshot.context.inPvP = true
+    completedObjectives.snapshot.context.matchComplete = true
+    completedObjectives.command.status = "COMPLETE"
+    KWR.MainWindow:UpdateObjectives(completedObjectives)
+    local calls = KWR.MainWindow.pages.OBJECTIVES.callsCard
+    local allDisabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allDisabled = allDisabled and not button:IsEnabled()
+    end
+    assert(KWR.MainWindow.pages.OBJECTIVES.summaryCard.heading.value == "MATCH COMPLETE"
+        and calls.helper.value == "MATCH COMPLETE - REVIEW / AAR NEXT"
+        and calls.statusBadge.text.value == "CLOSED"
+        and allDisabled,
+        "Completed-match Objectives view left tactical calls active or obscured the AAR handoff.")
+    KWR.MainWindow:UpdateObjectives(KWR.Store:Get())
+    local allEnabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allEnabled = allEnabled and button:IsEnabled()
+    end
+    assert(allEnabled, "Objectives Quick Calls did not re-enable after leaving completed-match state.")
+
+    mockCombat = true
+    KWR.MainWindow:UpdateObjectives(completedObjectives)
+    allEnabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allEnabled = allEnabled and button:IsEnabled()
+    end
+    assert(allEnabled and calls.pendingClosed == true
+        and calls.pendingClosedQueued == true,
+        "Completed-match Quick Calls mutated protected button state during combat.")
+    mockCombat = false
+    KWR.MainWindow.lastState = completedObjectives
+    KWR.MainWindow:FlushCombatVisibility()
+    allDisabled = true
+    for _, button in ipairs(calls.buttons or {}) do
+        allDisabled = allDisabled and not button:IsEnabled()
+    end
+    assert(allDisabled and calls.pendingClosedQueued == false,
+        "Deferred completed-match Quick Call state did not flush after combat.")
+    KWR.MainWindow.lastState = KWR.Store:Get()
+    KWR.MainWindow:UpdateObjectives(KWR.Store:Get())
+end
 KWR.MainWindow:Show("TEAM")
 KWR.MainWindow:UpdateTeam(KWR.Store:Get())
 assert(KWR.MainWindow.pages.TEAM.summaryCard.readyBadge.text.value ~= ""
     and KWR.MainWindow.pages.TEAM.summaryCard.openBadge.text.value ~= ""
     and KWR.MainWindow.pages.TEAM.readinessCard.stateBadge.text.value ~= "",
     "Team page did not surface the new readiness badges.")
+do
+    local capacityState = KWR.Util:Copy(KWR.Store:Get())
+    capacityState.snapshot.context.inPvP = true
+    capacityState.snapshot.context.preview = false
+    capacityState.snapshot.context.isRated = false
+    capacityState.snapshot.context.isBlitz = false
+    capacityState.snapshot.context.mapKey = "ARATHI"
+    capacityState.snapshot.formation.targetSize = 10
+    capacityState.snapshot.roster = {}
+    for index = 1, 12 do
+        capacityState.snapshot.roster[index] = {
+            name = "Capacity" .. tostring(index),
+            shortName = "Capacity" .. tostring(index),
+            role = "DAMAGER",
+            spec = "Arms",
+            connected = true,
+        }
+    end
+    KWR.MainWindow:UpdateTeam(capacityState)
+    assert(KWR.MainWindow.pages.TEAM.summaryCard.value.value:find(
+        "12 / 15 PLAYERS", 1, true),
+        "Normal 15-player battleground roster displayed a false full-team denominator.")
+    capacityState._normalTeamToken = KWR.Store.listeners[KWR.MainWindow].selector(
+        KWR.MainWindow, capacityState)
+    capacityState.snapshot.context.isBlitz = true
+    assert(capacityState._normalTeamToken ~= KWR.Store.listeners[KWR.MainWindow].selector(
+        KWR.MainWindow, capacityState),
+        "Team-page invalidation token ignored a battleground mode capacity change.")
+    for index = 9, 12 do capacityState.snapshot.roster[index] = nil end
+    KWR.MainWindow:UpdateTeam(capacityState)
+    assert(KWR.MainWindow.pages.TEAM.summaryCard.value.value:find(
+        "8 / 8 PLAYERS", 1, true),
+        "Battleground Blitz roster did not use the eight-player capacity.")
+    KWR.MainWindow:UpdateTeam(KWR.Store:Get())
+end
+assert(#KWR.MainWindow.pages.TEAM.rosterCard.rows == 15,
+    "Expanded Team roster did not allocate all fifteen random-battleground rows.")
 KWR.MainWindow:Show("ASSIGNMENTS")
 KWR.MainWindow:UpdateAssignments(KWR.Store:Get())
 assert(KWR.MainWindow.builtPageCount == 6
@@ -5357,14 +5520,17 @@ KWR.MainWindow:FlushCombatVisibility()
 assert(not KWR.MainWindow.frame:IsShown(),
     "Deferred expanded window hide did not complete after combat.")
 KWR.MainWindow:Show("TEAM")
+assert(#KWR.MainWindow.pages.TEAM.rosterCard.rows == 15,
+    "Expanded Team roster lost random-battleground row capacity after visibility changes.")
 local rejectedCall = KWR.QuickCalls:CreateButton(UIParent, "DYNAMIC UNREVIEWED CALL", 132, 25)
 assert(rejectedCall.quickCallRejected == true
     and rejectedCall:GetAttribute("macrotext1") == nil,
     "An unreviewed Quick Call reached the secure binding path.")
 KWR.CopyDialog:ShowCompact("Compact Test", "ONE LINE")
-assert(KWR.CopyDialog.frame.width == 520 and KWR.CopyDialog.frame.height == 170
-    and KWR.CopyDialog.frame.edit.multiLine == false,
-    "Single-line copy did not use the compact dialog geometry.")
+assert(KWR.CopyDialog.frame.width == 620 and KWR.CopyDialog.frame.height == 220
+    and KWR.CopyDialog.frame.edit.multiLine == true
+    and KWR.CopyDialog.frame.note.value:find("Manual copy only", 1, true),
+    "Compact copy did not use the readable manual-selection geometry.")
 KWR.CopyDialog:ShowText("Report Test", "LINE 1\nLINE 2")
 assert(KWR.CopyDialog.frame.width == 820 and KWR.CopyDialog.frame.height == 560
     and KWR.CopyDialog.frame.edit.multiLine == true
@@ -5382,6 +5548,9 @@ assert(KWR.CopyDialog.frame.scrollChild.width ~= nil
     and KWR.CopyDialog.frame.scrollChild.height ~= nil,
     "Copy dialog did not tolerate a missing string-height API.")
 KWR.CopyDialog.frame.edit.GetStringHeight = originalGetStringHeight
+KWR.CopyDialog.frame:Hide()
+assert(not KWR.CopyDialog.frame:IsShown(),
+    "Copy dialog test left a modal surface open over later battlefield checks.")
 local explainTitle, explainText = KWR.MainWindowReports:BuildExplainPayload(KWR.Store:Get(), mainHelpers)
 assert(explainTitle == "KWR Command Review"
     and explainText:find("BOTTOM LINE:", 1, true)
@@ -5417,6 +5586,14 @@ assert(KWR.Options.namedChecks.autoReporter == nil
     and KWR.Options.namedChecks.battlefieldOrbs.check.kwrDisabled == false
     and KWR.Options.namedChecks.aarAutoOpen.check.kwrDisabled == true,
     "Options window did not separate advisory overlay dependencies from hard dependencies.")
+KWR.Options.namedChecks.highContrast.check:SetChecked(true)
+KWR.Options.namedChecks.highContrast.check.scripts.OnClick(
+    KWR.Options.namedChecks.highContrast.check)
+assert(KWR.db.profile.accessibility.highContrast == true
+    and KWR.Options.reloadRequested == true
+    and _G.KWR_TEST_POPUP_SHOWN == "KWR_ACCESSIBILITY_RELOAD",
+    "High-contrast changes did not request the required UI reload.")
+KWR.db.profile.accessibility.highContrast = false
 KWR.Options.namedChecks.reticleEnabled.check:SetChecked(false)
 KWR.Options.namedChecks.reticleEnabled.check.scripts.OnClick(
     KWR.Options.namedChecks.reticleEnabled.check)
@@ -5435,7 +5612,8 @@ KWR.Options:Refresh()
 local optionsInventory = KWR.Options:Inventory()
 local optionsAudit = KWR.Options:LayoutAudit()
 assert(#optionsInventory >= 12 and optionsAudit.ok == true,
-    "Options window did not expose a complete auditable inventory or clean card geometry.")
+    "Options window did not expose a complete auditable inventory or clean card geometry: "
+        .. table.concat(optionsAudit.issues or {}, "; "))
 do
     local launcher = KWR.MainWindow.launcherMenu
     if not launcher then
@@ -5786,6 +5964,15 @@ assert(KWR.Theme:Color("KWR_COLOR_PRIMARY") == KWR.Theme:Color("gold")
     and KWR.Theme:Metric("KWR_RADIUS_MD") == 10
     and type(KWR.Theme:Token("KWR_FONT_HEADER")) == "table",
     "Theme token contract drifted from the locked KWR design-system names.")
+do
+    KWR.db.profile.accessibility.highContrast = true
+    local softR, softG, softB, softA = KWR.Theme:Color("KWR_COLOR_TEXT_SOFT")
+    local borderR, borderG, borderB, borderA = KWR.Theme:Color("KWR_COLOR_BORDER")
+    assert(softR == 0.92 and softG == 0.94 and softB == 0.98 and softA == 1
+        and borderR == 0.31 and borderG == 0.39 and borderB == 0.49 and borderA == 1,
+        "High-contrast accessibility mode did not override text and border tokens.")
+    KWR.db.profile.accessibility.highContrast = false
+end
 assert(KWR.modules.IconRegistry
     and KWR.Icons
     and KWR.Icons.icons.kill == true
@@ -5964,6 +6151,9 @@ if previewState and previewState.snapshot and previewState.snapshot.context
             className = "Mechanical",
             classFile = "WARRIOR",
         }
+        if KWR.Options and KWR.Options.frame then KWR.Options.frame:Hide() end
+        if KWR.AARWindow and KWR.AARWindow.frame then KWR.AARWindow.frame:Hide() end
+        if KWR.CopyDialog and KWR.CopyDialog.frame then KWR.CopyDialog.frame:Hide() end
         KWR.CursorRing.lastState = reticlePreviewState
         KWR.CursorRing:RefreshReticle()
         assert(KWR.CursorRing.reticle:IsShown(),
@@ -5973,6 +6163,14 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         assert(reticlePoint and reticlePoint[1] == "CENTER"
             and reticlePoint[2] == previewDummyPlate and reticlePoint[3] == "TOP",
             "Target class reticle was not aligned to the native nameplate anchor.")
+        KWR.AARWindow.frame:Show()
+        KWR.CursorRing:RefreshReticle()
+        assert(not KWR.CursorRing.reticle:IsShown() and KWR.CursorRing.reticlePending == true,
+            "Target reticle drew over the AAR review modal.")
+        KWR.AARWindow.frame:Hide()
+        KWR.CursorRing:RefreshReticle()
+        assert(KWR.CursorRing.reticle:IsShown(),
+            "Target reticle did not recover after the AAR review modal closed.")
         mockLiveEnemies.target.guid = "Creature-0-0-0-0-999999-0000000001"
         KWR.CursorRing:RefreshReticle()
         assert(not KWR.CursorRing.reticle:IsShown(),

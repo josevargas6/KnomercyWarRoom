@@ -204,6 +204,13 @@ Theme.backdrop = {
 function Theme:Color(name)
     local tokenName = self.colorAliases[name] or name or "white"
     local color = self.tokens.colors[tokenName] or self.colors.white
+    local accessibility = KWR.db and KWR.db.profile and KWR.db.profile.accessibility or {}
+    if accessibility.highContrast == true then
+        if tokenName == "KWR_COLOR_TEXT_SOFT" then return 0.92, 0.94, 0.98, 1 end
+        if tokenName == "KWR_COLOR_TEXT_MUTED" then return 0.74, 0.79, 0.86, 1 end
+        if tokenName == "KWR_COLOR_TEXT_DIM" then return 0.60, 0.66, 0.74, 1 end
+        if tokenName == "KWR_COLOR_BORDER" then return 0.31, 0.39, 0.49, 1 end
+    end
     return color[1], color[2], color[3], color[4]
 end
 

@@ -1047,7 +1047,11 @@ function CursorRing:RefreshReticle()
     -- combat target lock draw across its controls; keep a retry marker so the
     -- cue returns automatically as soon as the panel closes.
     local options = KWR.Options and KWR.Options.frame
-    if options and options.IsShown and options:IsShown() then
+    local aar = KWR.AARWindow and KWR.AARWindow.frame
+    local copyDialog = KWR.CopyDialog and KWR.CopyDialog.frame
+    if (options and options.IsShown and options:IsShown())
+        or (aar and aar.IsShown and aar:IsShown())
+        or (copyDialog and copyDialog.IsShown and copyDialog:IsShown()) then
         self.reticle:Hide()
         self.reticlePlate = nil
         self.reticlePending = true

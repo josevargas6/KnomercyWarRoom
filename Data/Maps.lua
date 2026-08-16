@@ -10,7 +10,7 @@ KWR.Maps = Maps
 local definitions = {
     ARATHI = {
         title = "Arathi Basin", short = "AB", kind = "NODE",
-        mapIDs = { 1366 }, maxScore = 1500, maxObjectives = 5,
+        mapIDs = { 1366 }, maxScore = 1500, maxObjectives = 5, normalTeamSize = 15,
         artMapIDs = { 1366 },
         scoreWidget = 1671, objectiveWidget = 1645, tickSeconds = 2, captureSeconds = 60,
         pointsPerTick = { [0]=0, [1]=2, [2]=3, [3]=4, [4]=7, [5]=60 },
@@ -48,7 +48,7 @@ local definitions = {
     },
     DEEPWIND = {
         title = "Deepwind Gorge", short = "DWG", kind = "NODE",
-        mapIDs = { 1576, 519 }, maxScore = 1500, maxObjectives = 5,
+        mapIDs = { 1576, 519 }, maxScore = 1500, maxObjectives = 5, normalTeamSize = 15,
         artMapIDs = { 1576, 519 },
         scoreWidget = 2074, objectiveWidget = 2339, tickSeconds = 2, captureSeconds = 60,
         pointsPerTick = { [0]=0, [1]=2, [2]=3, [3]=4, [4]=7, [5]=60 },
@@ -65,7 +65,7 @@ local definitions = {
     },
     EOTS = {
         title = "Eye of the Storm", short = "EOTS", kind = "HYBRID",
-        mapIDs = { 112, 397 }, maxScore = 1500, maxObjectives = 4,
+        mapIDs = { 112, 397 }, maxScore = 1500, maxObjectives = 4, normalTeamSize = 15,
         artMapIDs = { 112, 397 }, poiMapID = 397,
         scoreWidget = 1671, objectiveWidget = 1672, tickSeconds = 2, captureSeconds = 60,
         pointsPerTick = { [0]=0, [1]=2, [2]=4, [3]=10, [4]=20 },

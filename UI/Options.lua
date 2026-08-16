@@ -3,6 +3,31 @@ local _, KWR = ...
 local Options = {}
 KWR.Options = Options
 
+local ACCESSIBILITY_RELOAD_POPUP = "KWR_ACCESSIBILITY_RELOAD"
+
+local function requestAccessibilityReload()
+    Options.reloadRequested = true
+    if type(StaticPopupDialogs) ~= "table" or type(StaticPopup_Show) ~= "function" then
+        KWR:Print("Reload the UI to apply high-contrast colors to every open KWR surface.", true)
+        return
+    end
+    if not StaticPopupDialogs[ACCESSIBILITY_RELOAD_POPUP] then
+        StaticPopupDialogs[ACCESSIBILITY_RELOAD_POPUP] = {
+            text = "Reload the UI now to apply high-contrast colors to every KWR window?",
+            button1 = ACCEPT or "Reload UI",
+            button2 = CANCEL or "Later",
+            OnAccept = function()
+                if type(ReloadUI) == "function" then ReloadUI() end
+            end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+            preferredIndex = 3,
+        }
+    end
+    StaticPopup_Show(ACCESSIBILITY_RELOAD_POPUP)
+end
+
 local function createOptionCard(parent, title, summary, x, y, width, height)
     local card = KWR.Theme:Card(parent, title)
     card:SetPoint("TOPLEFT", x, y)
@@ -69,6 +94,11 @@ local function createCheck(self, parent, key, label, summary, y, getter, setter,
         check.summary:SetNonSpaceWrap(true)
     end
     check.summary:SetText(summary)
+    if parent and parent.kwrGeometry then
+        parent.kwrGeometry.childBottom = math.min(
+            parent.kwrGeometry.childBottom or (parent.kwrGeometry.y - parent.kwrGeometry.height),
+            parent.kwrGeometry.y + y - 48)
+    end
     registerCheck(self, key, check, getter, setter, {
         label = label,
         group = parent and parent.heading and parent.heading:GetText() or "",
@@ -172,7 +202,7 @@ function Options:Create()
     local commandCard = createOptionCard(content,
         "Command Surfaces",
         "Core commander windows, call density, and review text behavior.",
-        0, 0, 342, 336)
+        0, 0, 342, 440)
     createCheck(self, commandCard,
         "hudEnabled",
         "Show compact command center",
@@ -225,11 +255,21 @@ function Options:Create()
         -322,
         function() return KWR.CommanderComm and KWR.CommanderComm:TransportEnabled() end,
         function(value) return KWR.CommanderComm and KWR.CommanderComm:SetTransportEnabled(value) end)
+    createCheck(self, commandCard,
+        "hudFocusMode",
+        "Use minimal live combat mode",
+        "Shows only your next action and an actionable local target/peel cue during battleground combat.",
+        -372,
+        function() return KWR.db.profile.hud.focusMode == true end,
+        function(value)
+            KWR.db.profile.hud.focusMode = value == true
+            if KWR.HUD then KWR.HUD:Invalidate(); KWR.HUD:Update(KWR.Store:Get()) end
+        end)
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
         "Cursor ring, reticle, guide lines, and live nameplate overlays.",
-        366, 0, 342, 550)
+        366, 0, 342, 556)
     createCheck(self, targetCard,
         "cursorEnabled",
         "Enable cursor ring",
@@ -323,7 +363,7 @@ function Options:Create()
     local reviewCard = createOptionCard(content,
         "Review And AAR",
         "Controls onboarding messages, manual evidence capture, and safe preview behavior.",
-        0, -354, 342, 316)
+        0, -458, 342, 316)
     createCheck(self, reviewCard,
         "showLoadMessage",
         "Show login message",
@@ -378,7 +418,7 @@ function Options:Create()
     local presentationCard = createOptionCard(content,
         "Battleground Auto-Show",
         "Auto-manages KWR command surfaces. Use Shift-M for the native battlefield map.",
-        0, -688, 342, 196)
+        0, -792, 342, 196)
     createCheck(self, presentationCard,
         "presentationEnabled",
         "Auto-manage compact battleground surfaces",
@@ -409,8 +449,8 @@ function Options:Create()
         function(value) KWR.db.profile.combatRoster.locked = value end)
     local utilityCard = createOptionCard(content,
         "Utilities",
-        "Reset the saved positions for KWR-owned windows.",
-        366, -868, 342, 170)
+        "Reset positions and tune readability for KWR-owned windows.",
+        366, -868, 342, 220)
     local reset = KWR.Theme:Button(utilityCard, "Reset Window Positions", 168, 28, function()
         if KWR.LayoutCoordinator and KWR.LayoutCoordinator.Reset then
             KWR.LayoutCoordinator:Reset()
@@ -456,11 +496,33 @@ function Options:Create()
         end
     end)
     reset:SetPoint("TOPLEFT", 10, -74)
+    createCheck(self, utilityCard,
+        "highContrast",
+        "Use high-contrast text",
+        "Brightens secondary text and panel boundaries. Requires a UI reload; KWR will ask first.",
+        -120,
+        function() return KWR.db.profile.accessibility.highContrast == true end,
+        function(value)
+            value = value == true
+            if KWR.db.profile.accessibility.highContrast ~= value then
+                KWR.db.profile.accessibility.highContrast = value
+                requestAccessibilityReload()
+            end
+        end)
+    local diagnostics = KWR.Theme:Button(utilityCard, "Copy Field Diagnostic", 168, 28, function()
+        if KWR.Verification and KWR.Verification.FieldReport then
+            KWR.CopyDialog:ShowText("KWR Field Diagnostic",
+                KWR.Verification:FieldReport(), {
+                    note = "Local diagnostic only. It records data coverage, refresh health, and safe observation state for field testing.",
+                })
+        end
+    end)
+    diagnostics:SetPoint("TOPLEFT", 10, -174)
 
     local footerCard = createOptionCard(content,
         "Policy",
         "KWR safety and visibility rules stay fixed regardless of battleground setup.",
-        0, -1086, 708, 112)
+        0, -1102, 708, 112)
     frame.note = KWR.Theme:Font(footerCard, 9, "muted")
     frame.note:SetPoint("TOPLEFT", 10, -40)
     frame.note:SetPoint("TOPRIGHT", -10, -40)
@@ -513,11 +575,17 @@ function Options:LayoutAudit()
     local issues = {}
     for i = 1, #cards do
         local a = cards[i]
+        local aBoxBottom = a.y - a.height
+        if a.childBottom and a.childBottom < aBoxBottom then
+            issues[#issues + 1] = a.title .. " content exceeds its card"
+        end
         for j = i + 1, #cards do
             local b = cards[j]
             local separateX = (a.x + a.width) <= b.x or (b.x + b.width) <= a.x
-            local aTop, aBottom = a.y, a.y - a.height
-            local bTop, bBottom = b.y, b.y - b.height
+            local aTop, aBottom = a.y, math.min(aBoxBottom, a.childBottom or aBoxBottom)
+            local bBoxBottom = b.y - b.height
+            local bTop, bBottom = b.y, math.min(
+                bBoxBottom, b.childBottom or bBoxBottom)
             local separateY = aBottom >= bTop or bBottom >= aTop
             if not separateX and not separateY then
                 issues[#issues + 1] = a.title .. " overlaps " .. b.title

@@ -58,7 +58,11 @@ end
 local function castObservation()
     if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
     local _, _, _, _, _, _, _, spellID = UnitCastingInfo("target")
+    -- A protected cast can be returned as a secret value. Do not branch on
+    -- or serialize it; skip only this sample and keep later public samples.
+    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil end
     if not spellID then _, _, _, _, _, _, _, spellID = UnitChannelInfo("target") end
+    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil end
     if not tonumber(spellID) then return nil end
     return "enemy=" .. encode(unitIdentity("target"), 64) .. ";spell=" .. tostring(spellID) .. ";state=START"
 end
