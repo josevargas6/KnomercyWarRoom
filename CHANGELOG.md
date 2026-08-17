@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.1.1-alpha.2 - 2026-08-17
+## 6.1.1-alpha.3 - 2026-08-17
 
 - Made Season 2 field mode the default for upgraded local profiles: Command
   guidance, live HUD, team/enemy roster, reticle, battlefield presentation,
@@ -10,6 +10,14 @@
   theory with an explicit awaiting-field-feedback status, while real Retail
   observations and AARs remain distinct evidence that can refine or disprove
   the theory.
+- Added a clear in-addon Season 2 hotfix watchlist for the official August 11
+  PvP changes. It is deliberately advisory: it exposes affected specs and
+  source provenance without modifying ratings, predictions, or doctrine.
+- Added `/kwr season2`, a compact local evidence-run checklist for team truth,
+  carrier targeting, stability/performance, and readability. It routes to the
+  existing automatic AAR review/export path through `/kwr season2 aar`.
+
+## 6.1.1-alpha.2 - 2026-08-17
 
 ## 6.1.1-alpha.1 - 2026-08-17
 

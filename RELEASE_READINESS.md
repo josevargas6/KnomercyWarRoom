@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.1-alpha.2
+# Release Readiness - 6.1.1-alpha.3
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,7 +6,7 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**6.1.1-alpha.2 is the local Season 2 release candidate; 6.1.0 remains the
+**6.1.1-alpha.3 is the local Season 2 release candidate; 6.1.0 remains the
 immutable public stable baseline.** The candidate integrates the five reviewed
 post-stable commits, the active Retail 12.1 knowledge review, deterministic ZIP
 repair, and release-audit hardening under a new Commander/Sentinel version.
@@ -16,7 +16,7 @@ public artifacts, and the production-authority evidence listed below.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
-new 6.1.1-alpha.2-bound battleground sessions or ten-client Sentinel transport
+new 6.1.1-alpha.3-bound battleground sessions or ten-client Sentinel transport
 proof. The official 12.1 compatibility/hotfix review is now active, while the
 stale 12.0.7 ladder snapshot, inferred numerical tuning weights, and provisional
 Season 2 formations remain excluded from live meta influence. The candidate

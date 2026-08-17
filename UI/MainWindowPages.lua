@@ -1467,7 +1467,13 @@ function MainWindowPages:RenderIntel(page, state, helpers)
     end
     page.historyCard.note:SetText(string.format("Showing latest %d of %d matches",
         math.min(#page.historyCard.rows, #history), #history))
+    local season2Lines = KWR.Season2Readiness and KWR.Season2Readiness:SummaryLines(state) or {}
     page.insightCard.value:SetText(table.concat({
+        season2Lines[1] or "SEASON 2 HOTFIX WATCH  UNAVAILABLE",
+        season2Lines[2] or "Advisory status unavailable.",
+        season2Lines[3] or "EVIDENCE RUN  CAPTURE",
+        "Use /kwr season2 for the compact watchlist and capture checklist.",
+        "",
         "MATCHES RECORDED        " .. tostring(insights.matches),
         "VICTORIES               " .. tostring(insights.wins),
         "DEFEATS                 " .. tostring(insights.losses),

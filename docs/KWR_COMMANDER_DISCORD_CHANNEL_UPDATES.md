@@ -25,13 +25,13 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.1-alpha.2 is the Season 2 field-test candidate.
+Knomercy War Room Commander 6.1.1-alpha.3 is the Season 2 field-test candidate.
 
 Do not post until the matching tag, public assets, CurseForge Alpha file, and
 production readiness evidence are verified.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.2
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.3
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -63,7 +63,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander 6.1.1-alpha.2 field-test focus:
+KWR Commander 6.1.1-alpha.3 field-test focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -80,7 +80,7 @@ Ongoing field work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.1-alpha.2 distribution receipt
+KWR Commander 6.1.1-alpha.3 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -89,13 +89,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.2
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.3
 
 Certified artifact:
-KnomercyWarRoom-6.1.1-alpha.2.zip
+KnomercyWarRoom-6.1.1-alpha.3.zip
 
 SHA-256 manifest:
-KWR_6_1_1_ALPHA_2_SHA256.txt on the GitHub release
+KWR_6_1_1_ALPHA_3_SHA256.txt on the GitHub release
 
 Validation:
 - validate.ps1 passed

@@ -34,17 +34,17 @@ GitHub Actions route:
 ## #announcements
 
 ```text
-KWR Sentinel 6.1.1-alpha.2 is the synchronized field-test execution-card
-companion for Commander 6.1.1-alpha.2.
+KWR Sentinel 6.1.1-alpha.3 is the synchronized field-test execution-card
+companion for Commander 6.1.1-alpha.3.
 
 Do not post until the matching tag, public assets, CurseForge Alpha file, and
 production readiness evidence are verified.
 
 Download:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.1-alpha.2/KWR-Sentinel-6.1.1-alpha.2.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.1-alpha.3/KWR-Sentinel-6.1.1-alpha.3.zip
 
 Release page:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.2
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.3
 
 Install folder:
 World of Warcraft/_retail_/Interface/AddOns/KWRSentinel
@@ -86,7 +86,7 @@ Bug reports should include:
 ## #kwr-field-testing
 
 ```text
-KWR Sentinel 6.1.1-alpha.2 field-test targets:
+KWR Sentinel 6.1.1-alpha.3 field-test targets:
 
 1. Enter a Retail battleground with KWR and KWRSentinel installed on the same client.
 2. Confirm the card shows LOCAL KWR when commander bridge data is available.
@@ -101,19 +101,19 @@ Report any taint, Lua errors, unreadable text, repeated alerts, or incorrect tar
 ## Restricted Ops Thread
 
 ```text
-KWR Sentinel 6.1.1-alpha.2 distribution receipt
+KWR Sentinel 6.1.1-alpha.3 distribution receipt
 
 GitHub repo:
 https://github.com/josevargas6/KWRSentinel
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.2
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.3
 
 ZIP:
-https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.1-alpha.2/KWR-Sentinel-6.1.1-alpha.2.zip
+https://github.com/josevargas6/KnomercyWarRoom/releases/download/v6.1.1-alpha.3/KWR-Sentinel-6.1.1-alpha.3.zip
 
 SHA-256 manifest:
-KWR_6_1_1_ALPHA_2_SHA256.txt on the GitHub release
+KWR_6_1_1_ALPHA_3_SHA256.txt on the GitHub release
 
 Validation:
 - validate.ps1 passed

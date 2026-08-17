@@ -1890,6 +1890,14 @@ function MainWindow:ArmFieldTest()
     KWR:Print("Next: run /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
 end
 
+function MainWindow:ShowSeason2EvidenceRun()
+    self:Show("INTEL")
+    KWR.CopyDialog:ShowText("KWR Season 2 Watch + Evidence Run",
+        KWR.Season2Readiness:Report(KWR.Store:Get()), {
+            note = "Official hotfixes are advisory until reviewed with real Retail evidence. This checklist and every export remain local until you manually copy them.",
+        })
+end
+
 function MainWindow:ShowAARExport()
     local export, message = KWR.AAR:Export()
     if not export then

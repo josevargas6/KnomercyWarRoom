@@ -16,12 +16,26 @@ local PACKS = {
         interface = 120100,
         season = "Midnight Season 2",
         captured = "2026-08-17",
-        officialHotfixReviewed = "2026-07-28",
+        officialHotfixReviewed = "2026-08-11",
         source = "BLIZZARD_HOTFIXES",
         reviewed = true,
         cooldowns = {},
         capabilities = {},
         disabledPlans = {},
+        hotfixWatchlist = {
+            status = "OFFICIAL_UNMODELED",
+            effectiveDate = "2026-08-11",
+            source = "Blizzard official hotfix notes",
+            sourceURL = "https://worldofwarcraft.blizzard.com/en-us/news/20863656/hotfixes-august-1",
+            policy = "Advisory only. KWR does not alter capability ratings, predictions, or doctrine until player-reviewed Retail evidence supports a bounded update.",
+            affected = {
+                "Balance Druid: PvP armor and defensive reductions",
+                "Holy Priest: throughput and Ray of Hope adjustments",
+                "Restoration Shaman: Riptide and template adjustments",
+                "Frost Mage: reduced chill strength",
+                "Affliction / Destruction Warlock: PvP template adjustments",
+            },
+        },
         seasonPrepCorpus = {
             active = true,
             mode = "IMMEDIATE_THEORY_FIRST",
@@ -31,7 +45,7 @@ local PACKS = {
         notes = {
             "12.1 Season 2 compatibility and theory-first branch selection are active.",
             "Blizzard schedules PvP Season 2 for 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
-            "Official PvP hotfix notes were reviewed through 2026-07-28; directional tuning is recorded without inventing numerical capability weights.",
+            "Official PvP hotfix notes were reviewed through 2026-08-11; the affected-specialization watchlist is advisory and does not invent numerical capability weights.",
             "The Will of the Forsaken PvP-trinket display change is presentation evidence only; KWR never invents or starts a trinket cooldown without observing the trinket itself.",
             "The 12.0.7 static ladder snapshot remains excluded from Season 2 meta influence until a separately reviewed 12.1 snapshot exists.",
             "Season-preparation gearing, simulation cases, and provisional compositions still require Retail validation before stable strategic certification.",
@@ -132,6 +146,11 @@ end
 function PatchData:SeasonPrepCorpusMode()
     local pack = self:Get()
     return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.mode or "DISABLED"
+end
+
+function PatchData:HotfixWatchlist()
+    local pack = self:Get()
+    return pack and pack.hotfixWatchlist or nil
 end
 
 function PatchData:Validate(interface)

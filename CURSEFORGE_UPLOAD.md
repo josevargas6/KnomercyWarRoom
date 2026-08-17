@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-artifacts\KnomercyWarRoom-6.1.1-alpha.2.zip
+artifacts\KnomercyWarRoom-6.1.1-alpha.3.zip
 ```
 
 Project:
@@ -14,8 +14,8 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Required upload fields:
 
-- File: `KnomercyWarRoom-6.1.1-alpha.2.zip`
-- Display name: `Knomercy War Room 6.1.1-alpha.2`
+- File: `KnomercyWarRoom-6.1.1-alpha.3.zip`
+- Display name: `Knomercy War Room 6.1.1-alpha.3`
 - Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
@@ -29,7 +29,7 @@ Guarded API upload command:
 $env:CURSEFORGE_PROJECT_ID = "<project id>"
 $env:CURSEFORGE_API_TOKEN = "<author token>"
 $env:CURSEFORGE_GAME_VERSION_IDS = "<comma-separated Retail version ids>"
-$artifact = "<absolute path to certified KnomercyWarRoom-6.1.1-alpha.2.zip>"
+$artifact = "<absolute path to certified KnomercyWarRoom-6.1.1-alpha.3.zip>"
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType alpha -DryRun
 ./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType alpha
 ```
@@ -44,13 +44,13 @@ Package evidence:
 - TOC basename matches parent folder.
 - Interface numbers: `120100`, `120007`
 - Package audit: passed by the certified build gate.
-- Certified ZIP hash: use the generated `KWR_6_1_1_ALPHA_2_SHA256.txt`
+- Certified ZIP hash: use the generated `KWR_6_1_1_ALPHA_3_SHA256.txt`
   manifest next to the built artifact. Rebuild the package before final upload
   if the source changes.
 
 Do not upload:
 
-- `KWR_6_1_1_ALPHA_2_DEVELOPER.zip`
+- `KWR_6_1_1_ALPHA_3_DEVELOPER.zip`
 - `KWRSentinel_*.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data

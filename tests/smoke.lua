@@ -524,6 +524,7 @@ local files = {
     "Runtime/SafetyMonitor.lua",
     "Runtime/AAR.lua",
     "Runtime/Verification.lua",
+    "Runtime/Season2Readiness.lua",
     "Runtime/MemoryBudget.lua",
     "Runtime/SentinelIngress.lua",
     "Runtime/SentinelMerge.lua",
@@ -1694,6 +1695,21 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
     and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "ACTIVE_THEORY_FIELD"
     and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "IMMEDIATE_THEORY_FIRST",
     "Season 2 did not activate the theory-first corpus with pending-review safeguards.")
+do
+    local watchlist = KWR.PatchData:HotfixWatchlist()
+    assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
+        and watchlist.effectiveDate == "2026-08-11"
+        and #(watchlist.affected or {}) >= 5,
+        "Season 2 official-hotfix watchlist did not retain advisory provenance.")
+    local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
+    local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
+    assert(evidenceRun.watchlist == watchlist
+        and #evidenceRun.checks == 4
+        and evidenceReport:find("OFFICIAL_UNMODELED", 1, true)
+        and evidenceReport:find("Carrier target", 1, true)
+        and evidenceReport:find("local capture only", 1, true),
+        "Season 2 evidence run did not preserve bounded local-only capture guidance.")
+end
 do
     local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
     assert(seasonTwoTargets[1]

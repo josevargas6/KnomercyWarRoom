@@ -104,6 +104,15 @@ function MainWindowCommands:Register(owner, helpers)
             KWR.MatchRuntime:RescanRoster()
         elseif input == "field" or input == "fieldtest" or input == "ready" then
             owner:ArmFieldTest()
+        elseif input == "season2" or input == "season 2" or input == "watchlist" then
+            owner:ShowSeason2EvidenceRun()
+        elseif input == "season2 aar" or input == "season 2 aar" then
+            local latest = KWR.AAR:GetLatest()
+            if latest and KWR.AARWindow then
+                KWR.AARWindow:Show(latest.id)
+            else
+                KWR:Print("No completed AAR is available yet. Finish a real battleground first.", true)
+            end
         elseif input == "options" then KWR.Options:Toggle()
         elseif input == "presentation" or input == "bgui" then
             KWR.db.profile.presentation.enabled = KWR.db.profile.presentation.enabled == false
@@ -144,7 +153,7 @@ function MainWindowCommands:Register(owner, helpers)
             local commands = {
                 "/kwr", "field", "bug", "tactical", "reporter", "roster", "teammini", "enemymini",
                 "objectives", "team", "enemies", "assignments", "intel", "aar", "aar copy",
-                "aar clear", "override", "hud", "copy", "alts", "explain", "perf", "verify", "evidence",
+                "aar clear", "season2 [aar]", "override", "hud", "copy", "alts", "explain", "perf", "verify", "evidence",
                 "mode", "refresh", "reassess", "options", "presentation", "cursor", "reticle",
                 "status",
             }
