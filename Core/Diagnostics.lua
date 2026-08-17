@@ -746,10 +746,10 @@ function Diagnostics:Run()
             and deathbringer.jobs.ASSASSIN == math.min(100, baseUnholy.jobs.ASSASSIN + 10)
             and KWR.Capabilities:Get("DEATHKNIGHT", "Unholy").heroTalent == nil)
     local marksmanship = KWR.Capabilities:Get("HUNTER", "Marksmanship")
-    check("Retail 12.1 compatibility rejects stale capability overlays",
+    check("Retail 12.1 compatibility activates without stale numerical overlays",
         marksmanship
             and KWR.PatchData:Capability("HUNTER:marksmanship") == nil
-            and KWR.PatchData:Validate(120100) == false)
+            and KWR.PatchData:Validate(120100) == true)
     local cachedA = KWR.Capabilities:Resolve("DRUID", "Guardian")
     local cachedB = KWR.Capabilities:Resolve("DRUID", "Guardian")
     local copiedCapability = KWR.Capabilities:Get("DRUID", "Guardian")
@@ -1713,8 +1713,8 @@ function Diagnostics:Run()
             and widgetSnapshot.objectives.enemyIncoming == 0)
     check("Battle-plan repository covers every supported map",
         KWR.BattlePlans:Count() >= 20)
-    check("Retail 12.1 patch data remains fail-closed pending review",
-        KWR.PatchData:Validate(120100) == false)
+    check("Retail 12.1 patch data is active after official review",
+        KWR.PatchData:Validate(120100) == true)
     check("Learning repository is bounded and available",
         type(KWR.Learning:Summary()) == "table")
     check("Learning rejects reviews without qualified score and team truth",

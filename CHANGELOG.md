@@ -1,6 +1,22 @@
 # Changelog
 
-## Unreleased
+## 6.1.1-alpha.1 - 2026-08-17
+
+- Bound the integrated Season 2 candidate to a new Commander/Sentinel version
+  so it can no longer collide with the immutable public `6.1.0` release.
+- Reviewed the active Retail 12.1 pack against official Season 2 and PvP
+  hotfix sources through July 28. Theory-first Season 2 branches are active;
+  the stale 12.0.7 ladder snapshot remains excluded from meta influence and
+  simulation/provisional guidance still requires Retail validation.
+- Corrected the knowledge audit to inspect the declared active patch pack and
+  all TOC interfaces instead of accidentally accepting a dated review from an
+  inactive historical pack.
+- Made release ZIP construction deterministic through canonical entry order
+  and normalized timestamps; clean-build certification now fails on any
+  binary archive mismatch instead of accepting a container exception.
+- Made the public release-surface audit tolerate an intentionally retired
+  `develop` branch, declared `main` as the sole release authority, and encoded
+  Beacon, Maps, and ScoreCard as optional non-blocking estate components.
 
 - Activated the full Strategist Nexus theory immediately across every
   supported legal branch. Weak or conflicting live truth now gates commitment

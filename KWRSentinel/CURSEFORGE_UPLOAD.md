@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-<absolute path to certified KWR-Sentinel-6.1.0.zip>
+<absolute path to certified KWR-Sentinel-6.1.1-alpha.1.zip>
 ```
 
 Project:
@@ -14,9 +14,9 @@ https://www.curseforge.com/wow/addons/kwr-sentinel
 
 Required upload fields:
 
-- File: `KWR-Sentinel-6.1.0.zip`
-- Display name: `KWR Sentinel 6.1.0`
-- Release type: `Release`
+- File: `KWR-Sentinel-6.1.1-alpha.1.zip`
+- Display name: `KWR Sentinel 6.1.1-alpha.1`
+- Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
 - Supported game versions: `12.1.0` / interface `120100` and `12.0.7` / interface `120007`
@@ -30,8 +30,8 @@ $env:CURSEFORGE_PROJECT_ID = "<project id>"
 $env:CURSEFORGE_API_TOKEN = "<author token>"
 $env:CURSEFORGE_GAME_VERSION_IDS = "<comma-separated Retail version ids>"
 $artifact = "<absolute path to certified KWRSentinel zip>"
-./tools/curseforge-upload-sentinel.ps1 -ArtifactPath $artifact -ReleaseType release -DryRun
-./tools/curseforge-upload-sentinel.ps1 -ArtifactPath $artifact -ReleaseType release
+./tools/curseforge-upload-sentinel.ps1 -ArtifactPath $artifact -ReleaseType alpha -DryRun
+./tools/curseforge-upload-sentinel.ps1 -ArtifactPath $artifact -ReleaseType alpha
 ```
 
 The script uses CurseForge's multipart upload API:
@@ -54,14 +54,14 @@ Package evidence:
 - Interface numbers: `120100`, `120007`
 - Package audit: passed.
 - Sentinel ZIP SHA-256: use the generated
-  `KWR_6_1_0_SHA256.txt` manifest next to the built artifact. The
+  `KWR_6_1_1_ALPHA_1_SHA256.txt` manifest next to the built artifact. The
   exact hash is intentionally not embedded here because this file is packaged
   inside the ZIP.
 
 Do not upload:
 
-- `KnomercyWarRoom-6.1.0.zip`
-- `KWR_6_1_0_DEVELOPER.zip`
+- `KnomercyWarRoom-6.1.1-alpha.1.zip`
+- `KWR_6_1_1_ALPHA_1_DEVELOPER.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
 - workspace-only temp files

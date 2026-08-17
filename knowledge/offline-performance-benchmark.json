@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-offline-performance-benchmark",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-16T23:30:41Z",
+    "generatedAt":  "2026-08-17T15:13:25Z",
     "result":  "PASS",
     "budgets":  {
                     "averageMs":  1.5,

@@ -60,14 +60,55 @@ foreach ($relative in $required) {
     }
 }
 
-$patchSource = Get-Content -LiteralPath (Join-Path $root "Data\PatchData.lua") -Raw
+$patchPath = Join-Path $root "Data\PatchData.lua"
+$patchLines = @(Get-Content -LiteralPath $patchPath)
+$patchSource = $patchLines -join "`n"
 $tocSource = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
-$interface = [regex]::Match($tocSource, "## Interface:\s*(\d+)").Groups[1].Value
-if ($patchSource -notmatch [regex]::Escape("interface = $interface")) {
-    $errors.Add("Active patch data does not match TOC interface $interface.")
+$tocInterfaceMatch = [regex]::Match($tocSource, '(?m)^## Interface:\s*(?<interfaces>[\d,\s]+)$')
+$tocInterfaces = @()
+if ($tocInterfaceMatch.Success) {
+    $tocInterfaces = @($tocInterfaceMatch.Groups['interfaces'].Value -split ',' |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' })
 }
-if ($patchSource -notmatch 'officialHotfixReviewed\s*=\s*"\d{4}-\d{2}-\d{2}"') {
-    $errors.Add("Active patch pack has no dated official hotfix review.")
+$activePatchMatch = [regex]::Match($patchSource, 'activePatch\s*=\s*"(?<patch>[^"]+)"')
+$activePackSource = $null
+if (-not $activePatchMatch.Success) {
+    $errors.Add("Patch data does not declare activePatch.")
+} else {
+    $activePatch = $activePatchMatch.Groups['patch'].Value
+    $activeStart = -1
+    $activePattern = '^\s{4}\["' + [regex]::Escape($activePatch) + '"\]\s*=\s*\{'
+    for ($index = 0; $index -lt $patchLines.Count; $index++) {
+        if ($patchLines[$index] -match $activePattern) {
+            $activeStart = $index
+            break
+        }
+    }
+    if ($activeStart -lt 0) {
+        $errors.Add("Patch data has no pack for activePatch $activePatch.")
+    } else {
+        $activeEnd = $patchLines.Count - 1
+        for ($index = $activeStart + 1; $index -lt $patchLines.Count; $index++) {
+            if ($patchLines[$index] -match '^\s{4}\["[^"]+"\]\s*=\s*\{') {
+                $activeEnd = $index - 1
+                break
+            }
+        }
+        $activePackSource = $patchLines[$activeStart..$activeEnd] -join "`n"
+    }
+}
+if ($activePackSource) {
+    $activeInterfaceMatch = [regex]::Match($activePackSource, '(?m)^\s*interface\s*=\s*(?<interface>\d+)\s*,')
+    if (-not $activeInterfaceMatch.Success -or
+        $tocInterfaces -notcontains $activeInterfaceMatch.Groups['interface'].Value) {
+        $errors.Add("Active patch data interface is not declared by the TOC: $($tocInterfaces -join ', ').")
+    }
+    if ($activePackSource -notmatch 'officialHotfixReviewed\s*=\s*"\d{4}-\d{2}-\d{2}"') {
+        $errors.Add("Active patch pack has no dated official hotfix review.")
+    }
+    if ($activePackSource -notmatch '(?m)^\s*reviewed\s*=\s*true\s*,') {
+        $errors.Add("Active patch pack is not marked reviewed.")
+    }
 }
 
 $templatePath = Join-Path $root "knowledge\patch-template.json"

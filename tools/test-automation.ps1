@@ -143,6 +143,30 @@ Assert-True `
     -Condition ($ciWorkflow -match 'certify-offline\.ps1\s+-SkipBuild') `
     -Message "CI does not execute the unified offline certification gate."
 
+$buildScript = Get-Content -LiteralPath (Join-Path $root "tools\build.ps1") -Raw
+Assert-True `
+    -Condition ($buildScript -match 'Sort-Object ArchivePath') `
+    -Message "Build archives do not use canonical entry ordering."
+Assert-True `
+    -Condition ($buildScript -match '\$entry\.LastWriteTime\s*=\s*\$fixedTimestamp') `
+    -Message "Build archives do not normalize entry timestamps."
+Assert-True `
+    -Condition ($buildScript -notmatch 'PASS_WITH_DOCUMENTED_EXCEPTION|Compress-Archive did not produce byte-identical') `
+    -Message "Build still permits a non-deterministic ZIP-container exception."
+
+$releaseSurfaceAudit = Get-Content -LiteralPath (
+    Join-Path $root "tools\audit-release-surfaces.ps1"
+) -Raw
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'release_authority\s*=\s*"main"') `
+    -Message "Release-surface audit does not identify main as release authority."
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'ABSENT_RETIRED') `
+    -Message "Release-surface audit does not tolerate a retired develop branch."
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'OPTIONAL_INTENTIONALLY_ABSENT_ALLOWED') `
+    -Message "Release-surface audit does not encode optional Beacon installation policy."
+
 foreach ($workflow in @(
     "ci.yml",
     "deploy.yml",

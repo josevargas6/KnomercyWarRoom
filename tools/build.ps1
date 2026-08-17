@@ -39,15 +39,51 @@ function New-KwrArchive {
         [string]$DestinationPath
     )
 
-    # Compress-Archive serializes thousands of files slowly on Windows hosts.
-    # ZipFile uses the native .NET implementation, retains the same top-level
-    # directory layout, and keeps clean-build/reproducibility manifests intact.
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::CreateFromDirectory(
-        $SourceDirectory,
+    # ZIP metadata is part of the release artifact. Enumerate entries in a
+    # canonical order and replace source mtimes with one valid ZIP timestamp so
+    # two clean builds of the same payload are byte-for-byte identical.
+    Add-Type -AssemblyName System.IO.Compression
+    $sourceRoot = [IO.Path]::GetFullPath($SourceDirectory).TrimEnd('\', '/')
+    $archiveRoot = Split-Path -Leaf $sourceRoot
+    $entries = @(Get-ChildItem -LiteralPath $sourceRoot -Recurse -File |
+        ForEach-Object {
+            $relativePath = $_.FullName.Substring($sourceRoot.Length).TrimStart('\', '/')
+            [pscustomobject]@{
+                File = $_
+                ArchivePath = ($archiveRoot + '/' + $relativePath).Replace('\', '/')
+            }
+        } | Sort-Object ArchivePath)
+    $fixedTimestamp = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+    $destinationStream = [IO.File]::Open(
         $DestinationPath,
-        [IO.Compression.CompressionLevel]::Optimal,
-        $true)
+        [IO.FileMode]::CreateNew,
+        [IO.FileAccess]::ReadWrite,
+        [IO.FileShare]::None)
+    $archive = $null
+    try {
+        $archive = [IO.Compression.ZipArchive]::new(
+            $destinationStream,
+            [IO.Compression.ZipArchiveMode]::Create,
+            $false)
+        foreach ($item in $entries) {
+            $entry = $archive.CreateEntry(
+                $item.ArchivePath,
+                [IO.Compression.CompressionLevel]::Optimal)
+            $entry.LastWriteTime = $fixedTimestamp
+            $sourceStream = [IO.File]::OpenRead($item.File.FullName)
+            $entryStream = $null
+            try {
+                $entryStream = $entry.Open()
+                $sourceStream.CopyTo($entryStream)
+            } finally {
+                if ($entryStream) { $entryStream.Dispose() }
+                $sourceStream.Dispose()
+            }
+        }
+    } finally {
+        if ($archive) { $archive.Dispose() }
+        $destinationStream.Dispose()
+    }
 }
 
 function Write-JsonFile {
@@ -425,16 +461,14 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
                 throw "Reproducibility audit failed because staged source digests changed between clean builds."
             }
 
-            $reproResult = if ($binaryMismatchCount -eq 0) { "PASS" } else { "PASS_WITH_DOCUMENTED_EXCEPTION" }
+            if ($binaryMismatchCount -ne 0) {
+                throw "Reproducibility audit failed because deterministic archive bytes changed between clean builds."
+            }
+            $reproResult = "PASS"
             $notes = @(
                 "Two clean builds were executed with the primary package audit intact and nested reproducibility/package-audit recursion disabled in the secondary pass."
             )
-            if ($binaryMismatchCount -eq 0) {
-                $notes += "Binary SHA-256 hashes matched for every produced archive."
-            } else {
-                $notes += "Staged payload digests matched across clean builds, but PowerShell Compress-Archive did not produce byte-identical ZIP containers."
-                $notes += "Package audit still validated the extracted payload, release exclusions, and extracted runtime smoke/soak on the primary build."
-            }
+            $notes += "Canonical entry order and timestamps produced matching binary SHA-256 hashes for every archive."
 
             $reproducibility = [pscustomobject]@{
                 candidate = $version

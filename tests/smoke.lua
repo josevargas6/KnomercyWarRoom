@@ -1691,8 +1691,8 @@ assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatu
     "Season-prep scenario corpus entry lost its pending-review guard.")
 assert(KWR.PatchData:SeasonPrepCorpusActive() == true
     and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "PENDING_SEASON_REVIEW"
-    and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "ADVISORY",
-    "Alpha40 did not activate the season-prep corpus as advisory guidance.")
+    and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "IMMEDIATE_THEORY_FIRST",
+    "Season 2 did not activate the theory-first corpus with pending-review safeguards.")
 do
     local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
     assert(seasonTwoTargets[1]
@@ -1872,11 +1872,11 @@ assert(type(liveState.snapshot.reporter.trust) == "table"
     "Reporter did not expose a trust profile.")
 assert(type(liveState.snapshot.knowledgeStatus) == "table"
     and type(liveState.snapshot.knowledgeStatus.label) == "string"
-    and liveState.snapshot.knowledgeStatus.patchAligned == false
-    and liveState.snapshot.knowledgeStatus.reviewed == false
-    and liveState.snapshot.knowledgeStatus.compositionAuthorized == false
+    and liveState.snapshot.knowledgeStatus.patchAligned == true
+    and liveState.snapshot.knowledgeStatus.reviewed == true
+    and liveState.snapshot.knowledgeStatus.metaAligned == false
     and liveState.snapshot.knowledgeStatus.metaInfluenceAllowed == false,
-    "Retail 12.1 compatibility mode did not fail closed on stale tuning data.")
+    "Retail 12.1 review did not activate independently while stale meta stayed excluded.")
 assert(type(liveState.snapshot.strategy.trust) == "table"
     and type(liveState.snapshot.strategy.trust.mode) == "string",
     "Strategist did not expose a strategy trust model.")
@@ -1884,9 +1884,9 @@ assert(liveState.snapshot.strategy.theoryActive == true
     and liveState.snapshot.strategy.projectionBasis == "IMMEDIATE_THEORY_FIRST"
     and liveState.snapshot.strategy.recommendationMode ~= "VERIFY"
     and type(liveState.snapshot.strategy.executionGate) == "table"
-    and liveState.snapshot.strategy.executionGate.status == "VERIFY_BEFORE_COMMIT"
-    and liveState.snapshot.strategy.trust.commitAuthorized == false,
-    "Stale composition truth replaced the active theory instead of gating commitment.")
+    and liveState.snapshot.strategy.executionGate.status == "COMMIT_ALLOWED"
+    and liveState.snapshot.strategy.trust.commitAuthorized == true,
+    "Reviewed 12.1 capabilities and authoritative live truth did not activate a bounded commit.")
 assert(type(liveState.snapshot.strategy.scenarioCalibration) == "table"
     and liveState.snapshot.strategy.scenarioCalibration.reviewedCases >= 5
     and type(liveState.snapshot.strategy.reviewDisciplineRule) == "string",
