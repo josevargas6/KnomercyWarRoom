@@ -1,44 +1,44 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-17T15:23:37Z",
-    "candidateVersion":  "6.1.1-alpha.1",
-    "buildOutputDirectory":  "artifacts/KWR-611-alpha1",
+    "generatedAt":  "2026-08-17T18:47:05Z",
+    "candidateVersion":  "6.1.1-alpha.2",
+    "buildOutputDirectory":  "artifacts/KWR-611-alpha2",
     "distributionArtifact":  {
-                                 "name":  "KnomercyWarRoom-6.1.1-alpha.1.zip",
-                                 "path":  "artifacts/KWR-611-alpha1/KnomercyWarRoom-6.1.1-alpha.1.zip",
-                                 "size":  918125,
-                                 "sha256":  "046926C81309F64C9F1FF719A93361E503B4E44631E654D1BE5C081A77C5C342"
+                                 "name":  "KnomercyWarRoom-6.1.1-alpha.2.zip",
+                                 "path":  "artifacts/KWR-611-alpha2/KnomercyWarRoom-6.1.1-alpha.2.zip",
+                                 "size":  918678,
+                                 "sha256":  "150E17F65018F0B2981C729DA559A2600742FB56DCD6D1DBB34EEDABB0529352"
                              },
     "developerArtifact":  {
-                              "name":  "KWR_6_1_1_ALPHA_1_DEVELOPER.zip",
-                              "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_DEVELOPER.zip",
-                              "size":  15974623,
-                              "sha256":  "80613AF15D33F1A9B6956C762624F20725600F873EDE4F101A10AFBF2DCE5C04"
+                              "name":  "KWR_6_1_1_ALPHA_2_DEVELOPER.zip",
+                              "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_DEVELOPER.zip",
+                              "size":  15975330,
+                              "sha256":  "0A6BF6CAD2643020069D7CCABCE21EFEE2054522E109E8E0DF736851E4DFD715"
                           },
     "hashManifest":  {
-                         "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_SHA256.txt",
+                         "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_SHA256.txt",
                          "lines":  [
-                                       "046926C81309F64C9F1FF719A93361E503B4E44631E654D1BE5C081A77C5C342  KnomercyWarRoom-6.1.1-alpha.1.zip",
-                                       "669ECF13D55699BAF42694297E1E49245151415219FCBC741C6986AD17AA65DF  KWR-Sentinel-6.1.1-alpha.1.zip"
+                                       "150E17F65018F0B2981C729DA559A2600742FB56DCD6D1DBB34EEDABB0529352  KnomercyWarRoom-6.1.1-alpha.2.zip",
+                                       "52BFB34C7A0C01140E02B0C14A789F678D9C572C82C5FB57AA1CB192C2567C89  KWR-Sentinel-6.1.1-alpha.2.zip"
                                    ]
                      },
     "developerHashManifest":  {
-                                  "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_DEVELOPER_CHECKSUM.txt",
+                                  "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_DEVELOPER_CHECKSUM.txt",
                                   "lines":  [
-                                                "80613AF15D33F1A9B6956C762624F20725600F873EDE4F101A10AFBF2DCE5C04  KWR_6_1_1_ALPHA_1_DEVELOPER.zip"
+                                                "0A6BF6CAD2643020069D7CCABCE21EFEE2054522E109E8E0DF736851E4DFD715  KWR_6_1_1_ALPHA_2_DEVELOPER.zip"
                                             ]
                               },
     "sourceManifest":  {
-                           "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "2444D8BF522FB4011D95139888CFF53B7689A7D1F70B2AB8C6EF1F15684C949E",
+                           "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "CBF3620A62287BB4ACFA323A1FD5D520DFA1E84BA05F26B96F69B61593F92FA2",
                            "distributionEntryCount":  396,
-                           "developerDigest":  "54C0240AD262DA8A25109937EE08B99CDCAF5CCD7064081891E4ECF83215A52D",
+                           "developerDigest":  "AFB7195262A1358B9D0D98A3FCFD80A050CB52F241DFD86A25F26F774AFC0F16",
                            "developerEntryCount":  8959
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-17T15:17:13.1573651Z",
+                            "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-17T18:40:30.7662577Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.9168",
@@ -48,7 +48,7 @@
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_REPRODUCIBILITY.json",
+                            "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_REPRODUCIBILITY.json",
                             "result":  "PASS",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -58,8 +58,8 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "artifacts/KWR-611-alpha1/KWR_6_1_1_ALPHA_1_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-17T15:23:23.3178995Z",
+                         "path":  "artifacts/KWR-611-alpha2/KWR_6_1_1_ALPHA_2_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-08-17T18:46:44.6459453Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
                          "distributionEntries":  396,
@@ -85,13 +85,13 @@
                           "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
                           "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
                           "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
-                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.1"
+                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.2"
                       },
     "fieldEvidenceBinding":  {
-                                 "candidateVersion":  "6.1.1-alpha.1",
-                                 "distributionSha256":  "046926C81309F64C9F1FF719A93361E503B4E44631E654D1BE5C081A77C5C342",
+                                 "candidateVersion":  "6.1.1-alpha.2",
+                                 "distributionSha256":  "150E17F65018F0B2981C729DA559A2600742FB56DCD6D1DBB34EEDABB0529352",
                                  "evidenceScope":  "candidate",
-                                 "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.1.zip",
+                                 "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.2.zip",
                                  "requiredProof":  [
                                                        "Screenshot or text capture of installed TOC version.",
                                                        "Recorded distribution ZIP SHA256 used for install.",
