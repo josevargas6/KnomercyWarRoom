@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.1.1-alpha.2 - 2026-08-17
+
+- Made Season 2 field mode the default for upgraded local profiles: Command
+  guidance, live HUD, team/enemy roster, reticle, battlefield presentation,
+  bounded Sentinel transport, automatic AAR capture, and AAR review now arm
+  together. `/kwr field` reapplies the complete local field profile.
+- Activated Season 2 theory rows for field use. They now surface as active
+  theory with an explicit awaiting-field-feedback status, while real Retail
+  observations and AARs remain distinct evidence that can refine or disprove
+  the theory.
+
 ## 6.1.1-alpha.1 - 2026-08-17
 
 - Bound the integrated Season 2 candidate to a new Commander/Sentinel version

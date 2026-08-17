@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.1"
+KWR.version = "6.1.1-alpha.2"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -178,6 +178,39 @@ local DEFAULTS = {
         processedMatches = {},
     },
 }
+
+local FIELD_ACTIVATION_VERSION = 1
+
+local function activateFieldProfile(profile, force)
+    profile = type(profile) == "table" and profile or {}
+    local activated = KWR.Util:Number(profile.fieldActivationVersion, 0) or 0
+    if not force and activated >= FIELD_ACTIVATION_VERSION then
+        return false
+    end
+    profile.preview = false
+    profile.guidanceMode = "COMMAND"
+    profile.hud.enabled = true
+    profile.cursor.enabled = true
+    profile.combatRoster.shown = true
+    profile.combatRoster.mode = "BOTH"
+    profile.combatRoster.teamShown = true
+    profile.combatRoster.enemyShown = true
+    profile.combatRoster.autoShowInPvP = true
+    profile.combatRoster.combatVisuals = true
+    profile.presentation.enabled = true
+    profile.presentation.autoReporter = true
+    profile.presentation.autoRoster = true
+    profile.aar.enabled = true
+    profile.aar.autoOpen = true
+    profile.sentinelTransportEnabled = true
+    profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
+    return true
+end
+
+function KWR:ActivateFieldProfile(force)
+    if not self.db or not self.db.profile then return false end
+    return activateFieldProfile(self.db.profile, force == true)
+end
 
 local function mergeDefaults(target, defaults)
     target = type(target) == "table" and target or {}
@@ -406,6 +439,7 @@ local function normalizeProfile(profile)
     profile.aar.autoOpen = KWR.Util:Boolean(profile.aar.autoOpen, defaults.aar.autoOpen)
     profile.sentinelTransportEnabled = KWR.Util:Boolean(
         profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
+    activateFieldProfile(profile, false)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
     profile.layoutMode = KWR.Util:Upper(profile.layoutMode, defaults.layoutMode, 16)
     if profile.layoutMode ~= "AUTO" and profile.layoutMode ~= "COMPACT"

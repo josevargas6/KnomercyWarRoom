@@ -1,6 +1,6 @@
 # RBG Meta Data Provenance
 
-KWR 6.1.1-alpha.1 contains a static Rated Battleground specialization snapshot
+KWR 6.1.1-alpha.2 contains a static Rated Battleground specialization snapshot
 captured on 2026-06-27 for Retail patch 12.0.7, Midnight Season 1.
 
 Source pages:

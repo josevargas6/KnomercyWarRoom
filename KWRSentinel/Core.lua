@@ -4,10 +4,12 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.1-alpha.1"
+Sentinel.version = "6.1.1-alpha.2"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
+
+local FIELD_ACTIVATION_VERSION = 1
 
 -- Keep Sentinel out of the way of Blizzard's full-screen and major utility
 -- panels. This intentionally mirrors KWR's main overlay window list.
@@ -76,9 +78,9 @@ local DEFAULTS = {
             angle = 225,
         },
         transport = {
-            -- Cross-client traffic is opt-in until a raid leader enables it
-            -- for a deliberate team test.
-            enabled = false,
+            -- Field mode enables the bounded team relay. It carries only
+            -- validated Commander/Sentinel observations and expires quickly.
+            enabled = true,
         },
         loadMessage = true,
     },
@@ -153,6 +155,21 @@ function Sentinel:InitializeDatabase()
     end
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
+    self:ActivateFieldProfile(false)
+end
+
+function Sentinel:ActivateFieldProfile(force)
+    local profile = self.db and self.db.profile
+    if type(profile) ~= "table" then return false end
+    local activated = tonumber(profile.fieldActivationVersion) or 0
+    if not force and activated >= FIELD_ACTIVATION_VERSION then return false end
+    profile.hud.enabled = true
+    profile.targetCue.enabled = true
+    profile.panels.status.enabled = true
+    profile.minimap.enabled = true
+    profile.transport.enabled = true
+    profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
+    return true
 end
 
 function Sentinel:TransportEnabled()

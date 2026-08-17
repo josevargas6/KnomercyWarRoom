@@ -1875,21 +1875,18 @@ function MainWindow:TogglePreview()
 end
 
 function MainWindow:ArmFieldTest()
-    KWR.db.profile.preview = false
-    KWR.db.profile.guidanceMode = "COMMAND"
-    KWR.db.profile.aar.autoOpen = true
-    KWR.db.profile.aar.enabled = true
-    KWR.db.profile.hud.enabled = true
-    KWR.db.profile.presentation.enabled = true
-    KWR.db.profile.combatRoster.shown = true
-    KWR.db.profile.combatRoster.mode = "BOTH"
-    KWR.db.profile.combatRoster.teamShown = true
-    KWR.db.profile.combatRoster.enemyShown = true
+    KWR:ActivateFieldProfile(true)
     KWR.HUD:SetEnabled(true)
     KWR.CombatRoster:Show("BOTH")
+    KWR.CursorRing:SetEnabled(true)
+    local sentinel = _G.KWRSentinel
+    if sentinel and sentinel.ActivateFieldProfile then
+        sentinel:ActivateFieldProfile(true)
+        if sentinel.Observer then sentinel.Observer:SendHello() end
+    end
     if KWR.Presentation then KWR.Presentation:RefreshNow() end
     KWR.MatchRuntime:ForceRefresh("field-test-arm")
-    KWR:Print("Field test armed: live HUD, team/enemy roster, automatic AAR, and command mode are active.", true)
+    KWR:Print("Season 2 field mode armed: live HUD, roster, reticle, Sentinel transport, automatic AAR, and command mode are active.", true)
     KWR:Print("Next: run /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
 end
 

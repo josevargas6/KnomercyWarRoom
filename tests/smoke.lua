@@ -703,7 +703,7 @@ do
         and KWR.db.profile.hud.point == "CENTER"
         and KWR.db.profile.main.page == "TACTICAL"
         and KWR.db.profile.main.x == 0
-        and KWR.db.profile.cursor.enabled == false
+        and KWR.db.profile.cursor.enabled == true
         and KWR.db.profile.cursor.reticleEnabled == true
         and KWR.db.profile.cursor.battlefieldOrbs == true
         and KWR.db.profile.cursor.arenaLightweight == true
@@ -717,6 +717,7 @@ do
         and type(KWR.db.profile.presentation) == "table"
         and KWR.db.profile.aar.enabled == true
         and KWR.db.profile.aar.autoOpen == true
+        and KWR.db.profile.sentinelTransportEnabled == true
         and KWR.db.profile.showLoadMessage == true
         and type(KWR.db.journal.history) == "table"
         and #KWR.db.journal.history == 2
@@ -1687,10 +1688,10 @@ assert(wsgExpertReview
     and wsgExpertReview.preferredResponseId == "WSG_RESP_ESCORT_SHELL"
     and type(wsgExpertReview.safestCounter) == "string",
     "Scenario expert corpus did not expose reviewed opening doctrine for Warsong Gulch.")
-assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "PENDING_SEASON_REVIEW",
-    "Season-prep scenario corpus entry lost its pending-review guard.")
+assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "ACTIVE_THEORY_FIELD",
+    "Season-prep scenario corpus entry did not activate for field use.")
 assert(KWR.PatchData:SeasonPrepCorpusActive() == true
-    and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "PENDING_SEASON_REVIEW"
+    and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "ACTIVE_THEORY_FIELD"
     and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "IMMEDIATE_THEORY_FIRST",
     "Season 2 did not activate the theory-first corpus with pending-review safeguards.")
 do
@@ -1897,7 +1898,7 @@ assert(type(liveState.snapshot.strategy.scenarioAdversarialCalibration) == "tabl
     "Strategist did not attach adversarial scenario calibration.")
 assert(type(liveState.snapshot.strategy.scenarioExpertReview) == "table"
     and (liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 5
-        or (liveState.snapshot.strategy.scenarioExpertReview.seasonStatus == "PENDING_SEASON_REVIEW"
+        or (liveState.snapshot.strategy.scenarioExpertReview.seasonStatus == "ACTIVE_THEORY_FIELD"
             and liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 1))
     and type(liveState.snapshot.strategy.expertPreferredAction) == "string"
     and type(liveState.snapshot.strategy.expertSafestCounter) == "string",
