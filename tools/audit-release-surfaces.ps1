@@ -82,10 +82,9 @@ try {
     Add-Finding "Unable to verify main release automation after bounded retries: $($_.Exception.Message)"
 }
 
-# `main` is the sole release authority. `develop` is an optional historical
-# lane, so its retirement must not crash or block an otherwise valid audit.
-# When it still exists, record ancestry for cleanup without treating it as a
-# promotion source.
+# The documented develop-to-main promotion flow remains a release gate while
+# develop has unique work. A branch that is strictly behind main is stale and
+# can be retired without blocking the release audit.
 try {
     $developmentBranch = Invoke-GitHubRead `
         -Uri "$apiRoot/branches/develop" `
@@ -100,8 +99,13 @@ try {
                 ahead_by = $comparison.ahead_by
                 behind_by = $comparison.behind_by
             }
+            if ($comparison.status -ne "behind") {
+                Add-Finding "main and develop are $($comparison.status) (develop ahead $($comparison.ahead_by), behind $($comparison.behind_by)); promote or reconcile develop before release."
+                $developmentBranchState = "PRESENT_PROMOTION_REQUIRED"
+            }
         } catch {
-            $developmentBranchState = "PRESENT_COMPARISON_UNAVAILABLE"
+            $developmentBranchState = "PRESENT_COMPARISON_UNAVAILABLE_BLOCKING"
+            Add-Finding "Unable to compare main and develop; release promotion cannot be verified."
         }
     }
 } catch {
@@ -110,7 +114,8 @@ try {
         $statusCode = [int]$_.Exception.Response.StatusCode
     }
     if ($statusCode -ne 404) {
-        $developmentBranchState = "UNKNOWN_NON_BLOCKING"
+        $developmentBranchState = "UNKNOWN_BLOCKING"
+        Add-Finding "Unable to determine develop branch state; release promotion cannot be verified."
     }
 }
 
@@ -130,7 +135,7 @@ foreach ($path in @(
     github_release_assets = $release.assets.Count
     github_release_url = $release.html_url
     release_authority = "main"
-    development_branch_policy = "NON_AUTHORITATIVE_OPTIONAL"
+    development_branch_policy = "PROMOTION_REQUIRED_UNLESS_STALE_BEHIND_MAIN"
     development_branch_state = $developmentBranchState
     development_comparison = $developmentComparison
     estate_policy = [pscustomobject]@{

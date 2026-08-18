@@ -32,7 +32,8 @@ function Season2Readiness:Build(state)
     local entry = KWR.Verification and KWR.Verification:BuildEntry(state) or {}
     local latest = KWR.AAR and KWR.AAR:GetLatest() or nil
     local live = entry.preview ~= true and entry.instanceType == "pvp"
-    local rosterReady = (entry.roster or 0) > 0
+    local rosterReady = live
+        and (entry.roster or 0) > 0
         and (entry.teamSpecs or 0) >= (entry.roster or 0)
         and (entry.teamUnits or 0) >= (entry.roster or 0)
     local latestPerformance = latest and latest.performance or {}
