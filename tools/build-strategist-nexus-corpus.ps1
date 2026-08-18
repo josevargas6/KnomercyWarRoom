@@ -63,6 +63,7 @@ function Write-CountTable {
 }
 
 $maps = @{}
+$jointSeparator = [string][char]31
 foreach ($case in $cases) {
     $mapKey = [string]$case.mapKey
     $phase = [string]$case.phase
@@ -83,6 +84,7 @@ foreach ($case in $cases) {
             scoreStates = @{}
             counterResponses = @{}
             evidenceStates = @{}
+            jointCases = @{}
             outcomeBranches = @{}
             sourceScenarios = @{}
         }
@@ -94,6 +96,14 @@ foreach ($case in $cases) {
     Add-Count $bucket.scoreStates ([string]$case.scoreState)
     Add-Count $bucket.counterResponses ([string]$case.counterResponse)
     Add-Count $bucket.evidenceStates ([string]$case.evidenceState)
+    $jointKey = @(
+        [string]$case.scenarioFamily,
+        [string]$case.compWatch,
+        [string]$case.scoreState,
+        [string]$case.counterResponse,
+        [string]$case.evidenceState
+    ) -join $jointSeparator
+    Add-Count $bucket.jointCases $jointKey
     Add-Count $bucket.outcomeBranches ([string]$case.outcomeBranch)
     Add-Count $bucket.sourceScenarios ([string]$case.sourceScenarioId)
 }
@@ -129,6 +139,7 @@ foreach ($mapKey in @($maps.Keys | Sort-Object)) {
         Write-CountTable $lines '                    ' 'scoreStates' $bucket.scoreStates
         Write-CountTable $lines '                    ' 'counterResponses' $bucket.counterResponses
         Write-CountTable $lines '                    ' 'evidenceStates' $bucket.evidenceStates
+        Write-CountTable $lines '                    ' 'jointCases' $bucket.jointCases
         Write-CountTable $lines '                    ' 'outcomeBranches' $bucket.outcomeBranches
         Write-CountTable $lines '                    ' 'sourceScenarios' $bucket.sourceScenarios
         $lines.Add('                },')
@@ -139,10 +150,12 @@ foreach ($mapKey in @($maps.Keys | Sort-Object)) {
 $lines.Add('    },')
 $lines.Add('}')
 $lines.Add('')
-$lines.Add('local function narrow(current, values, key)')
-$lines.Add('    if not key then return current end')
-$lines.Add('    local count = values and values[key] or 0')
-$lines.Add('    return math.min(current, count)')
+$lines.Add('local function jointKey(query)')
+$lines.Add('    if not query.family or query.family == "" or not query.compWatch or query.compWatch == ""')
+$lines.Add('        or not query.scoreState or query.scoreState == "" or not query.counterResponse or query.counterResponse == ""')
+$lines.Add('        or not query.evidenceState or query.evidenceState == "" then return nil end')
+$lines.Add('    local values = { query.family, query.compWatch, query.scoreState, query.counterResponse, query.evidenceState }')
+$lines.Add('    return table.concat(values, "\31")')
 $lines.Add('end')
 $lines.Add('')
 $lines.Add('function StrategistNexusCorpus:Count() return DATA.totalCases end')
@@ -158,15 +171,12 @@ $lines.Add('    if not bucket then')
 $lines.Add('        return { available = false, marginalCases = 0, sourceStatus = DATA.sourceStatus }')
 $lines.Add('    end')
 $lines.Add('    query = type(query) == "table" and query or {}')
-$lines.Add('    local count = bucket.totalCases')
-$lines.Add('    count = narrow(count, bucket.families, query.family)')
-$lines.Add('    count = narrow(count, bucket.compWatches, query.compWatch)')
-$lines.Add('    count = narrow(count, bucket.scoreStates, query.scoreState)')
-$lines.Add('    count = narrow(count, bucket.counterResponses, query.counterResponse)')
-$lines.Add('    count = narrow(count, bucket.evidenceStates, query.evidenceState)')
+$lines.Add('    local key = jointKey(query)')
+$lines.Add('    local count = key and (bucket.jointCases and bucket.jointCases[key] or 0) or bucket.totalCases')
 $lines.Add('    return {')
 $lines.Add('        available = count > 0,')
 $lines.Add('        marginalCases = count,')
+$lines.Add('        exactCases = count,')
 $lines.Add('        phaseCases = bucket.totalCases,')
 $lines.Add('        mapCases = map.totalCases,')
 $lines.Add('        totalCases = DATA.totalCases,')

@@ -1600,8 +1600,17 @@ do
         counterResponse = "EXPECTED",
         evidenceState = "LIVE_KNOWN",
     })
-    assert(branch.available == true and branch.marginalCases >= 19,
-        "Strategist Nexus did not retrieve bounded branch coverage.")
+    assert(branch.available == true and branch.exactCases == 1,
+        "Strategist Nexus did not retrieve exact branch coverage.")
+    local absentBranch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
+        family = "scout-confirm",
+        compWatch = "HUNTER_DK_PRESSURE",
+        scoreState = "SAFE_DEFAULT",
+        counterResponse = "EXPECTED",
+        evidenceState = "UNKNOWN",
+    })
+    assert(absentBranch.available == false and absentBranch.exactCases == 0,
+        "Strategist Nexus treated marginal coverage as an exact branch match.")
 end
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
@@ -1957,10 +1966,16 @@ for _, candidate in ipairs(liveState.snapshot.strategy.simulations or {}) do
         "Strategist Nexus candidate adjustment escaped its bounded policy.")
     assert((candidate.nexus.coverageGuardAdjustment or 0) <= 0,
         "Simulation coverage produced an unauthorized positive tactic score.")
-    assert(candidate.nexus.activation == "IMMEDIATE_THEORY_FIRST"
-        and candidate.nexus.theoryActivated == true
-        and candidate.enemyResponsePlan.responseID ~= "STANDARD_REINFORCE",
-        "A supported candidate did not activate complete countertheory.")
+    if (candidate.nexus.simulationCoverage and candidate.nexus.simulationCoverage.exactCases or 0) > 0 then
+        assert(candidate.nexus.activation == "IMMEDIATE_THEORY_FIRST"
+            and candidate.nexus.theoryActivated == true
+            and candidate.enemyResponsePlan.responseID ~= "STANDARD_REINFORCE",
+            "An exactly covered candidate did not activate complete countertheory.")
+    else
+        assert(candidate.nexus.theoryActivated == false
+            and (candidate.nexus.coverageGuardAdjustment or 0) <= 0,
+            "An uncovered candidate was allowed to claim simulation support.")
+    end
     if candidate.legal == false then
         assert(candidate.nexus.adjustment == 0,
             "Strategist Nexus adjusted an objective-rule-gated candidate.")
