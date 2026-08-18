@@ -29,7 +29,7 @@ local function qualifiedResponseRequiresReplacement(response)
     -- Only an explicit emergency or a confirmed critical coverage gap may
     -- cross the commitment gate without ordinary superiority/persistence.
     return response.emergency == true
-        or (response.recovery and response.recovery.criticalGap == true)
+        or (response.recovery and KWR.Util:Text(response.recovery.criticalGap, "", 48) ~= "")
 end
 
 local function classifyBypass(snapshot, response, prediction, stabilized)
@@ -827,8 +827,8 @@ end
 
 local function buildActivePlay(snapshot, prediction, strategy, response, command, previousPlay, now)
     local family = snapshot.context and snapshot.context.kind or "WORLD"
-    local objective = (response and response.target) or (strategy.objectiveDecision
-        and strategy.objectiveDecision.target) or nil
+    local objective = (response and response.target) or strategy.target
+        or (strategy.objectiveDecision and strategy.objectiveDecision.target) or nil
     local movers = splitNames(response and response.moverText or command.who)
     local stayers = splitNames(response and response.stayerText or "")
     local baseCommit = snapshot.context and snapshot.context.inPvP and 12 or 6

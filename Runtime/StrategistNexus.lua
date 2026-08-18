@@ -220,6 +220,18 @@ function StrategistNexus:Rank(snapshot, prediction, result)
     return result
 end
 
+local function candidateAction(candidate, defaultTarget)
+    candidate = type(candidate) == "table" and candidate or {}
+    local action = KWR.Util:Text(candidate.action, "", 180)
+    if action ~= "" then return action end
+    local id = KWR.Util:Text(candidate.id, "HOLD", 40)
+    local outcome = KWR.Util:Text(candidate.outcome, "", 180)
+    if outcome ~= "" then return id .. ": " .. outcome end
+    local target = KWR.Util:Text(candidate.target or defaultTarget,
+        "the mapped objective", 96)
+    return "Execute " .. id .. " at " .. target .. " if the primary aborts."
+end
+
 function StrategistNexus:Envelope(snapshot, prediction, result)
     if type(result) ~= "table" then return nil end
     local selected = result.selectedAction or {}
@@ -235,7 +247,7 @@ function StrategistNexus:Envelope(snapshot, prediction, result)
         primary = {
             id = result.recommendationMode or selected.id or "VERIFY",
             action = result.action,
-            target = selected.target,
+            target = result.target or selected.target,
             score = result.decisionScore,
             outcome = result.expectedOutcome or selected.outcome,
             basis = result.projectionBasis or "IMMEDIATE_THEORY_FIRST",
@@ -243,10 +255,7 @@ function StrategistNexus:Envelope(snapshot, prediction, result)
         fallback = {
             id = fallback.id or "HOLD",
             target = fallback.target,
-            action = response.safestReply or result.switchIf
-                or ("Execute " .. tostring(fallback.id or "HOLD")
-                    .. " at " .. tostring(fallback.target or selected.target
-                        or "the mapped objective") .. " if the primary aborts."),
+            action = candidateAction(fallback, result.target or selected.target),
             score = fallback.decisionScore,
         },
         enemyResponse = {

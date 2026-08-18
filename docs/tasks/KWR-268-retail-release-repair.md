@@ -86,6 +86,19 @@ and incomplete/misleading review presentation.
 - [x] The roster publisher distinguishes legitimate same-short-name players
   with their realm-qualified names while continuing to collapse transitional
   duplicate records.
+- [x] Release-review regressions now preserve critical coverage gaps through
+  command compaction, count repeat opponents once per new live match (even on
+  the same map), retain direct player specialization above stale scoreboard
+  evidence, record assignment changes in the AAR throttle key, and reject
+  interrupted AARs as stability proof.
+- [x] Nexus candidates, carrier overrides, envelope targets, objective
+  decisions, active-play tracking, and fallback text now refer to the same
+  executable action. Formation screens now distinguish playstyle, favorable
+  situations, vulnerabilities, and counterplay without treating a counter
+  instruction as a positive matchup.
+- [x] Sentinel relay traffic is opt-in on a clean install; explicit Field mode
+  remains a complete, functional activation path and is still covered by the
+  deterministic transport suite.
 - [ ] Build, extracted-package audit, exact Retail installation, remote CI and
   review, merge/tag/publication, and final-hash live RBG evidence remain
   release gates. They must not be substituted with source-only tests.

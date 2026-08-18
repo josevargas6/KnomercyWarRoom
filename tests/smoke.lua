@@ -718,7 +718,7 @@ do
         and type(KWR.db.profile.presentation) == "table"
         and KWR.db.profile.aar.enabled == true
         and KWR.db.profile.aar.autoOpen == true
-        and KWR.db.profile.sentinelTransportEnabled == true
+        and KWR.db.profile.sentinelTransportEnabled == false
         and KWR.db.profile.showLoadMessage == true
         and type(KWR.db.journal.history) == "table"
         and #KWR.db.journal.history == 2
@@ -2330,6 +2330,9 @@ assert(sentinelView.watch and sentinelView.watch.reason ~= ""
     "Sentinel bridge did not publish the current local watch target.")
 do
     KWR_TEST_COMM = KWR.CommanderComm
+    assert(KWR_TEST_COMM:TransportEnabled() == false
+        and KWR_TEST_COMM:SetTransportEnabled(true),
+        "Commander transport did not remain opt-in before explicit Field-mode activation.")
     KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
     KWR_TEST_ROSTER_SENDER = liveState.snapshot.roster[1].name
     KWR_TEST_HELLO = table.concat({
@@ -6056,8 +6059,9 @@ assert(not KWR.MainWindow.pages.TACTICAL.nextCard.value.value:find("center board
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.summary.value:find(
         "TARGET BUILD:", 1, true)
     and KWR.MainWindow.pages.TACTICAL.winCard.heading.value == "COUNTERPICK"
-    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("BEST AGAINST", 1, true),
-    "Setup tactical page did not expose direct roster and counterpick information.")
+    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("FAVORS", 1, true)
+    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("COUNTERPLAY", 1, true),
+    "Setup tactical page did not expose direct roster strengths and counterplay information.")
 assert(KWR.MainWindow.pages.TACTICAL.targetCard.heading.value == "BUILD FIT"
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("TARGET MATCH", 1, true)
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("OPEN SLOTS", 1, true)
@@ -7241,6 +7245,104 @@ do
     assert(applyCount == 1, "Idle hidden surfaces still triggered layout polling")
     coordinator.Apply = oldApply
     KWR.LayoutCoordinator:Reset()
+end
+
+-- Regression coverage for release-review correctness: a later match on the
+-- same map counts once, direct specialization truth beats stale scoreboard
+-- data, reviewed AAR context wins, and the Nexus fallback describes its own
+-- candidate rather than the primary enemy-response instruction.
+do
+    local savedPlayers = KWR.Util:Copy(KWR.db.opponentModels.players)
+    local savedSessionKey = KWR.OpponentModels.sessionKey
+    local savedSeen = KWR.Util:Copy(KWR.OpponentModels.sessionSeen)
+    local savedTokens = KWR.Util:Copy(KWR.OpponentModels.sampleTokens)
+    local savedDeathState = KWR.Util:Copy(KWR.OpponentModels.deathState)
+    KWR.db.opponentModels.players = {}
+    local repeatOpponent = {
+        context = { inPvP = true, mapKey = "WSG", mapID = 489, instanceID = 489 },
+        enemies = { { guid = "repeat-opponent", name = "Repeat-Realm", visible = true } },
+    }
+    KWR.OpponentModels:ResetSession("WSG:489:489:PVP:LIVE")
+    KWR.OpponentModels:Observe(repeatOpponent)
+    KWR.OpponentModels:ResetSession(nil)
+    KWR.OpponentModels:ResetSession("WSG:489:489:PVP:LIVE")
+    KWR.OpponentModels:Observe(repeatOpponent)
+    assert(KWR.db.opponentModels.players["repeat-opponent"].sessions == 2,
+        "Opponent model did not count a repeated opponent in a later same-map match.")
+    KWR.db.opponentModels.players = savedPlayers
+    KWR.OpponentModels.sessionKey = savedSessionKey
+    KWR.OpponentModels.sessionSeen = savedSeen
+    KWR.OpponentModels.sampleTokens = savedTokens
+    KWR.OpponentModels.deathState = savedDeathState
+
+    local authorityActive = { friendlyTeam = {}, enemyTeam = {} }
+    KWR.AAR:CaptureTeams(authorityActive, {
+        roster = {
+            { guid = "direct-spec", name = "Direct-Realm", shortName = "Direct",
+                spec = "Frost", role = "DAMAGER", specSource = "player_spec" },
+            { guid = "direct-spec", name = "Direct-Realm", shortName = "Direct",
+                spec = "Fire", role = "DAMAGER", specSource = "scoreboard" },
+        },
+    })
+    assert(authorityActive.friendlyTeam["direct-spec"].spec == "Frost",
+        "AAR stale scoreboard evidence overrode direct player specialization truth.")
+
+    local reviewedExport = KWR.AAR:Export({
+        addonVersion = KWR.version, mapKey = "WSG", result = "DRAW", scoreEnd = {},
+        reviewContext = "Diagnostic", feedback = { sessionType = "Commander" },
+    })
+    assert(reviewedExport:find("Review Context: Commander", 1, true),
+        "AAR export did not honor submitted review context.")
+
+    local fallbackEnvelope = KWR.StrategistNexus:Envelope({ context = {} }, {}, {
+        action = "PRIMARY: Hold the primary lane.", target = "Primary",
+        recommendationMode = "PRIMARY", selectedAction = {
+            id = "PRIMARY", target = "Primary", outcome = "Primary outcome",
+            enemyResponsePlan = { safestReply = "Primary response only." },
+        },
+        nexusFallbackCandidate = { id = "FALLBACK", target = "Fallback", outcome = "Fallback outcome" },
+        responseContract = {}, nexusContext = {},
+    })
+    assert(fallbackEnvelope.fallback.action:find("FALLBACK: Fallback outcome", 1, true),
+        "Nexus fallback action drifted from its fallback candidate.")
+
+    local compactGap = KWR.CommandReview:CompactResponsePackage({
+        qualified = true, recovery = { criticalGap = "Farm", releaseTarget = "Lumber Mill", urgent = true },
+    })
+    assert(compactGap.recovery.criticalGap == "Farm" and compactGap.recovery.urgent == true,
+        "Command review compacted away critical coverage-gap evidence.")
+
+    local savedStrategyCache = KWR.Strategist.cache
+    local carrierStrategySnapshot = KWR.Util:Copy(KWR.Store:Get().snapshot)
+    carrierStrategySnapshot.context = {
+        mapKey = "WSG", mapName = "Warsong Gulch", kind = "FLAG", inPvP = true,
+    }
+    carrierStrategySnapshot.score = { friendly = 1, enemy = 1, max = 3 }
+    carrierStrategySnapshot.objectives = {
+        friendlyFlagActive = 1,
+        enemyFlagActive = 1,
+        rows = {
+            { label = "Home", owner = "UNKNOWN", state = "CARRIED", kind = "FLAG" },
+            { label = "Enemy Flag Room", owner = "UNKNOWN", state = "CARRIED", kind = "FLAG" },
+        },
+    }
+    carrierStrategySnapshot.objectives.carriers = {
+        { owner = "FRIENDLY", player = "OurCarrier", objective = "Home", stacks = 2 },
+        { owner = "ENEMY", player = "EnemyCarrier", objective = "Enemy Flag Room", stacks = 4 },
+    }
+    carrierStrategySnapshot.truth = { coreFresh = true, aggressiveCommitAllowed = true }
+    carrierStrategySnapshot.knowledgeStatus = { compositionAuthorized = true }
+    carrierStrategySnapshot.reporter = carrierStrategySnapshot.reporter or {}
+    local carrierStrategy = KWR.Strategist:Evaluate(carrierStrategySnapshot, {
+        urgency = 55, status = "TIE", confidence = "HIGH",
+    })
+    assert(carrierStrategy.recommendationMode == "RETURN_ENEMY_CARRIER"
+        and carrierStrategy.target == "EnemyCarrier"
+        and carrierStrategy.objectiveDecision.target == "EnemyCarrier"
+        and carrierStrategy.nexus.primary.id == "RETURN_ENEMY_CARRIER"
+        and carrierStrategy.nexus.primary.target == "EnemyCarrier",
+        "Live carrier override did not synchronize Nexus, command target, and active-play objective truth.")
+    KWR.Strategist.cache = savedStrategyCache
 end
 
 local result = { passed = 0, failed = 0 }

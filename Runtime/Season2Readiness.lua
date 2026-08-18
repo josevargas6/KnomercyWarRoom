@@ -39,6 +39,9 @@ function Season2Readiness:Build(state)
     local latestPerformance = latest and latest.performance or {}
     local latestStability = latest and latest.commandStability or {}
     local stabilityReady = latest ~= nil
+        and latest.matchComplete == true
+        and latest.partial ~= true
+        and latest.result ~= "INTERRUPTED"
         and (latestPerformance.samples or 0) > 0
         and (latestPerformance.errors or 0) == 0
         and (latestStability.certificationStatus == "READY"

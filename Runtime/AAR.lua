@@ -75,7 +75,8 @@ end
 local function mergeEntity(record, entity)
     local current = displayEntity(entity)
     local source = current.specSource:lower()
-    local authority = source == "inspect" and 400
+    local authority = source == "player_spec" and 500
+        or source == "inspect" and 400
         or source == "scoreboard" and 350
         or source == "live" and 300
         or source == "observed" and 250
@@ -675,6 +676,20 @@ local function objectiveStateSignature(objectives)
     return table.concat(rows, "\31")
 end
 
+local function assignmentStateSignature(assignments)
+    local rows = {}
+    for _, assignment in ipairs(assignments or {}) do
+        rows[#rows + 1] = table.concat({
+            entityKey(assignment, "friendly"),
+            clean(assignment.role, "", 40),
+            clean(assignment.location, "", 48),
+            clean(assignment.status, "", 24),
+        }, "\30")
+    end
+    table.sort(rows)
+    return table.concat(rows, "\31")
+end
+
 function AAR:Record(state)
     if not self.active then self:Start(state) end
     local active = self.active
@@ -695,6 +710,7 @@ function AAR:Record(state)
         evidenceCollectionSignature(snapshot.roster, "friendly"),
         evidenceCollectionSignature(snapshot.enemies, "enemy"),
         objectiveStateSignature(objectives),
+        assignmentStateSignature(state.assignments),
     })
     if active.lastRecordSignature == recordSignature
         and (now - (active.lastRecordAt or 0)) < 5 then
@@ -1164,9 +1180,9 @@ local function sessionType(value)
 end
 
 local function entrySessionType(entry)
-    local context = sessionType(entry and entry.reviewContext)
-    if context ~= "" then return context end
-    return sessionType(entry and entry.feedback and entry.feedback.sessionType)
+    local submitted = sessionType(entry and entry.feedback and entry.feedback.sessionType)
+    if submitted ~= "" then return submitted end
+    return sessionType(entry and entry.reviewContext)
 end
 
 local function sessionInterpretation(value)

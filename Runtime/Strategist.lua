@@ -842,6 +842,48 @@ local function applyEnemyResponsePlanning(snapshot, prediction, result)
     end
 end
 
+local function carrierTarget(carrier, fallback)
+    return KWR.Util:Text(carrier and (carrier.player or carrier.name or carrier.objective),
+        fallback or "the objective carrier", 64)
+end
+
+-- Carrier and emergency-objective truth outrank a generic Nexus candidate.
+-- Keep every command-facing field in one synchronized record so Commander,
+-- the envelope, and active-play stability track the exact same call.
+local function applyObjectiveOverride(result, override)
+    if type(result) ~= "table" or type(override) ~= "table" then return end
+    local previous = KWR.Util:Copy(result.selectedAction or {})
+    local selected = KWR.Util:Copy(previous)
+    selected.id = KWR.Util:Text(override.id, "OBJECTIVE_OVERRIDE", 48)
+    selected.target = KWR.Util:Text(override.target or result.target,
+        "the live objective", 64)
+    selected.outcome = KWR.Util:Text(override.outcome or override.reason,
+        "Live objective truth requires this action.", 180)
+    selected.success = KWR.Util:Text(override.success, selected.success or "Objective stabilizes.", 160)
+    selected.abort = KWR.Util:Text(override.abort, selected.abort or "Carrier or objective state changes.", 160)
+    selected.override = "LIVE_OBJECTIVE_TRUTH"
+    result.selectedAction = selected
+    result.action = KWR.Util:Text(override.action, result.action, 220)
+    result.reason = KWR.Util:Text(override.reason, result.reason, 220)
+    result.switchIf = KWR.Util:Text(override.switchIf, result.switchIf, 180)
+    result.stop = KWR.Util:Text(override.abort, result.stop, 180)
+    result.target = selected.target
+    result.expectedOutcome = selected.outcome
+    result.recommendationMode = selected.id
+    result.enemyResponsePlan = nil
+    result.enemyResponseID = nil
+    result.enemyResponseSummary = nil
+    result.consequenceScore = 0
+    if previous.id and previous.id ~= selected.id then
+        result.nexusFallbackCandidate = previous
+    end
+    result.objectiveDecision = type(result.objectiveDecision) == "table"
+        and KWR.Util:Copy(result.objectiveDecision) or {}
+    result.objectiveDecision.target = selected.target
+    result.objectiveDecision.success = selected.success
+    result.objectiveDecision.abort = selected.abort
+end
+
 function Strategist:Evaluate(snapshot, prediction)
     local signature = decisionSignature(snapshot, prediction)
     local now = KWR.Util:Now()
@@ -1153,14 +1195,24 @@ function Strategist:Evaluate(snapshot, prediction)
         if friendlyCarrier and enemyCarrier then
             local enemyStacks = enemyCarrier.stacks or 0
             if enemyStacks < 3 then
-                result.action = "Stabilize our flag carrier, regroup offense, and deny trickle deaths."
-                result.reason = "Both flags are held; coordinated offense becomes more actionable as carrier pressure rises."
-                result.switchIf = "Push the grouped return when enemy carrier stacks or exposed defenses create a real kill window."
-                result.stop = "Do not trickle into a healthy, fully supported low-stack carrier."
+                applyObjectiveOverride(result, {
+                    id = "STABILIZE_FRIENDLY_CARRIER",
+                    target = carrierTarget(friendlyCarrier, "our flag carrier"),
+                    action = "Stabilize our flag carrier, regroup offense, and deny trickle deaths.",
+                    reason = "Both flags are held; coordinated offense becomes more actionable as carrier pressure rises.",
+                    switchIf = "Push the grouped return when enemy carrier stacks or exposed defenses create a real kill window.",
+                    success = "Our carrier is stabilized and the return group is assembled.",
+                    abort = "Do not trickle into a healthy, fully supported low-stack carrier.",
+                })
             else
-                result.action = "Push one grouped return team onto the stacked enemy flag carrier while preserving our carrier peel."
-                result.reason = "Enemy carrier pressure is now actionable; synchronize healer control and burst."
-                result.stop = "Do not send isolated players ahead of the return group."
+                applyObjectiveOverride(result, {
+                    id = "RETURN_ENEMY_CARRIER",
+                    target = carrierTarget(enemyCarrier, "the enemy flag carrier"),
+                    action = "Push one grouped return team onto the stacked enemy flag carrier while preserving our carrier peel.",
+                    reason = "Enemy carrier pressure is now actionable; synchronize healer control and burst.",
+                    success = "The enemy carrier is returned or their escort is broken.",
+                    abort = "Do not send isolated players ahead of the return group.",
+                })
             end
         end
     elseif snapshot.context.kind == "ORB" then
@@ -1170,9 +1222,16 @@ function Strategist:Evaluate(snapshot, prediction)
                 and carrier.healthPercent <= 35 then endangered = carrier break end
         end
         if endangered then
-            result.action = "Prepare a replacement at " .. endangered.objective
-                .. " and peel the current carrier toward supported scoring space."
-            result.reason = "A low-health orb carrier needs an intentional handoff or immediate peel, not an unplanned loss."
+            applyObjectiveOverride(result, {
+                id = "RELIEVE_FRIENDLY_ORB_CARRIER",
+                target = carrierTarget(endangered, endangered.objective or "the orb carrier"),
+                action = "Prepare a replacement at " .. KWR.Util:Text(endangered.objective,
+                    "the scoring point", 64)
+                    .. " and peel the current carrier toward supported scoring space.",
+                reason = "A low-health orb carrier needs an intentional handoff or immediate peel, not an unplanned loss.",
+                success = "The carrier reaches support or the replacement secures the handoff.",
+                abort = "Do not abandon the current carrier before relief arrives.",
+            })
         end
     end
     local truth = snapshot.truth or {}

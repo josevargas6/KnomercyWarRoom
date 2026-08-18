@@ -158,7 +158,9 @@ local DEFAULTS = {
             enabled = true,
             autoOpen = true,
         },
-        sentinelTransportEnabled = true,
+        -- Cross-client relay is opt-in with the Sentinel companion. Field
+        -- mode enables the complete reviewed bridge explicitly.
+        sentinelTransportEnabled = false,
         guidanceMode = "COMMAND",
         fieldReviewContext = "Diagnostic",
     },

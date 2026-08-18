@@ -96,6 +96,11 @@ function CommandReview:CompactResponsePackage(response)
         moverText = clean(response.moverText, "Team", 100),
         stayerText = clean(response.stayerText, "Assigned defenders", 100),
         qualified = response.qualified == true,
+        recovery = {
+            criticalGap = clean(response.recovery and response.recovery.criticalGap, "", 48),
+            releaseTarget = clean(response.recovery and response.recovery.releaseTarget, "", 48),
+            urgent = response.recovery and response.recovery.urgent == true or false,
+        },
     }
 end
 

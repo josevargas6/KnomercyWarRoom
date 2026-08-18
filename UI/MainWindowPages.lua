@@ -4,9 +4,9 @@ local MainWindowPages = {}
 KWR.MainWindowPages = MainWindowPages
 
 local function aarSessionContext(entry)
-    local value = KWR.Util:Text(entry and entry.reviewContext, "", 24)
+    local value = KWR.Util:Text(entry and entry.feedback and entry.feedback.sessionType, "", 24)
     if value == "" then
-        value = KWR.Util:Text(entry and entry.feedback and entry.feedback.sessionType, "", 24)
+        value = KWR.Util:Text(entry and entry.reviewContext, "", 24)
     end
     return value
 end
@@ -157,6 +157,18 @@ local function formationCompLabel(comp, fallback)
     -- in every list and card hides the actual composition name.
     if comp.metaStatus == "ADVISORY_PRE_LIVE" then return name end
     return tier ~= "" and (tier .. " " .. name) or name
+end
+
+local function formationMatchupText(value, fallback)
+    if type(value) == "table" then
+        local rows = {}
+        for _, item in ipairs(value) do
+            local text = KWR.Util:Text(item, "", 80)
+            if text ~= "" then rows[#rows + 1] = text end
+        end
+        value = table.concat(rows, ", ")
+    end
+    return KWR.Util:Text(value, fallback, 180)
 end
 
 local function formationNeedSummary(formation)
@@ -371,16 +383,22 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             recruitLines[#recruitLines + 1] = "Roster roles are complete."
         end
         local briefComp = buildTarget or currentComp or formation.archetype or {}
+        local archetype = formation.archetype or {}
         local positionLines = {
             "|cffffd05aPLAYSTYLE|r",
             KWR.Util:Text(briefComp.win or briefComp.description,
                 "Flexible objective pressure.", 180),
             "",
-            "|cff49dd49STRONG INTO|r " .. KWR.Util:Text(briefComp.favorable or briefComp.counter,
-                "Confirm the enemy composition before committing.", 180),
+            "|cff49dd49FAVORS|r " .. formationMatchupText(
+                briefComp.favorable or archetype.favorable,
+                "Use the listed plan roles to create a clean objective edge."),
             "",
-            "|cffff6a6aWEAK INTO|r " .. KWR.Util:Text(briefComp.counter,
-                "Avoid unsupported commits and protect objective coverage.", 180),
+            "|cffff6a6aVULNERABLE TO|r " .. formationMatchupText(
+                briefComp.vulnerable or archetype.vulnerable or briefComp.counter,
+                "Avoid unsupported commits and protect objective coverage."),
+            "",
+            "|cff4f8cffCOUNTERPLAY|r " .. formationMatchupText(briefComp.counter,
+                "Confirm the enemy composition before committing."),
         }
         page.battlefieldCard.formation.title:SetText(targetLabel)
         page.battlefieldCard.formation.summary:SetText((formation.players or 0) .. " / "
@@ -410,9 +428,13 @@ function MainWindowPages:RenderTactical(page, state, helpers)
     if formationMode then
         local planComp = formation.buildTarget or formationTier or formation.archetype or {}
         local planName = formationCompLabel(planComp, "Balanced Team Fight")
+        local planArchetype = formation.archetype or {}
         page.winCard.value:SetText("|cffffd05aSELECTED|r " .. planName
-            .. "\n|cff4f8cffBEST AGAINST|r " .. KWR.Util:Text(planComp.favorable or planComp.counter,
-                "Confirm the enemy composition before committing.", 180))
+            .. "\n|cff49dd49FAVORS|r " .. formationMatchupText(
+                planComp.favorable or planArchetype.favorable,
+                "Use the selected plan's strengths on the current objective.")
+            .. "\n|cffff6a6aCOUNTERPLAY|r " .. formationMatchupText(planComp.counter,
+                "Confirm the enemy composition before committing."))
     else
         page.winCard.value:SetText((teamfight and teamfight.displayEligible == true
                 and KWR.Util:Text(teamfight.summary,

@@ -81,7 +81,9 @@ local DEFAULTS = {
         transport = {
             -- Field mode enables the bounded team relay. It carries only
             -- validated Commander/Sentinel observations and expires quickly.
-            enabled = true,
+            -- It remains opt-in until a player explicitly activates Field
+            -- mode, so a clean install never sends group addon traffic.
+            enabled = false,
         },
         loadMessage = true,
     },

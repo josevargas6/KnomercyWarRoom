@@ -32,6 +32,16 @@
 - Added explicit Diagnostic/Commander/Spectator AAR context and unavailable
   player states; corrected opponent session counting so re-entry does not
   inflate profile samples.
+- Corrected final review-path edge cases: command replacement now preserves an
+  urgent coverage gap, repeat opponents count across separate same-map matches,
+  direct player specialization outranks stale scoreboard data, assignment swaps
+  cannot disappear from AAR sampling, and interrupted AARs cannot satisfy the
+  stability checklist.
+- Unified Nexus and live carrier execution metadata so the issued action,
+  target, envelope, fallback, and active-play evidence cannot describe
+  different objectives. Formation wording now separates favorable situations,
+  vulnerabilities, and practical counterplay; Sentinel relay traffic is opt-in
+  until Field mode is explicitly activated.
 - Synchronized the embedded Sentinel companion for the candidate release.
 
 ## 6.1.1-alpha.3 - 2026-08-17

@@ -44,13 +44,13 @@ Package evidence:
 - TOC basename matches parent folder.
 - Interface numbers: `120100`, `120007`
 - Package audit: passed by the certified build gate.
-- Certified ZIP hash: use the generated `KWR_6_1_1_ALPHA_3_SHA256.txt`
+- Certified ZIP hash: use the generated version-derived `KWR_<VERSION>_SHA256.txt`
   manifest next to the built artifact. Rebuild the package before final upload
   if the source changes.
 
 Do not upload:
 
-- `KWR_6_1_1_ALPHA_3_DEVELOPER.zip`
+- `KWR_<VERSION>_DEVELOPER.zip`
 - `KWRSentinel_*.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
