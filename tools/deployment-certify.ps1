@@ -58,7 +58,6 @@ function Assert-DeploymentReceipt {
         $receipt.after.installedDigest -cne $ExpectedDigest) {
         throw "$Label deployment receipt is not bound to the exact package digest."
     }
-    return $receipt
 }
 
 $status = @(& git status --porcelain)
@@ -102,10 +101,16 @@ $sentinelReceiptPath = Resolve-InputFile -Path $SentinelReceipt -Label 'Sentinel
 $manifest = Get-Content -LiteralPath $sourceManifestPath -Raw | ConvertFrom-Json
 $commanderDigest = [string]$manifest.distribution.digest
 $sentinelDigest = [string]$manifest.sentinel.digest
-$commanderReceipt = Assert-DeploymentReceipt -ReceiptPath $commanderReceiptPath -Label 'Commander' `
+Assert-DeploymentReceipt -ReceiptPath $commanderReceiptPath -Label 'Commander' `
     -ExpectedDigest $commanderDigest
-$sentinelReceipt = Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
+Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
     -ExpectedDigest $sentinelDigest
+
+# Read the receipts afresh for the evidence record after their path-bound
+# validation has succeeded. This keeps nested counts intact in Windows
+# PowerShell rather than relying on a function's object return pipeline.
+$commanderReceipt = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
+$sentinelReceipt = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
 
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tools\test-retail-savedvariables-audit.ps1')
 if ($LASTEXITCODE -ne 0) {
