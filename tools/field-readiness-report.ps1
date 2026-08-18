@@ -27,19 +27,40 @@ $offlineGatePassed = $packageReport -and
     $packageReport.candidateVersion -eq $version -and
     $packageReport.packageAudit.result -eq "PASS" -and
     $packageReport.environmentCertification.packageAuditInThisWorkspace -eq "CERTIFIED_IN_WORKSPACE"
-$captureMatrixPath = Join-Path $root "docs\CANDIDATE_FIELD_CAPTURE_MATRIX_2026-07-29.md"
-$captureMatrix = if (Test-Path -LiteralPath $captureMatrixPath) {
-    Get-Content -LiteralPath $captureMatrixPath -Raw
+$retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
+$retailCertification = if (Test-Path -LiteralPath $retailCertificationPath) {
+    Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
 } else {
-    ""
+    $null
 }
-$evidenceBaselineMatch = [regex]::Match($captureMatrix, '(?m)^Candidate:\s*(.+)$')
-$evidenceBaselineRaw = $evidenceBaselineMatch.Groups[1].Value.Trim()
-# The capture matrix is human-readable Markdown, but downstream automation
-# needs only the semantic candidate version—not delimiters or revision notes.
-$evidenceBaseline = [regex]::Match($evidenceBaselineRaw, '^`?([^`\s(]+)').Groups[1].Value.Trim()
-if ([string]::IsNullOrWhiteSpace($evidenceBaseline)) {
+
+# The capture matrix states what we intend to test. It is never evidence. The
+# promotion feed instead reports the newest actual SavedVariables capture and
+# only treats the target build as current when that capture is bound to it.
+$candidateEvidenceBound = $retailCertification -and
+    $retailCertification.binding.status -eq "BOUND" -and
+    [string]$retailCertification.candidateVersion -eq $version -and
+    [int]$retailCertification.source.candidateMatchCount -gt 0 -and
+    [int]$retailCertification.summary.completedMatches -gt 0
+$historicalCaptures = if ($retailCertification) {
+    @($retailCertification.matches | Where-Object {
+        -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion)
+    } | Sort-Object { [long]$_.endedAt } -Descending)
+} else {
+    @()
+}
+$latestCapture = @($historicalCaptures | Select-Object -First 1)
+$evidenceBaseline = "none"
+$evidenceBinding = "MISSING"
+$evidenceCapturedAt = $null
+if ($candidateEvidenceBound) {
     $evidenceBaseline = $version
+    $evidenceBinding = "CANDIDATE_BOUND"
+    $evidenceCapturedAt = [string]$retailCertification.generatedAt
+} elseif ($latestCapture.Count -gt 0) {
+    $evidenceBaseline = [string]$latestCapture[0].addonVersion
+    $evidenceBinding = "HISTORICAL_UNBOUND"
+    $evidenceCapturedAt = [string]$latestCapture[0].endedAt
 }
 $runtimeAvailable = $runtimePreflight `
     -and $runtimePreflight.packageAuditReady
@@ -79,6 +100,8 @@ $report = [ordered]@{
         version = $version
         build = $version
         evidenceBaseline = $evidenceBaseline
+        evidenceBinding = $evidenceBinding
+        evidenceCapturedAt = $evidenceCapturedAt
         date = [DateTime]::UtcNow.ToString("yyyy-MM-dd")
     }
     offlineStatus = [ordered]@{

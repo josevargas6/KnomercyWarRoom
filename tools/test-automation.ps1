@@ -234,12 +234,45 @@ $addonVersion = ((Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc
 Assert-True `
     -Condition ($dailyDryRun -match ('Build:\s+' + [regex]::Escape($addonVersion))) `
     -Message "Daily update does not use the current addon manifest version."
-$captureMatrix = Get-Content -LiteralPath (Join-Path $root "docs\CANDIDATE_FIELD_CAPTURE_MATRIX_2026-07-29.md") -Raw
-$baselineMatch = [regex]::Match($captureMatrix, '(?m)^Candidate:\s*`?([^`\s(]+)')
-$expectedEvidenceBaseline = $baselineMatch.Groups[1].Value.Trim()
+$readiness = Get-Content -LiteralPath (Join-Path $root "knowledge\field-test-readiness.json") -Raw | ConvertFrom-Json
+$retailCertification = Get-Content -LiteralPath (Join-Path $root "knowledge\retail-field-certification.json") -Raw | ConvertFrom-Json
+$candidateEvidenceBound =
+    $retailCertification.binding.status -eq "BOUND" -and
+    [string]$retailCertification.candidateVersion -eq $addonVersion -and
+    [int]$retailCertification.source.candidateMatchCount -gt 0 -and
+    [int]$retailCertification.summary.completedMatches -gt 0
+$latestHistoricalCapture = @($retailCertification.matches | Where-Object {
+    -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion)
+} | Sort-Object { [long]$_.endedAt } -Descending | Select-Object -First 1)
+$expectedEvidenceBaseline = if ($candidateEvidenceBound) {
+    $addonVersion
+} elseif ($latestHistoricalCapture.Count -gt 0) {
+    [string]$latestHistoricalCapture[0].addonVersion
+} else {
+    "none"
+}
 Assert-True `
     -Condition (-not [string]::IsNullOrWhiteSpace($expectedEvidenceBaseline)) `
-    -Message "Candidate capture matrix does not declare a machine-readable evidence baseline."
+    -Message "Field-evidence baseline is not machine-readable."
+Assert-True `
+    -Condition ($readiness.candidate.evidenceBaseline -eq $expectedEvidenceBaseline) `
+    -Message "Readiness report does not derive its baseline from captured Retail evidence."
+if ($candidateEvidenceBound) {
+    Assert-True `
+        -Condition ($readiness.candidate.evidenceBinding -eq "CANDIDATE_BOUND") `
+        -Message "Candidate-bound field evidence is not labelled as candidate-bound."
+} elseif ($latestHistoricalCapture.Count -gt 0) {
+    Assert-True `
+        -Condition ($readiness.candidate.evidenceBinding -eq "HISTORICAL_UNBOUND") `
+        -Message "Unbound field evidence is not labelled as historical."
+    Assert-True `
+        -Condition ($readiness.candidate.evidenceBaseline -ne $addonVersion) `
+        -Message "An unbound candidate must not be presented as fresh field evidence."
+} else {
+    Assert-True `
+        -Condition ($readiness.candidate.evidenceBinding -eq "MISSING") `
+        -Message "Missing field evidence is not labelled as missing."
+}
 if ($expectedEvidenceBaseline -eq $addonVersion) {
     Assert-True `
         -Condition ($dailyDryRun -notmatch 'Evidence baseline:') `
