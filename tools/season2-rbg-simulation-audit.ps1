@@ -21,33 +21,51 @@ if ($corpus.schema -ne "kwr-season2-rbg-simulation-corpus" -or $corpus.status -n
 if ($corpus.activation -ne "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION") {
     $errors.Add("Season 2 simulation corpus must activate theory branches without claiming empirical outcomes.")
 }
-if ([int]$corpus.totalCases -ne 5000 -or @($corpus.cases).Count -ne 5000) {
-    $errors.Add("Season 2 simulation corpus must contain exactly 5,000 cases.")
+ $completeMatrix = $corpus.coverageMode -eq 'COMPLETE_CARTESIAN'
+if ([int]$corpus.totalCases -ne 100000 -or ((-not $completeMatrix) -and @($corpus.cases).Count -ne 100000)) {
+    $errors.Add("Season 2 simulation corpus must contain exactly 100,000 cases.")
 }
 foreach ($field in @($schema.required)) {
     if ($null -eq $corpus.PSObject.Properties[$field]) {
         $errors.Add("Season 2 simulation corpus missing required field: $field")
     }
 }
-if ([int]$corpus.generatorVersion -lt 2) {
-    $errors.Add("Season 2 simulation corpus must use generatorVersion 2 or later.")
+if ([int]$corpus.generatorVersion -lt 3) {
+    $errors.Add("Season 2 simulation corpus must use generatorVersion 3 or later.")
 }
-$ids = @($corpus.cases | ForEach-Object caseId)
-if (@($ids | Select-Object -Unique).Count -ne $ids.Count) { $errors.Add("Simulation case IDs are not unique.") }
-$canonicalKeys = @($corpus.cases | ForEach-Object canonicalKey)
-if (@($canonicalKeys | Select-Object -Unique).Count -ne $canonicalKeys.Count) { $errors.Add("Simulation canonical keys are not unique.") }
-$contentHashes = @($corpus.cases | ForEach-Object contentHash)
-if (@($contentHashes | Select-Object -Unique).Count -ne $contentHashes.Count) { $errors.Add("Simulation content hashes are not unique.") }
-$maps = @($corpus.cases | Group-Object mapKey)
+if ([int]$corpus.schemaVersion -lt 2) {
+    $errors.Add("Season 2 simulation corpus must use schemaVersion 2 or later for complete Cartesian coverage.")
+}
+$cases = if ($corpus.cases) { @($corpus.cases) } else { @() }
+if (-not $completeMatrix) {
+    $ids = @($cases | ForEach-Object caseId)
+    if (@($ids | Select-Object -Unique).Count -ne $ids.Count) { $errors.Add("Simulation case IDs are not unique.") }
+    $canonicalKeys = @($cases | ForEach-Object canonicalKey)
+    if (@($canonicalKeys | Select-Object -Unique).Count -ne $canonicalKeys.Count) { $errors.Add("Simulation canonical keys are not unique.") }
+    $contentHashes = @($cases | ForEach-Object contentHash)
+    if (@($contentHashes | Select-Object -Unique).Count -ne $contentHashes.Count) { $errors.Add("Simulation content hashes are not unique.") }
+}
+$maps = if ($completeMatrix) { @($corpus.matrix.maps) } else { @($cases | Group-Object mapKey) }
 if ($maps.Count -ne 10) { $errors.Add("Simulation corpus must cover exactly ten maps.") }
 foreach ($map in $maps) {
-    if ($map.Count -ne 500) { $errors.Add("$($map.Name) must contain 500 cases; found $($map.Count).") }
+    $mapName = if ($completeMatrix) { $map.mapKey } else { $map.Name }
+    $mapCount = if ($completeMatrix) { [int]$corpus.casesPerMap } else { $map.Count }
+    if ($mapCount -ne 10000) { $errors.Add("$mapName must contain 10,000 cases; found $mapCount.") }
     foreach ($phase in @("OPENING", "STABILIZE", "PRESSURE", "RECOVERY", "ENDGAME")) {
-        $count = @($map.Group | Where-Object phase -eq $phase).Count
-        if ($count -ne 100) { $errors.Add("$($map.Name) $phase must contain 100 cases; found $count.") }
+        $count = if ($completeMatrix) { [int]$corpus.casesPerPhasePerMap } else { @($map.Group | Where-Object phase -eq $phase).Count }
+        if ($count -ne 2000) { $errors.Add("$mapName $phase must contain 2,000 cases; found $count.") }
     }
 }
-foreach ($case in @($corpus.cases)) {
+if ($completeMatrix) {
+    $product = @($corpus.matrix.compWatches).Count * @($corpus.matrix.scoreStates).Count *
+        @($corpus.matrix.counterResponses).Count * @($corpus.matrix.evidenceStates).Count
+    foreach ($phase in @('OPENING', 'STABILIZE', 'PRESSURE', 'RECOVERY', 'ENDGAME')) {
+        if ((@($corpus.matrix.families.$phase).Count * $product) -ne 2000) {
+            $errors.Add("Complete matrix does not cover all exact $phase tactical branches.")
+        }
+    }
+}
+foreach ($case in $cases) {
     foreach ($field in @($schema.caseRequired)) {
         if ($null -eq $case.PSObject.Properties[$field]) {
             $errors.Add("Simulation case $($case.caseId) missing required field: $field")
@@ -71,4 +89,4 @@ foreach ($case in @($corpus.cases)) {
     }
 }
 if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_ -ErrorAction Continue }; exit 1 }
-Write-Output "KWR Season 2 simulation audit PASS cases=5000 maps=10 phases=5"
+Write-Output "KWR Season 2 simulation audit PASS cases=100000 maps=10 phases=5 exactBranches=2000"

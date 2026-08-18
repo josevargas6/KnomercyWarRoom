@@ -1555,7 +1555,7 @@ assert(KWR.ScenarioAdversarialCalibration:Count() == 200,
     "Scenario adversarial calibration did not expose one fail-closed row per current base RBG scenario.")
 assert(KWR.ScenarioExpertCorpus:Count() == 1200,
     "Scenario expert corpus did not expose the current reviewed and season-prep scenario set.")
-assert(KWR.StrategistNexusCorpus:Count() == 5000
+assert(KWR.StrategistNexusCorpus:Count() == 100000
     and KWR.StrategistNexusCorpus:Status() == "SIMULATION_ONLY"
     and KWR.StrategistNexusCorpus:Activation()
         == "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
@@ -1579,9 +1579,9 @@ do
         for _, phase in ipairs(phases) do
             local coverage = KWR.StrategistNexusCorpus:Coverage(mapKey, phase, {})
             assert(coverage.available == true
-                and coverage.phaseCases == 100
-                and coverage.mapCases == 500
-                and coverage.totalCases == 5000,
+                and coverage.phaseCases == 2000
+                and coverage.mapCases == 10000
+                and coverage.totalCases == 100000,
                 "Strategist Nexus coverage drifted for " .. mapKey .. " / " .. phase)
             local knowledge = KWR.StrategistNexusKnowledge:Coverage(mapKey, phase)
             assert(knowledge.available == true
@@ -1602,15 +1602,14 @@ do
     })
     assert(branch.available == true and branch.exactCases == 1,
         "Strategist Nexus did not retrieve exact branch coverage.")
-    local absentBranch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
+    local incompleteBranch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
         family = "scout-confirm",
         compWatch = "HUNTER_DK_PRESSURE",
         scoreState = "SAFE_DEFAULT",
         counterResponse = "EXPECTED",
-        evidenceState = "UNKNOWN",
     })
-    assert(absentBranch.available == false and absentBranch.exactCases == 0,
-        "Strategist Nexus treated marginal coverage as an exact branch match.")
+    assert(incompleteBranch.available == false and incompleteBranch.exactCases == 0,
+        "Strategist Nexus treated an incomplete query as exact branch coverage.")
 end
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
@@ -1646,7 +1645,7 @@ assert(type(liveStrategy.nexus) == "table"
     and type(liveStrategy.nexus.primary) == "table"
     and type(liveStrategy.nexus.fallback) == "table"
     and type(liveStrategy.nexus.enemyResponse) == "table"
-    and liveStrategy.nexus.provenance.totalSimulationCases == 5000
+    and liveStrategy.nexus.provenance.totalSimulationCases == 100000
     and liveStrategy.nexus.provenance.sourceStatus == "PRODUCTION_ACTIVE"
     and liveStrategy.nexus.provenance.activation == "IMMEDIATE_THEORY_FIRST"
     and liveStrategy.nexus.provenance.simulationStatus == "SIMULATION_ONLY"
