@@ -1,44 +1,44 @@
 {
   "schema": "kwr-candidate-package-report",
   "schemaVersion": 1,
-  "generatedAt": "2026-08-18T09:18:29Z",
+  "generatedAt": "2026-08-18T09:48:54Z",
   "candidateVersion": "6.1.1-alpha.4",
   "buildOutputDirectory": "artifacts/candidate-package/alpha4",
   "distributionArtifact": {
     "name": "KnomercyWarRoom-6.1.1-alpha.4.zip",
     "path": "artifacts/candidate-package/alpha4/KnomercyWarRoom-6.1.1-alpha.4.zip",
-    "size": 953047,
-    "sha256": "B340AD78F6BDE0722A8799385F2EA0366B61E79D8A571B03806FD6C0BD5D06AD"
+    "size": 953467,
+    "sha256": "8A40A3DF5E525783C93DE7656DF90A37A0EA2632617D3EE76334058B2C1D4E3C"
   },
   "developerArtifact": {
     "name": "KWR_6_1_1_ALPHA_4_DEVELOPER.zip",
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_DEVELOPER.zip",
-    "size": 15856554,
-    "sha256": "18C17680E9F9A5FBEE65D119888C15776FF27FE547F21A50998C458B846A7F46"
+    "size": 15857152,
+    "sha256": "31694AC0DECDBB8DDE61DA84B5BA9B0FBD3BE344E80FAC4A9337890120D6B44E"
   },
   "hashManifest": {
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_SHA256.txt",
     "lines": [
-      "B340AD78F6BDE0722A8799385F2EA0366B61E79D8A571B03806FD6C0BD5D06AD  KnomercyWarRoom-6.1.1-alpha.4.zip",
-      "B8A2C0C6AC1C37EBB118B8282A515E580DD03176A5E24D097EAB476A03DA11D9  KWR-Sentinel-6.1.1-alpha.4.zip"
+      "8A40A3DF5E525783C93DE7656DF90A37A0EA2632617D3EE76334058B2C1D4E3C  KnomercyWarRoom-6.1.1-alpha.4.zip",
+      "BACF61DB46F91998D09F6670C99B732288B1B4CB9DE6CF29D6AB82E9B8399E12  KWR-Sentinel-6.1.1-alpha.4.zip"
     ]
   },
   "developerHashManifest": {
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_DEVELOPER_CHECKSUM.txt",
     "lines": [
-      "18C17680E9F9A5FBEE65D119888C15776FF27FE547F21A50998C458B846A7F46  KWR_6_1_1_ALPHA_4_DEVELOPER.zip"
+      "31694AC0DECDBB8DDE61DA84B5BA9B0FBD3BE344E80FAC4A9337890120D6B44E  KWR_6_1_1_ALPHA_4_DEVELOPER.zip"
     ]
   },
   "sourceManifest": {
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
-    "distributionDigest": "539323A847D580255A632B13FEAB93854C4E720E33A2BE77481BA4B96037D3AA",
+    "distributionDigest": "9334754E9238C59A39B5E2DA18D2FA2DF7C6D14021C2A8DE79502E2A696B84AD",
     "distributionEntryCount": 397,
-    "developerDigest": "E9BE9991B6ED6A2615CDB589629686E84ACF227531E58F0A641E04DD3E5CCFE0",
+    "developerDigest": "39FED577819C4C4925E71D23471C567EB28C32AC25DA3FA653785D1B964439F1",
     "developerEntryCount": 8961
   },
   "buildProvenance": {
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_BUILD_PROVENANCE.json",
-    "builtAtUtc": "2026-08-18T09:06:08.3501559Z",
+    "builtAtUtc": "2026-08-18T09:42:32.2318775Z",
     "sentinelIncluded": true,
     "powershellEdition": "Core",
     "powershellVersion": "7.6.4",
@@ -59,7 +59,7 @@
   },
   "packageAudit": {
     "path": "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_PACKAGE_AUDIT.json",
-    "auditedAtUtc": "2026-08-18T09:15:43.7842146Z",
+    "auditedAtUtc": "2026-08-18T09:47:26.6627179Z",
     "result": "PASS",
     "hashesVerified": 3,
     "distributionEntries": 397,
@@ -89,7 +89,7 @@
   },
   "fieldEvidenceBinding": {
     "candidateVersion": "6.1.1-alpha.4",
-    "distributionSha256": "B340AD78F6BDE0722A8799385F2EA0366B61E79D8A571B03806FD6C0BD5D06AD",
+    "distributionSha256": "8A40A3DF5E525783C93DE7656DF90A37A0EA2632617D3EE76334058B2C1D4E3C",
     "evidenceScope": "candidate",
     "canonicalArtifact": "KnomercyWarRoom-6.1.1-alpha.4.zip",
     "requiredProof": [
