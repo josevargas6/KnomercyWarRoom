@@ -234,6 +234,14 @@ $addonVersion = ((Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc
 Assert-True `
     -Condition ($dailyDryRun -match ('Build:\s+' + [regex]::Escape($addonVersion))) `
     -Message "Daily update does not use the current addon manifest version."
+foreach ($staleOperationalReference in @('Alpha 36', 'PR #30', 'KWR-047 disposition')) {
+    Assert-True `
+        -Condition ($dailyDryRun -notmatch [regex]::Escape($staleOperationalReference)) `
+        -Message "Daily update contains a stale operational reference: $staleOperationalReference"
+}
+Assert-True `
+    -Condition ($dailyDryRun -match 'PR #51') `
+    -Message "Daily update does not identify the active provenance PR."
 $readiness = Get-Content -LiteralPath (Join-Path $root "knowledge\field-test-readiness.json") -Raw | ConvertFrom-Json
 $retailCertification = Get-Content -LiteralPath (Join-Path $root "knowledge\retail-field-certification.json") -Raw | ConvertFrom-Json
 $candidateEvidenceBound =
