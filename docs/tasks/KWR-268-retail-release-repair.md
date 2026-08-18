@@ -99,9 +99,15 @@ and incomplete/misleading review presentation.
 - [x] Sentinel relay traffic is opt-in on a clean install; explicit Field mode
   remains a complete, functional activation path and is still covered by the
   deterministic transport suite.
-- [ ] Build, extracted-package audit, exact Retail installation, remote CI and
-  review, merge/tag/publication, and final-hash live RBG evidence remain
-  release gates. They must not be substituted with source-only tests.
+- [x] The exact Commander and Sentinel archives were rebuilt twice with binary
+  reproducibility, extracted-package audit, and a clean Retail installation.
+  The deployed package is bound to commit `6756f01`, Commander SHA-256
+  `5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047`,
+  and Sentinel SHA-256
+  `8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`.
+- [ ] Remote CI/review closure, merge/tag/publication, and final-hash live RBG
+  evidence remain release gates. They must not be substituted with source-only
+  tests or historical, unbound field evidence.
 
 # Verification
 

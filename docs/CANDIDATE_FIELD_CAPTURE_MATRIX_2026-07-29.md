@@ -1,6 +1,16 @@
 # Candidate Field Capture Matrix
 
-Candidate: `6.1.0-alpha.29`
+Candidate: `6.1.1-alpha.4` (`6756f01`)
+
+Installed Commander archive SHA-256:
+`5567BFD185268B068B1F2301805F8DEDBD7D80E32FF2B325047`
+
+Installed Sentinel archive SHA-256:
+`8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`
+
+Only evidence captured against these exact installed hashes may clear the
+sessions below. Existing historical Alpha36/Alpha43 evidence remains useful
+for diagnosis, but cannot certify this candidate.
 
 This is the fastest path to useful live evidence.
 

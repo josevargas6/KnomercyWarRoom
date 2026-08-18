@@ -27,11 +27,11 @@ unsupported promotion claims.
 # Current behavior
 
 The read-only exporter and candidate-bound audit inspect Retail AAR records and
-generate `knowledge/retail-field-certification.json`. Historical Alpha36 rows
-are correctly reported as unbound to Alpha37. The task remains in progress
-until Alpha41 is deployed and a fresh candidate-bound Retail session is
-captured; implementation acceptance is complete, but field certification is
-not.
+generate `knowledge/retail-field-certification.json`. Historical rows are
+correctly reported as unbound to the currently deployed candidate. The task
+remains in progress until `6.1.1-alpha.4` commit `6756f01` has fresh,
+candidate-bound Retail sessions; implementation acceptance is complete, but
+field certification is not.
 
 # Required behavior
 
