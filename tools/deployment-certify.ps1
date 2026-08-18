@@ -39,22 +39,23 @@ function Get-RelativeEvidencePath {
 }
 
 function Assert-DeploymentReceipt {
-    param([object]$Receipt, [string]$Label, [string]$ExpectedDigest)
+    param([string]$ReceiptPath, [string]$Label, [string]$ExpectedDigest)
 
-    # JSON conversion differs subtly between Windows PowerShell hosts. Normalize
-    # the two scalar gate values before comparing them so a valid true boolean
-    # cannot be rejected solely by the host's property coercion behavior.
-    $receiptResult = [string]$Receipt.result
-    $wasSynchronized = [Convert]::ToBoolean($Receipt.synchronized)
+    # Parse the evidence at its explicit path here rather than passing a
+    # deserialized object through a PowerShell function boundary. Windows
+    # PowerShell can otherwise bind that object as an empty PSCustomObject.
+    $receipt = Get-Content -LiteralPath $ReceiptPath -Raw | ConvertFrom-Json
+    $receiptResult = [string]$receipt.result
+    $wasSynchronized = [Convert]::ToBoolean($receipt.synchronized)
     if ($receiptResult -ne 'PASS' -or -not $wasSynchronized) {
         throw "$Label deployment receipt did not record a successful synchronization (result=$receiptResult; synchronized=$wasSynchronized)."
     }
-    if ($Receipt.after.missing.Count -ne 0 -or $Receipt.after.changed.Count -ne 0 -or
-        $Receipt.after.extra.Count -ne 0) {
+    if ($receipt.after.missing.Count -ne 0 -or $receipt.after.changed.Count -ne 0 -or
+        $receipt.after.extra.Count -ne 0) {
         throw "$Label deployment receipt contains unresolved manifest differences."
     }
-    if ($Receipt.after.packageDigest -cne $ExpectedDigest -or
-        $Receipt.after.installedDigest -cne $ExpectedDigest) {
+    if ($receipt.after.packageDigest -cne $ExpectedDigest -or
+        $receipt.after.installedDigest -cne $ExpectedDigest) {
         throw "$Label deployment receipt is not bound to the exact package digest."
     }
 }
@@ -95,12 +96,15 @@ $commanderReceiptPath = Resolve-InputFile -Path $CommanderReceipt -Label 'Comman
 $sentinelReceiptPath = Resolve-InputFile -Path $SentinelReceipt -Label 'Sentinel deployment receipt'
 
 $manifest = Get-Content -LiteralPath $sourceManifestPath -Raw | ConvertFrom-Json
+$commanderDigest = [string]$manifest.distribution.digest
+$sentinelDigest = [string]$manifest.sentinel.digest
+Assert-DeploymentReceipt -ReceiptPath $commanderReceiptPath -Label 'Commander' `
+    -ExpectedDigest $commanderDigest
+Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
+    -ExpectedDigest $sentinelDigest
+
 $commanderReceipt = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
 $sentinelReceipt = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
-Assert-DeploymentReceipt -Receipt $commanderReceipt -Label 'Commander' `
-    -ExpectedDigest $manifest.distribution.digest
-Assert-DeploymentReceipt -Receipt $sentinelReceipt -Label 'Sentinel' `
-    -ExpectedDigest $manifest.sentinel.digest
 
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tools\test-retail-savedvariables-audit.ps1')
 if ($LASTEXITCODE -ne 0) {
