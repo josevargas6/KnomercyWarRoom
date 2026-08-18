@@ -10,6 +10,18 @@ local function singleLine(font)
     if font.SetMaxLines then font:SetMaxLines(1) end
 end
 
+local function openBattlefieldMap()
+    -- This is a direct hardware-click action. KWR does not replace Shift-M or
+    -- fabricate battlefield data; it invokes Blizzard's native map surface.
+    if type(ToggleWorldMap) == "function" then
+        ToggleWorldMap()
+        return
+    end
+    if WorldMapFrame and type(ShowUIPanel) == "function" then
+        ShowUIPanel(WorldMapFrame)
+    end
+end
+
 function MainWindowLauncher:Create(owner)
     if owner.launcher then return end
     local profile = KWR.db.profile.launcher
@@ -112,6 +124,7 @@ function MainWindowLauncher:Create(owner)
             self.dragging = false
             self:SetScript("OnUpdate", nil)
         else
+            if InCombatLockdown and InCombatLockdown() then return end
             self:StopMovingOrSizing()
             local point, _, relativePoint, x, y = self:GetPoint(1)
             profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
@@ -178,9 +191,7 @@ function MainWindowLauncher:CreateMenu(owner)
         { "WAR ROOM", "commander", function() owner:Show("TACTICAL") end },
         { "FIGHT NOW", "hold", function() KWR.HUD:Toggle() end },
         { "TEAM BOARD", "friendly", function() owner:Show("TEAM") end },
-        { "MAP / SHIFT-M", "observed", function()
-            KWR:Print("Press Shift-M for Blizzard's battlefield map.", true)
-        end },
+        { "OPEN BATTLEFIELD MAP", "observed", openBattlefieldMap },
         { "ENEMY BOARD", "enemy", function() owner:Show("ENEMIES") end },
         { "REVIEW / AAR", "priority", function() owner:Show("INTEL") end },
         { "AAR EXPORT", "assignment", function() owner:Show("INTEL") end },

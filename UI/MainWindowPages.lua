@@ -145,11 +145,10 @@ local function formationCompLabel(comp, fallback)
     end
     local tier = KWR.Util:Text(comp.tier, "", 16)
     local name = KWR.Util:Text(comp.name, fallback or "Balanced Team Fight", 96)
-    local label = tier ~= "" and (tier .. " " .. name) or name
-    if comp.metaStatus == "ADVISORY_PRE_LIVE" then
-        label = label .. " [WATCH]"
-    end
-    return label
+    -- Advisory status belongs beside the selected build once; repeating WATCH
+    -- in every list and card hides the actual composition name.
+    if comp.metaStatus == "ADVISORY_PRE_LIVE" then return name end
+    return tier ~= "" and (tier .. " " .. name) or name
 end
 
 local function formationNeedSummary(formation)
@@ -179,11 +178,11 @@ end
 local function formationRecruitLine(recruit, index)
     if type(recruit) ~= "table" then return nil end
     local acquisition = tostring(recruit.acquisition or "OPEN SLOT")
-    if acquisition == "OPEN SLOT" then
-        acquisition = "OPEN"
-    end
+    local suffix = acquisition == "OPEN SLOT" and "" or " (replace)"
+    local role = tostring(recruit.role or "DAMAGER")
+    if role == "DAMAGER" then role = "DAMAGE" end
     return tostring(index) .. ". " .. tostring(recruit.label or "Unknown")
-        .. "  [" .. tostring(recruit.role or "DAMAGER") .. " / " .. acquisition .. "]"
+        .. " - " .. role .. suffix
 end
 
 local function formationRequirementLines(formation)
@@ -271,7 +270,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
     page.nextCard.heading:SetText(formationMode and "ROSTER ACTION"
         or (snapshot.reassessment and "PIVOT" or "NEXT"))
     page.targetCard.heading:SetText(formationMode and "BUILD FIT" or "KILL / CC")
-    page.winCard.heading:SetText(formationMode and "COMPOSITION PLAN" or "WIN PATH")
+    page.winCard.heading:SetText(formationMode and "COUNTERPICK" or "WIN PATH")
     page.callerCard.heading:SetText(formationMode and "LEADERSHIP SETUP" or "CALL TEAM")
     page.focusCard.heading:SetText(formationMode and "READY CHECK" or "NEXT")
     if not snapshot.context.inPvP then
@@ -354,57 +353,36 @@ function MainWindowPages:RenderTactical(page, state, helpers)
         local targetTier = buildTarget and buildTarget.tier or nil
         local currentLabel = formationCompLabel(currentComp, "Balanced Team Fight")
         local targetLabel = formationCompLabel(buildTarget or currentComp, currentName)
-        local targetSummary = buildTarget and (buildTarget.win or buildTarget.description)
-            or (currentComp and (currentComp.win or currentComp.description))
-            or "Build a complete command unit."
-        local choiceLines = { "|cffffd05aRECOMMENDED BUILD TARGETS|r" }
-        local choices = formation.availableComps or {}
-        local selectedID = buildTarget and buildTarget.id or nil
-        local selectedIndex = 1
-        for index, comp in ipairs(choices) do
-            if comp.id == selectedID then
-                selectedIndex = index
-                break
-            end
-        end
-        local windowStart = math.max(1, math.min(selectedIndex - 2, math.max(1, #choices - 4)))
-        local windowEnd = math.min(#choices, windowStart + 4)
-        for index = windowStart, windowEnd do
-            local comp = choices[index]
-            local active = comp.id == selectedID
-            choiceLines[#choiceLines + 1] = (active and "|cffffd05a> " or "  ")
-                .. (comp.mapFit and "" or "|cff8ea3bb")
-                .. tostring(comp.tier or "")
-                .. " " .. tostring(comp.name or "")
-                .. (comp.metaStatus == "ADVISORY_PRE_LIVE" and " |cff8ea3bbWATCH|r" or "")
-                .. (active and "|r  |cff49dd49SELECTED|r"
-                    or (comp.mapFit and "|r" or "|r  |cff8ea3bbOFF-MAP|r"))
-        end
-        choiceLines[#choiceLines + 1] = ""
-        choiceLines[#choiceLines + 1] = "|cffffd05aRECRUIT PRIORITY|r"
         local recruitLines = {}
+        recruitLines[#recruitLines + 1] = "|cffffd05aRECRUIT PRIORITY|r"
         for index, recruit in ipairs(formation.recommendations or {}) do
             recruitLines[#recruitLines + 1] = formationRecruitLine(recruit, index)
         end
         if #recruitLines == 0 then
             recruitLines[#recruitLines + 1] = "Roster roles are complete."
         end
-        local positionLines = { "|cffffd05a" .. tostring(formation.positioningTitle
-            or "POSITIONING KEYS") .. "|r" }
-        for index, text in ipairs(formation.positioning or {}) do
-            positionLines[#positionLines + 1] = tostring(index) .. ". " .. text
-        end
+        local briefComp = buildTarget or currentComp or formation.archetype or {}
+        local positionLines = {
+            "|cffffd05aPLAYSTYLE|r",
+            KWR.Util:Text(briefComp.win or briefComp.description,
+                "Flexible objective pressure.", 180),
+            "",
+            "|cff49dd49STRONG INTO|r " .. KWR.Util:Text(briefComp.counters,
+                "Confirm the enemy composition before committing.", 180),
+            "",
+            "|cffff6a6aWEAK INTO|r " .. KWR.Util:Text(briefComp.counter,
+                "Avoid unsupported commits and protect objective coverage.", 180),
+        }
         page.battlefieldCard.formation.title:SetText(targetLabel)
         page.battlefieldCard.formation.summary:SetText((formation.players or 0) .. " / "
             .. (formation.targetSize or 10) .. " PLAYERS\n"
             .. "NEED: " .. formationNeedSummary(formation) .. "\n"
             .. "CURRENT ROSTER: " .. currentLabel .. "\n"
             .. "TARGET BUILD: " .. targetLabel
-            .. ((buildTarget and buildTarget.seasonNote) and ("\n|cff8ea3bb" .. buildTarget.seasonNote .. "|r") or "")
-            .. "\n" .. targetSummary)
+            .. ((buildTarget and buildTarget.metaStatus == "ADVISORY_PRE_LIVE")
+                and "\n|cff8ea3bbSeason 2 theory - field validation pending.|r" or ""))
         page.battlefieldCard.formation.autoButton:SetSelected(formation.selectedCompID == nil)
-        page.battlefieldCard.formation.recruits:SetText(table.concat(choiceLines, "\n")
-            .. "\n" .. table.concat(recruitLines, "\n"))
+        page.battlefieldCard.formation.recruits:SetText(table.concat(recruitLines, "\n"))
         page.battlefieldCard.formation.positioning:SetText(table.concat(positionLines, "\n"))
     end
     page.battlefieldCard.reporterStatus:SetText(not snapshot.context.inPvP
@@ -421,12 +399,11 @@ function MainWindowPages:RenderTactical(page, state, helpers)
     local formationTier = formation.currentComp
         or (formation.tierMatch and formation.tierMatch.qualified and formation.tierMatch or nil)
     if formationMode then
-        local formationName = formationCompLabel(formationTier or formation.archetype, "Balanced Team Fight")
-        local targetName = formationCompLabel(formation.buildTarget or formationTier
-            or formation.archetype, "Balanced Team Fight")
-        page.winCard.value:SetText("NEED: " .. formationNeedSummary(formation)
-            .. "\nCURRENT: " .. formationName
-            .. "\nTARGET: " .. targetName)
+        local planComp = formation.buildTarget or formationTier or formation.archetype or {}
+        local planName = formationCompLabel(planComp, "Balanced Team Fight")
+        page.winCard.value:SetText("|cffffd05aSELECTED|r " .. planName
+            .. "\n|cff4f8cffBEST AGAINST|r " .. KWR.Util:Text(planComp.counters,
+                "Confirm the enemy composition before committing.", 180))
     else
         page.winCard.value:SetText((teamfight and teamfight.displayEligible == true
                 and KWR.Util:Text(teamfight.summary,

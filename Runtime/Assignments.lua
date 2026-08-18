@@ -811,8 +811,11 @@ function Assignments:Integrity(snapshot, assignments)
             and objective.owner == "FRIENDLY"
             and (job == "assault" or job == "carry")
         local status
-        if player.dead or player.connected == false then
-            status = "IMPOSSIBLE"
+        if player.dead then
+            status = "UNAVAILABLE_DEAD"
+            result.impossible = result.impossible + 1
+        elseif player.connected == false then
+            status = "UNAVAILABLE_DISCONNECTED"
             result.impossible = result.impossible + 1
         elseif completed then
             status = "COMPLETED"
@@ -863,7 +866,8 @@ function Assignments:Integrity(snapshot, assignments)
                 or ("Abort if " .. expected
                     .. " becomes unreachable or required coverage breaks."),
         }
-        if status == "ABANDONED" or status == "IMPOSSIBLE" then
+        if status == "ABANDONED" or status == "UNAVAILABLE_DEAD"
+            or status == "UNAVAILABLE_DISCONNECTED" then
             local replacement, replacementScore
             for _, candidate in ipairs(snapshot.roster or {}) do
                 if candidate.connected ~= false and not candidate.dead

@@ -1,5 +1,30 @@
 # Changelog
 
+## 6.1.1-alpha.4 - 2026-08-18
+
+- Repaired Retail roster publication at its source boundary: group, scoreboard,
+  and historical observations now collapse to one canonical player record before
+  any Commander surface renders. This prevents duplicate local and teammate rows.
+- Reconciled enemy observation identities from name to GUID, preserved the best
+  available class/spec/role facts, and count visibility episodes rather than
+  repeated refreshes as separate sightings.
+- Restored command stability: flag invalidation is now edge-triggered from the
+  command's own baseline, response packages no longer automatically bypass
+  replacement discipline, and the active-play key no longer churns with a
+  changing assignee list.
+- Deferred and guarded all KWR drag-stop calls across combat lockdown, replaced
+  the nonfunctional Shift-M menu stub with an actual battlefield-map action,
+  and reduced AAR write work during high-frequency refreshes.
+- Made target reticles materially easier to see with layered 2-4 px guides,
+  stronger contrast, and an explicit Standard/Bold preference.
+- Simplified composition selection into one counterpick decision: a selected
+  plan now states playstyle, strongest matchups, and weaknesses without
+  repeating watch/recruit text.
+- Added explicit Diagnostic/Commander/Spectator AAR context and unavailable
+  player states; corrected opponent session counting so re-entry does not
+  inflate profile samples.
+- Synchronized the embedded Sentinel companion for the candidate release.
+
 ## 6.1.1-alpha.3 - 2026-08-17
 
 - Made Season 2 field mode the default for upgraded local profiles: Command

@@ -289,12 +289,23 @@ function CursorRing:CreateReticleFrame()
     frame:Hide()
 
     frame.hLine = frame:CreateTexture(nil, "BACKGROUND")
+    frame.hLine:SetDrawLayer("BORDER")
     frame.hLine:SetPoint("CENTER")
     frame.hLine:SetTexture("Interface\\Buttons\\WHITE8X8")
 
     frame.vLine = frame:CreateTexture(nil, "BACKGROUND")
+    frame.vLine:SetDrawLayer("BORDER")
     frame.vLine:SetPoint("CENTER")
     frame.vLine:SetTexture("Interface\\Buttons\\WHITE8X8")
+
+    -- The contrast layer keeps the guide readable over both bright terrain
+    -- and dark spell effects without making the colored core opaque.
+    frame.hLineShadow = frame:CreateTexture(nil, "BACKGROUND")
+    frame.hLineShadow:SetPoint("CENTER")
+    frame.hLineShadow:SetTexture("Interface\\Buttons\\WHITE8X8")
+    frame.vLineShadow = frame:CreateTexture(nil, "BACKGROUND")
+    frame.vLineShadow:SetPoint("CENTER")
+    frame.vLineShadow:SetTexture("Interface\\Buttons\\WHITE8X8")
 
     frame.outer = frame:CreateTexture(nil, "ARTWORK")
     frame.outer:SetPoint("CENTER")
@@ -853,12 +864,22 @@ function CursorRing:ApplyReticle()
     local viewportHeight = KWR.Util:Number(UIParent and KWR.Util:Call(UIParent.GetHeight, UIParent), nil)
     viewportWidth = math.max(visualSize * 2, viewportWidth or visualSize * 12)
     viewportHeight = math.max(visualSize * 2, viewportHeight or visualSize * 8)
+    local effectiveScale = KWR.Util:Number(
+        UIParent and KWR.Util:Call(UIParent.GetEffectiveScale, UIParent), 1) or 1
+    effectiveScale = math.max(0.25, effectiveScale)
+    local style = KWR.Util:Upper(profile.reticleGuideStyle, "STANDARD", 12)
+    local desiredPixels = style == "BOLD" and 4 or 3
+    local core = math.max(2 / effectiveScale,
+        math.min(4 / effectiveScale, math.floor((desiredPixels / effectiveScale) + 0.5)))
+    local shadow = core + math.max(1 / effectiveScale, 1)
     frame:SetSize(visualSize, visualSize)
-    -- The crosshair's axis guides establish a single target focal point.
-    -- They remain one-pixel, low-alpha lines so the class token and ring stay
-    -- dominant over the battlefield rather than becoming a screen overlay.
-    frame.hLine:SetSize(viewportWidth, 1)
-    frame.vLine:SetSize(1, viewportHeight)
+    -- The guides have a scale-aware 2-4 physical-pixel core and a contrast
+    -- shadow. This is visible on battlefield terrain without obscuring the
+    -- target ring, class icon, or native nameplate.
+    frame.hLine:SetSize(viewportWidth, core)
+    frame.vLine:SetSize(core, viewportHeight)
+    frame.hLineShadow:SetSize(viewportWidth, shadow)
+    frame.vLineShadow:SetSize(shadow, viewportHeight)
     frame.outer:SetSize(visualSize, visualSize)
     frame.inner:SetSize(4, 4)
     local targetIconSize = math.max(26, math.floor(visualSize * 0.40))
@@ -869,6 +890,8 @@ function CursorRing:ApplyReticle()
     frame.baseAlpha = alpha
     frame.hLine:SetShown(profile.reticleGuides == true)
     frame.vLine:SetShown(profile.reticleGuides == true)
+    frame.hLineShadow:SetShown(profile.reticleGuides == true)
+    frame.vLineShadow:SetShown(profile.reticleGuides == true)
     self:ApplyReticleState(self.reticleState or {
         mode = "TARGET",
         label = "TARGET",
@@ -894,9 +917,14 @@ function CursorRing:ApplyReticleState(state)
     local profile = KWR.db.profile.cursor or {}
     local colors = RETICLE_COLORS[state.mode] or RETICLE_COLORS.TARGET
     local alpha = KWR.Util:Clamp(profile.reticleAlpha or 0.92, 0.2, 1)
+    local highContrast = KWR.db.profile.accessibility
+        and KWR.db.profile.accessibility.highContrast == true
     frame.baseAlpha = alpha
-    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
-    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], alpha * 0.42)
+    local guideAlpha = alpha * (highContrast and 0.92 or 0.78)
+    frame.hLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], guideAlpha)
+    frame.vLine:SetVertexColor(colors.outer[1], colors.outer[2], colors.outer[3], guideAlpha)
+    frame.hLineShadow:SetVertexColor(0, 0, 0, alpha * (highContrast and 0.85 or 0.68))
+    frame.vLineShadow:SetVertexColor(0, 0, 0, alpha * (highContrast and 0.85 or 0.68))
     frame.outer:SetVertexColor(
         colors.outer[1], colors.outer[2], colors.outer[3],
         math.min(1, math.max(colors.alpha or alpha, alpha * 0.90)))

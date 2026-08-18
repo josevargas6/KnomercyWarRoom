@@ -106,7 +106,10 @@ $exportLines = if ($ExportFile) {
 $meta = $null
 $matches = @()
 foreach ($line in @($exportLines)) {
-    $fields = @([string]$line -split "`t", -1)
+    # PowerShell's negative split count keeps the complete string instead of
+    # splitting it. Use the normal tab split so exporter META/MATCH records are
+    # actually decoded (and retain the empty fields the exporter emits).
+    $fields = @([string]$line -split "`t")
     if ($fields[0] -eq "META" -and $fields.Count -ge 4) {
         $meta = [pscustomobject]@{
             schemaVersion = [int]$fields[1]

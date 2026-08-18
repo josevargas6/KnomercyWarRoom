@@ -120,7 +120,11 @@ function Invoke-NestedBuildForReproducibility {
         [switch]$IncludeSentinel
     )
 
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $BuildScriptPath `
+    # Compression output is runtime-specific. Reuse the current PowerShell host
+    # instead of silently switching from pwsh to Windows PowerShell, otherwise
+    # two byte-identical source trees can yield different ZIP streams.
+    $currentHost = (Get-Process -Id $PID).Path
+    & $currentHost -NoProfile -ExecutionPolicy Bypass -File $BuildScriptPath `
         -OutputDirectory $NestedOutputDirectory `
         $(if ($IncludeSentinel) { "-IncludeSentinel" }) `
         -SkipPackageAudit `
@@ -462,6 +466,9 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
             }
 
             if ($binaryMismatchCount -ne 0) {
+                $comparison | Where-Object { -not $_.binaryMatch } |
+                    Format-Table artifact, primarySha256, secondarySha256 -AutoSize |
+                    Out-String | Write-Output
                 throw "Reproducibility audit failed because deterministic archive bytes changed between clean builds."
             }
             $reproResult = "PASS"

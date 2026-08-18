@@ -743,7 +743,7 @@ do
     }
     KWR:InitializeDatabase()
     assert(KWR.db.profile.cursor.reticleGuides == false
-        and KWR.db.profile.cursor.reticlePresentationVersion == 3,
+        and KWR.db.profile.cursor.reticlePresentationVersion == 4,
         "Reticle presentation migration did not preserve an explicit guide opt-out.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
@@ -3163,6 +3163,13 @@ local flagPreviousState = {
         hardDeadlineAt = KWR.Util:Now() + 26,
         phase = "COMMITTED",
         remainingValue = 74,
+        flagBaseline = {
+            friendlyFlagActive = 1,
+            enemyFlagActive = 1,
+            homeAvailable = false,
+            enemyRoomAvailable = false,
+            score = KWR.Util:Signature({ 1, 1 }),
+        },
     },
     command = {
         action = "ESCORT OUR FC",
@@ -5823,8 +5830,9 @@ assert(not KWR.MainWindow.pages.TACTICAL.nextCard.value.value:find("center board
         "CURRENT ROSTER:", 1, true)
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.summary.value:find(
         "TARGET BUILD:", 1, true)
-    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("NEED:", 1, true),
-    "Setup tactical page did not expose current roster, target build, and need directly.")
+    and KWR.MainWindow.pages.TACTICAL.winCard.heading.value == "COUNTERPICK"
+    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("BEST AGAINST", 1, true),
+    "Setup tactical page did not expose direct roster and counterpick information.")
 assert(KWR.MainWindow.pages.TACTICAL.targetCard.heading.value == "BUILD FIT"
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("TARGET MATCH", 1, true)
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("OPEN SLOTS", 1, true)
@@ -5857,7 +5865,7 @@ assert(KWR.db.profile.formation.selectedCompID == "CONTROL_CLEAVE"
 assert(KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.title.value:find(
         "Control Cleave", 1, true)
     and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find(
-        "TARGET:", 1, true)
+        "SELECTED", 1, true)
     and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find(
         "Control Cleave", 1, true),
     "Visible setup board did not repaint to the selected build target.")
@@ -6306,7 +6314,7 @@ assert(KWR.MainWindow.launcherMenu.stateBadge.text.value ~= ""
     and KWR.MainWindow.launcherMenu.buttons[1].label.value == "WAR ROOM"
     and KWR.MainWindow.launcherMenu.buttons[2].label.value == "FIGHT NOW"
     and KWR.MainWindow.launcherMenu.buttons[3].label.value == "TEAM BOARD"
-    and KWR.MainWindow.launcherMenu.buttons[4].label.value == "MAP / SHIFT-M"
+    and KWR.MainWindow.launcherMenu.buttons[4].label.value == "OPEN BATTLEFIELD MAP"
     and KWR.MainWindow.launcherMenu:GetFrameStrata() == "HIGH"
     and KWR.MainWindow.launcherMenu.buttons[3].icon.texture ~= nil,
     "Launcher menu or top-level shell naming drifted from the command-center contract.")

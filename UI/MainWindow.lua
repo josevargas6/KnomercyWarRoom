@@ -1876,6 +1876,7 @@ end
 
 function MainWindow:ArmFieldTest()
     KWR:ActivateFieldProfile(true)
+    KWR.db.profile.fieldReviewContext = "Diagnostic"
     KWR.HUD:SetEnabled(true)
     KWR.CombatRoster:Show("BOTH")
     KWR.CursorRing:SetEnabled(true)

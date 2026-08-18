@@ -469,6 +469,8 @@ function HUD:Create()
         frame:StartMoving()
     end)
     frame.dragHandle:SetScript("OnDragStop", function()
+        -- A drag may end after combat starts; Retail protects frame movement then.
+        if InCombatLockdown and InCombatLockdown() then return end
         frame:StopMovingOrSizing()
         local point, _, relativePoint, x, y = frame:GetPoint(1)
         profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y

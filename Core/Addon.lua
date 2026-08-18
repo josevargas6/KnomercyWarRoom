@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.3"
+KWR.version = "6.1.1-alpha.4"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -77,12 +77,13 @@ local DEFAULTS = {
             -- distance. This is the Fury-style visual footprint, not the
             -- smaller cursor marker scale.
             reticleSize = 116,
-            reticlePresentationVersion = 3,
+            reticlePresentationVersion = 4,
             reticleAlpha = 0.84,
             -- The target lock uses full axis guides so a selected player is
             -- readable through dense battleground effects. Players can still
             -- disable them in Options.
             reticleGuides = true,
+            reticleGuideStyle = "STANDARD",
             -- In a target call, preserve one native health bar: the current
             -- enemy. Other hostile plates keep only KWR's compact class/color
             -- shield so the battlefield remains readable.
@@ -159,6 +160,7 @@ local DEFAULTS = {
         },
         sentinelTransportEnabled = true,
         guidanceMode = "COMMAND",
+        fieldReviewContext = "Diagnostic",
     },
     journal = {
         history = {},
@@ -334,6 +336,12 @@ local function normalizeProfile(profile)
         profile.cursor.reticleAlpha, defaults.cursor.reticleAlpha)
     profile.cursor.reticleGuides = KWR.Util:Boolean(
         profile.cursor.reticleGuides, defaults.cursor.reticleGuides)
+    local guideStyle = KWR.Util:Upper(
+        profile.cursor.reticleGuideStyle, defaults.cursor.reticleGuideStyle, 12)
+    if guideStyle ~= "STANDARD" and guideStyle ~= "BOLD" then
+        guideStyle = defaults.cursor.reticleGuideStyle
+    end
+    profile.cursor.reticleGuideStyle = guideStyle
     profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
         profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
     local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
@@ -441,6 +449,13 @@ local function normalizeProfile(profile)
         profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
     activateFieldProfile(profile, false)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
+    profile.fieldReviewContext = KWR.Util:Text(
+        profile.fieldReviewContext, defaults.fieldReviewContext, 24)
+    if profile.fieldReviewContext ~= "Commander"
+        and profile.fieldReviewContext ~= "Spectator"
+        and profile.fieldReviewContext ~= "Diagnostic" then
+        profile.fieldReviewContext = defaults.fieldReviewContext
+    end
     profile.layoutMode = KWR.Util:Upper(profile.layoutMode, defaults.layoutMode, 16)
     if profile.layoutMode ~= "AUTO" and profile.layoutMode ~= "COMPACT"
         and profile.layoutMode ~= "STANDARD" and profile.layoutMode ~= "LARGE" then

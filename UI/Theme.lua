@@ -410,6 +410,8 @@ function Theme:MakeMovable(frame, profile)
         self:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(self)
+        -- Do not issue a protected movement call if combat began mid-drag.
+        if InCombatLockdown and InCombatLockdown() then return end
         self:StopMovingOrSizing()
         local point, _, relativePoint, x, y = self:GetPoint(1)
         profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y

@@ -1081,6 +1081,10 @@ function Sensors:Capture(lastMessage)
     context.blitzSource = self.blitzSource or "unconfirmed"
     roster, context.rosterHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
         roster, assigned, scoreboardRows, expectedRosterCount)
+    -- Every consumer receives the same validated roster. Do not leave this to
+    -- a UI-specific cleanup: assignments, enemy filtering, AAR, and Sentinel
+    -- must never see a duplicate friendly identity.
+    roster = KWR.TeamResolver:NormalizePublishedRoster(roster)
     context.team = KWR.Util:Copy(assigned)
 
     local score = {

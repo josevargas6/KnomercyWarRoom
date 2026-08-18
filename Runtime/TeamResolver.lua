@@ -358,12 +358,13 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
     -- can briefly contain stale copies with new GUIDs while players load or
     -- swap. Enrich matching group members only, preserving name, GUID, unit,
     -- cardinality, and row ownership.
-    local groupAuthoritative = #roster == expectedCount
-        and #uniqueGroup == expectedCount
+    local groupAuthoritative = #uniqueGroup == expectedCount
     if groupAuthoritative then
         local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(friendlyRows)
         local used, reconciled, matched = {}, {}, 0
-        for _, player in ipairs(roster) do
+        -- Only the already-validated group set may own friendly slots. Using
+        -- the raw input here reintroduced duplicate rows after dedupe.
+        for _, player in ipairs(uniqueGroup) do
             local guid = KWR.Util:Text(player.guid, "", 80)
             local full, short = nameKeys(player.name)
             local row = guid ~= "" and byGuid[guid] or nil
@@ -399,7 +400,7 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
         }
     end
 
-    local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(roster)
+    local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(uniqueGroup)
     local used, reconciled, repaired = {}, {}, 0
     for _, row in ipairs(friendlyRows) do
         local guid = KWR.Util:Text(row.guid, "", 80)

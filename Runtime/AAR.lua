@@ -74,6 +74,15 @@ end
 
 local function mergeEntity(record, entity)
     local current = displayEntity(entity)
+    local source = current.specSource:lower()
+    local authority = source == "inspect" and 400
+        or source == "scoreboard" and 350
+        or source == "live" and 300
+        or source == "observed" and 250
+        or source == "historical" and 100
+        or 0
+    record.fieldAuthority = type(record.fieldAuthority) == "table"
+        and record.fieldAuthority or {}
     for _, field in ipairs({
         "guid", "name", "shortName", "class", "classFile", "spec", "role", "specSource",
     }) do
@@ -82,9 +91,22 @@ local function mergeEntity(record, entity)
             or record[field] == "Unknown" or record[field] == "UNKNOWN"
             or record[field] == "unknown"
         if value ~= nil and value ~= "" and value ~= "Unknown"
-            and value ~= "UNKNOWN" and value ~= "unknown" and unknown then
-            record[field] = value
+            and value ~= "UNKNOWN" and value ~= "unknown" then
+            local currentAuthority = record.fieldAuthority[field] or 0
+            local evidenceField = field == "spec" or field == "role"
+                or field == "specSource"
+            if unknown or not evidenceField or authority >= currentAuthority then
+                record[field] = value
+                if evidenceField then record.fieldAuthority[field] = authority end
+            end
         end
+    end
+    -- A verified specialization is the role authority unless a stronger
+    -- explicit role was provided by the same/higher-quality source.
+    local resolvedRole = KWR.CombatSpells:Role(record.spec, "NONE")
+    if resolvedRole ~= "NONE" and authority >= (record.fieldAuthority.role or 0) then
+        record.role = resolvedRole
+        record.fieldAuthority.role = authority
     end
     return record
 end
@@ -341,7 +363,11 @@ function AAR:Start(state)
         scoreEnd = nil,
         commands = {},
         events = {},
-        feedback = {},
+        feedback = {
+            sessionType = KWR.Util:Text(
+                KWR.db and KWR.db.profile and KWR.db.profile.fieldReviewContext,
+                "Diagnostic", 24),
+        },
         planUsage = {},
         decisionReviews = {},
         friendlyTeam = {},
@@ -522,7 +548,8 @@ function AAR:CapturePlayerEvidence(active, state)
         local integrityRow = (player.guid and integrityByGUID[player.guid])
             or integrityByName[clean(player.shortName or player.name, "", 64):lower()]
         if integrityRow and (integrityRow.status == "ABANDONED"
-            or integrityRow.status == "IMPOSSIBLE"
+            or integrityRow.status == "UNAVAILABLE_DEAD"
+            or integrityRow.status == "UNAVAILABLE_DISCONNECTED"
             or integrityRow.status == "ON_STATION") then
             local note = integrityRow.status .. " | assigned "
                 .. clean(integrityRow.expected, "Unknown", 48) .. " | observed "
@@ -575,29 +602,39 @@ end
 
 function AAR:CaptureThreats(active, snapshot)
     local now = epoch()
-    local killKey = snapshot.combat and snapshot.combat.killTarget
-        and entityKey(snapshot.combat.killTarget, "enemy") or nil
+    local killTarget = snapshot.combat and snapshot.combat.killTarget or nil
     for _, enemy in ipairs(snapshot.enemies or {}) do
-        local key = entityKey(enemy, "enemy")
-        local threat = active.enemyThreats[key] or {
-            guid = clean(enemy.guid, "", 80),
-            name = clean(enemy.name or enemy.shortName, "Unknown", 64),
-            class = clean(enemy.class or enemy.classFile, "Unknown", 32),
-            spec = clean(enemy.spec, "Unknown", 32),
-            role = clean(enemy.role, "Unknown", 16),
+        local threat, key = claimEntityRecord(active.enemyThreats, enemy, "enemy", function(entity)
+            return {
+            guid = clean(entity.guid, "", 80),
+            name = clean(entity.name or entity.shortName, "Unknown", 64),
+            class = clean(entity.class or entity.classFile, "Unknown", 32),
+            spec = clean(entity.spec, "Unknown", 32),
+            role = clean(entity.role, "Unknown", 16),
             sightings = 0,
             flags = {},
+            visible = false,
         }
-        if enemy.visible == true then threat.sightings = threat.sightings + 1 end
+        end)
+        mergeEntity(threat, enemy)
+        -- A sighting is a visibility episode, not a Store-refresh count.
+        if enemy.visible == true and threat.visible ~= true then
+            threat.sightings = threat.sightings + 1
+        end
+        threat.visible = enemy.visible == true
         threat.lastSeenLocation = clean(enemy.location, threat.lastSeenLocation or "Unknown", 48)
         threat.lastSeenAt = KWR.Util:Number(enemy.lastSeenAt, threat.lastSeenAt)
         threat.lastSeenAge = KWR.Util:Number(enemy.lastSeenAge, enemy.age or threat.lastSeenAge)
-        if enemy.role == "HEALER" then threat.flags.healer = true end
-        if enemy.classFile == "ROGUE" or enemy.spec == "Feral" then
+        if threat.role == "HEALER" then threat.flags.healer = true end
+        if threat.classFile == "ROGUE" or threat.spec == "Feral" then
             threat.flags.stealth = true
         end
         if enemy.carrier then threat.flags.carrier = true end
-        if key == killKey or enemy.localEngaged then threat.flags.highPressure = true end
+        if canonicalEntityName(enemy) ~= "" and canonicalEntityName(enemy)
+            == canonicalEntityName(killTarget) then
+            threat.flags.highPressure = true
+        end
+        if enemy.localEngaged then threat.flags.highPressure = true end
         active.enemyThreats[key] = threat
     end
 end
@@ -605,6 +642,27 @@ end
 function AAR:Record(state)
     if not self.active then self:Start(state) end
     local active = self.active
+    local snapshot = state.snapshot or {}
+    local score = snapshot.score or {}
+    local objectives = snapshot.objectives or {}
+    local now = epoch()
+    -- The AAR is a semantic review ledger, not a second copy of every Store
+    -- tick. Sampling unchanged state inflated work, memory, and sightings.
+    local recordSignature = KWR.Util:Signature({
+        state.command and state.command.signature or "",
+        score.friendly or 0,
+        score.enemy or 0,
+        snapshot.context and snapshot.context.matchComplete and "DONE" or "LIVE",
+        #(objectives.events or {}),
+        #(snapshot.roster or {}),
+        #(snapshot.enemies or {}),
+    })
+    if active.lastRecordSignature == recordSignature
+        and (now - (active.lastRecordAt or 0)) < 5 then
+        return
+    end
+    active.lastRecordSignature = recordSignature
+    active.lastRecordAt = now
     active.scoreEnd = KWR.Util:Copy(state.snapshot.score)
     active.team = KWR.Util:Copy(state.snapshot.context.team or active.team)
     active.matchComplete = active.matchComplete
