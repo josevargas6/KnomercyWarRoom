@@ -1,6 +1,8 @@
 # Candidate Field Capture Matrix
 
-Candidate: `6.1.1-alpha.4` (`c5358af`)
+Candidate: `6.1.1-alpha.4`
+
+Deployed source revision: `c5358af`
 
 Installed Commander archive SHA-256:
 `325528B15D5E914CEB31886AB0F118D082393EB9943BC88B2DECA22179F7F9CA`

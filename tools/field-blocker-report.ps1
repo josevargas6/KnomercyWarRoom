@@ -53,6 +53,9 @@ $observedStabilityFailures = if ($retailCertification) {
         [int]$retailCertification.summary.stabilityFailedMatches
     }
 } else { 0 }
+$boundStabilityFailures = if ($retailBinding) {
+    [int]$retailCertification.summary.stabilityFailedMatches
+} else { 0 }
 $deploymentCertified = $deploymentCertification -and
     $deploymentCertification.candidateVersion -eq $version -and
     $deploymentCertification.result -eq 'PASS' -and
@@ -95,9 +98,11 @@ $report = [ordered]@{
         [ordered]@{
             id = "LIVE-STABILITY"
             priority = "P1"
-            # Old, unbound AAR rows establish why this exact live gate exists,
-            # but cannot claim a defect in the newly deployed candidate.
-            status = if ($observedStabilityFailures -gt 0) { "HISTORICAL_UNBOUND_FAILURE" }
+            # A candidate-bound failed review is a current confirmed defect.
+            # Older unbound AAR rows establish why this live gate exists, but
+            # cannot claim a defect in the newly deployed candidate.
+            status = if ($boundStabilityFailures -gt 0) { "CONFIRMED_DEFECT" }
+                elseif ($observedStabilityFailures -gt 0) { "HISTORICAL_UNBOUND_FAILURE" }
                 elseif ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
             title = "Flag-map command churn and AAR stability reporting"

@@ -234,9 +234,21 @@ $addonVersion = ((Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc
 Assert-True `
     -Condition ($dailyDryRun -match ('Build:\s+' + [regex]::Escape($addonVersion))) `
     -Message "Daily update does not use the current addon manifest version."
+$captureMatrix = Get-Content -LiteralPath (Join-Path $root "docs\CANDIDATE_FIELD_CAPTURE_MATRIX_2026-07-29.md") -Raw
+$baselineMatch = [regex]::Match($captureMatrix, '(?m)^Candidate:\s*`?([^`\s(]+)')
+$expectedEvidenceBaseline = $baselineMatch.Groups[1].Value.Trim()
 Assert-True `
-    -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
-    -Message "Daily update does not disclose the stale field-evidence baseline."
+    -Condition (-not [string]::IsNullOrWhiteSpace($expectedEvidenceBaseline)) `
+    -Message "Candidate capture matrix does not declare a machine-readable evidence baseline."
+if ($expectedEvidenceBaseline -eq $addonVersion) {
+    Assert-True `
+        -Condition ($dailyDryRun -notmatch 'Evidence baseline:') `
+        -Message "Daily update incorrectly calls the current evidence baseline stale."
+} else {
+    Assert-True `
+        -Condition ($dailyDryRun -match ('Evidence baseline:\s+' + [regex]::Escape($expectedEvidenceBaseline))) `
+        -Message "Daily update does not disclose the actual stale field-evidence baseline."
+}
 
 $releaseWorkflow = Get-Content -LiteralPath (
     Join-Path $root ".github\workflows\release.yml"

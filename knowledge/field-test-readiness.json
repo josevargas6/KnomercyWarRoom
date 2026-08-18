@@ -1,12 +1,12 @@
 {
   "schema": "kwr-field-test-readiness",
   "schemaVersion": 1,
-  "generatedAt": "2026-08-18T18:33:46Z",
+  "generatedAt": "2026-08-18T18:43:32Z",
   "candidate": {
     "addon": "Knomercy War Room",
     "version": "6.1.1-alpha.4",
     "build": "6.1.1-alpha.4",
-    "evidenceBaseline": "6.1.1-alpha.4` (`c5358af`)",
+    "evidenceBaseline": "6.1.1-alpha.4",
     "date": "2026-08-18"
   },
   "offlineStatus": {

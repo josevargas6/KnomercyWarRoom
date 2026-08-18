@@ -34,7 +34,10 @@ $captureMatrix = if (Test-Path -LiteralPath $captureMatrixPath) {
     ""
 }
 $evidenceBaselineMatch = [regex]::Match($captureMatrix, '(?m)^Candidate:\s*(.+)$')
-$evidenceBaseline = $evidenceBaselineMatch.Groups[1].Value.Trim().Trim([char]0x60)
+$evidenceBaselineRaw = $evidenceBaselineMatch.Groups[1].Value.Trim()
+# The capture matrix is human-readable Markdown, but downstream automation
+# needs only the semantic candidate version—not delimiters or revision notes.
+$evidenceBaseline = [regex]::Match($evidenceBaselineRaw, '^`?([^`\s(]+)').Groups[1].Value.Trim()
 if ([string]::IsNullOrWhiteSpace($evidenceBaseline)) {
     $evidenceBaseline = $version
 }
