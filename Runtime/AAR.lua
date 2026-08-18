@@ -662,6 +662,19 @@ local function evidenceCollectionSignature(collection, prefix)
     return table.concat(rows, "\31")
 end
 
+local function objectiveStateSignature(objectives)
+    local rows = {}
+    for _, row in ipairs(objectives and objectives.rows or {}) do
+        rows[#rows + 1] = table.concat({
+            clean(row.label, "Unknown Objective", 64),
+            clean(row.owner, "UNKNOWN", 16),
+            clean(row.state, "UNKNOWN", 20),
+        }, "\30")
+    end
+    table.sort(rows)
+    return table.concat(rows, "\31")
+end
+
 function AAR:Record(state)
     if not self.active then self:Start(state) end
     local active = self.active
@@ -681,6 +694,7 @@ function AAR:Record(state)
         #(snapshot.enemies or {}),
         evidenceCollectionSignature(snapshot.roster, "friendly"),
         evidenceCollectionSignature(snapshot.enemies, "enemy"),
+        objectiveStateSignature(objectives),
     })
     if active.lastRecordSignature == recordSignature
         and (now - (active.lastRecordAt or 0)) < 5 then
@@ -1513,11 +1527,14 @@ function AAR:GetInsights()
     for _, entry in ipairs(history) do
         if entry.result == "VICTORY" then wins = wins + 1 end
         if entry.result == "DEFEAT" then losses = losses + 1 end
-        if entry.feedback and next(entry.feedback) then reviewed = reviewed + 1 end
-        local mode = entrySessionType(entry)
-        if mode == "Commander" then commander = commander + 1 end
-        if mode == "Spectator" then spectator = spectator + 1 end
-        if mode == "Diagnostic" then diagnostic = diagnostic + 1 end
+        local reviewedEntry = entry.feedback and next(entry.feedback)
+        if reviewedEntry then
+            reviewed = reviewed + 1
+            local mode = entrySessionType(entry)
+            if mode == "Commander" then commander = commander + 1 end
+            if mode == "Spectator" then spectator = spectator + 1 end
+            if mode == "Diagnostic" then diagnostic = diagnostic + 1 end
+        end
         maps[entry.mapKey] = (maps[entry.mapKey] or 0) + 1
     end
     local topMap, topCount = "None", 0

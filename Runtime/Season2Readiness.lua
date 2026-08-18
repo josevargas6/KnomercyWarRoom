@@ -35,12 +35,13 @@ function Season2Readiness:Build(state)
     local rosterReady = (entry.roster or 0) > 0
         and (entry.teamSpecs or 0) >= (entry.roster or 0)
         and (entry.teamUnits or 0) >= (entry.roster or 0)
-    local stability = entry.commandStabilitySummary or {}
     local latestPerformance = latest and latest.performance or {}
+    local latestStability = latest and latest.commandStability or {}
     local stabilityReady = latest ~= nil
         and (latestPerformance.samples or 0) > 0
         and (latestPerformance.errors or 0) == 0
-        and (stability.certificationStatus == "PASS")
+        and (latestStability.certificationStatus == "READY"
+            or latestStability.certificationStatus == "PASS")
     local flagMap = FLAG_MAPS[entry.mapKey] == true
     local checks = {
         {
