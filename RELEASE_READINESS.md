@@ -7,8 +7,8 @@ folder is deployment evidence only after package-manifest verification.
 ## Current decision
 
 **6.1.1-alpha.4 is the Season 2 distribution candidate; 6.1.0 remains the
-immutable public stable baseline.** The repaired Commander/Sentinel pair from
-commit `6756f01` has completed offline certification, binary reproducibility,
+immutable public stable baseline.** The repaired Commander/Sentinel release
+line has completed offline certification, binary reproducibility,
 extracted-package audit, and exact Retail installation verification. The
 archive hashes are intentionally not embedded here: modifying a shipped
 document changes its archive. The versioned `SHA256` manifest and deployment
@@ -39,15 +39,15 @@ and rollback-artifact creation.
 - [x] The Commander and Sentinel archives are binary reproducible; both
   extracted runtime paths pass; the installed Retail manifests have zero
   missing, changed, or extra entries; and a rollback snapshot exists.
-- [x] All review conversations on the candidate PR are resolved. The exact
-  executable commit has a green `certify` run; the evidence-only head run must
-  also finish green before merge.
+- [x] All review conversations on the repair PR are resolved. Any final
+  evidence follow-up must have a green `certify` run before merge.
 - [ ] Merge the green reviewed candidate to `main`, verify the merged commit
   and tag the exact public-release artifact only after the live gate passes.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
   flag-map stability and AAR, canonical carrier targets, combat-safe native-map
   behavior, taint/blocked actions, supported-resolution readability, and field
-  CPU/memory budgets. The capture must use the hashes above.
+  CPU/memory budgets. The capture must use the hashes recorded in the
+  versioned checksum manifest and deployment certificate.
 - [ ] Capture live win and loss evidence across every map family, then rerun
   the read-only SavedVariables certification with only completed candidate rows.
 - [ ] Prove Sentinel's opt-in cross-client transport in a ten-client Retail

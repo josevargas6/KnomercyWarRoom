@@ -95,7 +95,9 @@ $report = [ordered]@{
         [ordered]@{
             id = "LIVE-STABILITY"
             priority = "P1"
-            status = if ($observedStabilityFailures -gt 0) { "CONFIRMED_DEFECT" }
+            # Old, unbound AAR rows establish why this exact live gate exists,
+            # but cannot claim a defect in the newly deployed candidate.
+            status = if ($observedStabilityFailures -gt 0) { "HISTORICAL_UNBOUND_FAILURE" }
                 elseif ($offlineGatePassed) { "LIVE_ONLY" } else { "OFFLINE_OPEN" }
             offlineStatus = if ($offlineGatePassed) { "PASS" } else { "BLOCKED" }
             title = "Flag-map command churn and AAR stability reporting"
