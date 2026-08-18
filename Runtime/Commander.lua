@@ -22,10 +22,20 @@ local function median(values)
     return (copy[middle - 1] + copy[middle]) / 2
 end
 
+local function qualifiedResponseRequiresReplacement(response)
+    if not response or response.qualified ~= true then return false end
+    -- A normal response package refines movers/stayers under the current
+    -- strategy. It is not a reason to discard an active play every refresh.
+    -- Only an explicit emergency or a confirmed critical coverage gap may
+    -- cross the commitment gate without ordinary superiority/persistence.
+    return response.emergency == true
+        or (response.recovery and KWR.Util:Text(response.recovery.criticalGap, "", 48) ~= "")
+end
+
 local function classifyBypass(snapshot, response, prediction, stabilized)
     if stabilized then return "STABILIZED" end
     if snapshot.reassessment then return "REASSESSMENT" end
-    if response and response.qualified then return "RESPONSE_PACKAGE" end
+    if qualifiedResponseRequiresReplacement(response) then return "RESPONSE_PACKAGE" end
     if (prediction.urgency or 0) >= 90 then return "EMERGENCY_URGENCY" end
     return "CANDIDATE_CHANGE"
 end
@@ -817,8 +827,8 @@ end
 
 local function buildActivePlay(snapshot, prediction, strategy, response, command, previousPlay, now)
     local family = snapshot.context and snapshot.context.kind or "WORLD"
-    local objective = (response and response.target) or (strategy.objectiveDecision
-        and strategy.objectiveDecision.target) or nil
+    local objective = (response and response.target) or strategy.target
+        or (strategy.objectiveDecision and strategy.objectiveDecision.target) or nil
     local movers = splitNames(response and response.moverText or command.who)
     local stayers = splitNames(response and response.stayerText or "")
     local baseCommit = snapshot.context and snapshot.context.inPvP and 12 or 6
@@ -891,17 +901,21 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         or ((prediction.timeToWin and family ~= "WORLD") and (now + prediction.timeToWin) or nil)
         or (arrival + baseCommit)
     local hardDeadline = resolution and (resolution + math.max(4, math.floor(baseCommit * 0.25))) or nil
+    local actionCode = KWR.Util:Text(
+        response and response.actionID,
+        KWR.Util:Text(command.action, "PLAY", 48):match("^[^%s:.]+") or "PLAY",
+        48)
     local id = KWR.Util:Signature({
         family,
         command.planID or strategy.planID or command.action,
         objective or "none",
-        command.action,
-        command.who,
+        actionCode,
     })
     local play = {
         id = id,
         family = family,
         action = command.action,
+        actionCode = actionCode,
         objective = objective,
         movers = movers,
         stayers = stayers,
@@ -947,6 +961,17 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         travelSeconds = timing.travel,
         interactionSeconds = timing.interaction,
     }
+    if family == "FLAG" then
+        local flags = flagStateSummary(snapshot)
+        local score = snapshot.score or {}
+        play.flagBaseline = {
+            friendlyFlagActive = flags.friendlyFlagActive or 0,
+            enemyFlagActive = flags.enemyFlagActive or 0,
+            homeAvailable = flags.homeAvailable == true,
+            enemyRoomAvailable = flags.enemyRoomAvailable == true,
+            score = KWR.Util:Signature({ score.friendly or 0, score.enemy or 0 }),
+        }
+    end
     play.phase = currentPlayPhase(play, snapshot, now)
     return play
 end
@@ -1247,21 +1272,30 @@ end
 local function flagInvalidationReason(definition, play, snapshot)
     if not play then return nil end
     local summary = flagStateSummary(snapshot)
+    local baseline = play.flagBaseline or {}
     local playType = classifyFlagPlay(play)
-    if playType == "ESCORT" and summary.friendlyFlagActive <= 0 then
+    if playType == "ESCORT" and (baseline.friendlyFlagActive or 0) > 0
+        and summary.friendlyFlagActive <= 0 then
         return "FRIENDLY_FLAG_STATE_CHANGED"
     end
-    if playType == "RETURN" and summary.enemyFlagActive <= 0 then
+    if playType == "RETURN" and (baseline.enemyFlagActive or 0) > 0
+        and summary.enemyFlagActive <= 0 then
         return "ENEMY_FLAG_STATE_CHANGED"
     end
     if playType == "RESET"
+        and ((baseline.friendlyFlagActive or 0) > 0
+            or (baseline.enemyFlagActive or 0) > 0
+            or baseline.homeAvailable ~= true
+            or baseline.enemyRoomAvailable ~= true)
         and summary.friendlyFlagActive <= 0
         and summary.enemyFlagActive <= 0
         and summary.homeAvailable == true
         and summary.enemyRoomAvailable == true then
         return "FLAGS_RESET"
     end
-    if (snapshot.score and snapshot.score.lastCapture) ~= nil then
+    local score = snapshot.score or {}
+    local scoreRevision = KWR.Util:Signature({ score.friendly or 0, score.enemy or 0 })
+    if baseline.score and baseline.score ~= scoreRevision then
         return "FLAG_CAPTURED"
     end
     return nil
@@ -1572,7 +1606,7 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
     if command.reassessment then
         return true, "REASSESSMENT"
     end
-    if command.responsePackage and command.responsePackage.qualified then
+    if qualifiedResponseRequiresReplacement(command.responsePackage) then
         return true, "RESPONSE_PACKAGE"
     end
     if (prediction.urgency or 0) >= 95 then
@@ -1751,7 +1785,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local candidateAction = action
     local candidateWho = who
     if snapshot.context.inPvP and not snapshot.reassessment
-        and not response.qualified and self.lastCommand
+        and self.lastCommand
         and self.lastCommand.mapKey == mapKey
         and self.lastCommand.status == status
         and (KWR.Util:Now() - (self.lastCommand.decisionAt or 0)) < 2.5
@@ -1858,7 +1892,7 @@ function Commander:Compose(snapshot, prediction, assignments)
                 and math.abs((prediction.urgency or 0) - (previousCommand.urgency or 0))
                 or 0,
             retained = stabilized == true,
-            responseBypass = response.qualified == true,
+            responseBypass = qualifiedResponseRequiresReplacement(response),
             reassessmentBypass = snapshot.reassessment ~= nil,
             emergencyBypass = (prediction.urgency or 0) >= 90 and not stabilized,
         },

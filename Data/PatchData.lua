@@ -8,31 +8,47 @@ KWR.PatchData = PatchData
 -- New patches should add or replace a data pack here. Runtime engines consume
 -- the normalized pack and do not require strategy code rewrites.
 local PACKS = {
-    -- The installed Retail client is 12.1.0. Keep the 12.0.7 capability
-    -- overlays out of command scoring until the new season's official tuning
-    -- has been reviewed; generic doctrine remains available and conservative.
+    -- The installed Retail client is 12.1.0. The official Season 2 schedule
+    -- and PvP hotfix ledger have been reviewed, but no numerical capability
+    -- overlay is inferred from directional tuning. Static ladder/meta data is
+    -- freshness-gated separately by KnowledgeManifest.
     ["12.1.0"] = {
         interface = 120100,
-        season = "Midnight Season 2 preparation",
-        captured = "2026-08-11",
-        officialHotfixReviewed = nil,
-        source = "BLIZZARD_SEASON_2",
-        reviewed = false,
+        season = "Midnight Season 2",
+        captured = "2026-08-17",
+        officialHotfixReviewed = "2026-08-11",
+        source = "BLIZZARD_HOTFIXES",
+        reviewed = true,
         cooldowns = {},
         capabilities = {},
         disabledPlans = {},
+        hotfixWatchlist = {
+            status = "OFFICIAL_UNMODELED",
+            effectiveDate = "2026-08-11",
+            source = "Blizzard official hotfix notes",
+            sourceURL = "https://worldofwarcraft.blizzard.com/en-us/news/20863656/hotfixes-august-1",
+            policy = "Advisory only. KWR does not alter capability ratings, predictions, or doctrine until player-reviewed Retail evidence supports a bounded update.",
+            affected = {
+                "Balance Druid: PvP armor and defensive reductions",
+                "Holy Priest: throughput and Ray of Hope adjustments",
+                "Restoration Shaman: Riptide and template adjustments",
+                "Frost Mage: reduced chill strength",
+                "Affliction / Destruction Warlock: PvP template adjustments",
+            },
+        },
         seasonPrepCorpus = {
             active = true,
-            mode = "ADVISORY",
-            activationAuthority = "USER_APPROVED_ALPHA40",
+            mode = "IMMEDIATE_THEORY_FIRST",
+            activationAuthority = "USER_APPROVED_2026_08_17",
             requiresRetailValidation = true,
         },
         notes = {
-            "12.1 compatibility mode is active.",
-            "Blizzard schedules PvP Season 2 for the week of 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
-            "Season-preparation gearing guidance is advisory only; pricing, caps, Catalyst behavior, and tuning remain unreviewed until confirmed live.",
-            "12.0.7 meta and tuning overlays are intentionally not patch-aligned.",
-            "Composition and meta influence remain fail-closed pending official 12.1 review.",
+            "12.1 Season 2 compatibility and theory-first branch selection are active.",
+            "Blizzard schedules PvP Season 2 for 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
+            "Official PvP hotfix notes were reviewed through 2026-08-11; the affected-specialization watchlist is advisory and does not invent numerical capability weights.",
+            "The Will of the Forsaken PvP-trinket display change is presentation evidence only; KWR never invents or starts a trinket cooldown without observing the trinket itself.",
+            "The 12.0.7 static ladder snapshot remains excluded from Season 2 meta influence until a separately reviewed 12.1 snapshot exists.",
+            "Season-preparation gearing, simulation cases, and provisional compositions still require Retail validation before stable strategic certification.",
         },
     },
     ["12.0.7"] = {
@@ -130,6 +146,11 @@ end
 function PatchData:SeasonPrepCorpusMode()
     local pack = self:Get()
     return pack and pack.seasonPrepCorpus and pack.seasonPrepCorpus.mode or "DISABLED"
+end
+
+function PatchData:HotfixWatchlist()
+    local pack = self:Get()
+    return pack and pack.hotfixWatchlist or nil
 end
 
 function PatchData:Validate(interface)

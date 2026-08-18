@@ -14,7 +14,6 @@ function Invoke-KwrTool([string]$Name, [string[]]$Arguments = @()) {
 }
 
 Invoke-KwrTool 'runtime-preflight.ps1'
-Invoke-KwrTool 'compile-season2-rbg-lifecycle.ps1'
 Invoke-KwrTool 'validate.ps1'
 Invoke-KwrTool 'knowledge-audit.ps1'
 Invoke-KwrTool 'season2-rbg-simulation-audit.ps1'

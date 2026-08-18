@@ -104,17 +104,6 @@ function Observer:ObserveCarrier(name, kind, label, source)
         .. ";source=" .. clean(source, 24))
 end
 
-function Observer:ObserveCarrierUnit(unit, source)
-    -- Retail can mark unit aura collections secret before addon code sees an
-    -- individual aura. Calling GetAuraDataByIndex in that state taints the
-    -- caller and produces a protected-action error; checking the returned
-    -- value cannot make the call safe. Carrier truth must therefore come from
-    -- an explicitly supported objective source, never from aura enumeration.
-    -- Keep this no-op entry point for compatibility with any future legal
-    -- source, but do not touch the protected unit/aura APIs here.
-    return false
-end
-
 function Observer:OnInitialize()
     self.frame = CreateFrame("Frame", "KWRSentinel_ObserverFrame")
     self.frame:RegisterEvent("PLAYER_ENTERING_WORLD")

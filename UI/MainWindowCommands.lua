@@ -24,8 +24,14 @@ function MainWindowCommands:Register(owner, helpers)
             end
         elseif input == "" or input == "open" then owner:Toggle()
         elseif input == "map" or input == "tactical" or input == "command" then owner:Show("TACTICAL")
+        elseif input == "battlefield" or input == "battlefield map" then
+            if KWR.MainWindowLauncher and KWR.MainWindowLauncher.ToggleBattlefieldMap then
+                KWR.MainWindowLauncher:ToggleBattlefieldMap()
+            else
+                KWR:Print("Blizzard's battlefield map is not available yet.", true)
+            end
         elseif input == "reporter" or input == "report" then
-            KWR:Print("KWR Support View is retired. Press Shift-M for Blizzard's battlefield map.", true)
+            KWR:Print("KWR Support View is retired. Use the launcher's OPEN BATTLEFIELD MAP button or /kwr battlefield.", true)
         elseif input == "roster" or input == "combat" then KWR.CombatRoster:Toggle("BOTH")
         elseif input == "teammini" then KWR.CombatRoster:Toggle("TEAM")
         elseif input == "enemymini" then KWR.CombatRoster:Toggle("ENEMY")
@@ -47,7 +53,7 @@ function MainWindowCommands:Register(owner, helpers)
                 or (message or "AAR evidence was not cleared."), true)
         elseif input == "preview reporter" or input == "demo reporter"
             or input == "preview support" or input == "demo support" then
-            KWR:Print("KWR Support View is retired. Press Shift-M for Blizzard's battlefield map.", true)
+            KWR:Print("KWR Support View is retired. Use the launcher's OPEN BATTLEFIELD MAP button or /kwr battlefield.", true)
         elseif input == "preview roster" or input == "demo roster" then
             if helpers.previewAvailable() then
                 local state = KWR.Store:Get()
@@ -90,7 +96,7 @@ function MainWindowCommands:Register(owner, helpers)
             end
         elseif input == "hud" then KWR.HUD:Toggle()
         elseif input == "reportermini" then
-            KWR:Print("KWR Support View is retired. Press Shift-M for Blizzard's battlefield map.", true)
+            KWR:Print("KWR Support View is retired. Use the launcher's OPEN BATTLEFIELD MAP button or /kwr battlefield.", true)
         elseif input == "copy" then
             KWR.CopyDialog:ShowCompact("KWR Compact Call",
                 helpers.compactCommandText(KWR.Store:Get()), {
@@ -104,6 +110,15 @@ function MainWindowCommands:Register(owner, helpers)
             KWR.MatchRuntime:RescanRoster()
         elseif input == "field" or input == "fieldtest" or input == "ready" then
             owner:ArmFieldTest()
+        elseif input == "season2" or input == "season 2" or input == "watchlist" then
+            owner:ShowSeason2EvidenceRun()
+        elseif input == "season2 aar" or input == "season 2 aar" then
+            local latest = KWR.AAR:GetLatest()
+            if latest and KWR.AARWindow then
+                KWR.AARWindow:Show(latest.id)
+            else
+                KWR:Print("No completed AAR is available yet. Finish a real battleground first.", true)
+            end
         elseif input == "options" then KWR.Options:Toggle()
         elseif input == "presentation" or input == "bgui" then
             KWR.db.profile.presentation.enabled = KWR.db.profile.presentation.enabled == false
@@ -142,9 +157,9 @@ function MainWindowCommands:Register(owner, helpers)
             KWR:Print(line1 .. " | " .. line2, true)
         else
             local commands = {
-                "/kwr", "field", "bug", "tactical", "reporter", "roster", "teammini", "enemymini",
+                "/kwr", "field", "bug", "tactical", "battlefield", "reporter", "roster", "teammini", "enemymini",
                 "objectives", "team", "enemies", "assignments", "intel", "aar", "aar copy",
-                "aar clear", "override", "hud", "copy", "alts", "explain", "perf", "verify", "evidence",
+                "aar clear", "season2 [aar]", "override", "hud", "copy", "alts", "explain", "perf", "verify", "evidence",
                 "mode", "refresh", "reassess", "options", "presentation", "cursor", "reticle",
                 "status",
             }

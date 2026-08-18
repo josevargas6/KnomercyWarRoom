@@ -281,6 +281,12 @@ function Theme:Title(parent, size, justify)
 end
 
 function Theme:Button(parent, label, width, height, callback)
+    -- A themed button is always an actionable control. Failing at creation is
+    -- safer than shipping an attractive but inert button because a callback
+    -- was omitted during a later UI change.
+    if type(callback) ~= "function" then
+        error("KWR Theme:Button requires an actionable callback", 2)
+    end
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(width or 100, height or 24)
     self:Style(button, "card", "border")
@@ -317,7 +323,7 @@ function Theme:Button(parent, label, width, height, callback)
         self.selected = selected == true
         applyState(self, false)
     end
-    button:SetScript("OnClick", callback or function() end)
+    button:SetScript("OnClick", callback)
     button:SetScript("OnEnter", function(self)
         applyState(self, true)
     end)
@@ -401,6 +407,35 @@ function Theme:Badge(parent, tone, text, width, height)
     return badge
 end
 
+function Theme:FinishMove(frame, profile)
+    if not frame or not profile then return false end
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingMoveStops = self.pendingMoveStops or {}
+        self.pendingMoveStops[frame] = profile
+        if not self.moveStopEventFrame then
+            self.moveStopEventFrame = CreateFrame("Frame")
+            self.moveStopEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            self.moveStopEventFrame:SetScript("OnEvent", function()
+                Theme:FlushPendingMoveStops()
+            end)
+        end
+        return false
+    end
+    frame:StopMovingOrSizing()
+    local point, _, relativePoint, x, y = frame:GetPoint(1)
+    profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+    return true
+end
+
+function Theme:FlushPendingMoveStops()
+    if InCombatLockdown and InCombatLockdown() then return end
+    local pending = self.pendingMoveStops or {}
+    self.pendingMoveStops = {}
+    for frame, profile in pairs(pending) do
+        self:FinishMove(frame, profile)
+    end
+end
+
 function Theme:MakeMovable(frame, profile)
     frame:SetMovable(true)
     frame:EnableMouse(true)
@@ -410,9 +445,9 @@ function Theme:MakeMovable(frame, profile)
         self:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        local point, _, relativePoint, x, y = self:GetPoint(1)
-        profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+        -- A drag may end after combat starts. Queue completion for the first
+        -- safe frame rather than leaving the frame in the moving state.
+        Theme:FinishMove(self, profile)
     end)
 end
 

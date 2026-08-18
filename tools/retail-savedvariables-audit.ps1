@@ -9,6 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 $savedPath = [IO.Path]::GetFullPath($SavedVariablesPath)
 $deploymentPath = if ([IO.Path]::IsPathRooted($DeploymentCertificationPath)) {
     [IO.Path]::GetFullPath($DeploymentCertificationPath)
@@ -34,7 +35,7 @@ $candidateSchema = [int][regex]::Match(
     $addonSource, 'KWR\.schemaVersion\s*=\s*(\d+)').Groups[1].Value
 $deployment = Get-Content -LiteralPath $deploymentPath -Raw | ConvertFrom-Json
 $savedItem = Get-Item -LiteralPath $savedPath
-$savedHash = (Get-FileHash -LiteralPath $savedPath -Algorithm SHA256).Hash.ToUpperInvariant()
+$savedHash = Get-KwrFileSha256 -LiteralPath $savedPath
 
 function Find-RetailEvidenceRuntime {
     $pathNode = Get-Command "node" -ErrorAction SilentlyContinue
@@ -106,7 +107,10 @@ $exportLines = if ($ExportFile) {
 $meta = $null
 $matches = @()
 foreach ($line in @($exportLines)) {
-    $fields = @([string]$line -split "`t", -1)
+    # PowerShell's negative split count keeps the complete string instead of
+    # splitting it. Use the normal tab split so exporter META/MATCH records are
+    # actually decoded (and retain the empty fields the exporter emits).
+    $fields = @([string]$line -split "`t")
     if ($fields[0] -eq "META" -and $fields.Count -ge 4) {
         $meta = [pscustomobject]@{
             schemaVersion = [int]$fields[1]

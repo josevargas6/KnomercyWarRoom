@@ -10,6 +10,37 @@ local function singleLine(font)
     if font.SetMaxLines then font:SetMaxLines(1) end
 end
 
+local function openBattlefieldMap()
+    -- Prefer Blizzard's own toggle entry point. The frame is loaded lazily on
+    -- some Retail clients, so merely checking BattlefieldMapFrame made the
+    -- launcher look inert until the player had pressed their key binding once.
+    if type(ToggleBattlefieldMap) == "function" then
+        local ok = pcall(ToggleBattlefieldMap)
+        if ok then return true end
+    end
+    if type(BattlefieldMap_LoadUI) == "function" then
+        pcall(BattlefieldMap_LoadUI)
+    elseif not BattlefieldMapFrame and type(UIParentLoadAddOn) == "function" then
+        pcall(UIParentLoadAddOn, "Blizzard_BattlefieldMap")
+    end
+    if BattlefieldMapFrame then
+        if BattlefieldMapFrame:IsShown() then
+            BattlefieldMapFrame:Hide()
+        else
+            BattlefieldMapFrame:Show()
+        end
+        return true
+    end
+    if KWR and KWR.Print then
+        KWR:Print("Blizzard's battlefield map is unavailable in this client state.", true)
+    end
+    return false
+end
+
+function MainWindowLauncher:ToggleBattlefieldMap()
+    return openBattlefieldMap()
+end
+
 function MainWindowLauncher:Create(owner)
     if owner.launcher then return end
     local profile = KWR.db.profile.launcher
@@ -112,9 +143,7 @@ function MainWindowLauncher:Create(owner)
             self.dragging = false
             self:SetScript("OnUpdate", nil)
         else
-            self:StopMovingOrSizing()
-            local point, _, relativePoint, x, y = self:GetPoint(1)
-            profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+            KWR.Theme:FinishMove(self, profile)
         end
     end)
     button:SetScript("OnEnter", function(self)
@@ -178,12 +207,10 @@ function MainWindowLauncher:CreateMenu(owner)
         { "WAR ROOM", "commander", function() owner:Show("TACTICAL") end },
         { "FIGHT NOW", "hold", function() KWR.HUD:Toggle() end },
         { "TEAM BOARD", "friendly", function() owner:Show("TEAM") end },
-        { "MAP / SHIFT-M", "observed", function()
-            KWR:Print("Press Shift-M for Blizzard's battlefield map.", true)
-        end },
+        { "OPEN BATTLEFIELD MAP", "observed", openBattlefieldMap },
         { "ENEMY BOARD", "enemy", function() owner:Show("ENEMIES") end },
         { "REVIEW / AAR", "priority", function() owner:Show("INTEL") end },
-        { "AAR EXPORT", "assignment", function() owner:Show("INTEL") end },
+        { "AAR EXPORT", "assignment", function() owner:ShowAARExport() end },
         { "VERIFY", "ready", function()
             KWR.CopyDialog:ShowText("KWR Live Verification", KWR.Verification:CurrentReport(), {
                 note = "Summary first, raw details below. Scroll to inspect the full verification report.",

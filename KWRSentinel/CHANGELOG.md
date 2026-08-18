@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 6.1.1-alpha.4 - 2026-08-18
+
+- Synchronized the companion's version with Commander 6.1.1-alpha.4 so player
+  installation and transport compatibility remain unambiguous.
+
+- Rewrote the CurseForge listing copy for clean plain-text rendering and made
+  the Knomercy War Room Commander requirement explicit.
+- Renamed future player downloads to `KWR-Sentinel-<version>.zip`; published
+  release assets remain immutable.
 ## 6.1.0 - 2026-08-15
 
 - Promoted the embedded Sentinel package in lockstep with Commander 6.1.0.

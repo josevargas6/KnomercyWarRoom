@@ -86,6 +86,16 @@ foreach ($file in @($runtimeLua + $sentinelLua)) {
     }
 }
 
+# A Retail package cannot carry promises of later implementation. Missing
+# Blizzard truth is handled by an explicit adaptive call, but unfinished code
+# must fail the source audit before it can reach a player package.
+$unfinishedPattern = '(?i)\bTODO\b|\bFIXME\b|not implemented|future implementation|coming soon|\bstub\b|\bno[- ]op\b'
+foreach ($file in @($runtimeLua + $sentinelLua)) {
+    foreach ($hit in @(Select-String -LiteralPath $file.FullName -Pattern $unfinishedPattern)) {
+        Add-AuditError "Production Lua contains unfinished behavior marker: $($hit.Path):$($hit.LineNumber)"
+    }
+}
+
 $allLua = @(Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.lua' -Force | Where-Object {
     $relative = $_.FullName.Substring($root.Length + 1).Replace('/', '\\')
     $relative -notmatch '^(\.git|\.pnpm-store|artifacts|builds|node_modules|tmp|temp|coverage)\\'

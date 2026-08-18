@@ -254,6 +254,7 @@ local function strategicState(snapshot, prediction)
     end
     if prediction.status == "WIN" then return "STABILIZE" end
     if prediction.status == "TIE" then return "CONTEST" end
+    if prediction.status == "WAITING" then return "PRESSURE" end
     return prediction.status
 end
 
@@ -579,6 +580,14 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
     local definition = KWR.Maps:Get(snapshot.context and snapshot.context.mapKey)
     local profile = KWR.Maps:OperationalProfile(
         snapshot.context and snapshot.context.mapKey)
+    local faction = snapshot.context and snapshot.context.team
+        and snapshot.context.team.faction
+    local homeTarget = definition and definition.home and faction
+        and definition.home[faction]
+    local theoryTarget = homeTarget
+        or (definition and definition.priorities and definition.priorities[1])
+        or (definition and definition.title)
+        or "the current scoring objective"
     local friendly, enemy, available = {}, {}, {}
     for _, objective in ipairs(snapshot.objectives
         and snapshot.objectives.rows or {}) do
@@ -604,7 +613,7 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
             and definition.priorities[1])
     local threatenedTarget = reporter.hotspot
         and reporter.hotspot.owner == "FRIENDLY"
-        and reporter.hotspot.label or friendly[1]
+        and reporter.hotspot.label or friendly[1] or theoryTarget
     local function etaFor(target)
         for _, eta in ipairs(reporter.etas or {}) do
             if eta.label == target then return eta end
@@ -629,7 +638,7 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
         {
             id = "HOLD",
             target = #friendly > 0 and table.concat(friendly, " + ")
-                or "current scoring requirement",
+                or theoryTarget,
             probability = 48 + holdValue
                 + ((ratings.nodeDefense or 1) - 2) * 4
                 + (budget.score < 50 and 10 or 0)
@@ -833,6 +842,48 @@ local function applyEnemyResponsePlanning(snapshot, prediction, result)
     end
 end
 
+local function carrierTarget(carrier, fallback)
+    return KWR.Util:Text(carrier and (carrier.player or carrier.name or carrier.objective),
+        fallback or "the objective carrier", 64)
+end
+
+-- Carrier and emergency-objective truth outrank a generic Nexus candidate.
+-- Keep every command-facing field in one synchronized record so Commander,
+-- the envelope, and active-play stability track the exact same call.
+local function applyObjectiveOverride(result, override)
+    if type(result) ~= "table" or type(override) ~= "table" then return end
+    local previous = KWR.Util:Copy(result.selectedAction or {})
+    local selected = KWR.Util:Copy(previous)
+    selected.id = KWR.Util:Text(override.id, "OBJECTIVE_OVERRIDE", 48)
+    selected.target = KWR.Util:Text(override.target or result.target,
+        "the live objective", 64)
+    selected.outcome = KWR.Util:Text(override.outcome or override.reason,
+        "Live objective truth requires this action.", 180)
+    selected.success = KWR.Util:Text(override.success, selected.success or "Objective stabilizes.", 160)
+    selected.abort = KWR.Util:Text(override.abort, selected.abort or "Carrier or objective state changes.", 160)
+    selected.override = "LIVE_OBJECTIVE_TRUTH"
+    result.selectedAction = selected
+    result.action = KWR.Util:Text(override.action, result.action, 220)
+    result.reason = KWR.Util:Text(override.reason, result.reason, 220)
+    result.switchIf = KWR.Util:Text(override.switchIf, result.switchIf, 180)
+    result.stop = KWR.Util:Text(override.abort, result.stop, 180)
+    result.target = selected.target
+    result.expectedOutcome = selected.outcome
+    result.recommendationMode = selected.id
+    result.enemyResponsePlan = nil
+    result.enemyResponseID = nil
+    result.enemyResponseSummary = nil
+    result.consequenceScore = 0
+    if previous.id and previous.id ~= selected.id then
+        result.nexusFallbackCandidate = previous
+    end
+    result.objectiveDecision = type(result.objectiveDecision) == "table"
+        and KWR.Util:Copy(result.objectiveDecision) or {}
+    result.objectiveDecision.target = selected.target
+    result.objectiveDecision.success = selected.success
+    result.objectiveDecision.abort = selected.abort
+end
+
 function Strategist:Evaluate(snapshot, prediction)
     local signature = decisionSignature(snapshot, prediction)
     local now = KWR.Util:Now()
@@ -869,12 +920,6 @@ function Strategist:Evaluate(snapshot, prediction)
     end
     local currentState = strategicState(snapshot, prediction)
     result.state = currentState
-    if prediction.status == "WAITING" and currentState ~= "OPENING" then
-        result.reason = "Live battleground data is incomplete; no active plan is selected."
-        result.confidence = "NONE"
-        return result
-    end
-
     for _, battlePlan in ipairs(KWR.BattlePlans:Get(snapshot.context.mapKey)) do
         local feasible, missing = requirementFit(ourSummary, battlePlan.requires)
         local score = 0
@@ -1137,6 +1182,9 @@ function Strategist:Evaluate(snapshot, prediction)
     applyDoctrineComparisonGuidance(result, doctrineComparison)
     applyDoctrineResponseGuidance(result, doctrineResponse)
     applyEnemyResponsePlanning(snapshot, prediction, result)
+    if KWR.StrategistNexus then
+        KWR.StrategistNexus:Rank(snapshot, prediction, result)
+    end
     local carriers = snapshot.objectives and snapshot.objectives.carriers or {}
     if snapshot.context.kind == "FLAG" then
         local friendlyCarrier, enemyCarrier
@@ -1147,14 +1195,24 @@ function Strategist:Evaluate(snapshot, prediction)
         if friendlyCarrier and enemyCarrier then
             local enemyStacks = enemyCarrier.stacks or 0
             if enemyStacks < 3 then
-                result.action = "Stabilize our flag carrier, regroup offense, and deny trickle deaths."
-                result.reason = "Both flags are held; coordinated offense becomes more actionable as carrier pressure rises."
-                result.switchIf = "Push the grouped return when enemy carrier stacks or exposed defenses create a real kill window."
-                result.stop = "Do not trickle into a healthy, fully supported low-stack carrier."
+                applyObjectiveOverride(result, {
+                    id = "STABILIZE_FRIENDLY_CARRIER",
+                    target = carrierTarget(friendlyCarrier, "our flag carrier"),
+                    action = "Stabilize our flag carrier, regroup offense, and deny trickle deaths.",
+                    reason = "Both flags are held; coordinated offense becomes more actionable as carrier pressure rises.",
+                    switchIf = "Push the grouped return when enemy carrier stacks or exposed defenses create a real kill window.",
+                    success = "Our carrier is stabilized and the return group is assembled.",
+                    abort = "Do not trickle into a healthy, fully supported low-stack carrier.",
+                })
             else
-                result.action = "Push one grouped return team onto the stacked enemy flag carrier while preserving our carrier peel."
-                result.reason = "Enemy carrier pressure is now actionable; synchronize healer control and burst."
-                result.stop = "Do not send isolated players ahead of the return group."
+                applyObjectiveOverride(result, {
+                    id = "RETURN_ENEMY_CARRIER",
+                    target = carrierTarget(enemyCarrier, "the enemy flag carrier"),
+                    action = "Push one grouped return team onto the stacked enemy flag carrier while preserving our carrier peel.",
+                    reason = "Enemy carrier pressure is now actionable; synchronize healer control and burst.",
+                    success = "The enemy carrier is returned or their escort is broken.",
+                    abort = "Do not send isolated players ahead of the return group.",
+                })
             end
         end
     elseif snapshot.context.kind == "ORB" then
@@ -1164,43 +1222,70 @@ function Strategist:Evaluate(snapshot, prediction)
                 and carrier.healthPercent <= 35 then endangered = carrier break end
         end
         if endangered then
-            result.action = "Prepare a replacement at " .. endangered.objective
-                .. " and peel the current carrier toward supported scoring space."
-            result.reason = "A low-health orb carrier needs an intentional handoff or immediate peel, not an unplanned loss."
+            applyObjectiveOverride(result, {
+                id = "RELIEVE_FRIENDLY_ORB_CARRIER",
+                target = carrierTarget(endangered, endangered.objective or "the orb carrier"),
+                action = "Prepare a replacement at " .. KWR.Util:Text(endangered.objective,
+                    "the scoring point", 64)
+                    .. " and peel the current carrier toward supported scoring space.",
+                reason = "A low-health orb carrier needs an intentional handoff or immediate peel, not an unplanned loss.",
+                success = "The carrier reaches support or the replacement secures the handoff.",
+                abort = "Do not abandon the current carrier before relief arrives.",
+            })
         end
     end
     local truth = snapshot.truth or {}
     result.trust = trustModel(snapshot, prediction, budget, simulations, result.selectedAction)
-    if (budget.score < 40 or truth.coreFresh == false)
-        and currentState ~= "OPENING" then
-        result.action = "Protect the current scoring requirement, verify enemy movement, then reassess."
-        result.reason = truth.conservativeReason
+    result.theoryActive = true
+    result.projectionBasis = "IMMEDIATE_THEORY_FIRST"
+    local gateReason
+    local requiredEvidence = {}
+    if budget.score < 40 or truth.coreFresh == false then
+        gateReason = truth.conservativeReason
             or "Evidence coverage is too low for an aggressive commitment."
-        result.stop = "Do not commit a split or long rotation from unverified information."
-        result.recommendationMode = "HOLD"
-        result.expectedOutcome = "Preserve score while rebuilding battlefield confidence."
-        result.projectedWinProbability = nil
-        result.decisionScore = simulations[1]
-            and simulations[1].decisionScore or nil
+        requiredEvidence = {
+            "authoritative objective state",
+            "fresh score state",
+            "enemy movement confirmation",
+        }
     elseif snapshot.knowledgeStatus
-        and snapshot.knowledgeStatus.compositionAuthorized == false
-        and currentState ~= "OPENING" then
-        result.action = "Play the map, protect coverage, and avoid composition-dependent commits until specs are verified."
-        result.reason = snapshot.knowledgeStatus.reason
-        result.stop = "Do not force comp-specific swaps or split calls from historical or incomplete spec truth."
-        result.recommendationMode = "VERIFY"
-        result.expectedOutcome = "Stabilize around map fundamentals while composition certainty improves."
-    elseif result.trust and result.trust.commitAuthorized == false
-        and currentState ~= "OPENING" then
-        result.action = "Verify enemy movement, protect the score floor, and probe with reversible movement only."
-        result.reason = result.trust.reason
-        result.stop = "Do not split or hard-commit from thin movement confidence."
-        result.recommendationMode = "VERIFY"
-        result.expectedOutcome = "Reduce uncertainty before the next decisive commit."
+        and snapshot.knowledgeStatus.compositionAuthorized == false then
+        gateReason = snapshot.knowledgeStatus.reason
+        requiredEvidence = {
+            "verified enemy specializations",
+            "enemy capability coverage",
+            "composition counter confirmation",
+        }
+    elseif result.trust and result.trust.commitAuthorized == false then
+        gateReason = result.trust.reason
+        requiredEvidence = {
+            "objective conflict resolution",
+            "enemy movement confirmation",
+            "local arrival-time advantage",
+        }
     elseif opportunity.open and budget.score >= 55
         and result.recommendationMode == "TEAMFIGHT" then
         result.reason = result.reason .. " WINDOW: "
             .. table.concat(opportunity.evidence, ", ") .. "."
+    end
+    result.executionGate = {
+        -- This remains diagnostic metadata. The player always receives the
+        -- best current call; weak truth changes its commitment style, not
+        -- whether KWR provides a plan.
+        status = gateReason and "VERIFY_BEFORE_COMMIT" or "COMMIT_ALLOWED",
+        reason = gateReason or "Live truth supports the selected plan.",
+        requiredEvidence = KWR.Util:Copy(requiredEvidence),
+        theoreticalPrimary = result.recommendationMode,
+        target = result.selectedAction and result.selectedAction.target,
+    }
+    if gateReason then
+        result.reason = KWR.Util:Text(result.reason, "", 220)
+        if result.reason ~= "" then result.reason = result.reason .. " " end
+        result.reason = result.reason .. "ADAPTIVE PLAN: " .. gateReason
+        result.stop = KWR.Util:Text(result.stop, "", 220)
+        if result.stop ~= "" then result.stop = result.stop .. " " end
+        result.stop = result.stop
+            .. "Keep objective coverage intact and convert only on the first confirmed opening."
     end
     if adversarialCalibration and (
         (result.trust and result.trust.commitAuthorized == false)
@@ -1223,6 +1308,9 @@ function Strategist:Evaluate(snapshot, prediction)
         if (result.switchIf == nil or result.switchIf == "") and adversarialCalibration.escalateWhen then
             result.switchIf = adversarialCalibration.escalateWhen
         end
+    end
+    if KWR.StrategistNexus then
+        result.nexus = KWR.StrategistNexus:Envelope(snapshot, prediction, result)
     end
     self.cache = {
         signature = signature,

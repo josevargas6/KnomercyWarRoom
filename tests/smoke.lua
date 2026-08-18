@@ -461,7 +461,8 @@ local files = {
     "Data/ScenarioCalibration.lua",
     "Data/ScenarioAdversarialCalibration.lua",
     "Data/ScenarioExpertCorpus.lua",
-    "Data/Season2CorpusLifecycle.lua",
+    "Data/StrategistNexusPolicy.lua",
+    "Data/StrategistNexusCorpus.lua",
     "Data/CompThreats.lua",
     "Data/EnemyDefenseModels.lua",
     "Data/OpenerDoctrine.lua",
@@ -471,6 +472,7 @@ local files = {
     "Data/ScenarioFixtures.lua",
     "Data/Counters.lua",
     "Data/KnowledgeManifest.lua",
+    "Data/StrategistNexusKnowledge.lua",
     "Rulesets/Retail_Current.lua",
     "Rulesets/PTR_12_1.lua",
     "Rulesets/Strict_Future.lua",
@@ -513,6 +515,7 @@ local files = {
     "Runtime/Reporter.lua",
     "Runtime/Predictor.lua",
     "Runtime/EnemyResponsePlanner.lua",
+    "Runtime/StrategistNexus.lua",
     "Runtime/Strategist.lua",
     "Runtime/AssignmentOverrides.lua",
     "Runtime/Assignments.lua",
@@ -521,6 +524,7 @@ local files = {
     "Runtime/SafetyMonitor.lua",
     "Runtime/AAR.lua",
     "Runtime/Verification.lua",
+    "Runtime/Season2Readiness.lua",
     "Runtime/MemoryBudget.lua",
     "Runtime/SentinelIngress.lua",
     "Runtime/SentinelMerge.lua",
@@ -615,8 +619,6 @@ assert(KWR.SafetyMonitor:Snapshot().blocked == KWR.SafetyMonitor.__testAfter.blo
 KWR.SafetyMonitor.__testBefore = nil
 KWR.SafetyMonitor.__testAfter = nil
 
-assert(KWR.Season2CorpusLifecycle and KWR.Season2CorpusLifecycle:Count() == 0,
-    "Simulation-only Season 2 corpus must compile to zero live runtime entries.")
 do
     local reviewQueue = KWR.AAR:BuildReviewQueue({
         performance = { errors = 1, maxP95Ms = 2.1, maxRefreshMs = 10.1 },
@@ -716,6 +718,7 @@ do
         and type(KWR.db.profile.presentation) == "table"
         and KWR.db.profile.aar.enabled == true
         and KWR.db.profile.aar.autoOpen == true
+        and KWR.db.profile.sentinelTransportEnabled == false
         and KWR.db.profile.showLoadMessage == true
         and type(KWR.db.journal.history) == "table"
         and #KWR.db.journal.history == 2
@@ -731,6 +734,28 @@ end
 do
     local savedDb = KWR.Util:Copy(KWR_DB)
     KWR_DB = {
+        schemaVersion = 60001,
+        profile = {
+            hud = { enabled = false },
+            cursor = { enabled = false },
+            combatRoster = { shown = false },
+            aar = { enabled = false },
+            sentinelTransportEnabled = false,
+        },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.enabled == false
+        and KWR.db.profile.cursor.enabled == false
+        and KWR.db.profile.combatRoster.shown == false
+        and KWR.db.profile.aar.enabled == false
+        and KWR.db.profile.sentinelTransportEnabled == false,
+        "Profile migration overwrote an explicit player opt-out.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
+    KWR_DB = {
         schemaVersion = 60129,
         profile = {
             cursor = {
@@ -740,7 +765,7 @@ do
     }
     KWR:InitializeDatabase()
     assert(KWR.db.profile.cursor.reticleGuides == false
-        and KWR.db.profile.cursor.reticlePresentationVersion == 3,
+        and KWR.db.profile.cursor.reticlePresentationVersion == 4,
         "Reticle presentation migration did not preserve an explicit guide opt-out.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
@@ -1435,6 +1460,10 @@ do
     })
     assert(#stableSameShort == 2,
         "Combat roster collapsed distinct stable same-short-name teammates.")
+    assert(stableSameShort[1].displayName ~= stableSameShort[2].displayName
+        and stableSameShort[1].displayName:find("-", 1, true)
+        and stableSameShort[2].displayName:find("-", 1, true),
+        "Combat roster did not disambiguate distinct stable same-short-name teammates.")
     local qualifiedAndShort = KWR.TeamResolver:NormalizePublishedRoster({
         { name = "Valorite-Area52", guid = "VALORITE-GUID", role = "DAMAGER" },
         { shortName = "Valorite", key = "VALORITE-SHORT", spec = "Devastation", role = "DAMAGER" },
@@ -1530,6 +1559,236 @@ assert(KWR.ScenarioAdversarialCalibration:Count() == 200,
     "Scenario adversarial calibration did not expose one fail-closed row per current base RBG scenario.")
 assert(KWR.ScenarioExpertCorpus:Count() == 1200,
     "Scenario expert corpus did not expose the current reviewed and season-prep scenario set.")
+assert(KWR.StrategistNexusCorpus:Count() == 100000
+    and KWR.StrategistNexusCorpus:Status() == "SIMULATION_ONLY"
+    and KWR.StrategistNexusCorpus:Activation()
+        == "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
+    and KWR.StrategistNexusCorpus:Patch() == "12.1.0",
+    "Strategist Nexus did not expose the complete simulation-only runtime corpus.")
+assert(KWR.StrategistNexusKnowledge:Status() == "PRODUCTION_ACTIVE"
+    and KWR.StrategistNexusKnowledge:Patch() == "12.1.0"
+    and KWR.StrategistNexusKnowledge:Shared().activation == "IMMEDIATE_THEORY_FIRST"
+    and KWR.StrategistNexusKnowledge:Shared().simulationAuthority
+        == "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL"
+    and KWR.StrategistNexusKnowledge:Shared().liveEvidenceRole
+        == "REFINE_OR_DISPROVE_NOT_ACTIVATE",
+    "Strategist Nexus production knowledge contract is unavailable or unsafe.")
+do
+    local maps = {
+        "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG",
+        "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING",
+    }
+    local phases = { "OPENING", "STABILIZE", "PRESSURE", "RECOVERY", "ENDGAME" }
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            local coverage = KWR.StrategistNexusCorpus:Coverage(mapKey, phase, {})
+            assert(coverage.available == true
+                and coverage.phaseCases == 2000
+                and coverage.mapCases == 10000
+                and coverage.totalCases == 100000,
+                "Strategist Nexus coverage drifted for " .. mapKey .. " / " .. phase)
+            local knowledge = KWR.StrategistNexusKnowledge:Coverage(mapKey, phase)
+            assert(knowledge.available == true
+                and knowledge.reviewedLabels >= 5
+                and knowledge.reviewedCases >= 5
+                and knowledge.adversarialCases >= 1
+                and knowledge.doctrineComparisons == 20
+                and knowledge.doctrineResponses == 20,
+                "Strategist Nexus reviewed knowledge drifted for " .. mapKey .. " / " .. phase)
+        end
+    end
+    local branch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
+        family = "first-contact",
+        compWatch = "HUNTER_DK_PRESSURE",
+        scoreState = "SAFE_DEFAULT",
+        counterResponse = "EXPECTED",
+        evidenceState = "LIVE_KNOWN",
+    })
+    assert(branch.available == true and branch.exactCases == 1,
+        "Strategist Nexus did not retrieve exact branch coverage.")
+    local incompleteBranch = KWR.StrategistNexusCorpus:Coverage("ARATHI", "OPENING", {
+        family = "scout-confirm",
+        compWatch = "HUNTER_DK_PRESSURE",
+        scoreState = "SAFE_DEFAULT",
+        counterResponse = "EXPECTED",
+    })
+    assert(incompleteBranch.available == false and incompleteBranch.exactCases == 0,
+        "Strategist Nexus treated an incomplete query as exact branch coverage.")
+
+    -- Exact coverage only matters if every covered branch resolves to one
+    -- concrete, legal player call. Enumerate every coordinate of the
+    -- 10 x 5 x 4 x 4 x 5 x 5 x 5 Cartesian matrix. The ranker's non-coverage
+    -- inputs are separable bounded adjustments, so each member of every input
+    -- axis is also passed through Rank below; this proves the whole matrix
+    -- without needlessly rebuilding the same result table 100,000 times.
+    local familiesByPhase = {
+        OPENING = { "first-contact", "scout-confirm", "reserve-route", "anti-stealth" },
+        STABILIZE = { "score-floor", "healer-triangle", "defender-pair", "rotation-discipline" },
+        PRESSURE = { "control-chain", "grip-window", "ranged-sightline", "weak-side-pivot" },
+        RECOVERY = { "regroup", "cross-map-trade", "post-wipe", "objective-denial" },
+        ENDGAME = { "clock-protection", "last-window", "safe-cap", "deny-throw" },
+    }
+    local candidateIDs = { "HOLD", "ROTATE", "TRADE", "TEAMFIGHT", "SPLIT" }
+    local candidateForFamily = {}
+    for _, phase in ipairs(phases) do
+        candidateForFamily[phase] = {}
+        for _, candidateID in ipairs(candidateIDs) do
+            local family = KWR.StrategistNexusPolicy:Family(phase, candidateID)
+            assert(family ~= nil,
+                "Strategist Nexus policy omitted a candidate family for " .. phase)
+            candidateForFamily[phase][family] = candidateForFamily[phase][family]
+                or candidateID
+        end
+        for _, family in ipairs(familiesByPhase[phase]) do
+            assert(candidateForFamily[phase][family] ~= nil,
+                "Simulation family is unreachable from a real action: "
+                    .. phase .. " / " .. family)
+        end
+    end
+    local scoreInputs = {
+        SAFE_DEFAULT = { status = "WAITING", urgency = 0 },
+        FAVORABLE = { status = "WIN", urgency = 0 },
+        UNFAVORABLE = { status = "LOSE", urgency = 0 },
+        TIED = { status = "TIE", urgency = 0 },
+        EMERGENCY = { status = "WAITING", urgency = 90 },
+    }
+    local responseIDs = {
+        EXPECTED = "ROTATION_MIRROR",
+        BAIT = "SCORE_FLOOR_BREAK",
+        OVERCOMMIT = "MULTI_POINT_PRESSURE",
+        CROSSMAP_PIVOT = "COUNTER_TRADE_RACE",
+        FAILED_CONNECT = "LATE_ROTATION_PUNISH",
+    }
+    local evidenceInputs = {
+        LIVE_KNOWN = { coreFresh = true, compositionAuthorized = true, budget = 80 },
+        OBSERVED = { coreFresh = true, compositionAuthorized = false, budget = 80 },
+        DERIVED = { coreFresh = false, compositionAuthorized = true, budget = 55 },
+        META_ONLY = { coreFresh = false, compositionAuthorized = false, budget = 0 },
+        UNKNOWN = { coreFresh = false, compositionAuthorized = true, budget = 0 },
+    }
+    local compWatches = {
+        "HUNTER_DK_PRESSURE", "ARMS_AFFLICTION_CONTROL",
+        "HUNTER_RET_TEMPO", "ROGUE_AFFLICTION_SPLIT",
+    }
+    local scoreStates = {
+        "SAFE_DEFAULT", "FAVORABLE", "UNFAVORABLE", "TIED", "EMERGENCY",
+    }
+    local counterResponses = {
+        "EXPECTED", "BAIT", "OVERCOMMIT", "CROSSMAP_PIVOT", "FAILED_CONNECT",
+    }
+    local evidenceStates = {
+        "LIVE_KNOWN", "OBSERVED", "DERIVED", "META_ONLY", "UNKNOWN",
+    }
+    local exercised = 0
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            for _, family in ipairs(familiesByPhase[phase]) do
+                for _, compWatch in ipairs(compWatches) do
+                    for _, scoreName in ipairs(scoreStates) do
+                        for _, counterResponse in ipairs(counterResponses) do
+                            for _, evidenceName in ipairs(evidenceStates) do
+                                local coverage = KWR.StrategistNexusCorpus:Coverage(mapKey, phase, {
+                                    family = family,
+                                    compWatch = compWatch,
+                                    scoreState = scoreName,
+                                    counterResponse = counterResponse,
+                                    evidenceState = evidenceName,
+                                })
+                                assert(coverage.available == true and coverage.exactCases == 1,
+                                    "Exact corpus branch is missing: "
+                                        .. table.concat({ mapKey, phase, family, compWatch,
+                                            scoreName, counterResponse, evidenceName }, " / "))
+                                exercised = exercised + 1
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    assert(exercised == 100000,
+        "Strategist Nexus coverage test did not enumerate every exact branch.")
+
+    local ranked = 0
+    local function assertRanked(mapKey, phase, family, compWatch, scoreName,
+            counterResponse, evidenceName)
+        local evidence = evidenceInputs[evidenceName]
+        local snapshot = {
+            context = { mapKey = mapKey },
+            truth = { coreFresh = evidence.coreFresh },
+            knowledgeStatus = { compositionAuthorized = evidence.compositionAuthorized },
+        }
+        local prediction = scoreInputs[scoreName]
+        local candidateID = candidateForFamily[phase][family]
+        local candidate = {
+            id = candidateID,
+            target = mapKey .. " objective",
+            outcome = "Execute " .. candidateID .. " for " .. family .. ".",
+            abort = "Switch when the objective rule changes.",
+            success = "Preserve or improve the score path.",
+            legal = true,
+            reversible = true,
+            decisionScore = 60,
+            probability = 60,
+            enemyResponsePlan = {
+                responseID = responseIDs[counterResponse],
+                summary = "Bounded counter response.",
+            },
+        }
+        local result = {
+            phase = phase,
+            simulations = { candidate },
+            confidenceBudget = { score = evidence.budget },
+            enemyComposition = { id = "BALANCED" },
+            enemyTier = { id = "S2_" .. compWatch },
+            ourSummary = { coverage = 0, ratings = {} },
+            enemySummary = { coverage = 0, ratings = {} },
+        }
+        KWR.StrategistNexus:Rank(snapshot, prediction, result)
+        local selected = result.selectedAction or {}
+        local coverage = selected.nexus and selected.nexus.simulationCoverage or {}
+        assert(coverage.available == true
+            and coverage.exactCases == 1
+            and selected.legal == true
+            and selected.nexus.theoryActivated == true
+            and type(result.action) == "string" and result.action ~= ""
+            and type(result.target) == "string" and result.target ~= ""
+            and type(result.reason) == "string" and result.reason ~= ""
+            and type(result.switchIf) == "string" and result.switchIf ~= ""
+            and type(result.stop) == "string" and result.stop ~= "",
+            "Exact simulation branch did not produce an actionable legal plan: "
+                .. table.concat({ mapKey, phase, family, compWatch,
+                    scoreName, counterResponse, evidenceName }, " / "))
+        ranked = ranked + 1
+    end
+
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            for _, family in ipairs(familiesByPhase[phase]) do
+                assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                    counterResponses[1], evidenceStates[1])
+                for _, compWatch in ipairs(compWatches) do
+                    assertRanked(mapKey, phase, family, compWatch, scoreStates[1],
+                        counterResponses[1], evidenceStates[1])
+                end
+                for _, scoreName in ipairs(scoreStates) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreName,
+                        counterResponses[1], evidenceStates[1])
+                end
+                for _, counterResponse in ipairs(counterResponses) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                        counterResponse, evidenceStates[1])
+                end
+                for _, evidenceName in ipairs(evidenceStates) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                        counterResponses[1], evidenceName)
+                end
+            end
+        end
+    end
+    assert(ranked == 4000,
+        "Strategist Nexus actionability test did not exercise every rank input axis.")
+end
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
 assert(KWR.DoctrineComparisons:CountResponses() == 200,
@@ -1560,6 +1819,20 @@ assert(liveStrategy.doctrineComparisonID
     and type(liveStrategy.comparisonChoice) == "string"
     and type(liveStrategy.safeCounterAction) == "string",
     "Strategist did not surface doctrine comparison and safe-counter guidance.")
+assert(type(liveStrategy.nexus) == "table"
+    and type(liveStrategy.nexus.primary) == "table"
+    and type(liveStrategy.nexus.fallback) == "table"
+    and type(liveStrategy.nexus.enemyResponse) == "table"
+    and liveStrategy.nexus.provenance.totalSimulationCases == 100000
+    and liveStrategy.nexus.provenance.sourceStatus == "PRODUCTION_ACTIVE"
+    and liveStrategy.nexus.provenance.activation == "IMMEDIATE_THEORY_FIRST"
+    and liveStrategy.nexus.provenance.simulationStatus == "SIMULATION_ONLY"
+    and liveStrategy.nexus.provenance.simulationActivation
+        == "IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION"
+    and liveStrategy.nexus.provenance.simulationAuthority
+        == "THEORY_BRANCH_ACTIVATION_NON_EMPIRICAL"
+    and liveStrategy.nexus.provenance.livePromotion == "PLAYER_REVIEW_REQUIRED",
+    "Strategist did not surface the evidence-gated Nexus decision envelope.")
 local liveCommand = KWR.Store:Get().command or {}
 assert(type(liveCommand.branchChoice) == "string"
     and type(liveCommand.safeCounter) == "string"
@@ -1624,12 +1897,27 @@ assert(wsgExpertReview
     and wsgExpertReview.preferredResponseId == "WSG_RESP_ESCORT_SHELL"
     and type(wsgExpertReview.safestCounter) == "string",
     "Scenario expert corpus did not expose reviewed opening doctrine for Warsong Gulch.")
-assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "PENDING_SEASON_REVIEW",
-    "Season-prep scenario corpus entry lost its pending-review guard.")
+assert(KWR.ScenarioExpertCorpus:Get("arathi-season-prep-opening-01").seasonStatus == "ACTIVE_THEORY_FIELD",
+    "Season-prep scenario corpus entry did not activate for field use.")
 assert(KWR.PatchData:SeasonPrepCorpusActive() == true
-    and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "PENDING_SEASON_REVIEW"
-    and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "ADVISORY",
-    "Alpha40 did not activate the season-prep corpus as advisory guidance.")
+    and KWR.ScenarioExpertCorpus:GetByMapAndPhase("ARATHI", "OPENING").seasonStatus == "ACTIVE_THEORY_FIELD"
+    and KWR.ScenarioExpertCorpus:Shared().seasonPrepActivation.mode == "IMMEDIATE_THEORY_FIRST",
+    "Season 2 did not activate the theory-first corpus with pending-review safeguards.")
+do
+    local watchlist = KWR.PatchData:HotfixWatchlist()
+    assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
+        and watchlist.effectiveDate == "2026-08-11"
+        and #(watchlist.affected or {}) >= 5,
+        "Season 2 official-hotfix watchlist did not retain advisory provenance.")
+    local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
+    local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
+    assert(evidenceRun.watchlist == watchlist
+        and #evidenceRun.checks == 4
+        and evidenceReport:find("OFFICIAL_UNMODELED", 1, true)
+        and evidenceReport:find("Carrier target", 1, true)
+        and evidenceReport:find("local capture only", 1, true),
+        "Season 2 evidence run did not preserve bounded local-only capture guidance.")
+end
 do
     local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
     assert(seasonTwoTargets[1]
@@ -1809,14 +2097,21 @@ assert(type(liveState.snapshot.reporter.trust) == "table"
     "Reporter did not expose a trust profile.")
 assert(type(liveState.snapshot.knowledgeStatus) == "table"
     and type(liveState.snapshot.knowledgeStatus.label) == "string"
-    and liveState.snapshot.knowledgeStatus.patchAligned == false
-    and liveState.snapshot.knowledgeStatus.reviewed == false
-    and liveState.snapshot.knowledgeStatus.compositionAuthorized == false
+    and liveState.snapshot.knowledgeStatus.patchAligned == true
+    and liveState.snapshot.knowledgeStatus.reviewed == true
+    and liveState.snapshot.knowledgeStatus.metaAligned == false
     and liveState.snapshot.knowledgeStatus.metaInfluenceAllowed == false,
-    "Retail 12.1 compatibility mode did not fail closed on stale tuning data.")
+    "Retail 12.1 review did not activate independently while stale meta stayed excluded.")
 assert(type(liveState.snapshot.strategy.trust) == "table"
     and type(liveState.snapshot.strategy.trust.mode) == "string",
     "Strategist did not expose a strategy trust model.")
+assert(liveState.snapshot.strategy.theoryActive == true
+    and liveState.snapshot.strategy.projectionBasis == "IMMEDIATE_THEORY_FIRST"
+    and liveState.snapshot.strategy.recommendationMode ~= "VERIFY"
+    and type(liveState.snapshot.strategy.executionGate) == "table"
+    and liveState.snapshot.strategy.executionGate.status == "COMMIT_ALLOWED"
+    and liveState.snapshot.strategy.trust.commitAuthorized == true,
+    "Reviewed 12.1 capabilities and authoritative live truth did not activate a bounded commit.")
 assert(type(liveState.snapshot.strategy.scenarioCalibration) == "table"
     and liveState.snapshot.strategy.scenarioCalibration.reviewedCases >= 5
     and type(liveState.snapshot.strategy.reviewDisciplineRule) == "string",
@@ -1827,7 +2122,7 @@ assert(type(liveState.snapshot.strategy.scenarioAdversarialCalibration) == "tabl
     "Strategist did not attach adversarial scenario calibration.")
 assert(type(liveState.snapshot.strategy.scenarioExpertReview) == "table"
     and (liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 5
-        or (liveState.snapshot.strategy.scenarioExpertReview.seasonStatus == "PENDING_SEASON_REVIEW"
+        or (liveState.snapshot.strategy.scenarioExpertReview.seasonStatus == "ACTIVE_THEORY_FIELD"
             and liveState.snapshot.strategy.scenarioExpertReview.reviewedLabels >= 1))
     and type(liveState.snapshot.strategy.expertPreferredAction) == "string"
     and type(liveState.snapshot.strategy.expertSafestCounter) == "string",
@@ -1837,6 +2132,32 @@ assert(type(liveState.snapshot.strategy.enemyResponsePlan) == "table"
     and type(liveState.snapshot.strategy.enemyResponsePlan.safestReply) == "string"
     and type(liveState.snapshot.strategy.consequenceScore) == "number",
     "Strategist did not attach bounded enemy-response planning.")
+assert(type(liveState.snapshot.strategy.nexusContext) == "table"
+    and type(liveState.snapshot.strategy.nexusFallbackCandidate) == "table"
+    and type(liveState.snapshot.strategy.nexus) == "table"
+    and liveState.snapshot.strategy.nexus.provenance.reviewedLearningSamples >= 0,
+    "Strategist Nexus did not preserve reviewed live-learning provenance.")
+for _, candidate in ipairs(liveState.snapshot.strategy.simulations or {}) do
+    assert(type(candidate.nexus) == "table"
+        and math.abs(candidate.nexus.adjustment or 0) <= 16,
+        "Strategist Nexus candidate adjustment escaped its bounded policy.")
+    assert((candidate.nexus.coverageGuardAdjustment or 0) <= 0,
+        "Simulation coverage produced an unauthorized positive tactic score.")
+    if (candidate.nexus.simulationCoverage and candidate.nexus.simulationCoverage.exactCases or 0) > 0 then
+        assert(candidate.nexus.activation == "IMMEDIATE_THEORY_FIRST"
+            and candidate.nexus.theoryActivated == true
+            and candidate.enemyResponsePlan.responseID ~= "STANDARD_REINFORCE",
+            "An exactly covered candidate did not activate complete countertheory.")
+    else
+        assert(candidate.nexus.theoryActivated == false
+            and (candidate.nexus.coverageGuardAdjustment or 0) <= 0,
+            "An uncovered candidate was allowed to claim simulation support.")
+    end
+    if candidate.legal == false then
+        assert(candidate.nexus.adjustment == 0,
+            "Strategist Nexus adjusted an objective-rule-gated candidate.")
+    end
+end
 assert(type(liveState.snapshot.strategy.executionAssessment) == "table"
     and type(liveState.snapshot.strategy.executionAssessment.organization) == "table"
     and liveState.snapshot.strategy.executionAssessment.organization.uncovered
@@ -1863,7 +2184,10 @@ local conflictedStrategy = KWR.Strategist:Evaluate(
     conflictedSnapshot, KWR.Predictor:Evaluate(conflictedSnapshot))
 assert(conflictedStrategy.trust
     and conflictedStrategy.trust.commitAuthorized == false
-    and conflictedStrategy.trust.reason == "Objective truth has conflicting public signals.",
+    and conflictedStrategy.trust.reason == "Objective truth has conflicting public signals."
+    and conflictedStrategy.theoryActive == true
+    and conflictedStrategy.recommendationMode ~= "VERIFY"
+    and conflictedStrategy.executionGate.status == "VERIFY_BEFORE_COMMIT",
     "Strategist did not suppress hard commits when objective evidence conflicted.")
 assert(liveState.assignments[1].backupRole == "Defense Floater"
     and liveState.assignments[1].assignmentConfidence == "HIGH"
@@ -2006,6 +2330,9 @@ assert(sentinelView.watch and sentinelView.watch.reason ~= ""
     "Sentinel bridge did not publish the current local watch target.")
 do
     KWR_TEST_COMM = KWR.CommanderComm
+    assert(KWR_TEST_COMM:TransportEnabled() == false
+        and KWR_TEST_COMM:SetTransportEnabled(true),
+        "Commander transport did not remain opt-in before explicit Field-mode activation.")
     KWR_TEST_SESSION = KWR_TEST_COMM:SessionKey(liveState)
     KWR_TEST_ROSTER_SENDER = liveState.snapshot.roster[1].name
     KWR_TEST_HELLO = table.concat({
@@ -3053,6 +3380,13 @@ local flagPreviousState = {
         hardDeadlineAt = KWR.Util:Now() + 26,
         phase = "COMMITTED",
         remainingValue = 74,
+        flagBaseline = {
+            friendlyFlagActive = 1,
+            enemyFlagActive = 1,
+            homeAvailable = false,
+            enemyRoomAvailable = false,
+            score = KWR.Util:Signature({ 1, 1 }),
+        },
     },
     command = {
         action = "ESCORT OUR FC",
@@ -4680,6 +5014,17 @@ do
     }
     boundState.assignments = {}
     KWR.CombatRoster:Update(boundState)
+    local sameShortState = KWR.Util:Copy(boundState)
+    sameShortState.snapshot.roster[1].name = "Verite-MoonGuard"
+    sameShortState.snapshot.roster[1].shortName = "Verite"
+    sameShortState.snapshot.roster[2].name = "Verite-Tichondrius"
+    sameShortState.snapshot.roster[2].shortName = "Verite"
+    KWR.CombatRoster:Update(sameShortState)
+    assert(KWR.CombatRoster.teamRows[1].nameText.value ~= KWR.CombatRoster.teamRows[2].nameText.value
+        and KWR.CombatRoster.teamRows[1].nameText.value:find("Verite%-", 1) == 1
+        and KWR.CombatRoster.teamRows[2].nameText.value:find("Verite%-", 1) == 1,
+        "Combat roster rendered indistinguishable duplicate short-name bars.")
+    KWR.CombatRoster:Update(boundState)
     local loadingState = KWR.Util:Copy(boundState)
     loadingState.snapshot.context.rosterHydration = { expected = 3 }
     loadingState.snapshot.context.rosterPresentation = { ready = false }
@@ -5713,8 +6058,10 @@ assert(not KWR.MainWindow.pages.TACTICAL.nextCard.value.value:find("center board
         "CURRENT ROSTER:", 1, true)
     and KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.summary.value:find(
         "TARGET BUILD:", 1, true)
-    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("NEED:", 1, true),
-    "Setup tactical page did not expose current roster, target build, and need directly.")
+    and KWR.MainWindow.pages.TACTICAL.winCard.heading.value == "COUNTERPICK"
+    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("FAVORS", 1, true)
+    and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find("COUNTERPLAY", 1, true),
+    "Setup tactical page did not expose direct roster strengths and counterplay information.")
 assert(KWR.MainWindow.pages.TACTICAL.targetCard.heading.value == "BUILD FIT"
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("TARGET MATCH", 1, true)
     and KWR.MainWindow.pages.TACTICAL.targetCard.value.value:find("OPEN SLOTS", 1, true)
@@ -5747,7 +6094,7 @@ assert(KWR.db.profile.formation.selectedCompID == "CONTROL_CLEAVE"
 assert(KWR.MainWindow.pages.TACTICAL.battlefieldCard.formation.title.value:find(
         "Control Cleave", 1, true)
     and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find(
-        "TARGET:", 1, true)
+        "SELECTED", 1, true)
     and KWR.MainWindow.pages.TACTICAL.winCard.value.value:find(
         "Control Cleave", 1, true),
     "Visible setup board did not repaint to the selected build target.")
@@ -6196,7 +6543,7 @@ assert(KWR.MainWindow.launcherMenu.stateBadge.text.value ~= ""
     and KWR.MainWindow.launcherMenu.buttons[1].label.value == "WAR ROOM"
     and KWR.MainWindow.launcherMenu.buttons[2].label.value == "FIGHT NOW"
     and KWR.MainWindow.launcherMenu.buttons[3].label.value == "TEAM BOARD"
-    and KWR.MainWindow.launcherMenu.buttons[4].label.value == "MAP / SHIFT-M"
+    and KWR.MainWindow.launcherMenu.buttons[4].label.value == "OPEN BATTLEFIELD MAP"
     and KWR.MainWindow.launcherMenu:GetFrameStrata() == "HIGH"
     and KWR.MainWindow.launcherMenu.buttons[3].icon.texture ~= nil,
     "Launcher menu or top-level shell naming drifted from the command-center contract.")
@@ -6204,6 +6551,14 @@ KWR.MainWindow.launcherMenu.buttons[3].scripts.OnClick()
 assert(KWR.MainWindow.activePage == "TEAM"
     and not KWR.CombatRoster:AnyShown(),
     "Launcher Team Roster action opened the compact popup instead of the full Team page.")
+do
+    local priorToggle = ToggleBattlefieldMap
+    local toggles = 0
+    ToggleBattlefieldMap = function() toggles = toggles + 1 end
+    assert(KWR.MainWindowLauncher:ToggleBattlefieldMap() == true and toggles == 1,
+        "Launcher battlefield-map action did not invoke Blizzard's map toggle.")
+    ToggleBattlefieldMap = priorToggle
+end
 KWR.MainWindow.launcherMenu:Hide()
 KWR.MainWindow:RestoreCompactSurfaces()
 assert(KWR.HUD.frame:IsShown(),
@@ -6890,6 +7245,104 @@ do
     assert(applyCount == 1, "Idle hidden surfaces still triggered layout polling")
     coordinator.Apply = oldApply
     KWR.LayoutCoordinator:Reset()
+end
+
+-- Regression coverage for release-review correctness: a later match on the
+-- same map counts once, direct specialization truth beats stale scoreboard
+-- data, reviewed AAR context wins, and the Nexus fallback describes its own
+-- candidate rather than the primary enemy-response instruction.
+do
+    local savedPlayers = KWR.Util:Copy(KWR.db.opponentModels.players)
+    local savedSessionKey = KWR.OpponentModels.sessionKey
+    local savedSeen = KWR.Util:Copy(KWR.OpponentModels.sessionSeen)
+    local savedTokens = KWR.Util:Copy(KWR.OpponentModels.sampleTokens)
+    local savedDeathState = KWR.Util:Copy(KWR.OpponentModels.deathState)
+    KWR.db.opponentModels.players = {}
+    local repeatOpponent = {
+        context = { inPvP = true, mapKey = "WSG", mapID = 489, instanceID = 489 },
+        enemies = { { guid = "repeat-opponent", name = "Repeat-Realm", visible = true } },
+    }
+    KWR.OpponentModels:ResetSession("WSG:489:489:PVP:LIVE")
+    KWR.OpponentModels:Observe(repeatOpponent)
+    KWR.OpponentModels:ResetSession(nil)
+    KWR.OpponentModels:ResetSession("WSG:489:489:PVP:LIVE")
+    KWR.OpponentModels:Observe(repeatOpponent)
+    assert(KWR.db.opponentModels.players["repeat-opponent"].sessions == 2,
+        "Opponent model did not count a repeated opponent in a later same-map match.")
+    KWR.db.opponentModels.players = savedPlayers
+    KWR.OpponentModels.sessionKey = savedSessionKey
+    KWR.OpponentModels.sessionSeen = savedSeen
+    KWR.OpponentModels.sampleTokens = savedTokens
+    KWR.OpponentModels.deathState = savedDeathState
+
+    local authorityActive = { friendlyTeam = {}, enemyTeam = {} }
+    KWR.AAR:CaptureTeams(authorityActive, {
+        roster = {
+            { guid = "direct-spec", name = "Direct-Realm", shortName = "Direct",
+                spec = "Frost", role = "DAMAGER", specSource = "player_spec" },
+            { guid = "direct-spec", name = "Direct-Realm", shortName = "Direct",
+                spec = "Fire", role = "DAMAGER", specSource = "scoreboard" },
+        },
+    })
+    assert(authorityActive.friendlyTeam["direct-spec"].spec == "Frost",
+        "AAR stale scoreboard evidence overrode direct player specialization truth.")
+
+    local reviewedExport = KWR.AAR:Export({
+        addonVersion = KWR.version, mapKey = "WSG", result = "DRAW", scoreEnd = {},
+        reviewContext = "Diagnostic", feedback = { sessionType = "Commander" },
+    })
+    assert(reviewedExport:find("Review Context: Commander", 1, true),
+        "AAR export did not honor submitted review context.")
+
+    local fallbackEnvelope = KWR.StrategistNexus:Envelope({ context = {} }, {}, {
+        action = "PRIMARY: Hold the primary lane.", target = "Primary",
+        recommendationMode = "PRIMARY", selectedAction = {
+            id = "PRIMARY", target = "Primary", outcome = "Primary outcome",
+            enemyResponsePlan = { safestReply = "Primary response only." },
+        },
+        nexusFallbackCandidate = { id = "FALLBACK", target = "Fallback", outcome = "Fallback outcome" },
+        responseContract = {}, nexusContext = {},
+    })
+    assert(fallbackEnvelope.fallback.action:find("FALLBACK: Fallback outcome", 1, true),
+        "Nexus fallback action drifted from its fallback candidate.")
+
+    local compactGap = KWR.CommandReview:CompactResponsePackage({
+        qualified = true, recovery = { criticalGap = "Farm", releaseTarget = "Lumber Mill", urgent = true },
+    })
+    assert(compactGap.recovery.criticalGap == "Farm" and compactGap.recovery.urgent == true,
+        "Command review compacted away critical coverage-gap evidence.")
+
+    local savedStrategyCache = KWR.Strategist.cache
+    local carrierStrategySnapshot = KWR.Util:Copy(KWR.Store:Get().snapshot)
+    carrierStrategySnapshot.context = {
+        mapKey = "WSG", mapName = "Warsong Gulch", kind = "FLAG", inPvP = true,
+    }
+    carrierStrategySnapshot.score = { friendly = 1, enemy = 1, max = 3 }
+    carrierStrategySnapshot.objectives = {
+        friendlyFlagActive = 1,
+        enemyFlagActive = 1,
+        rows = {
+            { label = "Home", owner = "UNKNOWN", state = "CARRIED", kind = "FLAG" },
+            { label = "Enemy Flag Room", owner = "UNKNOWN", state = "CARRIED", kind = "FLAG" },
+        },
+    }
+    carrierStrategySnapshot.objectives.carriers = {
+        { owner = "FRIENDLY", player = "OurCarrier", objective = "Home", stacks = 2 },
+        { owner = "ENEMY", player = "EnemyCarrier", objective = "Enemy Flag Room", stacks = 4 },
+    }
+    carrierStrategySnapshot.truth = { coreFresh = true, aggressiveCommitAllowed = true }
+    carrierStrategySnapshot.knowledgeStatus = { compositionAuthorized = true }
+    carrierStrategySnapshot.reporter = carrierStrategySnapshot.reporter or {}
+    local carrierStrategy = KWR.Strategist:Evaluate(carrierStrategySnapshot, {
+        urgency = 55, status = "TIE", confidence = "HIGH",
+    })
+    assert(carrierStrategy.recommendationMode == "RETURN_ENEMY_CARRIER"
+        and carrierStrategy.target == "EnemyCarrier"
+        and carrierStrategy.objectiveDecision.target == "EnemyCarrier"
+        and carrierStrategy.nexus.primary.id == "RETURN_ENEMY_CARRIER"
+        and carrierStrategy.nexus.primary.target == "EnemyCarrier",
+        "Live carrier override did not synchronize Nexus, command target, and active-play objective truth.")
+    KWR.Strategist.cache = savedStrategyCache
 end
 
 local result = { passed = 0, failed = 0 }

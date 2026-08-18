@@ -4,7 +4,7 @@ title: Clarify native PvP identifiers and target reticle
 owner: Codex
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, ARCHITECTURE.md, AGENTS.md]
 dependencies: [KWR-256]
 affected_modules:
@@ -64,12 +64,12 @@ nameplate unit tokens. No persisted schema migration is needed.
 
 # Acceptance criteria
 
-- [ ] Enemy class marker is exactly 42 pixels square and has no duplicate KWR name.
-- [ ] Friendly healer, tank, and damage records select their respective native role icons.
-- [ ] Carrier records still replace the friendly role icon with a coloured orb or flag.
-- [ ] Reticle centre displays the reviewed target class when available.
-- [ ] Standard nameplate remains unmodified by KWR marker rendering.
-- [ ] Validation and deterministic Lua smoke tests pass.
+- [x] Enemy class marker is exactly 42 pixels square and has no duplicate KWR name.
+- [x] Friendly healer, tank, and damage records select their respective native role icons.
+- [x] Carrier records still replace the friendly role icon with a coloured orb or flag.
+- [x] Reticle centre displays the reviewed target class when available.
+- [x] Standard nameplate remains unmodified by KWR marker rendering.
+- [x] Validation and deterministic Lua smoke tests pass.
 
 # Verification
 

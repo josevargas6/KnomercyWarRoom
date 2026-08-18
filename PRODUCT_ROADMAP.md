@@ -60,11 +60,14 @@ The repository currently declares:
 - 5,000 Season 2 deterministic simulation cases: 500 per map and 100 per phase
   for `OPENING`, `STABILIZE`, `PRESSURE`, `RECOVERY`, and `ENDGAME`;
 - those 5,000 Season 2 cases as `SIMULATION_ONLY` and
-  `OFFLINE_COVERAGE_AND_REGRESSION_ONLY`.
+  `IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION`; their compact production
+  index activates covered theory branches, never an empirical outcome model.
 
 The 5,000 cases are an existing coverage target, not 5,000 independent proofs
-that a tactic wins. They must not affect live plan scoring merely because they
-exist. One normalized scenario case is the truth record; the scenario matrix,
+that a tactic wins. Their counts may not reward a tactic; the Nexus activates
+the reviewed theory mapped to covered branches and penalizes any branch the
+audited corpus did not exercise. One normalized
+scenario case is the truth record; the scenario matrix,
 coverage totals, calibration tables, compact Lua data, and audit reports are
 derived views of those records. No mirrored hand-maintained corpus and matrix
 copies are allowed.
@@ -155,23 +158,24 @@ Map-family coverage must remain specific:
 The coverage matrix is generated from canonical records and reports counts and
 gaps. It is not edited as an independent strategy source.
 
-### Evidence and activation lifecycle
+### Evidence roles and activation lifecycle
 
-Every record advances through explicit states:
+Simulation and observed evidence do not share an in-place promotion path:
 
-1. `SIMULATION_ONLY`: deterministic regression coverage; zero live scoring
-   influence.
+1. `SIMULATION_ONLY`: deterministic regression coverage; a missing branch can
+   reduce confidence, but generated counts and outcome labels add no score.
 2. `DOCTRINE_REVIEWED`: legal and tactically coherent according to two expert
    reviews, or one expert review plus supporting reviewed match evidence;
    eligible as a curated baseline only.
 3. `FIELD_OBSERVED`: exercised with matching public state in live play and
    linked to a sanitized AAR outcome; still bounded by sample safeguards.
-4. `PROMOTED`: passes audit, replay, adversarial, calibration, expiry, and
-   decision-quality gates; may influence live candidate scoring within the
-   authority hierarchy.
+4. `PROMOTED`: a separate observed/reviewed record passes audit, replay,
+   adversarial, calibration, expiry, and decision-quality gates; may influence
+   live plan scoring within the authority hierarchy.
 5. `QUARANTINED` or `RETIRED`: tuning, API behavior, contradictory outcomes,
    unsafe evidence, or doctrine replacement prevents live use.
 
+Simulation records never become observed records by changing a status field.
 Activation is by versioned plan slice, never by bulk count. A promoted record
 may adjust only a legal candidate whose required live facts are satisfied.
 Meta, doctrine, and learned history remain tie breakers and may not override a
@@ -357,6 +361,7 @@ gate from a clean checkout:
 
 ```powershell
 ./tools/build-season2-rbg-simulation-corpus.ps1 -CasesPerMap 500
+./tools/build-strategist-nexus-corpus.ps1
 ./tools/corpus-audit.ps1
 ./tools/knowledge-audit.ps1
 ./tools/decision-benchmark.ps1
@@ -370,8 +375,8 @@ The final automation must additionally assert:
 - 10 maps, 500 canonical cases per map, 100 per phase, and 5,000 total;
 - zero duplicate IDs and zero duplicate normalized content hashes;
 - zero dangling plan, fallback, counter, assignment, or source references;
-- zero `SIMULATION_ONLY`, expired, unreviewed, or quarantined records compiled
-  into live scoring data;
+- zero synthetic outcome or case-count influence on positive tactic scoring;
+- zero expired, unreviewed, or quarantined observations in reviewed learning;
 - deterministic generation and package hashes from identical inputs;
 - standalone marker mode defaults, cleanup, and target-state transitions;
 - zero secret-value arithmetic/comparison and zero protected-frame mutation;

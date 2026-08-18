@@ -1,3 +1,5 @@
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
+
 function Get-ReleaseExcludedEntries {
     return @(
         "Core\Diagnostics.lua"
@@ -78,11 +80,11 @@ function Get-DirectoryManifestEntries {
 
     $entries = New-Object System.Collections.ArrayList
     foreach ($file in Get-ChildItem -LiteralPath $RootPath -Recurse -File | Sort-Object FullName) {
-        $hash = Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256
+        $hash = Get-KwrFileSha256 -LiteralPath $file.FullName
         [void]$entries.Add([pscustomobject]@{
             path = Get-NormalizedRelativePath -RootPath $RootPath -FullPath $file.FullName
             size = [int64]$file.Length
-            sha256 = $hash.Hash.ToUpperInvariant()
+            sha256 = $hash
         })
     }
     return @($entries)

@@ -140,7 +140,8 @@ function CommanderComm:Distribution(state)
 end
 
 function CommanderComm:TransportEnabled()
-    return not KWR.db or not KWR.db.profile or KWR.db.profile.sentinelTransportEnabled ~= false
+    return KWR.db and KWR.db.profile
+        and KWR.db.profile.sentinelTransportEnabled == true
 end
 
 function CommanderComm:SetTransportEnabled(enabled)

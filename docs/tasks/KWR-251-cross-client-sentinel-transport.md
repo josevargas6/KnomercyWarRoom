@@ -54,6 +54,9 @@ truth without creating another strategist or unsafe gameplay automation.
 - [x] Remote observations merge below stronger local/widget truth.
 - [x] Deterministic protocol, malformed-input, dedupe, expiry, and ten-sender soak tests pass.
 - [x] Validator confines communication APIs to reviewed transport owners.
+- [x] A clean Commander/Sentinel install keeps relay transport disabled until
+  the player explicitly enables Field mode; existing player choices are
+  preserved.
 - [ ] Retail multi-client, taint, and product-value sessions pass.
 
 # Verification

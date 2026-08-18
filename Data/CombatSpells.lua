@@ -195,6 +195,10 @@ function CombatSpells:Role(spec, assigned)
         if math.floor(numeric / 8) % 2 == 1 then return "DAMAGER" end
     end
     spec = KWR.Util:Text(spec, "", 32):lower()
+    -- A secret, absent, or placeholder specialization is not evidence that a
+    -- player deals damage. Returning DAMAGER here caused later scoreboard
+    -- healer truth to lose to an early weak default in AAR reconciliation.
+    if spec == "" or spec == "unknown" or spec == "none" then return "NONE" end
     if HEALER_SPECS[spec] then return "HEALER" end
     if TANK_SPECS[spec] then return "TANK" end
     return spec ~= "" and "DAMAGER" or "NONE"

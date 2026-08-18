@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.0
+# Release Readiness - 6.1.1-alpha.4
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,20 +6,59 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**6.1.0 is the owner-authorized stable Season 2 release target.** It reconciles
-the reviewed post-Alpha 43 Commander and embedded Sentinel field-test work on a
-new semantic version and tag; the existing annotated `v6.1.0-alpha.43` tag and
-its five public assets remain immutable historical evidence. Publication is
-authorized only from the merged, green stable-release commit through the
-protected `production` workflow.
+**6.1.1-alpha.4 is the Season 2 distribution candidate; 6.1.0 remains the
+immutable public stable baseline.** The repaired Commander/Sentinel pair from
+commit `6756f01` has completed offline certification, binary reproducibility,
+extracted-package audit, and exact Retail installation verification. Its
+Commander SHA-256 is
+`5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047`;
+its Sentinel SHA-256 is
+`8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`.
 
-The 2026-08-15 owner direction explicitly accepts promotion with the previously
+It is a field-test candidate, not yet a Retail-ready public release. Promotion
+requires green reviewed merge and CI, an exact tag, protected `production`
+approval, matching public artifacts, and candidate-bound live RBG evidence on
+these hashes. No source-only, historical, unbound, simulated, or owner-risk
+authorization can substitute for those final live gates.
+
+The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
-new candidate-bound battleground sessions, ten-client Sentinel transport proof,
-or reviewed Retail 12.1 PvP tuning. Patch-dependent 12.1 overlays therefore
-remain fail-closed. The stable package must still pass validation, deterministic
-Lua tests, package extraction/audit, Commander/Sentinel version parity,
-checksums, protected production approval, and rollback-artifact creation.
+new 6.1.1-alpha.4-bound battleground sessions or ten-client Sentinel transport
+proof. The official 12.1 compatibility/hotfix review is now active, while the
+stale 12.0.7 ladder snapshot, inferred numerical tuning weights, and provisional
+Season 2 formations remain excluded from live meta influence. The candidate
+must still pass validation, deterministic Lua tests, package extraction/audit,
+Commander/Sentinel version parity, checksums, protected production approval,
+and rollback-artifact creation.
+
+## Current distribution gate board
+
+- [x] Source validation, source-drift, document-authority, control-surface,
+  knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
+  RBG-corpus gates pass.
+- [x] The Commander and Sentinel archives are binary reproducible; both
+  extracted runtime paths pass; the installed Retail manifests have zero
+  missing, changed, or extra entries; and a rollback snapshot exists.
+- [x] All review conversations on the candidate PR are resolved. The exact
+  executable commit has a green `certify` run; the evidence-only head run must
+  also finish green before merge.
+- [ ] Merge the green reviewed candidate to `main`, verify the merged commit
+  and tag the exact public-release artifact only after the live gate passes.
+- [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
+  flag-map stability and AAR, canonical carrier targets, combat-safe native-map
+  behavior, taint/blocked actions, supported-resolution readability, and field
+  CPU/memory budgets. The capture must use the hashes above.
+- [ ] Capture live win and loss evidence across every map family, then rerun
+  the read-only SavedVariables certification with only completed candidate rows.
+- [ ] Prove Sentinel's opt-in cross-client transport in a ten-client Retail
+  session, including handshake, malformed-packet rejection, expiry, reload,
+  match teardown, taint safety, and player value.
+- [ ] From the green tagged commit, publish the exact two public runtime ZIPs,
+  checksums, manifest, and install guide; verify the public downloads and
+  CurseForge file IDs before any announcement.
+
+Until every unchecked item is evidenced, this candidate is **field-test ready,
+not distribution Retail ready**.
 
 Alpha 43 remains the last published prerelease baseline. Its protected run
 completed on 2026-08-14 from commit
@@ -45,14 +84,12 @@ bundles. The release workflow uses an explicit public-asset allowlist and the
 CI workflow uploads public and developer artifacts separately, so a wildcard
 upload cannot reintroduce internal evidence to player downloads.
 
-Five complete Retail battlegrounds were reported with no observed errors, but
-they ran on an external PC. On 2026-08-11 the product owner authorized this
-evidence gap for the Alpha 41 release: `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
-`LIVE-CARRIER-TARGET`, and `LIVE-READABILITY` are no longer release blockers.
-They are refinement telemetry until the external SavedVariables journal and
-associated screenshots or logs are imported. This authorization is recorded in
-`knowledge/field-verification-attestation.json`; it does not certify cross-PC
-Sentinel, which retains its separate ten-client safety/value refinement proof.
+Historical reports of complete Retail battlegrounds and the prior
+field-verification attestation are diagnostic provenance only. They do not bind
+to the current package hashes and therefore cannot clear
+`LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, or
+`LIVE-READABILITY`. Cross-PC Sentinel transport likewise requires its separate
+ten-client safety and product-value proof.
 
 The read-only SavedVariables audit in
 `knowledge/retail-field-certification.json` found four completed matches and
@@ -104,10 +141,10 @@ Current repo state:
   evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
 - the default release package now excludes the optional Sentinel bundle unless
   `tools/build.ps1 -IncludeSentinel` is used intentionally;
-- no internal release blockers remain under the explicit Alpha 41 product-owner
-  authorization; live stability, taint/safety, field-performance proof,
-  screenshot matrix, supported-map certification, official 12.1 tuning review,
-  and release presentation are refinement telemetry;
+- all offline distribution gates pass for the exact current artifacts, while
+  live stability, taint/safety, field-performance proof, screenshot matrix,
+  supported-map certification, official 12.1 tuning review, and release
+  presentation remain hard promotion gates;
 - `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
   `LIVE-READABILITY` are the field-gate identifiers in
   `knowledge/field-blocker-report.json`; implementation task IDs are not reused
@@ -274,8 +311,12 @@ official patch data + reviewed field evidence + bounded community reports
 release; both TOCs, runtime constants, package manifests, hashes, tag, GitHub
 release, CurseForge files, and Discord copy must name the same version and
 commit. The installed AddOns folders are runtime evidence, never source control.
+`KWRBeacon`, `KWR_Maps`, and `KWR_ScoreCard` are optional, independently
+versioned experiments. Their intentional absence from an AddOns installation
+does not block a Commander/Sentinel cutover unless a future release explicitly
+adds one of them to its signed package manifest.
 
-### Truth as of 2026-08-15
+### Historical 6.1.0 cutover provenance — not the current gate board
 
 - `main` contains the merged Alpha 43 line plus subsequent maintenance; the
   stable cutover branch reconciles the reviewed field-test commits without
@@ -307,7 +348,7 @@ commit. The installed AddOns folders are runtime evidence, never source control.
 | Discord | Announce only a verified immutable GitHub release and matching CurseForge file IDs. Webhooks are notifications, not feedback intake or a deployment control plane. | Dry-run copy equals posted copy; announcement receipt links to the exact tag and files. |
 | Bot + Render | Keep Render as a least-privilege Discord intake worker. Deploy only the reviewed bot `main` commit, run a post-deploy `/readyz` check, and record the commit, deployment ID, ready time, and command-registration result. | Render deployment receipt and a private health result proving `discordReady: true`; no secret or user identifier in the receipt. |
 
-### P0 cutover register — complete before public Season 2 promotion
+### Historical P0 cutover register — retained for provenance
 
 | ID | Gap to close | Required action | Done only when |
 | --- | --- | --- | --- |

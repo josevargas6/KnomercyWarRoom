@@ -7,12 +7,13 @@ param(
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $releaseManifest = Join-Path $PSScriptRoot "release-manifest.ps1"
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 . $releaseManifest
 $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc")
 $version = (($toc | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
 $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
-$distributionZip = Join-Path $outputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
+$distributionZip = Join-Path $outputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $outputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
 $sentinelRoot = Join-Path $root "KWRSentinel"
 $sentinelZip = $null
@@ -20,7 +21,7 @@ if (Test-Path -LiteralPath $sentinelRoot) {
     $sentinelToc = Get-Content -LiteralPath (Join-Path $sentinelRoot "KWRSentinel.toc")
     $sentinelVersion = (($sentinelToc | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
     $sentinelSafeVersion = $sentinelVersion.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
-    $candidateSentinelZip = Join-Path $outputRoot ("KWRSentinel_{0}.zip" -f $sentinelSafeVersion)
+    $candidateSentinelZip = Join-Path $outputRoot ("KWR-Sentinel-{0}.zip" -f $sentinelVersion)
     if (Test-Path -LiteralPath $candidateSentinelZip) {
         $sentinelZip = $candidateSentinelZip
     }
@@ -454,13 +455,13 @@ foreach ($path in @($distributionZip, $sentinelZip)) {
         continue
     }
     $name = [IO.Path]::GetFileName($path)
-    $actual = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
+    $actual = Get-KwrFileSha256 -LiteralPath $path
     if ($expectedHashes[$name] -ne $actual) {
         throw "SHA-256 mismatch for $name"
     }
 }
 $developerName = [IO.Path]::GetFileName($developerZip)
-$developerActual = (Get-FileHash -LiteralPath $developerZip -Algorithm SHA256).Hash
+$developerActual = Get-KwrFileSha256 -LiteralPath $developerZip
 if ($developerHashes[$developerName] -ne $developerActual) {
     throw "SHA-256 mismatch for $developerName"
 }

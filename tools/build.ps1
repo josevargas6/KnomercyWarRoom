@@ -14,6 +14,7 @@ $validator = Join-Path $PSScriptRoot "validate.ps1"
 $sentinelRoot = Join-Path $root "KWRSentinel"
 $sourceTocPath = Join-Path $root "KnomercyWarRoom.toc"
 $releaseManifest = Join-Path $PSScriptRoot "release-manifest.ps1"
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 . $releaseManifest
 
 function New-ArtifactSummary {
@@ -23,11 +24,11 @@ function New-ArtifactSummary {
     )
 
     $item = Get-Item -LiteralPath $Path
-    $hash = Get-FileHash -LiteralPath $Path -Algorithm SHA256
+    $hash = Get-KwrFileSha256 -LiteralPath $Path
     return [pscustomobject]@{
         name = $item.Name
         size = [int64]$item.Length
-        sha256 = $hash.Hash.ToUpperInvariant()
+        sha256 = $hash
     }
 }
 
@@ -39,15 +40,51 @@ function New-KwrArchive {
         [string]$DestinationPath
     )
 
-    # Compress-Archive serializes thousands of files slowly on Windows hosts.
-    # ZipFile uses the native .NET implementation, retains the same top-level
-    # directory layout, and keeps clean-build/reproducibility manifests intact.
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::CreateFromDirectory(
-        $SourceDirectory,
+    # ZIP metadata is part of the release artifact. Enumerate entries in a
+    # canonical order and replace source mtimes with one valid ZIP timestamp so
+    # two clean builds of the same payload are byte-for-byte identical.
+    Add-Type -AssemblyName System.IO.Compression
+    $sourceRoot = [IO.Path]::GetFullPath($SourceDirectory).TrimEnd('\', '/')
+    $archiveRoot = Split-Path -Leaf $sourceRoot
+    $entries = @(Get-ChildItem -LiteralPath $sourceRoot -Recurse -File |
+        ForEach-Object {
+            $relativePath = $_.FullName.Substring($sourceRoot.Length).TrimStart('\', '/')
+            [pscustomobject]@{
+                File = $_
+                ArchivePath = ($archiveRoot + '/' + $relativePath).Replace('\', '/')
+            }
+        } | Sort-Object ArchivePath)
+    $fixedTimestamp = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+    $destinationStream = [IO.File]::Open(
         $DestinationPath,
-        [IO.Compression.CompressionLevel]::Optimal,
-        $true)
+        [IO.FileMode]::CreateNew,
+        [IO.FileAccess]::ReadWrite,
+        [IO.FileShare]::None)
+    $archive = $null
+    try {
+        $archive = [IO.Compression.ZipArchive]::new(
+            $destinationStream,
+            [IO.Compression.ZipArchiveMode]::Create,
+            $false)
+        foreach ($item in $entries) {
+            $entry = $archive.CreateEntry(
+                $item.ArchivePath,
+                [IO.Compression.CompressionLevel]::Optimal)
+            $entry.LastWriteTime = $fixedTimestamp
+            $sourceStream = [IO.File]::OpenRead($item.File.FullName)
+            $entryStream = $null
+            try {
+                $entryStream = $entry.Open()
+                $sourceStream.CopyTo($entryStream)
+            } finally {
+                if ($entryStream) { $entryStream.Dispose() }
+                $sourceStream.Dispose()
+            }
+        }
+    } finally {
+        if ($archive) { $archive.Dispose() }
+        $destinationStream.Dispose()
+    }
 }
 
 function Write-JsonFile {
@@ -84,7 +121,11 @@ function Invoke-NestedBuildForReproducibility {
         [switch]$IncludeSentinel
     )
 
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $BuildScriptPath `
+    # Compression output is runtime-specific. Reuse the current PowerShell host
+    # instead of silently switching from pwsh to Windows PowerShell, otherwise
+    # two byte-identical source trees can yield different ZIP streams.
+    $currentHost = (Get-Process -Id $PID).Path
+    & $currentHost -NoProfile -ExecutionPolicy Bypass -File $BuildScriptPath `
         -OutputDirectory $NestedOutputDirectory `
         $(if ($IncludeSentinel) { "-IncludeSentinel" }) `
         -SkipPackageAudit `
@@ -107,7 +148,7 @@ $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 
 [IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
 $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
-$distributionZip = Join-Path $outputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
+$distributionZip = Join-Path $outputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $outputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
 $sentinelZip = $null
 $hasSentinel = $IncludeSentinel -and (Test-Path -LiteralPath $sentinelRoot)
@@ -115,7 +156,7 @@ if ($hasSentinel) {
     $sentinelToc = Get-Content -LiteralPath (Join-Path $sentinelRoot "KWRSentinel.toc")
     $sentinelVersion = (($sentinelToc | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
     $sentinelSafeVersion = $sentinelVersion.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
-    $sentinelZip = Join-Path $outputRoot ("KWRSentinel_{0}.zip" -f $sentinelSafeVersion)
+    $sentinelZip = Join-Path $outputRoot ("KWR-Sentinel-{0}.zip" -f $sentinelVersion)
 }
 $hashFile = Join-Path $outputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
 $developerHashFile = Join-Path $outputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)
@@ -216,7 +257,8 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         "field-test-readiness.json",
         "field-blocker-report.json",
         "candidate-package-report.json",
-        "offline-completion-audit.json"
+        "offline-completion-audit.json",
+        "deployment-certification.json"
     )) {
         Remove-Item -LiteralPath (Join-Path $developerSource (Join-Path "knowledge" $generatedReceipt)) -Force -ErrorAction SilentlyContinue
     }
@@ -246,19 +288,19 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip
     }
 
-    $distributionHash = Get-FileHash -LiteralPath $distributionZip -Algorithm SHA256
-    $developerHash = Get-FileHash -LiteralPath $developerZip -Algorithm SHA256
+    $distributionHash = Get-KwrFileSha256 -LiteralPath $distributionZip
+    $developerHash = Get-KwrFileSha256 -LiteralPath $developerZip
     # Player-facing checksums must name only player-facing downloads.  The
     # developer ZIP and its checksum remain in the retention-bound CI artifact.
     $hashLines = @(
-        "$($distributionHash.Hash)  $([IO.Path]::GetFileName($distributionZip))"
+        "$distributionHash  $([IO.Path]::GetFileName($distributionZip))"
     )
     if ($hasSentinel) {
-        $sentinelHash = Get-FileHash -LiteralPath $sentinelZip -Algorithm SHA256
-        $hashLines += "$($sentinelHash.Hash)  $([IO.Path]::GetFileName($sentinelZip))"
+        $sentinelHash = Get-KwrFileSha256 -LiteralPath $sentinelZip
+        $hashLines += "$sentinelHash  $([IO.Path]::GetFileName($sentinelZip))"
     }
     $hashLines | Set-Content -LiteralPath $hashFile -Encoding ASCII
-    @("$($developerHash.Hash)  $([IO.Path]::GetFileName($developerZip))") |
+    @("$developerHash  $([IO.Path]::GetFileName($developerZip))") |
         Set-Content -LiteralPath $developerHashFile -Encoding ASCII
 
     $distributionEntries = Get-DirectoryManifestEntries -RootPath $distributionRoot
@@ -425,16 +467,17 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
                 throw "Reproducibility audit failed because staged source digests changed between clean builds."
             }
 
-            $reproResult = if ($binaryMismatchCount -eq 0) { "PASS" } else { "PASS_WITH_DOCUMENTED_EXCEPTION" }
+            if ($binaryMismatchCount -ne 0) {
+                $comparison | Where-Object { -not $_.binaryMatch } |
+                    Format-Table artifact, primarySha256, secondarySha256 -AutoSize |
+                    Out-String | Write-Output
+                throw "Reproducibility audit failed because deterministic archive bytes changed between clean builds."
+            }
+            $reproResult = "PASS"
             $notes = @(
                 "Two clean builds were executed with the primary package audit intact and nested reproducibility/package-audit recursion disabled in the secondary pass."
             )
-            if ($binaryMismatchCount -eq 0) {
-                $notes += "Binary SHA-256 hashes matched for every produced archive."
-            } else {
-                $notes += "Staged payload digests matched across clean builds, but PowerShell Compress-Archive did not produce byte-identical ZIP containers."
-                $notes += "Package audit still validated the extracted payload, release exclusions, and extracted runtime smoke/soak on the primary build."
-            }
+            $notes += "Canonical entry order and timestamps produced matching binary SHA-256 hashes for every archive."
 
             $reproducibility = [pscustomobject]@{
                 candidate = $version

@@ -4,6 +4,7 @@ param()
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $checks = 0
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 
 function Assert-True {
     param(
@@ -35,6 +36,15 @@ function Assert-Throws {
     }
     Assert-True -Condition $threw -Message $Message
 }
+
+$hashProbe = Join-Path $root "tools\test-automation.ps1"
+$nativeHash = (Get-FileHash -LiteralPath $hashProbe -Algorithm SHA256).Hash.ToUpperInvariant()
+Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
+    -Message "Shared SHA-256 utility disagrees with the native checksum."
+function Get-FileHash { throw "forced module-load failure" }
+Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
+    -Message "Shared SHA-256 utility did not recover from a missing hash cmdlet."
+Remove-Item -LiteralPath function:Get-FileHash -Force
 
 . (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
 
@@ -143,6 +153,38 @@ Assert-True `
     -Condition ($ciWorkflow -match 'certify-offline\.ps1\s+-SkipBuild') `
     -Message "CI does not execute the unified offline certification gate."
 
+$buildScript = Get-Content -LiteralPath (Join-Path $root "tools\build.ps1") -Raw
+Assert-True `
+    -Condition ($buildScript -match 'Sort-Object ArchivePath') `
+    -Message "Build archives do not use canonical entry ordering."
+Assert-True `
+    -Condition ($buildScript -match '\$entry\.LastWriteTime\s*=\s*\$fixedTimestamp') `
+    -Message "Build archives do not normalize entry timestamps."
+Assert-True `
+    -Condition ($buildScript -notmatch 'PASS_WITH_DOCUMENTED_EXCEPTION|Compress-Archive did not produce byte-identical') `
+    -Message "Build still permits a non-deterministic ZIP-container exception."
+
+$deploymentCertificationScript = Get-Content -LiteralPath (Join-Path $root "tools\deployment-certify.ps1") -Raw
+Assert-True `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$commanderReceiptData\.after\.installedEntries\)') `
+    -Message "Deployment certification does not preserve the validated Commander entry count."
+Assert-True `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$sentinelReceiptData\.after\.installedEntries\)') `
+    -Message "Deployment certification does not preserve the validated Sentinel entry count."
+
+$releaseSurfaceAudit = Get-Content -LiteralPath (
+    Join-Path $root "tools\audit-release-surfaces.ps1"
+) -Raw
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'release_authority\s*=\s*"main"') `
+    -Message "Release-surface audit does not identify main as release authority."
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'ABSENT_RETIRED') `
+    -Message "Release-surface audit does not tolerate a retired develop branch."
+Assert-True `
+    -Condition ($releaseSurfaceAudit -match 'OPTIONAL_INTENTIONALLY_ABSENT_ALLOWED') `
+    -Message "Release-surface audit does not encode optional Beacon installation policy."
+
 foreach ($workflow in @(
     "ci.yml",
     "deploy.yml",
@@ -161,9 +203,11 @@ foreach ($requiredPath in @(
     "docs\WORKFLOW_NOW.md",
     "tests\golden\twin_peaks_recovery_sample.label.json",
     "tools\kwr-daily-discord-update.ps1",
+    "tools\deployment-certify.ps1",
     "tools\replay-test-runner.lua",
     "tools\test-lua.ps1",
     "tools\test-social-copy.ps1"
+    "tools\hash-utils.ps1"
 )) {
     Assert-True `
         -Condition (Test-Path -LiteralPath (Join-Path $root $requiredPath)) `

@@ -5,6 +5,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
+
 $required = @(
     "Data\SourceRegistry.lua",
     "Data\PatchData.lua",
@@ -60,14 +62,55 @@ foreach ($relative in $required) {
     }
 }
 
-$patchSource = Get-Content -LiteralPath (Join-Path $root "Data\PatchData.lua") -Raw
+$patchPath = Join-Path $root "Data\PatchData.lua"
+$patchLines = @(Get-Content -LiteralPath $patchPath)
+$patchSource = $patchLines -join "`n"
 $tocSource = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
-$interface = [regex]::Match($tocSource, "## Interface:\s*(\d+)").Groups[1].Value
-if ($patchSource -notmatch [regex]::Escape("interface = $interface")) {
-    $errors.Add("Active patch data does not match TOC interface $interface.")
+$tocInterfaceMatch = [regex]::Match($tocSource, '(?m)^## Interface:\s*(?<interfaces>[\d,\s]+)$')
+$tocInterfaces = @()
+if ($tocInterfaceMatch.Success) {
+    $tocInterfaces = @($tocInterfaceMatch.Groups['interfaces'].Value -split ',' |
+        ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' })
 }
-if ($patchSource -notmatch 'officialHotfixReviewed\s*=\s*"\d{4}-\d{2}-\d{2}"') {
-    $errors.Add("Active patch pack has no dated official hotfix review.")
+$activePatchMatch = [regex]::Match($patchSource, 'activePatch\s*=\s*"(?<patch>[^"]+)"')
+$activePackSource = $null
+if (-not $activePatchMatch.Success) {
+    $errors.Add("Patch data does not declare activePatch.")
+} else {
+    $activePatch = $activePatchMatch.Groups['patch'].Value
+    $activeStart = -1
+    $activePattern = '^\s{4}\["' + [regex]::Escape($activePatch) + '"\]\s*=\s*\{'
+    for ($index = 0; $index -lt $patchLines.Count; $index++) {
+        if ($patchLines[$index] -match $activePattern) {
+            $activeStart = $index
+            break
+        }
+    }
+    if ($activeStart -lt 0) {
+        $errors.Add("Patch data has no pack for activePatch $activePatch.")
+    } else {
+        $activeEnd = $patchLines.Count - 1
+        for ($index = $activeStart + 1; $index -lt $patchLines.Count; $index++) {
+            if ($patchLines[$index] -match '^\s{4}\["[^"]+"\]\s*=\s*\{') {
+                $activeEnd = $index - 1
+                break
+            }
+        }
+        $activePackSource = $patchLines[$activeStart..$activeEnd] -join "`n"
+    }
+}
+if ($activePackSource) {
+    $activeInterfaceMatch = [regex]::Match($activePackSource, '(?m)^\s*interface\s*=\s*(?<interface>\d+)\s*,')
+    if (-not $activeInterfaceMatch.Success -or
+        $tocInterfaces -notcontains $activeInterfaceMatch.Groups['interface'].Value) {
+        $errors.Add("Active patch data interface is not declared by the TOC: $($tocInterfaces -join ', ').")
+    }
+    if ($activePackSource -notmatch 'officialHotfixReviewed\s*=\s*"\d{4}-\d{2}-\d{2}"') {
+        $errors.Add("Active patch pack has no dated official hotfix review.")
+    }
+    if ($activePackSource -notmatch '(?m)^\s*reviewed\s*=\s*true\s*,') {
+        $errors.Add("Active patch pack is not marked reviewed.")
+    }
 }
 
 $templatePath = Join-Path $root "knowledge\patch-template.json"
@@ -547,7 +590,34 @@ try {
     $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
 }
 
+$nexusGeneratedPath = Join-Path $root "Data\StrategistNexusCorpus.lua"
+$nexusTempPath = Join-Path ([IO.Path]::GetTempPath()) (
+    "kwr-strategist-nexus-" + [guid]::NewGuid().ToString("N") + ".lua")
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (
+        Join-Path $root "tools\build-strategist-nexus-corpus.ps1") `
+        -OutputFile $nexusTempPath
+    if ($LASTEXITCODE -ne 0) {
+        $errors.Add("Strategist Nexus corpus compiler failed.")
+    } elseif (-not (Test-Path -LiteralPath $nexusGeneratedPath)) {
+        $errors.Add("Strategist Nexus generated runtime corpus is missing.")
+    } else {
+        $expectedHash = Get-KwrFileSha256 -LiteralPath $nexusGeneratedPath
+        $actualHash = Get-KwrFileSha256 -LiteralPath $nexusTempPath
+        if ($expectedHash -cne $actualHash) {
+            $errors.Add("Strategist Nexus runtime corpus is stale or non-deterministic.")
+        }
+    }
+} catch {
+    $errors.Add("Strategist Nexus corpus audit failed: $($_.Exception.Message)")
+} finally {
+    if (Test-Path -LiteralPath $nexusTempPath) {
+        Remove-Item -LiteralPath $nexusTempPath -Force
+    }
+}
+
 $deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
+if (Test-Path -LiteralPath $deploymentCertificationPath) {
 try {
     $deploymentCertification = Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
     foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'releaseTag', 'commander', 'sentinel', 'upgradeProof', 'result')) {
@@ -561,7 +631,8 @@ try {
             $errors.Add('Current-candidate deployment certification is not PASS.')
         }
         foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
-            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
+            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or
+                -not $product.sha256 -or -not $product.packageDigest) {
                 $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
             }
         }
@@ -572,6 +643,9 @@ try {
     }
 } catch {
     $errors.Add("Deployment certification JSON is invalid: $($_.Exception.Message)")
+}
+} elseif (-not $AllowGeneratedEvidenceOmission) {
+    $errors.Add("Missing knowledge artifact: knowledge\\deployment-certification.json")
 }
 
 $retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"

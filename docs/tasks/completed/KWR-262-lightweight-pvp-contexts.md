@@ -4,7 +4,7 @@ title: Keep lightweight KWR targeting available outside rated battlegrounds
 owner: Codex
 priority: high
 risk: medium
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, ARCHITECTURE.md, AGENTS.md]
 dependencies: [KWR-261]
 affected_modules:
@@ -60,12 +60,12 @@ refresh backoffs and hide the driver when no visual is active.
 
 # Acceptance criteria
 
-- [ ] Arena context retains only the lightweight target/nameplate layer.
-- [ ] World-PvP reticle rejects attackable mobs and non-player targets.
-- [ ] RBG Commander surfaces remain unaffected.
-- [ ] No TAB binding or protected-action call is introduced.
-- [ ] Context settings are visible and reversible in Options.
-- [ ] Lua, validation, and soak tests pass.
+- [x] Arena context retains only the lightweight target/nameplate layer.
+- [x] World-PvP reticle rejects attackable mobs and non-player targets.
+- [x] RBG Commander surfaces remain unaffected.
+- [x] No TAB binding or protected-action call is introduced.
+- [x] Context settings are visible and reversible in Options.
+- [x] Lua, validation, and soak tests pass.
 
 # Verification
 

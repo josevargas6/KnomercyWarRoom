@@ -4,7 +4,7 @@ title: Make command options close reliably in combat
 owner: KWR
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules: [UI/Options.lua]
@@ -36,10 +36,10 @@ Use direct visibility on the non-secure Options and launcher frames only. Do not
 
 # Acceptance criteria
 
-- [ ] The Options X closes the Options frame directly.
-- [ ] Escape recognizes the Options frame as a special closable frame.
-- [ ] Opening Options hides the KWR launcher menu.
-- [ ] The behavior does not invoke protected-frame operations.
+- [x] The Options X closes the Options frame directly.
+- [x] Escape recognizes the Options frame as a special closable frame.
+- [x] Opening Options hides the KWR launcher menu.
+- [x] The behavior does not invoke protected-frame operations.
 
 # Verification
 

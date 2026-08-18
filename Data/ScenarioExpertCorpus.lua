@@ -84434,15 +84434,25 @@ function ScenarioExpertCorpus:Count()
     return count
 end
 
+local function activeTheoryRow(row)
+    local copy = row and KWR.Util:Copy(row) or nil
+    if copy and copy.seasonStatus == "PENDING_SEASON_REVIEW"
+        and KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() then
+        copy.seasonStatus = "ACTIVE_THEORY_FIELD"
+        copy.evidenceStatus = "THEORY_AWAITING_FIELD_FEEDBACK"
+    end
+    return copy
+end
+
 function ScenarioExpertCorpus:Get(scenarioID)
     local row = DATA.scenarios and DATA.scenarios[scenarioID]
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetMapSummary(mapKey)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
@@ -84450,7 +84460,7 @@ function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
     phase = KWR.Util:Upper(phase, nil, 24)
     local row = mapKey and phase and DATA.maps and DATA.maps[mapKey]
     row = row and row.phaseSummaries and row.phaseSummaries[phase] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
@@ -84482,7 +84492,7 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
         end
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:Shared()
@@ -84490,7 +84500,7 @@ function ScenarioExpertCorpus:Shared()
     shared.seasonPrepActivation = {
         active = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true,
         mode = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusMode() or "DISABLED",
-        safety = "Advisory corpus guidance never replaces live evidence or the Commander strategist.",
+        safety = "Active theory guides the Commander now; live observations and AAR feedback refine or disprove it without being relabeled as simulated evidence.",
     }
     return shared
 end

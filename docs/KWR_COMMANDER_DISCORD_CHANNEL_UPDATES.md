@@ -1,8 +1,8 @@
 # KWR Commander Discord Channel Updates
 
-Status: ready-to-post
+Status: draft-do-not-post
 
-Date: 2026-08-15
+Date: 2026-08-17
 
 No Discord connector or webhook credential is available in this workspace, so
 these messages are prepared for manual posting or for the KWR Sentinel Discord
@@ -25,10 +25,13 @@ the repo.
 ## #announcements
 
 ```text
-Knomercy War Room Commander 6.1.0 is available as the stable Season 2 release.
+Knomercy War Room Commander 6.1.1-alpha.4 is the Season 2 field-test candidate.
+
+Do not post until the matching tag, public assets, CurseForge Alpha file, and
+production readiness evidence are verified.
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.4
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -60,7 +63,7 @@ KWR does not auto-target, auto-focus, auto-cast, auto-send chat, or automate gam
 ## #kwr-field-testing
 
 ```text
-KWR Commander 6.1.0 refinement focus:
+KWR Commander 6.1.1-alpha.4 field-test focus:
 
 1. Confirm Fight Now HUD wording stays clean and readable in live combat.
 2. Confirm Team and Enemy tracking stay truthful after battleground transitions.
@@ -77,7 +80,7 @@ Ongoing field work:
 ## Restricted Ops Thread
 
 ```text
-KWR Commander 6.1.0 distribution receipt
+KWR Commander 6.1.1-alpha.4 distribution receipt
 
 CurseForge project:
 https://www.curseforge.com/wow/addons/knomercy-war-room
@@ -86,13 +89,13 @@ CurseForge project id:
 1632632
 
 GitHub release:
-https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.0
+https://github.com/josevargas6/KnomercyWarRoom/releases/tag/v6.1.1-alpha.4
 
 Certified artifact:
-KWR_6_1_0_DISTRIBUTION.zip
+KnomercyWarRoom-6.1.1-alpha.4.zip
 
 SHA-256 manifest:
-KWR_6_1_0_SHA256.txt on the GitHub release
+KWR_6_1_1_ALPHA_3_SHA256.txt on the GitHub release
 
 Validation:
 - validate.ps1 passed
@@ -104,5 +107,5 @@ Validation:
 Current truth:
 - CurseForge receives the exact certified artifact for Retail 12.1.0 and 12.0.7
 - GitHub release assets and their public hashes are the authoritative published record
-- CurseForge file type is Release for the stable semantic version
+- CurseForge file type is Alpha for the suffixed semantic version
 ```

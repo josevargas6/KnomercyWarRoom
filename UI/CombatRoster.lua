@@ -406,6 +406,13 @@ local function makeFrameMovable(frame, handle, kind)
         frame:StartMoving()
     end)
     handle:SetScript("OnDragStop", function()
+        -- Combat can begin between drag start and mouse-up. Retail protects
+        -- this call during lockdown, so persist only after regeneration.
+        if InCombatLockdown and InCombatLockdown() then
+            CombatRoster.pendingDragStops = CombatRoster.pendingDragStops or {}
+            CombatRoster.pendingDragStops[frame] = frameProfile(kind)
+            return
+        end
         frame:StopMovingOrSizing()
         rememberFrameAnchor(frame, frameProfile(kind))
     end)
@@ -887,6 +894,14 @@ function CombatRoster:Expand(mode)
 end
 
 function CombatRoster:FlushPending()
+    if self.pendingDragStops and not (InCombatLockdown and InCombatLockdown()) then
+        local pendingDragStops = self.pendingDragStops
+        self.pendingDragStops = nil
+        for frame, profile in pairs(pendingDragStops) do
+            frame:StopMovingOrSizing()
+            rememberFrameAnchor(frame, profile)
+        end
+    end
     if self.pending then
         local pending = self.pending
         self.pending = nil

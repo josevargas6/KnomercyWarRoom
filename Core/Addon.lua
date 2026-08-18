@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.0"
+KWR.version = "6.1.1-alpha.4"
 KWR.schemaVersion = 60129
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -62,6 +62,9 @@ local DEFAULTS = {
             y = 0,
             page = "TACTICAL",
         },
+        -- Four presentation choices keep the UI predictable without asking
+        -- players to tune separate scales for every KWR surface.
+        layoutMode = "AUTO",
         formation = {
             selectedCompID = nil,
         },
@@ -74,12 +77,13 @@ local DEFAULTS = {
             -- distance. This is the Fury-style visual footprint, not the
             -- smaller cursor marker scale.
             reticleSize = 116,
-            reticlePresentationVersion = 3,
+            reticlePresentationVersion = 4,
             reticleAlpha = 0.84,
             -- The target lock uses full axis guides so a selected player is
             -- readable through dense battleground effects. Players can still
             -- disable them in Options.
             reticleGuides = true,
+            reticleGuideStyle = "STANDARD",
             -- In a target call, preserve one native health bar: the current
             -- enemy. Other hostile plates keep only KWR's compact class/color
             -- shield so the battlefield remains readable.
@@ -154,8 +158,11 @@ local DEFAULTS = {
             enabled = true,
             autoOpen = true,
         },
-        sentinelTransportEnabled = true,
+        -- Cross-client relay is opt-in with the Sentinel companion. Field
+        -- mode enables the complete reviewed bridge explicitly.
+        sentinelTransportEnabled = false,
         guidanceMode = "COMMAND",
+        fieldReviewContext = "Diagnostic",
     },
     journal = {
         history = {},
@@ -175,6 +182,39 @@ local DEFAULTS = {
         processedMatches = {},
     },
 }
+
+local FIELD_ACTIVATION_VERSION = 1
+
+local function activateFieldProfile(profile, force)
+    profile = type(profile) == "table" and profile or {}
+    local activated = KWR.Util:Number(profile.fieldActivationVersion, 0) or 0
+    if not force and activated >= FIELD_ACTIVATION_VERSION then
+        return false
+    end
+    profile.preview = false
+    profile.guidanceMode = "COMMAND"
+    profile.hud.enabled = true
+    profile.cursor.enabled = true
+    profile.combatRoster.shown = true
+    profile.combatRoster.mode = "BOTH"
+    profile.combatRoster.teamShown = true
+    profile.combatRoster.enemyShown = true
+    profile.combatRoster.autoShowInPvP = true
+    profile.combatRoster.combatVisuals = true
+    profile.presentation.enabled = true
+    profile.presentation.autoReporter = true
+    profile.presentation.autoRoster = true
+    profile.aar.enabled = true
+    profile.aar.autoOpen = true
+    profile.sentinelTransportEnabled = true
+    profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
+    return true
+end
+
+function KWR:ActivateFieldProfile(force)
+    if not self.db or not self.db.profile then return false end
+    return activateFieldProfile(self.db.profile, force == true)
+end
 
 local function mergeDefaults(target, defaults)
     target = type(target) == "table" and target or {}
@@ -298,6 +338,12 @@ local function normalizeProfile(profile)
         profile.cursor.reticleAlpha, defaults.cursor.reticleAlpha)
     profile.cursor.reticleGuides = KWR.Util:Boolean(
         profile.cursor.reticleGuides, defaults.cursor.reticleGuides)
+    local guideStyle = KWR.Util:Upper(
+        profile.cursor.reticleGuideStyle, defaults.cursor.reticleGuideStyle, 12)
+    if guideStyle ~= "STANDARD" and guideStyle ~= "BOLD" then
+        guideStyle = defaults.cursor.reticleGuideStyle
+    end
+    profile.cursor.reticleGuideStyle = guideStyle
     profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
         profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
     local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
@@ -403,7 +449,24 @@ local function normalizeProfile(profile)
     profile.aar.autoOpen = KWR.Util:Boolean(profile.aar.autoOpen, defaults.aar.autoOpen)
     profile.sentinelTransportEnabled = KWR.Util:Boolean(
         profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
+    -- Migration only fills absent defaults. Existing saved opt-outs are player
+    -- choices and must never be converted into a forced field profile here.
+    profile.fieldActivationVersion = math.max(
+        KWR.Util:Number(profile.fieldActivationVersion, 0) or 0,
+        FIELD_ACTIVATION_VERSION)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
+    profile.fieldReviewContext = KWR.Util:Text(
+        profile.fieldReviewContext, defaults.fieldReviewContext, 24)
+    if profile.fieldReviewContext ~= "Commander"
+        and profile.fieldReviewContext ~= "Spectator"
+        and profile.fieldReviewContext ~= "Diagnostic" then
+        profile.fieldReviewContext = defaults.fieldReviewContext
+    end
+    profile.layoutMode = KWR.Util:Upper(profile.layoutMode, defaults.layoutMode, 16)
+    if profile.layoutMode ~= "AUTO" and profile.layoutMode ~= "COMPACT"
+        and profile.layoutMode ~= "STANDARD" and profile.layoutMode ~= "LARGE" then
+        profile.layoutMode = defaults.layoutMode
+    end
     return profile
 end
 

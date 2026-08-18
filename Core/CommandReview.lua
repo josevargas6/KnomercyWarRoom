@@ -15,6 +15,22 @@ function CommandReview:CompactTextList(values, maximum, limit)
     return result
 end
 
+function CommandReview:CompactEvidence(values, maximum, limit)
+    local result = {}
+    for index = 1, math.min(maximum or 0, #(values or {})) do
+        local value = values[index]
+        if type(value) == "table" then
+            value = value.text or value.reason or value.label or value.summary
+                or value.id or value.source
+        end
+        value = KWR.Util:Text(value, "", limit or 120)
+        if value ~= "" and value ~= "Unknown" and value ~= "unknown" then
+            result[#result + 1] = value
+        end
+    end
+    return result
+end
+
 function CommandReview:CompactSimulations(rows)
     local result = {}
     for index = 1, math.min(2, #(rows or {})) do
@@ -80,6 +96,11 @@ function CommandReview:CompactResponsePackage(response)
         moverText = clean(response.moverText, "Team", 100),
         stayerText = clean(response.stayerText, "Assigned defenders", 100),
         qualified = response.qualified == true,
+        recovery = {
+            criticalGap = clean(response.recovery and response.recovery.criticalGap, "", 48),
+            releaseTarget = clean(response.recovery and response.recovery.releaseTarget, "", 48),
+            urgent = response.recovery and response.recovery.urgent == true or false,
+        },
     }
 end
 
@@ -114,7 +135,7 @@ function CommandReview:BuildRecord(command, snapshot, assignments, prediction)
         projection = command.projection or strategy.projection,
         recommendationMode = command.recommendationMode or strategy.recommendationMode
             or (prediction and prediction.status) or nil,
-        evidence = self:CompactTextList(command.evidence or confidenceBudget.evidence, 4, 120),
+        evidence = self:CompactEvidence(command.evidence or confidenceBudget.evidence, 4, 120),
         simulations = self:CompactSimulations(command.simulations or strategy.simulations),
         executionAssessment = self:CompactExecutionAssessment(
             command.executionAssessment or strategy.executionAssessment),

@@ -8,6 +8,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 $buildOutputPath = if ([IO.Path]::IsPathRooted($BuildOutputDirectory)) {
     $BuildOutputDirectory
 } else {
@@ -19,8 +20,11 @@ $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
 $version = [regex]::Match($toc, "## Version:\s*(.+)").Groups[1].Value.Trim()
 $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 
-$distributionZip = Join-Path $buildOutputRoot ("KWR_{0}_DISTRIBUTION.zip" -f $safeVersion)
+$distributionZip = Join-Path $buildOutputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
+$sentinelToc = Get-Content -LiteralPath (Join-Path $root "KWRSentinel\KWRSentinel.toc") -Raw
+$sentinelVersion = [regex]::Match($sentinelToc, "## Version:\s*(.+)").Groups[1].Value.Trim()
+$sentinelZip = Join-Path $buildOutputRoot ("KWR-Sentinel-{0}.zip" -f $sentinelVersion)
 $hashFile = Join-Path $buildOutputRoot ("KWR_{0}_SHA256.txt" -f $safeVersion)
 $developerHashFile = Join-Path $buildOutputRoot ("KWR_{0}_DEVELOPER_CHECKSUM.txt" -f $safeVersion)
 $sourceManifestFile = Join-Path $buildOutputRoot ("KWR_{0}_SOURCE_MANIFEST.json" -f $safeVersion)
@@ -31,6 +35,7 @@ $packageAuditFile = Join-Path $buildOutputRoot ("KWR_{0}_PACKAGE_AUDIT.json" -f 
 foreach ($path in @(
     $distributionZip,
     $developerZip,
+    $sentinelZip,
     $hashFile,
     $developerHashFile,
     $sourceManifestFile,
@@ -59,7 +64,7 @@ function New-ArtifactReport {
     )
 
     $item = Get-Item -LiteralPath $Path
-    $hash = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToUpperInvariant()
+    $hash = Get-KwrFileSha256 -LiteralPath $Path
     return [ordered]@{
         name = $item.Name
         path = Get-ReportPath -Path $item.FullName
@@ -70,6 +75,7 @@ function New-ArtifactReport {
 
 $distributionArtifact = New-ArtifactReport -Path $distributionZip
 $developerArtifact = New-ArtifactReport -Path $developerZip
+$sentinelArtifact = New-ArtifactReport -Path $sentinelZip
 $sourceManifest = Get-Content -LiteralPath $sourceManifestFile -Raw | ConvertFrom-Json
 $provenance = Get-Content -LiteralPath $provenanceFile -Raw | ConvertFrom-Json
 $reproducibility = Get-Content -LiteralPath $reproducibilityFile -Raw | ConvertFrom-Json
@@ -110,6 +116,7 @@ $report = [ordered]@{
     buildOutputDirectory = Get-ReportPath -Path $buildOutputRoot
     distributionArtifact = $distributionArtifact
     developerArtifact = $developerArtifact
+    sentinelArtifact = $sentinelArtifact
     hashManifest = [ordered]@{
         path = Get-ReportPath -Path $hashFile
         lines = @($hashLines)
@@ -124,6 +131,8 @@ $report = [ordered]@{
         distributionEntryCount = $sourceManifest.distribution.entryCount
         developerDigest = $sourceManifest.developer.digest
         developerEntryCount = $sourceManifest.developer.entryCount
+        sentinelDigest = $sourceManifest.sentinel.digest
+        sentinelEntryCount = $sourceManifest.sentinel.entryCount
     }
     buildProvenance = [ordered]@{
         path = Get-ReportPath -Path $provenanceFile

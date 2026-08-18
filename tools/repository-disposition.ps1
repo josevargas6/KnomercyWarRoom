@@ -10,6 +10,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 $liveRoot = [IO.Path]::GetFullPath($LiveRoot)
 $snapshot = [IO.Path]::GetFullPath($RollbackSnapshot)
 $excludedPattern = '\\(\.git|\.pnpm-store|artifacts|builds|node_modules|tmp|temp|coverage)\\'
@@ -26,7 +27,7 @@ function Get-FileMap {
         }
         $map[$relative] = [pscustomobject]@{
             size = [int64]$file.Length
-            sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToUpperInvariant()
+            sha256 = Get-KwrFileSha256 -LiteralPath $file.FullName
         }
     }
     return $map

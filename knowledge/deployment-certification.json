@@ -1,42 +1,41 @@
 {
-  "schema": "kwr-deployment-certification",
-  "schemaVersion": 1,
-  "certifiedAt": "2026-08-12T01:29:51Z",
-  "candidateVersion": "6.1.0-alpha.41",
-  "releaseTag": null,
-  "releaseCommit": "9708700cb0cc8cbafec18b704cfca881a0d21fa9",
-  "commander": {
-    "sha256": "7AE92609F02D56B62F7A21425E87B827965FF32C15ECA71EFBC556FC62F2632D",
-    "packageDigest": "E0D01AB3B72872F4D1A7368F8F68C6CF0F04048B2FA14718E43B69A28A85E8A6",
-    "installedEntries": 392,
-    "missing": 0,
-    "changed": 0,
-    "extra": 0
-  },
-  "sentinel": {
-    "sha256": "01C69EDBCB3E6C815F4BB16532F9AD4B4E756366F672C0EC1182E9997B9E9039",
-    "packageDigest": "FFB9FBCB16A792E973089D23E02DD41ECAAC54712C5BCCF719FAFA787BC1040C",
-    "installedEntries": 9,
-    "missing": 0,
-    "changed": 0,
-    "extra": 0
-  },
-  "upgradeProof": {
-    "savedVariablesMigrationMatrix": "PASS",
-    "futureSchemaReadOnlyCompatibility": "PASS",
-    "deterministicSuite": "KWR_LUA_TESTS_PASS"
-  },
-  "sentinelBridge": {
-    "loadFlag": "ENABLED",
-    "character": "Verite-Bladefist",
-    "mode": "SAME_CLIENT_AND_KWRSYNC1",
-    "crossClientTransport": "IMPLEMENTED_PENDING_RETAIL_PROOF"
-  },
-  "evidence": [
-    "artifacts/alpha41-retail-12_1-9708700/KWR_6_1_0_ALPHA_41_BUILD_PROVENANCE.json",
-    "artifacts/alpha41-retail-12_1-9708700/commander-deployment-receipt.json",
-    "artifacts/alpha41-retail-12_1-9708700/sentinel-deployment-receipt.json",
-    "docs/KWR_12_1_RETAIL_REFINEMENT_RELEASE_TASK_2026-08-11.md"
-  ],
-  "result": "PASS"
+    "schema":  "kwr-deployment-certification",
+    "schemaVersion":  2,
+    "certifiedAt":  "2026-08-18T17:16:13Z",
+    "candidateVersion":  "6.1.1-alpha.4",
+    "releaseTag":  null,
+    "releaseCommit":  "6756f018607d77887df866d0bc9059a88c2d46b1",
+    "commander":  {
+                      "sha256":  "5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047",
+                      "packageDigest":  "D9E497381F42C9BDD4B7260D720C32F3199838A1C489D76CA01AD8C2A63F7310",
+                      "installedEntries":  397,
+                      "missing":  0,
+                      "changed":  0,
+                      "extra":  0
+                  },
+    "sentinel":  {
+                     "sha256":  "8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5",
+                     "packageDigest":  "150EBBA0E93F1A044BF7B4A29BD481367549C2F6D0C37DEFFAAD4EF24FEDBE52",
+                     "installedEntries":  12,
+                     "missing":  0,
+                     "changed":  0,
+                     "extra":  0
+                 },
+    "upgradeProof":  {
+                         "savedVariablesMigrationMatrix":  "PASS",
+                         "futureSchemaReadOnlyCompatibility":  "PASS",
+                         "deterministicSuite":  "KWR_LUA_TESTS_PASS suite=All"
+                     },
+    "sentinelBridge":  {
+                           "loadFlag":  "ENABLED",
+                           "mode":  "SAME_CLIENT_AND_KWRSYNC1",
+                           "crossClientTransport":  "IMPLEMENTED_PENDING_RETAIL_PROOF"
+                       },
+    "evidence":  [
+                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
+                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/deployment-commander-6756f01.json",
+                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/deployment-sentinel-6756f01.json",
+                     "tools/test-retail-savedvariables-audit.ps1"
+                 ],
+    "result":  "PASS"
 }

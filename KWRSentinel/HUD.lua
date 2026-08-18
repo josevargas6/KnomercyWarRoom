@@ -514,10 +514,11 @@ function HUD:Create()
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
-        selfFrame:StopMovingOrSizing()
-        selfFrame.KWRDragging = nil
-        local point, _, relativePoint, x, y = selfFrame:GetPoint(1)
-        profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+        Sentinel:FinishMove(selfFrame, function()
+            selfFrame.KWRDragging = nil
+            local point, _, relativePoint, x, y = selfFrame:GetPoint(1)
+            profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+        end)
     end)
     self.frame = frame
     return frame

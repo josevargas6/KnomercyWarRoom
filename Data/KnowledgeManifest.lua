@@ -3,8 +3,8 @@ local _, KWR = ...
 local KnowledgeManifest = {
     schema = 2,
     patch = "12.1.0",
-    season = "Midnight Season 2 preparation",
-    reviewedAt = "2026-08-11",
+    season = "Midnight Season 2",
+    reviewedAt = "2026-08-17",
     sources = {
         "Blizzard in-game public APIs",
         "Battle.net Game Data/Profile reference",
@@ -68,8 +68,8 @@ function KnowledgeManifest:Status(snapshot)
         end
     end
     local patchAligned = self.patch == KWR.PatchData.activePatch
-        and self.patch == KWR.MetaSnapshot.patch
         and patch.reviewed == true
+    local metaAligned = patchAligned and self.patch == KWR.MetaSnapshot.patch
     local score = 0
     if patchAligned then score = score + 30 end
     if reviewedAgeDays ~= nil then
@@ -95,6 +95,7 @@ function KnowledgeManifest:Status(snapshot)
         or (score >= 55 and "MEDIUM" or (score >= 30 and "LOW" or "NONE"))
     local reasons = {}
     reasons[#reasons + 1] = patchAligned and "patch aligned" or "patch review mismatch"
+    reasons[#reasons + 1] = metaAligned and "meta aligned" or "meta snapshot excluded"
     reasons[#reasons + 1] = string.format("spec certainty F:%d%% E:%d%%",
         math.floor((friendly.coverage or 0) * 100 + 0.5),
         math.floor((enemy.coverage or 0) * 100 + 0.5))
@@ -109,6 +110,7 @@ function KnowledgeManifest:Status(snapshot)
     end
     return {
         patchAligned = patchAligned,
+        metaAligned = metaAligned,
         reviewed = patch.reviewed == true,
         reviewedAgeDays = reviewedAgeDays,
         metaAgeDays = metaAgeDays,
@@ -126,7 +128,7 @@ function KnowledgeManifest:Status(snapshot)
             and (enemy.coverage or 0) >= 0.7
             and enemyHistorical <= 3
             and label ~= "NONE",
-        metaInfluenceAllowed = patchAligned
+        metaInfluenceAllowed = metaAligned
             and (metaAgeDays == nil or metaAgeDays <= 10),
     }
 end

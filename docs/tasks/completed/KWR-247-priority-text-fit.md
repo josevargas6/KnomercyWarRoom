@@ -4,7 +4,7 @@ title: Prevent setup strategy text from being squeezed or clipped
 owner: unassigned
 priority: medium
 risk: low
-status: planned
+status: completed
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
@@ -38,9 +38,9 @@ Keep the existing card and page geometry stable; make only the internal column a
 
 # Acceptance criteria
 
-- [ ] Composition-job text receives materially more horizontal space.
-- [ ] Recruitment priorities remain readable and continue to wrap.
-- [ ] No strategy text is truncated by the column change.
+- [x] Composition-job text receives materially more horizontal space.
+- [x] Recruitment priorities remain readable and continue to wrap.
+- [x] No strategy text is truncated by the column change.
 
 # Verification
 

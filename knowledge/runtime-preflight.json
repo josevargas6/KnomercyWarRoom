@@ -1,11 +1,11 @@
 {
     "schema":  "kwr-runtime-preflight",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-15T22:22:56Z",
-    "candidateVersion":  "6.1.0",
+    "generatedAt":  "2026-08-18T16:58:14Z",
+    "candidateVersion":  "6.1.1-alpha.4",
     "node":  {
-                 "nodeOnPath":  false,
-                 "nodeOnPathSource":  null,
+                 "nodeOnPath":  true,
+                 "nodeOnPathSource":  "C:\\Users\\josev\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.19.0-win-x64\\node.exe",
                  "bundledNodePath":  "C:\\Users\\josev\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
                  "bundledNodeReadable":  true
              },

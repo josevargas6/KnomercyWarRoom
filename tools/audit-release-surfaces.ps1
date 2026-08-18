@@ -11,34 +11,112 @@ $headers = @{
 }
 $apiRoot = "https://api.github.com/repos/$Repository"
 $findings = New-Object System.Collections.Generic.List[string]
+$developmentBranchState = "ABSENT_RETIRED"
+$developmentComparison = $null
 
 function Add-Finding {
     param([string]$Message)
     $findings.Add($Message)
 }
 
-$release = Invoke-RestMethod -Headers $headers -Uri "$apiRoot/releases/tags/$ReleaseTag"
-$expectsPrerelease = $ReleaseTag.Substring(1) -match '-'
-if ([bool]$release.prerelease -ne $expectsPrerelease) {
-    Add-Finding "Release $ReleaseTag channel does not match its semantic version."
+function Invoke-GitHubRead {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Uri,
+        [switch]$AllowNotFound
+    )
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        try {
+            return Invoke-RestMethod -Headers $headers -Uri $Uri -TimeoutSec 20
+        } catch {
+            $statusCode = $null
+            if ($_.Exception.Response -and $_.Exception.Response.StatusCode) {
+                $statusCode = [int]$_.Exception.Response.StatusCode
+            }
+            if ($AllowNotFound -and $statusCode -eq 404) { return $null }
+            if ($attempt -eq 3) { throw }
+            Start-Sleep -Seconds $attempt
+        }
+    }
 }
-if ($release.assets.Count -lt 1) { Add-Finding "Release $ReleaseTag has no GitHub assets." }
 
-$workflowResponse = Invoke-RestMethod -Headers $headers -Uri "$apiRoot/contents/.github/workflows/release.yml?ref=main"
-$workflow = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($workflowResponse.content))
-if ($workflow -notmatch 'CURSEFORGE_PROJECT_ID:\s*"1632632"') {
-    Add-Finding "main release workflow does not contain Commander numeric CurseForge project id 1632632."
-}
-if ($workflow -notmatch 'CURSEFORGE_PROJECT_ID:\s*"1614463"') {
-    Add-Finding "main release workflow does not contain Sentinel numeric CurseForge project id 1614463."
-}
-if ($workflow -notmatch 'curseforge-upload-http') {
-    Add-Finding "main release workflow does not use truthful CurseForge upload response validation."
+function Get-GitHubFileContent {
+    param([Parameter(Mandatory = $true)][string]$Path)
+    $response = Invoke-GitHubRead -Uri "$apiRoot/contents/$Path`?ref=main"
+    return [Text.Encoding]::UTF8.GetString(
+        [Convert]::FromBase64String($response.content))
 }
 
-$comparison = Invoke-RestMethod -Headers $headers -Uri "$apiRoot/compare/main...develop"
-if ($comparison.status -ne "ahead") {
-    Add-Finding "main and develop are $($comparison.status) (develop ahead $($comparison.ahead_by), behind $($comparison.behind_by)); targeted promotion is required."
+$release = $null
+try {
+    $release = Invoke-GitHubRead -Uri "$apiRoot/releases/tags/$ReleaseTag"
+    $expectsPrerelease = $ReleaseTag.Substring(1) -match '-'
+    if ([bool]$release.prerelease -ne $expectsPrerelease) {
+        Add-Finding "Release $ReleaseTag channel does not match its semantic version."
+    }
+    if ($release.assets.Count -lt 1) { Add-Finding "Release $ReleaseTag has no GitHub assets." }
+} catch {
+    Add-Finding "Unable to read release $ReleaseTag after bounded retries: $($_.Exception.Message)"
+}
+
+try {
+    $workflow = Get-GitHubFileContent -Path ".github/workflows/release.yml"
+    if ($workflow -notmatch 'CURSEFORGE_PROJECT_ID:\s*"1632632"') {
+        Add-Finding "main release workflow does not contain Commander numeric CurseForge project id 1632632."
+    }
+    if ($workflow -notmatch 'CURSEFORGE_PROJECT_ID:\s*"1614463"') {
+        Add-Finding "main release workflow does not contain Sentinel numeric CurseForge project id 1614463."
+    }
+    if ($workflow -notmatch 'curseforge-upload-commander\.ps1' -or
+        $workflow -notmatch 'curseforge-upload-sentinel\.ps1') {
+        Add-Finding "main release workflow does not invoke both guarded CurseForge uploaders."
+    } else {
+        $validatorSource = Get-GitHubFileContent -Path "tools/curseforge-upload-http.ps1"
+        if ($validatorSource -notmatch 'function\s+Assert-CurseForgeUploadResponse' -or
+            $validatorSource -notmatch 'without a positive file id' -or
+            $validatorSource -notmatch 'without a valid JSON response') {
+            Add-Finding "main CurseForge upload helper does not fail closed on an unverified response."
+        }
+    }
+} catch {
+    Add-Finding "Unable to verify main release automation after bounded retries: $($_.Exception.Message)"
+}
+
+# The documented develop-to-main promotion flow remains a release gate while
+# develop has unique work. A branch that is strictly behind main is stale and
+# can be retired without blocking the release audit.
+try {
+    $developmentBranch = Invoke-GitHubRead `
+        -Uri "$apiRoot/branches/develop" `
+        -AllowNotFound
+    if ($developmentBranch) {
+        $developmentBranchState = "PRESENT_NON_AUTHORITATIVE"
+        try {
+            $comparison = Invoke-GitHubRead `
+                -Uri "$apiRoot/compare/main...develop"
+            $developmentComparison = [pscustomobject]@{
+                status = $comparison.status
+                ahead_by = $comparison.ahead_by
+                behind_by = $comparison.behind_by
+            }
+            if ($comparison.status -ne "behind") {
+                Add-Finding "main and develop are $($comparison.status) (develop ahead $($comparison.ahead_by), behind $($comparison.behind_by)); promote or reconcile develop before release."
+                $developmentBranchState = "PRESENT_PROMOTION_REQUIRED"
+            }
+        } catch {
+            $developmentBranchState = "PRESENT_COMPARISON_UNAVAILABLE_BLOCKING"
+            Add-Finding "Unable to compare main and develop; release promotion cannot be verified."
+        }
+    }
+} catch {
+    $statusCode = $null
+    if ($_.Exception.Response -and $_.Exception.Response.StatusCode) {
+        $statusCode = [int]$_.Exception.Response.StatusCode
+    }
+    if ($statusCode -ne 404) {
+        $developmentBranchState = "UNKNOWN_BLOCKING"
+        Add-Finding "Unable to determine develop branch state; release promotion cannot be verified."
+    }
 }
 
 foreach ($path in @(
@@ -56,6 +134,17 @@ foreach ($path in @(
     release = $ReleaseTag
     github_release_assets = $release.assets.Count
     github_release_url = $release.html_url
+    release_authority = "main"
+    development_branch_policy = "PROMOTION_REQUIRED_UNLESS_STALE_BEHIND_MAIN"
+    development_branch_state = $developmentBranchState
+    development_comparison = $developmentComparison
+    estate_policy = [pscustomobject]@{
+        commander = "REQUIRED"
+        sentinel = "REQUIRED_EMBEDDED_PACKAGE"
+        beacon = "OPTIONAL_INTENTIONALLY_ABSENT_ALLOWED"
+        maps = "OPTIONAL"
+        scorecard = "OPTIONAL"
+    }
     findings = @($findings)
     status = if ($findings.Count -eq 0) { "PASS" } else { "BLOCKED" }
 } | ConvertTo-Json -Depth 5

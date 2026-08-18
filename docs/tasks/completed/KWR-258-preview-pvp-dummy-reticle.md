@@ -4,7 +4,7 @@ title: Enable reticle on PvP training dummies in preview
 owner: KWR
 priority: medium
 risk: low
-status: in_progress
+status: completed
 authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules: [Features/CursorRing.lua]
@@ -36,9 +36,9 @@ Use GUID identity rather than localized dummy names. Preserve the existing namep
 
 # Acceptance criteria
 
-- [ ] Preview reticle displays for an attackable reviewed PvP training dummy.
-- [ ] Preview reticle remains hidden for other NPC targets.
-- [ ] Live PvP player-target behavior is unchanged.
+- [x] Preview reticle displays for an attackable reviewed PvP training dummy.
+- [x] Preview reticle remains hidden for other NPC targets.
+- [x] Live PvP player-target behavior is unchanged.
 
 # Verification
 

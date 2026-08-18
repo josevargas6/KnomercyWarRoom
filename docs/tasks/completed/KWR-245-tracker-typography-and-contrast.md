@@ -4,7 +4,7 @@ title: Improve tracker name and health text contrast
 owner: unassigned
 priority: high
 risk: low
-status: planned
+status: completed
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
@@ -38,9 +38,9 @@ Keep status bars below text and avoid changing secure attributes during combat.
 
 # Acceptance criteria
 
-- [ ] Team and enemy row names use bold outlined text and bright class colors.
-- [ ] Health values remain white, outlined, and visually above amber/red/green fills.
-- [ ] Existing tracker layout and data behavior remain unchanged.
+- [x] Team and enemy row names use bold outlined text and bright class colors.
+- [x] Health values remain white, outlined, and visually above amber/red/green fills.
+- [x] Existing tracker layout and data behavior remain unchanged.
 
 # Verification
 

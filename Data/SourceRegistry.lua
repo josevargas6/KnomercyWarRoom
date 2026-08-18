@@ -18,7 +18,7 @@ local SOURCES = {
     BLIZZARD_HOTFIXES = {
         authority = "REFERENCE",
         name = "Official World of Warcraft Hotfixes",
-        url = "https://worldofwarcraft.blizzard.com/en-us/news/24276957",
+        url = "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-midnight-hotfixes-july-28/2296045",
         use = "Build-time PvP tuning and API/mechanics review; live observations remain authoritative.",
     },
     BLIZZARD_SEASON_2 = {
@@ -26,6 +26,12 @@ local SOURCES = {
         name = "Official Midnight Season 2 schedule and PvP rewards",
         url = "https://news.blizzard.com/en-us/article/24294369/the-shadows-deepen-midnight-season-2-begins-august-18",
         use = "Build-time season schedule and published PvP reward confirmation; it does not approve gameplay tuning or vendor assumptions.",
+    },
+    BLIZZARD_SEASON_2_OVERVIEW = {
+        authority = "REFERENCE",
+        name = "Official Midnight Season 2 systems overview",
+        url = "https://worldofwarcraft.blizzard.com/en-us/news/24280285",
+        use = "Build-time confirmation of Season 2 PvP and client presentation features; it does not authorize inferred gameplay state.",
     },
     MURLOK = {
         authority = "META",

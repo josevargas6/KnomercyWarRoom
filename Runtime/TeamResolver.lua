@@ -214,6 +214,29 @@ function TeamResolver:NormalizePublishedRoster(roster)
             normalized[#normalized + 1] = player
         end
     end
+
+    -- A short name is not a display identity. Two fully resolved players can
+    -- share it across realms; rendering only the short form makes a correct
+    -- roster look like it contains a duplicate, while a transitional copy of
+    -- one player must remain collapsed above. Keep the identity decision in
+    -- this single publishing boundary so every consumer receives both a
+    -- unique roster and an unambiguous row label.
+    local displayCounts = {}
+    for _, player in ipairs(normalized) do
+        local shortName = KWR.Util:CanonicalShortName(
+            player.shortName or player.name)
+        if shortName ~= "" then
+            displayCounts[shortName] = (displayCounts[shortName] or 0) + 1
+        end
+    end
+    for _, player in ipairs(normalized) do
+        local shortName = KWR.Util:CanonicalShortName(
+            player.shortName or player.name)
+        local compact = KWR.Util:Text(player.shortName, "", 64)
+        local full = KWR.Util:Text(player.name, compact, 96)
+        player.displayName = displayCounts[shortName] and displayCounts[shortName] > 1
+            and full or compact
+    end
     return normalized
 end
 
@@ -358,12 +381,13 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
     -- can briefly contain stale copies with new GUIDs while players load or
     -- swap. Enrich matching group members only, preserving name, GUID, unit,
     -- cardinality, and row ownership.
-    local groupAuthoritative = #roster == expectedCount
-        and #uniqueGroup == expectedCount
+    local groupAuthoritative = #uniqueGroup == expectedCount
     if groupAuthoritative then
         local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(friendlyRows)
         local used, reconciled, matched = {}, {}, 0
-        for _, player in ipairs(roster) do
+        -- Only the already-validated group set may own friendly slots. Using
+        -- the raw input here reintroduced duplicate rows after dedupe.
+        for _, player in ipairs(uniqueGroup) do
             local guid = KWR.Util:Text(player.guid, "", 80)
             local full, short = nameKeys(player.name)
             local row = guid ~= "" and byGuid[guid] or nil
@@ -399,7 +423,7 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
         }
     end
 
-    local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(roster)
+    local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(uniqueGroup)
     local used, reconciled, repaired = {}, {}, 0
     for _, row in ipairs(friendlyRows) do
         local guid = KWR.Util:Text(row.guid, "", 80)

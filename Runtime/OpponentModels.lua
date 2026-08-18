@@ -340,9 +340,17 @@ function OpponentModels:ObserveEnemy(snapshot, enemy)
     if not profile then return nil end
     local mapKey = KWR.Util:Text(snapshot and snapshot.context and snapshot.context.mapKey,
         "WORLD", 24)
+    -- Session identity is deliberately transient. BattlefieldSessionKey names
+    -- a map, not a unique queue instance, so persisting it on the profile
+    -- would suppress a legitimate later encounter on the same map forever.
+    -- MatchRuntime clears this set when the player leaves a battleground;
+    -- within that live session an enemy is still counted exactly once.
     if self.sessionSeen[profile.key] ~= true then
         self.sessionSeen[profile.key] = true
         profile.sessions = (profile.sessions or 0) + 1
+        -- Remove the obsolete persisted map key on the next encounter so
+        -- saved variables converge to the per-match contract.
+        profile.lastSessionKey = nil
     end
     if enemy.visible == true and self:Throttle(profile, "sighting", 10) then
         profile.sightings = (profile.sightings or 0) + 1

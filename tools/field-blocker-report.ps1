@@ -56,12 +56,17 @@ $observedStabilityFailures = if ($retailCertification) {
 $deploymentCertified = $deploymentCertification -and
     $deploymentCertification.candidateVersion -eq $version -and
     $deploymentCertification.result -eq 'PASS' -and
+    $packageReport -and
     $deploymentCertification.commander.missing -eq 0 -and
     $deploymentCertification.commander.changed -eq 0 -and
     $deploymentCertification.commander.extra -eq 0 -and
+    $deploymentCertification.commander.sha256 -eq $packageReport.distributionArtifact.sha256 -and
+    $deploymentCertification.commander.packageDigest -eq $packageReport.sourceManifest.distributionDigest -and
     $deploymentCertification.sentinel.missing -eq 0 -and
     $deploymentCertification.sentinel.changed -eq 0 -and
     $deploymentCertification.sentinel.extra -eq 0 -and
+    $deploymentCertification.sentinel.sha256 -eq $packageReport.sentinelArtifact.sha256 -and
+    $deploymentCertification.sentinel.packageDigest -eq $packageReport.sourceManifest.sentinelDigest -and
     $deploymentCertification.upgradeProof.savedVariablesMigrationMatrix -eq 'PASS' -and
     $deploymentCertification.upgradeProof.futureSchemaReadOnlyCompatibility -eq 'PASS'
 $offlineGatePassed = $packageReport -and

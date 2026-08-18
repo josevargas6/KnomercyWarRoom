@@ -1,7 +1,105 @@
 # Changelog
 
-## Unreleased
+## 6.1.1-alpha.4 - 2026-08-18
 
+- Repaired Retail roster publication at its source boundary: group, scoreboard,
+  and historical observations now collapse to one canonical player record before
+  any Commander surface renders. Same-short-name teammates now retain their
+  realm-qualified display identities, so two legitimate players cannot render
+  as indistinguishable duplicate bars.
+- Reconciled enemy observation identities from name to GUID, preserved the best
+  available class/spec/role facts, and count visibility episodes rather than
+  repeated refreshes as separate sightings.
+- Restored command stability: flag invalidation is now edge-triggered from the
+  command's own baseline, response packages no longer automatically bypass
+  replacement discipline, and the active-play key no longer churns with a
+  changing assignee list.
+- Deferred and guarded all KWR drag-stop calls across combat lockdown, replaced
+  the nonfunctional Shift-M menu stub with an actual battlefield-map action,
+  and reduced AAR write work during high-frequency refreshes.
+- Added a shared Sentinel drag-completion queue released only after combat,
+  removed its dormant carrier-unit observer, and made both UI button factories
+  reject missing callbacks at creation time. The release validator now audits
+  every declared control surface and rejects unfinished production markers.
+- Completed the exact Season 2 matrix at 100,000 actionable branches across
+  all ten Retail RBG maps; every phase/family branch is now reachable from a
+  real candidate action and exercised by the runtime regression suite.
+- Made target reticles materially easier to see with layered 2-4 px guides,
+  stronger contrast, and an explicit Standard/Bold preference.
+- Simplified composition selection into one counterpick decision: a selected
+  plan now states playstyle, strongest matchups, and weaknesses without
+  repeating watch/recruit text.
+- Added explicit Diagnostic/Commander/Spectator AAR context and unavailable
+  player states; corrected opponent session counting so re-entry does not
+  inflate profile samples.
+- Corrected final review-path edge cases: command replacement now preserves an
+  urgent coverage gap, repeat opponents count across separate same-map matches,
+  direct player specialization outranks stale scoreboard data, assignment swaps
+  cannot disappear from AAR sampling, and interrupted AARs cannot satisfy the
+  stability checklist.
+- Unified Nexus and live carrier execution metadata so the issued action,
+  target, envelope, fallback, and active-play evidence cannot describe
+  different objectives. Formation wording now separates favorable situations,
+  vulnerabilities, and practical counterplay; Sentinel relay traffic is opt-in
+  until Field mode is explicitly activated.
+- Synchronized the embedded Sentinel companion for the candidate release.
+
+## 6.1.1-alpha.3 - 2026-08-17
+
+- Made Season 2 field mode the default for upgraded local profiles: Command
+  guidance, live HUD, team/enemy roster, reticle, battlefield presentation,
+  bounded Sentinel transport, automatic AAR capture, and AAR review now arm
+  together. `/kwr field` reapplies the complete local field profile.
+- Activated Season 2 theory rows for field use. They now surface as active
+  theory with an explicit awaiting-field-feedback status, while real Retail
+  observations and AARs remain distinct evidence that can refine or disprove
+  the theory.
+- Added a clear in-addon Season 2 hotfix watchlist for the official August 11
+  PvP changes. It is deliberately advisory: it exposes affected specs and
+  source provenance without modifying ratings, predictions, or doctrine.
+- Added `/kwr season2`, a compact local evidence-run checklist for team truth,
+  carrier targeting, stability/performance, and readability. It routes to the
+  existing automatic AAR review/export path through `/kwr season2 aar`.
+
+## 6.1.1-alpha.2 - 2026-08-17
+
+## 6.1.1-alpha.1 - 2026-08-17
+
+- Bound the integrated Season 2 candidate to a new Commander/Sentinel version
+  so it can no longer collide with the immutable public `6.1.0` release.
+- Reviewed the active Retail 12.1 pack against official Season 2 and PvP
+  hotfix sources through July 28. Theory-first Season 2 branches are active;
+  the stale 12.0.7 ladder snapshot remains excluded from meta influence and
+  simulation/provisional guidance still requires Retail validation.
+- Corrected the knowledge audit to inspect the declared active patch pack and
+  all TOC interfaces instead of accidentally accepting a dated review from an
+  inactive historical pack.
+- Made release ZIP construction deterministic through canonical entry order
+  and normalized timestamps; clean-build certification now fails on any
+  binary archive mismatch instead of accepting a container exception.
+- Made the public release-surface audit tolerate an intentionally retired
+  `develop` branch, declared `main` as the sole release authority, and encoded
+  Beacon, Maps, and ScoreCard as optional non-blocking estate components.
+
+- Activated the full Strategist Nexus theory immediately across every
+  supported legal branch. Weak or conflicting live truth now gates commitment
+  and names the evidence required without replacing the map-specific primary,
+  fallback, or counterplan with generic HOLD/VERIFY text.
+- Replaced the generic default enemy reinforce assumption with explicit HOLD,
+  ROTATE, TRADE, TEAMFIGHT, and SPLIT countertheory. Live AAR evidence now
+  refines or disproves active theory rather than unlocking it gradually.
+- Added the production Strategist Nexus: reviewed doctrine, capability and
+  composition theory, score-state discipline, and reversible fallbacks now
+  form one bounded decision envelope. The audited 5,000-case simulation index
+  guards branch coverage only, while player-reviewed AAR results refine plans
+  through existing patch and minimum-sample gates.
+- Removed the unused zero-row simulation promotion lifecycle so synthetic
+  records cannot be confused with observed match evidence.
+- Rewrote the CurseForge listing copy as concise plain text so the CurseForge
+  client does not display raw Markdown markers; Sentinel now states its
+  Commander requirement directly.
+- Renamed future player downloads to `KnomercyWarRoom-<version>.zip` and
+  `KWR-Sentinel-<version>.zip`; the published v6.1.0 assets remain immutable.
 - Added an optional minimal live-combat HUD mode, high-contrast presentation
   tokens, a readable multiline manual-copy surface, and full 15-player roster
   capacity without reducing the normal Fight-Now kill/CC direction stack.

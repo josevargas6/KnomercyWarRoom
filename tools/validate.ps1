@@ -37,6 +37,7 @@ foreach ($audit in @("source-drift-audit.ps1", "document-authority-audit.ps1")) 
 
 foreach ($requiredTool in @(
     "deployment-manifest-audit.ps1",
+    "deployment-certify.ps1",
     "test-deployment-manifest.ps1",
     "retail-savedvariables-audit.ps1",
     "retail-savedvariables-export.lua",
@@ -216,6 +217,14 @@ $legacyPattern = "KWR_520|RC2|RC4|CommanderUI|SensorManager|release-ready-candid
 $legacyHits = @($luaFiles | Select-String -Pattern $legacyPattern)
 foreach ($hit in $legacyHits) {
     Add-ValidationError "Legacy patch marker: $($hit.Path):$($hit.LineNumber)"
+}
+
+# Every shipped control must have a real action and every drag surface must
+# use the shared combat-safe completion path. Keep this in the standard
+# validator so package builds and CI cannot omit the surface contract.
+& (Join-Path $PSScriptRoot "control-surface-audit.ps1")
+if ($LASTEXITCODE -ne 0) {
+    Add-ValidationError "Control-surface audit failed."
 }
 
 $forbiddenPattern = "\bSendChatMessage\b|\bSendAddonMessage\b|\bSetBinding[A-Za-z]*\s*\(|\bSaveBindings\s*\(|\bTargetUnit\s*\(|\bFocusUnit\s*\(|\bAssistUnit\s*\(|\bSpellTargetUnit\s*\(|\bCastSpell[A-Za-z]*\s*\(|\bUseAction\s*\(|\bRunMacro\s*\(|\bRunMacroText\s*\(|\bCombatLogGetCurrentEventInfo\s*\("

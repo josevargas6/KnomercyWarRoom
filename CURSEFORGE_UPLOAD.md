@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-artifacts\KWR_6_1_0_DISTRIBUTION.zip
+artifacts\KnomercyWarRoom-6.1.1-alpha.4.zip
 ```
 
 Project:
@@ -14,9 +14,9 @@ https://www.curseforge.com/wow/addons/knomercy-war-room
 
 Required upload fields:
 
-- File: `KWR_6_1_0_DISTRIBUTION.zip`
-- Display name: `Knomercy War Room 6.1.0`
-- Release type: `Release`
+- File: `KnomercyWarRoom-6.1.1-alpha.4.zip`
+- Display name: `Knomercy War Room 6.1.1-alpha.4`
+- Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
 - Supported game versions: `12.1.0` / interface `120100` and `12.0.7` / interface `120007`
@@ -29,9 +29,9 @@ Guarded API upload command:
 $env:CURSEFORGE_PROJECT_ID = "<project id>"
 $env:CURSEFORGE_API_TOKEN = "<author token>"
 $env:CURSEFORGE_GAME_VERSION_IDS = "<comma-separated Retail version ids>"
-$artifact = "<absolute path to certified KWR_6_1_0_DISTRIBUTION.zip>"
-./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType release -DryRun
-./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType release
+$artifact = "<absolute path to certified KnomercyWarRoom-6.1.1-alpha.4.zip>"
+./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType alpha -DryRun
+./tools/curseforge-upload-commander.ps1 -ArtifactPath $artifact -ReleaseType alpha
 ```
 
 The script uses CurseForge's multipart upload API:
@@ -44,13 +44,13 @@ Package evidence:
 - TOC basename matches parent folder.
 - Interface numbers: `120100`, `120007`
 - Package audit: passed by the certified build gate.
-- Certified ZIP hash: use the generated `KWR_6_1_0_SHA256.txt`
+- Certified ZIP hash: use the generated version-derived `KWR_<VERSION>_SHA256.txt`
   manifest next to the built artifact. Rebuild the package before final upload
   if the source changes.
 
 Do not upload:
 
-- `KWR_6_1_0_DEVELOPER.zip`
+- `KWR_<VERSION>_DEVELOPER.zip`
 - `KWRSentinel_*.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data
@@ -58,12 +58,12 @@ Do not upload:
 
 Important download note:
 
-- This stable release is intended to become the normal CurseForge App
-  install/update target after moderation.
+- This field-test build remains an Alpha until the release owner approves
+  stable promotion after the required Retail evidence is captured.
 
 After upload:
 
 1. Wait for CurseForge moderation.
 2. Record the CurseForge file URL and file ID in your release handoff notes.
 3. Verify the public CurseForge download URL before announcing it.
-4. Confirm CurseForge reports the file type as `Release`, not `Alpha`.
+4. Confirm CurseForge reports the file type as `Alpha`, not `Release`.

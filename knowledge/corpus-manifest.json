@@ -13,7 +13,7 @@
                     "replayResults":  2000,
                     "outcomeReviews":  2000,
                     "adversarialCases":  201,
-                    "season2SimulationCases":  5000
+                    "season2SimulationCases":  100000
                 },
     "profiles":  [
                      {

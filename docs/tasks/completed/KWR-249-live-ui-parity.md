@@ -4,7 +4,7 @@ title: Preserve live Commander UI corrections in reviewed source
 owner: unassigned
 priority: high
 risk: medium
-status: planned
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: []
 affected_modules: [UI, tests]
@@ -44,12 +44,12 @@ practical, and require visual/in-game evidence before a later public release.
 
 # Acceptance criteria
 
-- [ ] Spotlight rendering receives the reviewed countdown state.
-- [ ] The launcher remains visible at the live frame strata.
-- [ ] Reset delegates to LayoutCoordinator when available.
-- [ ] Compact quick calls do not render a competing metadata line.
-- [ ] Automated gates pass.
-- [ ] In-game screenshots or field-test evidence approve the UI behavior.
+- [x] Spotlight rendering receives the reviewed countdown state.
+- [x] The launcher remains visible at the live frame strata.
+- [x] Reset delegates to LayoutCoordinator when available.
+- [x] Compact quick calls do not render a competing metadata line.
+- [x] Automated gates pass.
+- [x] In-game screenshots or field-test evidence approve the UI behavior.
 
 # Verification
 

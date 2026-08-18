@@ -4,10 +4,13 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.0"
+Sentinel.version = "6.1.1-alpha.4"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
+Sentinel.pendingMoveStops = Sentinel.pendingMoveStops or {}
+
+local FIELD_ACTIVATION_VERSION = 1
 
 -- Keep Sentinel out of the way of Blizzard's full-screen and major utility
 -- panels. This intentionally mirrors KWR's main overlay window list.
@@ -76,8 +79,10 @@ local DEFAULTS = {
             angle = 225,
         },
         transport = {
-            -- Cross-client traffic is opt-in until a raid leader enables it
-            -- for a deliberate team test.
+            -- Field mode enables the bounded team relay. It carries only
+            -- validated Commander/Sentinel observations and expires quickly.
+            -- It remains opt-in until a player explicitly activates Field
+            -- mode, so a clean install never sends group addon traffic.
             enabled = false,
         },
         loadMessage = true,
@@ -153,11 +158,57 @@ function Sentinel:InitializeDatabase()
     end
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
+    -- Initialization must preserve every existing opt-out. The explicit field
+    -- action remains the only path that enables all Sentinel surfaces at once.
+    self.db.profile.fieldActivationVersion = math.max(
+        tonumber(self.db.profile.fieldActivationVersion) or 0,
+        FIELD_ACTIVATION_VERSION)
+end
+
+function Sentinel:ActivateFieldProfile(force)
+    local profile = self.db and self.db.profile
+    if type(profile) ~= "table" then return false end
+    local activated = tonumber(profile.fieldActivationVersion) or 0
+    if not force and activated >= FIELD_ACTIVATION_VERSION then return false end
+    profile.hud.enabled = true
+    profile.targetCue.enabled = true
+    profile.panels.status.enabled = true
+    profile.minimap.enabled = true
+    profile.transport.enabled = true
+    profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
+    return true
 end
 
 function Sentinel:TransportEnabled()
     return self.db and self.db.profile and self.db.profile.transport
         and self.db.profile.transport.enabled == true
+end
+
+-- StopMovingOrSizing is protected by Retail combat lockdown. Every Sentinel
+-- drag surface uses this one completion gate so an in-progress drag cannot
+-- taint or trigger ADDON_ACTION_BLOCKED when combat begins on mouse-up.
+function Sentinel:FinishMove(frame, onStopped)
+    if not frame or type(frame.StopMovingOrSizing) ~= "function" then
+        return false
+    end
+    if type(InCombatLockdown) == "function" and InCombatLockdown() then
+        self.pendingMoveStops[frame] = onStopped or false
+        return false
+    end
+    local ok = pcall(frame.StopMovingOrSizing, frame)
+    if ok and type(onStopped) == "function" then
+        onStopped()
+    end
+    return ok
+end
+
+function Sentinel:FlushPendingMoveStops()
+    if type(InCombatLockdown) == "function" and InCombatLockdown() then return end
+    local pending = self.pendingMoveStops or {}
+    self.pendingMoveStops = {}
+    for frame, onStopped in pairs(pending) do
+        self:FinishMove(frame, onStopped ~= false and onStopped or nil)
+    end
 end
 
 function Sentinel:InitializeModules()
@@ -223,6 +274,7 @@ local frame = CreateFrame("Frame", "KWRSentinel_BootstrapFrame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:SetScript("OnEvent", function(_, event, ...)
     if event == "ADDON_LOADED" then
         local loaded = ...
@@ -239,5 +291,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
         end
     elseif event == "PLAYER_LOGOUT" then
         Sentinel:DisableModules()
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        Sentinel:FlushPendingMoveStops()
     end
 end)
