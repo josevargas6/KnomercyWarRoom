@@ -41,8 +41,13 @@ function Get-RelativeEvidencePath {
 function Assert-DeploymentReceipt {
     param([object]$Receipt, [string]$Label, [string]$ExpectedDigest)
 
-    if ($Receipt.result -ne 'PASS' -or $Receipt.synchronized -ne $true) {
-        throw "$Label deployment receipt did not record a successful synchronization."
+    # JSON conversion differs subtly between Windows PowerShell hosts. Normalize
+    # the two scalar gate values before comparing them so a valid true boolean
+    # cannot be rejected solely by the host's property coercion behavior.
+    $receiptResult = [string]$Receipt.result
+    $wasSynchronized = [Convert]::ToBoolean($Receipt.synchronized)
+    if ($receiptResult -ne 'PASS' -or -not $wasSynchronized) {
+        throw "$Label deployment receipt did not record a successful synchronization (result=$receiptResult; synchronized=$wasSynchronized)."
     }
     if ($Receipt.after.missing.Count -ne 0 -or $Receipt.after.changed.Count -ne 0 -or
         $Receipt.after.extra.Count -ne 0) {
