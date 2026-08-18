@@ -1210,8 +1210,11 @@ function Strategist:Evaluate(snapshot, prediction)
             .. table.concat(opportunity.evidence, ", ") .. "."
     end
     result.executionGate = {
+        -- This remains diagnostic metadata. The player always receives the
+        -- best current call; weak truth changes its commitment style, not
+        -- whether KWR provides a plan.
         status = gateReason and "VERIFY_BEFORE_COMMIT" or "COMMIT_ALLOWED",
-        reason = gateReason or "Live truth supports the theoretical branch.",
+        reason = gateReason or "Live truth supports the selected plan.",
         requiredEvidence = KWR.Util:Copy(requiredEvidence),
         theoreticalPrimary = result.recommendationMode,
         target = result.selectedAction and result.selectedAction.target,
@@ -1219,11 +1222,11 @@ function Strategist:Evaluate(snapshot, prediction)
     if gateReason then
         result.reason = KWR.Util:Text(result.reason, "", 220)
         if result.reason ~= "" then result.reason = result.reason .. " " end
-        result.reason = result.reason .. "THEORY ACTIVE: " .. gateReason
+        result.reason = result.reason .. "ADAPTIVE PLAN: " .. gateReason
         result.stop = KWR.Util:Text(result.stop, "", 220)
         if result.stop ~= "" then result.stop = result.stop .. " " end
         result.stop = result.stop
-            .. "Do not hard-commit until the execution gate evidence is confirmed."
+            .. "Keep objective coverage intact and convert only on the first confirmed opening."
     end
     if adversarialCalibration and (
         (result.trust and result.trust.commitAuthorized == false)
