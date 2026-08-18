@@ -101,8 +101,8 @@ and incomplete/misleading review presentation.
   deterministic transport suite.
 - [x] The exact Commander and Sentinel archives were rebuilt twice with binary
   reproducibility, extracted-package audit, and a clean Retail installation.
-  The deployed package is bound to commit `24ed4f4`, Commander SHA-256
-  `D3FC657E6114D26ECABB081547C7EE6FAB0257565B1EA050CB593CC1E9585594`,
+  The deployed package is bound to commit `c5358af`, Commander SHA-256
+  `325528B15D5E914CEB31886AB0F118D082393EB9943BC88B2DECA22179F7F9CA`,
   and Sentinel SHA-256
   `8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`.
 - [ ] Remote CI/review closure, merge/tag/publication, and final-hash live RBG
