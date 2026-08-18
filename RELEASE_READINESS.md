@@ -9,11 +9,11 @@ folder is deployment evidence only after package-manifest verification.
 **6.1.1-alpha.4 is the Season 2 distribution candidate; 6.1.0 remains the
 immutable public stable baseline.** The repaired Commander/Sentinel pair from
 commit `6756f01` has completed offline certification, binary reproducibility,
-extracted-package audit, and exact Retail installation verification. Its
-Commander SHA-256 is
-`5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047`;
-its Sentinel SHA-256 is
-`8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`.
+extracted-package audit, and exact Retail installation verification. The
+archive hashes are intentionally not embedded here: modifying a shipped
+document changes its archive. The versioned `SHA256` manifest and deployment
+certificate are the sole exact-hash authorities generated after the immutable
+archive is built.
 
 It is a field-test candidate, not yet a Retail-ready public release. Promotion
 requires green reviewed merge and CI, an exact tag, protected `production`
