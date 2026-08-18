@@ -4,7 +4,7 @@ title: Delay battlefield roster presentation until identity settles
 owner: KWR
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies: [KWR-255]
 affected_modules: [Runtime/MatchRuntime.lua, UI/CombatRosterState.lua]
@@ -36,10 +36,10 @@ Use the existing MatchRuntime lifecycle and CombatRoster presentation boundary. 
 
 # Acceptance criteria
 
-- [ ] Team and Enemy panels do not render provisional roster rows during battleground entry.
-- [ ] Panels render once the expected roster is complete and unit-stable.
-- [ ] A bounded timeout renders available information after eight seconds.
-- [ ] Strategy capture continues while presentation is gated.
+- [x] Team and Enemy panels do not render provisional roster rows during battleground entry.
+- [x] Panels render once the expected roster is complete and unit-stable.
+- [x] A bounded timeout renders available information after eight seconds.
+- [x] Strategy capture continues while presentation is gated.
 
 # Verification
 

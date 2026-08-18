@@ -4,7 +4,7 @@ title: Publish the Alpha 42 certified Commander and Sentinel field-test release
 owner: KWR
 priority: high
 risk: medium
-status: in_progress
+status: completed
 authority_references: [RELEASE_POLICY.md, RELEASE_READINESS.md, .github/workflows/release.yml]
 dependencies: [PR-41]
 affected_modules: [KnomercyWarRoom.toc, KWRSentinel/KWRSentinel.toc, Core/Addon.lua, KWRSentinel/Core.lua, tools/build.ps1, release.yml]
@@ -44,13 +44,13 @@ current candidate.
 
 # Acceptance criteria
 
-- [ ] Commander and Sentinel report `6.1.0-alpha.42` consistently.
-- [ ] Full validation, knowledge, Lua, and package gates pass.
-- [ ] PR certification is green and the release source is merged to `main`.
-- [ ] The `v6.1.0-alpha.42` GitHub prerelease contains Commander, Sentinel,
+- [x] Commander and Sentinel report `6.1.0-alpha.42` consistently.
+- [x] Full validation, knowledge, Lua, and package gates pass.
+- [x] PR certification is green and the release source is merged to `main`.
+- [x] The `v6.1.0-alpha.42` GitHub prerelease contains Commander, Sentinel,
   checksum, source-manifest, provenance, and reproducibility artifacts.
-- [ ] CurseForge receives both exact certified archives.
-- [ ] Matching Discord publication receipts are produced by the guarded workflow.
+- [x] CurseForge receives both exact certified archives.
+- [x] Matching Discord publication receipts are produced by the guarded workflow.
 
 # Verification
 

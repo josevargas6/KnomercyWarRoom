@@ -4,7 +4,7 @@ title: Suppress provisional duplicate friendly roster identities at battleground
 owner: Codex
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [ARCHITECTURE.md, DESIGN_CONTRACT.md]
 dependencies: []
 affected_modules:
@@ -45,9 +45,9 @@ prefer omission over guessing during the Blizzard API hydration window.
 
 # Acceptance criteria
 
-- [ ] A provisional `Verite-Area52` / `Verite-Illidan` pair yields one Team row.
-- [ ] Existing stable same-short-name behavior remains covered by smoke tests.
-- [ ] Lua validation and smoke tests pass.
+- [x] A provisional `Verite-Area52` / `Verite-Illidan` pair yields one Team row.
+- [x] Existing stable same-short-name behavior remains covered by smoke tests.
+- [x] Lua validation and smoke tests pass.
 
 # Verification
 

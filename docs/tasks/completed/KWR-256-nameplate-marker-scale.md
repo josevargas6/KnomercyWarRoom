@@ -4,7 +4,7 @@ title: Make battlefield health-bar identifiers readable at live nameplate scale
 owner: Codex
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, ARCHITECTURE.md]
 dependencies: [KWR-255]
 affected_modules:
@@ -45,10 +45,10 @@ anchor. No per-frame allocation or saved-variable migration is permitted.
 
 # Acceptance criteria
 
-- [ ] Native marker ring is at least 36 by 36 pixels.
-- [ ] Native marker icon is at least 24 by 24 pixels.
-- [ ] The marker remains centered on its originating nameplate.
-- [ ] Validation and Lua tests pass.
+- [x] Native marker ring is at least 36 by 36 pixels.
+- [x] Native marker icon is at least 24 by 24 pixels.
+- [x] The marker remains centered on its originating nameplate.
+- [x] Validation and Lua tests pass.
 
 # Verification
 

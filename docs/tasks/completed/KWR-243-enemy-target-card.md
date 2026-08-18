@@ -4,7 +4,7 @@ title: Rework the compact enemy target card
 owner: unassigned
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies:
   - KWR-242

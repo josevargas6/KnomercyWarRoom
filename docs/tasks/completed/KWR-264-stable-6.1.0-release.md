@@ -4,7 +4,7 @@ title: Reconcile and publish stable 6.1.0
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: completed
 authority_references: [RELEASE_POLICY.md, RELEASE_READINESS.md, DESIGN_CONTRACT.md, ARCHITECTURE.md, AGENTS.md]
 dependencies: [KWR-263]
 affected_modules:
@@ -32,18 +32,18 @@ Patch-dependent 12.1 data remains fail-closed.
 
 # Acceptance criteria
 
-- [ ] Commander and embedded Sentinel TOC/runtime versions are exactly 6.1.0.
-- [ ] Stable GitHub and CurseForge publication semantics are deterministic and
+- [x] Commander and embedded Sentinel TOC/runtime versions are exactly 6.1.0.
+- [x] Stable GitHub and CurseForge publication semantics are deterministic and
       covered by automation tests; suffixed versions remain prereleases.
-- [ ] Validation, security, knowledge, Lua, soak, replay, build, extraction,
+- [x] Validation, security, knowledge, Lua, soak, replay, build, extraction,
       reproducibility, and package audits pass on the final source.
-- [ ] Required GitHub `certify` status is green on the final PR head.
-- [ ] The PR merges to `main`, a new annotated `v6.1.0` tag points to that merge,
+- [x] Required GitHub `certify` status is green on the final PR head.
+- [x] The PR merges to `main`, a new annotated `v6.1.0` tag points to that merge,
       and `v6.1.0-alpha.43` remains unchanged.
-- [ ] The protected production run publishes exactly five GitHub player assets,
+- [x] The protected production run publishes exactly five GitHub player assets,
       submits Commander and Sentinel as CurseForge `Release` files, and posts
       the synchronized release announcement.
-- [ ] Public hashes, manifests, file IDs, and installed-folder comparison are
+- [x] Public hashes, manifests, file IDs, and installed-folder comparison are
       verified against the stable tag.
 
 # Verification

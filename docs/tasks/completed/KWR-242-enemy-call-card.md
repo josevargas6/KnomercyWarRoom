@@ -4,7 +4,7 @@ title: Simplify the live enemy call card
 owner: unassigned
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: []
 affected_modules:

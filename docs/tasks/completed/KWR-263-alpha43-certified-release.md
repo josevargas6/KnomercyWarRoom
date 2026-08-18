@@ -4,7 +4,7 @@ title: Certify Alpha 43 performance and retail release closure
 owner: Codex
 priority: high
 risk: medium
-status: in_progress
+status: completed
 authority_references: [RELEASE_READINESS.md, DESIGN_CONTRACT.md, ARCHITECTURE.md, AGENTS.md]
 dependencies: [KWR-261, KWR-262]
 affected_modules:
@@ -24,12 +24,12 @@ changes are included in one reproducible package.
 
 # Acceptance criteria
 
-- [ ] Alpha 43 Commander and Sentinel TOCs and release evidence agree.
-- [ ] Candidate, readiness, blocker, and completion reports bind to Alpha 43.
-- [ ] Upload checklists name only Alpha 43 archives and manifests.
-- [ ] Layout polling covers every managed visible surface and skips idle state.
-- [ ] Lua smoke, transport, soak, replay, validation, and GitHub certification pass.
-- [ ] PR merge, tagged release, CurseForge publication, and Discord publication
+- [x] Alpha 43 Commander and Sentinel TOCs and release evidence agree.
+- [x] Candidate, readiness, blocker, and completion reports bind to Alpha 43.
+- [x] Upload checklists name only Alpha 43 archives and manifests.
+- [x] Layout polling covers every managed visible surface and skips idle state.
+- [x] Lua smoke, transport, soak, replay, validation, and GitHub certification pass.
+- [x] PR merge, tagged release, CurseForge publication, and Discord publication
       are verified from the same certified package hashes.
 
 # Verification
