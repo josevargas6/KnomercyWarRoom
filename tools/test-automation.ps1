@@ -166,10 +166,10 @@ Assert-True `
 
 $deploymentCertificationScript = Get-Content -LiteralPath (Join-Path $root "tools\deployment-certify.ps1") -Raw
 Assert-True `
-    -Condition ($deploymentCertificationScript -match '\[int\]\(\$commanderReceipt\.after\.installedEntries\)') `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$commanderReceiptData\.after\.installedEntries\)') `
     -Message "Deployment certification does not preserve the validated Commander entry count."
 Assert-True `
-    -Condition ($deploymentCertificationScript -match '\[int\]\(\$sentinelReceipt\.after\.installedEntries\)') `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$sentinelReceiptData\.after\.installedEntries\)') `
     -Message "Deployment certification does not preserve the validated Sentinel entry count."
 
 $releaseSurfaceAudit = Get-Content -LiteralPath (

@@ -109,16 +109,16 @@ Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
 # Read the receipts afresh for the evidence record after their path-bound
 # validation has succeeded. This keeps nested counts intact in Windows
 # PowerShell rather than relying on a function's object return pipeline.
-$commanderReceipt = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
-$sentinelReceipt = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
-$commanderInstalledEntries = [int]($commanderReceipt.after.installedEntries)
-$commanderMissing = [int]($commanderReceipt.after.missing.Count)
-$commanderChanged = [int]($commanderReceipt.after.changed.Count)
-$commanderExtra = [int]($commanderReceipt.after.extra.Count)
-$sentinelInstalledEntries = [int]($sentinelReceipt.after.installedEntries)
-$sentinelMissing = [int]($sentinelReceipt.after.missing.Count)
-$sentinelChanged = [int]($sentinelReceipt.after.changed.Count)
-$sentinelExtra = [int]($sentinelReceipt.after.extra.Count)
+$commanderReceiptData = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
+$sentinelReceiptData = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
+$commanderInstalledEntries = [int]($commanderReceiptData.after.installedEntries)
+$commanderMissing = [int]($commanderReceiptData.after.missing.Count)
+$commanderChanged = [int]($commanderReceiptData.after.changed.Count)
+$commanderExtra = [int]($commanderReceiptData.after.extra.Count)
+$sentinelInstalledEntries = [int]($sentinelReceiptData.after.installedEntries)
+$sentinelMissing = [int]($sentinelReceiptData.after.missing.Count)
+$sentinelChanged = [int]($sentinelReceiptData.after.changed.Count)
+$sentinelExtra = [int]($sentinelReceiptData.after.extra.Count)
 if ($commanderInstalledEntries -le 0 -or $sentinelInstalledEntries -le 0) {
     throw 'Deployment certification received a receipt with no installed package entries.'
 }
