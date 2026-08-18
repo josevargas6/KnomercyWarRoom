@@ -704,7 +704,7 @@ do
         and KWR.db.profile.hud.point == "CENTER"
         and KWR.db.profile.main.page == "TACTICAL"
         and KWR.db.profile.main.x == 0
-        and KWR.db.profile.cursor.enabled == true
+        and KWR.db.profile.cursor.enabled == false
         and KWR.db.profile.cursor.reticleEnabled == true
         and KWR.db.profile.cursor.battlefieldOrbs == true
         and KWR.db.profile.cursor.arenaLightweight == true
@@ -728,6 +728,28 @@ do
         and type(KWR.db.assignmentOverrides.players) == "table"
         and type(KWR.db.opponentModels.players) == "table",
         "SavedVariables type normalization did not recover malformed fields safely.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
+    KWR_DB = {
+        schemaVersion = 60001,
+        profile = {
+            hud = { enabled = false },
+            cursor = { enabled = false },
+            combatRoster = { shown = false },
+            aar = { enabled = false },
+            sentinelTransportEnabled = false,
+        },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.enabled == false
+        and KWR.db.profile.cursor.enabled == false
+        and KWR.db.profile.combatRoster.shown == false
+        and KWR.db.profile.aar.enabled == false
+        and KWR.db.profile.sentinelTransportEnabled == false,
+        "Profile migration overwrote an explicit player opt-out.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
 end

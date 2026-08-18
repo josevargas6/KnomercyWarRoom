@@ -447,7 +447,11 @@ local function normalizeProfile(profile)
     profile.aar.autoOpen = KWR.Util:Boolean(profile.aar.autoOpen, defaults.aar.autoOpen)
     profile.sentinelTransportEnabled = KWR.Util:Boolean(
         profile.sentinelTransportEnabled, defaults.sentinelTransportEnabled)
-    activateFieldProfile(profile, false)
+    -- Migration only fills absent defaults. Existing saved opt-outs are player
+    -- choices and must never be converted into a forced field profile here.
+    profile.fieldActivationVersion = math.max(
+        KWR.Util:Number(profile.fieldActivationVersion, 0) or 0,
+        FIELD_ACTIVATION_VERSION)
     profile.guidanceMode = KWR.Util:Text(profile.guidanceMode, defaults.guidanceMode, 24)
     profile.fieldReviewContext = KWR.Util:Text(
         profile.fieldReviewContext, defaults.fieldReviewContext, 24)

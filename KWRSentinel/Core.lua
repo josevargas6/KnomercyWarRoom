@@ -155,7 +155,11 @@ function Sentinel:InitializeDatabase()
     end
     KWR_SENTINEL_DB = mergeDefaults(KWR_SENTINEL_DB, DEFAULTS)
     self.db = KWR_SENTINEL_DB
-    self:ActivateFieldProfile(false)
+    -- Initialization must preserve every existing opt-out. The explicit field
+    -- action remains the only path that enables all Sentinel surfaces at once.
+    self.db.profile.fieldActivationVersion = math.max(
+        tonumber(self.db.profile.fieldActivationVersion) or 0,
+        FIELD_ACTIVATION_VERSION)
 end
 
 function Sentinel:ActivateFieldProfile(force)

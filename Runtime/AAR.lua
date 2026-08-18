@@ -640,6 +640,28 @@ function AAR:CaptureThreats(active, snapshot)
     end
 end
 
+local function evidenceCollectionSignature(collection, prefix)
+    local rows = {}
+    for _, entity in ipairs(collection or {}) do
+        -- Deliberately exclude volatile health and age fields: the throttle is
+        -- intended to suppress redraw noise while retaining meaningful truth
+        -- changes such as death, disconnect, location, role/spec, and sighting.
+        rows[#rows + 1] = table.concat({
+            entityKey(entity, prefix),
+            clean(entity.role or entity.groupRole, "", 16),
+            clean(entity.spec, "", 32),
+            clean(entity.location, "", 48),
+            entity.dead == true and "dead" or "alive",
+            entity.connected == false and "offline" or "online",
+            entity.visible == true and "visible" or "hidden",
+            entity.carrier == true and "carrier" or "no-carrier",
+            entity.localEngaged == true and "engaged" or "quiet",
+        }, "\30")
+    end
+    table.sort(rows)
+    return table.concat(rows, "\31")
+end
+
 function AAR:Record(state)
     if not self.active then self:Start(state) end
     local active = self.active
@@ -657,6 +679,8 @@ function AAR:Record(state)
         #(objectives.events or {}),
         #(snapshot.roster or {}),
         #(snapshot.enemies or {}),
+        evidenceCollectionSignature(snapshot.roster, "friendly"),
+        evidenceCollectionSignature(snapshot.enemies, "enemy"),
     })
     if active.lastRecordSignature == recordSignature
         and (now - (active.lastRecordAt or 0)) < 5 then
