@@ -250,7 +250,8 @@ $candidateEvidenceBound =
     [int]$retailCertification.source.candidateMatchCount -gt 0 -and
     [int]$retailCertification.summary.completedMatches -gt 0
 $latestHistoricalCapture = @($retailCertification.matches | Where-Object {
-    -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion)
+    -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion) -and
+    [string]$_.addonVersion -ne $addonVersion
 } | Sort-Object { [long]$_.endedAt } -Descending | Select-Object -First 1)
 $expectedEvidenceBaseline = if ($candidateEvidenceBound) {
     $addonVersion
@@ -280,6 +281,37 @@ if ($candidateEvidenceBound) {
     Assert-True `
         -Condition ($readiness.candidate.evidenceBinding -eq "MISSING") `
         -Message "Missing field evidence is not labelled as missing."
+}
+$unboundFixturePath = Join-Path ([IO.Path]::GetTempPath()) ("kwr-unbound-certification-" + [guid]::NewGuid().ToString("N") + ".json")
+$unboundReadinessPath = Join-Path ([IO.Path]::GetTempPath()) ("kwr-unbound-readiness-" + [guid]::NewGuid().ToString("N") + ".json")
+try {
+    $unboundFixture = $retailCertification | ConvertTo-Json -Depth 16 | ConvertFrom-Json
+    $unboundFixture.binding.status = "UNBOUND"
+    $unboundFixture.source.candidateMatchCount = 1
+    $unboundFixture.summary.completedMatches = 1
+    $unboundFixture.matches += [pscustomobject]@{
+        index = 999
+        addonVersion = $addonVersion
+        schemaVersion = [int]$unboundFixture.candidateSchema
+        endedAt = [long]9999999999
+        result = "VICTORY"
+    }
+    [IO.File]::WriteAllText(
+        $unboundFixturePath,
+        (($unboundFixture | ConvertTo-Json -Depth 16) + [Environment]::NewLine),
+        [Text.UTF8Encoding]::new($false))
+    & (Join-Path $root "tools\field-readiness-report.ps1") `
+        -RetailCertificationPath $unboundFixturePath `
+        -OutFile $unboundReadinessPath | Out-Null
+    $unboundReadiness = Get-Content -LiteralPath $unboundReadinessPath -Raw | ConvertFrom-Json
+    Assert-True `
+        -Condition ($unboundReadiness.candidate.evidenceBaseline -ne $addonVersion) `
+        -Message "An unbound current-version capture suppresses the required evidence refresh warning."
+    Assert-True `
+        -Condition ($unboundReadiness.candidate.evidenceBinding -ne "CANDIDATE_BOUND") `
+        -Message "An unbound current-version capture was promoted to candidate-bound evidence."
+} finally {
+    Remove-Item -LiteralPath $unboundFixturePath, $unboundReadinessPath -Force -ErrorAction SilentlyContinue
 }
 if ($expectedEvidenceBaseline -eq $addonVersion) {
     Assert-True `

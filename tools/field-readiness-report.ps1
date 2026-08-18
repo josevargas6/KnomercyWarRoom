@@ -1,11 +1,16 @@
 [CmdletBinding()]
 param(
-    [string]$OutFile = "knowledge\field-test-readiness.json"
+    [string]$OutFile = "knowledge\field-test-readiness.json",
+    [string]$RetailCertificationPath = "knowledge\retail-field-certification.json"
 )
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
-$outPath = Join-Path $root $OutFile
+$outPath = if ([IO.Path]::IsPathRooted($OutFile)) {
+    [IO.Path]::GetFullPath($OutFile)
+} else {
+    Join-Path $root $OutFile
+}
 
 $matrix = Get-Content -LiteralPath (Join-Path $root "knowledge\rbg-scenario-matrix.json") -Raw | ConvertFrom-Json
 $manifest = Get-Content -LiteralPath (Join-Path $root "knowledge\corpus-manifest.json") -Raw | ConvertFrom-Json
@@ -27,7 +32,11 @@ $offlineGatePassed = $packageReport -and
     $packageReport.candidateVersion -eq $version -and
     $packageReport.packageAudit.result -eq "PASS" -and
     $packageReport.environmentCertification.packageAuditInThisWorkspace -eq "CERTIFIED_IN_WORKSPACE"
-$retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
+$retailCertificationPath = if ([IO.Path]::IsPathRooted($RetailCertificationPath)) {
+    [IO.Path]::GetFullPath($RetailCertificationPath)
+} else {
+    Join-Path $root $RetailCertificationPath
+}
 $retailCertification = if (Test-Path -LiteralPath $retailCertificationPath) {
     Get-Content -LiteralPath $retailCertificationPath -Raw | ConvertFrom-Json
 } else {
@@ -42,9 +51,13 @@ $candidateEvidenceBound = $retailCertification -and
     [string]$retailCertification.candidateVersion -eq $version -and
     [int]$retailCertification.source.candidateMatchCount -gt 0 -and
     [int]$retailCertification.summary.completedMatches -gt 0
+# A current-version row is not a valid baseline until it passes the binding
+# checks above. Otherwise a pre-deployment or otherwise unbound session could
+# suppress the mandatory refresh warning merely by sharing the build version.
 $historicalCaptures = if ($retailCertification) {
     @($retailCertification.matches | Where-Object {
-        -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion)
+        -not [string]::IsNullOrWhiteSpace([string]$_.addonVersion) -and
+        [string]$_.addonVersion -ne $version
     } | Sort-Object { [long]$_.endedAt } -Descending)
 } else {
     @()
