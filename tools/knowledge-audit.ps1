@@ -617,6 +617,7 @@ try {
 }
 
 $deploymentCertificationPath = Join-Path $root "knowledge\deployment-certification.json"
+if (Test-Path -LiteralPath $deploymentCertificationPath) {
 try {
     $deploymentCertification = Get-Content -LiteralPath $deploymentCertificationPath -Raw | ConvertFrom-Json
     foreach ($key in @('schema', 'schemaVersion', 'candidateVersion', 'releaseTag', 'commander', 'sentinel', 'upgradeProof', 'result')) {
@@ -642,6 +643,9 @@ try {
     }
 } catch {
     $errors.Add("Deployment certification JSON is invalid: $($_.Exception.Message)")
+}
+} elseif (-not $AllowGeneratedEvidenceOmission) {
+    $errors.Add("Missing knowledge artifact: knowledge\\deployment-certification.json")
 }
 
 $retailCertificationPath = Join-Path $root "knowledge\retail-field-certification.json"
