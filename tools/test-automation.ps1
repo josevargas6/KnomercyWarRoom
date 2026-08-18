@@ -164,6 +164,14 @@ Assert-True `
     -Condition ($buildScript -notmatch 'PASS_WITH_DOCUMENTED_EXCEPTION|Compress-Archive did not produce byte-identical') `
     -Message "Build still permits a non-deterministic ZIP-container exception."
 
+$deploymentCertificationScript = Get-Content -LiteralPath (Join-Path $root "tools\deployment-certify.ps1") -Raw
+Assert-True `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$commanderReceipt\.after\.installedEntries\)') `
+    -Message "Deployment certification does not preserve the validated Commander entry count."
+Assert-True `
+    -Condition ($deploymentCertificationScript -match '\[int\]\(\$sentinelReceipt\.after\.installedEntries\)') `
+    -Message "Deployment certification does not preserve the validated Sentinel entry count."
+
 $releaseSurfaceAudit = Get-Content -LiteralPath (
     Join-Path $root "tools\audit-release-surfaces.ps1"
 ) -Raw

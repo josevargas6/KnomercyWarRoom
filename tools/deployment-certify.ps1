@@ -132,18 +132,18 @@ $certificate = [ordered]@{
     commander = [ordered]@{
         sha256 = Get-KwrFileSha256 -LiteralPath $commanderZip
         packageDigest = $manifest.distribution.digest
-        installedEntries = [int]$commanderReceipt.after.installedEntries
-        missing = [int]$commanderReceipt.after.missing.Count
-        changed = [int]$commanderReceipt.after.changed.Count
-        extra = [int]$commanderReceipt.after.extra.Count
+        installedEntries = [int]($commanderReceipt.after.installedEntries)
+        missing = [int]($commanderReceipt.after.missing.Count)
+        changed = [int]($commanderReceipt.after.changed.Count)
+        extra = [int]($commanderReceipt.after.extra.Count)
     }
     sentinel = [ordered]@{
         sha256 = Get-KwrFileSha256 -LiteralPath $sentinelZip
         packageDigest = $manifest.sentinel.digest
-        installedEntries = [int]$sentinelReceipt.after.installedEntries
-        missing = [int]$sentinelReceipt.after.missing.Count
-        changed = [int]$sentinelReceipt.after.changed.Count
-        extra = [int]$sentinelReceipt.after.extra.Count
+        installedEntries = [int]($sentinelReceipt.after.installedEntries)
+        missing = [int]($sentinelReceipt.after.missing.Count)
+        changed = [int]($sentinelReceipt.after.changed.Count)
+        extra = [int]($sentinelReceipt.after.extra.Count)
     }
     upgradeProof = [ordered]@{
         savedVariablesMigrationMatrix = 'PASS'
