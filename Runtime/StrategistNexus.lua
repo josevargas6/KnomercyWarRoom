@@ -6,7 +6,7 @@ KWR.StrategistNexus = StrategistNexus
 local function scoreState(prediction, phase)
     local status = KWR.Util:Upper(prediction and prediction.status, "WAITING", 16)
     local urgency = KWR.Util:Number(prediction and prediction.urgency, 0) or 0
-    if urgency >= 88 or (phase == "RECOVERY" and status == "LOSE") then
+    if urgency >= 88 then
         return "EMERGENCY"
     end
     if status == "WIN" then return "FAVORABLE" end

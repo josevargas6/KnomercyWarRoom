@@ -96,6 +96,9 @@ function Theme:Badge(parent, tone, text, width, height)
 end
 
 function Theme:Button(parent, label, width, height, onClick)
+    if type(onClick) ~= "function" then
+        error("KWRSentinel Theme:Button requires an actionable callback", 2)
+    end
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(width or 58, height or 20)
     self:Style(button, "panel", "border")
@@ -116,10 +119,8 @@ function Theme:Button(parent, label, width, height, onClick)
     if button.label.SetJustifyV then
         button.label:SetJustifyV("MIDDLE")
     end
-    button.label:SetText(label or "BTN")
-    if onClick then
-        button:SetScript("OnClick", onClick)
-    end
+    button.label:SetText(label or "")
+    button:SetScript("OnClick", onClick)
     local function applyState(selfButton, hovered)
         Theme:Style(selfButton, hovered and "raised" or "panel",
             hovered and "borderHi" or "border")

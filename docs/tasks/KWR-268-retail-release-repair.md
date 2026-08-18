@@ -71,6 +71,25 @@ and incomplete/misleading review presentation.
 - [ ] Commander/Sentinel package versions, manifests, hashes, and release
   evidence are exact and reproducible.
 
+# Current offline implementation evidence
+
+- [x] The complete 100,000-branch Season 2 RBG matrix is present for all ten
+  Retail RBG maps. Every matrix family is reachable from a real action, every
+  exact coordinate is enumerated by regression, and every rank input axis
+  produces a legal actionable plan.
+- [x] Commander and Sentinel button factories reject missing callbacks; the
+  release validator audits all declared control surfaces and production Lua
+  cannot contain TODO/FIXME, stub, no-op, or future-implementation markers.
+- [x] Sentinel drag completion defers protected movement calls until
+  `PLAYER_REGEN_ENABLED`; the regression test verifies the protected method is
+  never called in combat and completes exactly once after combat.
+- [x] The roster publisher distinguishes legitimate same-short-name players
+  with their realm-qualified names while continuing to collapse transitional
+  duplicate records.
+- [ ] Build, extracted-package audit, exact Retail installation, remote CI and
+  review, merge/tag/publication, and final-hash live RBG evidence remain
+  release gates. They must not be substituted with source-only tests.
+
 # Verification
 
 1. Run the complete validation, security, knowledge, Lua, automation,

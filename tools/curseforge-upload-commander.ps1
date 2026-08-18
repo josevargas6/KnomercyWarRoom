@@ -17,6 +17,7 @@ $artifact = [IO.Path]::GetFullPath($ArtifactPath)
 $changelogPath = Join-Path $root "CHANGELOG.md"
 $tocPath = Join-Path $root "KnomercyWarRoom.toc"
 . (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 
 function ConvertTo-JsonStringLiteral {
     param([AllowNull()][string]$Value)
@@ -69,7 +70,7 @@ if ($versionIds.Count -gt 0) {
 }
 
 $metadataJson = "{" + ($metadataFields -join ",") + "}"
-$sha256 = (Get-FileHash -LiteralPath $artifact -Algorithm SHA256).Hash.ToUpperInvariant()
+$sha256 = Get-KwrFileSha256 -LiteralPath $artifact
 
 Write-Output "Commander artifact: $artifact"
 Write-Output "Display name: $displayName"

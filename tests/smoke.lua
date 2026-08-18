@@ -1460,6 +1460,10 @@ do
     })
     assert(#stableSameShort == 2,
         "Combat roster collapsed distinct stable same-short-name teammates.")
+    assert(stableSameShort[1].displayName ~= stableSameShort[2].displayName
+        and stableSameShort[1].displayName:find("-", 1, true)
+        and stableSameShort[2].displayName:find("-", 1, true),
+        "Combat roster did not disambiguate distinct stable same-short-name teammates.")
     local qualifiedAndShort = KWR.TeamResolver:NormalizePublishedRoster({
         { name = "Valorite-Area52", guid = "VALORITE-GUID", role = "DAMAGER" },
         { shortName = "Valorite", key = "VALORITE-SHORT", spec = "Devastation", role = "DAMAGER" },
@@ -1610,6 +1614,180 @@ do
     })
     assert(incompleteBranch.available == false and incompleteBranch.exactCases == 0,
         "Strategist Nexus treated an incomplete query as exact branch coverage.")
+
+    -- Exact coverage only matters if every covered branch resolves to one
+    -- concrete, legal player call. Enumerate every coordinate of the
+    -- 10 x 5 x 4 x 4 x 5 x 5 x 5 Cartesian matrix. The ranker's non-coverage
+    -- inputs are separable bounded adjustments, so each member of every input
+    -- axis is also passed through Rank below; this proves the whole matrix
+    -- without needlessly rebuilding the same result table 100,000 times.
+    local familiesByPhase = {
+        OPENING = { "first-contact", "scout-confirm", "reserve-route", "anti-stealth" },
+        STABILIZE = { "score-floor", "healer-triangle", "defender-pair", "rotation-discipline" },
+        PRESSURE = { "control-chain", "grip-window", "ranged-sightline", "weak-side-pivot" },
+        RECOVERY = { "regroup", "cross-map-trade", "post-wipe", "objective-denial" },
+        ENDGAME = { "clock-protection", "last-window", "safe-cap", "deny-throw" },
+    }
+    local candidateIDs = { "HOLD", "ROTATE", "TRADE", "TEAMFIGHT", "SPLIT" }
+    local candidateForFamily = {}
+    for _, phase in ipairs(phases) do
+        candidateForFamily[phase] = {}
+        for _, candidateID in ipairs(candidateIDs) do
+            local family = KWR.StrategistNexusPolicy:Family(phase, candidateID)
+            assert(family ~= nil,
+                "Strategist Nexus policy omitted a candidate family for " .. phase)
+            candidateForFamily[phase][family] = candidateForFamily[phase][family]
+                or candidateID
+        end
+        for _, family in ipairs(familiesByPhase[phase]) do
+            assert(candidateForFamily[phase][family] ~= nil,
+                "Simulation family is unreachable from a real action: "
+                    .. phase .. " / " .. family)
+        end
+    end
+    local scoreInputs = {
+        SAFE_DEFAULT = { status = "WAITING", urgency = 0 },
+        FAVORABLE = { status = "WIN", urgency = 0 },
+        UNFAVORABLE = { status = "LOSE", urgency = 0 },
+        TIED = { status = "TIE", urgency = 0 },
+        EMERGENCY = { status = "WAITING", urgency = 90 },
+    }
+    local responseIDs = {
+        EXPECTED = "ROTATION_MIRROR",
+        BAIT = "SCORE_FLOOR_BREAK",
+        OVERCOMMIT = "MULTI_POINT_PRESSURE",
+        CROSSMAP_PIVOT = "COUNTER_TRADE_RACE",
+        FAILED_CONNECT = "LATE_ROTATION_PUNISH",
+    }
+    local evidenceInputs = {
+        LIVE_KNOWN = { coreFresh = true, compositionAuthorized = true, budget = 80 },
+        OBSERVED = { coreFresh = true, compositionAuthorized = false, budget = 80 },
+        DERIVED = { coreFresh = false, compositionAuthorized = true, budget = 55 },
+        META_ONLY = { coreFresh = false, compositionAuthorized = false, budget = 0 },
+        UNKNOWN = { coreFresh = false, compositionAuthorized = true, budget = 0 },
+    }
+    local compWatches = {
+        "HUNTER_DK_PRESSURE", "ARMS_AFFLICTION_CONTROL",
+        "HUNTER_RET_TEMPO", "ROGUE_AFFLICTION_SPLIT",
+    }
+    local scoreStates = {
+        "SAFE_DEFAULT", "FAVORABLE", "UNFAVORABLE", "TIED", "EMERGENCY",
+    }
+    local counterResponses = {
+        "EXPECTED", "BAIT", "OVERCOMMIT", "CROSSMAP_PIVOT", "FAILED_CONNECT",
+    }
+    local evidenceStates = {
+        "LIVE_KNOWN", "OBSERVED", "DERIVED", "META_ONLY", "UNKNOWN",
+    }
+    local exercised = 0
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            for _, family in ipairs(familiesByPhase[phase]) do
+                for _, compWatch in ipairs(compWatches) do
+                    for _, scoreName in ipairs(scoreStates) do
+                        for _, counterResponse in ipairs(counterResponses) do
+                            for _, evidenceName in ipairs(evidenceStates) do
+                                local coverage = KWR.StrategistNexusCorpus:Coverage(mapKey, phase, {
+                                    family = family,
+                                    compWatch = compWatch,
+                                    scoreState = scoreName,
+                                    counterResponse = counterResponse,
+                                    evidenceState = evidenceName,
+                                })
+                                assert(coverage.available == true and coverage.exactCases == 1,
+                                    "Exact corpus branch is missing: "
+                                        .. table.concat({ mapKey, phase, family, compWatch,
+                                            scoreName, counterResponse, evidenceName }, " / "))
+                                exercised = exercised + 1
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    assert(exercised == 100000,
+        "Strategist Nexus coverage test did not enumerate every exact branch.")
+
+    local ranked = 0
+    local function assertRanked(mapKey, phase, family, compWatch, scoreName,
+            counterResponse, evidenceName)
+        local evidence = evidenceInputs[evidenceName]
+        local snapshot = {
+            context = { mapKey = mapKey },
+            truth = { coreFresh = evidence.coreFresh },
+            knowledgeStatus = { compositionAuthorized = evidence.compositionAuthorized },
+        }
+        local prediction = scoreInputs[scoreName]
+        local candidateID = candidateForFamily[phase][family]
+        local candidate = {
+            id = candidateID,
+            target = mapKey .. " objective",
+            outcome = "Execute " .. candidateID .. " for " .. family .. ".",
+            abort = "Switch when the objective rule changes.",
+            success = "Preserve or improve the score path.",
+            legal = true,
+            reversible = true,
+            decisionScore = 60,
+            probability = 60,
+            enemyResponsePlan = {
+                responseID = responseIDs[counterResponse],
+                summary = "Bounded counter response.",
+            },
+        }
+        local result = {
+            phase = phase,
+            simulations = { candidate },
+            confidenceBudget = { score = evidence.budget },
+            enemyComposition = { id = "BALANCED" },
+            enemyTier = { id = "S2_" .. compWatch },
+            ourSummary = { coverage = 0, ratings = {} },
+            enemySummary = { coverage = 0, ratings = {} },
+        }
+        KWR.StrategistNexus:Rank(snapshot, prediction, result)
+        local selected = result.selectedAction or {}
+        local coverage = selected.nexus and selected.nexus.simulationCoverage or {}
+        assert(coverage.available == true
+            and coverage.exactCases == 1
+            and selected.legal == true
+            and selected.nexus.theoryActivated == true
+            and type(result.action) == "string" and result.action ~= ""
+            and type(result.target) == "string" and result.target ~= ""
+            and type(result.reason) == "string" and result.reason ~= ""
+            and type(result.switchIf) == "string" and result.switchIf ~= ""
+            and type(result.stop) == "string" and result.stop ~= "",
+            "Exact simulation branch did not produce an actionable legal plan: "
+                .. table.concat({ mapKey, phase, family, compWatch,
+                    scoreName, counterResponse, evidenceName }, " / "))
+        ranked = ranked + 1
+    end
+
+    for _, mapKey in ipairs(maps) do
+        for _, phase in ipairs(phases) do
+            for _, family in ipairs(familiesByPhase[phase]) do
+                assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                    counterResponses[1], evidenceStates[1])
+                for _, compWatch in ipairs(compWatches) do
+                    assertRanked(mapKey, phase, family, compWatch, scoreStates[1],
+                        counterResponses[1], evidenceStates[1])
+                end
+                for _, scoreName in ipairs(scoreStates) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreName,
+                        counterResponses[1], evidenceStates[1])
+                end
+                for _, counterResponse in ipairs(counterResponses) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                        counterResponse, evidenceStates[1])
+                end
+                for _, evidenceName in ipairs(evidenceStates) do
+                    assertRanked(mapKey, phase, family, compWatches[1], scoreStates[1],
+                        counterResponses[1], evidenceName)
+                end
+            end
+        end
+    end
+    assert(ranked == 4000,
+        "Strategist Nexus actionability test did not exercise every rank input axis.")
 end
 assert(KWR.DoctrineComparisons:Count() == 200,
     "Doctrine comparison library did not expose equal map-wide comparison coverage.")
@@ -4833,6 +5011,17 @@ do
     }
     boundState.assignments = {}
     KWR.CombatRoster:Update(boundState)
+    local sameShortState = KWR.Util:Copy(boundState)
+    sameShortState.snapshot.roster[1].name = "Verite-MoonGuard"
+    sameShortState.snapshot.roster[1].shortName = "Verite"
+    sameShortState.snapshot.roster[2].name = "Verite-Tichondrius"
+    sameShortState.snapshot.roster[2].shortName = "Verite"
+    KWR.CombatRoster:Update(sameShortState)
+    assert(KWR.CombatRoster.teamRows[1].nameText.value ~= KWR.CombatRoster.teamRows[2].nameText.value
+        and KWR.CombatRoster.teamRows[1].nameText.value:find("Verite%-", 1) == 1
+        and KWR.CombatRoster.teamRows[2].nameText.value:find("Verite%-", 1) == 1,
+        "Combat roster rendered indistinguishable duplicate short-name bars.")
+    KWR.CombatRoster:Update(boundState)
     local loadingState = KWR.Util:Copy(boundState)
     loadingState.snapshot.context.rosterHydration = { expected = 3 }
     loadingState.snapshot.context.rosterPresentation = { ready = false }
@@ -6358,6 +6547,14 @@ KWR.MainWindow.launcherMenu.buttons[3].scripts.OnClick()
 assert(KWR.MainWindow.activePage == "TEAM"
     and not KWR.CombatRoster:AnyShown(),
     "Launcher Team Roster action opened the compact popup instead of the full Team page.")
+do
+    local priorToggle = ToggleBattlefieldMap
+    local toggles = 0
+    ToggleBattlefieldMap = function() toggles = toggles + 1 end
+    assert(KWR.MainWindowLauncher:ToggleBattlefieldMap() == true and toggles == 1,
+        "Launcher battlefield-map action did not invoke Blizzard's map toggle.")
+    ToggleBattlefieldMap = priorToggle
+end
 KWR.MainWindow.launcherMenu:Hide()
 KWR.MainWindow:RestoreCompactSurfaces()
 assert(KWR.HUD.frame:IsShown(),

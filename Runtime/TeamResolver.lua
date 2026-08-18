@@ -214,6 +214,29 @@ function TeamResolver:NormalizePublishedRoster(roster)
             normalized[#normalized + 1] = player
         end
     end
+
+    -- A short name is not a display identity. Two fully resolved players can
+    -- share it across realms; rendering only the short form makes a correct
+    -- roster look like it contains a duplicate, while a transitional copy of
+    -- one player must remain collapsed above. Keep the identity decision in
+    -- this single publishing boundary so every consumer receives both a
+    -- unique roster and an unambiguous row label.
+    local displayCounts = {}
+    for _, player in ipairs(normalized) do
+        local shortName = KWR.Util:CanonicalShortName(
+            player.shortName or player.name)
+        if shortName ~= "" then
+            displayCounts[shortName] = (displayCounts[shortName] or 0) + 1
+        end
+    end
+    for _, player in ipairs(normalized) do
+        local shortName = KWR.Util:CanonicalShortName(
+            player.shortName or player.name)
+        local compact = KWR.Util:Text(player.shortName, "", 64)
+        local full = KWR.Util:Text(player.name, compact, 96)
+        player.displayName = displayCounts[shortName] and displayCounts[shortName] > 1
+            and full or compact
+    end
     return normalized
 end
 

@@ -281,6 +281,12 @@ function Theme:Title(parent, size, justify)
 end
 
 function Theme:Button(parent, label, width, height, callback)
+    -- A themed button is always an actionable control. Failing at creation is
+    -- safer than shipping an attractive but inert button because a callback
+    -- was omitted during a later UI change.
+    if type(callback) ~= "function" then
+        error("KWR Theme:Button requires an actionable callback", 2)
+    end
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(width or 100, height or 24)
     self:Style(button, "card", "border")
@@ -317,7 +323,7 @@ function Theme:Button(parent, label, width, height, callback)
         self.selected = selected == true
         applyState(self, false)
     end
-    button:SetScript("OnClick", callback or function() end)
+    button:SetScript("OnClick", callback)
     button:SetScript("OnEnter", function(self)
         applyState(self, true)
     end)

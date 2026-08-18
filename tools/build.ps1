@@ -14,6 +14,7 @@ $validator = Join-Path $PSScriptRoot "validate.ps1"
 $sentinelRoot = Join-Path $root "KWRSentinel"
 $sourceTocPath = Join-Path $root "KnomercyWarRoom.toc"
 $releaseManifest = Join-Path $PSScriptRoot "release-manifest.ps1"
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 . $releaseManifest
 
 function New-ArtifactSummary {
@@ -23,11 +24,11 @@ function New-ArtifactSummary {
     )
 
     $item = Get-Item -LiteralPath $Path
-    $hash = Get-FileHash -LiteralPath $Path -Algorithm SHA256
+    $hash = Get-KwrFileSha256 -LiteralPath $Path
     return [pscustomobject]@{
         name = $item.Name
         size = [int64]$item.Length
-        sha256 = $hash.Hash.ToUpperInvariant()
+        sha256 = $hash
     }
 }
 
@@ -256,7 +257,8 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         "field-test-readiness.json",
         "field-blocker-report.json",
         "candidate-package-report.json",
-        "offline-completion-audit.json"
+        "offline-completion-audit.json",
+        "deployment-certification.json"
     )) {
         Remove-Item -LiteralPath (Join-Path $developerSource (Join-Path "knowledge" $generatedReceipt)) -Force -ErrorAction SilentlyContinue
     }
@@ -286,19 +288,19 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip
     }
 
-    $distributionHash = Get-FileHash -LiteralPath $distributionZip -Algorithm SHA256
-    $developerHash = Get-FileHash -LiteralPath $developerZip -Algorithm SHA256
+    $distributionHash = Get-KwrFileSha256 -LiteralPath $distributionZip
+    $developerHash = Get-KwrFileSha256 -LiteralPath $developerZip
     # Player-facing checksums must name only player-facing downloads.  The
     # developer ZIP and its checksum remain in the retention-bound CI artifact.
     $hashLines = @(
-        "$($distributionHash.Hash)  $([IO.Path]::GetFileName($distributionZip))"
+        "$distributionHash  $([IO.Path]::GetFileName($distributionZip))"
     )
     if ($hasSentinel) {
-        $sentinelHash = Get-FileHash -LiteralPath $sentinelZip -Algorithm SHA256
-        $hashLines += "$($sentinelHash.Hash)  $([IO.Path]::GetFileName($sentinelZip))"
+        $sentinelHash = Get-KwrFileSha256 -LiteralPath $sentinelZip
+        $hashLines += "$sentinelHash  $([IO.Path]::GetFileName($sentinelZip))"
     }
     $hashLines | Set-Content -LiteralPath $hashFile -Encoding ASCII
-    @("$($developerHash.Hash)  $([IO.Path]::GetFileName($developerZip))") |
+    @("$developerHash  $([IO.Path]::GetFileName($developerZip))") |
         Set-Content -LiteralPath $developerHashFile -Encoding ASCII
 
     $distributionEntries = Get-DirectoryManifestEntries -RootPath $distributionRoot

@@ -8,6 +8,7 @@ Sentinel.version = "6.1.1-alpha.4"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
+Sentinel.pendingMoveStops = Sentinel.pendingMoveStops or {}
 
 local FIELD_ACTIVATION_VERSION = 1
 
@@ -181,6 +182,33 @@ function Sentinel:TransportEnabled()
         and self.db.profile.transport.enabled == true
 end
 
+-- StopMovingOrSizing is protected by Retail combat lockdown. Every Sentinel
+-- drag surface uses this one completion gate so an in-progress drag cannot
+-- taint or trigger ADDON_ACTION_BLOCKED when combat begins on mouse-up.
+function Sentinel:FinishMove(frame, onStopped)
+    if not frame or type(frame.StopMovingOrSizing) ~= "function" then
+        return false
+    end
+    if type(InCombatLockdown) == "function" and InCombatLockdown() then
+        self.pendingMoveStops[frame] = onStopped or false
+        return false
+    end
+    local ok = pcall(frame.StopMovingOrSizing, frame)
+    if ok and type(onStopped) == "function" then
+        onStopped()
+    end
+    return ok
+end
+
+function Sentinel:FlushPendingMoveStops()
+    if type(InCombatLockdown) == "function" and InCombatLockdown() then return end
+    local pending = self.pendingMoveStops or {}
+    self.pendingMoveStops = {}
+    for frame, onStopped in pairs(pending) do
+        self:FinishMove(frame, onStopped ~= false and onStopped or nil)
+    end
+end
+
 function Sentinel:InitializeModules()
     for _, name in ipairs(self.moduleOrder) do
         self:CallModule(self.modules[name], "OnInitialize")
@@ -244,6 +272,7 @@ local frame = CreateFrame("Frame", "KWRSentinel_BootstrapFrame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:SetScript("OnEvent", function(_, event, ...)
     if event == "ADDON_LOADED" then
         local loaded = ...
@@ -260,5 +289,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
         end
     elseif event == "PLAYER_LOGOUT" then
         Sentinel:DisableModules()
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        Sentinel:FlushPendingMoveStops()
     end
 end)

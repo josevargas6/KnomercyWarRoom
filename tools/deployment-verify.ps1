@@ -7,6 +7,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 if (-not (Test-Path -LiteralPath $PackageManifest)) {
     throw "Package manifest does not exist: $PackageManifest"
 }
@@ -29,7 +30,7 @@ foreach ($file in Get-ChildItem -LiteralPath $InstalledAddonRoot -Recurse -File 
     if ($expected.ContainsKey($relative) -or $topLevel -in $productionRoots) {
         $actual[$relative] = [pscustomobject]@{
             size = [int64]$file.Length
-            sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToUpperInvariant()
+            sha256 = Get-KwrFileSha256 -LiteralPath $file.FullName
         }
     }
 }

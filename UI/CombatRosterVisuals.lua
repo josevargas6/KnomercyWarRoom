@@ -649,7 +649,8 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
     })
     local signature = KWR.Util:Signature({
         assignmentSignature,
-        data.key, data.name, data.shortName, data.classFile, data.role or data.groupRole,
+        data.key, data.name, data.shortName, data.displayName,
+        data.classFile, data.role or data.groupRole,
         data.spec, data.specSource, data.healthPercent, data.lastHealthPercent,
         data.dead, data.connected,
         data.visible, data.localRange, data.age and math.floor(data.age / 2),
@@ -680,7 +681,8 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
     row.boundKey = data.key or data.name or data.shortName
     row.boundName = data.name or data.shortName
     row.boundTeam = team
-    row.displayName = trackerText(data.shortName or data.name, "Unknown", 20)
+    row.displayName = trackerText(data.displayName or data.shortName or data.name,
+        "Unknown", 20)
     row.displayUnit = data.unit
     row.nameText:SetText(row.displayName)
     local r, g, b = brightClassColor(helpers.classColor(data.classFile))

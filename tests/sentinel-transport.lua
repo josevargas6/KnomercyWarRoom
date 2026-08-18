@@ -178,6 +178,39 @@ assert(Comm:SessionKey() == nil and Comm:Distribution() == nil,
 IsInInstance = oldIsInInstance
 issecretvalue = nil
 
+-- Every Sentinel drag completion must defer the protected Retail stop call
+-- until combat has ended. This is intentionally tested at the shared Core
+-- gate rather than one particular frame so HUD, options, and helper panels
+-- cannot regress independently.
+do
+    local oldSentinel = rawget(_G, "Sentinel")
+    local oldLockdown = rawget(_G, "InCombatLockdown")
+    local oldSlashCmdList = rawget(_G, "SlashCmdList")
+    local uiSentinel = { modules = {}, moduleOrder = {} }
+    function uiSentinel:RegisterModule(name, module)
+        self.modules[name] = module
+        self.moduleOrder[#self.moduleOrder + 1] = name
+    end
+    local locked = true
+    InCombatLockdown = function() return locked end
+    SlashCmdList = {}
+    assert(loadfile(sentinelRoot .. "/Core.lua"))("KWRSentinel", uiSentinel)
+    local stopCalls, completed = 0, 0
+    local frame = {
+        StopMovingOrSizing = function() stopCalls = stopCalls + 1 end,
+    }
+    assert(not uiSentinel:FinishMove(frame, function() completed = completed + 1 end)
+        and stopCalls == 0 and completed == 0,
+        "Sentinel called protected StopMovingOrSizing during combat lockdown")
+    locked = false
+    uiSentinel:FlushPendingMoveStops()
+    assert(stopCalls == 1 and completed == 1,
+        "Sentinel did not complete the deferred drag after combat")
+    _G.Sentinel = oldSentinel
+    InCombatLockdown = oldLockdown
+    SlashCmdList = oldSlashCmdList
+end
+
 print("KWR_SENTINEL_TRANSPORT_PASS accepted=" .. tostring(Comm.diagnostics.received)
     .. " rejected=" .. tostring(Comm.diagnostics.rejected)
     .. " hud=" .. tostring(Sentinel.hudUpdates))

@@ -81,9 +81,10 @@ local function createShell(name, title, width, height, setting)
         selfFrame:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(selfFrame)
-        selfFrame:StopMovingOrSizing()
-        selfFrame.KWRDragging = nil
-        saveAnchor(selfFrame, setting)
+        Sentinel:FinishMove(selfFrame, function()
+            selfFrame.KWRDragging = nil
+            saveAnchor(selfFrame, setting)
+        end)
     end)
     return frame
 end

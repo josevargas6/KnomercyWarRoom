@@ -5,6 +5,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
+
 $required = @(
     "Data\SourceRegistry.lua",
     "Data\PatchData.lua",
@@ -600,8 +602,8 @@ try {
     } elseif (-not (Test-Path -LiteralPath $nexusGeneratedPath)) {
         $errors.Add("Strategist Nexus generated runtime corpus is missing.")
     } else {
-        $expectedHash = (Get-FileHash -LiteralPath $nexusGeneratedPath -Algorithm SHA256).Hash
-        $actualHash = (Get-FileHash -LiteralPath $nexusTempPath -Algorithm SHA256).Hash
+        $expectedHash = Get-KwrFileSha256 -LiteralPath $nexusGeneratedPath
+        $actualHash = Get-KwrFileSha256 -LiteralPath $nexusTempPath
         if ($expectedHash -cne $actualHash) {
             $errors.Add("Strategist Nexus runtime corpus is stale or non-deterministic.")
         }
@@ -628,7 +630,8 @@ try {
             $errors.Add('Current-candidate deployment certification is not PASS.')
         }
         foreach ($product in @($deploymentCertification.commander, $deploymentCertification.sentinel)) {
-            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or -not $product.sha256) {
+            if ($product.missing -ne 0 -or $product.changed -ne 0 -or $product.extra -ne 0 -or
+                -not $product.sha256 -or -not $product.packageDigest) {
                 $errors.Add('Deployment certification contains missing, changed, extra, or unhashed files.')
             }
         }

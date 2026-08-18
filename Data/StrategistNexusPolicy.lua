@@ -39,7 +39,7 @@ local FAMILIES = {
         TEAMFIGHT = "healer-triangle", SPLIT = "defender-pair",
     },
     PRESSURE = {
-        HOLD = "ranged-sightline", ROTATE = "weak-side-pivot", TRADE = "weak-side-pivot",
+        HOLD = "ranged-sightline", ROTATE = "weak-side-pivot", TRADE = "grip-window",
         TEAMFIGHT = "control-chain", SPLIT = "weak-side-pivot",
     },
     RECOVERY = {
@@ -47,7 +47,7 @@ local FAMILIES = {
         TEAMFIGHT = "post-wipe", SPLIT = "objective-denial",
     },
     ENDGAME = {
-        HOLD = "clock-protection", ROTATE = "last-window", TRADE = "deny-throw",
+        HOLD = "clock-protection", ROTATE = "last-window", TRADE = "safe-cap",
         TEAMFIGHT = "last-window", SPLIT = "deny-throw",
     },
 }

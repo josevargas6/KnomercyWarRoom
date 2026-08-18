@@ -4,6 +4,7 @@ param()
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $checks = 0
+. (Join-Path $PSScriptRoot "hash-utils.ps1")
 
 function Assert-True {
     param(
@@ -35,6 +36,15 @@ function Assert-Throws {
     }
     Assert-True -Condition $threw -Message $Message
 }
+
+$hashProbe = Join-Path $root "tools\test-automation.ps1"
+$nativeHash = (Get-FileHash -LiteralPath $hashProbe -Algorithm SHA256).Hash.ToUpperInvariant()
+Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
+    -Message "Shared SHA-256 utility disagrees with the native checksum."
+function Get-FileHash { throw "forced module-load failure" }
+Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
+    -Message "Shared SHA-256 utility did not recover from a missing hash cmdlet."
+Remove-Item -LiteralPath function:Get-FileHash -Force
 
 . (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
 
@@ -185,9 +195,11 @@ foreach ($requiredPath in @(
     "docs\WORKFLOW_NOW.md",
     "tests\golden\twin_peaks_recovery_sample.label.json",
     "tools\kwr-daily-discord-update.ps1",
+    "tools\deployment-certify.ps1",
     "tools\replay-test-runner.lua",
     "tools\test-lua.ps1",
     "tools\test-social-copy.ps1"
+    "tools\hash-utils.ps1"
 )) {
     Assert-True `
         -Condition (Test-Path -LiteralPath (Join-Path $root $requiredPath)) `

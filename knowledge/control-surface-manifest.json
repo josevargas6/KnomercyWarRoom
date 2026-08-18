@@ -1,0 +1,52 @@
+{
+  "schema": "kwr-control-surface-manifest",
+  "schemaVersion": 1,
+  "policy": "Every visible control has an intentional action; unavailable Blizzard state reports honestly rather than pretending to succeed.",
+  "controls": [
+    {
+      "id": "commander-launcher",
+      "source": "UI/MainWindowLauncher.lua",
+      "patterns": ["Left-click: Command Center", "Right-click: Command menu"]
+    },
+    {
+      "id": "blizzard-battlefield-map",
+      "source": "UI/MainWindowLauncher.lua",
+      "patterns": ["ToggleBattlefieldMap", "BattlefieldMap_LoadUI", "OPEN BATTLEFIELD MAP"]
+    },
+    {
+      "id": "command-center-tabs-and-controls",
+      "source": "UI/MainWindow.lua",
+      "patterns": ["PIVOT", "RESCAN", "COPY", "OPEN REVIEW"]
+    },
+    {
+      "id": "quick-calls",
+      "source": "UI/QuickCalls.lua",
+      "patterns": ["SecureActionButtonTemplate", "APPROVED", "UNREVIEWED QUICK CALL"]
+    },
+    {
+      "id": "compact-roster-actions",
+      "source": "UI/CombatRosterVisuals.lua",
+      "patterns": ["/targetexact", "/focus", "ApplyBinding"]
+    },
+    {
+      "id": "commander-window-drag-safety",
+      "source": "UI/Theme.lua",
+      "patterns": ["FinishMove", "PLAYER_REGEN_ENABLED", "InCombatLockdown"]
+    },
+    {
+      "id": "sentinel-minimap",
+      "source": "KWRSentinel/MinimapButton.lua",
+      "patterns": ["show/hide execution card", "Sentinel quick options"]
+    },
+    {
+      "id": "sentinel-native-utility-buttons",
+      "source": "KWRSentinel/HUD.lua",
+      "patterns": ["ToggleMap", "ToggleScore", "FinishMove"]
+    },
+    {
+      "id": "sentinel-drag-safety",
+      "source": "KWRSentinel/Core.lua",
+      "patterns": ["FinishMove", "FlushPendingMoveStops", "PLAYER_REGEN_ENABLED"]
+    }
+  ]
+}

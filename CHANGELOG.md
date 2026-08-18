@@ -4,7 +4,9 @@
 
 - Repaired Retail roster publication at its source boundary: group, scoreboard,
   and historical observations now collapse to one canonical player record before
-  any Commander surface renders. This prevents duplicate local and teammate rows.
+  any Commander surface renders. Same-short-name teammates now retain their
+  realm-qualified display identities, so two legitimate players cannot render
+  as indistinguishable duplicate bars.
 - Reconciled enemy observation identities from name to GUID, preserved the best
   available class/spec/role facts, and count visibility episodes rather than
   repeated refreshes as separate sightings.
@@ -15,6 +17,13 @@
 - Deferred and guarded all KWR drag-stop calls across combat lockdown, replaced
   the nonfunctional Shift-M menu stub with an actual battlefield-map action,
   and reduced AAR write work during high-frequency refreshes.
+- Added a shared Sentinel drag-completion queue released only after combat,
+  removed its dormant carrier-unit observer, and made both UI button factories
+  reject missing callbacks at creation time. The release validator now audits
+  every declared control surface and rejects unfinished production markers.
+- Completed the exact Season 2 matrix at 100,000 actionable branches across
+  all ten Retail RBG maps; every phase/family branch is now reachable from a
+  real candidate action and exercised by the runtime regression suite.
 - Made target reticles materially easier to see with layered 2-4 px guides,
   stronger contrast, and an explicit Standard/Bold preference.
 - Simplified composition selection into one counterpick decision: a selected
