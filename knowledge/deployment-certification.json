@@ -1,21 +1,21 @@
 {
   "schema": "kwr-deployment-certification",
-  "schemaVersion": 1,
-  "certifiedAt": "2026-08-18T08:32:21Z",
+  "schemaVersion": 2,
+  "certifiedAt": "2026-08-18T16:12:58Z",
   "candidateVersion": "6.1.1-alpha.4",
   "releaseTag": null,
-  "releaseCommit": "1253607094ab35352844e935c9d5d5271d8e22ce",
+  "releaseCommit": "4d809fd6ab7ca840a82bd042e0128b9a206ab5dc",
   "commander": {
-    "sha256": "CCE0D1D2FE996811A7CB0C55CB2F49CF88DB54C581AB8DC76235498D937F80BD",
-    "packageDigest": "620F1FAFC00D67F1484F245E02321625272F2BD5C642900F23F9DE0EC19B2912",
+    "sha256": "7A25F2060584C730D4D0E185D89D2CC275B64CABF49AD9BE6B69432DF2564718",
+    "packageDigest": "FF6C0FB8B9BC614B88201ACE04EBB8F6967EC6DA232B11AED5B4B6E810FE9B01",
     "installedEntries": 397,
     "missing": 0,
     "changed": 0,
     "extra": 0
   },
   "sentinel": {
-    "sha256": "B8A2C0C6AC1C37EBB118B8282A515E580DD03176A5E24D097EAB476A03DA11D9",
-    "packageDigest": "E55A4A543EDF6A58F52A0CEEA93EBB12D4FB0FC8D2D1C61D751C849D9667DF38",
+    "sha256": "8BAA5B7DAED132A6006CF8C8CC1687BA9375B2BB4785FACFF5E14158ABDF3AB3",
+    "packageDigest": "FE60BF03794563037CBE95482C44A0703A1424D0FE02FB7A11413838AD8318B2",
     "installedEntries": 12,
     "missing": 0,
     "changed": 0,
@@ -24,7 +24,7 @@
   "upgradeProof": {
     "savedVariablesMigrationMatrix": "PASS",
     "futureSchemaReadOnlyCompatibility": "PASS",
-    "deterministicSuite": "KWR_LUA_TESTS_PASS"
+    "deterministicSuite": "KWR_LUA_TESTS_PASS suite=All"
   },
   "sentinelBridge": {
     "loadFlag": "ENABLED",
@@ -32,9 +32,9 @@
     "crossClientTransport": "IMPLEMENTED_PENDING_RETAIL_PROOF"
   },
   "evidence": [
-    "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_BUILD_PROVENANCE.json",
-    "artifacts/candidate-package/alpha4/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
-    "knowledge/deployment-certification-sentinel.json",
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-distribution/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-distribution/deployment-commander-distribution.json",
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-distribution/deployment-sentinel-distribution.json",
     "tools/test-retail-savedvariables-audit.ps1"
   ],
   "result": "PASS"
