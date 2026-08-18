@@ -1181,8 +1181,7 @@ function Strategist:Evaluate(snapshot, prediction)
     result.projectionBasis = "IMMEDIATE_THEORY_FIRST"
     local gateReason
     local requiredEvidence = {}
-    if (budget.score < 40 or truth.coreFresh == false)
-        and currentState ~= "OPENING" then
+    if budget.score < 40 or truth.coreFresh == false then
         gateReason = truth.conservativeReason
             or "Evidence coverage is too low for an aggressive commitment."
         requiredEvidence = {
@@ -1191,16 +1190,14 @@ function Strategist:Evaluate(snapshot, prediction)
             "enemy movement confirmation",
         }
     elseif snapshot.knowledgeStatus
-        and snapshot.knowledgeStatus.compositionAuthorized == false
-        and currentState ~= "OPENING" then
+        and snapshot.knowledgeStatus.compositionAuthorized == false then
         gateReason = snapshot.knowledgeStatus.reason
         requiredEvidence = {
             "verified enemy specializations",
             "enemy capability coverage",
             "composition counter confirmation",
         }
-    elseif result.trust and result.trust.commitAuthorized == false
-        and currentState ~= "OPENING" then
+    elseif result.trust and result.trust.commitAuthorized == false then
         gateReason = result.trust.reason
         requiredEvidence = {
             "objective conflict resolution",

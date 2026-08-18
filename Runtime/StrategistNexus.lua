@@ -176,6 +176,13 @@ function StrategistNexus:Rank(snapshot, prediction, result)
     local selected = result.simulations[1]
     if selected then
         result.selectedAction = KWR.Util:Copy(selected)
+        -- The winning Nexus candidate is executable strategy, not envelope-only metadata.
+        result.action = selected.id .. ": " .. KWR.Util:Text(selected.outcome,
+            "Execute the selected objective action.", 180)
+        result.target = selected.target or result.target
+        result.reason = KWR.Util:Text(selected.outcome, result.reason, 220)
+        result.switchIf = KWR.Util:Text(selected.abort, result.switchIf, 180)
+        result.stop = KWR.Util:Text(selected.abort, result.stop, 180)
         result.expectedOutcome = selected.outcome
         result.recommendationMode = selected.id
         result.projectedWinProbability = selected.probability

@@ -8,7 +8,7 @@ KWR.Season2Readiness = Season2Readiness
 
 local FLAG_MAPS = {
     TWINPEAKS = true,
-    WARSONGGULCH = true,
+    WSG = true,
 }
 
 local function text(value, fallback, maximum)

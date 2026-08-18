@@ -376,7 +376,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             KWR.Util:Text(briefComp.win or briefComp.description,
                 "Flexible objective pressure.", 180),
             "",
-            "|cff49dd49STRONG INTO|r " .. KWR.Util:Text(briefComp.counters,
+            "|cff49dd49STRONG INTO|r " .. KWR.Util:Text(briefComp.favorable or briefComp.counter,
                 "Confirm the enemy composition before committing.", 180),
             "",
             "|cffff6a6aWEAK INTO|r " .. KWR.Util:Text(briefComp.counter,
@@ -411,7 +411,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
         local planComp = formation.buildTarget or formationTier or formation.archetype or {}
         local planName = formationCompLabel(planComp, "Balanced Team Fight")
         page.winCard.value:SetText("|cffffd05aSELECTED|r " .. planName
-            .. "\n|cff4f8cffBEST AGAINST|r " .. KWR.Util:Text(planComp.counters,
+            .. "\n|cff4f8cffBEST AGAINST|r " .. KWR.Util:Text(planComp.favorable or planComp.counter,
                 "Confirm the enemy composition before committing.", 180))
     else
         page.winCard.value:SetText((teamfight and teamfight.displayEligible == true
