@@ -111,6 +111,17 @@ Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
 # PowerShell rather than relying on a function's object return pipeline.
 $commanderReceipt = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
 $sentinelReceipt = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
+$commanderInstalledEntries = [int]($commanderReceipt.after.installedEntries)
+$commanderMissing = [int]($commanderReceipt.after.missing.Count)
+$commanderChanged = [int]($commanderReceipt.after.changed.Count)
+$commanderExtra = [int]($commanderReceipt.after.extra.Count)
+$sentinelInstalledEntries = [int]($sentinelReceipt.after.installedEntries)
+$sentinelMissing = [int]($sentinelReceipt.after.missing.Count)
+$sentinelChanged = [int]($sentinelReceipt.after.changed.Count)
+$sentinelExtra = [int]($sentinelReceipt.after.extra.Count)
+if ($commanderInstalledEntries -le 0 -or $sentinelInstalledEntries -le 0) {
+    throw 'Deployment certification received a receipt with no installed package entries.'
+}
 
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tools\test-retail-savedvariables-audit.ps1')
 if ($LASTEXITCODE -ne 0) {
@@ -132,18 +143,18 @@ $certificate = [ordered]@{
     commander = [ordered]@{
         sha256 = Get-KwrFileSha256 -LiteralPath $commanderZip
         packageDigest = $manifest.distribution.digest
-        installedEntries = [int]($commanderReceipt.after.installedEntries)
-        missing = [int]($commanderReceipt.after.missing.Count)
-        changed = [int]($commanderReceipt.after.changed.Count)
-        extra = [int]($commanderReceipt.after.extra.Count)
+        installedEntries = $commanderInstalledEntries
+        missing = $commanderMissing
+        changed = $commanderChanged
+        extra = $commanderExtra
     }
     sentinel = [ordered]@{
         sha256 = Get-KwrFileSha256 -LiteralPath $sentinelZip
         packageDigest = $manifest.sentinel.digest
-        installedEntries = [int]($sentinelReceipt.after.installedEntries)
-        missing = [int]($sentinelReceipt.after.missing.Count)
-        changed = [int]($sentinelReceipt.after.changed.Count)
-        extra = [int]($sentinelReceipt.after.extra.Count)
+        installedEntries = $sentinelInstalledEntries
+        missing = $sentinelMissing
+        changed = $sentinelChanged
+        extra = $sentinelExtra
     }
     upgradeProof = [ordered]@{
         savedVariablesMigrationMatrix = 'PASS'
