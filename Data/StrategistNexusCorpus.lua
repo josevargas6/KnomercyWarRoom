@@ -7648,7 +7648,12 @@ function StrategistNexusCorpus:Coverage(mapKey, phase, query)
     end
     query = type(query) == "table" and query or {}
     local key = jointKey(query)
-    local count = key and (bucket.jointCases and bucket.jointCases[key] or 0) or bucket.totalCases
+    local hasQuery = next(query) ~= nil
+    -- An incomplete filter cannot be treated as exact support. Empty
+    -- queries intentionally report phase coverage; filtered queries
+    -- require every indexed dimension and otherwise fail closed.
+    local count = not hasQuery and bucket.totalCases
+        or (key and (bucket.jointCases and bucket.jointCases[key] or 0) or 0)
     return {
         available = count > 0,
         marginalCases = count,
