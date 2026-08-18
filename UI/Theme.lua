@@ -401,6 +401,35 @@ function Theme:Badge(parent, tone, text, width, height)
     return badge
 end
 
+function Theme:FinishMove(frame, profile)
+    if not frame or not profile then return false end
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingMoveStops = self.pendingMoveStops or {}
+        self.pendingMoveStops[frame] = profile
+        if not self.moveStopEventFrame then
+            self.moveStopEventFrame = CreateFrame("Frame")
+            self.moveStopEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            self.moveStopEventFrame:SetScript("OnEvent", function()
+                Theme:FlushPendingMoveStops()
+            end)
+        end
+        return false
+    end
+    frame:StopMovingOrSizing()
+    local point, _, relativePoint, x, y = frame:GetPoint(1)
+    profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+    return true
+end
+
+function Theme:FlushPendingMoveStops()
+    if InCombatLockdown and InCombatLockdown() then return end
+    local pending = self.pendingMoveStops or {}
+    self.pendingMoveStops = {}
+    for frame, profile in pairs(pending) do
+        self:FinishMove(frame, profile)
+    end
+end
+
 function Theme:MakeMovable(frame, profile)
     frame:SetMovable(true)
     frame:EnableMouse(true)
@@ -410,11 +439,9 @@ function Theme:MakeMovable(frame, profile)
         self:StartMoving()
     end)
     frame:SetScript("OnDragStop", function(self)
-        -- Do not issue a protected movement call if combat began mid-drag.
-        if InCombatLockdown and InCombatLockdown() then return end
-        self:StopMovingOrSizing()
-        local point, _, relativePoint, x, y = self:GetPoint(1)
-        profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+        -- A drag may end after combat starts. Queue completion for the first
+        -- safe frame rather than leaving the frame in the moving state.
+        Theme:FinishMove(self, profile)
     end)
 end
 

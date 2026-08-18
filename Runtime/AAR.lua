@@ -363,11 +363,12 @@ function AAR:Start(state)
         scoreEnd = nil,
         commands = {},
         events = {},
-        feedback = {
-            sessionType = KWR.Util:Text(
-                KWR.db and KWR.db.profile and KWR.db.profile.fieldReviewContext,
-                "Diagnostic", 24),
-        },
+        -- Review feedback must remain empty until the player actually submits it.
+        -- Context is operational metadata, not evidence that an AAR was reviewed.
+        reviewContext = KWR.Util:Text(
+            KWR.db and KWR.db.profile and KWR.db.profile.fieldReviewContext,
+            "Diagnostic", 24),
+        feedback = {},
         planUsage = {},
         decisionReviews = {},
         friendlyTeam = {},
@@ -1124,6 +1125,12 @@ local function sessionType(value)
     return ""
 end
 
+local function entrySessionType(entry)
+    local context = sessionType(entry and entry.reviewContext)
+    if context ~= "" then return context end
+    return sessionType(entry and entry.feedback and entry.feedback.sessionType)
+end
+
 local function sessionInterpretation(value)
     if value == "Spectator" then
         return "Interpretation: observer evidence only; outcome is not a clean command-follow verdict."
@@ -1153,8 +1160,8 @@ function AAR:Export(entry)
         "End: " .. formatEpoch(entry.endedAt),
         "Rating Change: " .. unknown(entry.ratingChange),
         "Team Faction: " .. clean(entry.team and entry.team.faction, "Unknown", 16),
-        "Review Context: " .. unknown(entry.feedback and sessionType(entry.feedback.sessionType) or ""),
-        sessionInterpretation(sessionType(entry.feedback and entry.feedback.sessionType)),
+        "Review Context: " .. unknown(entrySessionType(entry)),
+        sessionInterpretation(entrySessionType(entry)),
         string.format("Runtime: samples %d | refresh max %.3f ms | p95 max %.3f ms | memory %.1f -> %.1f KB / max %.1f KB | transition max %.3f ms | errors %d",
             entry.performance and entry.performance.samples or 0,
             entry.performance and entry.performance.maxRefreshMs or 0,
@@ -1483,7 +1490,7 @@ function AAR:GetInsights()
         if entry.result == "VICTORY" then wins = wins + 1 end
         if entry.result == "DEFEAT" then losses = losses + 1 end
         if entry.feedback and next(entry.feedback) then reviewed = reviewed + 1 end
-        local mode = sessionType(entry.feedback and entry.feedback.sessionType)
+        local mode = entrySessionType(entry)
         if mode == "Commander" then commander = commander + 1 end
         if mode == "Spectator" then spectator = spectator + 1 end
         if mode == "Diagnostic" then diagnostic = diagnostic + 1 end

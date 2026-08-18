@@ -12,14 +12,16 @@ end
 
 local function openBattlefieldMap()
     -- This is a direct hardware-click action. KWR does not replace Shift-M or
-    -- fabricate battlefield data; it invokes Blizzard's native map surface.
-    if type(ToggleWorldMap) == "function" then
-        ToggleWorldMap()
-        return
+    -- fabricate battlefield data; it invokes Blizzard's Shift-M surface.
+    if BattlefieldMapFrame then
+        if BattlefieldMapFrame:IsShown() then
+            BattlefieldMapFrame:Hide()
+        else
+            BattlefieldMapFrame:Show()
+        end
+        return true
     end
-    if WorldMapFrame and type(ShowUIPanel) == "function" then
-        ShowUIPanel(WorldMapFrame)
-    end
+    return false
 end
 
 function MainWindowLauncher:Create(owner)
@@ -124,10 +126,7 @@ function MainWindowLauncher:Create(owner)
             self.dragging = false
             self:SetScript("OnUpdate", nil)
         else
-            if InCombatLockdown and InCombatLockdown() then return end
-            self:StopMovingOrSizing()
-            local point, _, relativePoint, x, y = self:GetPoint(1)
-            profile.point, profile.relativePoint, profile.x, profile.y = point, relativePoint, x, y
+            KWR.Theme:FinishMove(self, profile)
         end
     end)
     button:SetScript("OnEnter", function(self)

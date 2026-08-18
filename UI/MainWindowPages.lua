@@ -3,8 +3,16 @@ local _, KWR = ...
 local MainWindowPages = {}
 KWR.MainWindowPages = MainWindowPages
 
+local function aarSessionContext(entry)
+    local value = KWR.Util:Text(entry and entry.reviewContext, "", 24)
+    if value == "" then
+        value = KWR.Util:Text(entry and entry.feedback and entry.feedback.sessionType, "", 24)
+    end
+    return value
+end
+
 local function aarSessionShort(entry)
-    local value = KWR.Util:Text(entry and entry.feedback and entry.feedback.sessionType, "", 24)
+    local value = aarSessionContext(entry)
     if value == "Commander" then return "CMD" end
     if value == "Spectator" then return "SPEC" end
     if value == "Diagnostic" then return "DIAG" end
@@ -12,7 +20,7 @@ local function aarSessionShort(entry)
 end
 
 local function aarSessionLabel(entry)
-    local value = KWR.Util:Text(entry and entry.feedback and entry.feedback.sessionType, "", 24)
+    local value = aarSessionContext(entry)
     return value ~= "" and value or "Unlabeled"
 end
 
@@ -355,10 +363,11 @@ function MainWindowPages:RenderTactical(page, state, helpers)
         local targetLabel = formationCompLabel(buildTarget or currentComp, currentName)
         local recruitLines = {}
         recruitLines[#recruitLines + 1] = "|cffffd05aRECRUIT PRIORITY|r"
-        for index, recruit in ipairs(formation.recommendations or {}) do
+        local recommendations = formation.recommendations or {}
+        for index, recruit in ipairs(recommendations) do
             recruitLines[#recruitLines + 1] = formationRecruitLine(recruit, index)
         end
-        if #recruitLines == 0 then
+        if #recommendations == 0 then
             recruitLines[#recruitLines + 1] = "Roster roles are complete."
         end
         local briefComp = buildTarget or currentComp or formation.archetype or {}
