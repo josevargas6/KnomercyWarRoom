@@ -58,10 +58,14 @@ function Assert-DeploymentReceipt {
         $receipt.after.installedDigest -cne $ExpectedDigest) {
         throw "$Label deployment receipt is not bound to the exact package digest."
     }
+    return $receipt
 }
 
-$status = & git status --porcelain
-if ($LASTEXITCODE -ne 0 -or $status) {
+$status = @(& git status --porcelain)
+$unexpectedDirtyPaths = @($status | ForEach-Object {
+    if ($_.Length -ge 4) { $_.Substring(3).Replace('\', '/') }
+} | Where-Object { $_ -and $_ -ne 'knowledge/deployment-certification.json' })
+if ($LASTEXITCODE -ne 0 -or $unexpectedDirtyPaths.Count -gt 0) {
     throw 'Deployment certification requires a committed, clean source tree.'
 }
 $releaseCommit = (& git rev-parse HEAD).Trim()
@@ -98,13 +102,10 @@ $sentinelReceiptPath = Resolve-InputFile -Path $SentinelReceipt -Label 'Sentinel
 $manifest = Get-Content -LiteralPath $sourceManifestPath -Raw | ConvertFrom-Json
 $commanderDigest = [string]$manifest.distribution.digest
 $sentinelDigest = [string]$manifest.sentinel.digest
-Assert-DeploymentReceipt -ReceiptPath $commanderReceiptPath -Label 'Commander' `
+$commanderReceipt = Assert-DeploymentReceipt -ReceiptPath $commanderReceiptPath -Label 'Commander' `
     -ExpectedDigest $commanderDigest
-Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
+$sentinelReceipt = Assert-DeploymentReceipt -ReceiptPath $sentinelReceiptPath -Label 'Sentinel' `
     -ExpectedDigest $sentinelDigest
-
-$commanderReceipt = Get-Content -LiteralPath $commanderReceiptPath -Raw | ConvertFrom-Json
-$sentinelReceipt = Get-Content -LiteralPath $sentinelReceiptPath -Raw | ConvertFrom-Json
 
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tools\test-retail-savedvariables-audit.ps1')
 if ($LASTEXITCODE -ne 0) {
