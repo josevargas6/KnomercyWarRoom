@@ -15,11 +15,23 @@ function Invoke-KwrTool([string]$Name, [string[]]$Arguments = @()) {
 
 Invoke-KwrTool 'runtime-preflight.ps1'
 Invoke-KwrTool 'validate.ps1'
-Invoke-KwrTool 'knowledge-audit.ps1'
+# A new TOC version cannot have a candidate-bound package receipt until the
+# exact archive exists.  Audit durable knowledge first, omitting only the
+# version-bound generated receipts; the complete audit runs after packaging.
+Invoke-KwrTool 'knowledge-audit.ps1' @('-AllowGeneratedEvidenceOmission')
 Invoke-KwrTool 'season2-rbg-simulation-audit.ps1'
 Invoke-KwrTool 'test-lua.ps1' @('-Suite', 'All')
 Invoke-KwrTool 'performance-benchmark.ps1'
 if (-not $SkipBuild) {
     Invoke-KwrTool 'build.ps1' @('-OutputDirectory', $OutputDirectory, '-IncludeSentinel')
+    Invoke-KwrTool 'candidate-package-report.ps1' @('-BuildOutputDirectory', $OutputDirectory)
+    Invoke-KwrTool 'field-readiness-report.ps1'
+    Invoke-KwrTool 'field-blocker-report.ps1'
+    Invoke-KwrTool 'offline-completion-audit.ps1'
+    Invoke-KwrTool 'knowledge-audit.ps1'
 }
-Write-Output 'KWR OFFLINE CERTIFICATION PASS'
+if ($SkipBuild) {
+    Write-Output 'KWR OFFLINE SOURCE CERTIFICATION PASS'
+} else {
+    Write-Output 'KWR OFFLINE CERTIFICATION PASS'
+}

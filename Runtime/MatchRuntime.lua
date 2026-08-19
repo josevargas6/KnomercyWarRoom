@@ -149,6 +149,21 @@ local function isFriendlyObjectiveCarrier(unit)
     return false
 end
 
+local function isPriorityEnemyUnit(unit)
+    if unit == "target" or unit == "focus" then return true end
+    local state = KWR.Store and KWR.Store:Get()
+    local carriers = state and state.snapshot and state.snapshot.objectives
+        and state.snapshot.objectives.carriers or {}
+    local unitName = KWR.Util:ShortName(KWR.Util:UnitName(unit)):lower()
+    for _, carrier in ipairs(carriers) do
+        if carrier.owner == "ENEMY"
+            and KWR.Util:ShortName(carrier.player):lower() == unitName then
+            return true
+        end
+    end
+    return false
+end
+
 local function stableIdentityCount(rows)
     if type(rows) ~= "table" or #rows == 0 then return 0, false end
     local seen, count = {}, 0
@@ -702,7 +717,11 @@ function Runtime:HandleEvent(event, ...)
         end
     end
     if event == "UPDATE_UI_WIDGET" and KWR.Sensors then
-        KWR.Sensors:ObserveWidget((...))
+        if KWR.Sensors:ObserveWidget((...)) ~= true then
+            self.diagnostics.ignoredWidgetEvents =
+                (self.diagnostics.ignoredWidgetEvents or 0) + 1
+            return
+        end
     end
     if (event == "UNIT_SPELLCAST_START"
         or event == "UNIT_SPELLCAST_CHANNEL_START") and KWR.CombatIntel then
@@ -756,7 +775,14 @@ function Runtime:HandleEvent(event, ...)
     elseif (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH"
         or event == "UNIT_AURA") and KWR.EnemyIntel then
         local unit = ...
-        if unit then KWR.EnemyIntel:ObserveToken(unit, "Unit Event") end
+        if unit then
+            KWR.EnemyIntel:ObserveToken(unit, "Unit Event")
+            if not isPriorityEnemyUnit(unit) then
+                self.diagnostics.lightweightEvents =
+                    (self.diagnostics.lightweightEvents or 0) + 1
+                return
+            end
+        end
     end
     if event == "PVP_MATCH_COMPLETE" then
         self.matchComplete = true
@@ -772,8 +798,7 @@ function Runtime:HandleEvent(event, ...)
     local fast = event == "UPDATE_UI_WIDGET"
         or event == "UPDATE_BATTLEFIELD_SCORE"
         or event == "PVP_MATCH_ACTIVE"
-    local settle = event == "UPDATE_UI_WIDGET" and 0.35
-        or (event == "UPDATE_BATTLEFIELD_SCORE" and 0.45)
+    local settle = event == "UPDATE_BATTLEFIELD_SCORE" and 0.45
         or (event == "PVP_MATCH_ACTIVE" and 0.75)
         or nil
     self:Queue(event, fast and 0.05 or 0.12, settle)

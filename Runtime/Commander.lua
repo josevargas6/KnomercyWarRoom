@@ -182,6 +182,32 @@ local function currentObjectiveRow(snapshot, objective)
     return nil
 end
 
+-- A map definition gives the planner valid locations, but it does not report
+-- live ownership, availability, or control. Never let that static fallback
+-- invalidate an in-progress command.
+local function objectiveRowHasLiveState(row)
+    if type(row) ~= "table" then return false end
+    local native = row.native
+    if type(native) == "table" then
+        local semantic = KWR.Util:Text(native.semantic, "", 32)
+        if semantic == "MAP_REFERENCE" or semantic == "UNOBSERVED" then
+            return false
+        end
+    end
+    if KWR.Util:Text(row.source, "", 32):lower() == "map_definition" then
+        return false
+    end
+    local state = KWR.Util:Text(row.state, "", 20)
+    return state ~= "" and state ~= "MAP" and state ~= "UNKNOWN"
+end
+
+local function snapshotHasLiveObjectiveState(snapshot)
+    for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
+        if objectiveRowHasLiveState(row) then return true end
+    end
+    return false
+end
+
 local function objectiveSummary(snapshot)
     local summary = {
         friendly = 0,
@@ -191,21 +217,23 @@ local function objectiveSummary(snapshot)
         contested = 0,
     }
     for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
-        local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
-        local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
-        if owner == "FRIENDLY" then
-            summary.friendly = summary.friendly + 1
-            if state == "INCOMING" then
-                summary.assaultedFriendly = summary.assaultedFriendly + 1
+        if objectiveRowHasLiveState(row) then
+            local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
+            local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
+            if owner == "FRIENDLY" then
+                summary.friendly = summary.friendly + 1
+                if state == "INCOMING" then
+                    summary.assaultedFriendly = summary.assaultedFriendly + 1
+                end
+            elseif owner == "ENEMY" then
+                summary.enemy = summary.enemy + 1
+                if state == "INCOMING" then
+                    summary.assaultedEnemy = summary.assaultedEnemy + 1
+                end
             end
-        elseif owner == "ENEMY" then
-            summary.enemy = summary.enemy + 1
-            if state == "INCOMING" then
-                summary.assaultedEnemy = summary.assaultedEnemy + 1
+            if state == "INCOMING" or state == "CONTESTED" then
+                summary.contested = summary.contested + 1
             end
-        end
-        if state == "INCOMING" or state == "CONTESTED" then
-            summary.contested = summary.contested + 1
         end
     end
     return summary
@@ -313,19 +341,21 @@ local function cartStateSummary(snapshot)
         crystalSeen = false,
     }
     for _, row in ipairs(objectives.rows or {}) do
-        local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
-        local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
-        local label = KWR.Util:Text(row.label, "", 48)
-        if state == "ACTIVE" then
-            summary.activeRows = summary.activeRows + 1
-        end
-        if owner == "FRIENDLY" and state == "CONTROLLED" then
-            summary.friendlyControlled = summary.friendlyControlled + 1
-        elseif owner == "ENEMY" and state == "CONTROLLED" then
-            summary.enemyControlled = summary.enemyControlled + 1
-        end
-        if label == "Crystal" then
-            summary.crystalSeen = true
+        if objectiveRowHasLiveState(row) then
+            local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
+            local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
+            local label = KWR.Util:Text(row.label, "", 48)
+            if state == "ACTIVE" then
+                summary.activeRows = summary.activeRows + 1
+            end
+            if owner == "FRIENDLY" and state == "CONTROLLED" then
+                summary.friendlyControlled = summary.friendlyControlled + 1
+            elseif owner == "ENEMY" and state == "CONTROLLED" then
+                summary.enemyControlled = summary.enemyControlled + 1
+            end
+            if label == "Crystal" then
+                summary.crystalSeen = true
+            end
         end
     end
     return summary
@@ -363,21 +393,23 @@ local function resourceStateSummary(snapshot)
         nextSpawnSeen = false,
     }
     for _, row in ipairs(objectives.rows or {}) do
-        local label = KWR.Util:Text(row.label, "", 48)
-        local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
-        local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
-        if label == "Next Spawn" then
-            summary.nextSpawnSeen = state ~= "MAP"
-        end
-        if label ~= "Next Spawn" and state == "ACTIVE" then
-            summary.activeNodes = summary.activeNodes + 1
-        elseif state == "AVAILABLE" then
-            summary.availableNodes = summary.availableNodes + 1
-        end
-        if owner == "FRIENDLY" and state == "CONTROLLED" then
-            summary.friendlyControlled = summary.friendlyControlled + 1
-        elseif owner == "ENEMY" and state == "CONTROLLED" then
-            summary.enemyControlled = summary.enemyControlled + 1
+        if objectiveRowHasLiveState(row) then
+            local label = KWR.Util:Text(row.label, "", 48)
+            local owner = KWR.Util:Text(row.owner, "UNKNOWN", 16)
+            local state = KWR.Util:Text(row.state, "UNKNOWN", 20)
+            if label == "Next Spawn" then
+                summary.nextSpawnSeen = true
+            end
+            if label ~= "Next Spawn" and state == "ACTIVE" then
+                summary.activeNodes = summary.activeNodes + 1
+            elseif state == "AVAILABLE" then
+                summary.availableNodes = summary.availableNodes + 1
+            end
+            if owner == "FRIENDLY" and state == "CONTROLLED" then
+                summary.friendlyControlled = summary.friendlyControlled + 1
+            elseif owner == "ENEMY" and state == "CONTROLLED" then
+                summary.enemyControlled = summary.enemyControlled + 1
+            end
         end
     end
     return summary
@@ -1251,8 +1283,11 @@ end
 
 local function nodeInvalidationReason(definition, play, snapshot, now)
     if not play or not play.objective then return nil end
-    local owner, state = currentObjectiveOwner(snapshot, play.objective)
-    if owner and owner ~= "FRIENDLY"
+    local objectiveRow = currentObjectiveRow(snapshot, play.objective)
+    if not objectiveRowHasLiveState(objectiveRow) then return nil end
+    local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
+    local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
+    if owner ~= "FRIENDLY"
         and (play.phase == "COMMITTED" or play.phase == "RESOLVING") then
         return "HELD_NODE_LOST"
     end
@@ -1323,7 +1358,7 @@ local function orbInvalidationReason(play, snapshot)
         and summary.enemyCarriers <= 0 then
         return "ORBS_RESET"
     end
-    if playType == "PICKUP" and objectiveRow then
+    if playType == "PICKUP" and objectiveRowHasLiveState(objectiveRow) then
         local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
         local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
         if owner ~= "UNKNOWN" or (state ~= "AVAILABLE" and state ~= "ACTIVE") then
@@ -1339,37 +1374,39 @@ local function cartInvalidationReason(play, snapshot)
     local playType = classifyCartPlay(play)
     local objective = KWR.Util:Text(play.objective, "", 48)
     local objectiveRow = objective ~= "" and currentObjectiveRow(snapshot, objective) or nil
-    if playType == "ESCORT" and objectiveRow then
+    local hasLiveState = snapshotHasLiveObjectiveState(snapshot)
+    if playType == "ESCORT" and objectiveRowHasLiveState(objectiveRow) then
         local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
         local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
         if owner ~= "FRIENDLY" and state ~= "ACTIVE" then
             return "FRIENDLY_CART_STATE_CHANGED"
         end
     end
-    if playType == "DELAY" and objectiveRow then
+    if playType == "DELAY" and objectiveRowHasLiveState(objectiveRow) then
         local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
         local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
         if owner ~= "ENEMY" and state ~= "ACTIVE" then
             return "ENEMY_CART_STATE_CHANGED"
         end
     end
-    if objective ~= "" and objective ~= "Enemy Cart" and objective ~= "Crystal" then
+    if objectiveRowHasLiveState(objectiveRow)
+        and objective ~= "" and objective ~= "Enemy Cart" and objective ~= "Crystal" then
         local owner, state = currentObjectiveOwner(snapshot, objective)
         if owner ~= "FRIENDLY" and state ~= "ACTIVE" and summary.vehicles <= 0 then
             return "FRIENDLY_CART_STATE_CHANGED"
         end
     end
-    if playType == "ESCORT"
+    if hasLiveState and playType == "ESCORT"
         and summary.friendlyControlled <= 0
         and summary.activeRows <= 0 then
         return "FRIENDLY_CART_STATE_CHANGED"
     end
-    if playType == "DELAY"
+    if hasLiveState and playType == "DELAY"
         and summary.enemyControlled <= 0
         and summary.activeRows <= 0 then
         return "ENEMY_CART_STATE_CHANGED"
     end
-    if playType == "CRYSTAL" and summary.crystalSeen ~= true then
+    if hasLiveState and playType == "CRYSTAL" and summary.crystalSeen ~= true then
         return "CRYSTAL_STATE_CHANGED"
     end
     return nil
@@ -1381,26 +1418,27 @@ local function resourceInvalidationReason(play, snapshot)
     local playType = classifyResourcePlay(play)
     local objective = KWR.Util:Text(play.objective, "", 48)
     local objectiveRow = objective ~= "" and currentObjectiveRow(snapshot, objective) or nil
-    if playType == "ACTIVE" and objectiveRow then
+    local hasLiveState = snapshotHasLiveObjectiveState(snapshot)
+    if playType == "ACTIVE" and objectiveRowHasLiveState(objectiveRow) then
         local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
         local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
         if owner ~= "FRIENDLY" and state ~= "ACTIVE" and state ~= "CONTROLLED" then
             return "ACTIVE_NODE_STATE_CHANGED"
         end
     end
-    if playType == "SPAWN" and objectiveRow then
+    if playType == "SPAWN" and objectiveRowHasLiveState(objectiveRow) then
         local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
         local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
         if owner ~= "UNKNOWN" or (state ~= "ACTIVE" and state ~= "AVAILABLE") then
             return "NEXT_SPAWN_STATE_CHANGED"
         end
     end
-    if playType == "ACTIVE"
+    if hasLiveState and playType == "ACTIVE"
         and summary.activeNodes <= 0
         and summary.friendlyControlled <= 0 then
         return "ACTIVE_NODE_STATE_CHANGED"
     end
-    if playType == "SPAWN" and summary.nextSpawnSeen ~= true then
+    if hasLiveState and playType == "SPAWN" and summary.nextSpawnSeen ~= true then
         return "NEXT_SPAWN_STATE_CHANGED"
     end
     return nil
@@ -1601,7 +1639,10 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
         return true, "NO_ACTIVE_PLAY"
     end
     if currentPlay.id == nextPlay.id then
-        return true, "SAME_PLAY"
+        -- An identical candidate is confirmation of the current order, not a
+        -- replacement.  Treating it as a replacement reset the commitment
+        -- lifecycle and inflated live command churn on every recompute.
+        return false, "SAME_PLAY"
     end
     if command.reassessment then
         return true, "REASSESSMENT"

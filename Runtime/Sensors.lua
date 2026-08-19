@@ -951,14 +951,15 @@ function Sensors:OnInitialize()
 end
 
 function Sensors:ObserveWidget(widgetInfo)
-    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return end
+    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return false end
     local widgetID = number(widgetInfo.widgetID, nil)
-    if not widgetID then return end
+    if not widgetID then return false end
     local state = KWR.Store and KWR.Store:Get()
     local mapKey = state and state.snapshot and state.snapshot.context
         and state.snapshot.context.mapKey
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
         local definition = KWR.Maps:Get(mapKey)
+        local relevant = false
         local widget = readDoubleStatus(widgetID)
         if validScoreWidget(widget, definition) then
             local verifiedID = definition and definition.scoreWidget
@@ -966,15 +967,19 @@ function Sensors:ObserveWidget(widgetInfo)
                 or not validScoreWidget(readDoubleStatus(verifiedID), definition) then
                 self.scoreWidgetByMap[mapKey] = widgetID
             end
+            relevant = true
         end
         if C_UIWidgetManager and type(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo) == "function" then
             local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, widgetID)
             if type(info) == "table"
                 and (type(info.leftIcons) == "table" or type(info.rightIcons) == "table") then
                 self.objectiveWidgetByMap[mapKey] = widgetID
+                relevant = true
             end
         end
+        return relevant
     end
+    return false
 end
 
 function Sensors:TrackScore(context, score)

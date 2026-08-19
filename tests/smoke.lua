@@ -1843,13 +1843,6 @@ local tpCalibration = KWR.ScenarioCalibration:Get("tp-recovery-route-rebuild")
 assert(tpCalibration
     and tpCalibration.reviewedCases >= 5
     and tpCalibration.topFailure == "EXECUTION_ERROR"
-    and type(tpCalibration.doctrineComparisons) == "table"
-    and tpCalibration.doctrineComparisons["TWINPEAKS_RECOVER_VS_TRICKLE"] ~= nil
-    and type(tpCalibration.doctrineResponses) == "table"
-    and tpCalibration.doctrineResponses["TWINPEAKS_RESP_RECOVER_REBAIT"] ~= nil
-    and type(tpCalibration.outcomeDrivers) == "table"
-    and tpCalibration.outcomeDrivers["EXECUTION_BREAK"] ~= nil
-    and type(tpCalibration.lessonPatterns) == "table"
     and type(tpCalibration.disciplineRule) == "string",
     "Scenario calibration did not expose reviewed discipline data for Twin Peaks recovery.")
 local tpMapCalibration = KWR.ScenarioCalibration:GetMapSummary("TWINPEAKS")
@@ -1869,11 +1862,6 @@ local tpAdversarialCalibration = KWR.ScenarioAdversarialCalibration:Get("tp-reco
 assert(tpAdversarialCalibration
     and tpAdversarialCalibration.adversarialCases >= 1
     and tpAdversarialCalibration.forbiddenCommit == "CALL:FULL_COMMIT"
-    and type(tpAdversarialCalibration.doctrineComparisons) == "table"
-    and tpAdversarialCalibration.doctrineComparisons["TWINPEAKS_RECOVER_VS_TRICKLE"] ~= nil
-    and type(tpAdversarialCalibration.doctrineResponses) == "table"
-    and tpAdversarialCalibration.doctrineResponses["TWINPEAKS_RESP_RECOVER_REBAIT"] ~= nil
-    and tpAdversarialCalibration.truthDisciplinePatterns ~= nil
     and type(tpAdversarialCalibration.disciplineRule) == "string",
     "Scenario adversarial calibration did not expose fail-closed discipline data.")
 local tpMapAdversarial = KWR.ScenarioAdversarialCalibration:GetMapSummary("TWINPEAKS")
@@ -4105,6 +4093,65 @@ assert(heldDeephaulCartCommand.activePlayDecision
     and deephaulCrystalOpportunityPenalty >= 6
     and (heldDeephaulCartScore.margin or 0) >= 24,
     "Deephaul cart play did not resist a non-decisive crystal pivot while cart progress was live.")
+local confirmedCartPlay = KWR.Util:Copy(heldDeephaulCartCommand.activePlayCandidate)
+KWR.Store.state.activePlay = KWR.Util:Copy(confirmedCartPlay)
+KWR.Store.state.command = {
+    action = confirmedCartPlay.action,
+    who = "Verite, Holic, Lymrith",
+    when = "NOW",
+    reason = "Keep the confirmed cart order active.",
+    signature = confirmedCartPlay.id,
+    decisionAt = KWR.Util:Now() - 2,
+}
+KWR.Commander.lastActivePlay = KWR.Util:Copy(confirmedCartPlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(KWR.Store.state.command)
+local confirmedCartCommand = KWR.Commander:Compose(
+    deephaulSnapshot, deephaulPrediction, liveState.assignments)
+assert(confirmedCartCommand.activePlayDecision
+    and confirmedCartCommand.activePlayDecision.retained == true
+    and confirmedCartCommand.activePlayDecision.replacementAllowed == false
+    and confirmedCartCommand.activePlayDecision.replacementReason == "SAME_PLAY",
+    "An identical cart command was incorrectly recorded as a replacement.")
+do
+local mapReferenceCartSnapshot = KWR.Util:Copy(deephaulSnapshot)
+mapReferenceCartSnapshot.objectives.vehicles = {}
+mapReferenceCartSnapshot.objectives.rows = {
+    { label = "Our Cart", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+    { label = "Enemy Cart", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+    { label = "Crystal", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+}
+KWR.Store.state.activePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(deephaulCartState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(deephaulCartState.command)
+local heldMapReferenceCartCommand = KWR.Commander:Compose(
+    mapReferenceCartSnapshot, deephaulPrediction, liveState.assignments)
+assert(heldMapReferenceCartCommand.activePlayDecision
+    and heldMapReferenceCartCommand.activePlayDecision.invalidation == nil,
+    "Static map-reference rows incorrectly invalidated an active Deephaul cart escort.")
+local unobservedCartSnapshot = KWR.Util:Copy(deephaulSnapshot)
+unobservedCartSnapshot.objectives.vehicles = {}
+unobservedCartSnapshot.objectives.rows = {
+    { label = "Our Cart", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+    { label = "Enemy Cart", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+    { label = "Crystal", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+}
+KWR.Store.state.activePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(deephaulCartState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(deephaulCartState.command)
+local heldUnobservedCartCommand = KWR.Commander:Compose(
+    unobservedCartSnapshot, deephaulPrediction, liveState.assignments)
+assert(heldUnobservedCartCommand.activePlayDecision
+    and heldUnobservedCartCommand.activePlayDecision.invalidation == nil,
+    "Unobserved cart-widget rows incorrectly invalidated an active Deephaul cart escort.")
+end
 local deephaulCrystalState = KWR.Util:Copy(deephaulCartState)
 deephaulCrystalState.activePlay.id = "ACTIVE_TAKE_CRYSTAL"
 deephaulCrystalState.activePlay.action = "TAKE CRYSTAL"
@@ -4562,6 +4609,25 @@ do
         and protectedHydration.source == "group_authoritative"
         and protectedHydration.scoreboardHadDuplicates == true,
         "Stale duplicate scoreboard identities displaced authoritative group members.")
+
+    do
+    local ambiguousGroup = KWR.Util:Copy(authoritativeRoster)
+    ambiguousGroup[7] = {
+        unit = "raid7", unitStable = true, guid = "Verite-Old",
+        name = "Verite", classFile = "DEATHKNIGHT", role = "DAMAGER",
+    }
+    ambiguousGroup[8] = {
+        unit = "raid8", unitStable = true, guid = "Verite-Stale",
+        name = "Verite-StaleRealm", classFile = "DEATHKNIGHT", role = "DAMAGER",
+    }
+    local repairedCollision, collisionHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
+        ambiguousGroup, { scoreFaction = 0 }, friendlyRows, 8)
+    assert(#repairedCollision == 8
+        and repairedCollision[7].name == "Friendly7-TestRealm"
+        and collisionHydration.source == "scoreboard_complete"
+        and collisionHydration.groupIdentityConflict == true,
+        "Complete scoreboard truth did not repair an ambiguous group roster collision.")
+    end
 
     local partialRows = {}
     for index = 1, 5 do partialRows[index] = KWR.Util:Copy(friendlyRows[index]) end

@@ -203,6 +203,7 @@ function ConvertTo-PlainData {
 function To-LuaLiteral {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowNull()]
         $Value,
         [int]$Indent = 0
     )
@@ -506,6 +507,28 @@ $scenarioIndex = [ordered]@{}
 foreach ($row in $scenarioRows.ToArray()) {
     $scenarioIndex[[string]$row.scenarioId] = $row
 }
+$runtimeScenarioIndex = [ordered]@{}
+foreach ($row in $scenarioRows.ToArray()) {
+    # The complete multi-review evidence remains in the JSON artifact. Retail
+    # only loads the bounded decision envelope consumed by Strategist.
+    $runtimeScenarioIndex[[string]$row.scenarioId] = [ordered]@{
+        scenarioId = [string]$row.scenarioId
+        mapKey = [string]$row.mapKey
+        phase = [string]$row.phase
+        seasonStatus = [string]$row.seasonStatus
+        reviewedLabels = [int]$row.reviewedLabels
+        reviewConfidence = [string]$row.reviewConfidence
+        agreementRate = [double]$row.agreementRate
+        consensusPrimaryAction = [string]$row.consensusPrimaryAction
+        consensusFallbackAction = [string]$row.consensusFallbackAction
+        preferredComparisonId = [string]$row.preferredComparisonId
+        preferredResponseId = [string]$row.preferredResponseId
+        safestCounter = [string]$row.safestCounter
+        expectedEnemyCounter = [string]$row.expectedEnemyCounter
+        mustStay = New-ObjectArray $row.mustStay
+        requiredCapabilities = New-ObjectArray $row.requiredCapabilities
+    }
+}
 $mapIndex = [ordered]@{}
 foreach ($row in $mapRows.ToArray()) {
     $mapIndex[[string]$row.mapKey] = $row
@@ -514,7 +537,7 @@ foreach ($row in $mapRows.ToArray()) {
 $luaData = ConvertTo-PlainData -Value ([pscustomobject]@{
     shared = $json.shared
     maps = $mapIndex
-    scenarios = $scenarioIndex
+    scenarios = $runtimeScenarioIndex
 })
 
 $lua = @"
@@ -524,6 +547,7 @@ local ScenarioExpertCorpus = {}
 KWR.ScenarioExpertCorpus = ScenarioExpertCorpus
 
 local phaseIndex = nil
+local phaseIndexSeasonPrepActive = nil
 
 local DATA = $(To-LuaLiteral -Value $luaData -Indent 0)
 
@@ -533,15 +557,25 @@ function ScenarioExpertCorpus:Count()
     return count
 end
 
+local function activeTheoryRow(row)
+    local copy = row and KWR.Util:Copy(row) or nil
+    if copy and copy.seasonStatus == "PENDING_SEASON_REVIEW"
+        and KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() then
+        copy.seasonStatus = "ACTIVE_THEORY_FIELD"
+        copy.evidenceStatus = "THEORY_AWAITING_FIELD_FEEDBACK"
+    end
+    return copy
+end
+
 function ScenarioExpertCorpus:Get(scenarioID)
     local row = DATA.scenarios and DATA.scenarios[scenarioID]
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetMapSummary(mapKey)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
@@ -549,7 +583,7 @@ function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
     phase = KWR.Util:Upper(phase, nil, 24)
     local row = mapKey and phase and DATA.maps and DATA.maps[mapKey]
     row = row and row.phaseSummaries and row.phaseSummaries[phase] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
@@ -558,26 +592,40 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
     if not mapKey or not phase then
         return nil
     end
-    if not phaseIndex then
+    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
+    if not phaseIndex or phaseIndexSeasonPrepActive ~= seasonPrepActive then
         phaseIndex = {}
+        phaseIndexSeasonPrepActive = seasonPrepActive
         for _, row in pairs(DATA.scenarios or {}) do
             if row.mapKey and row.phase
-                and row.reviewConfidence == "HIGH"
-                and row.seasonStatus ~= "PENDING_SEASON_REVIEW" then
+                and (row.reviewConfidence == "HIGH"
+                    or (seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"))
+                and (row.seasonStatus ~= "PENDING_SEASON_REVIEW" or seasonPrepActive) then
                 phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
                 local current = phaseIndex[row.mapKey][row.phase]
-                if not current or tostring(row.scenarioId) < tostring(current.scenarioId) then
+                local rowPriority = row.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1
+                local currentPriority = current
+                    and (current.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1) or 0
+                if not current or rowPriority > currentPriority
+                    or (rowPriority == currentPriority
+                        and tostring(row.scenarioId) < tostring(current.scenarioId)) then
                     phaseIndex[row.mapKey][row.phase] = row
                 end
             end
         end
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
-    return row and KWR.Util:Copy(row) or nil
+    return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:Shared()
-    return KWR.Util:Copy(DATA.shared or {})
+    local shared = KWR.Util:Copy(DATA.shared or {})
+    shared.seasonPrepActivation = {
+        active = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true,
+        mode = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusMode() or "DISABLED",
+        safety = "Active theory guides the Commander now; live observations and AAR feedback refine or disprove it without being relabeled as simulated evidence.",
+    }
+    return shared
 end
 
 KWR:RegisterModule("ScenarioExpertCorpus", ScenarioExpertCorpus)

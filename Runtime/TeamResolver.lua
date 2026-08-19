@@ -98,6 +98,31 @@ local function dedupeFriendlyRows(rows)
     return compact, #compact ~= #(rows or {})
 end
 
+-- A real cross-realm collision is realm-qualified on at least one feed. Two
+-- roster rows that render as the same unqualified short name are transitional
+-- aliases of one player, never two safe assignment targets.
+local function hasAmbiguousUnqualifiedShortIdentity(rows)
+    local identities = {}
+    local unqualified = {}
+    for _, row in ipairs(rows or {}) do
+        local rawName = KWR.Util:Text(row and (row.name or row.shortName), "", 96)
+        local full, short = nameKeys(rawName)
+        if full and short then
+            identities[short] = identities[short] or {}
+            identities[short][full] = true
+            if not rawName:find("-", 1, true) then
+                unqualified[short] = true
+            end
+        end
+    end
+    for short, names in pairs(identities) do
+        local count = 0
+        for _ in pairs(names) do count = count + 1 end
+        if count > 1 and unqualified[short] then return true end
+    end
+    return false
+end
+
 function TeamResolver:NormalizePublishedRoster(roster)
     local kept = {}
     local aliasIndex = {}
@@ -381,6 +406,8 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
     -- can briefly contain stale copies with new GUIDs while players load or
     -- swap. Enrich matching group members only, preserving name, GUID, unit,
     -- cardinality, and row ownership.
+    local groupIdentityConflict = hasAmbiguousUnqualifiedShortIdentity(uniqueGroup)
+    local scoreboardIdentityConflict = hasAmbiguousUnqualifiedShortIdentity(friendlyRows)
     local groupAuthoritative = #uniqueGroup == expectedCount
     if groupAuthoritative then
         local byGuid, byName, byShort, shortCounts = rosterIdentityMaps(friendlyRows)
@@ -400,16 +427,24 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
             end
             reconciled[#reconciled + 1] = enrichGroupPlayer(player, row)
         end
-        return reconciled, {
-            source = matched > 0 and "group_authoritative_enriched" or "group_authoritative",
-            expected = expectedCount,
-            friendlyRows = #friendlyRows,
-            matched = matched,
-            repaired = 0,
-            rejectedScoreboardRows = math.max(0, #friendlyRows - matched),
-            scoreboardHadDuplicates = scoreboardHadDuplicates == true,
-            groupHadDuplicates = groupHadDuplicates == true,
-        }
+        -- Group tokens usually own identity, but a complete scoreboard is the
+        -- stronger source when the group set contains a transitional,
+        -- unqualified same-short-name collision. This is the live leave/join
+        -- pattern that used to put one player in two team rows.
+        if not groupIdentityConflict then
+            return reconciled, {
+                source = matched > 0 and "group_authoritative_enriched" or "group_authoritative",
+                expected = expectedCount,
+                friendlyRows = #friendlyRows,
+                matched = matched,
+                repaired = 0,
+                rejectedScoreboardRows = math.max(0, #friendlyRows - matched),
+                scoreboardHadDuplicates = scoreboardHadDuplicates == true,
+                groupHadDuplicates = groupHadDuplicates == true,
+                groupIdentityConflict = false,
+                scoreboardIdentityConflict = scoreboardIdentityConflict,
+            }
+        end
     end
 
     if #friendlyRows ~= expectedCount then
@@ -420,6 +455,8 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
             repaired = 0,
             scoreboardHadDuplicates = scoreboardHadDuplicates == true,
             groupHadDuplicates = groupHadDuplicates == true,
+            groupIdentityConflict = groupIdentityConflict,
+            scoreboardIdentityConflict = scoreboardIdentityConflict,
         }
     end
 
@@ -466,6 +503,8 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
         repaired = repaired,
         scoreboardHadDuplicates = scoreboardHadDuplicates == true,
         groupHadDuplicates = groupHadDuplicates == true,
+        groupIdentityConflict = groupIdentityConflict,
+        scoreboardIdentityConflict = scoreboardIdentityConflict,
     }
 end
 

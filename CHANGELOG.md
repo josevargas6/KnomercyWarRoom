@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.1.1-alpha.5 - 2026-08-18
+
+- Treat identical active plays as confirmations, preventing false replacements and commitment resets.
+- Require observed objective evidence before a cart-state change can invalidate a live cart order.
+- Reconcile ambiguous short-name roster snapshots from complete scoreboard truth and suppress duplicate visible team-bar rows while secure frames settle.
+- Ignore irrelevant UI-widget and non-priority enemy health/aura events; retain full refreshes for meaningful objective, carrier, target, and focus evidence.
+- Compact shipped calibration and expert-corpus tables while retaining the complete audit corpus outside the runtime load path.
+
 ## 6.1.1-alpha.4 - 2026-08-18
 
 - Repaired Retail roster publication at its source boundary: group, scoreboard,

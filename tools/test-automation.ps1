@@ -234,9 +234,13 @@ $addonVersion = ((Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc
 Assert-True `
     -Condition ($dailyDryRun -match ('Build:\s+' + [regex]::Escape($addonVersion))) `
     -Message "Daily update does not use the current addon manifest version."
+$fieldReadiness = Get-Content -LiteralPath (Join-Path $root "knowledge\field-test-readiness.json") `
+    -Raw | ConvertFrom-Json
+$evidenceBaseline = [string]$fieldReadiness.candidate.evidenceBaseline
 Assert-True `
-    -Condition ($dailyDryRun -match 'Evidence baseline:\s+6\.1\.0-alpha\.29') `
-    -Message "Daily update does not disclose the stale field-evidence baseline."
+    -Condition ($evidenceBaseline -and $dailyDryRun -match (
+        'Evidence baseline:\s+' + [regex]::Escape($evidenceBaseline))) `
+    -Message "Daily update does not disclose the configured field-evidence baseline."
 
 $releaseWorkflow = Get-Content -LiteralPath (
     Join-Path $root ".github\workflows\release.yml"
