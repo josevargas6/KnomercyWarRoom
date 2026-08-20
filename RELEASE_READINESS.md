@@ -16,11 +16,22 @@ here: modifying a shipped document changes its archive. The versioned `SHA256`
 manifest and deployment certificate are the sole exact-hash authorities
 generated after the immutable archive is built.
 
-It is a field-test candidate, not yet a Retail-ready public release. Promotion
-requires green reviewed merge and CI, an exact tag, protected `production`
-approval, matching public artifacts, and candidate-bound live RBG evidence on
-these hashes. No source-only, historical, unbound, simulated, or owner-risk
-authorization can substitute for those final live gates.
+It is a field-test candidate, not yet a stable Retail-ready release. The owner
+authorized Alpha 5 field-test distribution on 2026-08-20 after source review,
+green CI, exact tagging, protected `production` approval, and public artifact
+verification. Candidate-bound live RBG evidence remains mandatory for any
+later stable promotion; source-only, historical, unbound, or simulated proof
+cannot substitute for that stable-release gate.
+
+The 2026-08-19 competitive-readiness refinement is implemented locally and
+passes its deterministic source gates. A local-only candidate was packaged and
+installed for the user-authorized field test; it is not a public release
+artifact and no push, merge, tag, publication, or production action occurred.
+The subsequent KWR-270 field repair is source-validated, reproducibly packaged,
+and installed locally with manifest parity for Commander and Sentinel. It must
+receive a fresh live RBG capture before it can clear the field-performance gate.
+Prior alpha.5 package hashes remain historical to their recorded source snapshots
+and cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
@@ -37,11 +48,13 @@ and rollback-artifact creation.
 - [x] Source validation, source-drift, document-authority, control-surface,
   knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
   RBG-corpus gates pass.
-- [x] The Commander and Sentinel archives are binary reproducible; both
-  extracted runtime paths pass; the installed Retail manifests have zero
-  missing, changed, or extra entries; and a rollback snapshot exists.
-- [x] All review conversations on the repair PR are resolved. Any final
-  evidence follow-up must have a green `certify` run before merge.
+- [ ] Build the current source candidate under an authorized release workflow,
+  then prove Commander/Sentinel version parity, binary reproducibility,
+  extracted-runtime integrity, install-manifest parity, hashes, and rollback.
+  Prior alpha.5 receipts do not bind the KWR-269 source changes.
+- [ ] Push/open or update the current source PR, resolve review conversations,
+  and obtain the required green `certify` result. No GitHub write was authorized
+  during KWR-269 implementation.
 - [ ] Merge the green reviewed candidate to `main`, verify the merged commit
   and tag the exact public-release artifact only after the live gate passes.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
@@ -51,15 +64,15 @@ and rollback-artifact creation.
   versioned checksum manifest and deployment certificate.
 - [ ] Capture live win and loss evidence across every map family, then rerun
   the read-only SavedVariables certification with only completed candidate rows.
-- [ ] Prove Sentinel's opt-in cross-client transport in a ten-client Retail
-  session, including handshake, malformed-packet rejection, expiry, reload,
-  match teardown, taint safety, and player value.
-- [ ] From the green tagged commit, publish the exact two public runtime ZIPs,
-  checksums, manifest, and install guide; verify the public downloads and
-  CurseForge file IDs before any announcement.
+- [x] Keep Sentinel cross-client transport disabled by default and outside the
+  competitive-readiness release dependency. Any future opt-in promotion still
+  requires its own ten-client, taint, expiry, teardown, and product-value proof.
+- [ ] From the green tagged commit, publish the explicit Alpha 5 field-test
+  runtime ZIPs, checksums, manifest, and install guide; verify the public
+  downloads and CurseForge file IDs before any announcement.
 
-Until every unchecked item is evidenced, this candidate is **field-test ready,
-not distribution Retail ready**.
+Until every unchecked live item is evidenced, this candidate may be distributed
+only as an explicit **field-test prerelease, not a stable Retail release**.
 
 Alpha 43 remains the last published prerelease baseline. Its protected run
 completed on 2026-08-14 from commit

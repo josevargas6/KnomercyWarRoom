@@ -799,8 +799,9 @@ function Assignments:Integrity(snapshot, assignments)
         local expected = KWR.Util:Text(assignment.location, "", 48)
         local job = integrityJob(assignment.role)
         local route = assignmentTravel(snapshot, player, expected)
-        local expectedTravel = route and route.seconds or 12
-        record.expectedBy = (record.issuedAt or now) + expectedTravel + 5
+        local expectedTravel = route and route.seconds or nil
+        record.expectedBy = expectedTravel
+            and ((record.issuedAt or now) + expectedTravel + 5) or nil
         record.routeSource = route and route.source or "UNVERIFIED"
         local comparable = actual ~= "" and actual ~= "Unknown"
             and actual ~= "Position restricted"
@@ -825,10 +826,10 @@ function Assignments:Integrity(snapshot, assignments)
             status = "ON_STATION"
             result.onStation = result.onStation + 1
             record.lastConfirmedAt = now
-        elseif not comparable then
+        elseif not comparable or not expectedTravel then
             status = "UNVERIFIED"
             result.unverified = result.unverified + 1
-        elseif now >= (record.expectedBy or now + 1)
+        elseif now >= record.expectedBy
             and age >= math.max(20, expectedTravel + 8) then
             status = "ABANDONED"
             result.abandoned = result.abandoned + 1

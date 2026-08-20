@@ -4,7 +4,7 @@ title: Bind Retail SavedVariables evidence to the deployed candidate
 owner: unassigned
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: [KWR-047]
 affected_modules:
@@ -70,3 +70,9 @@ fail closed when evidence is missing, stale, interrupted, or below budget.
 
 Remove the read-only exporter, audit wrapper, generated certification, and its
 validation wiring. No client or SavedVariables rollback is required.
+
+# Closure disposition
+
+Closed 2026-08-19 as implementation-complete. Candidate-bound Retail sessions
+remain an explicit distribution gate in `RELEASE_READINESS.md`; this closure
+does not claim that live evidence exists.

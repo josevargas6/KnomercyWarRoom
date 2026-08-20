@@ -24493,6 +24493,34 @@ function ScenarioExpertCorpus:Get(scenarioID)
     return activeTheoryRow(row)
 end
 
+local function compactScenario(row)
+    if not row then return nil end
+    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
+    return {
+        scenarioId = row.scenarioId,
+        mapKey = row.mapKey,
+        phase = row.phase,
+        reviewedLabels = row.reviewedLabels,
+        reviewConfidence = row.reviewConfidence,
+        agreementRate = row.agreementRate,
+        consensusPrimaryAction = row.consensusPrimaryAction,
+        consensusFallbackAction = row.consensusFallbackAction,
+        safestCounter = row.safestCounter,
+        expectedEnemyCounter = row.expectedEnemyCounter,
+        topLossClassification = row.topLossClassification,
+        mustStay = KWR.Util:Copy(row.mustStay or {}),
+        requiredCapabilities = KWR.Util:Copy(row.requiredCapabilities or {}),
+        seasonStatus = seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"
+            and "ACTIVE_THEORY_FIELD" or row.seasonStatus,
+        evidenceStatus = seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"
+            and "THEORY_AWAITING_FIELD_FEEDBACK" or row.evidenceStatus,
+    }
+end
+
+function ScenarioExpertCorpus:GetSummary(scenarioID)
+    return compactScenario(DATA.scenarios and DATA.scenarios[scenarioID])
+end
+
 function ScenarioExpertCorpus:GetMapSummary(mapKey)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
@@ -24537,6 +24565,35 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
     return activeTheoryRow(row)
+end
+
+function ScenarioExpertCorpus:GetSummaryByMapAndPhase(mapKey, phase)
+    mapKey = KWR.Util:Upper(mapKey, nil, 24)
+    phase = KWR.Util:Upper(phase, nil, 24)
+    if not mapKey or not phase then return nil end
+    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
+    if not phaseIndex or phaseIndexSeasonPrepActive ~= seasonPrepActive then
+        phaseIndex = {}
+        phaseIndexSeasonPrepActive = seasonPrepActive
+        for _, row in pairs(DATA.scenarios or {}) do
+            if row.mapKey and row.phase
+                and (row.reviewConfidence == "HIGH"
+                    or (seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"))
+                and (row.seasonStatus ~= "PENDING_SEASON_REVIEW" or seasonPrepActive) then
+                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
+                local current = phaseIndex[row.mapKey][row.phase]
+                local rowPriority = row.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1
+                local currentPriority = current
+                    and (current.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1) or 0
+                if not current or rowPriority > currentPriority
+                    or (rowPriority == currentPriority
+                        and tostring(row.scenarioId) < tostring(current.scenarioId)) then
+                    phaseIndex[row.mapKey][row.phase] = row
+                end
+            end
+        end
+    end
+    return compactScenario(phaseIndex[mapKey] and phaseIndex[mapKey][phase])
 end
 
 function ScenarioExpertCorpus:Shared()

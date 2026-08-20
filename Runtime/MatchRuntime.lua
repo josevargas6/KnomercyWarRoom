@@ -17,6 +17,7 @@ local Runtime = {
         lastDurationMs = 0,
         averageDurationMs = 0,
         p95DurationMs = 0,
+        durationSampleCount = 0,
         maxDurationMs = 0,
         memoryKB = 0,
         events = 0,
@@ -76,6 +77,12 @@ local function clearQueueState(runtime)
     runtime.pendingReason = nil
     runtime.pendingRevision = nil
     runtime.pendingSettle = nil
+end
+
+local function recordStage(runtime, name, started)
+    if not started or started <= 0 or type(debugprofilestop) ~= "function" then return end
+    runtime.diagnostics.stageMs = runtime.diagnostics.stageMs or {}
+    runtime.diagnostics.stageMs[name] = math.max(0, debugprofilestop() - started)
 end
 
 local PERSISTENT_EVENTS = {
@@ -142,21 +149,6 @@ local function isFriendlyObjectiveCarrier(unit)
     local unitName = KWR.Util:ShortName(KWR.Util:UnitName(unit)):lower()
     for _, carrier in ipairs(carriers) do
         if carrier.owner == "FRIENDLY"
-            and KWR.Util:ShortName(carrier.player):lower() == unitName then
-            return true
-        end
-    end
-    return false
-end
-
-local function isPriorityEnemyUnit(unit)
-    if unit == "target" or unit == "focus" then return true end
-    local state = KWR.Store and KWR.Store:Get()
-    local carriers = state and state.snapshot and state.snapshot.objectives
-        and state.snapshot.objectives.carriers or {}
-    local unitName = KWR.Util:ShortName(KWR.Util:UnitName(unit)):lower()
-    for _, carrier in ipairs(carriers) do
-        if carrier.owner == "ENEMY"
             and KWR.Util:ShortName(carrier.player):lower() == unitName then
             return true
         end
@@ -427,6 +419,11 @@ function Runtime:Refresh(reason)
     local started = type(debugprofilestop) == "function" and debugprofilestop() or 0
     local ok, message = xpcall(function()
         local snapshot
+        -- The test driver models debugprofilestop as a single start/stop pair
+        -- per refresh.  Retail gets the finer live-stage signal; deterministic
+        -- offline timing remains a faithful end-to-end measurement.
+        local profileStages = rawget(_G, "KWR_TEST_ENV") ~= true
+        local stageStarted = profileStages and started or 0
         if KWR.db.profile.preview and not isPvP() and previewAvailable() then
             snapshot = KWR.Preview:Build()
         else
@@ -435,6 +432,8 @@ function Runtime:Refresh(reason)
             end
             snapshot = KWR.Sensors:Capture(self.lastMessage)
         end
+        recordStage(self, "Sensors", stageStarted)
+        stageStarted = profileStages and debugprofilestop() or 0
         snapshot.context.matchComplete = self.matchComplete == true
         snapshot = self:ApplyMatchCompleteFallback(snapshot)
         self:AnnotateRosterPresentation(snapshot)
@@ -445,6 +444,8 @@ function Runtime:Refresh(reason)
         if KWR.KnowledgeManifest and KWR.KnowledgeManifest.Status then
             snapshot.knowledgeStatus = KWR.KnowledgeManifest:Status(snapshot)
         end
+        recordStage(self, "Truth", stageStarted)
+        stageStarted = profileStages and debugprofilestop() or 0
         KWR.RosterInspector:RequestNext(snapshot.roster)
         snapshot = KWR.ObjectiveIntel:Apply(snapshot)
         snapshot.formation = KWR.FormationAdvisor:Evaluate(snapshot)
@@ -455,14 +456,20 @@ function Runtime:Refresh(reason)
             snapshot.opponentModels = KWR.OpponentModels:Observe(snapshot)
         end
         snapshot.truth = KWR.Verification:Contract(snapshot)
+        recordStage(self, "Battlefield", stageStarted)
+        stageStarted = profileStages and debugprofilestop() or 0
         local prediction = KWR.Predictor:Evaluate(snapshot)
         snapshot.strategy = KWR.Strategist:Evaluate(snapshot, prediction)
+        recordStage(self, "Strategy", stageStarted)
+        stageStarted = profileStages and debugprofilestop() or 0
         local assignments = KWR.Assignments:Build(snapshot, prediction)
         snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
         snapshot.strategy.executionAssessment =
             KWR.Strategist:AssessExecution(snapshot, prediction, assignments)
         snapshot.responsePackage =
             KWR.Assignments:ResponsePackage(snapshot, assignments)
+        recordStage(self, "Assignments", stageStarted)
+        stageStarted = profileStages and debugprofilestop() or 0
         if self.reassessRequested then
             local previous = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
             local changes = KWR.Assignments:Diff(
@@ -483,6 +490,9 @@ function Runtime:Refresh(reason)
         local command = KWR.Commander:Compose(snapshot, prediction, assignments)
         snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
             snapshot, prediction, assignments, command)
+        snapshot.commandEmphasis = KWR.CommandEmphasis:Build(
+            snapshot, prediction, assignments, command)
+        recordStage(self, "Command", stageStarted)
         self.diagnostics.refreshes = self.diagnostics.refreshes + 1
         self.diagnostics.lastReason = reason or "refresh"
         if started > 0 and type(debugprofilestop) == "function" then
@@ -498,6 +508,7 @@ function Runtime:Refresh(reason)
             while #self.durationSamples > (self.maxDurationSamples or 120) do
                 table.remove(self.durationSamples, 1)
             end
+            self.diagnostics.durationSampleCount = #self.durationSamples
             if self.diagnostics.refreshes % 10 == 0 then
                 local ordered, total = {}, 0
                 for index, sample in ipairs(self.durationSamples) do
@@ -777,11 +788,15 @@ function Runtime:HandleEvent(event, ...)
         local unit = ...
         if unit then
             KWR.EnemyIntel:ObserveToken(unit, "Unit Event")
-            if not isPriorityEnemyUnit(unit) then
-                self.diagnostics.lightweightEvents =
-                    (self.diagnostics.lightweightEvents or 0) + 1
-                return
-            end
+            -- Health and aura traffic is exceptionally high in a real RBG.
+            -- It can refine the local enemy record, but it cannot establish
+            -- objective ownership, score truth, or a safe strategic pivot.
+            -- Target/carrier observations remain available to CombatIntel on
+            -- the regular pulse and combat/nameplate events instead of making
+            -- each aura stack a complete strategy recomputation.
+            self.diagnostics.lightweightEvents =
+                (self.diagnostics.lightweightEvents or 0) + 1
+            return
         end
     end
     if event == "PVP_MATCH_COMPLETE" then

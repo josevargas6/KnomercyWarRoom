@@ -1736,6 +1736,10 @@ function Commander:Compose(snapshot, prediction, assignments)
     local mapKey = snapshot.context.mapKey
     local previousState = KWR.Store and KWR.Store:Get() or {}
     local previousPlay = previousState and previousState.activePlay or self.lastActivePlay
+    local previousPhase = previousPlay and previousPlay.phase
+    local previousTerminal = previousPhase == "SUCCEEDED" or previousPhase == "FAILED"
+        or previousPhase == "EXPIRED"
+    local candidatePreviousPlay = previousTerminal and nil or previousPlay
     local score = type(snapshot.score) == "table" and snapshot.score or {}
     local definition = mapKey and KWR.Maps:Get(mapKey) or nil
     local formation = snapshot.formation or {}
@@ -1939,14 +1943,14 @@ function Commander:Compose(snapshot, prediction, assignments)
         },
     }
     local candidatePlay = buildActivePlay(
-        snapshot, prediction, strategy, response, command, previousPlay, now)
+        snapshot, prediction, strategy, response, command, candidatePreviousPlay, now)
     self.candidateTrends = self.candidateTrends or {}
     local trend = self.candidateTrends[candidatePlay.id]
     if trend then
         local wins = (trend.consecutiveWins or 0) + 1
         local priorAverage = trend.averageAdvantage or 0
         local currentAdvantage = (candidatePlay.remainingValue or 0)
-            - currentRemainingValue(previousPlay, now)
+            - currentRemainingValue(candidatePreviousPlay, now)
         trend.lastPreferredAt = now
         trend.consecutiveWins = wins
         trend.averageAdvantage = ((priorAverage * (wins - 1)) + currentAdvantage) / wins
@@ -1959,9 +1963,9 @@ function Commander:Compose(snapshot, prediction, assignments)
             lastPreferredAt = now,
             consecutiveWins = 1,
             averageAdvantage = (candidatePlay.remainingValue or 0)
-                - currentRemainingValue(previousPlay, now),
+                - currentRemainingValue(candidatePreviousPlay, now),
             minimumAdvantage = (candidatePlay.remainingValue or 0)
-                - currentRemainingValue(previousPlay, now),
+                - currentRemainingValue(candidatePreviousPlay, now),
         }
         self.candidateTrends[candidatePlay.id] = trend
     end
@@ -1977,6 +1981,16 @@ function Commander:Compose(snapshot, prediction, assignments)
         updatedPreviousPlay.phase = currentPlayPhase(updatedPreviousPlay, snapshot, now)
     end
     local invalidation = invalidationReason(updatedPreviousPlay, snapshot, now)
+    local priorPhase = previousPlayForTransition and previousPlayForTransition.phase
+    local priorTerminal = priorPhase == "SUCCEEDED" or priorPhase == "FAILED"
+        or priorPhase == "EXPIRED"
+    if priorTerminal then
+        -- A terminal play was already reported on its transition refresh.
+        -- Retaining it as the previous play causes every later refresh to
+        -- re-count the same invalidation and makes the stability metric lie.
+        updatedPreviousPlay = nil
+        invalidation = nil
+    end
     local canReplace, replacementReason, replacementScore = replacementAllowed(
         snapshot, updatedPreviousPlay, candidatePlay, trend, prediction, command)
     if invalidation then

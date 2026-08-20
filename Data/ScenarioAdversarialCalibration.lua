@@ -3144,6 +3144,27 @@ function ScenarioAdversarialCalibration:Get(scenarioID)
     return row and KWR.Util:Copy(row) or nil
 end
 
+local function compactScenario(row)
+    if not row then return nil end
+    return {
+        scenarioId = row.scenarioId,
+        mapKey = row.mapKey,
+        phase = row.phase,
+        adversarialCases = row.adversarialCases,
+        disciplineRule = row.disciplineRule,
+        truthRisk = row.truthRisk,
+        safePrimaryAction = row.safePrimaryAction,
+        safeFallbackAction = row.safeFallbackAction,
+        forbiddenCommit = row.forbiddenCommit,
+        mustStay = KWR.Util:Copy(row.mustStay or {}),
+        escalateWhen = row.escalateWhen,
+    }
+end
+
+function ScenarioAdversarialCalibration:GetSummary(scenarioID)
+    return compactScenario(DATA.scenarios and DATA.scenarios[scenarioID])
+end
+
 function ScenarioAdversarialCalibration:GetMapSummary(mapKey)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
@@ -3175,6 +3196,22 @@ function ScenarioAdversarialCalibration:GetByMapAndPhase(mapKey, phase)
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
     return row and KWR.Util:Copy(row) or nil
+end
+
+function ScenarioAdversarialCalibration:GetSummaryByMapAndPhase(mapKey, phase)
+    mapKey = KWR.Util:Upper(mapKey, nil, 24)
+    phase = KWR.Util:Upper(phase, nil, 24)
+    if not mapKey or not phase then return nil end
+    if not phaseIndex then
+        phaseIndex = {}
+        for _, row in pairs(DATA.scenarios or {}) do
+            if row.mapKey and row.phase then
+                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
+                phaseIndex[row.mapKey][row.phase] = row
+            end
+        end
+    end
+    return compactScenario(phaseIndex[mapKey] and phaseIndex[mapKey][phase])
 end
 
 function ScenarioAdversarialCalibration:Shared()

@@ -119,6 +119,7 @@ Runtime\SentinelRelay.lua
 Runtime\CommanderComm.lua
 Runtime\SentinelBridge.lua
 Runtime\CommandAudio.lua
+Runtime\CommandEmphasis.lua
 Runtime\MatchRuntime.lua
 
 UI\Theme.lua

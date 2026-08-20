@@ -63,10 +63,11 @@ local function locationLabel(mapKey, label)
 end
 
 local function trackPositionLine(track)
-    if track and track.mapSource then
+    if track and track.positionSource == "ESTIMATED" then
         return "Position: estimated (" .. KWR.Util:Text(track.location, "Unknown", 48) .. ")"
     end
-    return "Position: tracked"
+    return track and track.positionSource == "OBSERVED"
+        and "Position: observed" or "Position: unknown"
 end
 
 local function bestTrackList(primary, fallback)
@@ -323,15 +324,17 @@ function TacticalMap:Place(frame, index, x, y, label, color, size, options)
     marker.dot:SetColorTexture(color[1], color[2], color[3], color[4] or 1)
     local iconSize = options.iconSize or (size or 18)
     local showIcon = options.icon and KWR.Icons and KWR.Icons:Apply(marker.icon, options.icon, iconSize)
+    if not showIcon then marker.icon:Hide() end
     marker.dot:SetAlpha(showIcon and (options.fillAlpha or 0.12) or 1)
     local border = options.border or color
     if shape == "circle" then
+        local dotOnly = options.dotOnly == true
         marker.ring:SetVertexColor(ring[1], ring[2], ring[3], ring[4] or 0.90)
-        marker.ring:Show()
+        marker.ring:SetShown(not dotOnly)
         marker:SetBackdropColor(0, 0, 0, 0)
         marker:SetBackdropBorderColor(0, 0, 0, 0)
-        marker.dot:SetPoint("TOPLEFT", 4, -4)
-        marker.dot:SetPoint("BOTTOMRIGHT", -4, 4)
+        marker.dot:SetPoint("TOPLEFT", dotOnly and 1 or 4, dotOnly and -1 or -4)
+        marker.dot:SetPoint("BOTTOMRIGHT", dotOnly and -1 or 4, dotOnly and 1 or -4)
         marker.dot:SetTexture("Interface\\Buttons\\WHITE8X8")
         marker.dot:SetVertexColor(color[1], color[2], color[3], color[4] or 1)
     else
@@ -368,17 +371,27 @@ function TacticalMap:AcquirePath(frame, index, color)
             frame.paths[index] = line
         end
     end
-    if line then line:SetColorTexture(color[1], color[2], color[3], color[4] or 0.55) end
+    if line then
+        line:SetThickness(frame.liveMode and 1 or (frame.compact and 1.5 or 2))
+        line:SetColorTexture(color[1], color[2], color[3], color[4] or 0.55)
+    end
     return line
 end
 
 function TacticalMap:RefreshPaths(frame, state)
     local reporter = state.snapshot and state.snapshot.reporter
     local index = 1
+    -- Keep live trails balanced between friendlies and enemies: a full friendly
+    -- roster must not crowd the enemy movement signal off the map.
+    local maximumTracks = frame.liveMode and 4 or nil
+    local drawnTracks = 0
     if type(reporter) == "table" then
         local function drawTrack(track, color)
+            if maximumTracks and drawnTracks >= maximumTracks then return end
+            if frame.liveMode and track.positionSource ~= "OBSERVED" then return end
             local points = track.points or {}
-            local first = math.max(2, #points - (frame.compact and 2 or 5))
+            local first = math.max(2, #points - (frame.liveMode and 2 or (frame.compact and 2 or 5)))
+            local drew = false
             for pointIndex = first, #points do
                 local from, to = points[pointIndex - 1], points[pointIndex]
                 local line = TacticalMap:AcquirePath(frame, index, color)
@@ -389,10 +402,13 @@ function TacticalMap:RefreshPaths(frame, state)
                         to.x * frame.canvas:GetWidth(), -to.y * frame.canvas:GetHeight())
                     line:Show()
                     index = index + 1
+                    drew = true
                 end
             end
+            if drew then drawnTracks = drawnTracks + 1 end
         end
         for _, track in ipairs(reporter.friendly or {}) do drawTrack(track, { 0.20, 0.52, 1.00, 0.50 }) end
+        drawnTracks = 0
         for _, track in ipairs(reporter.enemy or {}) do
             drawTrack(track, (track.age or 999) <= 10
                 and { 1.00, 0.18, 0.18, 0.55 } or { 1.00, 0.70, 0.18, 0.40 })
@@ -408,6 +424,7 @@ function TacticalMap:RefreshMarkers(frame, state)
     local objectives = snapshot.objectives or {}
     local reporter = snapshot.reporter or {}
     local commandText = KWR.CommandView:ActionText(state.command, "", 160):lower()
+    local liveDots = frame.liveMode == true
     local hotspot = reporter.hotspot
     local pressureByLabel, etaByLabel = {}, {}
     for _, row in ipairs(reporter.pressure or {}) do
@@ -520,10 +537,12 @@ function TacticalMap:RefreshMarkers(frame, state)
             tooltipLines[#tooltipLines + 1] = "Commander priority node."
         end
         index = self:Place(frame, index, objective.x, objective.y, label, color,
-            priority and (frame.compact and 14 or 24) or (frame.compact and 10 or 20), {
+            priority and (frame.compact and 14 or (liveDots and 17 or 24))
+                or (frame.compact and 10 or (liveDots and 13 or 20)), {
                 badge = badge,
                 icon = objectiveIcon(objective),
-                iconSize = priority and (frame.compact and 14 or 20) or (frame.compact and 10 or 16),
+                iconSize = priority and (frame.compact and 14 or (liveDots and 15 or 20))
+                    or (frame.compact and 10 or (liveDots and 11 or 16)),
                 fillAlpha = 0.10,
                 shape = "square",
                 border = priority and { 1.00, 0.78, 0.20, 1 } or color,
@@ -537,17 +556,19 @@ function TacticalMap:RefreshMarkers(frame, state)
     local enemyTracks = bestTrackList(reporter and reporter.enemy, snapshot.enemies)
     for _, player in ipairs(friendlyTracks) do
         local badge = player.dead and "X" or ""
+        local estimated = player.positionSource == "ESTIMATED"
         index = self:Place(frame, index, player.x, player.y, markerName(player),
             player.role == "HEALER" and { 0.18, 0.82, 0.32, 1 } or { 0.18, 0.55, 1.00, 1 },
-            frame.compact and 7 or 14,
+            frame.compact and 7 or (liveDots and (estimated and 6 or 8) or 14),
             {
                 badge = badge,
-                icon = playerIcon(player, "TEAM"),
+                icon = not liveDots and playerIcon(player, "TEAM") or nil,
                 iconSize = frame.compact and 12 or 18,
-                fillAlpha = 0.16,
+                fillAlpha = liveDots and 1 or 0.16,
                 shape = "circle",
+                dotOnly = liveDots,
                 ring = teamBorder("TEAM", false),
-                alpha = player.dead and 0.45 or 1,
+                alpha = player.dead and 0.45 or (estimated and 0.55 or 1),
                 border = teamBorder("TEAM", false),
                 showLabel = frame.reporterMode == true and frame.compact ~= true,
                 tooltipTitle = KWR.Util:Text(player.name or player.shortName, "Friendly", 48),
@@ -573,17 +594,20 @@ function TacticalMap:RefreshMarkers(frame, state)
         local enemyName = KWR.Util:ShortName(enemy.name or enemy.shortName or ""):lower()
         local kill = killName and killName ~= "" and killName == enemyName
         local badge = enemy.dead and "X" or ""
+        local estimated = enemy.positionSource == "ESTIMATED"
         index = self:Place(frame, index, enemy.x, enemy.y, markerName(enemy),
             enemy.role == "HEALER" and not kill
                 and { 0.24, 0.96, 0.40, 1 } or color,
-            kill and (frame.compact and 10 or 18) or (frame.compact and 7 or 14), {
+            kill and (frame.compact and 10 or (liveDots and 14 or 18))
+                or (frame.compact and 7 or (liveDots and (estimated and 6 or 8) or 14)), {
                 badge = badge,
-                icon = kill and "kill" or playerIcon(enemy, "ENEMY"),
+                icon = kill and "kill" or (not liveDots and playerIcon(enemy, "ENEMY") or nil),
                 iconSize = kill and (frame.compact and 16 or 22) or (frame.compact and 12 or 18),
-                fillAlpha = 0.16,
+                fillAlpha = liveDots and 1 or 0.16,
                 shape = "circle",
+                dotOnly = liveDots and not kill,
                 ring = teamBorder("ENEMY", kill),
-                alpha = enemy.dead and 0.38 or (age and age > 30 and 0.55 or 1),
+                alpha = enemy.dead and 0.38 or (estimated and 0.55 or (age and age > 30 and 0.55 or 1)),
                 border = teamBorder("ENEMY", kill),
                 showLabel = frame.reporterMode == true or kill,
                 emphasis = kill,
@@ -611,10 +635,10 @@ function TacticalMap:RefreshMarkers(frame, state)
             color, badge, label = { 0.68, 0.28, 1.00, 1 }, "", "Purple Orb"
         end
         index = self:Place(frame, index, flag.x, flag.y, label,
-            color, frame.compact and 12 or 20, {
+            color, frame.compact and 12 or (liveDots and 14 or 20), {
                 badge = badge,
                 icon = objectiveFreeIcon(texture),
-                iconSize = frame.compact and 14 or 20,
+                iconSize = frame.compact and 14 or (liveDots and 14 or 20),
                 fillAlpha = 0.10,
                 shape = "square",
                 showLabel = frame.reporterMode == true,
@@ -639,10 +663,10 @@ function TacticalMap:RefreshMarkers(frame, state)
         index = self:Place(frame, index, carrier.x, carrier.y,
             carrier.player .. " - " .. carrier.objective,
             colors[carrier.color] or { 1.00, 0.85, 0.22, 1 },
-            frame.compact and 14 or 22, {
+            frame.compact and 14 or (liveDots and 16 or 22), {
                 badge = badge,
                 icon = carrierIcon(carrier),
-                iconSize = frame.compact and 16 or 22,
+                iconSize = frame.compact and 16 or (liveDots and 16 or 22),
                 fillAlpha = 0.16,
                 shape = "circle",
                 ring = carrier.owner == "ENEMY"
@@ -662,7 +686,7 @@ function TacticalMap:RefreshMarkers(frame, state)
         index = self:Place(frame, index, vehicle.x, vehicle.y,
             vehicle.name or "Vehicle",
             { 0.88, 0.88, 0.92, 1 },
-            frame.compact and 9 or 16,
+            frame.compact and 9 or (liveDots and 11 or 16),
             {
                 badge = "V",
                 border = { 0.74, 0.74, 0.78, 1 },
@@ -679,6 +703,7 @@ end
 function TacticalMap:Update(frame, state)
     frame.lastState = state
     local context = state.snapshot and state.snapshot.context or {}
+    frame.liveMode = context.inPvP == true and context.preview ~= true
     local hasArt = self:SetBestArt(frame, context)
     frame.empty:SetShown(not hasArt)
     frame.emptySub:SetShown(not hasArt)
@@ -691,6 +716,7 @@ function TacticalMap:Update(frame, state)
     local tone, tag = commandTone(state)
     local objectiveSource = snapshot.objectives and snapshot.objectives.source or "none"
     local coverage = reporter.coverage or {}
+    local emphasis = snapshot.commandEmphasis or {}
     local localTarget = snapshot.combat and snapshot.combat.localTarget
     local commandTarget = snapshot.combat and snapshot.combat.killTarget
     local hotspot = reporter.hotspot
@@ -714,15 +740,17 @@ function TacticalMap:Update(frame, state)
         .. "/" .. tostring(coverage.enemyRecent or 0))
     frame.objectiveBadge:SetTone(objectiveTone(objectiveSource))
     frame.objectiveBadge:SetText(objectiveTag(objectiveSource))
-    frame.commandText:SetText("CALL: " .. KWR.CommandView:ActionText(command,
-        "Waiting for live battleground data.", frame.compact and 56 or 110))
+    frame.commandText:SetText("CALL: " .. KWR.Util:Text(emphasis.action,
+        KWR.CommandView:ActionText(command, "Waiting for live battleground data.", 110),
+        frame.compact and 56 or 110))
+    local threat = emphasis.threat and emphasis.threat.label or nil
+    local route = emphasis.route
+    local timer = emphasis.timer
     frame.contextText:SetText(table.concat({
-        localTarget and ("KILL " .. KWR.Util:ShortName(localTarget.name or localTarget.shortName or "TARGET"))
-            or "KILL NONE",
-        commandTarget and ("NEXT " .. KWR.Util:ShortName(commandTarget.name or commandTarget.shortName or "TARGET"))
-            or "NEXT HOLD",
-        hotspot and hotspot.label and ("PRESSURE " .. KWR.Util:Text(hotspot.label, "", 20))
-            or "PRESSURE QUIET",
+        threat and ("THREAT " .. KWR.Util:Text(threat, "", 20)) or "THREAT NONE",
+        route and ("ROUTE " .. KWR.Util:Text(route.target, "", 18)
+            .. " " .. tostring(route.friendlyETA or "?") .. "s") or "ROUTE VERIFY",
+        timer and ("TIMER " .. KWR.Util:Clock(timer.seconds)) or "TIMER NONE",
     }, "  |  "))
     frame.telemetryText:SetText(string.format(
         "%d SEEN  |  %d RECENT  |  %s  |  %s",
@@ -730,7 +758,8 @@ function TacticalMap:Update(frame, state)
         (coverage.enemyVisible or 0) + (coverage.enemyRecent or 0),
         localTarget and ("KILL " .. KWR.Util:ShortName(localTarget.name or localTarget.shortName or "TARGET"))
             or "NO KILL TARGET",
-        objectiveTag(objectiveSource)
+        objectiveTag(objectiveSource) .. " | CMD "
+            .. (emphasis.consistency and emphasis.consistency.ok and "SYNC" or "VERIFY")
     ))
     frame.commandText:SetTextColor(KWR.Theme:Color((command.urgency or 0) >= 85 and "red"
         or ((command.urgency or 0) >= 60 and "yellow" or "gold")))

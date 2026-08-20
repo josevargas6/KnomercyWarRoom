@@ -4,7 +4,7 @@ title: Dock Sentinel beside active Commander surfaces
 owner: unassigned
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: [KWR-251]
 affected_modules: [UI/LayoutCoordinator.lua, KWRSentinel/HUD.lua, KWRSentinel/Panels.lua]
@@ -43,3 +43,8 @@ side stack with the smallest overlap; a player drag remains authoritative.
 # Rollback
 
 Revert KWR-252. Sentinel keeps its independent saved anchors.
+
+# Closure disposition
+
+Closed 2026-08-19 as implementation-complete. The missing Retail screenshot is
+retained as release evidence, not represented as an implementation defect.

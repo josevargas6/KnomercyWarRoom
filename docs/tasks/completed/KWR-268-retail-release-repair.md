@@ -4,7 +4,7 @@ title: Retail release-candidate truth, stability, safety, and clarity repair
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: completed
 dependencies: [KWR-032, KWR-033, KWR-052]
 affected_modules: [Core, Runtime, State, UI, Features, Data, tests, tools, release]
 authority_references: [AGENTS.md, RELEASE_READINESS.md, QA_CHECKLIST.md, docs/ADR_2026-07-29_UNIFIED_ROSTER_PRESENTATION.md]
@@ -122,3 +122,10 @@ and incomplete/misleading review presentation.
 Keep the immutable 6.1.0 stable artifacts and the previous alpha package.
 If any offline or field gate fails, stop promotion, preserve the defect bundle,
 and issue a new candidate rather than overwriting a published artifact.
+
+# Closure disposition
+
+Closed 2026-08-19 as superseded by KWR-269 for local competitive-readiness
+refinement. Existing package/hash evidence remains historical to its recorded
+commit. Merge, tag, publication, and candidate-bound live evidence remain
+release gates; this task closure does not assert those external actions passed.

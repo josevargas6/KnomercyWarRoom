@@ -19,6 +19,7 @@ local function fixture(mapKey, score, objectives, inPvP)
             friendlyNeeded = math.max((score.max or (definition and definition.maxScore) or 0) - (score.friendly or 0), 0),
             enemyNeeded = math.max((score.max or (definition and definition.maxScore) or 0) - (score.enemy or 0), 0),
             source = score.source or "ui_widget",
+            observedAt = score.observedAt or KWR.Util:Now(),
         },
         objectives = {
             friendly = objectives.friendly or 0,
@@ -29,6 +30,7 @@ local function fixture(mapKey, score, objectives, inPvP)
             enemyActive = objectives.enemyActive or objectives.enemy or 0,
             rows = {},
             source = objectives.source or "ui_widget",
+            observedAt = objectives.observedAt or KWR.Util:Now(),
         },
         roster = {},
         capturedAt = KWR.Util:Now(),
@@ -57,7 +59,7 @@ function Diagnostics:Run()
         "EnemyIntel", "ObjectiveIntel", "FormationAdvisor", "CombatIntel",
         "Preview", "Reporter",
         "Predictor", "Strategist", "AssignmentOverrides", "Assignments", "Commander", "Learning",
-        "AAR", "Verification", "SentinelBridge", "MatchRuntime", "CursorRing", "Theme", "CopyDialog", "QuickCalls", "TacticalMap",
+        "AAR", "Verification", "SentinelBridge", "CommandEmphasis", "MatchRuntime", "CursorRing", "Theme", "CopyDialog", "QuickCalls", "TacticalMap",
         "CombatRoster", "HUD",
         "MainWindow", "AARWindow", "Options",
     }) do
@@ -540,9 +542,9 @@ function Diagnostics:Run()
     )
     orbWithoutTelemetry.objectives.source = "none"
     orbWithoutTelemetry = KWR.Predictor:Evaluate(orbWithoutTelemetry)
-    check("Temple never fabricates missing orb ownership",
-        orbWithoutTelemetry.objectiveTelemetry == false
-            and orbWithoutTelemetry.condition:find("telemetry unavailable", 1, true) ~= nil)
+    check("Temple blocks commands when orb ownership is unavailable",
+        orbWithoutTelemetry.status == "WAITING"
+            and orbWithoutTelemetry.confidence == "NONE")
 
     local silvershard = KWR.Predictor:Evaluate(fixture(
         "SILVERSHARD",
@@ -568,9 +570,9 @@ function Diagnostics:Run()
     )
     cartWithoutTelemetry.objectives.source = "none"
     cartWithoutTelemetry = KWR.Predictor:Evaluate(cartWithoutTelemetry)
-    check("Deephaul never fabricates missing cart ownership",
-        cartWithoutTelemetry.objectiveTelemetry == false
-            and cartWithoutTelemetry.condition:find("telemetry unavailable", 1, true) ~= nil)
+    check("Deephaul blocks commands when cart ownership is unavailable",
+        cartWithoutTelemetry.status == "WAITING"
+            and cartWithoutTelemetry.confidence == "NONE")
 
     local seething = KWR.Predictor:Evaluate(fixture(
         "SEETHING",
@@ -1112,7 +1114,10 @@ function Diagnostics:Run()
         etas = {
             {
                 label = "Farm", friendlyETA = 14, enemyETA = 5,
-                advantage = -9, confidence = "MEDIUM",
+                advantage = -9, estimatedAdvantage = -9,
+                advantageQualified = true, confidence = "HIGH",
+                friendlySource = "OBSERVED_POSITION_SPEED",
+                enemySource = "OBSERVED_POSITION_SPEED",
             },
         },
         enemyIntent = {

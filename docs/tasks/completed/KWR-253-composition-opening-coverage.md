@@ -4,7 +4,7 @@ title: Expand composition-aware opening doctrine coverage
 owner: unassigned
 priority: high
 risk: medium
-status: in_progress
+status: completed
 authority_references: [DESIGN_CONTRACT.md, RELEASE_READINESS.md]
 dependencies: [KWR-251]
 affected_modules: [Data/OpenerDoctrine.lua, Runtime/Strategist.lua, tests/smoke.lua]
@@ -33,7 +33,7 @@ qualified roster tier while retaining explicit uncertainty and safe fallbacks.
 - [x] Every supported map exposes at least fifteen opening branches.
 - [x] Ten new friendly/enemy matchup branches are available per map.
 - [x] Tier-aware selection is passed through the existing strategist.
-- [ ] Deterministic selection assertions pass.
+- [x] Deterministic selection assertions pass.
 - [ ] Retail opening captures validate representative matchup branches.
 
 # Verification
@@ -45,3 +45,9 @@ qualified roster tier while retaining explicit uncertainty and safe fallbacks.
 # Rollback
 
 Revert KWR-253; generic reviewed opener branches remain available.
+
+# Closure disposition
+
+Closed 2026-08-19 as implementation-complete. Representative Retail opening
+captures remain a field-validation gate and do not promote theory-reviewed
+branches to verified live doctrine.

@@ -4,7 +4,7 @@ title: Activate Alpha40 season-prep corpus in advisory mode
 owner: unassigned
 priority: high
 risk: medium
-status: in_progress
+status: completed
 authority_references: [RELEASE_READINESS.md, DATA_GOVERNANCE.md]
 dependencies: [KWR-053, KWR-253]
 affected_modules: [Data/PatchData.lua, Data/ScenarioExpertCorpus.lua, Runtime/Strategist.lua]
@@ -38,3 +38,8 @@ guidance without promoting its pending entries as verified live doctrine.
 # Rollback
 
 Set `seasonPrepCorpus.active` to false in the active PatchData pack.
+
+# Closure disposition
+
+Closed 2026-08-19 as implementation-complete. Retail usefulness evidence
+remains required before any advisory row can be promoted to live authority.

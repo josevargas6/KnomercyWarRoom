@@ -520,6 +520,10 @@ end
 
 local function buildLines(packet)
     local lines, speech = {}, {}
+    if packet.commandAction and packet.commandAction ~= "" then
+        lines[#lines + 1] = "COMMAND: " .. packet.commandAction
+        speech[#speech + 1] = packet.commandAction
+    end
     local handoff = packet.objectiveHandoff
     if handoff then
         local orb = handoff.objective:gsub(" Orb$", "")
@@ -593,6 +597,7 @@ function Builder:Build(snapshot, prediction, assignments, command)
             or (handoff and handoff.confidence) or "UNKNOWN",
         personalByKey = {},
         commandAction = KWR.Util:Text(command and command.action, "", 180),
+        canonicalCommandSignature = command and command.signature or nil,
         predictionCondition = KWR.Util:Text(prediction and prediction.condition, "", 180),
     }
     if handoff then
@@ -615,6 +620,8 @@ function Builder:Build(snapshot, prediction, assignments, command)
         and packet.confidence ~= "LOW"
         and packet.confidence ~= "UNKNOWN"
     local signatureParts = {
+        packet.canonicalCommandSignature or "",
+        packet.commandAction or "",
         handoff and handoff.actor or "",
         handoff and handoff.objective or "",
         handoff and handoff.stacks or 0,
