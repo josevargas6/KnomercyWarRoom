@@ -11,6 +11,7 @@ $luaOutPath = Join-Path $root "Data\ScenarioAdversarialCalibration.lua"
 function To-LuaLiteral {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowNull()]
         $Value,
         [int]$Indent = 0
     )
@@ -70,6 +71,74 @@ function To-LuaLiteral {
     }
     $lines += "$pad}"
     return ($lines -join "`n")
+}
+
+function ConvertTo-PlainData {
+    param([Parameter(Mandatory = $true)]$Value)
+
+    if ($null -eq $Value -or $Value -is [string] -or $Value -is [bool] -or
+        $Value -is [int] -or $Value -is [long] -or $Value -is [double] -or
+        $Value -is [decimal]) {
+        return $Value
+    }
+    if ($Value -is [System.Collections.IDictionary]) {
+        $copy = [ordered]@{}
+        foreach ($key in $Value.Keys) {
+            $copy[[string]$key] = ConvertTo-PlainData -Value $Value[$key]
+        }
+        return $copy
+    }
+    if ($Value -is [System.Collections.IEnumerable] -and -not ($Value -is [string])) {
+        $items = @()
+        foreach ($item in $Value) {
+            $items += ,(ConvertTo-PlainData -Value $item)
+        }
+        return $items
+    }
+    $copy = [ordered]@{}
+    foreach ($property in $Value.PSObject.Properties) {
+        $copy[[string]$property.Name] = ConvertTo-PlainData -Value $property.Value
+    }
+    return $copy
+}
+
+function Get-RuntimeAdversarialRow {
+    param([Parameter(Mandatory = $true)]$Row)
+    return [ordered]@{
+        scenarioId = [string]$Row.scenarioId
+        mapKey = [string]$Row.mapKey
+        phase = [string]$Row.phase
+        adversarialCases = [int]$Row.adversarialCases
+        truthRisk = [string]$Row.truthRisk
+        safePrimaryAction = [string]$Row.safePrimaryAction
+        safeFallbackAction = [string]$Row.safeFallbackAction
+        forbiddenCommit = [string]$Row.forbiddenCommit
+        mustStay = @($Row.mustStay)
+        disciplineRule = [string]$Row.disciplineRule
+        escalateWhen = [string]$Row.escalateWhen
+    }
+}
+
+function Get-RuntimeAdversarialSummary {
+    param([Parameter(Mandatory = $true)]$Row)
+    $phases = [ordered]@{}
+    foreach ($phaseName in $Row.phaseSummaries.Keys) {
+        $phase = $Row.phaseSummaries[$phaseName]
+        $phases[[string]$phaseName] = [ordered]@{
+            phase = [string]$phase.phase
+            scenarios = [int]$phase.scenarios
+            adversarialCases = [int]$phase.adversarialCases
+        }
+    }
+    return [ordered]@{
+        mapKey = [string]$Row.mapKey
+        mapProfile = [string]$Row.mapProfile
+        scenarios = [int]$Row.scenarios
+        adversarialCases = [int]$Row.adversarialCases
+        doctrineComparisons = $Row.doctrineComparisons
+        doctrineResponses = $Row.doctrineResponses
+        phaseSummaries = $phases
+    }
 }
 
 function Get-DisciplineRule {
@@ -148,6 +217,9 @@ $principles = [ordered]@{
 $scenarios = New-Object System.Collections.Generic.List[object]
 foreach ($map in @($matrix.maps)) {
     foreach ($scenario in @($map.scenarios)) {
+        if ([string]$scenario.seasonStatus -eq "PENDING_SEASON_REVIEW") {
+            continue
+        }
         $files = @(Get-ChildItem -LiteralPath $adversarialPath -Filter "$($scenario.scenarioId)-adversarial-*.json" | Sort-Object Name)
         $primaryActions = New-Object System.Collections.Generic.List[string]
         $fallbackActions = New-Object System.Collections.Generic.List[string]
@@ -425,11 +497,21 @@ $scenarioMap = [ordered]@{}
 foreach ($scenario in $scenarios) {
     $scenarioMap[[string]$scenario.scenarioId] = $scenario
 }
-$luaData = [ordered]@{
-    shared = $artifact.shared
-    maps = $mapSummaries
-    scenarios = $scenarioMap
+$runtimeScenarioMap = [ordered]@{}
+foreach ($scenario in $scenarios) {
+    $runtimeScenarioMap[[string]$scenario.scenarioId] =
+        Get-RuntimeAdversarialRow -Row $scenario
 }
+$runtimeMapSummaries = [ordered]@{}
+foreach ($mapKey in $mapSummaries.Keys) {
+    $runtimeMapSummaries[[string]$mapKey] =
+        Get-RuntimeAdversarialSummary -Row $mapSummaries[$mapKey]
+}
+$luaData = ConvertTo-PlainData -Value ([ordered]@{
+    shared = $artifact.shared
+    maps = $runtimeMapSummaries
+    scenarios = $runtimeScenarioMap
+})
 
 $lua = @(
 'local _, KWR = ...'

@@ -52,10 +52,41 @@ end
 
 local function isFresh(evidence)
     if type(evidence) ~= "table" or evidence.observedAt == nil then
-        return true
+        return false
     end
     local age = KWR.Util:Now() - n(evidence.observedAt, 0)
     return age >= 0 and age <= LIVE_EVIDENCE_MAX_AGE
+end
+
+local function observedRate(score, side)
+    local evidence = score and score.rateEvidence
+    if type(evidence) ~= "table"
+        or evidence.source ~= "verified_widget_transition"
+        or not isFresh(evidence)
+        or n(evidence.samples, 0) < 4
+        or evidence.confidence ~= "MEDIUM" then
+        return nil
+    end
+    local rate = n(evidence[side .. "PerSecond"], -1)
+    if rate < 0 or rate > 100 then return nil end
+    return rate, evidence
+end
+
+local function modeledTime(definition, score, objectives, isBlitz, side)
+    local rate, evidence = observedRate(score, side)
+    if rate and rate > 0 then
+        return math.ceil(math.max((definition.maxScore or 0) - n(score[side], 0), 0) / rate), {
+            source = "verified_widget_transition",
+            confidence = evidence.confidence,
+            samples = evidence.samples,
+            observedAt = evidence.observedAt,
+        }
+    end
+    return timeToWin(definition.maxScore, score[side],
+        pointsFor(definition, objectives, isBlitz), definition.tickSeconds), {
+            source = "reviewed_objective_model",
+            confidence = "MEDIUM",
+        }
 end
 
 local function confidence(snapshot)
@@ -101,10 +132,10 @@ local function nodePrediction(snapshot, definition)
     local enemyBases = n(objectives.enemy, 0)
     local friendlyIncoming = n(objectives.friendlyIncoming, 0)
     local enemyIncoming = n(objectives.enemyIncoming, 0)
-    local friendlyTime = timeToWin(definition.maxScore, score.friendly,
-        pointsFor(definition, friendlyBases, isBlitz), definition.tickSeconds)
-    local enemyTime = timeToWin(definition.maxScore, score.enemy,
-        pointsFor(definition, enemyBases, isBlitz), definition.tickSeconds)
+    local friendlyTime, friendlyTimeModel = modeledTime(
+        definition, score, friendlyBases, isBlitz, "friendly")
+    local enemyTime, enemyTimeModel = modeledTime(
+        definition, score, enemyBases, isBlitz, "enemy")
     local minimum, projectedFriendly, projectedEnemy = minimumObjectivesToBeat(
         definition, score.friendly, score.enemy, enemyBases, isBlitz
     )
@@ -179,11 +210,15 @@ local function nodePrediction(snapshot, definition)
         projectedEnemyTime = projectedEnemy,
         recoverable = recoverable,
         isBlitz = isBlitz,
+        timeModel = {
+            friendly = friendlyTimeModel,
+            enemy = enemyTimeModel,
+        },
     }
 end
 
 local function flagPrediction(snapshot, definition)
-    if not hasScore(snapshot) then
+    if not hasScore(snapshot) or not hasObjectives(snapshot) then
         return waiting(snapshot, "Waiting for flag and score widgets.")
     end
     local score, objectives = snapshot.score, snapshot.objectives
@@ -268,7 +303,7 @@ local function hybridPrediction(snapshot, definition)
 end
 
 local function orbPrediction(snapshot, definition)
-    if not hasScore(snapshot) then
+    if not hasScore(snapshot) or not hasObjectives(snapshot) then
         return waiting(snapshot, "Waiting for orb and score widgets.")
     end
     local score, objectives = snapshot.score, snapshot.objectives
@@ -297,7 +332,7 @@ local function orbPrediction(snapshot, definition)
 end
 
 local function cartPrediction(snapshot, definition)
-    if not hasScore(snapshot) then
+    if not hasScore(snapshot) or not hasObjectives(snapshot) then
         return waiting(snapshot, "Waiting for cart and score data.")
     end
     local score, objectives = snapshot.score, snapshot.objectives
@@ -335,7 +370,7 @@ local function cartPrediction(snapshot, definition)
 end
 
 local function resourcePrediction(snapshot, definition)
-    if not hasScore(snapshot) then
+    if not hasScore(snapshot) or not hasObjectives(snapshot) then
         return waiting(snapshot, "Waiting for resource score data.")
     end
     local score = snapshot.score
@@ -359,7 +394,10 @@ local function applyReporterEvidence(prediction, snapshot)
     prediction.reporterRisk = n(reporter.risk, 0)
     prediction.movementEvidence = KWR.Util:Text(reporter.summary, "", 160)
     prediction.hotspot = reporter.hotspot and KWR.Util:Text(reporter.hotspot.label, "", 48) or nil
-    if prediction.reporterRisk >= 70 and reporter.callHint then
+    local truth = snapshot.truth or {}
+    if prediction.status ~= "WAITING" and prediction.confidence ~= "NONE"
+        and truth.aggressiveCommitAllowed == true
+        and prediction.reporterRisk >= 70 and reporter.callHint then
         prediction.urgency = math.max(n(prediction.urgency, 0), prediction.reporterRisk)
         prediction.action = KWR.Util:Text(prediction.action .. " " .. reporter.callHint, prediction.action, 180)
         prediction.source = KWR.Util:Text(prediction.source .. "+reporter", prediction.source, 48)

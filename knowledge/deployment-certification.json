@@ -1,41 +1,41 @@
 {
-    "schema":  "kwr-deployment-certification",
-    "schemaVersion":  2,
-    "certifiedAt":  "2026-08-18T17:16:13Z",
-    "candidateVersion":  "6.1.1-alpha.4",
-    "releaseTag":  null,
-    "releaseCommit":  "6756f018607d77887df866d0bc9059a88c2d46b1",
-    "commander":  {
-                      "sha256":  "5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047",
-                      "packageDigest":  "D9E497381F42C9BDD4B7260D720C32F3199838A1C489D76CA01AD8C2A63F7310",
-                      "installedEntries":  397,
-                      "missing":  0,
-                      "changed":  0,
-                      "extra":  0
-                  },
-    "sentinel":  {
-                     "sha256":  "8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5",
-                     "packageDigest":  "150EBBA0E93F1A044BF7B4A29BD481367549C2F6D0C37DEFFAAD4EF24FEDBE52",
-                     "installedEntries":  12,
-                     "missing":  0,
-                     "changed":  0,
-                     "extra":  0
-                 },
-    "upgradeProof":  {
-                         "savedVariablesMigrationMatrix":  "PASS",
-                         "futureSchemaReadOnlyCompatibility":  "PASS",
-                         "deterministicSuite":  "KWR_LUA_TESTS_PASS suite=All"
-                     },
-    "sentinelBridge":  {
-                           "loadFlag":  "ENABLED",
-                           "mode":  "SAME_CLIENT_AND_KWRSYNC1",
-                           "crossClientTransport":  "IMPLEMENTED_PENDING_RETAIL_PROOF"
-                       },
-    "evidence":  [
-                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
-                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/deployment-commander-6756f01.json",
-                     "artifacts/retail-rc-6.1.1-alpha.4-20260818-review-repairs/deployment-sentinel-6756f01.json",
-                     "tools/test-retail-savedvariables-audit.ps1"
-                 ],
-    "result":  "PASS"
+  "schema": "kwr-deployment-certification",
+  "schemaVersion": 2,
+  "certifiedAt": "2026-08-18T18:32:40Z",
+  "candidateVersion": "6.1.1-alpha.4",
+  "releaseTag": null,
+  "releaseCommit": "c5358afdc4d2d3e52f3c25efd8b1ef65ffc11ca4",
+  "commander": {
+    "sha256": "325528B15D5E914CEB31886AB0F118D082393EB9943BC88B2DECA22179F7F9CA",
+    "packageDigest": "E358BB32A195E07C35E4D38D13DFEE29401ED0E9CDD9546EC7ED3E5D7E1A2A2B",
+    "installedEntries": 397,
+    "missing": 0,
+    "changed": 0,
+    "extra": 0
+  },
+  "sentinel": {
+    "sha256": "8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5",
+    "packageDigest": "150EBBA0E93F1A044BF7B4A29BD481367549C2F6D0C37DEFFAAD4EF24FEDBE52",
+    "installedEntries": 12,
+    "missing": 0,
+    "changed": 0,
+    "extra": 0
+  },
+  "upgradeProof": {
+    "savedVariablesMigrationMatrix": "PASS",
+    "futureSchemaReadOnlyCompatibility": "PASS",
+    "deterministicSuite": "KWR_LUA_TESTS_PASS suite=All"
+  },
+  "sentinelBridge": {
+    "loadFlag": "ENABLED",
+    "mode": "SAME_CLIENT_AND_KWRSYNC1",
+    "crossClientTransport": "IMPLEMENTED_PENDING_RETAIL_PROOF"
+  },
+  "evidence": [
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-final-provenance/KWR_6_1_1_ALPHA_4_SOURCE_MANIFEST.json",
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-final-provenance/deployment-commander-c5358af.json",
+    "artifacts/retail-rc-6.1.1-alpha.4-20260818-final-provenance/deployment-sentinel-c5358af.json",
+    "tools/test-retail-savedvariables-audit.ps1"
+  ],
+  "result": "PASS"
 }

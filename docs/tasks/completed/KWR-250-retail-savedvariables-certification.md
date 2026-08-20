@@ -4,7 +4,7 @@ title: Bind Retail SavedVariables evidence to the deployed candidate
 owner: unassigned
 priority: high
 risk: low
-status: in_progress
+status: completed
 authority_references: [RELEASE_READINESS.md, RELEASE_POLICY.md]
 dependencies: [KWR-047]
 affected_modules:
@@ -29,7 +29,7 @@ unsupported promotion claims.
 The read-only exporter and candidate-bound audit inspect Retail AAR records and
 generate `knowledge/retail-field-certification.json`. Historical rows are
 correctly reported as unbound to the currently deployed candidate. The task
-remains in progress until `6.1.1-alpha.4` commit `6756f01` has fresh,
+remains in progress until deployed `6.1.1-alpha.4` candidate `c5358af` has fresh,
 candidate-bound Retail sessions; implementation acceptance is complete, but
 field certification is not.
 
@@ -70,3 +70,9 @@ fail closed when evidence is missing, stale, interrupted, or below budget.
 
 Remove the read-only exporter, audit wrapper, generated certification, and its
 validation wiring. No client or SavedVariables rollback is required.
+
+# Closure disposition
+
+Closed 2026-08-19 as implementation-complete. Candidate-bound Retail sessions
+remain an explicit distribution gate in `RELEASE_READINESS.md`; this closure
+does not claim that live evidence exists.

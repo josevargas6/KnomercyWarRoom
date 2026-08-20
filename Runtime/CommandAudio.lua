@@ -67,11 +67,23 @@ end
 function Audio:Repeat()
     local state = KWR.Store and KWR.Store:Get()
     local packet = state and state.snapshot and state.snapshot.executionCommand
+    if not state or not state.command or type(packet) ~= "table"
+        or KWR.Util:Text(packet.canonicalCommandSignature, "", 240) == ""
+        or packet.canonicalCommandSignature ~= state.command.signature
+        or packet.commandAction ~= state.command.action then
+        return false, "command_conflict"
+    end
     return self:SpeakPacket(packet, true)
 end
 
 function Audio:Observe(state)
     local packet = state and state.snapshot and state.snapshot.executionCommand
+    if not state or not state.command or type(packet) ~= "table"
+        or KWR.Util:Text(packet.canonicalCommandSignature, "", 240) == ""
+        or packet.canonicalCommandSignature ~= state.command.signature
+        or packet.commandAction ~= state.command.action then
+        return false, "command_conflict"
+    end
     return self:SpeakPacket(packet, false)
 end
 

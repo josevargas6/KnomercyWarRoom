@@ -4,7 +4,7 @@ title: Enable bounded cross-client Sentinel transport
 owner: unassigned
 priority: critical
 risk: high
-status: in_progress
+status: completed
 authority_references: [PROTOCOL.md, SENTINEL_TRANSPORT_SPEC.md, SECURITY.md, RELEASE_READINESS.md]
 dependencies: [KWR-250]
 affected_modules:
@@ -70,3 +70,10 @@ truth without creating another strategist or unsafe gameplay automation.
 
 Disable the `transport.enabled` profile flag and revert the KWR-251 transport
 modules. Commander and standalone Sentinel remain functional without traffic.
+
+# Closure disposition
+
+Closed 2026-08-19 as superseded for product promotion. The bounded transport
+implementation remains disabled by default, but competitive-readiness policy
+does not require automatic/cross-client communications. Any future opt-in
+promotion requires separate live ten-client, taint, and product-value proof.

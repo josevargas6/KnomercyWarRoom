@@ -788,8 +788,16 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
 end
 
 function CombatRosterVisuals:UpdateRows(owner, rows, data, team, combat, assignments, allowBinding, shown)
+    local displayed = {}
     for index, row in ipairs(rows) do
         local entry = data[index]
+        local displayKey = entry and team == "TEAM" and KWR.Util:CanonicalName(
+            entry.displayName or entry.shortName or entry.name) or ""
+        if displayKey ~= "" and displayed[displayKey] then
+            entry = nil
+        elseif displayKey ~= "" then
+            displayed[displayKey] = true
+        end
         if entry then
             if allowBinding then owner:ApplyBinding(row, entry, team) end
             owner:Visual(row, entry, team, combat, assignments and assignments[entry.name])
@@ -858,6 +866,13 @@ function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, as
             if team == "TEAM" and shortName ~= ""
                 and shortCounts[shortName] == 1 then
                 aliases[#aliases + 1] = "SHORT:" .. shortName
+            end
+            if team == "TEAM" then
+                local displayName = KWR.Util:CanonicalName(
+                    entry.displayName or entry.shortName or entry.name)
+                if displayName ~= "" then
+                    aliases[#aliases + 1] = "DISPLAY:" .. displayName
+                end
             end
             local duplicate = false
             for _, alias in ipairs(aliases) do

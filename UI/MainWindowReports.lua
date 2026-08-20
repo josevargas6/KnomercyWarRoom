@@ -367,6 +367,10 @@ function MainWindowReports:BuildPerformancePayload(state)
     local suppressions = KWR.Commander.GetSuppressionLog and KWR.Commander:GetSuppressionLog() or {}
     local latestOverride = overrides[#overrides]
     local latestSuppression = suppressions[#suppressions]
+    local sampleCount = diagnostics.durationSampleCount or 0
+    local p95Text = sampleCount >= 10
+        and string.format("P95: %.3f ms", diagnostics.p95DurationMs or 0)
+        or string.format("P95: pending (%d/10 samples before first calculation)", sampleCount)
     local moduleTimes = {}
     for name, duration in pairs(boot.moduleMs or {}) do
         moduleTimes[#moduleTimes + 1] = { name = name, duration = duration }
@@ -376,6 +380,16 @@ function MainWindowReports:BuildPerformancePayload(state)
     for index = 1, math.min(5, #moduleTimes) do
         slowModules[#slowModules + 1] = string.format("%s %.3f ms",
             moduleTimes[index].name, moduleTimes[index].duration)
+    end
+    local stageTimes = {}
+    for name, duration in pairs(diagnostics.stageMs or {}) do
+        stageTimes[#stageTimes + 1] = { name = name, duration = duration }
+    end
+    table.sort(stageTimes, function(a, b) return a.duration > b.duration end)
+    local slowStages = {}
+    for index = 1, math.min(4, #stageTimes) do
+        slowStages[#slowStages + 1] = string.format("%s %.3f ms",
+            stageTimes[index].name, stageTimes[index].duration)
     end
     return "KWR Performance", table.concat({
         "KWR PERFORMANCE TELEMETRY",
@@ -393,8 +407,10 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Load/widget settle refreshes: " .. tostring(diagnostics.settleRefreshes or 0),
         string.format("Last: %.3f ms", diagnostics.lastDurationMs or 0),
         string.format("Average: %.3f ms", diagnostics.averageDurationMs or 0),
-        string.format("P95: %.3f ms", diagnostics.p95DurationMs or 0),
+        "Duration samples: " .. tostring(sampleCount) .. " / 120",
+        p95Text,
         string.format("Maximum: %.3f ms", diagnostics.maxDurationMs or 0),
+        "Latest slow stages: " .. (#slowStages > 0 and table.concat(slowStages, ", ") or "unavailable"),
         string.format("Lua memory: %.1f KB", diagnostics.memoryKB or 0),
         string.format("Capability cache: %d hits / %d misses / %d entries",
             capabilityCache.hits or 0, capabilityCache.misses or 0,

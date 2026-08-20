@@ -4,7 +4,7 @@ title: Retail release-candidate truth, stability, safety, and clarity repair
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: completed
 dependencies: [KWR-032, KWR-033, KWR-052]
 affected_modules: [Core, Runtime, State, UI, Features, Data, tests, tools, release]
 authority_references: [AGENTS.md, RELEASE_READINESS.md, QA_CHECKLIST.md, docs/ADR_2026-07-29_UNIFIED_ROSTER_PRESENTATION.md]
@@ -101,8 +101,8 @@ and incomplete/misleading review presentation.
   deterministic transport suite.
 - [x] The exact Commander and Sentinel archives were rebuilt twice with binary
   reproducibility, extracted-package audit, and a clean Retail installation.
-  The deployed package is bound to commit `6756f01`, Commander SHA-256
-  `5567BFD185268B068B1F2301805F8BFDC0997141F8DEDBD7D80E32FF2B325047`,
+  The deployed package is bound to commit `c5358af`, Commander SHA-256
+  `325528B15D5E914CEB31886AB0F118D082393EB9943BC88B2DECA22179F7F9CA`,
   and Sentinel SHA-256
   `8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`.
 - [ ] Remote CI/review closure, merge/tag/publication, and final-hash live RBG
@@ -122,3 +122,10 @@ and incomplete/misleading review presentation.
 Keep the immutable 6.1.0 stable artifacts and the previous alpha package.
 If any offline or field gate fails, stop promotion, preserve the defect bundle,
 and issue a new candidate rather than overwriting a published artifact.
+
+# Closure disposition
+
+Closed 2026-08-19 as superseded by KWR-269 for local competitive-readiness
+refinement. Existing package/hash evidence remains historical to its recorded
+commit. Merge, tag, publication, and candidate-bound live evidence remain
+release gates; this task closure does not assert those external actions passed.

@@ -1,5 +1,41 @@
 # Changelog
 
+## 6.1.1-alpha.5 - 2026-08-18
+
+- Corrected the Season 2 hotfix boundary to Blizzard's July 28, 2026 ledger
+  and removed a legacy 2017 article from the advisory watchlist without
+  changing capability weights or tactical doctrine.
+- Reduced live Tactical Map clutter with smaller non-critical team dots,
+  bounded observed-only trails, and clearer priority objective emphasis.
+- Added a canonical command-emphasis contract for Tactical Map/Reporter Map,
+  with one command, one observed threat, one qualified route, one decisive
+  timer, explicit provenance, and conflict suppression for audio execution.
+- Derived bounded score-rate evidence from monotonic verified widget
+  transitions and require current timestamped score/objective evidence before
+  any live predictor can publish an aggressive call.
+- Anchor modeled score intervals to accepted score transitions rather than
+  intervening refresh pulses, preventing inflated live win-clock rates.
+- Preserve fallback objective provenance while allowing newer accepted system
+  carrier observations to invalidate stale pickup commands.
+- Separated observed player positions and speeds from semantic map estimates;
+  estimated anchors no longer create objective pressure, reinforcement
+  advantage, or assignment-abandonment certainty.
+- Added a 20-case competitive truth matrix covering all ten supported maps in
+  standard and Blitz variants, plus fail-closed freshness, rate, route,
+  pressure, attention-authority, and command-consistency regressions.
+- Treat identical active plays as confirmations, preventing false replacements and commitment resets.
+- Require observed objective evidence before a cart-state change can invalidate a live cart order.
+- Reconcile ambiguous short-name roster snapshots from complete scoreboard truth and suppress duplicate visible team-bar rows while secure frames settle.
+- Ignore irrelevant UI-widget events and route health/aura observation through
+  the lightweight local-intelligence path.
+- Keep all non-carrier health/aura observation lightweight; it can refresh local
+  enemy records but cannot schedule a full strategic recompute.
+- Record each terminal ActivePlay transition once, rather than counting the
+  same expired or completed play on every later refresh.
+- Store only compact transition fields in the verification ledger; the full
+  `/kwr verify` report remains generated on demand.
+- Compact shipped calibration and expert-corpus tables while retaining the complete audit corpus outside the runtime load path.
+
 ## 6.1.1-alpha.4 - 2026-08-18
 
 - Repaired Retail roster publication at its source boundary: group, scoreboard,

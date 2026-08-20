@@ -951,14 +951,15 @@ function Sensors:OnInitialize()
 end
 
 function Sensors:ObserveWidget(widgetInfo)
-    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return end
+    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return false end
     local widgetID = number(widgetInfo.widgetID, nil)
-    if not widgetID then return end
+    if not widgetID then return false end
     local state = KWR.Store and KWR.Store:Get()
     local mapKey = state and state.snapshot and state.snapshot.context
         and state.snapshot.context.mapKey
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
         local definition = KWR.Maps:Get(mapKey)
+        local relevant = false
         local widget = readDoubleStatus(widgetID)
         if validScoreWidget(widget, definition) then
             local verifiedID = definition and definition.scoreWidget
@@ -966,15 +967,19 @@ function Sensors:ObserveWidget(widgetInfo)
                 or not validScoreWidget(readDoubleStatus(verifiedID), definition) then
                 self.scoreWidgetByMap[mapKey] = widgetID
             end
+            relevant = true
         end
         if C_UIWidgetManager and type(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo) == "function" then
             local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, widgetID)
             if type(info) == "table"
                 and (type(info.leftIcons) == "table" or type(info.rightIcons) == "table") then
                 self.objectiveWidgetByMap[mapKey] = widgetID
+                relevant = true
             end
         end
+        return relevant
     end
+    return false
 end
 
 function Sensors:TrackScore(context, score)
@@ -995,7 +1000,9 @@ function Sensors:TrackScore(context, score)
             enemy = score.enemy,
             lastCapture = nil,
             observedAt = score.observedAt,
+            lastTransitionAt = KWR.Util:Number(score.observedAt, now),
             changedAt = now,
+            transitions = {},
         }
     else
         if score.friendly < (self.scoreSession.friendly or 0)
@@ -1006,8 +1013,15 @@ function Sensors:TrackScore(context, score)
             score.observedAt = self.scoreSession.observedAt
             score.changedAt = self.scoreSession.changedAt
             score.lastCapture = self.scoreSession.lastCapture
+            score.rateEvidence = KWR.Util:Copy(self.scoreSession.rateEvidence)
             return
         end
+        local previousFriendly = self.scoreSession.friendly or 0
+        local previousEnemy = self.scoreSession.enemy or 0
+        local previousTransitionAt = KWR.Util:Number(
+            self.scoreSession.lastTransitionAt,
+            KWR.Util:Number(self.scoreSession.observedAt,
+                self.scoreSession.changedAt or now))
         if score.friendly > (self.scoreSession.friendly or 0) then
             self.scoreSession.lastCapture = "FRIENDLY"
         elseif score.enemy > (self.scoreSession.enemy or 0) then
@@ -1016,13 +1030,53 @@ function Sensors:TrackScore(context, score)
         if score.friendly ~= self.scoreSession.friendly
             or score.enemy ~= self.scoreSession.enemy then
             self.scoreSession.changedAt = now
+            local transitionAt = KWR.Util:Number(score.observedAt, now)
+            local elapsed = math.max(0,
+                transitionAt - previousTransitionAt)
+            if elapsed >= 0.25 and elapsed <= 30 then
+                self.scoreSession.transitions[#self.scoreSession.transitions + 1] = {
+                    at = transitionAt,
+                    elapsed = elapsed,
+                    friendlyDelta = math.max(0, score.friendly - previousFriendly),
+                    enemyDelta = math.max(0, score.enemy - previousEnemy),
+                }
+                while #self.scoreSession.transitions > 8 do
+                    table.remove(self.scoreSession.transitions, 1)
+                end
+            end
+            -- Unchanged polls refresh observedAt for freshness, but rate
+            -- intervals must remain anchored to the last accepted score
+            -- transition rather than the most recent capture pulse.
+            self.scoreSession.lastTransitionAt = transitionAt
         end
         self.scoreSession.friendly = score.friendly
         self.scoreSession.enemy = score.enemy
         self.scoreSession.observedAt = score.observedAt
     end
+    local friendlyPoints, enemyPoints, elapsed, samples = 0, 0, 0, 0
+    for _, transition in ipairs(self.scoreSession.transitions or {}) do
+        friendlyPoints = friendlyPoints + (transition.friendlyDelta or 0)
+        enemyPoints = enemyPoints + (transition.enemyDelta or 0)
+        elapsed = elapsed + (transition.elapsed or 0)
+        samples = samples + 1
+    end
+    if samples >= 2 and elapsed > 0 then
+        self.scoreSession.rateEvidence = {
+            source = "verified_widget_transition",
+            observedAt = KWR.Util:Number(score.observedAt, now),
+            expiresAt = KWR.Util:Number(score.observedAt, now) + 8,
+            friendlyPerSecond = friendlyPoints / elapsed,
+            enemyPerSecond = enemyPoints / elapsed,
+            samples = samples,
+            windowSeconds = elapsed,
+            confidence = samples >= 4 and "MEDIUM" or "LOW",
+        }
+    else
+        self.scoreSession.rateEvidence = nil
+    end
     score.lastCapture = self.scoreSession.lastCapture
     score.changedAt = self.scoreSession.changedAt
+    score.rateEvidence = KWR.Util:Copy(self.scoreSession.rateEvidence)
 end
 
 function Sensors:Capture(lastMessage)

@@ -530,6 +530,13 @@ function ObjectiveIntel:Apply(snapshot)
                 row.state = "CARRIED"
                 row.carrier = carrier.player
                 row.owner = carrier.owner
+                -- Preserve native widget/map semantics as raw provenance, but
+                -- identify the newer accepted carrier observation as the
+                -- source of the overlaid live state.
+                row.source = KWR.Util:Text(carrier.source, "BG_SYSTEM", 32):lower()
+                row.selectedSource = row.source
+                row.liveStateSource = row.source
+                row.liveObservedAt = carrier.observedAt
                 if carrier.x and carrier.y then
                     row.x, row.y = carrier.x, carrier.y
                     row.mapSource = "carrier"

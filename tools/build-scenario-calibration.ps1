@@ -28,6 +28,7 @@ function Get-DisciplineRule {
 function To-LuaLiteral {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowNull()]
         $Value,
         [int]$Indent = 0
     )
@@ -91,6 +92,78 @@ function To-LuaLiteral {
     }
     $lines += "$pad}"
     return ($lines -join "`n")
+}
+
+function ConvertTo-PlainData {
+    param([Parameter(Mandatory = $true)]$Value)
+
+    if ($null -eq $Value -or $Value -is [string] -or $Value -is [bool] -or
+        $Value -is [int] -or $Value -is [long] -or $Value -is [double] -or
+        $Value -is [decimal]) {
+        return $Value
+    }
+    if ($Value -is [System.Collections.IDictionary]) {
+        $copy = [ordered]@{}
+        foreach ($key in $Value.Keys) {
+            $copy[[string]$key] = ConvertTo-PlainData -Value $Value[$key]
+        }
+        return $copy
+    }
+    if ($Value -is [System.Collections.IEnumerable] -and -not ($Value -is [string])) {
+        $items = @()
+        foreach ($item in $Value) {
+            $items += ,(ConvertTo-PlainData -Value $item)
+        }
+        return $items
+    }
+    $copy = [ordered]@{}
+    foreach ($property in $Value.PSObject.Properties) {
+        $copy[[string]$property.Name] = ConvertTo-PlainData -Value $property.Value
+    }
+    return $copy
+}
+
+function Get-RuntimeCalibrationRow {
+    param([Parameter(Mandatory = $true)]$Row)
+    return [ordered]@{
+        scenarioId = [string]$Row.scenarioId
+        mapKey = [string]$Row.mapKey
+        phase = [string]$Row.phase
+        reviewedCases = [int]$Row.reviewedCases
+        wins = [int]$Row.wins
+        losses = [int]$Row.losses
+        winRate = [int]$Row.winRate
+        reviewConfidence = [string]$Row.reviewConfidence
+        topFailure = [string]$Row.topFailure
+        topOutcomeDriver = [string]$Row.topOutcomeDriver
+        disciplineRule = [string]$Row.disciplineRule
+    }
+}
+
+function Get-RuntimeCalibrationSummary {
+    param([Parameter(Mandatory = $true)]$Row)
+    $phases = [ordered]@{}
+    foreach ($phaseName in $Row.phaseSummaries.Keys) {
+        $phase = $Row.phaseSummaries[$phaseName]
+        $phases[[string]$phaseName] = [ordered]@{
+            phase = [string]$phase.phase
+            scenarios = [int]$phase.scenarios
+            reviewedCases = [int]$phase.reviewedCases
+            wins = [int]$phase.wins
+            losses = [int]$phase.losses
+        }
+    }
+    return [ordered]@{
+        mapKey = [string]$Row.mapKey
+        mapProfile = [string]$Row.mapProfile
+        scenarios = [int]$Row.scenarios
+        reviewedCases = [int]$Row.reviewedCases
+        wins = [int]$Row.wins
+        losses = [int]$Row.losses
+        doctrineComparisons = $Row.doctrineComparisons
+        doctrineResponses = $Row.doctrineResponses
+        phaseSummaries = $phases
+    }
 }
 
 function Add-CountValue {
@@ -158,6 +231,9 @@ $guidance = [ordered]@{
 $scenarios = New-Object System.Collections.Generic.List[object]
 foreach ($map in @($matrix.maps)) {
     foreach ($scenario in @($map.scenarios)) {
+        if ([string]$scenario.seasonStatus -eq "PENDING_SEASON_REVIEW") {
+            continue
+        }
         $files = @(Get-ChildItem -LiteralPath $outcomesPath -Filter "$($scenario.scenarioId)*.outcome.json" | Sort-Object Name)
         $labelFiles = @(Get-ChildItem -LiteralPath $labelsPath -Filter "$($scenario.scenarioId)*.label.json" | Sort-Object Name)
         $wins = 0
@@ -544,11 +620,21 @@ $scenarioMap = [ordered]@{}
 foreach ($scenario in $scenarios) {
     $scenarioMap[[string]$scenario.scenarioId] = $scenario
 }
-$luaData = [ordered]@{
-    shared = $artifact.shared
-    maps = $mapSummaries
-    scenarios = $scenarioMap
+$runtimeScenarioMap = [ordered]@{}
+foreach ($scenario in $scenarios) {
+    $runtimeScenarioMap[[string]$scenario.scenarioId] =
+        Get-RuntimeCalibrationRow -Row $scenario
 }
+$runtimeMapSummaries = [ordered]@{}
+foreach ($mapKey in $mapSummaries.Keys) {
+    $runtimeMapSummaries[[string]$mapKey] =
+        Get-RuntimeCalibrationSummary -Row $mapSummaries[$mapKey]
+}
+$luaData = ConvertTo-PlainData -Value ([ordered]@{
+    shared = $artifact.shared
+    maps = $runtimeMapSummaries
+    scenarios = $runtimeScenarioMap
+})
 
 $lua = @(
 'local _, KWR = ...'

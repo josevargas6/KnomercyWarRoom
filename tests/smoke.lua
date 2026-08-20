@@ -2,6 +2,7 @@
 -- Run from the addon root with a Lua 5.1+ interpreter or fengari-node-cli.
 
 unpack = unpack or table.unpack
+_G.KWR_TEST_ENV = true
 SlashCmdList = {}
 CLASS_ICON_TCOORDS = {
     WARRIOR = { 0, 0.25, 0, 0.25 },
@@ -532,6 +533,7 @@ local files = {
     "Runtime/CommanderComm.lua",
     "Runtime/SentinelBridge.lua",
     "Runtime/CommandAudio.lua",
+    "Runtime/CommandEmphasis.lua",
     "Runtime/MatchRuntime.lua",
     "UI/Theme.lua",
     "UI/IconRegistry.lua",
@@ -577,6 +579,15 @@ function ResolveAddonPath(path)
         return normalizedRoot .. path
     end
     return normalizedRoot .. "/" .. path
+end
+
+function ResolveTestPath(path)
+    local driverRoot = rawget(_G, "KWR_TEST_DRIVER_ROOT")
+    if not driverRoot or driverRoot == "" then return path end
+    local normalizedRoot = tostring(driverRoot):gsub("\\", "/")
+    local relativePath = tostring(path):gsub("^tests/", "")
+    return normalizedRoot:sub(-1) == "/"
+        and normalizedRoot .. relativePath or normalizedRoot .. "/" .. relativePath
 end
 for _, path in ipairs(files) do
     local chunk, message = loadfile(ResolveAddonPath(path))
@@ -653,6 +664,9 @@ end
 if rawget(_G, "KWR_SMOKE_BOOTSTRAP_ONLY") == true then
     return smokeBootstrapExports()
 end
+
+KWR.__competitiveTruthFixtures = assert(loadfile(
+    ResolveTestPath("tests/fixtures/competitive_readiness.lua")))()
 
 local previewState
 do
@@ -889,8 +903,150 @@ assert(KWR.EndgameDoctrine:Select("ARATHI", {
 assert(KWR.db.profile.hud.point == "CENTER" and KWR.db.profile.hud.x == -440,
     "Legacy HUD placement did not migrate.")
 assert(KWR.Store:Get().command, "Command state was not published.")
-assert(KWR.Store:Get().snapshot.formation.openSlots == 9, "Formation advisor did not count open slots.")
+assert(KWR.Store:Get().snapshot.formation.openSlots == 9,
+    "Formation advisor did not count open slots: "
+        .. tostring(KWR.MatchRuntime and KWR.MatchRuntime.diagnostics
+            and KWR.MatchRuntime.diagnostics.lastError))
 assert(KWR.Store:Get().command.status == "FORMING", "World mode did not publish formation guidance.")
+function KWR.__RunCompetitiveReadinessFixtures()
+    local competitiveTruthFixtures = KWR.__competitiveTruthFixtures
+    assert(#competitiveTruthFixtures == 20,
+        "Competitive truth fixture matrix must cover ten maps in standard and Blitz variants.")
+    for _, fixtureRow in ipairs(competitiveTruthFixtures) do
+        local definition = assert(KWR.Maps:Get(fixtureRow.mapKey))
+        local now = KWR.Util:Now()
+        local snapshot = {
+            context = {
+                inPvP = true,
+                mapKey = fixtureRow.mapKey,
+                mapName = definition.title,
+                kind = fixtureRow.kind,
+                isBlitz = fixtureRow.variant == "BLITZ",
+            },
+            score = {
+                friendly = fixtureRow.score[1], enemy = fixtureRow.score[2],
+                max = fixtureRow.score[3], source = "ui_widget", observedAt = now,
+                friendlyNeeded = fixtureRow.score[3] - fixtureRow.score[1],
+                enemyNeeded = fixtureRow.score[3] - fixtureRow.score[2],
+            },
+            objectives = {
+                friendly = fixtureRow.objectives[1], enemy = fixtureRow.objectives[2],
+                friendlyActive = fixtureRow.objectives[1],
+                enemyActive = fixtureRow.objectives[2],
+                source = "ui_widget", observedAt = now, rows = {},
+            },
+            truth = { aggressiveCommitAllowed = true },
+            roster = {}, enemies = {},
+        }
+        local prediction = KWR.Predictor:Evaluate(snapshot)
+        assert(prediction.status ~= "WAITING" and prediction.kind == fixtureRow.kind,
+            "Competitive truth fixture failed: " .. fixtureRow.id)
+    end
+    local timeless = {
+        context = { inPvP = true, mapKey = "ARATHI", kind = "NODE" },
+        score = { friendly = 900, enemy = 700, source = "ui_widget" },
+        objectives = { friendly = 3, enemy = 2, source = "ui_widget" },
+    }
+    assert(KWR.Predictor:Evaluate(timeless).status == "WAITING",
+        "Timestamp-free score/objective evidence must fail closed.")
+
+    local savedSession, savedTime = KWR.Sensors.scoreSession, currentTime
+    KWR.Sensors.scoreSession = nil
+    local context = { inPvP = true, sessionKey = "competitive-rate" }
+    local rateScore
+    for index = 0, 10 do
+        currentTime = savedTime + (index * 2)
+        rateScore = {
+            source = "ui_widget", friendly = 500 + (index * 10),
+            enemy = 400 + (index * 6), observedAt = currentTime,
+            max = 1500,
+            friendlyNeeded = 1500 - (500 + (index * 10)),
+            enemyNeeded = 1500 - (400 + (index * 6)),
+        }
+        KWR.Sensors:TrackScore(context, rateScore)
+    end
+    assert(rateScore.rateEvidence
+        and rateScore.rateEvidence.source == "verified_widget_transition"
+        and rateScore.rateEvidence.samples == 8,
+        "Verified score transition evidence must be bounded and rate-bearing.")
+    local ratePrediction = KWR.Predictor:Evaluate({
+        context = { inPvP = true, mapKey = "ARATHI", kind = "NODE" },
+        score = rateScore,
+        objectives = {
+            source = "ui_widget", observedAt = currentTime,
+            friendly = 3, enemy = 2,
+        },
+        truth = { aggressiveCommitAllowed = true },
+    })
+    assert(ratePrediction.timeModel
+        and ratePrediction.timeModel.friendly.source == "verified_widget_transition",
+        "Time-to-win did not consume verified observed score-rate evidence.")
+
+    KWR.Sensors.scoreSession = nil
+    local pulsedScore
+    for second = 0, 15 do
+        currentTime = savedTime + second
+        local transitions = math.floor(second / 5)
+        pulsedScore = {
+            source = "ui_widget", friendly = 100 + (transitions * 10),
+            enemy = 80, observedAt = currentTime, max = 1500,
+        }
+        KWR.Sensors:TrackScore(context, pulsedScore)
+    end
+    assert(pulsedScore.rateEvidence
+        and pulsedScore.rateEvidence.samples == 3
+        and math.abs((pulsedScore.rateEvidence.friendlyPerSecond or 0) - 2) < 0.001
+        and math.abs((pulsedScore.rateEvidence.windowSeconds or 0) - 15) < 0.001,
+        "Score-rate evidence measured refresh pulses instead of score-transition intervals.")
+    KWR.Sensors.scoreSession, currentTime = savedSession, savedTime
+
+    local savedTracks = KWR.Reporter.tracks
+    KWR.Reporter.tracks = {
+        friendly = { f = { x = 0.5, y = 0.5, age = 1, dead = false,
+            positionSource = "ESTIMATED" } },
+        enemy = { e = { x = 0.5, y = 0.5, age = 1, dead = false,
+            positionSource = "ESTIMATED" } },
+    }
+    local pressureSnapshot = {
+        objectives = { rows = { { label = "Blacksmith", owner = "FRIENDLY",
+            x = 0.5, y = 0.5 } } },
+    }
+    local estimatedPressure = KWR.Reporter:ObjectivePressure(pressureSnapshot)[1]
+    assert(estimatedPressure.total == 0
+        and estimatedPressure.friendlyEstimated == 1
+        and estimatedPressure.enemyEstimated == 1,
+        "Estimated map anchors must not become observed objective pressure.")
+    KWR.Reporter.tracks = savedTracks
+
+    local emphasis = KWR.CommandEmphasis:Build({
+        context = { mapKey = "ARATHI" },
+        roster = { { currentTargetGUID = "Enemy-1" } },
+        enemies = { { guid = "Enemy-1", name = "Target-Realm" } },
+        executionCommand = {
+            commandAction = "Hold Blacksmith",
+            canonicalCommandSignature = "canonical",
+            signature = "local",
+        },
+    }, {}, {}, { action = "Hold Blacksmith", signature = "canonical", confidence = "HIGH" })
+    assert(emphasis.action == "Hold Blacksmith"
+        and emphasis.canonicalSignature == "canonical"
+        and emphasis.consistency.ok == true
+        and emphasis.attention.target == "Target"
+        and emphasis.attention.selectionAuthority == false,
+        "Command emphasis or secondary attention authority violated the canonical call contract.")
+    local spoke, reason = KWR.CommandAudio:Observe({
+        command = { action = "Hold Blacksmith", signature = "canonical" },
+        snapshot = { executionCommand = {
+            commandAction = "Rotate Farm",
+            canonicalCommandSignature = "other",
+        } },
+    })
+    assert(spoke == false and reason == "command_conflict",
+        "Audio must suppress an execution packet that conflicts with the canonical command.")
+    KWR.__competitiveTruthFixtures = nil
+end
+KWR.__RunCompetitiveReadinessFixtures()
+KWR.__RunCompetitiveReadinessFixtures = nil
 do
     local calls = 0
     local owner = {}
@@ -1843,13 +1999,6 @@ local tpCalibration = KWR.ScenarioCalibration:Get("tp-recovery-route-rebuild")
 assert(tpCalibration
     and tpCalibration.reviewedCases >= 5
     and tpCalibration.topFailure == "EXECUTION_ERROR"
-    and type(tpCalibration.doctrineComparisons) == "table"
-    and tpCalibration.doctrineComparisons["TWINPEAKS_RECOVER_VS_TRICKLE"] ~= nil
-    and type(tpCalibration.doctrineResponses) == "table"
-    and tpCalibration.doctrineResponses["TWINPEAKS_RESP_RECOVER_REBAIT"] ~= nil
-    and type(tpCalibration.outcomeDrivers) == "table"
-    and tpCalibration.outcomeDrivers["EXECUTION_BREAK"] ~= nil
-    and type(tpCalibration.lessonPatterns) == "table"
     and type(tpCalibration.disciplineRule) == "string",
     "Scenario calibration did not expose reviewed discipline data for Twin Peaks recovery.")
 local tpMapCalibration = KWR.ScenarioCalibration:GetMapSummary("TWINPEAKS")
@@ -1869,11 +2018,6 @@ local tpAdversarialCalibration = KWR.ScenarioAdversarialCalibration:Get("tp-reco
 assert(tpAdversarialCalibration
     and tpAdversarialCalibration.adversarialCases >= 1
     and tpAdversarialCalibration.forbiddenCommit == "CALL:FULL_COMMIT"
-    and type(tpAdversarialCalibration.doctrineComparisons) == "table"
-    and tpAdversarialCalibration.doctrineComparisons["TWINPEAKS_RECOVER_VS_TRICKLE"] ~= nil
-    and type(tpAdversarialCalibration.doctrineResponses) == "table"
-    and tpAdversarialCalibration.doctrineResponses["TWINPEAKS_RESP_RECOVER_REBAIT"] ~= nil
-    and tpAdversarialCalibration.truthDisciplinePatterns ~= nil
     and type(tpAdversarialCalibration.disciplineRule) == "string",
     "Scenario adversarial calibration did not expose fail-closed discipline data.")
 local tpMapAdversarial = KWR.ScenarioAdversarialCalibration:GetMapSummary("TWINPEAKS")
@@ -1906,7 +2050,8 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-08-11"
+        and watchlist.effectiveDate == "2026-07-28"
+        and string.find(watchlist.sourceURL or "", "2296045", 1, true)
         and #(watchlist.affected or {}) >= 5,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
     local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
@@ -2419,17 +2564,22 @@ assert(#KWR.Verification.ledger > 0, "Verification ledger did not record live tr
 do
     local savedLedger = KWR.Verification.ledger
     local savedLastSignature = KWR.Verification.lastSignature
-    local savedBuildEntry = KWR.Verification.BuildEntry
+    local savedBuildEntry = KWR.Verification.BuildLedgerEntry
     local buildCount = 0
     KWR.Verification.ledger = {}
     KWR.Verification.lastSignature = nil
-    KWR.Verification.BuildEntry = function(self, state)
+    KWR.Verification.BuildLedgerEntry = function(self, state)
         buildCount = buildCount + 1
         return savedBuildEntry(self, state)
     end
     KWR.Verification:Update(liveState)
     KWR.Verification:Update(liveState)
-    KWR.Verification.BuildEntry = savedBuildEntry
+    assert((KWR.Verification.ledger[1] or {}).mapKey ~= nil
+        and (KWR.Verification.ledger[1] or {}).objectiveSummary ~= nil
+        and (KWR.Verification.ledger[1] or {}).strategyTrust == nil
+        and (KWR.Verification.ledger[1] or {}).simulations == nil,
+        "Verification ledger retained the complete live strategy report.")
+    KWR.Verification.BuildLedgerEntry = savedBuildEntry
     KWR.Verification.ledger = savedLedger
     KWR.Verification.lastSignature = savedLastSignature
     assert(buildCount == 1,
@@ -2550,6 +2700,12 @@ do
         and KWR.MatchRuntime.pendingDueAt == nil
         and KWR.MatchRuntime.lastFriendlyHealthSyncAt == nil,
         "Ordinary friendly health churn still queued a full runtime refresh.")
+    KWR.MatchRuntime:HandleEvent("UNIT_AURA", "target")
+    assert((KWR.MatchRuntime.diagnostics.lightweightEvents or 0) == beforeLightweight + 2
+        and KWR.MatchRuntime.pending ~= true
+        and KWR.MatchRuntime.pendingReason == nil
+        and KWR.MatchRuntime.pendingDueAt == nil,
+        "Priority enemy aura churn still queued a full runtime refresh.")
     KWR.MatchRuntime.pending = savedPending
     KWR.MatchRuntime.pendingReason = savedPendingReason
     KWR.MatchRuntime.pendingDueAt = savedPendingDueAt
@@ -3364,6 +3520,15 @@ assert((postSuccessStability.successfulPlays or 0) >= 1
     and type(postSuccessStability.successRate) == "number"
     and type(postSuccessStability.averageSwitchAdvantage) == "number",
     "Commander stability metrics did not track play success and switch advantage.")
+KWR.Store.state.activePlay = KWR.Util:Copy(succeededNodeCommand.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(succeededNodeCommand)
+succeededNodeCommand = KWR.Commander:Compose(
+    nodeCaptureSuccessSnapshot, gilneasPrediction, liveState.assignments)
+assert(succeededNodeCommand.activePlayDecision
+    and succeededNodeCommand.activePlayDecision.invalidation == nil
+    and (KWR.Commander:GetStabilityMetrics().invalidations or 0)
+        == (postSuccessStability.invalidations or 0),
+    "A terminal ActivePlay transition was counted again on a later refresh.")
 local flagPreviousState = {
     activePlay = {
         id = "ACTIVE_ESCORT_OFC",
@@ -3844,6 +4009,54 @@ assert(invalidatedOrbPickupCommand.activePlayDecision
     and invalidatedOrbPickupCommand.activePlayDecision.invalidation == "FRIENDLY_ORB_STATE_CHANGED"
     and invalidatedOrbPickupCommand.activePlayDecision.replacementAllowed == true,
     "Orb pickup play did not invalidate when the targeted orb was no longer free.")
+do
+local savedObjectiveIntel = {
+    sessionKey = KWR.ObjectiveIntel.sessionKey,
+    events = KWR.ObjectiveIntel.events,
+    carriers = KWR.ObjectiveIntel.carriers,
+    timers = KWR.ObjectiveIntel.timers,
+    auraCache = KWR.ObjectiveIntel.auraCache,
+}
+local overlaidOrbSnapshot = KWR.Util:Copy(orbPickupSnapshot)
+overlaidOrbSnapshot.objectives.rows = {
+    { label = "Purple Orb", owner = "UNKNOWN", state = "AVAILABLE",
+        kind = "OBJECTIVE", source = "ui_widget",
+        native = { semantic = "UNOBSERVED" } },
+}
+overlaidOrbSnapshot.roster = {}
+overlaidOrbSnapshot.enemies = {
+    { name = "EnemyCarrier", visible = true, healthPercent = 62 },
+}
+local overlaySession = KWR.Util:BattlefieldSessionKey(overlaidOrbSnapshot.context)
+KWR.ObjectiveIntel.sessionKey = overlaySession
+KWR.ObjectiveIntel.events = {}
+KWR.ObjectiveIntel.timers = {}
+KWR.ObjectiveIntel.auraCache = {}
+KWR.ObjectiveIntel.carriers = {
+    ["Purple Orb"] = {
+        objective = "Purple Orb", owner = "ENEMY", player = "EnemyCarrier",
+        playerKey = "enemycarrier", kind = "ORB", source = "BG_SYSTEM",
+        observedAt = KWR.Util:Now(),
+    },
+}
+KWR.ObjectiveIntel:Apply(overlaidOrbSnapshot)
+KWR.Store.state.activePlay = KWR.Util:Copy(orbPickupState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(orbPickupState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(orbPickupState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(orbPickupState.command)
+local overlaidOrbPickupCommand = KWR.Commander:Compose(
+    overlaidOrbSnapshot, orbPrediction, liveState.assignments)
+assert(overlaidOrbSnapshot.objectives.rows[1].state == "CARRIED"
+    and overlaidOrbSnapshot.objectives.rows[1].source == "bg_system"
+    and overlaidOrbPickupCommand.activePlayDecision
+    and overlaidOrbPickupCommand.activePlayDecision.invalidation == "FRIENDLY_ORB_STATE_CHANGED",
+    "Live carrier overlay retained fallback provenance and failed to invalidate orb pickup.")
+KWR.ObjectiveIntel.sessionKey = savedObjectiveIntel.sessionKey
+KWR.ObjectiveIntel.events = savedObjectiveIntel.events
+KWR.ObjectiveIntel.carriers = savedObjectiveIntel.carriers
+KWR.ObjectiveIntel.timers = savedObjectiveIntel.timers
+KWR.ObjectiveIntel.auraCache = savedObjectiveIntel.auraCache
+end
 local cartPreviousState = {
     activePlay = {
         id = "ACTIVE_ESCORT_LAVA",
@@ -4105,6 +4318,65 @@ assert(heldDeephaulCartCommand.activePlayDecision
     and deephaulCrystalOpportunityPenalty >= 6
     and (heldDeephaulCartScore.margin or 0) >= 24,
     "Deephaul cart play did not resist a non-decisive crystal pivot while cart progress was live.")
+local confirmedCartPlay = KWR.Util:Copy(heldDeephaulCartCommand.activePlayCandidate)
+KWR.Store.state.activePlay = KWR.Util:Copy(confirmedCartPlay)
+KWR.Store.state.command = {
+    action = confirmedCartPlay.action,
+    who = "Verite, Holic, Lymrith",
+    when = "NOW",
+    reason = "Keep the confirmed cart order active.",
+    signature = confirmedCartPlay.id,
+    decisionAt = KWR.Util:Now() - 2,
+}
+KWR.Commander.lastActivePlay = KWR.Util:Copy(confirmedCartPlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(KWR.Store.state.command)
+local confirmedCartCommand = KWR.Commander:Compose(
+    deephaulSnapshot, deephaulPrediction, liveState.assignments)
+assert(confirmedCartCommand.activePlayDecision
+    and confirmedCartCommand.activePlayDecision.retained == true
+    and confirmedCartCommand.activePlayDecision.replacementAllowed == false
+    and confirmedCartCommand.activePlayDecision.replacementReason == "SAME_PLAY",
+    "An identical cart command was incorrectly recorded as a replacement.")
+do
+local mapReferenceCartSnapshot = KWR.Util:Copy(deephaulSnapshot)
+mapReferenceCartSnapshot.objectives.vehicles = {}
+mapReferenceCartSnapshot.objectives.rows = {
+    { label = "Our Cart", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+    { label = "Enemy Cart", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+    { label = "Crystal", owner = "UNKNOWN", state = "MAP", kind = "OBJECTIVE",
+        source = "map_definition", native = { semantic = "MAP_REFERENCE" } },
+}
+KWR.Store.state.activePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(deephaulCartState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(deephaulCartState.command)
+local heldMapReferenceCartCommand = KWR.Commander:Compose(
+    mapReferenceCartSnapshot, deephaulPrediction, liveState.assignments)
+assert(heldMapReferenceCartCommand.activePlayDecision
+    and heldMapReferenceCartCommand.activePlayDecision.invalidation == nil,
+    "Static map-reference rows incorrectly invalidated an active Deephaul cart escort.")
+local unobservedCartSnapshot = KWR.Util:Copy(deephaulSnapshot)
+unobservedCartSnapshot.objectives.vehicles = {}
+unobservedCartSnapshot.objectives.rows = {
+    { label = "Our Cart", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+    { label = "Enemy Cart", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+    { label = "Crystal", owner = "UNKNOWN", state = "AVAILABLE", kind = "OBJECTIVE",
+        source = "ui_widget", native = { semantic = "UNOBSERVED" } },
+}
+KWR.Store.state.activePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(deephaulCartState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(deephaulCartState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(deephaulCartState.command)
+local heldUnobservedCartCommand = KWR.Commander:Compose(
+    unobservedCartSnapshot, deephaulPrediction, liveState.assignments)
+assert(heldUnobservedCartCommand.activePlayDecision
+    and heldUnobservedCartCommand.activePlayDecision.invalidation == nil,
+    "Unobserved cart-widget rows incorrectly invalidated an active Deephaul cart escort.")
+end
 local deephaulCrystalState = KWR.Util:Copy(deephaulCartState)
 deephaulCrystalState.activePlay.id = "ACTIVE_TAKE_CRYSTAL"
 deephaulCrystalState.activePlay.action = "TAKE CRYSTAL"
@@ -4563,6 +4835,25 @@ do
         and protectedHydration.scoreboardHadDuplicates == true,
         "Stale duplicate scoreboard identities displaced authoritative group members.")
 
+    do
+    local ambiguousGroup = KWR.Util:Copy(authoritativeRoster)
+    ambiguousGroup[7] = {
+        unit = "raid7", unitStable = true, guid = "Verite-Old",
+        name = "Verite", classFile = "DEATHKNIGHT", role = "DAMAGER",
+    }
+    ambiguousGroup[8] = {
+        unit = "raid8", unitStable = true, guid = "Verite-Stale",
+        name = "Verite-StaleRealm", classFile = "DEATHKNIGHT", role = "DAMAGER",
+    }
+    local repairedCollision, collisionHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
+        ambiguousGroup, { scoreFaction = 0 }, friendlyRows, 8)
+    assert(#repairedCollision == 8
+        and repairedCollision[7].name == "Friendly7-TestRealm"
+        and collisionHydration.source == "scoreboard_complete"
+        and collisionHydration.groupIdentityConflict == true,
+        "Complete scoreboard truth did not repair an ambiguous group roster collision.")
+    end
+
     local partialRows = {}
     for index = 1, 5 do partialRows[index] = KWR.Util:Copy(friendlyRows[index]) end
     local degraded, degradedHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
@@ -4807,6 +5098,8 @@ if not releaseOnly then
     local _, perfText = KWR.MainWindowReports:BuildPerformancePayload(KWR.Store:Get())
     assert(type(perfText) == "string"
         and perfText:find("COMMAND STABILITY:", 1, true)
+        and perfText:find("Duration samples:", 1, true)
+        and perfText:find("P95:", 1, true)
         and perfText:find("Budget ", 1, true)
         and perfText:find("Field certification ", 1, true)
         and perfText:find("ACTIVE PLAY:", 1, true)
@@ -5673,6 +5966,8 @@ if not releaseOnly then
         "Tactical map did not reserve the premium header/footer rails.")
     local tacticalLiveFallbackState = KWR.Util:Copy(tacticalPreviewState)
     tacticalLiveFallbackState.snapshot.context.preview = false
+    tacticalLiveFallbackState.snapshot.context.inPvP = true
+    KWR.MainWindow.pages.TACTICAL.battlefieldCard.map.compact = false
     tacticalLiveFallbackState.snapshot.reporter = tacticalLiveFallbackState.snapshot.reporter or {}
     tacticalLiveFallbackState.snapshot.reporter.friendly = {}
     tacticalLiveFallbackState.snapshot.reporter.enemy = {}
@@ -5705,12 +6000,18 @@ if not releaseOnly then
         if marker and marker:IsShown() then
             if marker.tooltipTitle == "Fallbackfriendly-TestRealm" then
                 fallbackFriendlySeen = true
-                assert(marker.icon.texture ~= nil,
-                    "Fallback friendly tactical marker did not render an icon-first marker.")
+                assert(marker.width == 8 and not marker.ring:IsShown()
+                    and not marker.icon:IsShown(),
+                    "Live friendly tactical marker did not collapse to a compact color dot: "
+                        .. tostring(marker.width) .. "/" .. tostring(marker.ring:IsShown())
+                        .. "/" .. tostring(marker.icon:IsShown()))
             elseif marker.tooltipTitle == "Fallbackenemy-TestRealm" then
                 fallbackEnemySeen = true
-                assert(marker.icon.texture ~= nil,
-                    "Fallback enemy tactical marker did not render an icon-first marker.")
+                assert(marker.width == 8 and not marker.ring:IsShown()
+                    and not marker.icon:IsShown(),
+                    "Live enemy tactical marker did not collapse to a compact color dot: "
+                        .. tostring(marker.width) .. "/" .. tostring(marker.ring:IsShown())
+                        .. "/" .. tostring(marker.icon:IsShown()))
             end
         end
     end
@@ -7058,9 +7359,14 @@ do
     assert(byActor.Knomercy.targetStatus == "MATCHED"
         and byActor.Stan.targetStatus == "NOT_TARGETED",
         "Target-assist state did not distinguish matched and unmatched targets.")
-    assert(KWR.TeamfightCommandCard:Build(plan).lines[2]
+    KWR.__teamfightCard = KWR.TeamfightCommandCard:Build(plan)
+    assert(KWR.__teamfightCard.lines[2]
         == "Knomercy -> Subdue Priest-V",
         "Teamfight command card did not expose the commander job intent.")
+    assert(KWR.__teamfightCard.scope == "LOCAL_TEAMFIGHT"
+        and KWR.__teamfightCard.activeCallAuthority == false,
+        "Teamfight command card did not remain subordinate to the canonical active call.")
+    KWR.__teamfightCard = nil
     assert(KWR.PersonalAssignmentCard:Build(byActor.Knomercy).targetStatus == "MATCHED",
         "Personal assignment card did not preserve target-match state.")
     assert(#KWR.CrosshairPresenter:Markers(plan) == 3,

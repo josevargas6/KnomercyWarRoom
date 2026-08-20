@@ -1069,15 +1069,18 @@ function Strategist:Evaluate(snapshot, prediction)
             result.action = scenario.action
         end
     end
+    -- The live strategy only consumes decision fields, not the complete
+    -- reviewed corpus row.  Keep the corpus immutable and avoid cloning its
+    -- evidence graph on every battlefield refresh.
     local scenarioCalibration = KWR.ScenarioCalibration
-        and KWR.ScenarioCalibration:Get(result.scenarioID) or nil
+        and KWR.ScenarioCalibration:GetSummary(result.scenarioID) or nil
     if not scenarioCalibration and KWR.ScenarioCalibration then
-        scenarioCalibration = KWR.ScenarioCalibration:GetByMapAndPhase(
+        scenarioCalibration = KWR.ScenarioCalibration:GetSummaryByMapAndPhase(
             snapshot.context and snapshot.context.mapKey,
             result.phase)
     end
     if scenarioCalibration then
-        result.scenarioCalibration = KWR.Util:Copy(scenarioCalibration)
+        result.scenarioCalibration = scenarioCalibration
         result.reviewedCases = scenarioCalibration.reviewedCases
         result.reviewedWinRate = scenarioCalibration.winRate
         result.reviewConfidence = scenarioCalibration.reviewConfidence
@@ -1107,14 +1110,14 @@ function Strategist:Evaluate(snapshot, prediction)
             scenarioCalibration.topFailure or "NONE")
     end
     local adversarialCalibration = KWR.ScenarioAdversarialCalibration
-        and KWR.ScenarioAdversarialCalibration:Get(result.scenarioID) or nil
+        and KWR.ScenarioAdversarialCalibration:GetSummary(result.scenarioID) or nil
     if not adversarialCalibration and KWR.ScenarioAdversarialCalibration then
-        adversarialCalibration = KWR.ScenarioAdversarialCalibration:GetByMapAndPhase(
+        adversarialCalibration = KWR.ScenarioAdversarialCalibration:GetSummaryByMapAndPhase(
             snapshot.context and snapshot.context.mapKey,
             result.phase)
     end
     if adversarialCalibration then
-        result.scenarioAdversarialCalibration = KWR.Util:Copy(adversarialCalibration)
+        result.scenarioAdversarialCalibration = adversarialCalibration
         result.adversarialCases = adversarialCalibration.adversarialCases
         result.adversarialDisciplineRule = adversarialCalibration.disciplineRule
         if result.responseContract then
@@ -1129,14 +1132,14 @@ function Strategist:Evaluate(snapshot, prediction)
         end
     end
     local scenarioExpertReview = KWR.ScenarioExpertCorpus
-        and KWR.ScenarioExpertCorpus:Get(result.scenarioID) or nil
+        and KWR.ScenarioExpertCorpus:GetSummary(result.scenarioID) or nil
     if not scenarioExpertReview and KWR.ScenarioExpertCorpus then
-        scenarioExpertReview = KWR.ScenarioExpertCorpus:GetByMapAndPhase(
+        scenarioExpertReview = KWR.ScenarioExpertCorpus:GetSummaryByMapAndPhase(
             snapshot.context and snapshot.context.mapKey,
             result.phase)
     end
     if scenarioExpertReview then
-        result.scenarioExpertReview = KWR.Util:Copy(scenarioExpertReview)
+        result.scenarioExpertReview = scenarioExpertReview
         result.expertReviewedLabels = scenarioExpertReview.reviewedLabels
         result.expertReviewConfidence = scenarioExpertReview.reviewConfidence
         result.expertAgreementRate = scenarioExpertReview.agreementRate
@@ -1471,7 +1474,11 @@ function Strategist:AssessExecution(snapshot, prediction, assignments)
         target = forecastTarget,
         friendlyETA = eta and eta.friendlyETA or nil,
         enemyETA = eta and eta.enemyETA or nil,
-        advantage = eta and eta.advantage or nil,
+        advantage = eta and eta.advantageQualified == true and eta.advantage or nil,
+        estimatedAdvantage = eta and eta.estimatedAdvantage or nil,
+        advantageQualified = eta and eta.advantageQualified == true or false,
+        friendlySource = eta and eta.friendlySource or nil,
+        enemySource = eta and eta.enemySource or nil,
         confidence = eta and eta.confidence or "NONE",
         side = "UNKNOWN",
     }

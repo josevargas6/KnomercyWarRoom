@@ -509,6 +509,7 @@ function Verification:BuildEntry(state)
         refreshReason = diagnostics.lastReason,
         refreshMs = diagnostics.lastDurationMs or 0,
         p95Ms = diagnostics.p95DurationMs or 0,
+        durationSampleCount = diagnostics.durationSampleCount or 0,
         memoryKB = diagnostics.memoryKB or 0,
         transitionMs = diagnostics.lastTransitionDurationMs or 0,
         queueCoalesced = diagnostics.coalesced or 0,
@@ -522,6 +523,28 @@ function Verification:BuildEntry(state)
     }
 end
 
+function Verification:BuildLedgerEntry(state)
+    state = state or KWR.Store:Get()
+    local snapshot = state.snapshot or {}
+    local context = snapshot.context or {}
+    local score = snapshot.score or {}
+    local objectives = snapshot.objectives or {}
+    local prediction = state.prediction or {}
+    local strategy = snapshot.strategy or {}
+    local diagnostics = state.diagnostics or {}
+    return {
+        capturedAt = state.capturedAt or KWR.Util:Now(),
+        mapKey = context.mapKey,
+        team = context.team and context.team.faction or "Unknown",
+        friendlyScore = score.friendly or 0,
+        enemyScore = score.enemy or 0,
+        objectiveSummary = objectiveSummary(objectives),
+        prediction = prediction.status,
+        planID = strategy.planID,
+        refreshMs = diagnostics.lastDurationMs or 0,
+    }
+end
+
 function Verification:Update(state)
     local snapshot = state and state.snapshot
     if not snapshot or not snapshot.context or not snapshot.context.inPvP
@@ -529,8 +552,22 @@ function Verification:Update(state)
     local signature = lightweightSignature(state)
     if signature == self.lastSignature then return end
     self.lastSignature = signature
-    local entry = self:BuildEntry(state)
-    self.ledger[#self.ledger + 1] = entry
+    local entry = self:BuildLedgerEntry(state)
+    -- The ledger is a compact transition timeline. Keeping the complete
+    -- verification report here duplicates strategy simulations and evidence
+    -- graphs up to 60 times during a match; CurrentReport builds that detail
+    -- on demand when the player explicitly asks for it.
+    self.ledger[#self.ledger + 1] = {
+        capturedAt = entry.capturedAt,
+        mapKey = entry.mapKey,
+        team = entry.team,
+        friendlyScore = entry.friendlyScore,
+        enemyScore = entry.enemyScore,
+        objectiveSummary = entry.objectiveSummary,
+        prediction = entry.prediction,
+        planID = entry.planID,
+        refreshMs = entry.refreshMs,
+    }
     while #self.ledger > self.maxEntries do table.remove(self.ledger, 1) end
 end
 
@@ -871,8 +908,12 @@ function Verification:Format(entry)
             value(entry.responsePackage and entry.responsePackage.confidence,
                 "NONE"),
             entry.responsePackage and entry.responsePackage.score or 0),
-        string.format("Performance: last %.3f ms / p95 %.3f ms / memory %.1f KB",
-            entry.refreshMs or 0, entry.p95Ms or 0, entry.memoryKB or 0),
+        string.format("Performance: last %.3f ms / p95 %s / memory %.1f KB",
+            entry.refreshMs or 0,
+            (entry.durationSampleCount or 0) >= 10
+                and string.format("%.3f ms", entry.p95Ms or 0)
+                or string.format("PENDING (%d/10 samples)", entry.durationSampleCount or 0),
+            entry.memoryKB or 0),
         string.format("Transitions: last %.3f ms / addon initialize %.3f ms",
             entry.transitionMs or 0, entry.bootMs or 0),
         string.format("Refresh queue: coalesced %d / followups %d / preemptions %d / settles %d",

@@ -18,6 +18,8 @@ function Card:Build(plan)
         confidence = plan and plan.confidence or "UNKNOWN",
         countdown = plan and plan.countdown,
         unknownSafe = true,
+        scope = "LOCAL_TEAMFIGHT",
+        activeCallAuthority = false,
     }
 end
 

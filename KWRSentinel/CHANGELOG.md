@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 6.1.1-alpha.5 - 2026-08-18
+
+- Synchronized the companion version with Commander 6.1.1-alpha.5.
+
 ## 6.1.1-alpha.4 - 2026-08-18
 
 - Synchronized the companion's version with Commander 6.1.1-alpha.4 so player

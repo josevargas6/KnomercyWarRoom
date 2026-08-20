@@ -61,6 +61,17 @@ local function confidenceValue(label)
     return 0
 end
 
+local function objectiveEvidenceFresh(snapshot)
+    local context = snapshot and snapshot.context or {}
+    if context.inPvP ~= true or context.preview == true then return true end
+    local objectives = snapshot and snapshot.objectives or {}
+    local source = KWR.Util:Text(objectives.source, "none", 32):lower()
+    local observedAt = KWR.Util:Number(objectives.observedAt, nil)
+    if source == "none" or source == "unknown" or not observedAt then return false end
+    local age = KWR.Util:Now() - observedAt
+    return age >= 0 and age <= 8
+end
+
 local function topCounts(values, limit)
     local rows = {}
     for key, count in pairs(values or {}) do
@@ -123,6 +134,8 @@ local function projectTrack(track, includePoints, pointLimit)
         location = track.location,
         locationSource = track.locationSource,
         mapSource = track.mapSource,
+        positionSource = track.positionSource,
+        positionObservedAt = track.positionObservedAt,
         locationState = track.locationState,
         located = track.located,
         dead = track.dead,
@@ -217,6 +230,9 @@ function Reporter:Track(team, entity, observedAt, now)
             end
         end
         track.x, track.y = x, y
+        track.positionSource = "OBSERVED"
+        track.positionObservedAt = at
+        track.mapSource = KWR.Util:Text(entity.mapSource, "unit_position", 32)
     end
     track.observedAt = at
     track.age = math.max(0, (now or KWR.Util:Now()) - at)
@@ -271,6 +287,8 @@ function Reporter:FallbackTrackPositions(snapshot)
                     track.x, track.y = px, py
                     track.located = true
                     track.mapSource = source or "location_fallback"
+                    track.positionSource = "ESTIMATED"
+                    track.positionObservedAt = nil
                 end
             end
         end
@@ -306,6 +324,7 @@ end
 
 function Reporter:ObjectiveETAs(snapshot)
     local result = {}
+    if not objectiveEvidenceFresh(snapshot) then return result end
     local mapKey = snapshot.context and snapshot.context.mapKey
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
@@ -318,15 +337,21 @@ function Reporter:ObjectiveETAs(snapshot)
                 friendlyCount = 0,
                 enemyCount = 0,
                 observedSpeeds = 0,
+                observedPositions = 0,
+                estimatedRoutes = 0,
             }
             for team, tracks in pairs(self.tracks) do
                 for _, track in pairs(tracks) do
                     local maxAge = team == "friendly" and 10 or 30
                     if not track.dead and (track.age or 999) <= maxAge then
+                        local positionObserved = track.positionSource == "OBSERVED"
+                            and (track.age or 999) <= 10
                         local range = track.x and track.y
                             and distance(track.x, track.y, x, y) or nil
                         local speed, source = travelSpeed(track)
                         local eta = range and math.ceil(range / math.max(speed, 0.001)) or nil
+                        local etaSource = positionObserved and source == "OBSERVED"
+                            and "OBSERVED_POSITION_SPEED" or "ESTIMATED_POSITION_OR_SPEED"
                         if not eta and track.location
                             and track.location ~= "Unknown" then
                             local capability = KWR.Capabilities:Resolve(
@@ -341,6 +366,7 @@ function Reporter:ObjectiveETAs(snapshot)
                             if route then
                                 eta = route.seconds
                                 source = route.source
+                                etaSource = "MAP_ROUTE_ESTIMATE"
                             end
                         end
                         if eta then
@@ -351,20 +377,30 @@ function Reporter:ObjectiveETAs(snapshot)
                             if source == "OBSERVED" then
                                 row.observedSpeeds = row.observedSpeeds + 1
                             end
-                            if source == "MAP_ROUTE_ESTIMATE" then
-                                row.routeEstimates =
-                                    (row.routeEstimates or 0) + 1
+                            if positionObserved then
+                                row.observedPositions = row.observedPositions + 1
+                            end
+                            if etaSource ~= "OBSERVED_POSITION_SPEED" then
+                                row.estimatedRoutes = row.estimatedRoutes + 1
+                            end
+                            local sourceField = team == "friendly"
+                                and "friendlySource" or "enemySource"
+                            if row[field] == eta then
+                                row[sourceField] = etaSource
                             end
                         end
                     end
                 end
             end
             if row.friendlyETA or row.enemyETA then
-                row.advantage = row.friendlyETA and row.enemyETA
+                row.estimatedAdvantage = row.friendlyETA and row.enemyETA
                     and (row.enemyETA - row.friendlyETA) or nil
+                row.advantageQualified = row.friendlySource == "OBSERVED_POSITION_SPEED"
+                    and row.enemySource == "OBSERVED_POSITION_SPEED"
+                row.advantage = row.advantageQualified and row.estimatedAdvantage or nil
                 local coverage = row.friendlyCount + row.enemyCount
-                row.confidence = row.observedSpeeds >= 2 and "HIGH"
-                    or (coverage >= 3 and "MEDIUM" or "LOW")
+                row.confidence = row.advantageQualified and row.observedSpeeds >= 2 and "HIGH"
+                    or (coverage >= 3 and "LOW" or "NONE")
                 row.observedAt = KWR.Util:Now()
                 row.expiresAt = row.observedAt + 8
                 result[#result + 1] = row
@@ -550,6 +586,7 @@ end
 
 function Reporter:ObjectivePressure(snapshot)
     local pressure = {}
+    if not objectiveEvidenceFresh(snapshot) then return pressure end
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
         if x and y then
@@ -563,19 +600,28 @@ function Reporter:ObjectivePressure(snapshot)
                 enemy = 0,
                 friendlyCombat = 0,
                 enemyCombat = 0,
+                friendlyEstimated = 0,
+                enemyEstimated = 0,
             }
             for _, track in pairs(self.tracks.friendly) do
                 local range = distance(track.x, track.y, x, y)
-                if range and range <= 0.12 and not track.dead then
+                if range and range <= 0.12 and not track.dead
+                    and track.positionSource == "OBSERVED"
+                    and (track.age or 999) <= 10 then
                     row.friendly = row.friendly + 1
                     if track.inCombat then row.friendlyCombat = row.friendlyCombat + 1 end
+                elseif range and range <= 0.12 and not track.dead then
+                    row.friendlyEstimated = row.friendlyEstimated + 1
                 end
             end
             for _, track in pairs(self.tracks.enemy) do
                 local range = distance(track.x, track.y, x, y)
-                if range and range <= 0.12 and (track.age or 999) <= 30 and not track.dead then
+                if range and range <= 0.12 and (track.age or 999) <= 10
+                    and not track.dead and track.positionSource == "OBSERVED" then
                     row.enemy = row.enemy + 1
                     if track.inCombat then row.enemyCombat = row.enemyCombat + 1 end
+                elseif range and range <= 0.12 and not track.dead then
+                    row.enemyEstimated = row.enemyEstimated + 1
                 end
             end
             row.delta = row.enemy - row.friendly
@@ -605,15 +651,25 @@ function Reporter:ObjectivePressure(snapshot)
 end
 
 function Reporter:TrustProfile(snapshot, pressure, etas, intent)
-    local coverage = { friendly = 0, enemy = 0, friendlyLocated = 0, enemyLocated = 0 }
+    local coverage = {
+        friendly = 0, enemy = 0,
+        friendlyLocated = 0, enemyLocated = 0,
+        friendlyEstimated = 0, enemyEstimated = 0,
+    }
     local staleEnemy = 0
     for _, track in pairs(self.tracks.friendly) do
         coverage.friendly = coverage.friendly + 1
         if track.located then coverage.friendlyLocated = coverage.friendlyLocated + 1 end
+        if track.located and track.positionSource == "ESTIMATED" then
+            coverage.friendlyEstimated = coverage.friendlyEstimated + 1
+        end
     end
     for _, track in pairs(self.tracks.enemy) do
         coverage.enemy = coverage.enemy + 1
         if track.located then coverage.enemyLocated = coverage.enemyLocated + 1 end
+        if track.located and track.positionSource == "ESTIMATED" then
+            coverage.enemyEstimated = coverage.enemyEstimated + 1
+        end
         if track.visible ~= true and (track.age or 999) > 10 then
             staleEnemy = staleEnemy + 1
         end
