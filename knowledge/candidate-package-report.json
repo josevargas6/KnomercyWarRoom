@@ -1,52 +1,52 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-19T01:13:13Z",
+    "generatedAt":  "2026-08-20T18:53:10Z",
     "candidateVersion":  "6.1.1-alpha.5",
-    "buildOutputDirectory":  "Builds",
+    "buildOutputDirectory":  "artifacts/alpha5-release-candidate-20260820",
     "distributionArtifact":  {
                                  "name":  "KnomercyWarRoom-6.1.1-alpha.5.zip",
-                                 "path":  "KnomercyWarRoom-6.1.1-alpha.5.zip",
-                                 "size":  820655,
-                                 "sha256":  "0A008CD6C1217F0CDDE775AEC965AB0F63D30F95056FE46422701CB2DC431EE5"
+                                 "path":  "artifacts/alpha5-release-candidate-20260820/KnomercyWarRoom-6.1.1-alpha.5.zip",
+                                 "size":  826695,
+                                 "sha256":  "4AD0F1902B1C57A4764DFCC516CD5DAAFF8D4D629D5A687AEEB03F7EB6119193"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_1_ALPHA_5_DEVELOPER.zip",
-                              "path":  "KWR_6_1_1_ALPHA_5_DEVELOPER.zip",
-                              "size":  15449315,
-                              "sha256":  "44371171DC01E4C690B454045A64204A506DDCB9506D4EA7959919349DE17473"
+                              "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_DEVELOPER.zip",
+                              "size":  15464533,
+                              "sha256":  "A6640379C95AAE56026ED1DD48F025DE59D73B884E40C4D75E7FA64860058CB7"
                           },
     "sentinelArtifact":  {
                              "name":  "KWR-Sentinel-6.1.1-alpha.5.zip",
-                             "path":  "KWR-Sentinel-6.1.1-alpha.5.zip",
+                             "path":  "artifacts/alpha5-release-candidate-20260820/KWR-Sentinel-6.1.1-alpha.5.zip",
                              "size":  29184,
                              "sha256":  "DF9033BF457A9B630C09A2DBD39B58D200B7B867BD8A5AA0441676C8D4C39D9E"
                          },
     "hashManifest":  {
-                         "path":  "KWR_6_1_1_ALPHA_5_SHA256.txt",
+                         "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_SHA256.txt",
                          "lines":  [
-                                       "0A008CD6C1217F0CDDE775AEC965AB0F63D30F95056FE46422701CB2DC431EE5  KnomercyWarRoom-6.1.1-alpha.5.zip",
+                                       "4AD0F1902B1C57A4764DFCC516CD5DAAFF8D4D629D5A687AEEB03F7EB6119193  KnomercyWarRoom-6.1.1-alpha.5.zip",
                                        "DF9033BF457A9B630C09A2DBD39B58D200B7B867BD8A5AA0441676C8D4C39D9E  KWR-Sentinel-6.1.1-alpha.5.zip"
                                    ]
                      },
     "developerHashManifest":  {
-                                  "path":  "KWR_6_1_1_ALPHA_5_DEVELOPER_CHECKSUM.txt",
+                                  "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_DEVELOPER_CHECKSUM.txt",
                                   "lines":  [
-                                                "44371171DC01E4C690B454045A64204A506DDCB9506D4EA7959919349DE17473  KWR_6_1_1_ALPHA_5_DEVELOPER.zip"
+                                                "A6640379C95AAE56026ED1DD48F025DE59D73B884E40C4D75E7FA64860058CB7  KWR_6_1_1_ALPHA_5_DEVELOPER.zip"
                                             ]
                               },
     "sourceManifest":  {
-                           "path":  "KWR_6_1_1_ALPHA_5_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "0536852F41345334790F5EE0ADB4601D5D71456A1812901320E46611FFF7780A",
-                           "distributionEntryCount":  397,
-                           "developerDigest":  "B416B537D150EF9573E34E569A6359C6B3314271074AE3529D28E8EA85484B95",
-                           "developerEntryCount":  8965,
+                           "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "D706101132B9D8C0636236CFEDC5AF72F7E684CAA2CBDDD265A607CD9FE80778",
+                           "distributionEntryCount":  398,
+                           "developerDigest":  "51330BD40FA6EAF5AAC160DEBBCFABE0DBDFFDBE03C6C96F21CC4D134E462A68",
+                           "developerEntryCount":  8970,
                            "sentinelDigest":  "AA68B875C30E3663388C0A033B91BAE657D6F010B9B9CD9DEFB09640B5CA8C8C",
                            "sentinelEntryCount":  12
                        },
     "buildProvenance":  {
-                            "path":  "KWR_6_1_1_ALPHA_5_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-08-19T01:07:11.6506743Z",
+                            "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-08-20T18:46:22.6807010Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.9168",
@@ -56,7 +56,7 @@
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "KWR_6_1_1_ALPHA_5_REPRODUCIBILITY.json",
+                            "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_REPRODUCIBILITY.json",
                             "result":  "PASS",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -66,12 +66,12 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "KWR_6_1_1_ALPHA_5_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-08-19T01:13:11.6783491Z",
+                         "path":  "artifacts/alpha5-release-candidate-20260820/KWR_6_1_1_ALPHA_5_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-08-20T18:53:07.8844902Z",
                          "result":  "PASS",
                          "hashesVerified":  3,
-                         "distributionEntries":  397,
-                         "developerEntries":  8965,
+                         "distributionEntries":  398,
+                         "developerEntries":  8970,
                          "extractedDistributionRuntime":  "PASS",
                          "extractedDeveloperRuntime":  "PASS",
                          "reproducibilityCheck":  "PASS_COMPATIBLE"
@@ -97,7 +97,7 @@
                       },
     "fieldEvidenceBinding":  {
                                  "candidateVersion":  "6.1.1-alpha.5",
-                                 "distributionSha256":  "0A008CD6C1217F0CDDE775AEC965AB0F63D30F95056FE46422701CB2DC431EE5",
+                                 "distributionSha256":  "4AD0F1902B1C57A4764DFCC516CD5DAAFF8D4D629D5A687AEEB03F7EB6119193",
                                  "evidenceScope":  "candidate",
                                  "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.5.zip",
                                  "requiredProof":  [
