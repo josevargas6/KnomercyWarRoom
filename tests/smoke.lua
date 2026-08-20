@@ -981,6 +981,23 @@ function KWR.__RunCompetitiveReadinessFixtures()
     assert(ratePrediction.timeModel
         and ratePrediction.timeModel.friendly.source == "verified_widget_transition",
         "Time-to-win did not consume verified observed score-rate evidence.")
+
+    KWR.Sensors.scoreSession = nil
+    local pulsedScore
+    for second = 0, 15 do
+        currentTime = savedTime + second
+        local transitions = math.floor(second / 5)
+        pulsedScore = {
+            source = "ui_widget", friendly = 100 + (transitions * 10),
+            enemy = 80, observedAt = currentTime, max = 1500,
+        }
+        KWR.Sensors:TrackScore(context, pulsedScore)
+    end
+    assert(pulsedScore.rateEvidence
+        and pulsedScore.rateEvidence.samples == 3
+        and math.abs((pulsedScore.rateEvidence.friendlyPerSecond or 0) - 2) < 0.001
+        and math.abs((pulsedScore.rateEvidence.windowSeconds or 0) - 15) < 0.001,
+        "Score-rate evidence measured refresh pulses instead of score-transition intervals.")
     KWR.Sensors.scoreSession, currentTime = savedSession, savedTime
 
     local savedTracks = KWR.Reporter.tracks
@@ -3992,6 +4009,54 @@ assert(invalidatedOrbPickupCommand.activePlayDecision
     and invalidatedOrbPickupCommand.activePlayDecision.invalidation == "FRIENDLY_ORB_STATE_CHANGED"
     and invalidatedOrbPickupCommand.activePlayDecision.replacementAllowed == true,
     "Orb pickup play did not invalidate when the targeted orb was no longer free.")
+do
+local savedObjectiveIntel = {
+    sessionKey = KWR.ObjectiveIntel.sessionKey,
+    events = KWR.ObjectiveIntel.events,
+    carriers = KWR.ObjectiveIntel.carriers,
+    timers = KWR.ObjectiveIntel.timers,
+    auraCache = KWR.ObjectiveIntel.auraCache,
+}
+local overlaidOrbSnapshot = KWR.Util:Copy(orbPickupSnapshot)
+overlaidOrbSnapshot.objectives.rows = {
+    { label = "Purple Orb", owner = "UNKNOWN", state = "AVAILABLE",
+        kind = "OBJECTIVE", source = "ui_widget",
+        native = { semantic = "UNOBSERVED" } },
+}
+overlaidOrbSnapshot.roster = {}
+overlaidOrbSnapshot.enemies = {
+    { name = "EnemyCarrier", visible = true, healthPercent = 62 },
+}
+local overlaySession = KWR.Util:BattlefieldSessionKey(overlaidOrbSnapshot.context)
+KWR.ObjectiveIntel.sessionKey = overlaySession
+KWR.ObjectiveIntel.events = {}
+KWR.ObjectiveIntel.timers = {}
+KWR.ObjectiveIntel.auraCache = {}
+KWR.ObjectiveIntel.carriers = {
+    ["Purple Orb"] = {
+        objective = "Purple Orb", owner = "ENEMY", player = "EnemyCarrier",
+        playerKey = "enemycarrier", kind = "ORB", source = "BG_SYSTEM",
+        observedAt = KWR.Util:Now(),
+    },
+}
+KWR.ObjectiveIntel:Apply(overlaidOrbSnapshot)
+KWR.Store.state.activePlay = KWR.Util:Copy(orbPickupState.activePlay)
+KWR.Store.state.command = KWR.Util:Copy(orbPickupState.command)
+KWR.Commander.lastActivePlay = KWR.Util:Copy(orbPickupState.activePlay)
+KWR.Commander.lastCommand = KWR.Util:Copy(orbPickupState.command)
+local overlaidOrbPickupCommand = KWR.Commander:Compose(
+    overlaidOrbSnapshot, orbPrediction, liveState.assignments)
+assert(overlaidOrbSnapshot.objectives.rows[1].state == "CARRIED"
+    and overlaidOrbSnapshot.objectives.rows[1].source == "bg_system"
+    and overlaidOrbPickupCommand.activePlayDecision
+    and overlaidOrbPickupCommand.activePlayDecision.invalidation == "FRIENDLY_ORB_STATE_CHANGED",
+    "Live carrier overlay retained fallback provenance and failed to invalidate orb pickup.")
+KWR.ObjectiveIntel.sessionKey = savedObjectiveIntel.sessionKey
+KWR.ObjectiveIntel.events = savedObjectiveIntel.events
+KWR.ObjectiveIntel.carriers = savedObjectiveIntel.carriers
+KWR.ObjectiveIntel.timers = savedObjectiveIntel.timers
+KWR.ObjectiveIntel.auraCache = savedObjectiveIntel.auraCache
+end
 local cartPreviousState = {
     activePlay = {
         id = "ACTIVE_ESCORT_LAVA",

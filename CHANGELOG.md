@@ -13,6 +13,10 @@
 - Derived bounded score-rate evidence from monotonic verified widget
   transitions and require current timestamped score/objective evidence before
   any live predictor can publish an aggressive call.
+- Anchor modeled score intervals to accepted score transitions rather than
+  intervening refresh pulses, preventing inflated live win-clock rates.
+- Preserve fallback objective provenance while allowing newer accepted system
+  carrier observations to invalidate stale pickup commands.
 - Separated observed player positions and speeds from semantic map estimates;
   estimated anchors no longer create objective pressure, reinforcement
   advantage, or assignment-abandonment certainty.

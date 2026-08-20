@@ -1000,6 +1000,7 @@ function Sensors:TrackScore(context, score)
             enemy = score.enemy,
             lastCapture = nil,
             observedAt = score.observedAt,
+            lastTransitionAt = KWR.Util:Number(score.observedAt, now),
             changedAt = now,
             transitions = {},
         }
@@ -1017,8 +1018,10 @@ function Sensors:TrackScore(context, score)
         end
         local previousFriendly = self.scoreSession.friendly or 0
         local previousEnemy = self.scoreSession.enemy or 0
-        local previousObservedAt = KWR.Util:Number(
-            self.scoreSession.observedAt, self.scoreSession.changedAt or now)
+        local previousTransitionAt = KWR.Util:Number(
+            self.scoreSession.lastTransitionAt,
+            KWR.Util:Number(self.scoreSession.observedAt,
+                self.scoreSession.changedAt or now))
         if score.friendly > (self.scoreSession.friendly or 0) then
             self.scoreSession.lastCapture = "FRIENDLY"
         elseif score.enemy > (self.scoreSession.enemy or 0) then
@@ -1027,11 +1030,12 @@ function Sensors:TrackScore(context, score)
         if score.friendly ~= self.scoreSession.friendly
             or score.enemy ~= self.scoreSession.enemy then
             self.scoreSession.changedAt = now
+            local transitionAt = KWR.Util:Number(score.observedAt, now)
             local elapsed = math.max(0,
-                KWR.Util:Number(score.observedAt, now) - previousObservedAt)
+                transitionAt - previousTransitionAt)
             if elapsed >= 0.25 and elapsed <= 30 then
                 self.scoreSession.transitions[#self.scoreSession.transitions + 1] = {
-                    at = KWR.Util:Number(score.observedAt, now),
+                    at = transitionAt,
                     elapsed = elapsed,
                     friendlyDelta = math.max(0, score.friendly - previousFriendly),
                     enemyDelta = math.max(0, score.enemy - previousEnemy),
@@ -1040,6 +1044,10 @@ function Sensors:TrackScore(context, score)
                     table.remove(self.scoreSession.transitions, 1)
                 end
             end
+            -- Unchanged polls refresh observedAt for freshness, but rate
+            -- intervals must remain anchored to the last accepted score
+            -- transition rather than the most recent capture pulse.
+            self.scoreSession.lastTransitionAt = transitionAt
         end
         self.scoreSession.friendly = score.friendly
         self.scoreSession.enemy = score.enemy

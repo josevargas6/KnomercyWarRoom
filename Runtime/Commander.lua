@@ -187,14 +187,18 @@ end
 -- invalidate an in-progress command.
 local function objectiveRowHasLiveState(row)
     if type(row) ~= "table" then return false end
+    local source = KWR.Util:Text(
+        row.liveStateSource or row.selectedSource or row.source, "", 32):lower()
+    local acceptedLiveOverlay = source == "bg_system" or source == "remote_sentinel"
     local native = row.native
-    if type(native) == "table" then
+    if not acceptedLiveOverlay and type(native) == "table" then
         local semantic = KWR.Util:Text(native.semantic, "", 32)
         if semantic == "MAP_REFERENCE" or semantic == "UNOBSERVED" then
             return false
         end
     end
-    if KWR.Util:Text(row.source, "", 32):lower() == "map_definition" then
+    if not acceptedLiveOverlay
+        and KWR.Util:Text(row.source, "", 32):lower() == "map_definition" then
         return false
     end
     local state = KWR.Util:Text(row.state, "", 20)
