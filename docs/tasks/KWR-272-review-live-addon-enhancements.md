@@ -1,7 +1,7 @@
 ---
 id: KWR-272
 title: Review and integrate 20 live addon enhancements
-owner: unassigned
+owner: Codex
 priority: high
 risk: high
 status: in_progress
@@ -176,7 +176,7 @@ no live file was copied wholesale.
 - [x] Commander produces no stale active play after match completion or world transition.
 - [x] Formation and strategy caches are bounded, signature-keyed, observable, and safely invalidated.
 - [x] Historical specialization labels retain `(HIST)` at every supported width.
-- [ ] Validation, knowledge audit, Lua tests, soak, replay, transport, package audit, and reproducibility checks pass on the exact branch head.
+- [x] Validation, knowledge audit, Lua tests, soak, replay, transport, package audit, and reproducibility checks pass for the Alpha 6 candidate payload.
 - [ ] A reviewed PR merges before any tag or publication action.
 - [ ] A new versioned Commander/Sentinel package has exact public-manifest, installed-tree, and deployment-receipt parity.
 - [ ] Candidate-bound Retail evidence clears stability, safety, performance, readability, and supported map-family gates.

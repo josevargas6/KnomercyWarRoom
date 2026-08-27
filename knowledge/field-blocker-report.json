@@ -1,8 +1,8 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-20T22:46:17Z",
-    "candidateVersion":  "6.1.1-alpha.5",
+    "generatedAt":  "2026-08-27T20:53:01Z",
+    "candidateVersion":  "6.1.1-alpha.6",
     "blockingDefects":  [
                             {
                                 "id":  "LIVE-TEAM-TRUTH",

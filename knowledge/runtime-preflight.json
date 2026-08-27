@@ -1,8 +1,8 @@
 {
     "schema":  "kwr-runtime-preflight",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-20T22:35:08Z",
-    "candidateVersion":  "6.1.1-alpha.5",
+    "generatedAt":  "2026-08-27T20:38:07Z",
+    "candidateVersion":  "6.1.1-alpha.6",
     "node":  {
                  "nodeOnPath":  true,
                  "nodeOnPathSource":  "C:\\Users\\josev\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.19.0-win-x64\\node.exe",
