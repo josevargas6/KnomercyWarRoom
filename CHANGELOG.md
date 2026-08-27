@@ -1,5 +1,25 @@
 # Changelog
 
+## 6.1.1-alpha.6 - 2026-08-27
+
+- Reconciled all 20 audited live-addon enhancement candidates into canonical
+  source without copying the installed tree or weakening newer reviewed fixes.
+- Added bounded scoreboard reuse with explicit invalidation, reason-aware
+  critical refresh timing, current-roster rescans, and truthful lightweight
+  world standby state.
+- Added roster-safe assignment filtering, response mover/stayer deduplication,
+  explicit active-play clearing, and canonical flag-target verification.
+- Added observable one-result formation caching, retained bounded strategist
+  caches during active PvP, and clear both safely between matches.
+- Preserved canonical AAR map identity, historical specialization provenance,
+  location-first enemy truth, brawl bracket evidence, carrier-target evidence,
+  and health eligibility across the compact and expanded surfaces.
+- Reviewed Blizzard's official hotfix ledger through August 26, including
+  Warlock in the August 25 PvP tuning list and the August 26 Training Grounds
+  surrender fix, with no inferred capability weights or doctrine changes.
+- Added deterministic regressions for the adopted enhancement boundaries and
+  corrected localization-fixture isolation and manual roster-rescan ordering.
+
 ## 6.1.1-alpha.5 - 2026-08-18
 
 - Corrected the Season 2 hotfix boundary to Blizzard's July 28, 2026 ledger

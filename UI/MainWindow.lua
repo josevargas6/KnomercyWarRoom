@@ -137,8 +137,8 @@ local function healthColor(percent)
     return KWR.Theme:Color("green")
 end
 
-local function specLabel(entity)
-    return KWR.RosterPresentation:SpecLabel(entity)
+local function specLabel(entity, maxLength)
+    return KWR.RosterPresentation:SpecLabel(entity, maxLength)
 end
 
 local function applyDirectHealth(statusBar, unit, healthText)

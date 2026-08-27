@@ -18,7 +18,7 @@ local SOURCES = {
     BLIZZARD_HOTFIXES = {
         authority = "REFERENCE",
         name = "Official World of Warcraft Hotfixes",
-        url = "https://us.forums.blizzard.com/en/wow/t/world-of-warcraft-midnight-hotfixes-july-28/2296045",
+        url = "https://worldofwarcraft.blizzard.com/en-us/news/24296142/hotfixes-august-26-2026",
         use = "Build-time PvP tuning and API/mechanics review; live observations remain authoritative.",
     },
     BLIZZARD_SEASON_2 = {

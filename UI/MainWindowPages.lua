@@ -744,8 +744,7 @@ function MainWindowPages:RenderAssignments(page, state, helpers)
         if assignment then
             row.player:SetText(assignment.shortName .. (assignment.dead and "  DEAD" or ""))
             row.player:SetTextColor(helpers.classColor(assignment.classFile))
-            local spec = KWR.Util:Text(assignment.spec, "Unknown spec", 28)
-            if assignment.specSource == "historical" then spec = spec .. " (HIST)" end
+            local spec = KWR.RosterPresentation:SpecLabel(assignment, 26)
             row.class:SetText(spec .. " " .. assignment.class .. " / "
                 .. helpers.roleText(assignment.groupRole))
             row.assignment:SetText(assignment.role
@@ -995,7 +994,7 @@ function MainWindowPages:RenderTeam(page, state, helpers)
                 helpers.setClassIcon(row.icon, player.classFile)
                 row.player:SetText(player.shortName)
                 row.player:SetTextColor(helpers.classColor(player.classFile))
-                row.spec:SetText(helpers.specLabel(player))
+                row.spec:SetText(KWR.RosterPresentation:SpecLabel(player, 24))
                 row.role:SetText(helpers.roleText(
                     KWR.CombatSpells:Role(player.spec, player.role)))
                 local health = player.healthPercent

@@ -34,9 +34,20 @@ local Runtime = {
 }
 KWR.MatchRuntime = Runtime
 
-local MIN_REFRESH_INTERVAL = 0.40
+local MIN_REFRESH_INTERVAL = 0.75
+local CRITICAL_REFRESH_INTERVAL = 0.15
 local MAX_CHAINED_FOLLOWUPS = 1
 local ROSTER_PRESENTATION_TIMEOUT = 8
+
+local CRITICAL_REFRESH_REASONS = {
+    UPDATE_UI_WIDGET = true,
+    UPDATE_BATTLEFIELD_SCORE = true,
+    PVP_MATCH_ACTIVE = true,
+    PVP_MATCH_COMPLETE = true,
+    CHAT_MSG_BG_SYSTEM_ALLIANCE = true,
+    CHAT_MSG_BG_SYSTEM_HORDE = true,
+    CHAT_MSG_BG_SYSTEM_NEUTRAL = true,
+}
 
 local function firstLine(value)
     local text = tostring(value or "unknown runtime refresh error")
@@ -69,6 +80,11 @@ end
 
 local function previewAvailable()
     return KWR.Preview and type(KWR.Preview.Build) == "function"
+end
+
+local function allowsScoreboardReuse(reason)
+    return reason == "active-pulse" or reason == "coalesced-followup"
+        or reason == "settle-refresh"
 end
 
 local function clearQueueState(runtime)
@@ -175,6 +191,8 @@ function Runtime:ResetTransientTruth()
     self.rosterPresentation = nil
     if KWR.Sensors then
         KWR.Sensors.scoreSession = nil
+        KWR.Sensors.widgetFingerprints = {}
+        KWR.Sensors:InvalidateScoreboard()
     end
     if KWR.TeamResolver and KWR.TeamResolver.Reset then
         KWR.TeamResolver:Reset()
@@ -291,6 +309,11 @@ function Runtime:RememberQualifiedTruth(snapshot)
         cached.blitzSource = KWR.Util:Text(
             snapshot.context.blitzSource, "confirmed", 32)
     end
+    if snapshot.context.isBrawl == true then
+        cached.isBrawl = true
+        cached.brawlSource = KWR.Util:Text(
+            snapshot.context.brawlSource, "confirmed", 32)
+    end
     local rosterCount, rosterStable = stableIdentityCount(snapshot.roster)
     if rosterStable and rosterCount > 1
         and rosterCount >= (cached.rosterCount or 0) then
@@ -343,6 +366,10 @@ function Runtime:ApplyMatchCompleteFallback(snapshot)
         snapshot.context.isBlitz = true
         snapshot.context.blitzSource = cached.blitzSource or "confirmed"
     end
+    if cached.isBrawl then
+        snapshot.context.isBrawl = true
+        snapshot.context.brawlSource = cached.brawlSource or "confirmed"
+    end
     local rosterCount = stableIdentityCount(snapshot.roster)
     if cached.roster and rosterCount < (cached.rosterCount or 0) then
         snapshot.roster = KWR.Util:Copy(cached.roster)
@@ -361,7 +388,7 @@ function Runtime:Start()
     self.matchComplete = false
     self.active = true
     if C_Timer and C_Timer.NewTicker then
-        self.ticker = C_Timer.NewTicker(1, function()
+        self.ticker = C_Timer.NewTicker(2, function()
             if Runtime.active then Runtime:Queue("active-pulse", 0.02) end
         end)
     end
@@ -430,7 +457,8 @@ function Runtime:Refresh(reason)
             if KWR.db.profile.preview and not previewAvailable() then
                 KWR.db.profile.preview = false
             end
-            snapshot = KWR.Sensors:Capture(self.lastMessage)
+            snapshot = KWR.Sensors:Capture(self.lastMessage,
+                allowsScoreboardReuse(reason))
         end
         recordStage(self, "Sensors", stageStarted)
         stageStarted = profileStages and debugprofilestop() or 0
@@ -446,52 +474,122 @@ function Runtime:Refresh(reason)
         end
         recordStage(self, "Truth", stageStarted)
         stageStarted = profileStages and debugprofilestop() or 0
-        KWR.RosterInspector:RequestNext(snapshot.roster)
-        snapshot = KWR.ObjectiveIntel:Apply(snapshot)
-        snapshot.formation = KWR.FormationAdvisor:Evaluate(snapshot)
-        snapshot.combat = KWR.CombatIntel:Analyze(snapshot)
-        snapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(snapshot)
-        snapshot.reporter = KWR.Reporter:Observe(snapshot)
-        if KWR.OpponentModels and KWR.OpponentModels.Observe then
-            snapshot.opponentModels = KWR.OpponentModels:Observe(snapshot)
-        end
-        snapshot.truth = KWR.Verification:Contract(snapshot)
-        recordStage(self, "Battlefield", stageStarted)
-        stageStarted = profileStages and debugprofilestop() or 0
-        local prediction = KWR.Predictor:Evaluate(snapshot)
-        snapshot.strategy = KWR.Strategist:Evaluate(snapshot, prediction)
-        recordStage(self, "Strategy", stageStarted)
-        stageStarted = profileStages and debugprofilestop() or 0
-        local assignments = KWR.Assignments:Build(snapshot, prediction)
-        snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
-        snapshot.strategy.executionAssessment =
-            KWR.Strategist:AssessExecution(snapshot, prediction, assignments)
-        snapshot.responsePackage =
-            KWR.Assignments:ResponsePackage(snapshot, assignments)
-        recordStage(self, "Assignments", stageStarted)
-        stageStarted = profileStages and debugprofilestop() or 0
-        if self.reassessRequested then
-            local previous = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
-            local changes = KWR.Assignments:Diff(
-                previous and previous.assignments, assignments)
-            snapshot.reassessment = {
-                at = KWR.Util:Now(),
-                changes = changes,
-                summary = KWR.Assignments:SummarizeChanges(
-                    changes, snapshot.context.mapKey),
-                reason = "Manual battlefield reassessment",
-            }
-            self.lastReassessment = KWR.Util:Copy(snapshot.reassessment)
+        local prediction
+        local assignments
+        local command
+        if snapshot.context.inPvP ~= true and snapshot.context.preview ~= true then
+            -- Outside PvP only the formation surface is actionable. Do not
+            -- rebuild combat, reporter, opponent, verification, strategy, or
+            -- response systems from non-battleground data.
             self.reassessRequested = false
-        elseif self.lastReassessment
-            and (KWR.Util:Now() - (self.lastReassessment.at or 0)) <= 10 then
-            snapshot.reassessment = KWR.Util:Copy(self.lastReassessment)
+            self.lastReassessment = nil
+            if KWR.Commander and KWR.Commander.ClearActivePlay then
+                KWR.Commander:ClearActivePlay()
+            end
+            snapshot.formation = KWR.FormationAdvisor:Evaluate(snapshot)
+            snapshot.combat = {}
+            snapshot.teamfight = { displayEligible = false }
+            snapshot.reporter = {
+                active = false,
+                status = "INACTIVE",
+                friendly = {},
+                enemy = {},
+                pressure = {},
+                events = {},
+                risk = 0,
+                summary = "Reporter standing by. Enter a battleground to build movement knowledge.",
+                coverage = { friendly = 0, enemy = 0 },
+            }
+            snapshot.truth = {
+                coreFresh = false,
+                aggressiveCommitAllowed = false,
+                mode = "VERIFY_FIRST",
+            }
+            prediction = KWR.Predictor:Evaluate(snapshot)
+            snapshot.strategy = {
+                state = "WORLD",
+                action = prediction.action,
+                confidence = "NONE",
+                reason = "Strategy engine is standing by outside a battleground.",
+                objectiveDecision = {},
+                executionAssessment = {},
+            }
+            assignments = KWR.Assignments:Build(snapshot)
+            snapshot.assignmentIntegrity = {
+                onStation = #assignments,
+                moving = 0,
+                unverified = 0,
+                abandoned = 0,
+                impossible = 0,
+                coverageLedger = {},
+                reassignments = {},
+            }
+            snapshot.responsePackage = {
+                active = false,
+                qualified = false,
+                actionID = "HOLD_PLAN",
+                action = "HOLD CURRENT PLAN",
+                target = "VERIFY",
+                shortTarget = "VERIFY",
+                movers = {},
+                stayers = {},
+                moverText = "Team",
+                stayerText = "Assigned defenders",
+                confidence = "NONE",
+                score = 0,
+                recovery = {},
+            }
+            command = KWR.Commander:Compose(snapshot, prediction, assignments)
+        else
+            KWR.RosterInspector:RequestNext(snapshot.roster)
+            snapshot = KWR.ObjectiveIntel:Apply(snapshot)
+            snapshot.formation = KWR.FormationAdvisor:Evaluate(snapshot)
+            snapshot.combat = KWR.CombatIntel:Analyze(snapshot)
+            snapshot.teamfight = KWR.TeamfightCommandPlanner:Plan(snapshot)
+            snapshot.reporter = KWR.Reporter:Observe(snapshot)
+            if KWR.OpponentModels and KWR.OpponentModels.Observe then
+                snapshot.opponentModels = KWR.OpponentModels:Observe(snapshot)
+            end
+            snapshot.truth = KWR.Verification:Contract(snapshot)
+            recordStage(self, "Battlefield", stageStarted)
+            stageStarted = profileStages and debugprofilestop() or 0
+            prediction = KWR.Predictor:Evaluate(snapshot)
+            snapshot.strategy = KWR.Strategist:Evaluate(snapshot, prediction)
+            snapshot.carrierTargetEvidence =
+                KWR.ObjectiveIntel:NormalizeStrategyTarget(snapshot)
+            recordStage(self, "Strategy", stageStarted)
+            stageStarted = profileStages and debugprofilestop() or 0
+            assignments = KWR.Assignments:Build(snapshot, prediction)
+            snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
+            snapshot.strategy.executionAssessment =
+                KWR.Strategist:AssessExecution(snapshot, prediction, assignments)
+            snapshot.responsePackage =
+                KWR.Assignments:ResponsePackage(snapshot, assignments)
+            recordStage(self, "Assignments", stageStarted)
+            stageStarted = profileStages and debugprofilestop() or 0
+            if self.reassessRequested then
+                local previous = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
+                local changes = KWR.Assignments:Diff(
+                    previous and previous.assignments, assignments)
+                snapshot.reassessment = {
+                    at = KWR.Util:Now(),
+                    changes = changes,
+                    summary = KWR.Assignments:SummarizeChanges(
+                        changes, snapshot.context.mapKey),
+                    reason = "Manual battlefield reassessment",
+                }
+                self.lastReassessment = KWR.Util:Copy(snapshot.reassessment)
+                self.reassessRequested = false
+            elseif self.lastReassessment
+                and (KWR.Util:Now() - (self.lastReassessment.at or 0)) <= 10 then
+                snapshot.reassessment = KWR.Util:Copy(self.lastReassessment)
+            end
+            command = KWR.Commander:Compose(snapshot, prediction, assignments)
+            snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
+                snapshot, prediction, assignments, command)
+            snapshot.commandEmphasis = KWR.CommandEmphasis:Build(
+                snapshot, prediction, assignments, command)
         end
-        local command = KWR.Commander:Compose(snapshot, prediction, assignments)
-        snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
-            snapshot, prediction, assignments, command)
-        snapshot.commandEmphasis = KWR.CommandEmphasis:Build(
-            snapshot, prediction, assignments, command)
         recordStage(self, "Command", stageStarted)
         self.diagnostics.refreshes = self.diagnostics.refreshes + 1
         self.diagnostics.lastReason = reason or "refresh"
@@ -543,9 +641,11 @@ function Runtime:Refresh(reason)
     return ok
 end
 
-function Runtime:EffectiveDelay(delay)
+function Runtime:EffectiveDelay(delay, reason)
     local elapsed = KWR.Util:Now() - (self.lastRefreshAt or 0)
-    return math.max(delay or 0.10, math.max(0, MIN_REFRESH_INTERVAL - elapsed))
+    local interval = CRITICAL_REFRESH_REASONS[reason] == true
+        and CRITICAL_REFRESH_INTERVAL or MIN_REFRESH_INTERVAL
+    return math.max(delay or 0.10, math.max(0, interval - elapsed))
 end
 
 function Runtime:Schedule(reason, delay, revision)
@@ -553,7 +653,7 @@ function Runtime:Schedule(reason, delay, revision)
     self.pendingReason = reason or "queued"
     self.pendingRevision = revision or self.queueRevision or 0
     self.pendingSettle = self.pendingReason == "settle-refresh"
-    delay = self:EffectiveDelay(delay)
+    delay = self:EffectiveDelay(delay, reason)
     self.pendingDueAt = KWR.Util:Now() + delay
     self.timerToken = (self.timerToken or 0) + 1
     local token = self.timerToken
@@ -613,7 +713,7 @@ function Runtime:Queue(reason, delay, settleDelay)
     end
     if self.pending then
         self.diagnostics.coalesced = (self.diagnostics.coalesced or 0) + 1
-        local requestedDueAt = now + self:EffectiveDelay(delay)
+        local requestedDueAt = now + self:EffectiveDelay(delay, reason)
         if self.pendingDueAt and requestedDueAt + 0.001 < self.pendingDueAt then
             self.diagnostics.queuePreemptions =
                 (self.diagnostics.queuePreemptions or 0) + 1
@@ -659,13 +759,15 @@ function Runtime:Reassess()
 end
 
 function Runtime:RescanRoster()
+    local ok = self:ForceRefresh("manual-roster-rescan")
     local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
     local roster = state and state.snapshot and state.snapshot.roster or nil
     local queued = 0
-    if KWR.RosterInspector and type(KWR.RosterInspector.BeginFullRescan) == "function" then
+    if ok and KWR.RosterInspector
+        and type(KWR.RosterInspector.BeginFullRescan) == "function" then
         queued = KWR.RosterInspector:BeginFullRescan(roster)
+        KWR.RosterInspector:RequestNext(roster)
     end
-    local ok = self:ForceRefresh("manual-roster-rescan")
     self:ScheduleTransitionSweep("manual-roster-rescan", true)
     if ok then
         if queued > 0 then
@@ -702,12 +804,14 @@ function Runtime:HandleEvent(event, ...)
         return
     end
     if event == "GROUP_ROSTER_UPDATE" then
+        if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
         self:Queue(event, 0.05)
         self:ScheduleTransitionSweep(event, true)
         return
     end
     if event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED"
         or event == "PLAYER_SPECIALIZATION_CHANGED" then
+        if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
         self:Queue(event, 0.05)
         return
     end
@@ -733,6 +837,10 @@ function Runtime:HandleEvent(event, ...)
                 (self.diagnostics.ignoredWidgetEvents or 0) + 1
             return
         end
+    end
+    if event == "UPDATE_BATTLEFIELD_SCORE" or event == "PVP_MATCH_ACTIVE"
+        or event == "PVP_MATCH_COMPLETE" then
+        if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
     end
     if (event == "UNIT_SPELLCAST_START"
         or event == "UNIT_SPELLCAST_CHANNEL_START") and KWR.CombatIntel then

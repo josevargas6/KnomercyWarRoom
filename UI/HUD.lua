@@ -609,7 +609,6 @@ local function updateToken(owner, state)
     local target = combat.localTarget or combat.killTarget or {}
     return KWR.Util:Signature({
         true,
-        state and state.revision or 0,
         snapshot.context and snapshot.context.sessionKey,
         snapshot.context and snapshot.context.mapKey,
         snapshot.context and snapshot.context.inPvP,
@@ -715,9 +714,7 @@ function HUD:Update(state)
         "Hold current assignment.")
     local spokenCall = KWR.CommandView:SpokenCall(command, snapshot.context)
     local callMovers = KWR.CommandView:CallMovers(command)
-    local revision = KWR.Util:Number(state.revision, 0) or 0
     local renderSignature = KWR.Util:Signature({
-        revision,
         sessionKey,
         snapshot.context and snapshot.context.inPvP,
         focusMode,
@@ -779,7 +776,7 @@ function HUD:Update(state)
         return
     end
     self.renderUpdates = (self.renderUpdates or 0) + 1
-    self.lastRenderRevision = revision
+    self.lastRenderRevision = KWR.Util:Number(state.revision, 0) or 0
     self.lastRenderSignature = renderSignature
     frame.brand:SetText(snapshot.context.inPvP and "KWR FIGHT NOW" or "KWR SETUP CENTER")
     frame.rescan:SetText(snapshot.context.inPvP and "REPEAT" or "RESCAN")

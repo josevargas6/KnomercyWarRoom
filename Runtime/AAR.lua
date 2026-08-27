@@ -350,14 +350,39 @@ local function sortedValues(records)
     return result
 end
 
+local function canonicalMapIdentity(context)
+    context = context or {}
+    local mapKey = clean(context.mapKey, "UNKNOWN", 40)
+    local definition = KWR.Maps and KWR.Maps.Get and KWR.Maps:Get(mapKey) or nil
+    if not definition then return nil end
+    return {
+        mapKey = mapKey,
+        mapName = clean(definition.title, mapKey, 80),
+    }
+end
+
+function AAR:RefreshMapIdentity(active, context)
+    local identity = canonicalMapIdentity(context)
+    if not identity then return end
+    local currentKey = clean(active.mapKey, "UNKNOWN", 40)
+    local currentName = clean(active.mapName, "Unknown", 80)
+    if currentKey == identity.mapKey and currentName == identity.mapName then return end
+    -- Instance entry can briefly report a city or world zone before the
+    -- battleground map resolves. Store only the reviewed map definition.
+    active.mapKey = identity.mapKey
+    active.mapName = identity.mapName
+    active.mapIdentitySource = "resolved_map_definition"
+end
+
 function AAR:Start(state)
     local snapshot = state.snapshot
+    local identity = canonicalMapIdentity(snapshot.context)
     self.active = {
-        id = tostring(epoch()) .. ":" .. tostring(snapshot.context.mapKey),
+        id = tostring(epoch()) .. ":" .. tostring(identity and identity.mapKey or snapshot.context.mapKey),
         addonVersion = KWR.version,
         schemaVersion = KWR.schemaVersion,
-        mapKey = snapshot.context.mapKey,
-        mapName = snapshot.context.mapName,
+        mapKey = identity and identity.mapKey or snapshot.context.mapKey,
+        mapName = identity and identity.mapName or snapshot.context.mapName,
         team = KWR.Util:Copy(snapshot.context.team),
         startedAt = epoch(),
         scoreStart = KWR.Util:Copy(snapshot.score),
@@ -694,6 +719,7 @@ function AAR:Record(state)
     if not self.active then self:Start(state) end
     local active = self.active
     local snapshot = state.snapshot or {}
+    self:RefreshMapIdentity(active, snapshot.context)
     local score = snapshot.score or {}
     local objectives = snapshot.objectives or {}
     local now = epoch()

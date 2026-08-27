@@ -508,9 +508,9 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
     }
 end
 
-function TeamResolver:Resolve(roster)
-    local rows = self:ReadRows()
-    self.rows = rows
+function TeamResolver:Resolve(roster, reuseScoreboard)
+    local rows = reuseScoreboard == true and self.rows or self:ReadRows()
+    if reuseScoreboard ~= true then self.rows = rows end
     local native = self:Native()
     local mercenary = type(UnitIsMercenary) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitIsMercenary, "player"), false)
@@ -602,7 +602,7 @@ function TeamResolver:Resolve(roster)
     }, rows
 end
 
-function TeamResolver:Capture(inPvP, roster, sessionKey)
+function TeamResolver:Capture(inPvP, roster, sessionKey, reuseScoreboard)
     if not inPvP then
         self:Reset()
         return self:Native(), {}
@@ -614,7 +614,7 @@ function TeamResolver:Capture(inPvP, roster, sessionKey)
     elseif self.sessionKey == nil and sessionKey ~= "" then
         self.sessionKey = sessionKey
     end
-    return self:Resolve(roster)
+    return self:Resolve(roster, reuseScoreboard)
 end
 
 function TeamResolver:Get()

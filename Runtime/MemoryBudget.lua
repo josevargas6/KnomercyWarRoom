@@ -324,11 +324,16 @@ function MemoryBudget:TrimLive(state)
     elseif KWR.ObjectiveIntel and type(KWR.ObjectiveIntel.auraCache) == "table" then
         KWR.ObjectiveIntel.auraCache = {}
     end
-    if KWR.Strategist then
+    -- A one-result strategy cache is intentionally bounded. Clearing it while
+    -- players are fighting turns every retention pass into a full strategic
+    -- recomputation and can create avoidable p95 spikes. Reset it between
+    -- battlegrounds, where it cannot affect live command freshness.
+    if not inPvP and KWR.Strategist then
         KWR.Strategist.cache = nil
         KWR.Strategist.executionCache = nil
     end
     if type(collectgarbage) == "function"
+        and not inPvP
         and not (InCombatLockdown and InCombatLockdown()) then
         KWR.Util:Call(collectgarbage, "collect")
     end

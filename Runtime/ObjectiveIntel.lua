@@ -608,6 +608,28 @@ function ObjectiveIntel:CanonicalCommandTarget(mapKey, target, context)
     return "VERIFY"
 end
 
+function ObjectiveIntel:NormalizeStrategyTarget(snapshot)
+    local context = snapshot and snapshot.context
+    if not context or context.kind ~= "FLAG" then return nil end
+    local strategy = snapshot and snapshot.strategy
+    local decision = strategy and strategy.objectiveDecision
+    if type(decision) ~= "table" then return nil end
+    local rawTarget = KWR.Util:Text(decision.target, "", 96)
+    if rawTarget == "" then return nil end
+    local canonical = self:CanonicalCommandTarget(
+        context.mapKey, rawTarget, context)
+    decision.rawTarget = rawTarget
+    decision.target = canonical
+    decision.targetSource = canonical == "VERIFY" and "unclassified_raw_target"
+        or (canonical == rawTarget and "reviewed_target" or "canonicalized_target")
+    return {
+        rawTarget = rawTarget,
+        canonicalTarget = canonical,
+        source = decision.targetSource,
+        heldForVerification = canonical == "VERIFY",
+    }
+end
+
 function ObjectiveIntel:CarrierCount()
     local count = 0
     for _ in pairs(self.carriers) do count = count + 1 end

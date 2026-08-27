@@ -333,6 +333,35 @@ local function openingNode(roster, definition, context)
     return result
 end
 
+function Assignments:FilterRoster(snapshot, assignments)
+    local roster = snapshot and snapshot.roster or {}
+    if #roster == 0 then return assignments or {} end
+
+    local rosterKeys = {}
+    for _, player in ipairs(roster) do
+        local guid = KWR.Util:Text(player.guid, "", 96)
+        local name = KWR.Util:Text(player.name, "", 96)
+        local shortName = KWR.Util:CanonicalShortName(
+            player.shortName or player.name)
+        if guid ~= "" then rosterKeys[guid] = true end
+        if name ~= "" then rosterKeys[KWR.Util:CanonicalName(name)] = true end
+        if shortName ~= "" then rosterKeys["SHORT:" .. shortName] = true end
+    end
+
+    local filtered = {}
+    for _, assignment in ipairs(assignments or {}) do
+        local guid = KWR.Util:Text(assignment.guid, "", 96)
+        local name = KWR.Util:Text(assignment.name, "", 96)
+        local shortName = KWR.Util:CanonicalShortName(
+            assignment.shortName or assignment.name)
+        local known = (guid ~= "" and rosterKeys[guid])
+            or (name ~= "" and rosterKeys[KWR.Util:CanonicalName(name)])
+            or (shortName ~= "" and rosterKeys["SHORT:" .. shortName])
+        if known then filtered[#filtered + 1] = assignment end
+    end
+    return filtered
+end
+
 local function friendlyControlled(snapshot, definition, context)
     local result, seen = {}, {}
     for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
@@ -631,7 +660,7 @@ function Assignments:Build(snapshot)
         KWR.AssignmentOverrides:Apply(snapshot, result)
     end
     applyCounterDirectives(result, snapshot.strategy)
-    return result
+    return self:FilterRoster(snapshot, result)
 end
 
 function Assignments:Audit(snapshot, assignments)
@@ -1228,6 +1257,8 @@ function Assignments:ResponsePackage(snapshot, assignments)
     end
     local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
     local movers, stayers = {}, {}
+    local moverCandidates = {}
+    local moverKeys, stayerKeys = {}, {}
     local stayerGroups, stayerOrder = {}, {}
     local moverRoles = {
         ["Strike Team"] = true, ["Main Fight"] = true,
@@ -1240,26 +1271,52 @@ function Assignments:ResponsePackage(snapshot, assignments)
         if assignment.connected ~= false and not assignment.dead then
             local name = assignment.shortName or assignment.name
             local role = assignment.role or ""
+            local key = KWR.Util:CanonicalPlayerKey(name, assignment.guid) or ""
             if role:find("Defender", 1, true)
                 or role == "Tower Sitter" or role == "Cart Anchor" then
-                stayers[#stayers + 1] = name
+                if key ~= "" and not stayerKeys[key] then
+                    stayers[#stayers + 1] = name
+                    stayerKeys[key] = true
+                end
                 local location = KWR.Maps:AbbreviateLocation(
                     mapKey, assignment.location)
                 if not stayerGroups[location] then
                     stayerGroups[location] = {}
                     stayerOrder[#stayerOrder + 1] = location
                 end
-                stayerGroups[location][#stayerGroups[location] + 1] = name
+                local grouped = stayerGroups[location]
+                local alreadyGrouped = false
+                for _, existing in ipairs(grouped) do
+                    if KWR.Util:CanonicalPlayerKey(existing) == key then
+                        alreadyGrouped = true
+                        break
+                    end
+                end
+                if not alreadyGrouped then grouped[#grouped + 1] = name end
             elseif moverRoles[role] then
-                movers[#movers + 1] = name
+                moverCandidates[#moverCandidates + 1] = {
+                    key = key,
+                    name = name,
+                }
             end
+        end
+    end
+    for _, candidate in ipairs(moverCandidates) do
+        if candidate.key ~= "" and not stayerKeys[candidate.key]
+            and not moverKeys[candidate.key] then
+            movers[#movers + 1] = candidate.name
+            moverKeys[candidate.key] = true
         end
     end
     if #movers == 0 then
         for _, assignment in ipairs(assignments or {}) do
             if assignment.connected ~= false and not assignment.dead then
-                movers[#movers + 1] =
-                    assignment.shortName or assignment.name
+                local name = assignment.shortName or assignment.name
+                local key = KWR.Util:CanonicalPlayerKey(name, assignment.guid) or ""
+                if key ~= "" and not stayerKeys[key] and not moverKeys[key] then
+                    movers[#movers + 1] = name
+                    moverKeys[key] = true
+                end
             end
         end
     end
