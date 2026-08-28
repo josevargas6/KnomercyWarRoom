@@ -6,4 +6,4 @@ current workflow, task-status, blocker, and promotion record is
 `RELEASE_READINESS.md`; individual implementation details remain in the
 governed records under `docs/tasks/`.
 
-Do not use Alpha 36, PR #30, or any other historical state from this file.
+Do not use any historical state from this file.
