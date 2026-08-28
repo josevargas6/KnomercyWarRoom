@@ -4,7 +4,7 @@ title: Separate live UI, tactical, and strategic runtime work
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: blocked
 dependencies: [KWR-273]
 affected_modules: [Runtime/MatchRuntime.lua, Runtime/EnemyIntel.lua, UI/MainWindowReports.lua, tests/smoke.lua, tests/soak.lua]
 authority_references: [AGENTS.md, QA_CHECKLIST.md, RELEASE_READINESS.md]
@@ -81,5 +81,5 @@ telemetry does not attribute executions by reason or lane.
 
 # Rollback
 
-Reinstall the Alpha 8 Commander and Sentinel archives. No persisted schema or
+Reinstall the previous verified Commander and Sentinel archives. No persisted schema or
 doctrine data changes are introduced.

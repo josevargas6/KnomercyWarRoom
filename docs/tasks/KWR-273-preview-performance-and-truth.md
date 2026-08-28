@@ -4,7 +4,7 @@ title: Stabilize design-preview truth and refresh cost
 owner: Codex
 priority: critical
 risk: medium
-status: in_progress
+status: blocked
 dependencies: [KWR-272]
 affected_modules: [Runtime/Preview.lua, Runtime/MatchRuntime.lua, Runtime/Verification.lua, tests/smoke.lua]
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md, QA_CHECKLIST.md, RELEASE_READINESS.md]
@@ -35,5 +35,5 @@ unchanged preview data.
 
 # Rollback
 
-Disable preview mode or reinstall the previous Alpha 6 archive; no live PvP
+Disable preview mode or reinstall the previous verified release archive; no live PvP
 or persisted decision contract is changed.

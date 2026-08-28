@@ -4,7 +4,7 @@ title: Stabilize live battlefield refresh and command lifecycle
 owner: Codex
 priority: critical
 risk: medium
-status: in_progress
+status: blocked
 dependencies: [KWR-269]
 affected_modules: [Runtime, Core, tests, docs]
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md, QA_CHECKLIST.md, RELEASE_READINESS.md]
