@@ -4,7 +4,7 @@ title: Review and integrate 20 live addon enhancements
 owner: Codex
 priority: high
 risk: high
-status: field_verification_pending
+status: blocked
 dependencies:
   - KWR-270
 affected_modules:
