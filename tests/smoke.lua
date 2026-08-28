@@ -7745,15 +7745,15 @@ do
     assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
         "KWR surface strata did not recover after every bag closed.")
 
-    combinedBags:Show()
-    mockCombat = true
-    assert(coordinator:Apply() == false and coordinator.pendingApply == true
-        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
-        "Combat lockdown blocked the safe native-bag strata update.")
-    combinedBags:Hide()
-    assert(coordinator:Apply() == false
+combinedBags:Show()
+mockCombat = true
+assert(coordinator:Apply() == false and coordinator.pendingApply == true
         and KWR.HUD.frame:GetFrameStrata() == "HIGH",
-        "Combat lockdown blocked strata recovery after the bag closed.")
+        "Combat lockdown did not defer protected strata updates.")
+combinedBags:Hide()
+assert(coordinator:Apply() == false
+        and KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "Combat lockdown did not preserve strata while deferring layout.")
     mockCombat = false
     coordinator:Apply()
     _G.ContainerFrameCombinedBags = nil

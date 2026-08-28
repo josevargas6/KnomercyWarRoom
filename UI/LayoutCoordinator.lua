@@ -160,6 +160,13 @@ function LayoutCoordinator:BlizzardWindowOpen()
 end
 
 function LayoutCoordinator:ApplyStrata()
+    -- Frame strata is a protected frame mutation during combat. Defer the
+    -- complete layout pass until PLAYER_REGEN_ENABLED instead of attempting
+    -- even this shell-only adjustment from an event callback.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingApply = true
+        return false
+    end
     local lowered = self:BlizzardWindowOpen()
     local strata = lowered and "MEDIUM" or nil
     for _, entry in ipairs(KWR_STRATA) do
@@ -340,14 +347,14 @@ end
 function LayoutCoordinator:Apply()
     -- Strata changes touch only KWR-owned, unprotected shell frames. Keep
     -- Blizzard bags and panels above KWR even when combat blocks re-anchoring.
-    self:ApplyStrata()
-    -- Layout changes re-anchor frames and scroll containers. Retail can mark
-    -- those operations protected while combat is active, so no periodic or
-    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
     if InCombatLockdown and InCombatLockdown() then
         self.pendingApply = true
         return false
     end
+    self:ApplyStrata()
+    -- Layout changes re-anchor frames and scroll containers. Retail can mark
+    -- those operations protected while combat is active, so no periodic or
+    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
     self.pendingApply = nil
     self:ApplyMainWindow()
     self:ApplyHUD()

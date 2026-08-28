@@ -64,7 +64,7 @@ function Audio:SpeakPacket(packet, force)
     return true, "spoken"
 end
 
-function Audio:Repeat()
+function Audio:Replay()
     local state = KWR.Store and KWR.Store:Get()
     local packet = state and state.snapshot and state.snapshot.executionCommand
     if not state or not state.command or type(packet) ~= "table"

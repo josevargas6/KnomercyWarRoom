@@ -483,7 +483,7 @@ function HUD:Create()
         local state = currentState()
         if state and state.snapshot and state.snapshot.context
             and state.snapshot.context.inPvP then
-            if KWR.CommandAudio then KWR.CommandAudio:Repeat() end
+            if KWR.CommandAudio then KWR.CommandAudio:Replay() end
         else
             KWR.MatchRuntime:RescanRoster()
         end
