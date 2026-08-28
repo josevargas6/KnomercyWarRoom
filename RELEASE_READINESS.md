@@ -23,16 +23,14 @@ verification. Candidate-bound live RBG evidence remains mandatory for any
 later stable promotion; source-only, historical, unbound, or simulated proof
 cannot substitute for that stable-release gate.
 
-The 2026-08-19 competitive-readiness refinement is implemented locally and
-passes its deterministic source gates. A local-only candidate was packaged and
-installed for the user-authorized field test; it is not a public release
-artifact and no push, merge, tag, publication, or production action occurred.
-The subsequent KWR-270 field repair and KWR-272 live-enhancement reconciliation
-are source-validated on the Alpha 6 candidate branch. Alpha 6 must still be
-reproducibly packaged, installed from its exact manifest, and exercised in a
-fresh live RBG capture before it can clear the field-performance gate. Prior
-Alpha 5 package hashes remain historical to their recorded source snapshots and
-cannot certify the current branch.
+The 2026-08-19 competitive-readiness refinement, KWR-270 field repair, and
+KWR-272 live-enhancement reconciliation are incorporated into the Alpha 9
+candidate. The reviewed Alpha 9 source is merged to `main` and passes the
+protected post-merge certification, package reproducibility, and extracted
+runtime audits. It remains a field-test candidate: exact Alpha 9 installation,
+fresh Retail evidence, and the live performance/stability gates are still
+required. Prior Alpha 5 package hashes remain historical to their recorded
+source snapshots and cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
@@ -49,15 +47,15 @@ and rollback-artifact creation.
 - [x] Source validation, source-drift, document-authority, control-surface,
   knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
   RBG-corpus gates pass.
-- [ ] Build the current source candidate under an authorized release workflow,
-  then prove Commander/Sentinel version parity, binary reproducibility,
-  extracted-runtime integrity, install-manifest parity, hashes, and rollback.
-  Prior Alpha 5 receipts do not bind the KWR-270/KWR-272 Alpha 6 source changes.
-- [ ] Push/open or update the current source PR, resolve review conversations,
-  and obtain the required green `certify` result. No GitHub write was authorized
-  during KWR-270/KWR-272 implementation.
-- [ ] Merge the green reviewed candidate to `main`, verify the merged commit
-  and tag the exact public-release artifact only after the live gate passes.
+- [x] Build the current Alpha 9 source candidate under the authorized release
+  workflow and prove Commander/Sentinel version parity, binary reproducibility,
+  extracted-runtime integrity, and package audits. Exact installed-folder
+  parity, hashes, and rollback remain part of the live deployment gate.
+- [x] Push/open the current source PR, resolve review conversations, obtain the
+  required green `certify` result, and merge the reviewed candidate to `main`.
+  Alpha 9 `main` is `dedf22316badc6657cd5ffcdaa11e34e8d415bb3`.
+- [ ] Tag and publish the exact public-release artifact only after the live
+  installation and field gates pass.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
   flag-map stability and AAR, canonical carrier targets, combat-safe native-map
   behavior, taint/blocked actions, supported-resolution readability, and field
@@ -68,7 +66,7 @@ and rollback-artifact creation.
 - [x] Keep Sentinel cross-client transport disabled by default and outside the
   competitive-readiness release dependency. Any future opt-in promotion still
   requires its own ten-client, taint, expiry, teardown, and product-value proof.
-- [ ] From the green tagged commit, publish the explicit Alpha 6 field-test
+- [ ] From the green tagged commit, publish the explicit Alpha 9 field-test
   runtime ZIPs, checksums, manifest, and install guide; verify the public
   downloads and CurseForge file IDs before any announcement.
 
