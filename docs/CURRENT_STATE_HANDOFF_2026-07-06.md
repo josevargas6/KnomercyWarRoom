@@ -10,15 +10,15 @@ This is the clean restart handoff for continuing KWR work in a fresh Codex
 thread without dragging the full historical conversation, screenshots, and
 interrupted experiments forward.
 
-Use this file as the primary source of truth for:
+This dated handoff is historical context only. Do not use it as the current
+source of truth. Use `RELEASE_READINESS.md` for the current:
 
-- current addon status;
-- active stabilization priorities;
-- known working areas;
-- known broken/provisional areas;
+- addon status;
+- active priorities;
+- blockers;
 - immediate next tasks.
 
-For the live working queue, see `docs/WORKFLOW_NOW.md`.
+The former `docs/WORKFLOW_NOW.md` file is only a compatibility redirect.
 
 ## Product intent
 
