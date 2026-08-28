@@ -1,7 +1,7 @@
 {
     "schema":  "kwr-offline-performance-benchmark",
     "schemaVersion":  1,
-    "generatedAt":  "2026-08-27T20:42:56Z",
+    "generatedAt":  "2026-08-28T19:49:35Z",
     "result":  "PASS",
     "budgets":  {
                     "averageMs":  1.5,
@@ -18,7 +18,7 @@
                      "p95Ms":  0.79999999998836,
                      "maxMs":  3.2000000000116,
                      "commanderHistory":  3,
-                     "evidenceLedger":  2
+                     "evidenceLedger":  3
                  },
     "assertions":  [
                        "bounded refresh samples",
