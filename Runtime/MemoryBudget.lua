@@ -149,6 +149,7 @@ local MemoryBudget = {
                 purpose = "Keep bounded refresh timing samples for performance tracking.",
                 caps = {
                     maxDurationSamples = "runtimeDurationSamples",
+                    maxTacticalDurationSamples = "runtimeDurationSamples",
                 },
             },
         },
@@ -263,6 +264,7 @@ function MemoryBudget:ContractCount(contractKey)
         return coverage
     elseif contractKey == "RuntimeDiagnostics" then
         return listCount(KWR.MatchRuntime and KWR.MatchRuntime.durationSamples)
+            + listCount(KWR.MatchRuntime and KWR.MatchRuntime.tacticalDurationSamples)
     end
     return 0
 end
@@ -324,11 +326,16 @@ function MemoryBudget:TrimLive(state)
     elseif KWR.ObjectiveIntel and type(KWR.ObjectiveIntel.auraCache) == "table" then
         KWR.ObjectiveIntel.auraCache = {}
     end
-    if KWR.Strategist then
+    -- A one-result strategy cache is intentionally bounded. Clearing it while
+    -- players are fighting turns every retention pass into a full strategic
+    -- recomputation and can create avoidable p95 spikes. Reset it between
+    -- battlegrounds, where it cannot affect live command freshness.
+    if not inPvP and KWR.Strategist then
         KWR.Strategist.cache = nil
         KWR.Strategist.executionCache = nil
     end
     if type(collectgarbage) == "function"
+        and not inPvP
         and not (InCombatLockdown and InCombatLockdown()) then
         KWR.Util:Call(collectgarbage, "collect")
     end
@@ -405,6 +412,10 @@ function MemoryBudget:Summary()
             count = #(KWR.MatchRuntime and KWR.MatchRuntime.durationSamples or {}),
             cap = self:Cap("runtimeDurationSamples", 120),
         },
+        tacticalRuntimeDurations = {
+            count = #(KWR.MatchRuntime and KWR.MatchRuntime.tacticalDurationSamples or {}),
+            cap = self:Cap("runtimeDurationSamples", 120),
+        },
         contracts = self:ContractSummary(),
     }
 end
@@ -438,6 +449,9 @@ function MemoryBudget:Report()
             summary.objectiveEvents.count or 0, summary.objectiveEvents.cap or 0),
         string.format("Runtime duration samples: %d / %d",
             summary.runtimeDurations.count or 0, summary.runtimeDurations.cap or 0),
+        string.format("Tactical duration samples: %d / %d",
+            summary.tacticalRuntimeDurations.count or 0,
+            summary.tacticalRuntimeDurations.cap or 0),
         "",
         "Retention contract:",
     }

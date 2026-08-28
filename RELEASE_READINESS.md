@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.1-alpha.5
+# Release Readiness - 6.1.1-alpha.9
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,11 +6,11 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**6.1.1-alpha.5 is the Season 2 field-test candidate; 6.1.0 remains the
+**6.1.1-alpha.9 is the Season 2 field-test candidate; 6.1.0 remains the
 immutable public stable baseline.** It contains the live-evidence, roster,
 event-work, and compact-runtime-data repairs recorded in the current changelog.
 Its offline certification, binary reproducibility, extracted-package audit,
-and exact Retail installation verification must complete against the alpha.5
+and exact Retail installation verification must complete against the alpha.9
 archive before promotion. The archive hashes are intentionally not embedded
 here: modifying a shipped document changes its archive. The versioned `SHA256`
 manifest and deployment certificate are the sole exact-hash authorities
@@ -27,15 +27,16 @@ The 2026-08-19 competitive-readiness refinement is implemented locally and
 passes its deterministic source gates. A local-only candidate was packaged and
 installed for the user-authorized field test; it is not a public release
 artifact and no push, merge, tag, publication, or production action occurred.
-The subsequent KWR-270 field repair is source-validated, reproducibly packaged,
-and installed locally with manifest parity for Commander and Sentinel. It must
-receive a fresh live RBG capture before it can clear the field-performance gate.
-Prior alpha.5 package hashes remain historical to their recorded source snapshots
-and cannot certify the current branch.
+The subsequent KWR-270 field repair and KWR-272 live-enhancement reconciliation
+are source-validated on the Alpha 6 candidate branch. Alpha 6 must still be
+reproducibly packaged, installed from its exact manifest, and exercised in a
+fresh live RBG capture before it can clear the field-performance gate. Prior
+Alpha 5 package hashes remain historical to their recorded source snapshots and
+cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
-new 6.1.1-alpha.5-bound battleground sessions or ten-client Sentinel transport
+new 6.1.1-alpha.9-bound battleground sessions or ten-client Sentinel transport
 proof. The official 12.1 compatibility/hotfix review is now active, while the
 stale 12.0.7 ladder snapshot, inferred numerical tuning weights, and provisional
 Season 2 formations remain excluded from live meta influence. The candidate
@@ -51,10 +52,10 @@ and rollback-artifact creation.
 - [ ] Build the current source candidate under an authorized release workflow,
   then prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, install-manifest parity, hashes, and rollback.
-  Prior alpha.5 receipts do not bind the KWR-269 source changes.
+  Prior Alpha 5 receipts do not bind the KWR-270/KWR-272 Alpha 6 source changes.
 - [ ] Push/open or update the current source PR, resolve review conversations,
   and obtain the required green `certify` result. No GitHub write was authorized
-  during KWR-269 implementation.
+  during KWR-270/KWR-272 implementation.
 - [ ] Merge the green reviewed candidate to `main`, verify the merged commit
   and tag the exact public-release artifact only after the live gate passes.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
@@ -67,7 +68,7 @@ and rollback-artifact creation.
 - [x] Keep Sentinel cross-client transport disabled by default and outside the
   competitive-readiness release dependency. Any future opt-in promotion still
   requires its own ten-client, taint, expiry, teardown, and product-value proof.
-- [ ] From the green tagged commit, publish the explicit Alpha 5 field-test
+- [ ] From the green tagged commit, publish the explicit Alpha 6 field-test
   runtime ZIPs, checksums, manifest, and install guide; verify the public
   downloads and CurseForge file IDs before any announcement.
 

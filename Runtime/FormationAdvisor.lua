@@ -1,6 +1,10 @@
 local _, KWR = ...
 
-local FormationAdvisor = {}
+local FormationAdvisor = {
+    cache = nil,
+    cacheHits = 0,
+    cacheMisses = 0,
+}
 KWR.FormationAdvisor = FormationAdvisor
 
 local TARGET_SIZE = 10
@@ -358,7 +362,34 @@ local function formationCompLabel(comp, fallback)
     return tier ~= "" and (tier .. " " .. name) or name
 end
 
+local function formationSignature(snapshot)
+    local context = snapshot and snapshot.context or {}
+    local profile = KWR.db and KWR.db.profile and KWR.db.profile.formation or {}
+    local parts = {
+        KWR.Util:Text(context.mapKey, "WORLD", 32),
+        KWR.Util:Text(profile.selectedCompID, "AUTO", 64),
+    }
+    for _, player in ipairs(snapshot and snapshot.roster or {}) do
+        parts[#parts + 1] = table.concat({
+            KWR.Util:Text(player.guid or player.name, "?", 96),
+            KWR.Util:Text(player.classFile, "UNKNOWN", 24),
+            KWR.Util:Text(player.spec, "Unknown", 48),
+            KWR.Util:Text(player.role, "NONE", 16),
+            player.dead == true and "DEAD" or "ALIVE",
+            player.connected == false and "OFFLINE" or "ONLINE",
+        }, ":")
+    end
+    table.sort(parts)
+    return table.concat(parts, "\031")
+end
+
 function FormationAdvisor:Evaluate(snapshot)
+    local signature = formationSignature(snapshot)
+    if self.cache and self.cache.signature == signature then
+        self.cacheHits = self.cacheHits + 1
+        return KWR.Util:Copy(self.cache.result)
+    end
+    self.cacheMisses = self.cacheMisses + 1
     local roster = snapshot.roster or {}
     local summary = KWR.Capabilities:Summarize(roster)
     local detected = KWR.Compositions:Detect(summary)
@@ -494,7 +525,7 @@ function FormationAdvisor:Evaluate(snapshot)
             .. "  |  AUTO TARGET: HYBRID"
     end
     local positioning, positioningTitle = compPositioning(buildTarget)
-    return {
+    local result = {
         targetSize = TARGET_SIZE,
         players = #roster,
         openSlots = openSlots,
@@ -520,6 +551,11 @@ function FormationAdvisor:Evaluate(snapshot)
         action = action,
         reason = reason,
     }
+    self.cache = {
+        signature = signature,
+        result = KWR.Util:Copy(result),
+    }
+    return result
 end
 
 KWR:RegisterModule("FormationAdvisor", FormationAdvisor)

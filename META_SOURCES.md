@@ -1,6 +1,6 @@
 # RBG Meta Data Provenance
 
-KWR 6.1.1-alpha.5 contains a static Rated Battleground specialization snapshot
+KWR 6.1.1-alpha.6 contains a static Rated Battleground specialization snapshot
 captured on 2026-06-27 for Retail patch 12.0.7, Midnight Season 1.
 
 Source pages:
@@ -24,8 +24,14 @@ World of Warcraft addons cannot make arbitrary web requests during play. A new
 release must therefore refresh and review this snapshot during development.
 
 Patch-relative capability ratings are maintained separately in
-`Data/PatchData.lua`. The Retail 12.1 pack was reviewed on 2026-08-17 against
-Blizzard's official Season 2 schedule and official PvP hotfix ledger through
-2026-07-28. Directional tuning was not converted into invented numerical
-ratings. Capability data describes relative strategic tendencies, not
-individual-player talents, equipment, or guaranteed spell availability.
+`Data/PatchData.lua`. The Retail 12.1 pack was reviewed on 2026-08-27 against
+Blizzard's official Season 2 schedule and official hotfix ledger through
+2026-08-26. The review records the August 13 PvP fixes, August 18 PvP tuning,
+August 19 tier-shoulder PvP-item-level correction, August 17-20 class mechanics
+fixes, August 25 direct PvP tuning (including Warlock), and the August 26
+Training Grounds Arena lifecycle correction as an advisory field watch.
+Directional tuning and training-mode lifecycle fixes were not converted into
+invented numerical ratings or capability overrides: KWR remains fail-closed
+until reviewed Retail evidence supports a bounded update. Capability data
+describes relative strategic tendencies, not individual-player talents,
+equipment, or guaranteed spell availability.

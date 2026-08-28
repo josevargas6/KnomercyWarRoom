@@ -128,6 +128,7 @@ function TeamResolver:NormalizePublishedRoster(roster)
     local aliasIndex = {}
     local shortIdentityCounts = {}
     local shortIdentitySeen = {}
+    local shortHasQualifiedIdentity = {}
 
     for _, player in ipairs(roster or {}) do
         local rawName = KWR.Util:Text(player and (player.name or player.shortName), "", 96)
@@ -140,6 +141,9 @@ function TeamResolver:NormalizePublishedRoster(roster)
             local identity = guid ~= "" and ("GUID:" .. guid)
                 or (rawName:find("-", 1, true) and fullName ~= "" and ("NAME:" .. fullName))
                 or nil
+            if rawName:find("-", 1, true) then
+                shortHasQualifiedIdentity[shortName] = true
+            end
             if identity and not shortIdentitySeen[shortName][identity] then
                 shortIdentitySeen[shortName][identity] = true
                 shortIdentityCounts[shortName] = (shortIdentityCounts[shortName] or 0) + 1
@@ -194,7 +198,13 @@ function TeamResolver:NormalizePublishedRoster(roster)
         if name ~= "" then
             aliases[#aliases + 1] = "NAME:" .. name
         end
-        if shortName ~= "" and (shortIdentityCounts[shortName] or 0) <= 1 then
+        -- An unqualified duplicate is never a safely distinct assignment
+        -- target.  During battleground roster hydration Blizzard can briefly
+        -- publish the same player under multiple GUIDs but without realm
+        -- qualification; collapse that state until a realm-qualified identity
+        -- proves the short-name collision is real.
+        if shortName ~= "" and ((shortIdentityCounts[shortName] or 0) <= 1
+            or shortHasQualifiedIdentity[shortName] ~= true) then
             aliases[#aliases + 1] = "SHORT:" .. shortName
         end
         if unit ~= "" then
@@ -508,9 +518,9 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
     }
 end
 
-function TeamResolver:Resolve(roster)
-    local rows = self:ReadRows()
-    self.rows = rows
+function TeamResolver:Resolve(roster, reuseScoreboard)
+    local rows = reuseScoreboard == true and self.rows or self:ReadRows()
+    if reuseScoreboard ~= true then self.rows = rows end
     local native = self:Native()
     local mercenary = type(UnitIsMercenary) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitIsMercenary, "player"), false)
@@ -602,7 +612,7 @@ function TeamResolver:Resolve(roster)
     }, rows
 end
 
-function TeamResolver:Capture(inPvP, roster, sessionKey)
+function TeamResolver:Capture(inPvP, roster, sessionKey, reuseScoreboard)
     if not inPvP then
         self:Reset()
         return self:Native(), {}
@@ -614,7 +624,7 @@ function TeamResolver:Capture(inPvP, roster, sessionKey)
     elseif self.sessionKey == nil and sessionKey ~= "" then
         self.sessionKey = sessionKey
     end
-    return self:Resolve(roster)
+    return self:Resolve(roster, reuseScoreboard)
 end
 
 function TeamResolver:Get()

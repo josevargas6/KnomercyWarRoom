@@ -1,7 +1,7 @@
 {
   "schema": "kwr-retail-field-certification",
   "schemaVersion": 1,
-  "generatedAt": "2026-08-28T18:56:42Z",
+  "generatedAt": "2026-08-28T18:56:43Z",
   "candidateVersion": "6.1.1-alpha.9",
   "candidateSchema": 60129,
   "source": {

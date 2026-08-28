@@ -276,6 +276,7 @@ C_PvP = {
         if not mockPvP then return nil end
         return mockScoreboardRows[index]
     end,
+    IsInBrawl = function() return mockInstanceType == "brawl" end,
 }
 
 function IsInInstance()
@@ -1192,11 +1193,24 @@ do
     assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
         "WSG", "unrecognized localized widget label", allianceContext) == "VERIFY",
         "Unknown flag target did not fall back to VERIFY.")
+    local carrierTargetSnapshot = {
+        context = { kind = "FLAG", mapKey = "WSG", team = { faction = "Alliance" } },
+        strategy = { objectiveDecision = { target = "Verite" } },
+        objectives = { carriers = {
+            { player = "Verite", owner = "FRIENDLY" },
+        } },
+    }
+    local carrierEvidence = KWR.ObjectiveIntel:NormalizeStrategyTarget(
+        carrierTargetSnapshot)
+    assert(carrierEvidence and carrierEvidence.canonicalTarget == "Verite"
+        and carrierEvidence.source == "observed_carrier_identity",
+        "Observed carrier identity was collapsed or lost at the command-target boundary.")
     KWR.ObjectiveIntel:ObserveMessage("Priest hat den Hof angegriffen!", "ARATHI")
     assert(KWR.ObjectiveIntel.timers["Hof"]
         and KWR.ObjectiveIntel.timers["Hof"].assaulter == "Priest",
         "ObjectiveIntel did not resolve the reviewed German assault grammar.")
     mockLocale = savedLocale
+    KWR.ObjectiveIntel:Reset(nil)
 end
 do
     local savedHistory = KWR.Util:Copy(KWR.db.journal.history)
@@ -1248,6 +1262,34 @@ do
     KWR.db.journal.history = savedHistory
     KWR.db.journal.interrupted = savedInterrupted
     KWR.AAR.lastCompleted = savedLastCompleted
+    KWR.AAR.active = savedActive
+end
+do
+    local savedActive = KWR.Util:Copy(KWR.AAR.active)
+    local staleStart = {
+        snapshot = {
+            context = {
+                mapKey = "UNKNOWN",
+                mapName = "Silvermoon City",
+                team = { faction = "Horde", side = 0 },
+                phase = "ACTIVE",
+                matchComplete = false,
+            },
+            score = { friendly = 0, enemy = 0, source = "ui_widget" },
+            objectives = { rows = {}, events = {} },
+            roster = {}, enemies = {}, reporter = {}, combat = {},
+        },
+        assignments = {}, command = {}, prediction = {},
+    }
+    KWR.AAR.active = nil
+    KWR.AAR:Record(staleStart)
+    staleStart.snapshot.context.mapKey = "ARATHI"
+    staleStart.snapshot.context.mapName = "Silvermoon City"
+    KWR.AAR:Record(staleStart)
+    assert(KWR.AAR.active.mapKey == "ARATHI"
+        and KWR.AAR.active.mapName == "Arathi Basin"
+        and KWR.AAR.active.mapIdentitySource == "resolved_map_definition",
+        "AAR did not promote a transient world-zone label to the resolved battleground map.")
     KWR.AAR.active = savedActive
 end
 do
@@ -1502,6 +1544,93 @@ do
     assert(calls == 1,
         "MemoryBudget did not measure against the current Store state callback payload.")
 end
+do
+    local savedStrategyCache = KWR.Strategist.cache
+    local savedExecutionCache = KWR.Strategist.executionCache
+    KWR.Strategist.cache = { signature = "retain-in-pvp" }
+    KWR.Strategist.executionCache = { signature = "retain-in-pvp" }
+    KWR.MemoryBudget:TrimLive({ snapshot = { context = { inPvP = true } } })
+    assert(KWR.Strategist.cache and KWR.Strategist.executionCache,
+        "MemoryBudget cleared bounded strategy caches during active PvP.")
+    KWR.MemoryBudget:TrimLive({ snapshot = { context = { inPvP = false } } })
+    assert(KWR.Strategist.cache == nil and KWR.Strategist.executionCache == nil,
+        "MemoryBudget retained strategy caches outside PvP.")
+    KWR.Strategist.cache = savedStrategyCache
+    KWR.Strategist.executionCache = savedExecutionCache
+end
+do
+    KWR.FormationAdvisor.cache = nil
+    KWR.FormationAdvisor.cacheHits = 0
+    KWR.FormationAdvisor.cacheMisses = 0
+    local formationSnapshot = {
+        context = { mapKey = "WORLD" },
+        roster = {
+            { guid = "Player-Formation", classFile = "PRIEST", spec = "Holy",
+                role = "HEALER", connected = true },
+        },
+    }
+    KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    formationSnapshot.roster[1].connected = false
+    KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    assert(KWR.FormationAdvisor.cacheHits == 1
+        and KWR.FormationAdvisor.cacheMisses == 2,
+        "Formation cache did not reuse identical truth or invalidate on connection changes.")
+end
+do
+    local filtered = KWR.Assignments:FilterRoster({
+        roster = {
+            { guid = "Player-Known", name = "Known-Realm", shortName = "Known" },
+        },
+    }, {
+        { guid = "Player-Known", name = "Known-Realm" },
+        { guid = "Player-Stale", name = "Stale-Realm" },
+    })
+    assert(#filtered == 1 and filtered[1].guid == "Player-Known",
+        "Assignment filtering retained a player absent from the current roster.")
+end
+do
+    local flagSnapshot = {
+        context = { kind = "FLAG", mapKey = "WSG", team = { faction = "Alliance" } },
+        strategy = { objectiveDecision = { target = "unreviewed localized target" } },
+    }
+    local evidence = KWR.ObjectiveIntel:NormalizeStrategyTarget(flagSnapshot)
+    assert(evidence and evidence.heldForVerification == true
+        and evidence.canonicalTarget == "VERIFY"
+        and flagSnapshot.strategy.objectiveDecision.rawTarget
+            == "unreviewed localized target",
+        "Unknown flag strategy targets did not fail closed behind VERIFY.")
+end
+do
+    local historicalLabel = KWR.RosterPresentation:SpecLabel({
+        spec = "Restoration",
+        specSource = "historical",
+    }, 16)
+    assert(#historicalLabel <= 16 and historicalLabel:sub(-7) == " (HIST)",
+        "Width-aware specialization formatting lost historical provenance.")
+end
+do
+    local savedLastActivePlay = KWR.Commander.lastActivePlay
+    local savedCandidateTrends = KWR.Commander.candidateTrends
+    local savedRecordedInvalidations = KWR.Commander.recordedInvalidations
+    KWR.Commander.lastActivePlay = { id = "STALE" }
+    KWR.Commander.candidateTrends = { STALE = { count = 2 } }
+    KWR.Commander.recordedInvalidations = { STALE = true }
+    KWR.Commander:ClearActivePlay()
+    assert(KWR.Commander.lastActivePlay == nil
+        and next(KWR.Commander.candidateTrends) == nil
+        and next(KWR.Commander.recordedInvalidations) == nil,
+        "Commander did not clear all active-play decision state.")
+    KWR.Commander.lastActivePlay = savedLastActivePlay
+    KWR.Commander.candidateTrends = savedCandidateTrends
+    KWR.Commander.recordedInvalidations = savedRecordedInvalidations
+end
+do
+    KWR.Sensors.scoreboardDirty = false
+    KWR.Sensors:InvalidateScoreboard()
+    assert(KWR.Sensors.scoreboardDirty == true,
+        "Scoreboard invalidation did not mark cached team truth dirty.")
+end
 assert(KWR.MatchRuntime.frame:IsEventRegistered("UPDATE_UI_WIDGET"),
     "Active events were not registered during initialization.")
 local worldRefreshes = KWR.MatchRuntime.diagnostics.refreshes
@@ -1600,6 +1729,16 @@ do
     })
     assert(#shortOnly == 1 and shortOnly[1].unit == "raid10",
         "Combat roster retained duplicate short-name-only records for one teammate.")
+    shortOnly = KWR.TeamResolver:NormalizePublishedRoster({
+        { key = "VERITE-OLD-A", guid = "VERITE-GUID-OLD-A", name = "Verite",
+            role = "DAMAGER", spec = "Unholy" },
+        { key = "VERITE-CURRENT", guid = "VERITE-GUID-CURRENT", name = "Verite",
+            unit = "raid10", role = "DAMAGER", spec = "Unholy" },
+        { key = "VERITE-OLD-B", guid = "VERITE-GUID-OLD-B", name = "Verite",
+            role = "DAMAGER", spec = "Unholy" },
+    })
+    assert(#shortOnly == 1 and shortOnly[1].unit == "raid10",
+        "Combat roster retained unqualified duplicate-name transition rows.")
     local transientProfile = KWR.TeamResolver:NormalizePublishedRoster({
         { name = "Verite-OldRealm", guid = "STALE-VERITE-1", shortName = "Verite",
             role = "DAMAGER", spec = "Frost", classFile = "MAGE", healthPercent = 52 },
@@ -1693,9 +1832,24 @@ do
 end
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp"), "PvP pipeline refresh failed.")
 assert(KWR.MatchRuntime:ForceRefresh("smoke-pvp-team-confirm"), "PvP team confirmation refresh failed.")
+mockInstanceType = "brawl"
+assert(KWR.MatchRuntime:ForceRefresh("smoke-brawl-context"),
+    "Brawl context refresh failed.")
+assert(KWR.Store:Get().snapshot.context.isBrawl == true
+    and KWR.Verification:BuildEntry(KWR.Store:Get()).bracket == "BRAWL",
+    "Brawl context was mislabeled as a standard battleground.")
+mockInstanceType = "pvp"
+assert(KWR.MatchRuntime:ForceRefresh("smoke-standard-context"),
+    "Standard battleground context refresh failed.")
 assert(scoreRequests >= 1, "PvP capture did not request fresh scoreboard identity data.")
 mockWidgetOverrides[9999] = { left = 210, right = 20, max = 1500 }
-KWR.Sensors:ObserveWidget({ widgetID = 9999 })
+assert(KWR.Sensors:ObserveWidget({ widgetID = 9999 }) == true,
+    "A first valid widget observation was not accepted.")
+assert(KWR.Sensors:ObserveWidget({ widgetID = 9999 }) == false,
+    "An unchanged widget observation scheduled an unnecessary full refresh.")
+mockWidgetOverrides[9999].left = 211
+assert(KWR.Sensors:ObserveWidget({ widgetID = 9999 }) == true,
+    "A material widget score change was suppressed.")
 mockLeftScore, mockRightScore = 250, 34
 assert(KWR.MatchRuntime:ForceRefresh("smoke-score-authority"),
     "Verified score widget refresh failed.")
@@ -2050,9 +2204,9 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-07-28"
-        and string.find(watchlist.sourceURL or "", "2296045", 1, true)
-        and #(watchlist.affected or {}) >= 5,
+        and watchlist.effectiveDate == "2026-08-26"
+        and string.find(watchlist.sourceURL or "", "24296142", 1, true)
+        and #(watchlist.affected or {}) >= 10,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
     local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
     local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
@@ -2256,7 +2410,17 @@ assert(liveState.snapshot.strategy.theoryActive == true
     and type(liveState.snapshot.strategy.executionGate) == "table"
     and liveState.snapshot.strategy.executionGate.status == "COMMIT_ALLOWED"
     and liveState.snapshot.strategy.trust.commitAuthorized == true,
-    "Reviewed 12.1 capabilities and authoritative live truth did not activate a bounded commit.")
+    string.format(
+        "Reviewed 12.1 capabilities and authoritative live truth did not activate a bounded commit (theory=%s basis=%s mode=%s gate=%s authorized=%s reason=%s source=%s conflicts=%s unresolved=%s).",
+        tostring(liveState.snapshot.strategy.theoryActive),
+        tostring(liveState.snapshot.strategy.projectionBasis),
+        tostring(liveState.snapshot.strategy.recommendationMode),
+        tostring(liveState.snapshot.strategy.executionGate and liveState.snapshot.strategy.executionGate.status),
+        tostring(liveState.snapshot.strategy.trust and liveState.snapshot.strategy.trust.commitAuthorized),
+        tostring(liveState.snapshot.strategy.executionGate and liveState.snapshot.strategy.executionGate.reason),
+        tostring(liveState.snapshot.strategy.trust and liveState.snapshot.strategy.trust.objectiveEvidence and liveState.snapshot.strategy.trust.objectiveEvidence.source),
+        tostring(liveState.snapshot.strategy.trust and liveState.snapshot.strategy.trust.objectiveEvidence and liveState.snapshot.strategy.trust.objectiveEvidence.conflicts),
+        tostring(liveState.snapshot.strategy.trust and liveState.snapshot.strategy.trust.objectiveEvidence and liveState.snapshot.strategy.trust.objectiveEvidence.unresolved)))
 assert(type(liveState.snapshot.strategy.scenarioCalibration) == "table"
     and liveState.snapshot.strategy.scenarioCalibration.reviewedCases >= 5
     and type(liveState.snapshot.strategy.reviewDisciplineRule) == "string",
@@ -2766,17 +2930,16 @@ do
     KWR.Commander.history = {}
     if KWR.Store.state then KWR.Store.state.activePlay = nil end
     local reversalCommand = KWR.Commander:Compose({
-        context = { mapKey = "WORLD", inPvP = false },
+        context = { mapKey = "WORLD", inPvP = false, instanceType = "none" },
         formation = { action = "RECRUIT A" },
     }, {
         status = "WORLD",
         urgency = 0,
     }, {})
     local reversalMetrics = KWR.Commander:GetStabilityMetrics()
-    assert(reversalCommand.signature == signatureA
-        and reversalMetrics.reversals == 1
-        and reversalMetrics.reversalRate > 0,
-        "Commander did not detect an A-B-A command reversal through the real publication path.")
+    assert(reversalCommand.bypass == "WORLD_STANDBY"
+        and reversalMetrics.reversals == 0,
+        "World formation advice was incorrectly counted as a tactical command reversal.")
 
     KWR.Commander.metrics = {
         issued = 1,
@@ -2820,18 +2983,17 @@ do
         stabilizationSignature = signatureA,
     }
     local preMoveCommand = KWR.Commander:Compose({
-        context = { mapKey = "WORLD", inPvP = false },
+        context = { mapKey = "WORLD", inPvP = false, instanceType = "none" },
         formation = { action = "RECRUIT B" },
     }, {
         status = "WORLD",
         urgency = 0,
     }, {})
     local preMoveMetrics = KWR.Commander:GetStabilityMetrics()
-    assert(preMoveCommand.signature ~= signatureA
-        and preMoveMetrics.replacements == 1
-        and preMoveMetrics.preMovementInvalidations == 1
-        and preMoveMetrics.preMovementInvalidationRate == 1,
-        "Commander did not count a command replaced before movement could begin.")
+    assert(preMoveCommand.bypass == "WORLD_STANDBY"
+        and preMoveMetrics.replacements == 0
+        and preMoveMetrics.preMovementInvalidations == 0,
+        "World formation advice was incorrectly counted as a pre-movement replacement.")
 
     KWR.Commander.metrics = {
         issued = 0,
@@ -3045,9 +3207,9 @@ assert(superiorCandidate.activePlayDecision
     and type(switchScore.switchCost) == "table"
     and (switchScore.switchCost.total or 0) > 0,
     "Commander did not retain a non-superior replacement after the minimum commitment window.")
-assert((switchScore.switchCost.total or 0) >= 20,
-    "Arathi held-node replacement did not carry the stronger outer/structure switch-cost posture.")
-local invalidatedSnapshot = KWR.Util:Copy(replacementSnapshot)
+    assert((switchScore.switchCost.total or 0) >= 20,
+        "Arathi held-node replacement did not carry the stronger outer/structure switch-cost posture.")
+    local invalidatedSnapshot = KWR.Util:Copy(replacementSnapshot)
 local invalidatedState = KWR.Store:Get()
 invalidatedState.activePlay.reviewAt = KWR.Util:Now() - 6
 invalidatedState.activePlay.expectedArrivalAt = KWR.Util:Now() - 1
@@ -3083,6 +3245,28 @@ assert(type(latestInvalidationOverride) == "table"
     and latestInvalidationOverride.candidateObjective == "Blacksmith"
     and (latestInvalidationOverride.lostCommitmentTime or 0) > 0,
     "Invalidated active-play replacement was not logged with override evidence and lost commitment time.")
+do
+    local assaultSnapshot = KWR.Util:Copy(invalidatedSnapshot)
+    local assaultState = KWR.Util:Copy(invalidatedState)
+    assaultState.activePlay.action = "ROTATE TO FARM AND STABILIZE"
+    assaultState.activePlay.requiresFriendlyControl = nil
+    KWR.Store.state = assaultState
+    local assaultCommand = KWR.Commander:Compose(
+        assaultSnapshot, replacementPrediction, liveState.assignments)
+    assert(assaultCommand.activePlayDecision.invalidation ~= "HELD_NODE_LOST",
+        "Commander treated a rotation toward an enemy node as a lost held node.")
+    local worldSnapshot = KWR.Util:Copy(assaultSnapshot)
+    worldSnapshot.context.inPvP = false
+    worldSnapshot.context.mapKey = "WORLD"
+    worldSnapshot.context.kind = "WORLD"
+    worldSnapshot.context.instanceType = "none"
+    worldSnapshot.formation = { action = "Recruit a healer.", recommendations = {} }
+    local worldCommand = KWR.Commander:Compose(worldSnapshot, {}, {})
+    assert(worldCommand.activePlay == nil
+        and worldCommand.activePlayOutcome.status == "STANDBY"
+        and worldCommand.bypass == "WORLD_STANDBY",
+        "Commander created an active tactical play outside a battleground.")
+end
 local gilneasPreviousState = {
     activePlay = {
         id = "ACTIVE_WW_HOLD",
@@ -4986,6 +5170,10 @@ if not releaseOnly then
     previewState = KWR.Store:Get()
     assert(previewState.snapshot.context.preview == true, "Preview was not explicitly labeled.")
     assert(previewState.mode == "PREVIEW", "Store did not publish preview mode.")
+    assert(previewState.snapshot.context.team
+        and previewState.snapshot.context.team.side == "left"
+        and previewState.snapshot.context.team.source == "preview_synthetic",
+        "Preview did not provide an explicit synthetic assigned-team contract.")
     assert(KWR.Util:AllowsCompactBattlefieldSurfaces(previewState) == true,
         "Preview state did not allow compact battlefield surfaces.")
     assert(#previewState.snapshot.enemies == 10, "Preview enemy tracker was not populated.")
@@ -4998,6 +5186,16 @@ if not releaseOnly then
     assert(previewState.snapshot.combat.killTarget.shortName == "Syraelina", "Combat intelligence did not prefer the exposed healer.")
     assert(previewState.snapshot.combat.killTarget.localKillTarget == true, "Selected kill target was not marked for the compact glow.")
     assert(previewState.snapshot.combat.killReason:find("trinket used", 1, true), "Observed trinket use did not affect kill reasoning.")
+    local previewRefreshes = KWR.MatchRuntime.diagnostics.refreshes
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_BATTLEFIELD_STATUS"),
+        "Queued preview refresh failed.")
+    assert(KWR.MatchRuntime.diagnostics.refreshes == previewRefreshes
+        and (KWR.MatchRuntime.diagnostics.previewRefreshSkips or 0) >= 1,
+        "Unchanged preview data reran the full tactical pipeline.")
+    inspectNotifications = {}
+    assert(KWR.MatchRuntime:RescanRoster(), "Preview roster rescan failed.")
+    assert(#inspectNotifications == 0,
+        "Preview roster rescan requested Retail inspection for synthetic rows.")
 else
     previewState = KWR.Store:Get()
     assert(KWR.db.profile.preview ~= true,
@@ -5781,8 +5979,8 @@ assert(killRow:GetAttribute("type1") == "macro"
     and killRow:GetAttribute("macrotext2")
         == "/cleartarget [mod:shift]\n/targetexact [mod:shift] Warrior-Z\n/focus [mod:shift]\n/targetlasttarget [mod:shift]",
     "Enemy tracker binding did not clear a stale target before Shift+Right-Click focus.")
-assert(killRow and killRow.detailText.value == "KILL"
-    and controlRow and controlRow.detailText.value == "CC Knomercy"
+assert(killRow and killRow.detailText.value == "WHERE: LIVE"
+    and controlRow and controlRow.detailText.value == "WHERE: LIVE"
     and killRow.detailIcon.texture ~= nil
     and controlRow.detailIcon.texture ~= nil
     and not personalRow.displayName:find("%.%.%.", 1)
@@ -5792,7 +5990,7 @@ assert(killRow and killRow.detailText.value == "KILL"
         == KWR.Theme.combatColors.STOP.outer[1]
     and killRow.backdropBorderColor[1]
         == KWR.Theme.combatColors.KILL.outer[1],
-    "Compact tracker rows did not expose clean reviewed local KILL and CC calls.")
+    "Compact tracker rows did not expose location-first truth while retaining local KILL and CC indicators.")
 local clearedFightHudState = KWR.Util:Copy(localFightHudState)
 clearedFightHudState.revision = localFightHudState.revision + 1
 clearedFightHudState.snapshot.executionCommand.signature = "LOCAL-FIGHT-CLEAR"
@@ -7516,6 +7714,51 @@ assert(KWR.db.profile.launcher.angle == 225
     and KWR.db.profile.combatRoster.teamMini.x == -170
     and KWR.db.profile.combatRoster.enemyMini.x == 170,
     "Coordinated layout reset did not restore launcher and combat-roster positions.")
+
+-- Native bag windows must remain above the command HUD. Strata-only changes
+-- are safe during combat; all anchoring and scaling work stays deferred.
+do
+    local coordinator = KWR.LayoutCoordinator
+    local combinedBags = CreateFrame("Frame", "ContainerFrameCombinedBags", UIParent)
+    local individualBag = CreateFrame("Frame", "ContainerFrame1", UIParent)
+    combinedBags:Hide()
+    individualBag:Hide()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "HIGH"
+        and KWR.MainWindow.launcherMenu:GetFrameStrata() == "HIGH",
+        "KWR surfaces did not retain normal strata with bags closed.")
+
+    combinedBags:Show()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "MEDIUM"
+        and KWR.MainWindow.launcherMenu:GetFrameStrata() == "MEDIUM",
+        "Combined backpack did not take strata priority over KWR surfaces.")
+
+    combinedBags:Hide()
+    individualBag:Show()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Individual bag did not take strata priority over KWR surfaces.")
+
+    individualBag:Hide()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "KWR surface strata did not recover after every bag closed.")
+
+    combinedBags:Show()
+    mockCombat = true
+    assert(coordinator:Apply() == false and coordinator.pendingApply == true
+        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Combat lockdown blocked the safe native-bag strata update.")
+    combinedBags:Hide()
+    assert(coordinator:Apply() == false
+        and KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "Combat lockdown blocked strata recovery after the bag closed.")
+    mockCombat = false
+    coordinator:Apply()
+    _G.ContainerFrameCombinedBags = nil
+    _G.ContainerFrame1 = nil
+end
 
 -- Layout polling must remain deterministic: every managed visible surface
 -- keeps strata/clamping alive, while a fully hidden/idle UI does no work.

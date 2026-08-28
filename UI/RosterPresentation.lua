@@ -7,13 +7,14 @@ local function trackerText(value, fallback, maxLength)
     return KWR.Util:TextClip(value, fallback, maxLength)
 end
 
-function RosterPresentation:SpecLabel(entity)
-    local spec = KWR.Util:Text(
-        entity and entity.spec, "Unknown", 28)
-    if entity and entity.specSource == "historical" then
-        return spec .. " (HIST)"
-    end
-    return spec
+function RosterPresentation:SpecLabel(entity, maxLength)
+    maxLength = math.max(12, KWR.Util:Number(maxLength, 28) or 28)
+    local suffix = entity and entity.specSource == "historical" and " (HIST)" or ""
+    -- Preserve provenance in compact rows by truncating the spec before its
+    -- historical suffix, never after it.
+    local spec = KWR.Util:TextClip(entity and entity.spec, "Unknown",
+        math.max(6, maxLength - #suffix))
+    return spec .. suffix
 end
 
 function RosterPresentation:EnemyAction(

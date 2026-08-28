@@ -4,15 +4,19 @@ local Sensors = {
     specCache = {},
     scoreWidgetByMap = {},
     objectiveWidgetByMap = {},
+    widgetFingerprints = {},
     scoreSession = nil,
     blitzSessionKey = nil,
     blitzSource = nil,
+    positionCache = {},
     lastScoreRequestAt = -999,
 }
 KWR.Sensors = Sensors
 
 local Util
 local SCOREBOARD_REQUEST_INTERVAL = 10
+local SPEC_REFRESH_INTERVAL = 5
+local POSITION_REFRESH_INTERVAL = 1
 
 local function number(value, fallback)
     return Util:Number(value, fallback)
@@ -56,6 +60,33 @@ local function safeArrayLength(array)
     if type(array) ~= "table" then return 0 end
     local ok, count = pcall(function() return #array end)
     return ok and number(count, 0) or 0
+end
+
+local function iconStateFingerprint(icons)
+    local states = {}
+    for index = 1, safeArrayLength(icons) do
+        local icon = icons[index]
+        if type(icon) == "table" and not Util:IsSecret(icon) then
+            states[#states + 1] = tostring(number(icon.iconState, -1))
+        else
+            states[#states + 1] = "?"
+        end
+    end
+    return table.concat(states, ",")
+end
+
+local function widgetFingerprint(widgetID, widget, iconInfo)
+    local parts = { tostring(widgetID) }
+    if widget then
+        parts[#parts + 1] = table.concat({ "score", tostring(widget.left),
+            tostring(widget.right), tostring(widget.max) }, ":")
+    end
+    if type(iconInfo) == "table" then
+        parts[#parts + 1] = table.concat({ "objectives",
+            iconStateFingerprint(iconInfo.leftIcons),
+            iconStateFingerprint(iconInfo.rightIcons) }, ":")
+    end
+    return #parts > 1 and table.concat(parts, ":") or nil
 end
 
 local function evidenceTTL(source, field)
@@ -263,12 +294,20 @@ local function mergeObjectiveRow(result, incoming)
             end
             if incoming.poiID then row.poiID = incoming.poiID end
             if incoming.vignetteGUID then row.vignetteGUID = incoming.vignetteGUID end
-            if incoming.owner and resolveObjectiveField(row, "owner", incoming.owner,
+            -- Area POIs and vignettes identify map positions, but do not
+            -- authoritatively report ownership or capture state. Treating
+            -- their UNKNOWN/MAP placeholders as facts conflicts with the
+            -- live objective widget on every controlled node.
+            local observesOwner = incoming.source == "ui_widget"
+                and incoming.owner and incoming.owner ~= "UNKNOWN"
+            local observesState = incoming.source == "ui_widget"
+                and incoming.state and incoming.state ~= "MAP"
+            if observesOwner and resolveObjectiveField(row, "owner", incoming.owner,
                 incoming.source, observedAt, revision,
                 { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } }) then
                 row.owner = incoming.owner
             end
-            if incoming.state and resolveObjectiveField(row, "state", incoming.state,
+            if observesState and resolveObjectiveField(row, "state", incoming.state,
                 incoming.source, observedAt, revision,
                 { source = { system = incoming.source, widgetID = incoming.widgetID, iconState = incoming.iconState } }) then
                 row.state = incoming.state
@@ -627,6 +666,10 @@ local function requestScoreboard(force)
     end
 end
 
+function Sensors:InvalidateScoreboard()
+    self.scoreboardDirty = true
+end
+
 function Sensors:RequestScoreboard(force)
     requestScoreboard(force == true)
 end
@@ -774,7 +817,7 @@ local function captureRoster(mapID)
     end
 
     local seenIdentity, seenName, seenUnstableShortName = {}, {}, {}
-    local seenPlayerUnit = false
+    local seenUnits = {}
     for unitIndex, unit in ipairs(units) do
         local unitName = Util:UnitName(unit)
         -- GetRaidRosterInfo owns raid-slot identity. If that slot has not
@@ -786,16 +829,20 @@ local function captureRoster(mapID)
         else
             name = unitName
         end
-        -- During the pre-full-roster transition Blizzard can temporarily make
-        -- more than one group token resolve to the leader. Names and GUIDs
-        -- may still be provisional, so identity text alone cannot prevent a
-        -- duplicate Team row. Keep the first real player token and omit later
-        -- tokens that the client confirms are the same unit.
-        local isAdditionalPlayerToken = unit ~= "player"
-            and seenPlayerUnit
-            and type(UnitIsUnit) == "function"
-            and Util:Boolean(Util:Call(UnitIsUnit, unit, "player"), false)
-        if name and not isAdditionalPlayerToken then
+        -- During roster hydration any group token, not only the local-player
+        -- token, can temporarily resolve to an already-seen teammate. Names
+        -- and GUIDs can differ while that happens, so use Blizzard's unit
+        -- identity predicate before publishing a second Team row.
+        local isAdditionalUnitToken = false
+        if type(UnitIsUnit) == "function" then
+            for _, seenUnit in ipairs(seenUnits) do
+                if Util:Boolean(Util:Call(UnitIsUnit, unit, seenUnit), false) then
+                    isAdditionalUnitToken = true
+                    break
+                end
+            end
+        end
+        if name and not isAdditionalUnitToken then
             local unitStable = not inRaid
                 or raidUnitMatchesRosterName(name, unitName, raidShortCounts)
             local localizedClass, classFile
@@ -834,34 +881,33 @@ local function captureRoster(mapID)
                 if unstableShortName ~= "" then
                     seenUnstableShortName[unstableShortName] = true
                 end
-                if type(UnitIsUnit) == "function"
-                    and Util:Boolean(Util:Call(UnitIsUnit, unit, "player"), false) then
-                    seenPlayerUnit = true
-                end
+                seenUnits[#seenUnits + 1] = unit
             end
             if not duplicate then
-            local specID, specName, specRole, specSource
-            if unitStable then
-                specID, specName, specRole, specSource =
-                    resolveSpecialization(unit)
-            end
-            if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             local cacheKey = guid ~= "" and guid or name:lower()
-            local cacheRecord
+            local cacheRecord = Sensors.specCache[cacheKey]
+                or Sensors.specCache[name:lower()]
+            local specID, specName, specRole, specSource
+            local cacheExpired = not cacheRecord
+                or (observedAt - (cacheRecord.observedAt or 0)) >= SPEC_REFRESH_INTERVAL
+            if unitStable and cacheExpired then
+                specID, specName, specRole, specSource = resolveSpecialization(unit)
+            elseif cacheRecord then
+                specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
+                specSource = "cache"
+            end
+            if (not specName or specName == "") and cacheRecord then
+                specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
+                specSource = "cache"
+            end
             if specName and specName ~= "" then
                 cacheRecord = {
                     id = specID,
                     name = specName,
                     role = specRole,
-                    observedAt = Util:Now(),
+                    observedAt = observedAt,
                 }
                 Sensors.specCache[cacheKey] = cacheRecord
-            else
-                local cached = Sensors.specCache[cacheKey] or Sensors.specCache[name:lower()]
-                if cached then
-                    specID, specName, specRole = cached.id, cached.name, cached.role
-                    cacheRecord = cached
-                end
             end
             if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             if cacheRecord then
@@ -883,9 +929,24 @@ local function captureRoster(mapID)
             local healthMax = unitStable
                 and number(Util:Call(UnitHealthMax, unit), nil) or nil
             local x, y
+            local positionCache = Sensors.positionCache[cacheKey]
+            local positionExpired = not positionCache
+                or positionCache.mapID ~= mapID
+                or (observedAt - (positionCache.observedAt or 0)) >= POSITION_REFRESH_INTERVAL
             if unitStable and mapID and C_Map and C_Map.GetPlayerMapPosition then
-                local position = Util:Call(C_Map.GetPlayerMapPosition, mapID, unit)
-                x, y = readPosition(position)
+                if positionExpired then
+                    local position = Util:Call(C_Map.GetPlayerMapPosition, mapID, unit)
+                    x, y = readPosition(position)
+                    positionCache = {
+                        mapID = mapID,
+                        observedAt = observedAt,
+                        x = x,
+                        y = y,
+                    }
+                    Sensors.positionCache[cacheKey] = positionCache
+                else
+                    x, y = positionCache.x, positionCache.y
+                end
             end
             local location = x and y and nearestDefinedLocation(definition, x, y) or nil
             local targetGUID
@@ -944,6 +1005,10 @@ function Sensors:OnInitialize()
         for _, event in ipairs({ "INSPECT_READY", "PLAYER_SPECIALIZATION_CHANGED" }) do
             local eventName = event
             EventRegistry:RegisterFrameEventAndCallback(eventName, function()
+                -- Keep normal refreshes cheap, but let an explicit inspection
+                -- or specialization event make the next snapshot immediately
+                -- eligible to refresh its cached spec evidence.
+                Sensors.specCache = {}
                 if KWR.MatchRuntime then KWR.MatchRuntime:Queue(eventName, 0.05) end
             end, self)
         end
@@ -961,6 +1026,7 @@ function Sensors:ObserveWidget(widgetInfo)
         local definition = KWR.Maps:Get(mapKey)
         local relevant = false
         local widget = readDoubleStatus(widgetID)
+        local scoreFingerprint, objectiveFingerprint
         if validScoreWidget(widget, definition) then
             local verifiedID = definition and definition.scoreWidget
             if widgetID == verifiedID
@@ -968,6 +1034,7 @@ function Sensors:ObserveWidget(widgetInfo)
                 self.scoreWidgetByMap[mapKey] = widgetID
             end
             relevant = true
+            scoreFingerprint = widgetFingerprint(widgetID, widget, nil)
         end
         if C_UIWidgetManager and type(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo) == "function" then
             local info = Util:Call(C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo, widgetID)
@@ -975,7 +1042,21 @@ function Sensors:ObserveWidget(widgetInfo)
                 and (type(info.leftIcons) == "table" or type(info.rightIcons) == "table") then
                 self.objectiveWidgetByMap[mapKey] = widgetID
                 relevant = true
+                objectiveFingerprint = widgetFingerprint(widgetID, nil, info)
             end
+        end
+        local fingerprint
+        if scoreFingerprint and objectiveFingerprint then
+            fingerprint = scoreFingerprint .. "|" .. objectiveFingerprint
+        else
+            fingerprint = scoreFingerprint or objectiveFingerprint
+        end
+        if relevant and fingerprint then
+            local cacheKey = tostring(mapKey) .. ":" .. tostring(widgetID)
+            if self.widgetFingerprints[cacheKey] == fingerprint then
+                return false
+            end
+            self.widgetFingerprints[cacheKey] = fingerprint
         end
         return relevant
     end
@@ -1079,7 +1160,7 @@ function Sensors:TrackScore(context, score)
     score.rateEvidence = KWR.Util:Copy(self.scoreSession.rateEvidence)
 end
 
-function Sensors:Capture(lastMessage)
+function Sensors:Capture(lastMessage, allowScoreboardReuse)
     local inInstance, instanceType = Util:Call(IsInInstance)
     instanceType = text(instanceType, "none", 16)
     local inPvP = Util:Boolean(inInstance, false) and instanceType == "pvp"
@@ -1096,6 +1177,9 @@ function Sensors:Capture(lastMessage)
     local directBlitz = inPvP and C_PvP
         and type(C_PvP.IsBrawlSoloRBG) == "function"
         and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false
+    local directBrawl = inPvP and C_PvP
+        and type(C_PvP.IsInBrawl) == "function"
+        and Util:Boolean(Util:Call(C_PvP.IsInBrawl), false) or false
     local ratedProvider = C_PvP and type(C_PvP.IsRatedBattleground) == "function"
         and C_PvP.IsRatedBattleground or IsRatedBattleground
     local isRated = inPvP and type(ratedProvider) == "function"
@@ -1110,6 +1194,8 @@ function Sensors:Capture(lastMessage)
         phase = inPvP and "ACTIVE" or "WORLD",
         instanceID = number(instanceID, nil),
         isBlitz = directBlitz,
+        isBrawl = directBrawl,
+        brawlSource = directBrawl and "C_PvP.IsInBrawl" or "unconfirmed",
         isRated = isRated,
         capturedAt = Util:Now(),
     }
@@ -1121,9 +1207,18 @@ function Sensors:Capture(lastMessage)
         self.blitzSessionKey = context.sessionKey
         self.blitzSource = nil
     end
+    local now = Util:Now()
+    local reuseScoreboard = allowScoreboardReuse == true and inPvP
+        and self.scoreboardDirty ~= true
+        and self.lastScoreboardCaptureAt ~= nil
+        and now - self.lastScoreboardCaptureAt < 1.5
     local roster, expectedRosterCount = captureRoster(inPvP and mapID or nil)
     local assigned, scoreboardRows = KWR.TeamResolver:Capture(
-        inPvP, roster, context.sessionKey)
+        inPvP, roster, context.sessionKey, reuseScoreboard)
+    if not reuseScoreboard then
+        self.lastScoreboardCaptureAt = now
+        self.scoreboardDirty = false
+    end
     local scoreboardBlitz, blitzEvidence =
         KWR.TeamResolver:DetectBlitz(scoreboardRows)
     if directBlitz then

@@ -89,14 +89,26 @@ function Preview:Build()
             kind = "NODE",
             phase = "PREVIEW",
             capturedAt = now,
+            -- Preview intentionally supplies a complete synthetic team contract
+            -- for layout and assignment review. Verification still labels the
+            -- snapshot PREVIEW and never treats it as Retail-widget truth.
+            team = {
+                side = "left",
+                faction = "Alliance",
+                scoreFaction = 0,
+                source = "preview_synthetic",
+                votes = #rosterSeed,
+            },
         },
         score = {
             friendly = 1240, enemy = 980, max = 1500,
             friendlyNeeded = 260, enemyNeeded = 520, source = "preview",
+            observedAt = now,
         },
         objectives = {
             friendly = 3, enemy = 2, friendlyActive = 3, enemyActive = 2,
             friendlyIncoming = 0, enemyIncoming = 0, source = "preview",
+            observedAt = now,
             rows = {
                 { label = "Blacksmith", owner = "FRIENDLY", state = "CONTROLLED", x = 0.48, y = 0.52, source = "preview" },
                 { label = "Lumber Mill", owner = "FRIENDLY", state = "CONTROLLED", x = 0.58, y = 0.28, source = "preview" },

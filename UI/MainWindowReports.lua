@@ -9,6 +9,22 @@ local function roundedNumber(value)
     return math.floor(number + 0.5)
 end
 
+local function topCounterText(counts, limit)
+    local entries = {}
+    for name, count in pairs(type(counts) == "table" and counts or {}) do
+        entries[#entries + 1] = { name = name, count = tonumber(count) or 0 }
+    end
+    table.sort(entries, function(a, b)
+        if a.count ~= b.count then return a.count > b.count end
+        return a.name < b.name
+    end)
+    local result = {}
+    for index = 1, math.min(limit or 5, #entries) do
+        result[#result + 1] = entries[index].name .. " " .. tostring(entries[index].count)
+    end
+    return #result > 0 and table.concat(result, ", ") or "none"
+end
+
 function MainWindowReports:BuildExplainPayload(state, helpers)
     helpers = helpers or {}
     local command = state.command
@@ -371,6 +387,10 @@ function MainWindowReports:BuildPerformancePayload(state)
     local p95Text = sampleCount >= 10
         and string.format("P95: %.3f ms", diagnostics.p95DurationMs or 0)
         or string.format("P95: pending (%d/10 samples before first calculation)", sampleCount)
+    local tacticalSampleCount = diagnostics.tacticalDurationSampleCount or 0
+    local tacticalP95Text = tacticalSampleCount >= 10
+        and string.format("Tactical P95: %.3f ms", diagnostics.p95TacticalDurationMs or 0)
+        or string.format("Tactical P95: pending (%d/10)", tacticalSampleCount)
     local moduleTimes = {}
     for name, duration in pairs(boot.moduleMs or {}) do
         moduleTimes[#moduleTimes + 1] = { name = name, duration = duration }
@@ -399,17 +419,39 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Transition refreshes: " .. tostring(diagnostics.transitionRefreshes or 0),
         "Lightweight health/aura events: " .. tostring(diagnostics.lightweightEvents or 0),
         "",
-        "Refreshes: " .. tostring(diagnostics.refreshes or 0),
+        "Strategic refreshes: " .. tostring(diagnostics.strategicRefreshes
+            or diagnostics.refreshes or 0),
+        "Tactical refreshes: " .. tostring(diagnostics.tacticalRefreshes or 0),
         "Events: " .. tostring(diagnostics.events or 0),
         "Coalesced events: " .. tostring(diagnostics.coalesced or 0),
         "Newest-truth followups: " .. tostring(diagnostics.queueFollowups or 0),
         "Earlier refresh preemptions: " .. tostring(diagnostics.queuePreemptions or 0),
         "Load/widget settle refreshes: " .. tostring(diagnostics.settleRefreshes or 0),
-        string.format("Last: %.3f ms", diagnostics.lastDurationMs or 0),
-        string.format("Average: %.3f ms", diagnostics.averageDurationMs or 0),
-        "Duration samples: " .. tostring(sampleCount) .. " / 120",
-        p95Text,
-        string.format("Maximum: %.3f ms", diagnostics.maxDurationMs or 0),
+        string.format("Strategic last: %.3f ms", diagnostics.lastDurationMs or 0),
+        string.format("Strategic average: %.3f ms", diagnostics.averageDurationMs or 0),
+        "Duration samples: strategic " .. tostring(sampleCount)
+            .. " / 120, tactical " .. tostring(tacticalSampleCount) .. " / 120",
+        "Strategic duration samples: " .. tostring(sampleCount) .. " / 120",
+        "Strategic " .. p95Text,
+        string.format("Strategic maximum: %.3f ms", diagnostics.maxDurationMs or 0),
+        string.format("Tactical last: %.3f ms", diagnostics.lastTacticalDurationMs or 0),
+        string.format("Tactical average: %.3f ms", diagnostics.averageTacticalDurationMs or 0),
+        "Tactical duration samples: " .. tostring(tacticalSampleCount) .. " / 120",
+        tacticalP95Text,
+        string.format("Tactical maximum: %.3f ms", diagnostics.maxTacticalDurationMs or 0),
+        string.format("Tactical queue: coalesced %d / absorbed %d / escalated %d",
+            diagnostics.tacticalCoalesced or 0,
+            diagnostics.tacticalAbsorbed or 0,
+            diagnostics.tacticalEscalations or 0),
+        "Top events: " .. topCounterText(diagnostics.eventReasons, 6),
+        "Strategic queue reasons: " .. topCounterText(
+            diagnostics.strategicQueueReasons, 6),
+        "Strategic execution reasons: " .. topCounterText(
+            diagnostics.strategicRefreshReasons, 6),
+        "Tactical queue reasons: " .. topCounterText(
+            diagnostics.tacticalQueueReasons, 6),
+        "Tactical execution reasons: " .. topCounterText(
+            diagnostics.tacticalRefreshReasons, 6),
         "Latest slow stages: " .. (#slowStages > 0 and table.concat(slowStages, ", ") or "unavailable"),
         string.format("Lua memory: %.1f KB", diagnostics.memoryKB or 0),
         string.format("Capability cache: %d hits / %d misses / %d entries",

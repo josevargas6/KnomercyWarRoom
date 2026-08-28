@@ -42,6 +42,21 @@ local function enemyActionIcon(action)
     return "observed"
 end
 
+local function enemyLocationDisplay(enemy, mapKey)
+    local state = KWR.EnemyIntel:LocationState(enemy)
+    local location = KWR.Util:Text(enemy and enemy.location, "", 48)
+    if location ~= "" and KWR.Maps then
+        location = KWR.Maps:AbbreviateLocation(mapKey, location)
+    end
+    if state == "ENGAGED" or state == "LOCAL" or state == "VISIBLE" then
+        return "WHERE: " .. (location ~= "" and location or "LIVE"), "green"
+    end
+    if state == "LAST SEEN" then
+        return "LAST: " .. (location ~= "" and location or "UNKNOWN"), "orange"
+    end
+    return "WHERE: UNKNOWN", "muted"
+end
+
 local function teamActionIcon(assignment)
     if type(assignment) ~= "table" then return "hold" end
     local shortRole = KWR.Util:Upper(assignment.shortRole, "", 24)
@@ -698,7 +713,7 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
     local hr, hg, hb = helpers.healthColor(percent)
     row.health:SetStatusBarColor(hr, hg, hb, 0.72)
     row.healthText:SetText(percent and (tostring(math.floor(percent + 0.5)) .. "%")
-        or (data.unit and "LIVE"
+        or (team ~= "ENEMY" and data.unit and "LIVE"
         or (lastPercent and ("~" .. tostring(math.floor(lastPercent + 0.5)) .. "%")
         or "--")))
     emphasizeHealthText(row.healthText)
@@ -731,20 +746,17 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
         local action = KWR.RosterPresentation:EnemyAction(
             data, assignment, mapKey, true)
         applyIcon(row.detailIcon, enemyActionIcon(action))
-        row.detailText:SetText(trackerText(action.text, "--", 28))
-        if action.combatTone then
-            row.detailText:SetTextColor(
-                KWR.Theme:CombatColor(action.combatTone))
-        else
-            row.detailText:SetTextColor(
-                KWR.Theme:Color(action.tone))
-        end
+        local locationText, locationTone = enemyLocationDisplay(data, mapKey)
+        row.detailText:SetText(trackerText(locationText, "WHERE: UNKNOWN", 28))
+        row.detailText:SetTextColor(KWR.Theme:Color(locationTone))
         row:SetAlpha(data.localRange and 1 or (data.visible and 0.72 or 0.42))
         row.killReason = (kill or pressure) and focusReason or nil
-        row.tooltipState = active and ("Active defensive: " .. KWR.Util:Text(data.cooldownText, "Observed", 64))
-            or (trinket and "Observed PvP trinket is on cooldown"
-            or ("Observation: " .. observed
-                .. (data.locationSource and (" via " .. data.locationSource) or "")))
+        row.tooltipState = "Location: " .. observed
+            .. (data.locationSource and (" via " .. data.locationSource) or "")
+        if action and action.kind ~= "OBSERVED" and action.kind ~= "NONE" then
+            row.tooltipState = row.tooltipState .. "\nTactical: "
+                .. KWR.Util:Text(action.text, "Observed", 64)
+        end
         row.glow:SetShown((kill or pressure) and not defensive)
         local border = targeted and "gold"
             or (focused and "purple" or "border")

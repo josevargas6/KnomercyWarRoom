@@ -23,7 +23,10 @@ local BLIZZARD_WINDOWS = {
     "CollectionsJournal",
     "EncounterJournal",
     "GameMenuFrame",
+    "ContainerFrameCombinedBags",
 }
+
+local MAX_CONTAINER_FRAMES = 13
 
 local KWR_STRATA = {
     { "MainWindow", "HIGH" },
@@ -149,6 +152,9 @@ end
 function LayoutCoordinator:BlizzardWindowOpen()
     for _, name in ipairs(BLIZZARD_WINDOWS) do
         if shown(name) then return true end
+    end
+    for index = 1, MAX_CONTAINER_FRAMES do
+        if shown("ContainerFrame" .. index) then return true end
     end
     return false
 end
@@ -332,6 +338,9 @@ function LayoutCoordinator:ApplySentinel()
 end
 
 function LayoutCoordinator:Apply()
+    -- Strata changes touch only KWR-owned, unprotected shell frames. Keep
+    -- Blizzard bags and panels above KWR even when combat blocks re-anchoring.
+    self:ApplyStrata()
     -- Layout changes re-anchor frames and scroll containers. Retail can mark
     -- those operations protected while combat is active, so no periodic or
     -- display-change layout work may run until PLAYER_REGEN_ENABLED.
@@ -340,7 +349,6 @@ function LayoutCoordinator:Apply()
         return false
     end
     self.pendingApply = nil
-    self:ApplyStrata()
     self:ApplyMainWindow()
     self:ApplyHUD()
     self:ApplyOptions()

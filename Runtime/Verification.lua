@@ -335,14 +335,20 @@ function Verification:BuildEntry(state)
     local overrideDetails = KWR.AssignmentOverrides
         and KWR.AssignmentOverrides:DescribeActive(snapshot, state.assignments)
         or {}
-    local teamSpecs, teamUnits = 0, 0
+    local teamSpecs, teamUnits, teamHistoricalSpecs, teamHealthEligible = 0, 0, 0, 0
     local enemySpecs, enemyUnits, enemyLocal = 0, 0, 0
     local enemyVisible, enemyLocalRange, enemyLastSeen = 0, 0, 0
     for _, player in ipairs(snapshot.roster or {}) do
         if player.spec and player.spec ~= "" and player.spec ~= "Unknown" then
             teamSpecs = teamSpecs + 1
         end
+        if player.specSource == "historical" then
+            teamHistoricalSpecs = teamHistoricalSpecs + 1
+        end
         if player.unit then teamUnits = teamUnits + 1 end
+        if player.healthPercent ~= nil or player.unit then
+            teamHealthEligible = teamHealthEligible + 1
+        end
     end
     for _, enemy in ipairs(snapshot.enemies or {}) do
         if enemy.spec and enemy.spec ~= "" and enemy.spec ~= "Unknown" then
@@ -371,7 +377,8 @@ function Verification:BuildEntry(state)
         mapID = context.mapID,
         instanceType = context.instanceType,
         phase = context.phase,
-        bracket = context.isBlitz and "BLITZ" or "STANDARD",
+        bracket = context.isBrawl and "BRAWL"
+            or (context.isBlitz and "BLITZ" or "STANDARD"),
         preview = context.preview == true,
         team = context.team and context.team.faction or "Unknown",
         teamSide = context.team and context.team.side or "unknown",
@@ -416,6 +423,7 @@ function Verification:BuildEntry(state)
         alternativeReview = strategy.alternativeReview,
         executionAssessment = strategy.executionAssessment,
         responsePackage = snapshot.responsePackage,
+        carrierTargetEvidence = snapshot.carrierTargetEvidence,
         knowledgeStatus = snapshot.knowledgeStatus,
         simulations = strategy.simulations,
         switchIf = strategy.switchIf,
@@ -432,6 +440,8 @@ function Verification:BuildEntry(state)
         enemies = #(snapshot.enemies or {}),
         teamSpecs = teamSpecs,
         teamUnits = teamUnits,
+        teamHistoricalSpecs = teamHistoricalSpecs,
+        teamHealthEligible = teamHealthEligible,
         enemySpecs = enemySpecs,
         enemyUnits = enemyUnits,
         enemyLocal = enemyLocal,
@@ -607,6 +617,9 @@ function Verification:Format(entry)
         "Assigned team: " .. value(entry.team) .. " / " .. value(entry.teamSide)
             .. " / score faction " .. tostring(entry.scoreFaction or "unknown"),
         "Team data: " .. value(entry.teamSource) .. " / votes " .. tostring(entry.teamVotes or 0),
+        string.format("Team truth: roster %d / units %d / health-display eligible %d / known specs %d / HIST specs %d",
+            entry.roster or 0, entry.teamUnits or 0, entry.teamHealthEligible or 0,
+            entry.teamSpecs or 0, entry.teamHistoricalSpecs or 0),
         "Raw widget score: " .. tostring(entry.rawLeft or "unknown")
             .. " left / " .. tostring(entry.rawRight or "unknown") .. " right",
         "Friendly score: " .. tostring(entry.friendlyScore or 0)
@@ -626,6 +639,12 @@ function Verification:Format(entry)
             .. " / age " .. (entry.objectiveAge and string.format("%.2f sec", entry.objectiveAge) or "unknown"),
         "Objective widget: " .. tostring(entry.objectiveWidget or "unknown"),
         "Objective conflicts: " .. tostring(entry.objectiveConflicts or 0),
+        "Carrier target: " .. value(entry.carrierTargetEvidence
+            and entry.carrierTargetEvidence.canonicalTarget, "none")
+            .. " / source " .. value(entry.carrierTargetEvidence
+            and entry.carrierTargetEvidence.source, "none")
+            .. " / raw " .. value(entry.carrierTargetEvidence
+            and entry.carrierTargetEvidence.rawTarget, "none"),
         "Prediction: " .. value(entry.prediction)
             .. " / confidence " .. value(entry.confidence, "NONE"),
         "Condition: " .. value(entry.condition),

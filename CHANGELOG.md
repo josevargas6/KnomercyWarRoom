@@ -1,5 +1,49 @@
 # Changelog
 
+## 6.1.1-alpha.9 - 2026-08-27
+
+- Keep Blizzard's combined backpack and individual bag windows above KWR
+  surfaces, including safe strata-only updates during combat lockdown.
+- Split live runtime work into direct UI, tactical, and strategic lanes while preserving one Store and one decision engine.
+- Route target, focus, nameplate, unit-target, cast, and combat-state traffic through a bounded tactical queue that reuses the current strategic call.
+- Escalate only material tactical truth changes to one coalesced strategic refresh and replace the two-second full pulse with an eight-second recovery heartbeat.
+- Add lane-specific queue attribution, duration samples, P95, coalescing, absorption, escalation, and retention telemetry.
+- Add a deterministic 500-event tactical storm soak that proves bounded refreshes and command retention.
+
+## 6.1.1-alpha.8 - 2026-08-27
+
+- Treat unresolved opening ownership as unresolved, not as proof that a held node was lost.
+- Collapse unqualified duplicate-name friendly roster transition rows until a realm-qualified identity proves they are distinct players.
+
+## 6.1.1-alpha.7 - 2026-08-27
+
+- Make design preview provide explicit synthetic assigned-team truth while
+  retaining its unmistakable not-live provenance.
+- Reuse unchanged preview state for unrelated queued refreshes, so preview
+  interaction no longer repeatedly invokes the full battlefield strategy path.
+- Prevent preview roster rescans from requesting Retail inspection for
+  synthetic roster rows.
+
+## 6.1.1-alpha.6 - 2026-08-27
+
+- Reconciled all 20 audited live-addon enhancement candidates into canonical
+  source without copying the installed tree or weakening newer reviewed fixes.
+- Added bounded scoreboard reuse with explicit invalidation, reason-aware
+  critical refresh timing, current-roster rescans, and truthful lightweight
+  world standby state.
+- Added roster-safe assignment filtering, response mover/stayer deduplication,
+  explicit active-play clearing, and canonical flag-target verification.
+- Added observable one-result formation caching, retained bounded strategist
+  caches during active PvP, and clear both safely between matches.
+- Preserved canonical AAR map identity, historical specialization provenance,
+  location-first enemy truth, brawl bracket evidence, carrier-target evidence,
+  and health eligibility across the compact and expanded surfaces.
+- Reviewed Blizzard's official hotfix ledger through August 26, including
+  Warlock in the August 25 PvP tuning list and the August 26 Training Grounds
+  surrender fix, with no inferred capability weights or doctrine changes.
+- Added deterministic regressions for the adopted enhancement boundaries and
+  corrected localization-fixture isolation and manual roster-rescan ordering.
+
 ## 6.1.1-alpha.5 - 2026-08-18
 
 - Corrected the Season 2 hotfix boundary to Blizzard's July 28, 2026 ledger

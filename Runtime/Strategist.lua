@@ -274,7 +274,8 @@ local function quickRosterSignature(roster)
             player.spec or "?",
             player.role or "?",
             player.dead and "D" or "A",
-            player.location or "?",
+            player.connected == false and "OFFLINE" or "ONLINE",
+            player.carrier and "CARRIER" or "NONE",
         }, ":")
     end
     table.sort(parts)
@@ -319,7 +320,6 @@ local function decisionSignature(snapshot, prediction)
     add(intent.groupSize)
     add(math.floor((momentum.value or 0) / 5))
     add(resources.advantage)
-    add(reporter.matchMemory and reporter.matchMemory.revision)
     add(quickRosterSignature(snapshot.roster))
     add(quickRosterSignature(snapshot.enemies))
     return table.concat(parts, "\031")
@@ -888,7 +888,7 @@ function Strategist:Evaluate(snapshot, prediction)
     local signature = decisionSignature(snapshot, prediction)
     local now = KWR.Util:Now()
     if self.cache and self.cache.signature == signature
-        and now - self.cache.at <= 1.5 then
+        and now - self.cache.at <= 3 then
         self.cacheHits = self.cacheHits + 1
         return KWR.Util:Copy(self.cache.result)
     end

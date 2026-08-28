@@ -608,6 +608,44 @@ function ObjectiveIntel:CanonicalCommandTarget(mapKey, target, context)
     return "VERIFY"
 end
 
+function ObjectiveIntel:NormalizeStrategyTarget(snapshot)
+    local context = snapshot and snapshot.context
+    if not context or context.kind ~= "FLAG" then return nil end
+    local strategy = snapshot and snapshot.strategy
+    local decision = strategy and strategy.objectiveDecision
+    if type(decision) ~= "table" then return nil end
+    local rawTarget = KWR.Util:Text(decision.target, "", 96)
+    if rawTarget == "" then return nil end
+    -- A live carrier identity is already reviewed battlefield truth. Keep the
+    -- player's exact name so the commander and target cue can agree; only
+    -- unrecognized prose should cross the canonical-target boundary as VERIFY.
+    local canonical
+    local observedCarrier = false
+    for _, carrier in ipairs(snapshot.objectives
+        and snapshot.objectives.carriers or {}) do
+        local identity = KWR.Util:Text(carrier.player or carrier.name, "", 96)
+        if identity ~= "" and identity:upper() == rawTarget:upper()
+            and (carrier.owner == "FRIENDLY" or carrier.owner == "ENEMY") then
+            canonical = identity
+            observedCarrier = true
+            break
+        end
+    end
+    canonical = canonical or self:CanonicalCommandTarget(
+        context.mapKey, rawTarget, context)
+    decision.rawTarget = rawTarget
+    decision.target = canonical
+    decision.targetSource = canonical == "VERIFY" and "unclassified_raw_target"
+        or (canonical == rawTarget and "reviewed_target" or "canonicalized_target")
+    if observedCarrier then decision.targetSource = "observed_carrier_identity" end
+    return {
+        rawTarget = rawTarget,
+        canonicalTarget = canonical,
+        source = decision.targetSource,
+        heldForVerification = canonical == "VERIFY",
+    }
+end
+
 function ObjectiveIntel:CarrierCount()
     local count = 0
     for _ in pairs(self.carriers) do count = count + 1 end

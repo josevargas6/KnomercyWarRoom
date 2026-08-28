@@ -10,6 +10,7 @@ local Commander = {
     maxOverrideLog = 20,
     suppressionLog = {},
     maxSuppressionLog = 20,
+    recordedInvalidations = {},
 }
 KWR.Commander = Commander
 
@@ -28,8 +29,17 @@ local function qualifiedResponseRequiresReplacement(response)
     -- strategy. It is not a reason to discard an active play every refresh.
     -- Only an explicit emergency or a confirmed critical coverage gap may
     -- cross the commitment gate without ordinary superiority/persistence.
-    return response.emergency == true
-        or (response.recovery and KWR.Util:Text(response.recovery.criticalGap, "", 48) ~= "")
+    if response.emergency == true then return true end
+    -- Unknown widget state intentionally produces a VERIFY response.  That is
+    -- a request for more truth, not permission to tear down a committed play.
+    -- Likewise, HOLD_PLAN only confirms the current order.  Treating either
+    -- as a response bypass caused cart maps to replace VERIFY and the known
+    -- lane on alternating refreshes.
+    local actionID = KWR.Util:Text(response.actionID, "HOLD_PLAN", 32)
+    local target = KWR.Util:Text(response.target, "VERIFY", 48)
+    if actionID == "HOLD_PLAN" or target == "VERIFY" then return false end
+    return response.recovery
+        and KWR.Util:Text(response.recovery.criticalGap, "", 48) ~= ""
 end
 
 local function classifyBypass(snapshot, response, prediction, stabilized)
@@ -572,6 +582,19 @@ local function actionHasVerb(play, verbs)
     return false
 end
 
+local function requiresFriendlyNodeControl(play)
+    -- A rotation can legitimately say "stabilize" after arriving.  Movement
+    -- intent wins over that follow-up verb; otherwise an enemy/neutral target
+    -- is falsely treated as a held friendly node and invalidated mid-rotation.
+    if actionHasVerb(play, {
+        "ROTATE", "TAKE", "CAPTURE", "SECURE", "ASSAULT", "RECAP",
+        "PRESS", "ATTACK", "SEND",
+    }) then
+        return false
+    end
+    return actionHasVerb(play, { "HOLD", "DEFEND", "COVER", "STABILIZE", "PEEL" })
+end
+
 local function isResolutionPlay(play)
     if not play or not play.id then return false end
     local family = KWR.Util:Text(play.family, "WORLD", 16)
@@ -863,8 +886,16 @@ end
 
 local function buildActivePlay(snapshot, prediction, strategy, response, command, previousPlay, now)
     local family = snapshot.context and snapshot.context.kind or "WORLD"
-    local objective = (response and response.target) or strategy.target
-        or (strategy.objectiveDecision and strategy.objectiveDecision.target) or nil
+    local responseObjective = response and response.target or nil
+    if responseObjective == "VERIFY" then
+        -- Keep an uncertain cart/objective widget from manufacturing a new
+        -- active-play identity.  The command can still say VERIFY, while the
+        -- stability layer retains the last known strategic objective.
+        responseObjective = nil
+    end
+    local objective = responseObjective or strategy.target
+        or (strategy.objectiveDecision and strategy.objectiveDecision.target)
+        or (previousPlay and previousPlay.objective) or nil
     local movers = splitNames(response and response.moverText or command.who)
     local stayers = splitNames(response and response.stayerText or "")
     local baseCommit = snapshot.context and snapshot.context.inPvP and 12 or 6
@@ -997,6 +1028,11 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         travelSeconds = timing.travel,
         interactionSeconds = timing.interaction,
     }
+    if family == "NODE" or family == "HYBRID" then
+        -- Only defend/hold orders depend on preserving current friendly control.
+        -- Assaults and rotations often target enemy or neutral objectives.
+        play.requiresFriendlyControl = requiresFriendlyNodeControl(play)
+    end
     if family == "FLAG" then
         local flags = flagStateSummary(snapshot)
         local score = snapshot.score or {}
@@ -1291,18 +1327,27 @@ local function nodeInvalidationReason(definition, play, snapshot, now)
     if not objectiveRowHasLiveState(objectiveRow) then return nil end
     local owner = KWR.Util:Text(objectiveRow.owner, "UNKNOWN", 16)
     local state = KWR.Util:Text(objectiveRow.state, "UNKNOWN", 20)
-    if owner ~= "FRIENDLY"
+    local requiresFriendlyControl = play.requiresFriendlyControl
+    if requiresFriendlyControl == nil then
+        -- Compatibility for plays persisted before intent was explicit.
+        requiresFriendlyControl = requiresFriendlyNodeControl(play)
+    end
+    -- A fresh widget can report an available objective before it can resolve
+    -- ownership.  Unknown ownership is not proof that a held node was lost;
+    -- only explicit enemy ownership may invalidate an active defense play.
+    if requiresFriendlyControl == true and owner == "ENEMY"
         and (play.phase == "COMMITTED" or play.phase == "RESOLVING") then
         return "HELD_NODE_LOST"
     end
-    if state == "INCOMING" and (play.phase == "MOVING" or play.phase == "COMMITTED") then
+    if requiresFriendlyControl == true and state == "INCOMING"
+        and (play.phase == "MOVING" or play.phase == "COMMITTED") then
         local tickSeconds = definition and definition.tickSeconds or 2
         if tickSeconds <= 1 then
             return "FAST_TICK_NODE_UNSTABLE"
         end
     end
     if play.expectedResolutionAt and now >= play.expectedResolutionAt
-        and owner ~= "FRIENDLY" then
+        and owner ~= "FRIENDLY" and isResolutionPlay(play) then
         return "NODE_RESOLUTION_MISSED"
     end
     return nil
@@ -1731,6 +1776,67 @@ local function nodeRecoveryCall(assignments, mapKey)
         .. (#hold > 0 and (". HOLD " .. table.concat(hold, "; ")) or "")
 end
 
+local function worldCommand(snapshot, formation)
+    local action = KWR.Util:Text(formation.action,
+        "Build the command unit before queuing.", 180)
+    local names = {}
+    for index = 1, math.min(3, #(formation.recommendations or {})) do
+        names[#names + 1] = formation.recommendations[index].label
+    end
+    local who = #names > 0 and "Recruit " .. table.concat(names, " / ") or "Full team"
+    local now = KWR.Util:Now()
+    return {
+        -- A world/queue command must never retain a map identity left over
+        -- from a loading screen or a previous battleground.
+        mapKey = "WORLD",
+        inPvP = false,
+        status = "FORMING",
+        urgency = 0,
+        action = action,
+        who = who,
+        when = "BEFORE QUEUE",
+        reason = KWR.Util:Text(formation.reason,
+            "Queue or join a battleground to begin live command.", 220),
+        confidence = "NONE",
+        signature = KWR.Util:Signature({ "WORLD_STANDBY", action, who }),
+        createdAt = now,
+        expiresAt = now + 30,
+        bypass = "WORLD_STANDBY",
+        stability = {
+            retentionWindow = 0,
+            ttlSeconds = 0,
+            urgencyDelta = 0,
+            retained = false,
+            responseBypass = false,
+            reassessmentBypass = false,
+            emergencyBypass = false,
+            activePlayRetained = false,
+        },
+        activePlayDecision = {
+            retained = false,
+            replacementAllowed = false,
+            replacementReason = "WORLD_STANDBY",
+            gateClass = "WORLD_STANDBY",
+            phaseReason = "Queue or join a battleground to begin live command.",
+        },
+        activePlayOutcome = {
+            status = "STANDBY",
+            phase = "WORLD",
+            bucket = "WORLD",
+            reason = "No tactical play is active outside a battleground.",
+            retained = false,
+            replacementAllowed = false,
+        },
+        activePlayTransition = {
+            trigger = "WORLD_STANDBY",
+            fromPhase = "NONE",
+            toPhase = "WORLD",
+            rule = "OUTSIDE_BATTLEGROUND",
+            age = 0,
+        },
+    }
+end
+
 function Commander:Compose(snapshot, prediction, assignments)
     snapshot = type(snapshot) == "table" and snapshot or {}
     snapshot.context = type(snapshot.context) == "table" and snapshot.context or {}
@@ -1738,16 +1844,37 @@ function Commander:Compose(snapshot, prediction, assignments)
     assignments = type(assignments) == "table" and assignments or {}
 
     local mapKey = snapshot.context.mapKey
+    local formation = snapshot.formation or {}
+    if snapshot.context.inPvP ~= true and snapshot.context.preview ~= true then
+        -- Formation advice remains available outside PvP, but it must not
+        -- create, retain, or score a tactical play until the match is live.
+        self.lastActivePlay = nil
+        self.lastCommand = nil
+        self.lastSignature = nil
+        local command = worldCommand(snapshot, formation)
+        command.stabilitySummary = stabilitySummary(self.metrics)
+        return command
+    end
     local previousState = KWR.Store and KWR.Store:Get() or {}
     local previousPlay = previousState and previousState.activePlay or self.lastActivePlay
+    local previousContext = previousState and previousState.snapshot
+        and previousState.snapshot.context or {}
+    if snapshot.context.inPvP == true and previousContext.inPvP ~= true then
+        -- A loading/world snapshot can retain a previously resolved map key,
+        -- but it is never a valid predecessor for a live tactical play.
+        previousPlay = nil
+    end
+    if previousPlay and (previousPlay.family == "WORLD" or previousPlay.family == "UNKNOWN") then
+        -- Map resolution during the loading screen is not a tactical failure.
+        previousPlay = nil
+    end
     local previousPhase = previousPlay and previousPlay.phase
     local previousTerminal = previousPhase == "SUCCEEDED" or previousPhase == "FAILED"
         or previousPhase == "EXPIRED"
     local candidatePreviousPlay = previousTerminal and nil or previousPlay
     local score = type(snapshot.score) == "table" and snapshot.score or {}
     local definition = mapKey and KWR.Maps:Get(mapKey) or nil
-    local formation = snapshot.formation or {}
-    local status = not snapshot.context.inPvP and "FORMING" or (prediction.status or "WAITING")
+    local status = prediction.status or "WAITING"
     local finalStatus = finalMatchStatus(snapshot)
     if finalStatus then status = finalStatus end
     local doctrine = KWR.Doctrine:Get(mapKey)
@@ -1756,8 +1883,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local response = snapshot.responsePackage or {}
     local trust = strategy.trust or {}
     local knowledge = snapshot.knowledgeStatus or strategy.knowledge or {}
-    local action = not snapshot.context.inPvP and formation.action
-        or strategy.action or prediction.action or doctrineRecommendation
+    local action = strategy.action or prediction.action or doctrineRecommendation
     if snapshot.context.inPvP then action = addPriorityTarget(action, definition, prediction) end
     if snapshot.context.inPvP and (prediction.status == "LOSE" or strategy.state == "RECOVERY")
         and (snapshot.context.kind == "NODE" or snapshot.context.kind == "HYBRID") then
@@ -1835,6 +1961,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local candidateWho = who
     if snapshot.context.inPvP and not snapshot.reassessment
         and self.lastCommand
+        and self.lastCommand.inPvP == true
         and self.lastCommand.mapKey == mapKey
         and self.lastCommand.status == status
         and (KWR.Util:Now() - (self.lastCommand.decisionAt or 0)) < 2.5
@@ -1906,6 +2033,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     local previousCommand = self.lastCommand
     local command = {
         mapKey = mapKey,
+        inPvP = snapshot.context.inPvP == true,
         status = status,
         urgency = finalStatus and 0 or (prediction.urgency or 0),
         action = action,
@@ -2142,17 +2270,30 @@ function Commander:Compose(snapshot, prediction, assignments)
         end
     end
     if invalidation then
-        metrics.invalidations = (metrics.invalidations or 0) + 1
-        if invalidation == "PLAY_SUCCEEDED" then
-            metrics.successfulPlays = (metrics.successfulPlays or 0) + 1
-        end
-        local invalidationPhase = phaseBucket(updatedPreviousPlay and updatedPreviousPlay.phase)
-        if invalidationPhase == "COMMITTED" then
-            metrics.invalidationsAfterCommitment =
-                (metrics.invalidationsAfterCommitment or 0) + 1
-        else
-            metrics.invalidationsBeforeArrival =
-                (metrics.invalidationsBeforeArrival or 0) + 1
+        -- Metrics are a transition ledger, not a count of refreshes that
+        -- happen to observe the same terminal battlefield fact.  A generated
+        -- equivalent play can otherwise recreate its ID after a replacement
+        -- and inflate "invalidations" on every refresh.
+        local invalidationKey = table.concat({
+            KWR.Util:Text(updatedPreviousPlay and updatedPreviousPlay.id, "none", 160),
+            KWR.Util:Text(invalidation, "unknown", 48),
+        }, ":")
+        self.recordedInvalidations = self.recordedInvalidations or {}
+        local newlyRecorded = self.recordedInvalidations[invalidationKey] ~= true
+        self.recordedInvalidations[invalidationKey] = true
+        if newlyRecorded then
+            metrics.invalidations = (metrics.invalidations or 0) + 1
+            if invalidation == "PLAY_SUCCEEDED" then
+                metrics.successfulPlays = (metrics.successfulPlays or 0) + 1
+            end
+            local invalidationPhase = phaseBucket(updatedPreviousPlay and updatedPreviousPlay.phase)
+            if invalidationPhase == "COMMITTED" then
+                metrics.invalidationsAfterCommitment =
+                    (metrics.invalidationsAfterCommitment or 0) + 1
+            else
+                metrics.invalidationsBeforeArrival =
+                    (metrics.invalidationsBeforeArrival or 0) + 1
+            end
         end
     end
     if bypass == "EMERGENCY_URGENCY" then
@@ -2279,6 +2420,7 @@ function Commander:Compose(snapshot, prediction, assignments)
     command.createdAt = publishedCreatedAt
     self.lastCommand = {
         mapKey = snapshot.context.mapKey,
+        inPvP = snapshot.context.inPvP == true,
         status = status,
         urgency = command.urgency,
         action = command.action,
@@ -2309,6 +2451,12 @@ function Commander:GetSuppressionLog()
     return self.suppressionLog or {}
 end
 
+function Commander:ClearActivePlay()
+    self.lastActivePlay = nil
+    self.candidateTrends = {}
+    self.recordedInvalidations = {}
+end
+
 function Commander:ResetSession()
     self.lastCommand = nil
     self.lastSignature = nil
@@ -2318,6 +2466,7 @@ function Commander:ResetSession()
     self.overrideLog = {}
     self.suppressionLog = {}
     self.history = {}
+    self.recordedInvalidations = {}
 end
 
 function Commander:OnInitialize()

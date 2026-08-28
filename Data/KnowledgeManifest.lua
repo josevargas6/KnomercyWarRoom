@@ -4,7 +4,7 @@ local KnowledgeManifest = {
     schema = 2,
     patch = "12.1.0",
     season = "Midnight Season 2",
-    reviewedAt = "2026-08-17",
+    reviewedAt = "2026-08-27",
     sources = {
         "Blizzard in-game public APIs",
         "Battle.net Game Data/Profile reference",
