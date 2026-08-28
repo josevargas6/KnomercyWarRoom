@@ -128,6 +128,7 @@ function TeamResolver:NormalizePublishedRoster(roster)
     local aliasIndex = {}
     local shortIdentityCounts = {}
     local shortIdentitySeen = {}
+    local shortHasQualifiedIdentity = {}
 
     for _, player in ipairs(roster or {}) do
         local rawName = KWR.Util:Text(player and (player.name or player.shortName), "", 96)
@@ -140,6 +141,9 @@ function TeamResolver:NormalizePublishedRoster(roster)
             local identity = guid ~= "" and ("GUID:" .. guid)
                 or (rawName:find("-", 1, true) and fullName ~= "" and ("NAME:" .. fullName))
                 or nil
+            if rawName:find("-", 1, true) then
+                shortHasQualifiedIdentity[shortName] = true
+            end
             if identity and not shortIdentitySeen[shortName][identity] then
                 shortIdentitySeen[shortName][identity] = true
                 shortIdentityCounts[shortName] = (shortIdentityCounts[shortName] or 0) + 1
@@ -194,7 +198,13 @@ function TeamResolver:NormalizePublishedRoster(roster)
         if name ~= "" then
             aliases[#aliases + 1] = "NAME:" .. name
         end
-        if shortName ~= "" and (shortIdentityCounts[shortName] or 0) <= 1 then
+        -- An unqualified duplicate is never a safely distinct assignment
+        -- target.  During battleground roster hydration Blizzard can briefly
+        -- publish the same player under multiple GUIDs but without realm
+        -- qualification; collapse that state until a realm-qualified identity
+        -- proves the short-name collision is real.
+        if shortName ~= "" and ((shortIdentityCounts[shortName] or 0) <= 1
+            or shortHasQualifiedIdentity[shortName] ~= true) then
             aliases[#aliases + 1] = "SHORT:" .. shortName
         end
         if unit ~= "" then

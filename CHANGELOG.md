@@ -1,5 +1,29 @@
 # Changelog
 
+## 6.1.1-alpha.9 - 2026-08-27
+
+- Keep Blizzard's combined backpack and individual bag windows above KWR
+  surfaces, including safe strata-only updates during combat lockdown.
+- Split live runtime work into direct UI, tactical, and strategic lanes while preserving one Store and one decision engine.
+- Route target, focus, nameplate, unit-target, cast, and combat-state traffic through a bounded tactical queue that reuses the current strategic call.
+- Escalate only material tactical truth changes to one coalesced strategic refresh and replace the two-second full pulse with an eight-second recovery heartbeat.
+- Add lane-specific queue attribution, duration samples, P95, coalescing, absorption, escalation, and retention telemetry.
+- Add a deterministic 500-event tactical storm soak that proves bounded refreshes and command retention.
+
+## 6.1.1-alpha.8 - 2026-08-27
+
+- Treat unresolved opening ownership as unresolved, not as proof that a held node was lost.
+- Collapse unqualified duplicate-name friendly roster transition rows until a realm-qualified identity proves they are distinct players.
+
+## 6.1.1-alpha.7 - 2026-08-27
+
+- Make design preview provide explicit synthetic assigned-team truth while
+  retaining its unmistakable not-live provenance.
+- Reuse unchanged preview state for unrelated queued refreshes, so preview
+  interaction no longer repeatedly invokes the full battlefield strategy path.
+- Prevent preview roster rescans from requesting Retail inspection for
+  synthetic roster rows.
+
 ## 6.1.1-alpha.6 - 2026-08-27
 
 - Reconciled all 20 audited live-addon enhancement candidates into canonical

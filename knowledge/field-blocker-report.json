@@ -1,137 +1,137 @@
 {
-    "schema":  "kwr-field-blocker-report",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-08-27T20:53:01Z",
-    "candidateVersion":  "6.1.1-alpha.6",
-    "blockingDefects":  [
-                            {
-                                "id":  "LIVE-TEAM-TRUTH",
-                                "priority":  "P1",
-                                "status":  "LIVE_ONLY",
-                                "offlineStatus":  "PASS",
-                                "title":  "Expanded Team health and specialization provenance",
-                                "liveProofNeeded":  "one live battleground screenshot proving expanded Team health plus compact/expanded HIST agreement",
-                                "bestMap":  "TWINPEAKS",
-                                "bestSession":  "TP-TEAM-TRUTH"
-                            },
-                            {
-                                "id":  "LIVE-STABILITY",
-                                "priority":  "P1",
-                                "status":  "HISTORICAL_UNBOUND_FAILURE",
-                                "offlineStatus":  "PASS",
-                                "title":  "Flag-map command churn and AAR stability reporting",
-                                "liveProofNeeded":  "one complete clean flag match with /kwr verify, /kwr perf, and AAR showing stability pass",
-                                "bestMap":  "TWINPEAKS",
-                                "bestSession":  "TP-STABILITY"
-                            },
-                            {
-                                "id":  "LIVE-CARRIER-TARGET",
-                                "priority":  "P1",
-                                "status":  "LIVE_ONLY",
-                                "offlineStatus":  "PASS",
-                                "title":  "Raw flag-event prose entering the command-target path",
-                                "liveProofNeeded":  "one carrier state-change capture showing canonical route/carrier target instead of prose",
-                                "bestMap":  "TWINPEAKS",
-                                "bestSession":  "TP-CARRIER-TARGET"
-                            },
-                            {
-                                "id":  "LIVE-READABILITY",
-                                "priority":  "P2",
-                                "status":  "OPEN",
-                                "title":  "Supported-resolution readability remains open",
-                                "liveProofNeeded":  "screenshots at supported scale showing no meaningful clipping across command center tabs",
-                                "bestMap":  "TWINPEAKS",
-                                "bestSession":  "TP-READABILITY"
-                            }
-                        ],
-    "recommendedSessions":  [
-                                {
-                                    "sessionId":  "TP-TEAM-TRUTH",
-                                    "purpose":  "clear expanded Team trust defects first",
-                                    "maps":  [
-                                                 "TWINPEAKS"
-                                             ],
-                                    "clears":  [
-                                                   "LIVE-TEAM-TRUTH"
-                                               ]
-                                },
-                                {
-                                    "sessionId":  "TP-STABILITY",
-                                    "purpose":  "clear flag-match stability and AAR semantics",
-                                    "maps":  [
-                                                 "TWINPEAKS",
-                                                 "WSG"
-                                             ],
-                                    "clears":  [
-                                                   "LIVE-STABILITY"
-                                               ]
-                                },
-                                {
-                                    "sessionId":  "TP-CARRIER-TARGET",
-                                    "purpose":  "clear canonical flag command-target behavior during carrier events",
-                                    "maps":  [
-                                                 "TWINPEAKS",
-                                                 "WSG"
-                                             ],
-                                    "clears":  [
-                                                   "LIVE-CARRIER-TARGET"
-                                               ]
-                                },
-                                {
-                                    "sessionId":  "RBG-MAP-CERT-1",
-                                    "purpose":  "begin broader map-family live certification after current P1 blockers are cleared",
-                                    "maps":  [
-                                                 "ARATHI",
-                                                 "GILNEAS",
-                                                 "DEEPWIND",
-                                                 "EOTS"
-                                             ],
-                                    "clears":  [
-                                                   "map-family live proof"
-                                               ]
-                                },
-                                {
-                                    "sessionId":  "RBG-MAP-CERT-2",
-                                    "purpose":  "finish broader map-family live certification after current P1 blockers are cleared",
-                                    "maps":  [
-                                                 "TEMPLE",
-                                                 "SILVERSHARD",
-                                                 "DEEPHAUL",
-                                                 "SEETHING"
-                                             ],
-                                    "clears":  [
-                                                   "map-family live proof"
-                                               ]
-                                }
-                            ],
-    "liveOnlyGates":  [
-                          "exact hashed package install and upgrade proof",
-                          "taint and blocked-action safety proof",
-                          "lifecycle stability proof",
-                          "field performance budgets",
-                          "map-family battlefield proof",
-                          "evidence-backed decision quality"
-                      ],
-    "offlineGate":  {
-                        "status":  "PASS",
-                        "evidence":  [
-                                         "knowledge/candidate-package-report.json",
-                                         "knowledge/runtime-preflight.json"
-                                     ]
-                    },
-    "deploymentGate":  {
-                           "status":  "BLOCKED",
-                           "evidence":  "knowledge/deployment-certification.json"
-                       },
-    "retailEvidenceGate":  {
-                               "status":  "BLOCKED",
-                               "binding":  "UNBOUND",
-                               "completedMatches":  0,
-                               "stabilityFailedMatches":  4,
-                               "evidence":  "knowledge/retail-field-certification.json"
-                           },
-    "fieldAttestation":  {
-                             "status":  "MISSING",
-                             "evidence":  null
-                         }
+  "schema": "kwr-field-blocker-report",
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T18:56:43Z",
+  "candidateVersion": "6.1.1-alpha.9",
+  "blockingDefects": [
+    {
+      "id": "LIVE-TEAM-TRUTH",
+      "priority": "P1",
+      "status": "LIVE_ONLY",
+      "offlineStatus": "PASS",
+      "title": "Expanded Team health and specialization provenance",
+      "liveProofNeeded": "one live battleground screenshot proving expanded Team health plus compact/expanded HIST agreement",
+      "bestMap": "TWINPEAKS",
+      "bestSession": "TP-TEAM-TRUTH"
+    },
+    {
+      "id": "LIVE-STABILITY",
+      "priority": "P1",
+      "status": "HISTORICAL_UNBOUND_FAILURE",
+      "offlineStatus": "PASS",
+      "title": "Flag-map command churn and AAR stability reporting",
+      "liveProofNeeded": "one complete clean flag match with /kwr verify, /kwr perf, and AAR showing stability pass",
+      "bestMap": "TWINPEAKS",
+      "bestSession": "TP-STABILITY"
+    },
+    {
+      "id": "LIVE-CARRIER-TARGET",
+      "priority": "P1",
+      "status": "LIVE_ONLY",
+      "offlineStatus": "PASS",
+      "title": "Raw flag-event prose entering the command-target path",
+      "liveProofNeeded": "one carrier state-change capture showing canonical route/carrier target instead of prose",
+      "bestMap": "TWINPEAKS",
+      "bestSession": "TP-CARRIER-TARGET"
+    },
+    {
+      "id": "LIVE-READABILITY",
+      "priority": "P2",
+      "status": "OPEN",
+      "title": "Supported-resolution readability remains open",
+      "liveProofNeeded": "screenshots at supported scale showing no meaningful clipping across command center tabs",
+      "bestMap": "TWINPEAKS",
+      "bestSession": "TP-READABILITY"
+    }
+  ],
+  "recommendedSessions": [
+    {
+      "sessionId": "TP-TEAM-TRUTH",
+      "purpose": "clear expanded Team trust defects first",
+      "maps": [
+        "TWINPEAKS"
+      ],
+      "clears": [
+        "LIVE-TEAM-TRUTH"
+      ]
+    },
+    {
+      "sessionId": "TP-STABILITY",
+      "purpose": "clear flag-match stability and AAR semantics",
+      "maps": [
+        "TWINPEAKS",
+        "WSG"
+      ],
+      "clears": [
+        "LIVE-STABILITY"
+      ]
+    },
+    {
+      "sessionId": "TP-CARRIER-TARGET",
+      "purpose": "clear canonical flag command-target behavior during carrier events",
+      "maps": [
+        "TWINPEAKS",
+        "WSG"
+      ],
+      "clears": [
+        "LIVE-CARRIER-TARGET"
+      ]
+    },
+    {
+      "sessionId": "RBG-MAP-CERT-1",
+      "purpose": "begin broader map-family live certification after current P1 blockers are cleared",
+      "maps": [
+        "ARATHI",
+        "GILNEAS",
+        "DEEPWIND",
+        "EOTS"
+      ],
+      "clears": [
+        "map-family live proof"
+      ]
+    },
+    {
+      "sessionId": "RBG-MAP-CERT-2",
+      "purpose": "finish broader map-family live certification after current P1 blockers are cleared",
+      "maps": [
+        "TEMPLE",
+        "SILVERSHARD",
+        "DEEPHAUL",
+        "SEETHING"
+      ],
+      "clears": [
+        "map-family live proof"
+      ]
+    }
+  ],
+  "liveOnlyGates": [
+    "exact hashed package install and upgrade proof",
+    "taint and blocked-action safety proof",
+    "lifecycle stability proof",
+    "field performance budgets",
+    "map-family battlefield proof",
+    "evidence-backed decision quality"
+  ],
+  "offlineGate": {
+    "status": "PASS",
+    "evidence": [
+      "knowledge/candidate-package-report.json",
+      "knowledge/runtime-preflight.json"
+    ]
+  },
+  "deploymentGate": {
+    "status": "BLOCKED",
+    "evidence": "knowledge/deployment-certification.json"
+  },
+  "retailEvidenceGate": {
+    "status": "BLOCKED",
+    "binding": "UNBOUND",
+    "completedMatches": 2,
+    "stabilityFailedMatches": 3,
+    "evidence": "knowledge/retail-field-certification.json"
+  },
+  "fieldAttestation": {
+    "status": "MISSING",
+    "evidence": null
+  }
 }

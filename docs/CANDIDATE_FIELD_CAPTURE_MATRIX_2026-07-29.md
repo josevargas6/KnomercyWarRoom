@@ -1,15 +1,14 @@
 # Candidate Field Capture Matrix
 
-Candidate: `6.1.1-alpha.4` (`c5358af`)
+Candidate: `6.1.1-alpha.9` (unbound until exact-head CI publishes its commit
+and archive hashes)
 
-Installed Commander archive SHA-256:
-`325528B15D5E914CEB31886AB0F118D082393EB9943BC88B2DECA22179F7F9CA`
+Before beginning any session, copy the Commander and Sentinel SHA-256 values
+from the exact-head CI artifact manifest into the field log. Do not reuse the
+Alpha 4/5 hashes below or treat the currently installed folders as evidence.
 
-Installed Sentinel archive SHA-256:
-`8FF964EB29A86BF6184E403E72EA39089850B4193F5843B99D63DDFD1EFB59A5`
-
-Only evidence captured against these exact installed hashes may clear the
-sessions below. Existing historical Alpha36/Alpha43 evidence remains useful
+Only evidence captured against the exact installed Alpha 9 archive hashes may
+clear the sessions below. Historical Alpha 4/5/36/43 evidence remains useful
 for diagnosis, but cannot certify this candidate.
 
 This is the fastest path to useful live evidence.

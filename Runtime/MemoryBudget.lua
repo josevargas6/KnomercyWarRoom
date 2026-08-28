@@ -149,6 +149,7 @@ local MemoryBudget = {
                 purpose = "Keep bounded refresh timing samples for performance tracking.",
                 caps = {
                     maxDurationSamples = "runtimeDurationSamples",
+                    maxTacticalDurationSamples = "runtimeDurationSamples",
                 },
             },
         },
@@ -263,6 +264,7 @@ function MemoryBudget:ContractCount(contractKey)
         return coverage
     elseif contractKey == "RuntimeDiagnostics" then
         return listCount(KWR.MatchRuntime and KWR.MatchRuntime.durationSamples)
+            + listCount(KWR.MatchRuntime and KWR.MatchRuntime.tacticalDurationSamples)
     end
     return 0
 end
@@ -410,6 +412,10 @@ function MemoryBudget:Summary()
             count = #(KWR.MatchRuntime and KWR.MatchRuntime.durationSamples or {}),
             cap = self:Cap("runtimeDurationSamples", 120),
         },
+        tacticalRuntimeDurations = {
+            count = #(KWR.MatchRuntime and KWR.MatchRuntime.tacticalDurationSamples or {}),
+            cap = self:Cap("runtimeDurationSamples", 120),
+        },
         contracts = self:ContractSummary(),
     }
 end
@@ -443,6 +449,9 @@ function MemoryBudget:Report()
             summary.objectiveEvents.count or 0, summary.objectiveEvents.cap or 0),
         string.format("Runtime duration samples: %d / %d",
             summary.runtimeDurations.count or 0, summary.runtimeDurations.cap or 0),
+        string.format("Tactical duration samples: %d / %d",
+            summary.tacticalRuntimeDurations.count or 0,
+            summary.tacticalRuntimeDurations.cap or 0),
         "",
         "Retention contract:",
     }

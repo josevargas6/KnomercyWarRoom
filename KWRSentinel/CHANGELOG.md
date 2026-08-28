@@ -1,5 +1,10 @@
 # KWR Sentinel Changelog
 
+## 6.1.1-alpha.9 - 2026-08-28
+
+- Synchronizes Sentinel's package metadata and public release templates with
+  the Commander Alpha 9 field-test candidate.
+
 ## Unreleased
 
 ## 6.1.1-alpha.5 - 2026-08-18

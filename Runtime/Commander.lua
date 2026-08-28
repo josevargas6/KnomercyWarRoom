@@ -1332,7 +1332,10 @@ local function nodeInvalidationReason(definition, play, snapshot, now)
         -- Compatibility for plays persisted before intent was explicit.
         requiresFriendlyControl = requiresFriendlyNodeControl(play)
     end
-    if requiresFriendlyControl == true and owner ~= "FRIENDLY"
+    -- A fresh widget can report an available objective before it can resolve
+    -- ownership.  Unknown ownership is not proof that a held node was lost;
+    -- only explicit enemy ownership may invalidate an active defense play.
+    if requiresFriendlyControl == true and owner == "ENEMY"
         and (play.phase == "COMMITTED" or play.phase == "RESOLVING") then
         return "HELD_NODE_LOST"
     end

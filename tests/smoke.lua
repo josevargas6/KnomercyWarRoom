@@ -1717,6 +1717,16 @@ do
     })
     assert(#shortOnly == 1 and shortOnly[1].unit == "raid10",
         "Combat roster retained duplicate short-name-only records for one teammate.")
+    shortOnly = KWR.TeamResolver:NormalizePublishedRoster({
+        { key = "VERITE-OLD-A", guid = "VERITE-GUID-OLD-A", name = "Verite",
+            role = "DAMAGER", spec = "Unholy" },
+        { key = "VERITE-CURRENT", guid = "VERITE-GUID-CURRENT", name = "Verite",
+            unit = "raid10", role = "DAMAGER", spec = "Unholy" },
+        { key = "VERITE-OLD-B", guid = "VERITE-GUID-OLD-B", name = "Verite",
+            role = "DAMAGER", spec = "Unholy" },
+    })
+    assert(#shortOnly == 1 and shortOnly[1].unit == "raid10",
+        "Combat roster retained unqualified duplicate-name transition rows.")
     local transientProfile = KWR.TeamResolver:NormalizePublishedRoster({
         { name = "Verite-OldRealm", guid = "STALE-VERITE-1", shortName = "Verite",
             role = "DAMAGER", spec = "Frost", classFile = "MAGE", healthPercent = 52 },
@@ -3185,9 +3195,9 @@ assert(superiorCandidate.activePlayDecision
     and type(switchScore.switchCost) == "table"
     and (switchScore.switchCost.total or 0) > 0,
     "Commander did not retain a non-superior replacement after the minimum commitment window.")
-assert((switchScore.switchCost.total or 0) >= 20,
-    "Arathi held-node replacement did not carry the stronger outer/structure switch-cost posture.")
-local invalidatedSnapshot = KWR.Util:Copy(replacementSnapshot)
+    assert((switchScore.switchCost.total or 0) >= 20,
+        "Arathi held-node replacement did not carry the stronger outer/structure switch-cost posture.")
+    local invalidatedSnapshot = KWR.Util:Copy(replacementSnapshot)
 local invalidatedState = KWR.Store:Get()
 invalidatedState.activePlay.reviewAt = KWR.Util:Now() - 6
 invalidatedState.activePlay.expectedArrivalAt = KWR.Util:Now() - 1
@@ -5148,6 +5158,10 @@ if not releaseOnly then
     previewState = KWR.Store:Get()
     assert(previewState.snapshot.context.preview == true, "Preview was not explicitly labeled.")
     assert(previewState.mode == "PREVIEW", "Store did not publish preview mode.")
+    assert(previewState.snapshot.context.team
+        and previewState.snapshot.context.team.side == "left"
+        and previewState.snapshot.context.team.source == "preview_synthetic",
+        "Preview did not provide an explicit synthetic assigned-team contract.")
     assert(KWR.Util:AllowsCompactBattlefieldSurfaces(previewState) == true,
         "Preview state did not allow compact battlefield surfaces.")
     assert(#previewState.snapshot.enemies == 10, "Preview enemy tracker was not populated.")
@@ -5160,6 +5174,16 @@ if not releaseOnly then
     assert(previewState.snapshot.combat.killTarget.shortName == "Syraelina", "Combat intelligence did not prefer the exposed healer.")
     assert(previewState.snapshot.combat.killTarget.localKillTarget == true, "Selected kill target was not marked for the compact glow.")
     assert(previewState.snapshot.combat.killReason:find("trinket used", 1, true), "Observed trinket use did not affect kill reasoning.")
+    local previewRefreshes = KWR.MatchRuntime.diagnostics.refreshes
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_BATTLEFIELD_STATUS"),
+        "Queued preview refresh failed.")
+    assert(KWR.MatchRuntime.diagnostics.refreshes == previewRefreshes
+        and (KWR.MatchRuntime.diagnostics.previewRefreshSkips or 0) >= 1,
+        "Unchanged preview data reran the full tactical pipeline.")
+    inspectNotifications = {}
+    assert(KWR.MatchRuntime:RescanRoster(), "Preview roster rescan failed.")
+    assert(#inspectNotifications == 0,
+        "Preview roster rescan requested Retail inspection for synthetic rows.")
 else
     previewState = KWR.Store:Get()
     assert(KWR.db.profile.preview ~= true,
@@ -7678,6 +7702,51 @@ assert(KWR.db.profile.launcher.angle == 225
     and KWR.db.profile.combatRoster.teamMini.x == -170
     and KWR.db.profile.combatRoster.enemyMini.x == 170,
     "Coordinated layout reset did not restore launcher and combat-roster positions.")
+
+-- Native bag windows must remain above the command HUD. Strata-only changes
+-- are safe during combat; all anchoring and scaling work stays deferred.
+do
+    local coordinator = KWR.LayoutCoordinator
+    local combinedBags = CreateFrame("Frame", "ContainerFrameCombinedBags", UIParent)
+    local individualBag = CreateFrame("Frame", "ContainerFrame1", UIParent)
+    combinedBags:Hide()
+    individualBag:Hide()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "HIGH"
+        and KWR.MainWindow.launcherMenu:GetFrameStrata() == "HIGH",
+        "KWR surfaces did not retain normal strata with bags closed.")
+
+    combinedBags:Show()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "MEDIUM"
+        and KWR.MainWindow.launcherMenu:GetFrameStrata() == "MEDIUM",
+        "Combined backpack did not take strata priority over KWR surfaces.")
+
+    combinedBags:Hide()
+    individualBag:Show()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Individual bag did not take strata priority over KWR surfaces.")
+
+    individualBag:Hide()
+    coordinator:ApplyStrata()
+    assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "KWR surface strata did not recover after every bag closed.")
+
+    combinedBags:Show()
+    mockCombat = true
+    assert(coordinator:Apply() == false and coordinator.pendingApply == true
+        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Combat lockdown blocked the safe native-bag strata update.")
+    combinedBags:Hide()
+    assert(coordinator:Apply() == false
+        and KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "Combat lockdown blocked strata recovery after the bag closed.")
+    mockCombat = false
+    coordinator:Apply()
+    _G.ContainerFrameCombinedBags = nil
+    _G.ContainerFrame1 = nil
+end
 
 -- Layout polling must remain deterministic: every managed visible surface
 -- keeps strata/clamping alive, while a fully hidden/idle UI does no work.

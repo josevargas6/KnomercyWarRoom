@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.1-alpha.6
+# Release Readiness - 6.1.1-alpha.9
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,11 +6,11 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**6.1.1-alpha.6 is the Season 2 field-test candidate; 6.1.0 remains the
+**6.1.1-alpha.9 is the Season 2 field-test candidate; 6.1.0 remains the
 immutable public stable baseline.** It contains the live-evidence, roster,
 event-work, and compact-runtime-data repairs recorded in the current changelog.
 Its offline certification, binary reproducibility, extracted-package audit,
-and exact Retail installation verification must complete against the alpha.6
+and exact Retail installation verification must complete against the alpha.9
 archive before promotion. The archive hashes are intentionally not embedded
 here: modifying a shipped document changes its archive. The versioned `SHA256`
 manifest and deployment certificate are the sole exact-hash authorities
@@ -36,7 +36,7 @@ cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
-new 6.1.1-alpha.6-bound battleground sessions or ten-client Sentinel transport
+new 6.1.1-alpha.9-bound battleground sessions or ten-client Sentinel transport
 proof. The official 12.1 compatibility/hotfix review is now active, while the
 stale 12.0.7 ladder snapshot, inferred numerical tuning weights, and provisional
 Season 2 formations remain excluded from live meta influence. The candidate
