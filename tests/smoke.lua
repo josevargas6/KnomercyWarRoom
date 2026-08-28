@@ -1193,6 +1193,18 @@ do
     assert(KWR.ObjectiveIntel:CanonicalCommandTarget(
         "WSG", "unrecognized localized widget label", allianceContext) == "VERIFY",
         "Unknown flag target did not fall back to VERIFY.")
+    local carrierTargetSnapshot = {
+        context = { kind = "FLAG", mapKey = "WSG", team = { faction = "Alliance" } },
+        strategy = { objectiveDecision = { target = "Verite" } },
+        objectives = { carriers = {
+            { player = "Verite", owner = "FRIENDLY" },
+        } },
+    }
+    local carrierEvidence = KWR.ObjectiveIntel:NormalizeStrategyTarget(
+        carrierTargetSnapshot)
+    assert(carrierEvidence and carrierEvidence.canonicalTarget == "Verite"
+        and carrierEvidence.source == "observed_carrier_identity",
+        "Observed carrier identity was collapsed or lost at the command-target boundary.")
     KWR.ObjectiveIntel:ObserveMessage("Priest hat den Hof angegriffen!", "ARATHI")
     assert(KWR.ObjectiveIntel.timers["Hof"]
         and KWR.ObjectiveIntel.timers["Hof"].assaulter == "Priest",

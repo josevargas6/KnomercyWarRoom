@@ -1845,7 +1845,7 @@ function Commander:Compose(snapshot, prediction, assignments)
 
     local mapKey = snapshot.context.mapKey
     local formation = snapshot.formation or {}
-    if not snapshot.context.inPvP and snapshot.context.instanceType == "none" then
+    if snapshot.context.inPvP ~= true and snapshot.context.preview ~= true then
         -- Formation advice remains available outside PvP, but it must not
         -- create, retain, or score a tactical play until the match is live.
         self.lastActivePlay = nil
