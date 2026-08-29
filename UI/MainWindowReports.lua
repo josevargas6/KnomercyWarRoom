@@ -453,7 +453,7 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Tactical execution reasons: " .. topCounterText(
             diagnostics.tacticalRefreshReasons, 6),
         "Latest slow stages: " .. (#slowStages > 0 and table.concat(slowStages, ", ") or "unavailable"),
-        string.format("Lua memory: %.1f KB", diagnostics.memoryKB or 0),
+        string.format("KWR addon memory: %.1f KB (same GetAddOnMemoryUsage sample)", diagnostics.memoryKB or 0),
         string.format("Capability cache: %d hits / %d misses / %d entries",
             capabilityCache.hits or 0, capabilityCache.misses or 0,
             capabilityCache.entries or 0),

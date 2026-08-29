@@ -11,6 +11,8 @@ local Runtime = {
     transitionToken = 0,
     tacticalPending = false,
     tacticalTimerToken = 0,
+    lastTacticalEscalationAt = 0,
+    lastEnemyCaptureAt = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -48,9 +50,11 @@ KWR.MatchRuntime = Runtime
 
 local MIN_REFRESH_INTERVAL = 0.75
 local CRITICAL_REFRESH_INTERVAL = 0.15
-local TACTICAL_REFRESH_INTERVAL = 0.25
+local TACTICAL_REFRESH_INTERVAL = 0.50
 local STRATEGIC_HEARTBEAT_INTERVAL = 8
 local MAX_CHAINED_FOLLOWUPS = 1
+local STRATEGIC_ESCALATION_DWELL = 0.50
+local ENEMY_CAPTURE_INTERVAL = 0.75
 local ROSTER_PRESENTATION_TIMEOUT = 8
 
 local CRITICAL_REFRESH_REASONS = {
@@ -524,6 +528,9 @@ function Runtime:RefreshTactical(reason)
                 and snapshot.context.team.scoreFaction or nil
             snapshot.enemies = KWR.EnemyIntel:FilterPublishedTruth(
                 snapshot.roster, observed, scoreFaction)
+            self.lastEnemyCaptureAt = KWR.Util:Now()
+        else
+            snapshot.enemies = KWR.Util:Copy(currentSnapshot.enemies or {})
         end
         recordStage(self, "TacticalEnemy", stageStarted)
         stageStarted = type(debugprofilestop) == "function" and debugprofilestop() or 0
@@ -563,9 +570,13 @@ function Runtime:RefreshTactical(reason)
             state.assignments,
             state.command,
             KWR.Util:Copy(self.diagnostics))
-        if strategicTruthChanged then
+        if strategicTruthChanged
+            and ((self.diagnostics.events or 0) < 500
+                or KWR.Util:Now() - (self.lastTacticalEscalationAt or 0)
+                    >= STRATEGIC_ESCALATION_DWELL) then
             self.diagnostics.tacticalEscalations =
                 (self.diagnostics.tacticalEscalations or 0) + 1
+            self.lastTacticalEscalationAt = KWR.Util:Now()
             self:Queue("tactical-truth-change", 0.40)
         end
     end, runtimeErrorHandler)

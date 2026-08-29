@@ -365,12 +365,17 @@ end
 
 function MemoryBudget:Summary()
     local db = KWR.db or {}
-    local currentMB = self:MeasureMB()
+    -- Use the last synchronized sample so /kwr perf and the retention panel
+    -- report the same addon-wide metric instead of two different timestamps.
+    local currentMB = self.lastMeasuredMB and self.lastMeasuredMB > 0
+        and self.lastMeasuredMB or self:MeasureMB()
     return {
         softCapMB = self.softCapMB,
         warningCapMB = self.warningCapMB,
         hardCapMB = self.hardCapMB,
         currentMB = currentMB,
+        memoryKB = currentMB and (currentMB * 1024) or nil,
+        memorySource = "GetAddOnMemoryUsage(KnomercyWarRoom)",
         pressure = self:PressureLevel(currentMB),
         history = {
             count = #(db.journal and db.journal.history or {}),

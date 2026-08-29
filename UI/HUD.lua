@@ -504,6 +504,21 @@ function HUD:Create()
     frame.status = KWR.Theme:Font(frame, 8, "green", "CENTER")
     frame.status:SetPoint("TOPLEFT", 8, -74)
     frame.status:SetPoint("TOPRIGHT", -8, -74)
+    frame.timer = KWR.Theme:Font(frame, 10, "gold", "CENTER", "OUTLINE")
+    frame.timer:SetPoint("TOPLEFT", 8, -88)
+    frame.timer:SetPoint("TOPRIGHT", -8, -88)
+    frame.timer:SetText("")
+    frame.timerEndAt = nil
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        self._timerAccum = (self._timerAccum or 0) + (elapsed or 0)
+        if self._timerAccum < 0.20 then return end
+        self._timerAccum = 0
+        if self.timerEndAt and self:IsShown() then
+            local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
+            self.timer:SetText("SYNC " .. KWR.Util:Clock(remaining))
+            if remaining <= 0 then self.timerEndAt = nil end
+        end
+    end)
     frame.alertBadge = KWR.Theme:Badge(frame, "muted", "SET", 76, 16)
     frame.alertBadge:SetPoint("TOPLEFT", 10, -92)
     frame.alertBadge:EnableMouse(true)
@@ -782,6 +797,26 @@ function HUD:Update(state)
     frame.rescan:SetText(snapshot.context.inPvP and "REPEAT" or "RESCAN")
     frame.mode:SetText(snapshot.context.preview and "DESIGN PREVIEW"
         or (snapshot.context.inPvP and "LIVE BATTLEGROUND" or "QUEUE / SETUP"))
+    local timerRemaining = nil
+    local objectiveList = snapshot.objectives or {}
+    for _, objective in pairs(objectiveList) do
+        local candidate = type(objective) == "table"
+            and KWR.Util:Number(objective.timerRemaining, nil) or nil
+        if candidate and candidate > 0 then
+            timerRemaining = candidate
+            break
+        end
+    end
+    local commandTTL = command and command.expiresAt
+        and math.max(0, command.expiresAt - KWR.Util:Now()) or nil
+    timerRemaining = timerRemaining or commandTTL
+    if timerRemaining and timerRemaining > 0 then
+        frame.timerEndAt = KWR.Util:Now() + timerRemaining
+        frame.timer:SetText("SYNC " .. KWR.Util:Clock(timerRemaining))
+    else
+        frame.timerEndAt = nil
+        frame.timer:SetText("")
+    end
     if formationMode then
         applySetupLayout(frame)
         frame.score:SetText("RBG SETUP")
