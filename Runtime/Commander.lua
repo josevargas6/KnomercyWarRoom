@@ -1713,7 +1713,10 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
         margin = margin,
         switchCost = cost,
     }
-    local requiredDuration = requiredPersistenceSeconds(currentPlay, nextPlay)
+    -- Normal movement orders are deliberately sticky: allow at least 35s for
+    -- travel and execution before a materially superior replacement.
+    local requiredDuration = math.max(35,
+        requiredPersistenceSeconds(currentPlay, nextPlay))
     local duration = trend and math.max(0, (trend.lastPreferredAt or 0)
         - (trend.firstPreferredAt or 0)) or 0
     scorePayload.requiredDuration = requiredDuration
