@@ -1713,9 +1713,13 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
         margin = margin,
         switchCost = cost,
     }
-    -- Normal movement orders are deliberately sticky: allow at least 35s for
-    -- travel and execution before a materially superior replacement.
-    local requiredDuration = math.max(35,
+    -- Normal movement orders are deliberately sticky.  The dwell covers the
+    -- spoken call, peel/formation, travel, fight, and capture/interaction
+    -- window; the explicit Pivot button remains the on-demand override.
+    local executionWindow = (currentPlay.commitmentSeconds or 0)
+        + (currentPlay.travelSeconds or 0)
+        + (currentPlay.interactionSeconds or 0) + 8
+    local requiredDuration = math.max(35, executionWindow,
         requiredPersistenceSeconds(currentPlay, nextPlay))
     local duration = trend and math.max(0, (trend.lastPreferredAt or 0)
         - (trend.firstPreferredAt or 0)) or 0
