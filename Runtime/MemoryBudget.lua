@@ -352,6 +352,18 @@ function MemoryBudget:Trim(state, force)
     self.lastTrimAt = currentNow
     self:TrimPersistent()
     self:TrimLive(state)
+    if force and state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true then
+        -- Hard ceiling protection: discard optional decision/execution caches
+        -- during the match rather than allowing a retained-object climb.
+        if KWR.Strategist then
+            KWR.Strategist.cache = nil
+            KWR.Strategist.executionCache = nil
+        end
+        if KWR.CombatIntel and KWR.CombatIntel.byGUID then
+            KWR.CombatIntel.byGUID = {}
+        end
+    end
 end
 
 function MemoryBudget:PressureLevel(mb)

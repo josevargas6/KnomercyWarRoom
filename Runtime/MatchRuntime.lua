@@ -13,6 +13,8 @@ local Runtime = {
     tacticalTimerToken = 0,
     lastTacticalEscalationAt = 0,
     lastEnemyCaptureAt = 0,
+    lastWidgetQueueAt = 0,
+    lastPointsQueueAt = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -1131,6 +1133,22 @@ function Runtime:HandleEvent(event, ...)
                 (self.diagnostics.ignoredWidgetEvents or 0) + 1
             return
         end
+        local now = KWR.Util:Now()
+        if now - (self.lastWidgetQueueAt or 0) < 0.25 then
+            self.diagnostics.widgetEventsCoalesced =
+                (self.diagnostics.widgetEventsCoalesced or 0) + 1
+            return
+        end
+        self.lastWidgetQueueAt = now
+    end
+    if event == "BATTLEGROUND_POINTS_UPDATE" then
+        local now = KWR.Util:Now()
+        if now - (self.lastPointsQueueAt or 0) < 0.50 then
+            self.diagnostics.pointsEventsCoalesced =
+                (self.diagnostics.pointsEventsCoalesced or 0) + 1
+            return
+        end
+        self.lastPointsQueueAt = now
     end
     if event == "UPDATE_BATTLEFIELD_SCORE" or event == "PVP_MATCH_ACTIVE"
         or event == "PVP_MATCH_COMPLETE" then
