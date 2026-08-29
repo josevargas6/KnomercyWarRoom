@@ -1713,7 +1713,7 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
         margin = margin,
         switchCost = cost,
     }
-    -- Normal target switches use a short, predictable 5-9 second dwell. This
+    -- Normal target switches use a short, predictable 5-10 second dwell. This
     -- gives the player time to hear the call, peel, and begin movement while
     -- keeping the explicit CALL/Pivot button available for an immediate
     -- reassessment.
@@ -1722,7 +1722,7 @@ local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, predic
         + (currentPlay.interactionSeconds or 0) + 8
     local requestedDuration = math.max(executionWindow,
         requiredPersistenceSeconds(currentPlay, nextPlay))
-    local requiredDuration = math.min(9, math.max(5, requestedDuration))
+    local requiredDuration = math.min(10, math.max(5, requestedDuration))
     local duration = trend and math.max(0, (trend.lastPreferredAt or 0)
         - (trend.firstPreferredAt or 0)) or 0
     scorePayload.requiredDuration = requiredDuration
