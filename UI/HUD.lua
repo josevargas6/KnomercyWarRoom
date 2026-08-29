@@ -495,6 +495,7 @@ function HUD:Create()
     frame.request = KWR.Theme:Button(frame, "CALL", 58, 18, function()
         -- Explicit on-demand commander request; this is the intentional
         -- bypass of the normal execution-window dwell.
+        if KWR.CommandAudio then KWR.CommandAudio:Acknowledge() end
         KWR.MatchRuntime:Reassess()
     end)
     frame.request:SetPoint("TOPRIGHT", -74, -8)
