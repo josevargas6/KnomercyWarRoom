@@ -2204,9 +2204,9 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-08-26"
+        and watchlist.effectiveDate == "2026-08-27"
         and string.find(watchlist.sourceURL or "", "24296142", 1, true)
-        and #(watchlist.affected or {}) >= 10,
+        and #(watchlist.affected or {}) >= 12,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
     local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
     local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
@@ -7748,12 +7748,12 @@ do
 combinedBags:Show()
 mockCombat = true
 assert(coordinator:Apply() == false and coordinator.pendingApply == true
-        and KWR.HUD.frame:GetFrameStrata() == "HIGH",
-        "Combat lockdown did not defer protected strata updates.")
+        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Combat lockdown blocked the safe native-bag strata update.")
 combinedBags:Hide()
 assert(coordinator:Apply() == false
         and KWR.HUD.frame:GetFrameStrata() == "HIGH",
-        "Combat lockdown did not preserve strata while deferring layout.")
+        "Combat lockdown blocked strata recovery after the bag closed.")
     mockCombat = false
     coordinator:Apply()
     _G.ContainerFrameCombinedBags = nil

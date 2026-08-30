@@ -15,8 +15,8 @@ local PACKS = {
     ["12.1.0"] = {
         interface = 120100,
         season = "Midnight Season 2",
-        captured = "2026-08-27",
-        officialHotfixReviewed = "2026-08-26",
+        captured = "2026-08-30",
+        officialHotfixReviewed = "2026-08-27",
         source = "BLIZZARD_HOTFIXES",
         reviewed = true,
         cooldowns = {},
@@ -24,9 +24,9 @@ local PACKS = {
         disabledPlans = {},
         hotfixWatchlist = {
             status = "OFFICIAL_UNMODELED",
-            effectiveDate = "2026-08-26",
+            effectiveDate = "2026-08-27",
             source = "Blizzard official hotfix notes",
-            sourceURL = "https://worldofwarcraft.blizzard.com/en-us/news/24296142/hotfixes-august-26-2026",
+            sourceURL = "https://worldofwarcraft.blizzard.com/en-us/news/24296142",
             policy = "Advisory only. KWR does not alter capability ratings, predictions, or doctrine until player-reviewed Retail evidence supports a bounded update.",
             affected = {
                 "Will of the Forsaken: PvP trinket cooldown display corrected after breaking Mind Control",
@@ -41,6 +41,8 @@ local PACKS = {
                 "August 17-20 class mechanics fixes are recorded for field observation, not inferred as cooldown or capability changes",
                 "August 25: direct PvP tuning affects Demon Hunter, Druid, Evoker, Hunter, Mage, Monk, Paladin, Priest, Rogue, Shaman, Warlock, and Warrior specializations",
                 "August 26: Training Grounds Arena matches now end when game-controlled opponents surrender; this is lifecycle evidence only, not an RBG rules or capability change",
+                "August 27: Vicious Saddle progress repaired; this is reward-progression provenance only",
+                "August 27: Blur PvP-adjustment leakage into PvE repaired; intended PvP values are unchanged and no KWR capability or doctrine change is inferred",
             },
         },
         seasonPrepCorpus = {
@@ -52,11 +54,12 @@ local PACKS = {
         notes = {
             "12.1 Season 2 compatibility and theory-first branch selection are active.",
             "Blizzard schedules PvP Season 2 for 2026-08-18 and confirms two weapon tokens at 2,500 Conquest.",
-            "Official PvP hotfix notes were reviewed through 2026-08-26; direct class tuning and Training Grounds lifecycle corrections remain advisory and do not invent numerical capability weights.",
+            "Official PvP hotfix notes were reviewed through 2026-08-27; direct class tuning, lifecycle corrections, and scope repairs remain advisory and do not invent numerical capability weights.",
             "August 18 PvP tuning is a field-observation watch, not a capability, cooldown, or target-priority override.",
             "August 17-20 class mechanics fixes require observed Retail behavior before KWR changes any spell or cooldown interpretation.",
             "August 25 direct PvP class tuning is acknowledged, but no cooldown, capability, target-priority, or doctrine override is inferred without reviewed Retail evidence.",
             "The August 26 Training Grounds surrender correction is lifecycle evidence only and does not alter RBG objectives, capabilities, target priority, or doctrine.",
+            "The August 27 Vicious Saddle correction is reward-progression provenance only; the Blur correction restores intended PvE scope without changing the reviewed PvP value or KWR doctrine.",
             "The Will of the Forsaken PvP-trinket display change is presentation evidence only; KWR never invents or starts a trinket cooldown without observing the trinket itself.",
             "The 12.0.7 static ladder snapshot remains excluded from Season 2 meta influence until a separately reviewed 12.1 snapshot exists.",
             "Season-preparation gearing, simulation cases, and provisional compositions still require Retail validation before stable strategic certification.",

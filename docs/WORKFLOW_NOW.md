@@ -10,17 +10,16 @@ Do not use any historical state from this file.
 
 ## Current lane
 
-See `RELEASE_READINESS.md` for the current Alpha 9 lane.
+1. Read `RELEASE_READINESS.md` for the current Alpha 9 lane.
 
 ## Ready to work right now
 
-See `RELEASE_READINESS.md` for the governed task and blocker board.
+1. Work only from the unchecked gates in `RELEASE_READINESS.md` and their linked task records.
 
 ## Recently completed
 
-Completed work is recorded in `CHANGELOG.md` and the governed task records.
+1. Read `CHANGELOG.md` and the governed task records for completed work.
 
 ## Newly discovered / still needs attention
 
-Live-only blockers and promotion gates are maintained exclusively in
-`RELEASE_READINESS.md`.
+1. Read `RELEASE_READINESS.md` for the exclusive live-blocker and promotion-gate record.
