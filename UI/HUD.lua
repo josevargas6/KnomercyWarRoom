@@ -526,7 +526,10 @@ function HUD:Create()
         if self.timerEndAt and self:IsShown() then
             local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
             self.timer:SetText("SYNC " .. KWR.Util:Clock(remaining))
-            if remaining <= 0 then self.timerEndAt = nil end
+            if remaining <= 0 then
+                self.timerEndAt = nil
+                self.timer:SetText("")
+            end
         end
     end)
     frame.alertBadge = KWR.Theme:Badge(frame, "muted", "SET", 76, 16)
@@ -619,12 +622,16 @@ local function truthBadgeState(snapshot)
 end
 
 local function updateToken(owner, state)
+    return owner:UpdateToken(state)
+end
+
+function HUD:UpdateToken(state)
     local allowed = KWR.Util:AllowsCommandSurfaces(state)
     local arena = KWR.Util:IsArenaContext(state)
-    if owner.suppressed == true or KWR.db.profile.hud.enabled ~= true then
-        return KWR.Util:Signature({ allowed, arena, owner.suppressed, KWR.db.profile.hud.enabled })
+    if self.suppressed == true or KWR.db.profile.hud.enabled ~= true then
+        return KWR.Util:Signature({ allowed, arena, self.suppressed, KWR.db.profile.hud.enabled })
     end
-    local shown = owner.frame and owner.frame:IsShown() or false
+    local shown = self.frame and self.frame:IsShown() or false
     if not shown then
         return KWR.Util:Signature({ allowed, arena, shown, KWR.db.profile.hud.enabled })
     end
@@ -634,6 +641,7 @@ local function updateToken(owner, state)
     local target = combat.localTarget or combat.killTarget or {}
     return KWR.Util:Signature({
         true,
+        self:ObjectiveTimerSignature(snapshot),
         snapshot.context and snapshot.context.sessionKey,
         snapshot.context and snapshot.context.mapKey,
         snapshot.context and snapshot.context.inPvP,
@@ -653,6 +661,25 @@ function HUD:ObjectiveTimerRemaining(snapshot)
         if candidate and candidate > 0 then return candidate end
     end
     return nil
+end
+
+function HUD:ObjectiveTimerSignature(snapshot)
+    local objectives = snapshot and snapshot.objectives or {}
+    local timers = {}
+    for index, objective in ipairs(objectives.rows or {}) do
+        local remaining = type(objective) == "table"
+            and KWR.Util:Number(objective.timerRemaining, nil) or nil
+        if remaining and remaining > 0 then
+            timers[#timers + 1] = KWR.Util:Signature({
+                index,
+                objective.key or objective.id or objective.name or objective.label
+                    or ("objective-" .. tostring(index)),
+                objective.pendingState or "",
+                objective.timerEndAt or remaining,
+            })
+        end
+    end
+    return KWR.Util:Signature(timers)
 end
 
 function HUD:Update(state)
@@ -749,8 +776,10 @@ function HUD:Update(state)
         "Hold current assignment.")
     local spokenCall = KWR.CommandView:SpokenCall(command, snapshot.context)
     local callMovers = KWR.CommandView:CallMovers(command)
+    local objectiveTimerSignature = self:ObjectiveTimerSignature(snapshot)
     local renderSignature = KWR.Util:Signature({
         sessionKey,
+        objectiveTimerSignature,
         snapshot.context and snapshot.context.inPvP,
         focusMode,
         snapshot.context and snapshot.context.mapName,

@@ -5109,6 +5109,7 @@ do
             key = "Player-Scoreboard",
             name = "ScoreboardEnemy-Realm",
             source = "Scoreboard",
+            lastSeenAt = currentTime - 100,
             rosterAt = currentTime,
             firstKnownAt = currentTime,
             visible = false,
@@ -7238,6 +7239,28 @@ do
         "Adaptive tactical delay ignored a contested objective row.")
     assert(KWR.HUD:ObjectiveTimerRemaining(state.snapshot) == 17,
         "HUD timer selection ignored an active objective row.")
+    local savedAllowsCommandSurfaces = KWR.Util.AllowsCommandSurfaces
+    local savedIsArenaContext = KWR.Util.IsArenaContext
+    local savedHudEnabled = KWR.db.profile.hud.enabled
+    KWR.Util.AllowsCommandSurfaces = function() return true end
+    KWR.Util.IsArenaContext = function() return false end
+    KWR.db.profile.hud.enabled = true
+    KWR.HUD.frame:Show()
+    local firstToken = KWR.HUD:UpdateToken(state)
+    state.snapshot.objectives.rows[1].timerRemaining = 16
+    local secondToken = KWR.HUD:UpdateToken(state)
+    assert(firstToken ~= secondToken,
+        "HUD subscription token ignored an objective timer change.")
+    KWR.db.profile.hud.enabled = savedHudEnabled
+    KWR.Util.AllowsCommandSurfaces = savedAllowsCommandSurfaces
+    KWR.Util.IsArenaContext = savedIsArenaContext
+    KWR.HUD.frame.timer:SetText("SYNC 00:01")
+    KWR.HUD.frame.timerEndAt = currentTime - 1
+    KWR.HUD.frame._timerAccum = 0
+    KWR.HUD.frame.scripts.OnUpdate(KWR.HUD.frame, 1)
+    assert(rawget(KWR.HUD.frame, "timerEndAt") == nil
+        and KWR.HUD.frame.timer:GetText() == "",
+        "Expired HUD countdown left stale timer text visible.")
     state.snapshot.objectives = savedObjectives
 end
 do
