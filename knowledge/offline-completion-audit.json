@@ -1,41 +1,41 @@
 {
-    "schema":  "kwr-offline-completion-audit",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-08-27T20:53:02Z",
-    "candidateVersion":  "6.1.1-alpha.6",
-    "offlinePrepared":  true,
-    "fieldTestingPrepared":  false,
-    "offlineEvidence":  {
-                            "supportedMaps":  10,
-                            "baseScenarios":  200,
-                            "reviewedCorpus":  2003,
-                            "adversarialCases":  201,
-                            "reviewedScenarioCalibration":  200,
-                            "adversarialScenarioCalibration":  200,
-                            "candidatePackageReportPresent":  true,
-                            "runtimePreflightPresent":  true,
-                            "packageAuditReady":  true,
-                            "packageAuditWorkspaceStatus":  "CERTIFIED_IN_WORKSPACE",
-                            "validatePassed":  true,
-                            "knowledgeAuditPassed":  true,
-                            "corpusAuditPassed":  true,
-                            "decisionBenchmarkPassed":  true
-                        },
-    "remainingLiveOnlyBlockers":  [
-                                      "LIVE-TEAM-TRUTH",
-                                      "LIVE-STABILITY",
-                                      "LIVE-CARRIER-TARGET",
-                                      "LIVE-READABILITY",
-                                      "exact hashed package install and upgrade proof",
-                                      "taint and blocked-action safety proof",
-                                      "lifecycle stability proof",
-                                      "field performance budgets",
-                                      "map-family battlefield proof",
-                                      "evidence-backed decision quality"
-                                  ],
-    "environmentLimits":  [
-                              "Lua, LuaJIT, and Fengari are not directly on PATH in this Codex environment.",
-                              "The repository Lua runner discovers the readable cached Node and Fengari runtime without changing PATH.",
-                              "Live Retail behavior, secure-action proof, and field performance remain external to this workspace."
-                          ]
+  "schema": "kwr-offline-completion-audit",
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T21:04:07Z",
+  "candidateVersion": "6.1.1-alpha.9",
+  "offlinePrepared": true,
+  "fieldTestingPrepared": false,
+  "offlineEvidence": {
+    "supportedMaps": 10,
+    "baseScenarios": 200,
+    "reviewedCorpus": 2003,
+    "adversarialCases": 201,
+    "reviewedScenarioCalibration": 200,
+    "adversarialScenarioCalibration": 200,
+    "candidatePackageReportPresent": true,
+    "runtimePreflightPresent": true,
+    "packageAuditReady": true,
+    "packageAuditWorkspaceStatus": "CERTIFIED_IN_WORKSPACE",
+    "validatePassed": true,
+    "knowledgeAuditPassed": true,
+    "corpusAuditPassed": true,
+    "decisionBenchmarkPassed": true
+  },
+  "remainingLiveOnlyBlockers": [
+    "LIVE-TEAM-TRUTH",
+    "LIVE-STABILITY",
+    "LIVE-CARRIER-TARGET",
+    "LIVE-READABILITY",
+    "exact hashed package install and upgrade proof",
+    "taint and blocked-action safety proof",
+    "lifecycle stability proof",
+    "field performance budgets",
+    "map-family battlefield proof",
+    "evidence-backed decision quality"
+  ],
+  "environmentLimits": [
+    "Lua, LuaJIT, and Fengari are not directly on PATH in this Codex environment.",
+    "The repository Lua runner discovers the readable cached Node and Fengari runtime without changing PATH.",
+    "Live Retail behavior, secure-action proof, and field performance remain external to this workspace."
+  ]
 }

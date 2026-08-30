@@ -1559,6 +1559,28 @@ do
     KWR.Strategist.executionCache = savedExecutionCache
 end
 do
+    local savedByGUID = KWR.CombatIntel.byGUID
+    local savedByName = KWR.CombatIntel.byName
+    local savedTrimPersistent = KWR.MemoryBudget.TrimPersistent
+    local savedTrimLive = KWR.MemoryBudget.TrimLive
+    local retained = { defensives = { [1] = { expiresAt = 999 } } }
+    KWR.CombatIntel.byGUID = { ["Player-Memory"] = retained }
+    KWR.CombatIntel.byName = { memorytarget = retained }
+    KWR.MemoryBudget.TrimPersistent = function() end
+    KWR.MemoryBudget.TrimLive = function() end
+    KWR.MemoryBudget:Trim({
+        revision = 99,
+        snapshot = { context = { inPvP = true } },
+    }, true)
+    assert(next(KWR.CombatIntel.byGUID) == nil
+        and next(KWR.CombatIntel.byName) == nil,
+        "Hard memory trim retained CombatIntel records through the name index.")
+    KWR.MemoryBudget.TrimPersistent = savedTrimPersistent
+    KWR.MemoryBudget.TrimLive = savedTrimLive
+    KWR.CombatIntel.byGUID = savedByGUID
+    KWR.CombatIntel.byName = savedByName
+end
+do
     KWR.FormationAdvisor.cache = nil
     KWR.FormationAdvisor.cacheHits = 0
     KWR.FormationAdvisor.cacheMisses = 0
@@ -2204,9 +2226,9 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-08-26"
+        and watchlist.effectiveDate == "2026-08-27"
         and string.find(watchlist.sourceURL or "", "24296142", 1, true)
-        and #(watchlist.affected or {}) >= 10,
+        and #(watchlist.affected or {}) >= 12,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
     local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
     local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
@@ -5081,6 +5103,28 @@ do
     KWR.EnemyIntel.observedTokens = originalTokens
 end
 do
+    local originalRecords = KWR.EnemyIntel.records
+    KWR.EnemyIntel.records = {
+        ["Player-Scoreboard"] = {
+            key = "Player-Scoreboard",
+            name = "ScoreboardEnemy-Realm",
+            source = "Scoreboard",
+            lastSeenAt = currentTime - 100,
+            rosterAt = currentTime,
+            firstKnownAt = currentTime,
+            visible = false,
+            priority = 0,
+        },
+    }
+    KWR.EnemyIntel:PruneStaleRecords(currentTime + 1)
+    assert(KWR.EnemyIntel.records["Player-Scoreboard"] ~= nil,
+        "Fresh scoreboard-only enemy was pruned before its roster evidence aged.")
+    KWR.EnemyIntel:PruneStaleRecords(currentTime + 46)
+    assert(KWR.EnemyIntel.records["Player-Scoreboard"] == nil,
+        "Expired scoreboard-only enemy survived the stale-record bound.")
+    KWR.EnemyIntel.records = originalRecords
+end
+do
     local originalSessionKey = KWR.Reporter.sessionKey
     local originalTracks = KWR.Util:Copy(KWR.Reporter.tracks)
     local originalEvents = KWR.Util:Copy(KWR.Reporter.events)
@@ -5705,7 +5749,7 @@ end
 KWR.HUD:Update(coordinationState)
 assert(KWR.HUD.frame:IsShown(),
     "Compact HUD did not open for coordination test.")
-assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 500
+assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
     and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill:IsShown(),
     "Live Fight-Now card did not show its complete compact direction stack: width="
@@ -5734,6 +5778,12 @@ assert(KWR.HUD.frame.next.heading.value == "NOW"
     and not KWR.HUD.frame.mine.value.value:find("%+%d")
     and not KWR.HUD.frame.caller.value.value:find("%+%d"),
     "Live Fight-Now card did not expose current/next calls, posture, kill, and CC direction.")
+do
+    local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
+    local _, _, firstSectionY = KWR.HUD.frame.win:GetPoint(1)
+    assert(timerY == -88 and firstSectionY <= timerY - 18,
+        "Live HUD timer row overlaps the first execution section.")
+end
 assert(not KWR.HUD.frame.alertBadge:IsShown()
     and not KWR.HUD.frame.truthBadge:IsShown()
     and not KWR.HUD.frame.refresh:IsShown()
@@ -5859,6 +5909,12 @@ assert(KWR.HUD.frame.height == 292
     and not KWR.HUD.frame.caller:IsShown(),
     "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
 do
+    local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
+    local _, _, firstSectionY = KWR.HUD.frame.next:GetPoint(1)
+    assert(timerY == -88 and firstSectionY <= timerY - 18,
+        "Live HUD timer row overlaps the first focus section.")
+end
+do
     local teammateControlState = KWR.Util:Copy(localFightHudState)
     teammateControlState.snapshot.executionCommand.localFight.kill = nil
     teammateControlState.snapshot.executionCommand.localFight.controls[1].actor = "Teammate-Z"
@@ -5884,7 +5940,7 @@ do
     completedFocusState.command.action = "Open Review / AAR"
     KWR.HUD:Invalidate()
     KWR.HUD:Update(completedFocusState)
-    assert(KWR.HUD.frame.height == 500
+    assert(KWR.HUD.frame.height == 518
         and KWR.HUD.frame.next.heading.value == "REVIEW / AAR"
         and KWR.HUD.frame.next.value.value:find("Open Review / AAR", 1, true)
         and KWR.HUD.frame.kill.heading.value == "MATCH COMPLETE"
@@ -5902,7 +5958,7 @@ end
 KWR.db.profile.hud.focusMode = false
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 500 and KWR.HUD.frame.caller:IsShown()
+assert(KWR.HUD.frame.height == 518 and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill.value.value:find("CC:", 1, true),
     "Leaving minimal live combat mode did not restore the full Fight-Now stack.")
 KWR.CombatRoster:Update(localFightHudState)
@@ -7183,6 +7239,113 @@ KWR.HUD.eventFrame.scripts.OnEvent(KWR.HUD.eventFrame, "PLAYER_REGEN_ENABLED")
 assert(#scheduled == 1,
     "HUD did not schedule a post-combat refresh.")
 scheduled = {}
+do
+    local state = KWR.Store:Get()
+    local savedObjectives = state.snapshot.objectives
+    state.snapshot.objectives = {
+        rows = {
+            { pendingState = "INCOMING", timerRemaining = 17 },
+        },
+    }
+    assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 0.50,
+        "Adaptive tactical delay ignored a contested objective row.")
+    assert(KWR.HUD:ObjectiveTimerRemaining(state.snapshot) == 17,
+        "HUD timer selection ignored an active objective row.")
+    local savedAllowsCommandSurfaces = KWR.Util.AllowsCommandSurfaces
+    local savedIsArenaContext = KWR.Util.IsArenaContext
+    local savedHudEnabled = KWR.db.profile.hud.enabled
+    KWR.Util.AllowsCommandSurfaces = function() return true end
+    KWR.Util.IsArenaContext = function() return false end
+    KWR.db.profile.hud.enabled = true
+    KWR.HUD.frame:Show()
+    local firstToken = KWR.HUD:UpdateToken(state)
+    state.snapshot.objectives.rows[1].timerRemaining = 16
+    local secondToken = KWR.HUD:UpdateToken(state)
+    assert(firstToken ~= secondToken,
+        "HUD subscription token ignored an objective timer change.")
+    KWR.db.profile.hud.enabled = savedHudEnabled
+    KWR.Util.AllowsCommandSurfaces = savedAllowsCommandSurfaces
+    KWR.Util.IsArenaContext = savedIsArenaContext
+    KWR.HUD.frame.timer:SetText("SYNC 00:01")
+    KWR.HUD.frame.timerEndAt = currentTime - 1
+    KWR.HUD.frame._timerAccum = 0
+    KWR.HUD.frame.scripts.OnUpdate(KWR.HUD.frame, 1)
+    assert(rawget(KWR.HUD.frame, "timerEndAt") == nil
+        and KWR.HUD.frame.timer:GetText() == "",
+        "Expired HUD countdown left stale timer text visible.")
+    state.snapshot.objectives = savedObjectives
+end
+do
+    KWR.MatchRuntime.tacticalTimerToken =
+        (KWR.MatchRuntime.tacticalTimerToken or 0) + 1
+    KWR.MatchRuntime.tacticalPending = false
+    KWR.MatchRuntime.tacticalPendingDueAt = nil
+    KWR.MatchRuntime.tacticalPendingReason = nil
+    local preemptions = KWR.MatchRuntime.diagnostics.tacticalPreemptions or 0
+    KWR.MatchRuntime:QueueTactical("UPDATE_MOUSEOVER_UNIT", 0.05)
+    local quietDueAt = KWR.MatchRuntime.tacticalPendingDueAt
+    KWR.MatchRuntime:QueueTactical("UNIT_SPELLCAST_START", 0.05)
+    assert(#scheduled == 2
+        and KWR.MatchRuntime.tacticalPendingDueAt < quietDueAt
+        and KWR.MatchRuntime.tacticalPendingReason == "UNIT_SPELLCAST_START"
+        and (KWR.MatchRuntime.diagnostics.tacticalPreemptions or 0) == preemptions + 1,
+        "Emergency tactical event did not preempt the quiet pending timer.")
+    KWR.MatchRuntime.tacticalTimerToken =
+        (KWR.MatchRuntime.tacticalTimerToken or 0) + 1
+    KWR.MatchRuntime.tacticalPending = false
+    KWR.MatchRuntime.tacticalPendingDueAt = nil
+    KWR.MatchRuntime.tacticalPendingReason = nil
+    scheduled = {}
+end
+do
+    local savedObserveWidget = KWR.Sensors.ObserveWidget
+    local savedActive = KWR.MatchRuntime.active
+    KWR.Sensors.ObserveWidget = function() return true end
+    KWR.MatchRuntime.active = true
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.lastWidgetQueueAt = currentTime - 0.10
+    KWR.MatchRuntime:HandleEvent("UPDATE_UI_WIDGET", { widgetID = 777 })
+    assert(#scheduled == 1 and KWR.MatchRuntime.pending == true
+        and KWR.MatchRuntime.pendingReason == "UPDATE_UI_WIDGET",
+        "Rate-limited widget truth did not schedule a trailing refresh.")
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.active = savedActive
+    KWR.Sensors.ObserveWidget = savedObserveWidget
+    scheduled = {}
+end
+do
+    local savedActive = KWR.MatchRuntime.active
+    KWR.MatchRuntime.active = true
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.lastPointsQueueAt = currentTime - 0.10
+    KWR.MatchRuntime:HandleEvent("BATTLEGROUND_POINTS_UPDATE")
+    assert(#scheduled == 1 and KWR.MatchRuntime.pending == true
+        and KWR.MatchRuntime.pendingReason == "BATTLEGROUND_POINTS_UPDATE",
+        "Rate-limited battleground points truth did not schedule a trailing refresh.")
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.active = savedActive
+    scheduled = {}
+end
 KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
 KWR.MatchRuntime.pending = false
 KWR.MatchRuntime.pendingDueAt = nil
@@ -7745,13 +7908,13 @@ do
     assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
         "KWR surface strata did not recover after every bag closed.")
 
-    combinedBags:Show()
-    mockCombat = true
-    assert(coordinator:Apply() == false and coordinator.pendingApply == true
+combinedBags:Show()
+mockCombat = true
+assert(coordinator:Apply() == false and coordinator.pendingApply == true
         and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
         "Combat lockdown blocked the safe native-bag strata update.")
-    combinedBags:Hide()
-    assert(coordinator:Apply() == false
+combinedBags:Hide()
+assert(coordinator:Apply() == false
         and KWR.HUD.frame:GetFrameStrata() == "HIGH",
         "Combat lockdown blocked strata recovery after the bag closed.")
     mockCombat = false

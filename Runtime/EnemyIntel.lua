@@ -28,6 +28,7 @@ local CLASS_ID = {
     DRUID = 11, DEMONHUNTER = 12, EVOKER = 13,
 }
 local RECENT_LOCAL_WINDOW = 8
+local STALE_RECORD_TTL = 45
 local NOTE_TAGS = {
     { id = "KILL", label = "Kill" },
     { id = "SUBDUE", label = "Subdue" },
@@ -143,6 +144,32 @@ function EnemyIntel:PruneFriendlyRoster(roster)
             or (recordGuid ~= "" and friendlyGuids[recordGuid] == true)
             or (recordName ~= "" and friendlyNames[KWR.Util:CanonicalName(recordName)] == true)
         if isFriendly then
+            self.records[key] = nil
+        end
+    end
+end
+
+function EnemyIntel:PruneStaleRecords(now)
+    now = KWR.Util:Number(now, KWR.Util:Now()) or KWR.Util:Now()
+    for key, record in pairs(self.records or {}) do
+        local lastSeen
+        for _, timestamp in pairs({
+            record.lastSeenAt,
+            record.observedAt,
+            record.rosterAt,
+            record.firstKnownAt,
+        }) do
+            local candidate = KWR.Util:Number(timestamp, nil)
+            if candidate and (not lastSeen or candidate > lastSeen) then
+                lastSeen = candidate
+            end
+        end
+        local age = lastSeen and math.max(0, now - lastSeen) or STALE_RECORD_TTL + 1
+        -- Keep explicitly prioritized threats and currently visible/carrier
+        -- records; discard everything else once it cannot affect this fight.
+        if age > STALE_RECORD_TTL and record.visible ~= true
+            and (record.priority or 0) <= 0
+            and record.carrier ~= true then
             self.records[key] = nil
         end
     end
@@ -776,6 +803,7 @@ function EnemyIntel:Capture(context, roster, assigned, scoreboardRows)
     local sessionKey = KWR.Util:BattlefieldSessionKey(context)
     if self.sessionKey ~= sessionKey then self:Reset(sessionKey) end
     self:PruneFriendlyRoster(roster)
+    self:PruneStaleRecords(KWR.Util:Now())
     for _, record in pairs(self.records) do
         record.visible = false
         record.localRange = false

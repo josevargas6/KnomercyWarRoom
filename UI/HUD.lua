@@ -5,7 +5,7 @@ KWR.HUD = HUD
 
 local HUD_WIDTH = 432
 local HUD_HEIGHT = 548
-local HUD_EXECUTION_HEIGHT = 500
+local HUD_EXECUTION_HEIGHT = 518
 local HUD_FOCUS_HEIGHT = 292
 local HEADER_INSET = 12
 local SECTION_LEFT = 8
@@ -232,6 +232,7 @@ local function applySetupLayout(frame)
     frame.rescan:SetPoint("TOPRIGHT", -138, -8)
     frame.refresh:Show()
     frame.reassess:Show()
+    frame.request:Hide()
     frame.alertBadge:Show()
     frame.truthBadge:Show()
     frame.alert:Show()
@@ -247,14 +248,16 @@ local function applyFightNowLayout(frame)
     frame.rescan:SetPoint("TOPRIGHT", -10, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
+    frame.request:Show()
     frame.alertBadge:Hide()
     frame.truthBadge:Hide()
     frame.alert:Hide()
-    placeSection(frame.win, -88, 46)
-    placeSection(frame.next, -138, 100)
-    placeSection(frame.mine, -242, 100)
-    placeSection(frame.caller, -346, 68)
-    placeSection(frame.kill, -418, 72)
+    -- Reserve a dedicated row below status for the objective sync timer.
+    placeSection(frame.win, -106, 46)
+    placeSection(frame.next, -156, 100)
+    placeSection(frame.mine, -260, 100)
+    placeSection(frame.caller, -364, 68)
+    placeSection(frame.kill, -436, 72)
 end
 
 local function applyFocusLayout(frame)
@@ -262,11 +265,12 @@ local function applyFocusLayout(frame)
     frame.rescan:SetPoint("TOPRIGHT", -10, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
+    frame.request:Show()
     frame.alertBadge:Hide()
     frame.truthBadge:Hide()
     frame.alert:Hide()
-    placeSection(frame.next, -88, 104)
-    placeSection(frame.kill, -198, 72)
+    placeSection(frame.next, -106, 104)
+    placeSection(frame.kill, -216, 72)
 end
 
 local function commandCoverage(state)
@@ -483,12 +487,19 @@ function HUD:Create()
         local state = currentState()
         if state and state.snapshot and state.snapshot.context
             and state.snapshot.context.inPvP then
-            if KWR.CommandAudio then KWR.CommandAudio:Repeat() end
+            if KWR.CommandAudio then KWR.CommandAudio:Replay() end
         else
             KWR.MatchRuntime:RescanRoster()
         end
     end)
     frame.rescan:SetPoint("TOPRIGHT", -138, -8)
+    frame.request = KWR.Theme:Button(frame, "CALL", 58, 18, function()
+        -- Explicit on-demand commander request; this is the intentional
+        -- bypass of the normal execution-window dwell.
+        if KWR.CommandAudio then KWR.CommandAudio:Acknowledge() end
+        KWR.MatchRuntime:Reassess()
+    end)
+    frame.request:SetPoint("TOPRIGHT", -74, -8)
     frame.refresh = KWR.Theme:Button(frame, "REFRESH", 58, 18, function()
         KWR.MatchRuntime:ForceRefresh("hud-refresh")
     end)
@@ -504,6 +515,24 @@ function HUD:Create()
     frame.status = KWR.Theme:Font(frame, 8, "green", "CENTER")
     frame.status:SetPoint("TOPLEFT", 8, -74)
     frame.status:SetPoint("TOPRIGHT", -8, -74)
+    frame.timer = KWR.Theme:Font(frame, 10, "gold", "CENTER", "OUTLINE")
+    frame.timer:SetPoint("TOPLEFT", 8, -88)
+    frame.timer:SetPoint("TOPRIGHT", -8, -88)
+    frame.timer:SetText("")
+    frame.timerEndAt = nil
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        self._timerAccum = (self._timerAccum or 0) + (elapsed or 0)
+        if self._timerAccum < 0.20 then return end
+        self._timerAccum = 0
+        if self.timerEndAt and self:IsShown() then
+            local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
+            self.timer:SetText("SYNC " .. KWR.Util:Clock(remaining))
+            if remaining <= 0 then
+                self.timerEndAt = nil
+                self.timer:SetText("")
+            end
+        end
+    end)
     frame.alertBadge = KWR.Theme:Badge(frame, "muted", "SET", 76, 16)
     frame.alertBadge:SetPoint("TOPLEFT", 10, -92)
     frame.alertBadge:EnableMouse(true)
@@ -594,12 +623,16 @@ local function truthBadgeState(snapshot)
 end
 
 local function updateToken(owner, state)
+    return owner:UpdateToken(state)
+end
+
+function HUD:UpdateToken(state)
     local allowed = KWR.Util:AllowsCommandSurfaces(state)
     local arena = KWR.Util:IsArenaContext(state)
-    if owner.suppressed == true or KWR.db.profile.hud.enabled ~= true then
-        return KWR.Util:Signature({ allowed, arena, owner.suppressed, KWR.db.profile.hud.enabled })
+    if self.suppressed == true or KWR.db.profile.hud.enabled ~= true then
+        return KWR.Util:Signature({ allowed, arena, self.suppressed, KWR.db.profile.hud.enabled })
     end
-    local shown = owner.frame and owner.frame:IsShown() or false
+    local shown = self.frame and self.frame:IsShown() or false
     if not shown then
         return KWR.Util:Signature({ allowed, arena, shown, KWR.db.profile.hud.enabled })
     end
@@ -609,6 +642,7 @@ local function updateToken(owner, state)
     local target = combat.localTarget or combat.killTarget or {}
     return KWR.Util:Signature({
         true,
+        self:ObjectiveTimerSignature(snapshot),
         snapshot.context and snapshot.context.sessionKey,
         snapshot.context and snapshot.context.mapKey,
         snapshot.context and snapshot.context.inPvP,
@@ -618,6 +652,35 @@ local function updateToken(owner, state)
         state and state.prediction and state.prediction.urgency,
         target.key or target.name,
     })
+end
+
+function HUD:ObjectiveTimerRemaining(snapshot)
+    local objectives = snapshot and snapshot.objectives or {}
+    for _, objective in pairs(objectives.rows or {}) do
+        local candidate = type(objective) == "table"
+            and KWR.Util:Number(objective.timerRemaining, nil) or nil
+        if candidate and candidate > 0 then return candidate end
+    end
+    return nil
+end
+
+function HUD:ObjectiveTimerSignature(snapshot)
+    local objectives = snapshot and snapshot.objectives or {}
+    local timers = {}
+    for index, objective in ipairs(objectives.rows or {}) do
+        local remaining = type(objective) == "table"
+            and KWR.Util:Number(objective.timerRemaining, nil) or nil
+        if remaining and remaining > 0 then
+            timers[#timers + 1] = KWR.Util:Signature({
+                index,
+                objective.key or objective.id or objective.name or objective.label
+                    or ("objective-" .. tostring(index)),
+                objective.pendingState or "",
+                objective.timerEndAt or remaining,
+            })
+        end
+    end
+    return KWR.Util:Signature(timers)
 end
 
 function HUD:Update(state)
@@ -714,8 +777,10 @@ function HUD:Update(state)
         "Hold current assignment.")
     local spokenCall = KWR.CommandView:SpokenCall(command, snapshot.context)
     local callMovers = KWR.CommandView:CallMovers(command)
+    local objectiveTimerSignature = self:ObjectiveTimerSignature(snapshot)
     local renderSignature = KWR.Util:Signature({
         sessionKey,
+        objectiveTimerSignature,
         snapshot.context and snapshot.context.inPvP,
         focusMode,
         snapshot.context and snapshot.context.mapName,
@@ -782,6 +847,17 @@ function HUD:Update(state)
     frame.rescan:SetText(snapshot.context.inPvP and "REPEAT" or "RESCAN")
     frame.mode:SetText(snapshot.context.preview and "DESIGN PREVIEW"
         or (snapshot.context.inPvP and "LIVE BATTLEGROUND" or "QUEUE / SETUP"))
+    local timerRemaining = self:ObjectiveTimerRemaining(snapshot)
+    local commandTTL = command and command.expiresAt
+        and math.max(0, command.expiresAt - KWR.Util:Now()) or nil
+    timerRemaining = timerRemaining or commandTTL
+    if timerRemaining and timerRemaining > 0 then
+        frame.timerEndAt = KWR.Util:Now() + timerRemaining
+        frame.timer:SetText("SYNC " .. KWR.Util:Clock(timerRemaining))
+    else
+        frame.timerEndAt = nil
+        frame.timer:SetText("")
+    end
     if formationMode then
         applySetupLayout(frame)
         frame.score:SetText("RBG SETUP")

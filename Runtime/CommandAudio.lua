@@ -4,6 +4,8 @@ local Audio = {
     lastSignature = nil,
     lastSpokenAt = 0,
     pendingToken = 0,
+    acknowledgements = 0,
+    lastAcknowledgedAt = 0,
 }
 KWR.CommandAudio = Audio
 
@@ -64,7 +66,7 @@ function Audio:SpeakPacket(packet, force)
     return true, "spoken"
 end
 
-function Audio:Repeat()
+function Audio:Replay()
     local state = KWR.Store and KWR.Store:Get()
     local packet = state and state.snapshot and state.snapshot.executionCommand
     if not state or not state.command or type(packet) ~= "table"
@@ -73,7 +75,17 @@ function Audio:Repeat()
         or packet.commandAction ~= state.command.action then
         return false, "command_conflict"
     end
-    return self:SpeakPacket(packet, true)
+    local ok, status = self:SpeakPacket(packet, true)
+    if ok then
+        self.acknowledgements = (self.acknowledgements or 0) + 1
+        self.lastAcknowledgedAt = KWR.Util:Now()
+    end
+    return ok, status
+end
+
+function Audio:Acknowledge()
+    self.acknowledgements = (self.acknowledgements or 0) + 1
+    self.lastAcknowledgedAt = KWR.Util:Now()
 end
 
 function Audio:Observe(state)

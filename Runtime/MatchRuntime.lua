@@ -11,6 +11,10 @@ local Runtime = {
     transitionToken = 0,
     tacticalPending = false,
     tacticalTimerToken = 0,
+    lastTacticalEscalationAt = 0,
+    lastEnemyCaptureAt = 0,
+    lastWidgetQueueAt = 0,
+    lastPointsQueueAt = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -32,6 +36,7 @@ local Runtime = {
         lastTransitionDurationMs = 0,
         tacticalRefreshes = 0,
         tacticalCoalesced = 0,
+        tacticalPreemptions = 0,
         tacticalAbsorbed = 0,
         eventReasons = {},
         strategicQueueReasons = {},
@@ -48,13 +53,18 @@ KWR.MatchRuntime = Runtime
 
 local MIN_REFRESH_INTERVAL = 0.75
 local CRITICAL_REFRESH_INTERVAL = 0.15
-local TACTICAL_REFRESH_INTERVAL = 0.25
-local STRATEGIC_HEARTBEAT_INTERVAL = 8
+local TACTICAL_REFRESH_INTERVAL = 0.50
+local STRATEGIC_HEARTBEAT_INTERVAL = 15
+local QUIET_TACTICAL_REFRESH_INTERVAL = 0.75
+local EMERGENCY_TACTICAL_REFRESH_INTERVAL = 0.05
 local MAX_CHAINED_FOLLOWUPS = 1
+local STRATEGIC_ESCALATION_DWELL = 0.50
+local ENEMY_CAPTURE_INTERVAL = 0.75
 local ROSTER_PRESENTATION_TIMEOUT = 8
 
 local CRITICAL_REFRESH_REASONS = {
     UPDATE_UI_WIDGET = true,
+    BATTLEGROUND_POINTS_UPDATE = true,
     UPDATE_BATTLEFIELD_SCORE = true,
     PVP_MATCH_ACTIVE = true,
     PVP_MATCH_COMPLETE = true,
@@ -82,6 +92,19 @@ local TACTICAL_EVENTS = {
     PLAYER_REGEN_DISABLED = true,
 }
 
+local EMERGENCY_TACTICAL_EVENTS = {
+    PLAYER_TARGET_CHANGED = true,
+    PLAYER_FOCUS_CHANGED = true,
+    UNIT_SPELLCAST_START = true,
+    UNIT_SPELLCAST_CHANNEL_START = true,
+}
+
+local LOW_PRIORITY_TACTICAL_EVENTS = {
+    UPDATE_MOUSEOVER_UNIT = true,
+    NAME_PLATE_UNIT_ADDED = true,
+    NAME_PLATE_UNIT_REMOVED = true,
+}
+
 local function firstLine(value)
     local text = tostring(value or "unknown runtime refresh error")
     return text:match("([^\r\n]+)") or text
@@ -91,6 +114,19 @@ local function incrementCounter(container, key)
     if type(container) ~= "table" then return end
     key = KWR.Util:Text(key, "unknown", 64)
     container[key] = (container[key] or 0) + 1
+end
+
+local function appendEventTrace(runtime, event)
+    if event == "UNIT_AURA" or event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
+        return
+    end
+    local trace = runtime.diagnostics.eventTrace or {}
+    trace[#trace + 1] = {
+        event = KWR.Util:Text(event, "unknown", 64),
+        at = KWR.Util:Now(),
+    }
+    while #trace > 32 do table.remove(trace, 1) end
+    runtime.diagnostics.eventTrace = trace
 end
 
 local function tacticalStrategicSignature(snapshot)
@@ -524,6 +560,9 @@ function Runtime:RefreshTactical(reason)
                 and snapshot.context.team.scoreFaction or nil
             snapshot.enemies = KWR.EnemyIntel:FilterPublishedTruth(
                 snapshot.roster, observed, scoreFaction)
+            self.lastEnemyCaptureAt = KWR.Util:Now()
+        else
+            snapshot.enemies = KWR.Util:Copy(currentSnapshot.enemies or {})
         end
         recordStage(self, "TacticalEnemy", stageStarted)
         stageStarted = type(debugprofilestop) == "function" and debugprofilestop() or 0
@@ -563,9 +602,13 @@ function Runtime:RefreshTactical(reason)
             state.assignments,
             state.command,
             KWR.Util:Copy(self.diagnostics))
-        if strategicTruthChanged then
+        if strategicTruthChanged
+            and ((self.diagnostics.events or 0) < 500
+                or KWR.Util:Now() - (self.lastTacticalEscalationAt or 0)
+                    >= STRATEGIC_ESCALATION_DWELL) then
             self.diagnostics.tacticalEscalations =
                 (self.diagnostics.tacticalEscalations or 0) + 1
+            self.lastTacticalEscalationAt = KWR.Util:Now()
             self:Queue("tactical-truth-change", 0.40)
         end
     end, runtimeErrorHandler)
@@ -579,10 +622,33 @@ function Runtime:RefreshTactical(reason)
     return ok
 end
 
+function Runtime:AdaptiveTacticalDelay(reason)
+    if EMERGENCY_TACTICAL_EVENTS[reason] then
+        return EMERGENCY_TACTICAL_REFRESH_INTERVAL
+    end
+    local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
+    local snapshot = state and state.snapshot or {}
+    local combat = snapshot.combat or {}
+    local activeFight = combat.priorityCast or combat.localTarget
+    local objectives = snapshot.objectives or {}
+    local contested = false
+    for _, objective in pairs(objectives.rows or {}) do
+        if type(objective) == "table" and objective.pendingState == "INCOMING" then
+            contested = true
+            break
+        end
+    end
+    if activeFight or contested then return TACTICAL_REFRESH_INTERVAL end
+    if LOW_PRIORITY_TACTICAL_EVENTS[reason] then
+        return QUIET_TACTICAL_REFRESH_INTERVAL
+    end
+    return TACTICAL_REFRESH_INTERVAL
+end
+
 function Runtime:ScheduleTactical(reason, delay)
     self.tacticalPending = true
     self.tacticalPendingReason = reason or "tactical"
-    delay = math.max(delay or 0.05, TACTICAL_REFRESH_INTERVAL)
+    delay = math.max(delay or 0.05, self:AdaptiveTacticalDelay(reason))
     self.tacticalPendingDueAt = KWR.Util:Now() + delay
     self.tacticalTimerToken = (self.tacticalTimerToken or 0) + 1
     local token = self.tacticalTimerToken
@@ -615,6 +681,17 @@ function Runtime:QueueTactical(reason, delay)
     if self.tacticalPending then
         self.diagnostics.tacticalCoalesced =
             (self.diagnostics.tacticalCoalesced or 0) + 1
+        local requestedDelay = math.max(delay or 0.05,
+            self:AdaptiveTacticalDelay(reason))
+        local requestedDueAt = KWR.Util:Now() + requestedDelay
+        if self.tacticalPendingDueAt
+            and requestedDueAt + 0.001 < self.tacticalPendingDueAt then
+            self.diagnostics.tacticalPreemptions =
+                (self.diagnostics.tacticalPreemptions or 0) + 1
+            self.tacticalTimerToken = (self.tacticalTimerToken or 0) + 1
+            clearTacticalQueueState(self)
+            self:ScheduleTactical(reason, requestedDelay)
+        end
         return
     end
     self:ScheduleTactical(reason, delay)
@@ -1067,6 +1144,7 @@ end
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
     incrementCounter(self.diagnostics.eventReasons, event or "unknown")
+    appendEventTrace(self, event)
     if event == "PLAYER_ENTERING_WORLD"
         or event == "PLAYER_LEAVING_WORLD"
         or event == "ZONE_CHANGED_NEW_AREA"
@@ -1120,6 +1198,32 @@ function Runtime:HandleEvent(event, ...)
                 (self.diagnostics.ignoredWidgetEvents or 0) + 1
             return
         end
+        local now = KWR.Util:Now()
+        local elapsed = now - (self.lastWidgetQueueAt or 0)
+        if elapsed < 0.25 then
+            self.diagnostics.widgetEventsCoalesced =
+                (self.diagnostics.widgetEventsCoalesced or 0) + 1
+            -- ObserveWidget has already accepted and fingerprinted this final
+            -- state. Queue a trailing refresh so it cannot be stranded after
+            -- an earlier refresh consumed the leading edge of the burst.
+            self:Queue("UPDATE_UI_WIDGET", 0.25 - elapsed)
+            return
+        end
+        self.lastWidgetQueueAt = now
+    end
+    if event == "BATTLEGROUND_POINTS_UPDATE" then
+        local now = KWR.Util:Now()
+        local elapsed = now - (self.lastPointsQueueAt or 0)
+        if elapsed < 0.50 then
+            self.diagnostics.pointsEventsCoalesced =
+                (self.diagnostics.pointsEventsCoalesced or 0) + 1
+            -- The latest score is already available to the next capture. Keep
+            -- one trailing refresh so a burst's final points update cannot be
+            -- stranded behind the leading-edge rate limit.
+            self:Queue("BATTLEGROUND_POINTS_UPDATE", 0.50 - elapsed)
+            return
+        end
+        self.lastPointsQueueAt = now
     end
     if event == "UPDATE_BATTLEFIELD_SCORE" or event == "PVP_MATCH_ACTIVE"
         or event == "PVP_MATCH_COMPLETE" then

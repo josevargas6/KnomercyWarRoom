@@ -23,16 +23,16 @@ verification. Candidate-bound live RBG evidence remains mandatory for any
 later stable promotion; source-only, historical, unbound, or simulated proof
 cannot substitute for that stable-release gate.
 
-The 2026-08-19 competitive-readiness refinement is implemented locally and
-passes its deterministic source gates. A local-only candidate was packaged and
-installed for the user-authorized field test; it is not a public release
-artifact and no push, merge, tag, publication, or production action occurred.
-The subsequent KWR-270 field repair and KWR-272 live-enhancement reconciliation
-are source-validated on the Alpha 6 candidate branch. Alpha 6 must still be
-reproducibly packaged, installed from its exact manifest, and exercised in a
-fresh live RBG capture before it can clear the field-performance gate. Prior
-Alpha 5 package hashes remain historical to their recorded source snapshots and
-cannot certify the current branch.
+The 2026-08-19 competitive-readiness refinement, KWR-270 field repair, and
+KWR-272 live-enhancement reconciliation are incorporated into the public Alpha
+9 baseline at `dedf22316badc6657cd5ffcdaa11e34e8d415bb3`. The current runtime
+follow-up is under review in PR #55. Its clean source commit `e8cb018` passes
+local validation, deterministic Lua tests, binary reproducibility, and the
+extracted-package audit; the Commander candidate SHA-256 is
+`DDF5955668D4230812BE0B1DFCE3A005111BE442C72705DCD53A2508E8EEB0AF`.
+This evidence does not substitute for exact remote-head CI, merge, installation,
+or Retail field proof. Prior Alpha 5 package hashes remain historical to their
+recorded source snapshots and cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
@@ -49,15 +49,21 @@ and rollback-artifact creation.
 - [x] Source validation, source-drift, document-authority, control-surface,
   knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
   RBG-corpus gates pass.
-- [ ] Build the current source candidate under an authorized release workflow,
-  then prove Commander/Sentinel version parity, binary reproducibility,
-  extracted-runtime integrity, install-manifest parity, hashes, and rollback.
-  Prior Alpha 5 receipts do not bind the KWR-270/KWR-272 Alpha 6 source changes.
-- [ ] Push/open or update the current source PR, resolve review conversations,
-  and obtain the required green `certify` result. No GitHub write was authorized
-  during KWR-270/KWR-272 implementation.
-- [ ] Merge the green reviewed candidate to `main`, verify the merged commit
-  and tag the exact public-release artifact only after the live gate passes.
+- [x] Build the current Alpha 9 source candidate under the authorized release
+  workflow and prove Commander/Sentinel version parity, binary reproducibility,
+  extracted-runtime integrity, and package audits. Exact installed-folder
+  parity, hashes, and rollback remain part of the live deployment gate.
+- [x] Install the exact clean candidate with rollback snapshots and certify
+  installed-tree parity: Commander `DDF59556...B0AF` at 398/398 entries and
+  Sentinel `75DFEADD...E7EAA` at 12/12 entries. The Alpha 9 deployment receipt
+  is bound to clean source review commit
+  `e8cb018d2fd8b0349c4ce8c758bc6d738a88f28e`.
+- [ ] Push the current PR #55 source, resolve every review conversation, obtain
+  a green exact-head `certify` result, and merge the reviewed candidate to
+  `main`. Public Alpha 9 `main` remains
+  `dedf22316badc6657cd5ffcdaa11e34e8d415bb3` until that cutover completes.
+- [ ] Tag and publish the exact public-release artifact only after the live
+  installation and field gates pass.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
   flag-map stability and AAR, canonical carrier targets, combat-safe native-map
   behavior, taint/blocked actions, supported-resolution readability, and field
@@ -68,7 +74,7 @@ and rollback-artifact creation.
 - [x] Keep Sentinel cross-client transport disabled by default and outside the
   competitive-readiness release dependency. Any future opt-in promotion still
   requires its own ten-client, taint, expiry, teardown, and product-value proof.
-- [ ] From the green tagged commit, publish the explicit Alpha 6 field-test
+- [ ] From the green tagged commit, publish the explicit Alpha 9 field-test
   runtime ZIPs, checksums, manifest, and install guide; verify the public
   downloads and CurseForge file IDs before any announcement.
 

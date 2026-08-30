@@ -352,6 +352,18 @@ function MemoryBudget:Trim(state, force)
     self.lastTrimAt = currentNow
     self:TrimPersistent()
     self:TrimLive(state)
+    if force and state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true then
+        -- Hard ceiling protection: discard optional decision/execution caches
+        -- during the match rather than allowing a retained-object climb.
+        if KWR.Strategist then
+            KWR.Strategist.cache = nil
+            KWR.Strategist.executionCache = nil
+        end
+        if KWR.CombatIntel and KWR.CombatIntel.Reset then
+            KWR.CombatIntel:Reset()
+        end
+    end
 end
 
 function MemoryBudget:PressureLevel(mb)
@@ -365,12 +377,18 @@ end
 
 function MemoryBudget:Summary()
     local db = KWR.db or {}
-    local currentMB = self:MeasureMB()
+    -- Use the last synchronized sample so /kwr perf and the retention panel
+    -- report the same addon-wide metric instead of two different timestamps.
+    local currentMB = self.lastMeasuredMB and self.lastMeasuredMB > 0
+        and self.lastMeasuredMB or self:MeasureMB()
     return {
         softCapMB = self.softCapMB,
         warningCapMB = self.warningCapMB,
         hardCapMB = self.hardCapMB,
         currentMB = currentMB,
+        memoryKB = currentMB and (currentMB * 1024) or nil,
+        memorySource = "GetAddOnMemoryUsage(KnomercyWarRoom)",
+        degradationMode = self.degradationMode or "FULL",
         pressure = self:PressureLevel(currentMB),
         history = {
             count = #(db.journal and db.journal.history or {}),
@@ -429,6 +447,7 @@ function MemoryBudget:Report()
         string.format("Measured addon memory: %s",
             summary.currentMB and string.format("%.2f MB", summary.currentMB) or "unavailable"),
         string.format("Pressure state: %s", tostring(summary.pressure or "NONE")),
+        string.format("Degradation mode: %s", tostring(summary.degradationMode or "FULL")),
         string.format("AAR history: %d / %d",
             summary.history.count or 0, summary.history.cap or 0),
         string.format("Encounter history: %d / %d",
@@ -486,11 +505,17 @@ function MemoryBudget:Update(state)
     self.lastMeasuredMB = mb or self.lastMeasuredMB or 0
     local pressure = self:PressureLevel(mb)
     self.lastPressure = pressure
+    self.degradationMode = pressure == "FAIL" and "CRITICAL_LIVE_ONLY"
+        or pressure == "WARNING" and "REDUCED_DETAIL"
+        or pressure == "SOFT" and "CACHE_GUARDED" or "FULL"
     if pressure == "FAIL" then
         self:Trim(state, true)
     elseif pressure == "WARNING" then
         self:Trim(state, false)
         self:Trim(state, true)
+        if KWR.EnemyIntel and KWR.EnemyIntel.PruneStaleRecords then
+            KWR.EnemyIntel:PruneStaleRecords(KWR.Util:Now())
+        end
     elseif pressure == "SOFT" then
         self:Trim(state, false)
     elseif state.snapshot and state.snapshot.context and state.snapshot.context.inPvP ~= true then

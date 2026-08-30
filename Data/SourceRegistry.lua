@@ -18,7 +18,7 @@ local SOURCES = {
     BLIZZARD_HOTFIXES = {
         authority = "REFERENCE",
         name = "Official World of Warcraft Hotfixes",
-        url = "https://worldofwarcraft.blizzard.com/en-us/news/24296142/hotfixes-august-26-2026",
+        url = "https://worldofwarcraft.blizzard.com/en-us/news/24296142",
         use = "Build-time PvP tuning and API/mechanics review; live observations remain authoritative.",
     },
     BLIZZARD_SEASON_2 = {

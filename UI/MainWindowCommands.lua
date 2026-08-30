@@ -51,6 +51,20 @@ function MainWindowCommands:Register(owner, helpers)
             local cleared, message = KWR.AAR:ClearCompleted()
             KWR:Print(cleared and "Completed AAR evidence cleared."
                 or (message or "AAR evidence was not cleared."), true)
+        elseif input == "purge" or input == "purge tactical" then
+            if InCombatLockdown and InCombatLockdown() then
+                KWR:Print("Tactical purge is deferred until combat ends.", true)
+            else
+                if KWR.EnemyIntel and KWR.EnemyIntel.Reset then KWR.EnemyIntel:Reset(nil) end
+                if KWR.Reporter and KWR.Reporter.Reset then KWR.Reporter:Reset(nil) end
+                if KWR.ObjectiveIntel and KWR.ObjectiveIntel.Reset then KWR.ObjectiveIntel:Reset(nil) end
+                if KWR.CombatIntel and KWR.CombatIntel.Reset then KWR.CombatIntel:Reset() end
+                if KWR.Strategist then
+                    KWR.Strategist.cache = nil
+                    KWR.Strategist.executionCache = nil
+                end
+                KWR:Print("Nonessential tactical caches purged. AAR and learning history preserved.", true)
+            end
         elseif input == "preview reporter" or input == "demo reporter"
             or input == "preview support" or input == "demo support" then
             KWR:Print("KWR Support View is retired. Use the launcher's OPEN BATTLEFIELD MAP button or /kwr battlefield.", true)
