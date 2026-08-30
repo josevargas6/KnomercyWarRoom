@@ -645,6 +645,16 @@ local function updateToken(owner, state)
     })
 end
 
+function HUD:ObjectiveTimerRemaining(snapshot)
+    local objectives = snapshot and snapshot.objectives or {}
+    for _, objective in pairs(objectives.rows or {}) do
+        local candidate = type(objective) == "table"
+            and KWR.Util:Number(objective.timerRemaining, nil) or nil
+        if candidate and candidate > 0 then return candidate end
+    end
+    return nil
+end
+
 function HUD:Update(state)
     self.lastState = state
     if not self.ready then return end
@@ -807,16 +817,7 @@ function HUD:Update(state)
     frame.rescan:SetText(snapshot.context.inPvP and "REPEAT" or "RESCAN")
     frame.mode:SetText(snapshot.context.preview and "DESIGN PREVIEW"
         or (snapshot.context.inPvP and "LIVE BATTLEGROUND" or "QUEUE / SETUP"))
-    local timerRemaining = nil
-    local objectiveList = snapshot.objectives or {}
-    for _, objective in pairs(objectiveList) do
-        local candidate = type(objective) == "table"
-            and KWR.Util:Number(objective.timerRemaining, nil) or nil
-        if candidate and candidate > 0 then
-            timerRemaining = candidate
-            break
-        end
-    end
+    local timerRemaining = self:ObjectiveTimerRemaining(snapshot)
     local commandTTL = command and command.expiresAt
         and math.max(0, command.expiresAt - KWR.Util:Now()) or nil
     timerRemaining = timerRemaining or commandTTL

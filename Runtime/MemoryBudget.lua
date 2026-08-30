@@ -360,8 +360,8 @@ function MemoryBudget:Trim(state, force)
             KWR.Strategist.cache = nil
             KWR.Strategist.executionCache = nil
         end
-        if KWR.CombatIntel and KWR.CombatIntel.byGUID then
-            KWR.CombatIntel.byGUID = {}
+        if KWR.CombatIntel and KWR.CombatIntel.Reset then
+            KWR.CombatIntel:Reset()
         end
     end
 end

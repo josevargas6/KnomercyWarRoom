@@ -152,7 +152,8 @@ end
 function EnemyIntel:PruneStaleRecords(now)
     now = KWR.Util:Number(now, KWR.Util:Now()) or KWR.Util:Now()
     for key, record in pairs(self.records or {}) do
-        local lastSeen = KWR.Util:Number(record.lastSeenAt or record.observedAt, nil)
+        local lastSeen = KWR.Util:Number(record.lastSeenAt or record.observedAt
+            or record.rosterAt or record.firstKnownAt, nil)
         local age = lastSeen and math.max(0, now - lastSeen) or STALE_RECORD_TTL + 1
         -- Keep explicitly prioritized threats and currently visible/carrier
         -- records; discard everything else once it cannot affect this fight.

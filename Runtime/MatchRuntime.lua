@@ -36,6 +36,7 @@ local Runtime = {
         lastTransitionDurationMs = 0,
         tacticalRefreshes = 0,
         tacticalCoalesced = 0,
+        tacticalPreemptions = 0,
         tacticalAbsorbed = 0,
         eventReasons = {},
         strategicQueueReasons = {},
@@ -630,7 +631,7 @@ function Runtime:AdaptiveTacticalDelay(reason)
     local activeFight = combat.priorityCast or combat.localTarget
     local objectives = snapshot.objectives or {}
     local contested = false
-    for _, objective in pairs(objectives) do
+    for _, objective in pairs(objectives.rows or {}) do
         if type(objective) == "table" and objective.pendingState == "INCOMING" then
             contested = true
             break
@@ -679,6 +680,17 @@ function Runtime:QueueTactical(reason, delay)
     if self.tacticalPending then
         self.diagnostics.tacticalCoalesced =
             (self.diagnostics.tacticalCoalesced or 0) + 1
+        local requestedDelay = math.max(delay or 0.05,
+            self:AdaptiveTacticalDelay(reason))
+        local requestedDueAt = KWR.Util:Now() + requestedDelay
+        if self.tacticalPendingDueAt
+            and requestedDueAt + 0.001 < self.tacticalPendingDueAt then
+            self.diagnostics.tacticalPreemptions =
+                (self.diagnostics.tacticalPreemptions or 0) + 1
+            self.tacticalTimerToken = (self.tacticalTimerToken or 0) + 1
+            clearTacticalQueueState(self)
+            self:ScheduleTactical(reason, requestedDelay)
+        end
         return
     end
     self:ScheduleTactical(reason, delay)
@@ -1186,9 +1198,14 @@ function Runtime:HandleEvent(event, ...)
             return
         end
         local now = KWR.Util:Now()
-        if now - (self.lastWidgetQueueAt or 0) < 0.25 then
+        local elapsed = now - (self.lastWidgetQueueAt or 0)
+        if elapsed < 0.25 then
             self.diagnostics.widgetEventsCoalesced =
                 (self.diagnostics.widgetEventsCoalesced or 0) + 1
+            -- ObserveWidget has already accepted and fingerprinted this final
+            -- state. Queue a trailing refresh so it cannot be stranded after
+            -- an earlier refresh consumed the leading edge of the burst.
+            self:Queue("UPDATE_UI_WIDGET", 0.25 - elapsed)
             return
         end
         self.lastWidgetQueueAt = now
