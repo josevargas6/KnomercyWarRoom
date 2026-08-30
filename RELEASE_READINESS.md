@@ -24,13 +24,15 @@ later stable promotion; source-only, historical, unbound, or simulated proof
 cannot substitute for that stable-release gate.
 
 The 2026-08-19 competitive-readiness refinement, KWR-270 field repair, and
-KWR-272 live-enhancement reconciliation are incorporated into the Alpha 9
-candidate. The reviewed Alpha 9 source is merged to `main` and passes the
-protected post-merge certification, package reproducibility, and extracted
-runtime audits. It remains a field-test candidate: exact Alpha 9 installation,
-fresh Retail evidence, and the live performance/stability gates are still
-required. Prior Alpha 5 package hashes remain historical to their recorded
-source snapshots and cannot certify the current branch.
+KWR-272 live-enhancement reconciliation are incorporated into the public Alpha
+9 baseline at `dedf22316badc6657cd5ffcdaa11e34e8d415bb3`. The current runtime
+follow-up is under review in PR #55. Its clean source commit `54eed28` passes
+local validation, deterministic Lua tests, binary reproducibility, and the
+extracted-package audit; the Commander candidate SHA-256 is
+`CDD06E6A428BFC6A45FAC9DEB4CC9545B8C84C74FDB203CBE0D353BBDF8E5102`.
+This evidence does not substitute for exact remote-head CI, merge, installation,
+or Retail field proof. Prior Alpha 5 package hashes remain historical to their
+recorded source snapshots and cannot certify the current branch.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
@@ -51,9 +53,10 @@ and rollback-artifact creation.
   workflow and prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
-- [x] Push/open the current source PR, resolve review conversations, obtain the
-  required green `certify` result, and merge the reviewed candidate to `main`.
-  Alpha 9 `main` is `dedf22316badc6657cd5ffcdaa11e34e8d415bb3`.
+- [ ] Push the current PR #55 source, resolve every review conversation, obtain
+  a green exact-head `certify` result, and merge the reviewed candidate to
+  `main`. Public Alpha 9 `main` remains
+  `dedf22316badc6657cd5ffcdaa11e34e8d415bb3` until that cutover completes.
 - [ ] Tag and publish the exact public-release artifact only after the live
   installation and field gates pass.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
