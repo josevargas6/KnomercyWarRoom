@@ -5,7 +5,7 @@ KWR.HUD = HUD
 
 local HUD_WIDTH = 432
 local HUD_HEIGHT = 548
-local HUD_EXECUTION_HEIGHT = 500
+local HUD_EXECUTION_HEIGHT = 518
 local HUD_FOCUS_HEIGHT = 292
 local HEADER_INSET = 12
 local SECTION_LEFT = 8
@@ -252,11 +252,12 @@ local function applyFightNowLayout(frame)
     frame.alertBadge:Hide()
     frame.truthBadge:Hide()
     frame.alert:Hide()
-    placeSection(frame.win, -88, 46)
-    placeSection(frame.next, -138, 100)
-    placeSection(frame.mine, -242, 100)
-    placeSection(frame.caller, -346, 68)
-    placeSection(frame.kill, -418, 72)
+    -- Reserve a dedicated row below status for the objective sync timer.
+    placeSection(frame.win, -106, 46)
+    placeSection(frame.next, -156, 100)
+    placeSection(frame.mine, -260, 100)
+    placeSection(frame.caller, -364, 68)
+    placeSection(frame.kill, -436, 72)
 end
 
 local function applyFocusLayout(frame)
@@ -268,8 +269,8 @@ local function applyFocusLayout(frame)
     frame.alertBadge:Hide()
     frame.truthBadge:Hide()
     frame.alert:Hide()
-    placeSection(frame.next, -88, 104)
-    placeSection(frame.kill, -198, 72)
+    placeSection(frame.next, -106, 104)
+    placeSection(frame.kill, -216, 72)
 end
 
 local function commandCoverage(state)

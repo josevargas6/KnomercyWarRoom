@@ -64,6 +64,7 @@ local ROSTER_PRESENTATION_TIMEOUT = 8
 
 local CRITICAL_REFRESH_REASONS = {
     UPDATE_UI_WIDGET = true,
+    BATTLEGROUND_POINTS_UPDATE = true,
     UPDATE_BATTLEFIELD_SCORE = true,
     PVP_MATCH_ACTIVE = true,
     PVP_MATCH_COMPLETE = true,
@@ -1212,9 +1213,14 @@ function Runtime:HandleEvent(event, ...)
     end
     if event == "BATTLEGROUND_POINTS_UPDATE" then
         local now = KWR.Util:Now()
-        if now - (self.lastPointsQueueAt or 0) < 0.50 then
+        local elapsed = now - (self.lastPointsQueueAt or 0)
+        if elapsed < 0.50 then
             self.diagnostics.pointsEventsCoalesced =
                 (self.diagnostics.pointsEventsCoalesced or 0) + 1
+            -- The latest score is already available to the next capture. Keep
+            -- one trailing refresh so a burst's final points update cannot be
+            -- stranded behind the leading-edge rate limit.
+            self:Queue("BATTLEGROUND_POINTS_UPDATE", 0.50 - elapsed)
             return
         end
         self.lastPointsQueueAt = now
