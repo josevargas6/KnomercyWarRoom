@@ -1,13 +1,13 @@
 {
     "schema":  "kwr-deployment-certification",
     "schemaVersion":  2,
-    "certifiedAt":  "2026-08-30T21:06:18Z",
+    "certifiedAt":  "2026-08-30T21:30:32Z",
     "candidateVersion":  "6.1.1-alpha.9",
     "releaseTag":  null,
-    "releaseCommit":  "e8cb018d2fd8b0349c4ce8c758bc6d738a88f28e",
+    "releaseCommit":  "4a6bfd5f78afd4110a281080e2a50416599a9389",
     "commander":  {
-                      "sha256":  "DDF5955668D4230812BE0B1DFCE3A005111BE442C72705DCD53A2508E8EEB0AF",
-                      "packageDigest":  "784132761756B2082637F9E13B62FB1ED13B36495DA40D484E3918B171E87A94",
+                      "sha256":  "88B09C8CE037DB816CF28B84FE8122379312ADA7B2A367C856D37CE73C3AAAB1",
+                      "packageDigest":  "2D28708C6420772BB2859027FAAB3C21E2E14AD0F3F8F671474C440BA756151D",
                       "installedEntries":  398,
                       "missing":  0,
                       "changed":  0,
@@ -33,8 +33,8 @@
                        },
     "evidence":  [
                      "artifacts/candidate-package/alpha9-field/KWR_6_1_1_ALPHA_9_SOURCE_MANIFEST.json",
-                     "artifacts/deployment-alpha9-20260830-review4/commander-install-receipt.json",
-                     "artifacts/deployment-alpha9-20260830-review4/sentinel-install-receipt.json",
+                     "artifacts/deployment-alpha9-20260830-review5/commander-install-receipt.json",
+                     "artifacts/deployment-alpha9-20260830-review5/sentinel-install-receipt.json",
                      "tools/test-retail-savedvariables-audit.ps1"
                  ],
     "result":  "PASS"
