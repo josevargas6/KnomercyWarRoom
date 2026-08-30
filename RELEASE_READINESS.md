@@ -26,10 +26,10 @@ cannot substitute for that stable-release gate.
 The 2026-08-19 competitive-readiness refinement, KWR-270 field repair, and
 KWR-272 live-enhancement reconciliation are incorporated into the public Alpha
 9 baseline at `dedf22316badc6657cd5ffcdaa11e34e8d415bb3`. The current runtime
-follow-up is under review in PR #55. Its clean source commit `54eed28` passes
+follow-up is under review in PR #55. Its clean source commit `08328a4` passes
 local validation, deterministic Lua tests, binary reproducibility, and the
 extracted-package audit; the Commander candidate SHA-256 is
-`CDD06E6A428BFC6A45FAC9DEB4CC9545B8C84C74FDB203CBE0D353BBDF8E5102`.
+`5F8E5AF424271F64DF05B7F448961D2AD1E7FB3AC50C7E83D9BA25CCC1814262`.
 This evidence does not substitute for exact remote-head CI, merge, installation,
 or Retail field proof. Prior Alpha 5 package hashes remain historical to their
 recorded source snapshots and cannot certify the current branch.
@@ -54,9 +54,10 @@ and rollback-artifact creation.
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
 - [x] Install the exact clean candidate with rollback snapshots and certify
-  installed-tree parity: Commander `CDD06E6A...E5102` at 398/398 entries and
+  installed-tree parity: Commander `5F8E5AF4...14262` at 398/398 entries and
   Sentinel `75DFEADD...E7EAA` at 12/12 entries. The Alpha 9 deployment receipt
-  is bound to source review head `7004fafa020fc44da21413bd83e5a44da130d4aa`.
+  is bound to clean source review commit
+  `08328a4ae86c5aed27849dbe6f7b1713c666b0ab`.
 - [ ] Push the current PR #55 source, resolve every review conversation, obtain
   a green exact-head `certify` result, and merge the reviewed candidate to
   `main`. Public Alpha 9 `main` remains
