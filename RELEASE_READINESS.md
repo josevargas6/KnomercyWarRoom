@@ -53,6 +53,10 @@ and rollback-artifact creation.
   workflow and prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
+- [x] Install the exact clean candidate with rollback snapshots and certify
+  installed-tree parity: Commander `CDD06E6A...E5102` at 398/398 entries and
+  Sentinel `75DFEADD...E7EAA` at 12/12 entries. The Alpha 9 deployment receipt
+  is bound to source review head `7004fafa020fc44da21413bd83e5a44da130d4aa`.
 - [ ] Push the current PR #55 source, resolve every review conversation, obtain
   a green exact-head `certify` result, and merge the reviewed candidate to
   `main`. Public Alpha 9 `main` remains
