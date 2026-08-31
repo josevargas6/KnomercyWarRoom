@@ -54,9 +54,9 @@ and rollback-artifact creation.
   workflow and prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
-- [ ] Install the exact clean Alpha 10 candidate with a rollback snapshot and
+- [x] Install the exact clean Alpha 10 candidate with a rollback snapshot and
   certify zero missing, changed, or extra Commander/Sentinel files.
-- [ ] Merge the reviewed Alpha 10 source to protected `main` after exact-head
+- [x] Merge the reviewed Alpha 10 source to protected `main` after exact-head
   `certify` passes.
 - [ ] Tag and publish the exact Alpha 10 developer-prerelease artifacts after
   package and live-install certification. Stable promotion remains blocked on
