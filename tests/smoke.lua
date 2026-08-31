@@ -5937,6 +5937,7 @@ assert(KWR.HUD.frame.height == 436
 do
     local authoritativeScoreState = KWR.Util:Copy(localFightHudState)
     authoritativeScoreState.snapshot.score.source = "ui_widget"
+    authoritativeScoreState.snapshot.score.observedAt = currentTime
     KWR.HUD:Invalidate()
     KWR.HUD:Update(authoritativeScoreState)
     assert(KWR.HUD.frame.score.value:find("0 - 1", 1, true)
@@ -5944,6 +5945,40 @@ do
         "Combat Focus did not distinguish an authoritative score from an unknown placeholder: score="
             .. tostring(KWR.HUD.frame.score.value)
             .. " truth=" .. tostring(KWR.HUD.frame.truthBadge.currentTag))
+end
+do
+    local staleTruthState = KWR.Util:Copy(localFightHudState)
+    staleTruthState.snapshot.score.source = "ui_widget"
+    staleTruthState.snapshot.score.observedAt = currentTime - 6
+    staleTruthState.snapshot.objectives = { source = "none", rows = {} }
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(staleTruthState)
+    KWR.HUD.frame.truthBadge:GetScript("OnEnter")(KWR.HUD.frame.truthBadge)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "AGING"
+        and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("older than five seconds", 1, true),
+        "Combat Focus did not downgrade or explain stale widget evidence.")
+
+    local verifyTruthState = KWR.Util:Copy(staleTruthState)
+    verifyTruthState.snapshot.score.source = "none"
+    verifyTruthState.snapshot.score.observedAt = nil
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(verifyTruthState)
+    KWR.HUD.frame.truthBadge:GetScript("OnEnter")(KWR.HUD.frame.truthBadge)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "VERIFY"
+        and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("No authoritative", 1, true),
+        "Combat Focus did not explain missing authoritative evidence.")
+
+    local previewScoreState = KWR.Util:Copy(verifyTruthState)
+    previewScoreState.snapshot.context.preview = true
+    previewScoreState.snapshot.score = {
+        friendly = 1240, enemy = 980, max = 1500,
+        source = "preview", observedAt = currentTime,
+    }
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(previewScoreState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "PREVIEW"
+        and not KWR.HUD.frame.score.value:find("-- - --", 1, true),
+        "Design preview did not preserve its labeled synthetic score presentation.")
 end
 do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)

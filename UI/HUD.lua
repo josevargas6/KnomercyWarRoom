@@ -8,6 +8,7 @@ local HUD_HEIGHT = 548
 local HUD_EXECUTION_HEIGHT = 518
 local HUD_FOCUS_HEIGHT = 358
 local HUD_FOCUS_EXCEPTION_HEIGHT = 436
+local LIVE_EVIDENCE_MAX_AGE = 5
 local HEADER_INSET = 12
 local SECTION_LEFT = 8
 local SECTION_RIGHT = -8
@@ -348,6 +349,8 @@ local function alertState(state)
 end
 
 local function showStatusTooltip(owner, title, lines)
+    owner.tooltipTitle = title
+    owner.tooltipLines = lines
     if not GameTooltip or not GameTooltip.SetOwner then return end
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
     GameTooltip:AddLine(title, 1, 0.84, 0.24)
@@ -413,10 +416,16 @@ local function truthTooltipLines(tag)
             "This is the strongest live data state for the fight card.",
         }
     end
-    if tag == "PARTIAL" then
+    if tag == "AGING" then
         return {
-            "Some battleground data is present, but not every live source is confirmed yet.",
-            "Use Refresh if the call still feels incomplete.",
+            "The last confirmed battleground widget read is older than five seconds.",
+            "Treat the displayed facts as aging and verify the next live refresh before committing.",
+        }
+    end
+    if tag == "VERIFY" then
+        return {
+            "No authoritative live score or objective source is currently confirmed.",
+            "Keep unavailable facts unknown and verify the next Blizzard widget update.",
         }
     end
     return {
@@ -619,11 +628,26 @@ end
 
 local function truthBadgeState(snapshot)
     local context = snapshot and snapshot.context or {}
-    local scoreSource = KWR.Util:Upper(snapshot and snapshot.score and snapshot.score.source, "NONE", 18)
-    local objectiveSource = KWR.Util:Upper(snapshot and snapshot.objectives and snapshot.objectives.source, "NONE", 18)
+    local score = snapshot and snapshot.score or {}
+    local objectives = snapshot and snapshot.objectives or {}
+    local scoreSource = KWR.Util:Upper(score.source, "NONE", 18)
+    local objectiveSource = KWR.Util:Upper(objectives.source, "NONE", 18)
     if context.preview == true then return "orange", "PREVIEW" end
     if context.inPvP ~= true then return "muted", "VERIFY" end
-    if scoreSource:find("WIDGET", 1, true) or objectiveSource:find("WIDGET", 1, true)
+    local now = KWR.Util:Now()
+    local scoreWidget = scoreSource:find("WIDGET", 1, true) ~= nil
+    local objectiveWidget = objectiveSource:find("WIDGET", 1, true) ~= nil
+    local function isFresh(evidence)
+        local observedAt = KWR.Util:Number(evidence and evidence.observedAt, nil)
+        if not observedAt then return false end
+        local age = now - observedAt
+        return age >= 0 and age <= LIVE_EVIDENCE_MAX_AGE
+    end
+    if (scoreWidget and not isFresh(score))
+        or (objectiveWidget and not isFresh(objectives)) then
+        return "yellow", "AGING"
+    end
+    if scoreWidget or objectiveWidget
         or objectiveSource:find("PUBLIC", 1, true) then
         return "green", "LIVE"
     end
@@ -635,7 +659,9 @@ end
 
 local function scoreText(snapshot, fightNow)
     local score = snapshot and snapshot.score or {}
-    if score.source == "ui_widget"
+    local context = snapshot and snapshot.context or {}
+    if (score.source == "ui_widget"
+        or (context.preview == true and score.source == "preview"))
         and score.friendly ~= nil and score.enemy ~= nil then
         return fightNow.score
     end
@@ -825,6 +851,7 @@ function HUD:Update(state)
     local spokenCall = KWR.CommandView:SpokenCall(command, snapshot.context)
     local callMovers = KWR.CommandView:CallMovers(command)
     local objectiveTimerSignature = self:ObjectiveTimerSignature(snapshot)
+    local truthTone, truthTag = truthBadgeState(snapshot)
     local renderSignature = KWR.Util:Signature({
         sessionKey,
         objectiveTimerSignature,
@@ -861,6 +888,7 @@ function HUD:Update(state)
         snapshot.score and snapshot.score.enemy,
         snapshot.score and snapshot.score.source,
         snapshot.objectives and snapshot.objectives.source,
+        truthTag,
         snapshot.lastMessage,
         mine and mine.role,
         mine and (mine.location or mine.window),
@@ -930,7 +958,6 @@ function HUD:Update(state)
         frame.status:SetText("")
     end
     local alertTag, alert, alertColor = alertState(state)
-    local truthTone, truthTag = truthBadgeState(snapshot)
     frame.alertBadge:SetTone(alertColor)
     frame.alertBadge:SetText(alertTag)
     frame.alertBadge.currentTag = alertTag
