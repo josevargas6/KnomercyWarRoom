@@ -8,6 +8,7 @@ local HUD_HEIGHT = 548
 local HUD_EXECUTION_HEIGHT = 518
 local HUD_FOCUS_HEIGHT = 358
 local HUD_FOCUS_EXCEPTION_HEIGHT = 436
+local HUD_REVIEW_HEIGHT = 548
 local LIVE_EVIDENCE_MAX_AGE = 5
 local HEADER_INSET = 12
 local SECTION_LEFT = 8
@@ -235,10 +236,15 @@ local function applySetupLayout(frame)
     frame.refresh:Show()
     frame.reassess:Show()
     frame.request:Hide()
+    frame.alertBadge:ClearAllPoints()
+    frame.alertBadge:SetPoint("TOPLEFT", 10, -92)
     frame.alertBadge:Show()
     frame.truthBadge:ClearAllPoints()
     frame.truthBadge:SetPoint("LEFT", frame.alertBadge, "RIGHT", 8, 0)
     frame.truthBadge:Show()
+    frame.alert:ClearAllPoints()
+    frame.alert:SetPoint("TOPLEFT", 174, -92)
+    frame.alert:SetPoint("TOPRIGHT", -10, -92)
     frame.alert:Show()
     placeSection(frame.win, -114, 52)
     placeSection(frame.next, -172, 124)
@@ -281,6 +287,29 @@ local function applyFocusLayout(frame)
     placeSection(frame.mine, -208, 78)
     placeSection(frame.caller, -290, 54)
     placeSection(frame.kill, -350, 72)
+end
+
+local function applyReviewLayout(frame)
+    frame.rescan:ClearAllPoints()
+    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.refresh:Hide()
+    frame.reassess:Hide()
+    frame.request:Show()
+    frame.alertBadge:ClearAllPoints()
+    frame.alertBadge:SetPoint("TOPLEFT", 10, -104)
+    frame.alertBadge:Show()
+    frame.truthBadge:ClearAllPoints()
+    frame.truthBadge:SetPoint("LEFT", frame.alertBadge, "RIGHT", 8, 0)
+    frame.truthBadge:Show()
+    frame.alert:ClearAllPoints()
+    frame.alert:SetPoint("TOPLEFT", 174, -104)
+    frame.alert:SetPoint("TOPRIGHT", -10, -104)
+    frame.alert:Show()
+    placeSection(frame.win, -126, 46)
+    placeSection(frame.next, -176, 100)
+    placeSection(frame.mine, -280, 100)
+    placeSection(frame.caller, -384, 68)
+    placeSection(frame.kill, -456, 72)
 end
 
 local function commandCoverage(state)
@@ -545,10 +574,12 @@ function HUD:Create()
         if self.timerEndAt and self:IsShown() then
             local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
             self.timer:SetText((self.timerLabel or "OBJECTIVE")
-                .. " " .. KWR.Util:Clock(remaining))
+                .. " " .. KWR.Util:Clock(remaining)
+                .. " | " .. (self.timerSource or "UNKNOWN"))
             if remaining <= 0 then
                 self.timerEndAt = nil
                 self.timerLabel = nil
+                self.timerSource = nil
                 self.timer:SetText("")
             end
         end
@@ -633,7 +664,7 @@ local function truthBadgeState(snapshot)
     local scoreSource = KWR.Util:Upper(score.source, "NONE", 18)
     local objectiveSource = KWR.Util:Upper(objectives.source, "NONE", 18)
     if context.preview == true then return "orange", "PREVIEW" end
-    if context.inPvP ~= true then return "muted", "VERIFY" end
+    if context.inPvP ~= true then return "muted", "SETUP" end
     local now = KWR.Util:Now()
     local scoreWidget = scoreSource:find("WIDGET", 1, true) ~= nil
     local objectiveWidget = objectiveSource:find("WIDGET", 1, true) ~= nil
@@ -666,6 +697,20 @@ local function scoreText(snapshot, fightNow)
         return fightNow.score
     end
     return "-- - --"
+end
+
+local function timerSourceText(source)
+    local value = KWR.Util:Upper(source, "UNKNOWN", 18)
+    if value:find("WIDGET", 1, true) then return "LIVE" end
+    if value == "BG_SYSTEM" then return "SYSTEM" end
+    if value == "COMMAND" then return "CALL" end
+    if value:find("PUBLIC", 1, true) then return "PUBLIC" end
+    return value
+end
+
+local function timerText(label, source, remaining)
+    return (label or "OBJECTIVE") .. " " .. KWR.Util:Clock(remaining)
+        .. " | " .. (source or "UNKNOWN")
 end
 
 local function updateToken(owner, state)
@@ -780,8 +825,11 @@ function HUD:Update(state)
     local snapshot, command = state.snapshot, state.command
     local formationMode = snapshot.context.inPvP ~= true
     local matchComplete = snapshot.context.matchComplete == true
+    local combatPreset = KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS"
     local focusMode = not formationMode and not matchComplete
-        and KWR.db.profile.hud.combatPreset ~= "COMMANDER"
+        and combatPreset == "COMBAT_FOCUS"
+    local reviewMode = not formationMode and not matchComplete
+        and combatPreset == "REVIEW_OBSERVER"
     local formation = snapshot.formation or {}
     local sessionKey = KWR.Util:Text(snapshot and snapshot.context
         and snapshot.context.sessionKey,
@@ -857,6 +905,7 @@ function HUD:Update(state)
         objectiveTimerSignature,
         snapshot.context and snapshot.context.inPvP,
         focusMode,
+        reviewMode,
         snapshot.context and snapshot.context.mapName,
         snapshot.context and snapshot.context.isBlitz,
         snapshot.context and snapshot.context.matchComplete,
@@ -926,9 +975,13 @@ function HUD:Update(state)
     if selectedTimer and selectedTimer.remaining > 0 then
         frame.timerEndAt = KWR.Util:Now() + selectedTimer.remaining
         frame.timerLabel = KWR.Util:Upper(selectedTimer.label, "OBJECTIVE", 32)
-        frame.timer:SetText(frame.timerLabel .. " " .. KWR.Util:Clock(selectedTimer.remaining))
+        frame.timerSource = timerSourceText(selectedTimer.source)
+        frame.timer:SetText(timerText(
+            frame.timerLabel, frame.timerSource, selectedTimer.remaining))
     else
         frame.timerEndAt = nil
+        frame.timerLabel = nil
+        frame.timerSource = nil
         frame.timer:SetText("")
     end
     if formationMode then
@@ -948,6 +1001,13 @@ function HUD:Update(state)
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(fightNow.projectionTone, fightNow.projection))
+        frame.status:SetText("")
+    elseif reviewMode then
+        applyReviewLayout(frame)
+        local visibleScore = scoreText(snapshot, fightNow)
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
+            .. "  |  " .. KWR.Theme:CombatText(
+                fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     else
         applyFightNowLayout(frame)
@@ -1054,6 +1114,12 @@ function HUD:Update(state)
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
+    elseif reviewMode then
+        frame:SetHeight(HUD_REVIEW_HEIGHT)
+        frame.win:Show()
+        frame.mine:Show()
+        frame.caller:Show()
+        frame.kill:Show()
     else
         frame.kill.value:SetText(localFightCall or "")
     end
@@ -1069,6 +1135,12 @@ function HUD:Update(state)
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
+    elseif reviewMode then
+        frame:SetHeight(HUD_REVIEW_HEIGHT)
+        frame.win:Show()
+        frame.mine:Show()
+        frame.caller:Show()
+        frame.kill:Show()
     else
         frame:SetHeight(HUD_EXECUTION_HEIGHT)
         frame.win:Show()

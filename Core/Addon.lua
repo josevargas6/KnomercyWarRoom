@@ -20,8 +20,8 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
-            -- Combat Focus is the safe, low-density default. Commander remains
-            -- available as an explicit preset for callers who need more live context.
+            -- Combat Focus is the safe, low-density default. Commander and
+            -- Review/Observer remain explicit higher-context presets.
             focusMode = true,
             combatPreset = "COMBAT_FOCUS",
             point = "CENTER",
@@ -481,11 +481,16 @@ local function normalizeProfile(profile)
     profile.hud.combatPreset = rawCombatPreset == nil
         and (legacyFocusMode == false and "COMMANDER" or "COMBAT_FOCUS")
         or KWR.Util:Upper(rawCombatPreset, defaults.hud.combatPreset, 24)
+    if profile.hud.combatPreset == "REVIEW"
+        or profile.hud.combatPreset == "OBSERVER" then
+        profile.hud.combatPreset = "REVIEW_OBSERVER"
+    end
     if profile.hud.combatPreset ~= "COMBAT_FOCUS"
-        and profile.hud.combatPreset ~= "COMMANDER" then
+        and profile.hud.combatPreset ~= "COMMANDER"
+        and profile.hud.combatPreset ~= "REVIEW_OBSERVER" then
         profile.hud.combatPreset = defaults.hud.combatPreset
     end
-    profile.hud.focusMode = profile.hud.combatPreset ~= "COMMANDER"
+    profile.hud.focusMode = profile.hud.combatPreset == "COMBAT_FOCUS"
     return profile
 end
 

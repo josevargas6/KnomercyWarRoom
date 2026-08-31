@@ -135,6 +135,24 @@ function Options:Refresh()
     for mode, button in pairs(self.layoutButtons or {}) do
         button:SetSelected((KWR.db.profile.layoutMode or "AUTO") == mode)
     end
+    for preset, button in pairs(self.combatPresetButtons or {}) do
+        button:SetSelected((KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS") == preset)
+    end
+end
+
+function Options:SetCombatPreset(preset)
+    if preset ~= "COMBAT_FOCUS" and preset ~= "COMMANDER"
+        and preset ~= "REVIEW_OBSERVER" then
+        return false
+    end
+    KWR.db.profile.hud.combatPreset = preset
+    KWR.db.profile.hud.focusMode = preset == "COMBAT_FOCUS"
+    if KWR.HUD then
+        KWR.HUD:Invalidate()
+        KWR.HUD:Update(KWR.Store:Get())
+    end
+    self:Refresh()
+    return true
 end
 
 function Options:SetLayoutMode(mode)
@@ -268,18 +286,25 @@ function Options:Create()
         -322,
         function() return KWR.CommanderComm and KWR.CommanderComm:TransportEnabled() end,
         function(value) return KWR.CommanderComm and KWR.CommanderComm:SetTransportEnabled(value) end)
-    createCheck(self, commandCard,
-        "hudFocusMode",
-        "Use Combat Focus preset",
-        "Shows the team call, your job, the next trigger, and only an actionable local exception during battleground combat. Turn it off for the full Commander stack.",
-        -372,
-        function() return KWR.db.profile.hud.combatPreset ~= "COMMANDER" end,
-        function(value)
-            KWR.db.profile.hud.combatPreset = value == true
-                and "COMBAT_FOCUS" or "COMMANDER"
-            KWR.db.profile.hud.focusMode = value == true
-            if KWR.HUD then KWR.HUD:Invalidate(); KWR.HUD:Update(KWR.Store:Get()) end
+    local presetHeading = KWR.Theme:Font(commandCard, 9, "white", "LEFT", "OUTLINE")
+    presetHeading:SetPoint("TOPLEFT", 10, -370)
+    presetHeading:SetText("ACTIVE-COMBAT PRESET")
+    self.combatPresetButtons = {}
+    local presets = {
+        { "COMBAT_FOCUS", "FOCUS" },
+        { "COMMANDER", "COMMANDER" },
+        { "REVIEW_OBSERVER", "REVIEW" },
+    }
+    for index, entry in ipairs(presets) do
+        local preset, label = entry[1], entry[2]
+        local button = KWR.Theme:Button(commandCard, label, 100, 26, function()
+            Options:SetCombatPreset(preset)
         end)
+        button:SetPoint("TOPLEFT", 10 + ((index - 1) * 106), -394)
+        self.combatPresetButtons[preset] = button
+    end
+    commandCard.kwrGeometry.childBottom = math.min(
+        commandCard.kwrGeometry.childBottom, -430)
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",

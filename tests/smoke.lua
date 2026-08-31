@@ -786,6 +786,14 @@ do
     assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
         and KWR.db.profile.hud.focusMode == true,
         "Combat Focus migration did not preserve the legacy minimal-combat preference.")
+    KWR_DB = {
+        schemaVersion = 60130,
+        profile = { hud = { combatPreset = "REVIEW" } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
+        and KWR.db.profile.hud.focusMode == false,
+        "Review/Observer preset migration collapsed into another combat preset.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
 end
@@ -6037,6 +6045,17 @@ KWR.HUD:Update(localFightHudState)
 assert(KWR.HUD.frame.height == 518 and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill.value.value:find("CC:", 1, true),
     "Leaving minimal live combat mode did not restore the full Fight-Now stack.")
+KWR.db.profile.hud.combatPreset = "REVIEW_OBSERVER"
+KWR.HUD:Invalidate()
+KWR.HUD:Update(localFightHudState)
+assert(KWR.HUD.frame.height == 548
+    and KWR.HUD.frame.win:IsShown()
+    and KWR.HUD.frame.caller:IsShown()
+    and KWR.HUD.frame.kill:IsShown()
+    and KWR.HUD.frame.alertBadge:IsShown()
+    and KWR.HUD.frame.truthBadge:IsShown(),
+    "Review/Observer preset did not preserve the full call stack and provenance cues.")
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.CombatRoster:Update(localFightHudState)
 assert(KWR.CombatRoster.enemyFrame.targetSpotlight.nameText.value
     == "Knomercy CC - Priest P"
@@ -6163,6 +6182,7 @@ assert(KWR.HUD.frame.score.value == "RBG SETUP"
     and KWR.HUD.frame.alertBadge.text.value == "SETUP"
     and KWR.HUD.frame.alertBadge:IsShown()
     and KWR.HUD.frame.truthBadge:IsShown()
+    and KWR.HUD.frame.truthBadge.currentTag == "SETUP"
     and KWR.HUD.frame.refresh:IsShown()
     and KWR.HUD.frame.reassess:IsShown()
     and KWR.HUD.frame.win.heading.value == "SETUP GOAL"
@@ -6565,12 +6585,16 @@ assert(KWR.Options.namedChecks.autoReporter == nil
 KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.db.profile.hud.focusMode = false
 KWR.Options:Refresh()
-KWR.Options.namedChecks.hudFocusMode.check:SetChecked(true)
-KWR.Options.namedChecks.hudFocusMode.check.scripts.OnClick(
-    KWR.Options.namedChecks.hudFocusMode.check)
+KWR.Options:SetCombatPreset("COMBAT_FOCUS")
 assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
-    and KWR.db.profile.hud.focusMode == true,
-    "Combat Focus option did not switch the active HUD preset.")
+    and KWR.db.profile.hud.focusMode == true
+    and KWR.Options.combatPresetButtons.COMBAT_FOCUS.selected == true,
+    "Combat Focus selector did not switch the active HUD preset.")
+KWR.Options:SetCombatPreset("REVIEW_OBSERVER")
+assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
+    and KWR.db.profile.hud.focusMode == false
+    and KWR.Options.combatPresetButtons.REVIEW_OBSERVER.selected == true,
+    "Review/Observer selector did not expose the third active HUD preset.")
 KWR.Options.namedChecks.highContrast.check:SetChecked(true)
 KWR.Options.namedChecks.highContrast.check.scripts.OnClick(
     KWR.Options.namedChecks.highContrast.check)
@@ -7328,8 +7352,11 @@ do
     local state = KWR.Store:Get()
     local savedObjectives = state.snapshot.objectives
     state.snapshot.objectives = {
+        source = "ui_widget",
+        observedAt = currentTime,
         rows = {
-            { pendingState = "INCOMING", timerRemaining = 17 },
+            { pendingState = "INCOMING", timerRemaining = 17,
+                timerLabel = "BLACKSMITH", source = "ui_widget" },
         },
     }
     assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 0.50,
@@ -7343,6 +7370,11 @@ do
     KWR.Util.IsArenaContext = function() return false end
     KWR.db.profile.hud.enabled = true
     KWR.HUD.frame:Show()
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(state)
+    assert(KWR.HUD.frame.timer:GetText():find("BLACKSMITH", 1, true)
+        and KWR.HUD.frame.timer:GetText():find("| LIVE", 1, true),
+        "HUD timer omitted its semantic objective name or source provenance.")
     local firstToken = KWR.HUD:UpdateToken(state)
     state.snapshot.objectives.rows[1].timerRemaining = 16
     local secondToken = KWR.HUD:UpdateToken(state)
