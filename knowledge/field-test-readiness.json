@@ -1,218 +1,218 @@
 {
-    "schema":  "kwr-field-test-readiness",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-08-30T21:30:34Z",
-    "candidate":  {
-                      "addon":  "Knomercy War Room",
-                      "version":  "6.1.1-alpha.9",
-                      "build":  "6.1.1-alpha.9",
-                      "evidenceBaseline":  "6.1.1-alpha.9` (unbound until exact-head CI publishes its commit",
-                      "date":  "2026-08-30"
-                  },
-    "offlineStatus":  {
-                          "supportedMaps":  10,
-                          "baseScenarios":  200,
-                          "reviewedCorpus":  2003,
-                          "adversarialCases":  201,
-                          "reviewedScenarioCalibration":  200,
-                          "adversarialScenarioCalibration":  200,
-                          "validatePassed":  true,
-                          "knowledgeAuditPassed":  true,
-                          "corpusAuditPassed":  true,
-                          "decisionBenchmarkPassed":  true,
-                          "deterministicLuaRuntimeAvailable":  true,
-                          "gateEvidence":  [
-                                               "knowledge/candidate-package-report.json",
-                                               "knowledge/runtime-preflight.json"
-                                           ]
-                      },
-    "liveRequirements":  {
-                             "exactPackageRequired":  true,
-                             "requiredEvidence":  [
-                                                      "field-test log",
-                                                      "/kwr verify",
-                                                      "/kwr perf",
-                                                      "AAR export",
-                                                      "Lua error and taint result",
-                                                      "surface screenshots",
-                                                      "sanitized event export",
-                                                      "issue/task ID for every failure"
-                                                  ],
-                             "stopConditions":  [
-                                                    "Lua error",
-                                                    "taint or blocked action",
-                                                    "fabricated fact",
-                                                    "false high-confidence commit",
-                                                    "required reload",
-                                                    "identity merge",
-                                                    "unbounded history/work",
-                                                    "protected-assignment violation",
-                                                    "refresh above 10 ms hard maximum"
-                                                ],
-                             "remainingLiveBlockers":  [
-                                                           "Retail lifecycle stability",
-                                                           "secure-action and taint proof",
-                                                           "field performance budgets",
-                                                           "supported-resolution readability proof",
-                                                           "map-family battlefield verification",
-                                                           "evidence-backed decision quality"
-                                                       ]
-                         },
-    "maps":  [
-                 {
-                     "mapKey":  "ARATHI",
-                     "profile":  "ab_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "GILNEAS",
-                     "profile":  "bfg_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "DEEPWIND",
-                     "profile":  "dwg_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "EOTS",
-                     "profile":  "eots_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "WSG",
-                     "profile":  "wsg_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "TWINPEAKS",
-                     "profile":  "tp_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "TEMPLE",
-                     "profile":  "tok_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "SILVERSHARD",
-                     "profile":  "ssm_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "DEEPHAUL",
-                     "profile":  "dhr_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 },
-                 {
-                     "mapKey":  "SEETHING",
-                     "profile":  "shore_standard",
-                     "scenarioCount":  120,
-                     "reviewedCases":  100,
-                     "adversarialCases":  20,
-                     "liveStatus":  "LIVE REQUIRED",
-                     "requiredLiveProof":  [
-                                               "one clean opener capture",
-                                               "one mid-match state change capture",
-                                               "one recovery or pressure capture",
-                                               "match-end scoreboard and AAR agreement",
-                                               "/kwr verify and /kwr perf in the same session"
-                                           ]
-                 }
-             ],
-    "blockingConditions":  [
-                               "No field certification without exact hashed package evidence.",
-                               "Any code, data, TOC, or package change invalidates affected live evidence.",
-                               "Offline readiness does not certify live behavior by itself."
-                           ]
+  "schema": "kwr-field-test-readiness",
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T14:59:16Z",
+  "candidate": {
+    "addon": "Knomercy War Room",
+    "version": "6.1.1-alpha.10",
+    "build": "6.1.1-alpha.10",
+    "evidenceBaseline": "6.1.1-alpha.10` (unbound until exact-head CI publishes its commit",
+    "date": "2026-08-31"
+  },
+  "offlineStatus": {
+    "supportedMaps": 10,
+    "baseScenarios": 200,
+    "reviewedCorpus": 2003,
+    "adversarialCases": 201,
+    "reviewedScenarioCalibration": 200,
+    "adversarialScenarioCalibration": 200,
+    "validatePassed": true,
+    "knowledgeAuditPassed": true,
+    "corpusAuditPassed": true,
+    "decisionBenchmarkPassed": true,
+    "deterministicLuaRuntimeAvailable": true,
+    "gateEvidence": [
+      "knowledge/candidate-package-report.json",
+      "knowledge/runtime-preflight.json"
+    ]
+  },
+  "liveRequirements": {
+    "exactPackageRequired": true,
+    "requiredEvidence": [
+      "field-test log",
+      "/kwr verify",
+      "/kwr perf",
+      "AAR export",
+      "Lua error and taint result",
+      "surface screenshots",
+      "sanitized event export",
+      "issue/task ID for every failure"
+    ],
+    "stopConditions": [
+      "Lua error",
+      "taint or blocked action",
+      "fabricated fact",
+      "false high-confidence commit",
+      "required reload",
+      "identity merge",
+      "unbounded history/work",
+      "protected-assignment violation",
+      "refresh above 10 ms hard maximum"
+    ],
+    "remainingLiveBlockers": [
+      "Retail lifecycle stability",
+      "secure-action and taint proof",
+      "field performance budgets",
+      "supported-resolution readability proof",
+      "map-family battlefield verification",
+      "evidence-backed decision quality"
+    ]
+  },
+  "maps": [
+    {
+      "mapKey": "ARATHI",
+      "profile": "ab_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "GILNEAS",
+      "profile": "bfg_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "DEEPWIND",
+      "profile": "dwg_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "EOTS",
+      "profile": "eots_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "WSG",
+      "profile": "wsg_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "TWINPEAKS",
+      "profile": "tp_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "TEMPLE",
+      "profile": "tok_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "SILVERSHARD",
+      "profile": "ssm_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "DEEPHAUL",
+      "profile": "dhr_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    },
+    {
+      "mapKey": "SEETHING",
+      "profile": "shore_standard",
+      "scenarioCount": 120,
+      "reviewedCases": 100,
+      "adversarialCases": 20,
+      "liveStatus": "LIVE REQUIRED",
+      "requiredLiveProof": [
+        "one clean opener capture",
+        "one mid-match state change capture",
+        "one recovery or pressure capture",
+        "match-end scoreboard and AAR agreement",
+        "/kwr verify and /kwr perf in the same session"
+      ]
+    }
+  ],
+  "blockingConditions": [
+    "No field certification without exact hashed package evidence.",
+    "Any code, data, TOC, or package change invalidates affected live evidence.",
+    "Offline readiness does not certify live behavior by itself."
+  ]
 }

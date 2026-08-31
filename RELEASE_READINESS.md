@@ -50,7 +50,7 @@ and rollback-artifact creation.
 - [x] Source validation, source-drift, document-authority, control-surface,
   knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
   RBG-corpus gates pass.
-- [ ] Build the current Alpha 10 source candidate under the authorized release
+- [x] Build the current Alpha 10 source candidate under the authorized release
   workflow and prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
