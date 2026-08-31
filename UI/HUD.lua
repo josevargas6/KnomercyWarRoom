@@ -235,6 +235,8 @@ local function applySetupLayout(frame)
     frame.reassess:Show()
     frame.request:Hide()
     frame.alertBadge:Show()
+    frame.truthBadge:ClearAllPoints()
+    frame.truthBadge:SetPoint("LEFT", frame.alertBadge, "RIGHT", 8, 0)
     frame.truthBadge:Show()
     frame.alert:Show()
     placeSection(frame.win, -114, 52)
@@ -251,6 +253,8 @@ local function applyFightNowLayout(frame)
     frame.reassess:Hide()
     frame.request:Show()
     frame.alertBadge:Hide()
+    frame.truthBadge:ClearAllPoints()
+    frame.truthBadge:SetPoint("LEFT", frame.alertBadge, "RIGHT", 8, 0)
     frame.truthBadge:Hide()
     frame.alert:Hide()
     -- Reserve a dedicated row below status for the objective sync timer.
@@ -268,12 +272,14 @@ local function applyFocusLayout(frame)
     frame.reassess:Hide()
     frame.request:Show()
     frame.alertBadge:Hide()
-    frame.truthBadge:Hide()
+    frame.truthBadge:ClearAllPoints()
+    frame.truthBadge:SetPoint("TOPLEFT", 10, -104)
+    frame.truthBadge:Show()
     frame.alert:Hide()
-    placeSection(frame.next, -106, 78)
-    placeSection(frame.mine, -188, 78)
-    placeSection(frame.caller, -270, 54)
-    placeSection(frame.kill, -330, 72)
+    placeSection(frame.next, -126, 78)
+    placeSection(frame.mine, -208, 78)
+    placeSection(frame.caller, -290, 54)
+    placeSection(frame.kill, -350, 72)
 end
 
 local function commandCoverage(state)
@@ -627,6 +633,15 @@ local function truthBadgeState(snapshot)
     return "yellow", "AGING"
 end
 
+local function scoreText(snapshot, fightNow)
+    local score = snapshot and snapshot.score or {}
+    if score.source == "ui_widget"
+        and score.friendly ~= nil and score.enemy ~= nil then
+        return fightNow.score
+    end
+    return "-- - --"
+end
+
 local function updateToken(owner, state)
     return owner:UpdateToken(state)
 end
@@ -895,24 +910,21 @@ function HUD:Update(state)
         frame.status:SetTextColor(KWR.Theme:Color(KWR.CommandView:StatusColor(command.status)))
     elseif matchComplete then
         applyFightNowLayout(frame)
-        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
-            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
+        local visibleScore = scoreText(snapshot, fightNow)
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
                 fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     elseif focusMode then
         applyFocusLayout(frame)
-        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
-            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
+        local visibleScore = scoreText(snapshot, fightNow)
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     else
         applyFightNowLayout(frame)
-        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
-            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
+        local visibleScore = scoreText(snapshot, fightNow)
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
                 fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")

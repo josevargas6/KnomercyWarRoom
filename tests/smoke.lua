@@ -5927,15 +5927,31 @@ assert(KWR.HUD.frame.height == 436
     and KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.heading.value == "LOCAL ACTION"
     and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+    and KWR.HUD.frame.truthBadge:IsShown()
+    and KWR.HUD.frame.truthBadge.currentTag ~= nil
+    and KWR.HUD.frame.score.value:find("-- - --", 1, true)
     and not KWR.HUD.frame.win:IsShown()
     and KWR.HUD.frame.mine:IsShown()
     and KWR.HUD.frame.caller:IsShown(),
     "Combat Focus did not retain team NOW, MY JOB, NEXT, and the actionable local cue.")
 do
+    local authoritativeScoreState = KWR.Util:Copy(localFightHudState)
+    authoritativeScoreState.snapshot.score.source = "ui_widget"
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(authoritativeScoreState)
+    assert(KWR.HUD.frame.score.value:find("0 - 1", 1, true)
+        and KWR.HUD.frame.truthBadge.currentTag == "LIVE",
+        "Combat Focus did not distinguish an authoritative score from an unknown placeholder: score="
+            .. tostring(KWR.HUD.frame.score.value)
+            .. " truth=" .. tostring(KWR.HUD.frame.truthBadge.currentTag))
+end
+do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
     local _, _, firstSectionY = KWR.HUD.frame.next:GetPoint(1)
-    assert(timerY == -88 and firstSectionY <= timerY - 18,
-        "Live HUD timer row overlaps the first focus section.")
+    local _, _, truthY = KWR.HUD.frame.truthBadge:GetPoint(1)
+    assert(timerY == -88 and truthY == -104
+        and firstSectionY <= truthY - 18,
+        "Live HUD timer/trust rows overlap the first focus section.")
 end
 do
     local teammateControlState = KWR.Util:Copy(localFightHudState)
