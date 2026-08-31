@@ -685,7 +685,10 @@ local function truthBadgeState(snapshot)
         or objectiveSource:find("PUBLIC", 1, true) then
         return "green", "LIVE"
     end
-    if scoreSource == "NONE" and objectiveSource == "NONE" then
+    local scoreUnresolved = scoreSource == "NONE" or scoreSource == "TEAM_UNRESOLVED"
+    local objectivesUnresolved = objectiveSource == "NONE"
+        or objectiveSource == "TEAM_UNRESOLVED"
+    if scoreUnresolved and objectivesUnresolved then
         return "orange", "VERIFY"
     end
     return "yellow", "AGING"

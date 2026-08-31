@@ -5989,6 +5989,15 @@ do
         and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("No authoritative", 1, true),
         "Combat Focus did not explain missing authoritative evidence.")
 
+    local unresolvedTeamState = KWR.Util:Copy(verifyTruthState)
+    unresolvedTeamState.snapshot.score.source = "team_unresolved"
+    unresolvedTeamState.snapshot.score.observedAt = currentTime
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(unresolvedTeamState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "VERIFY"
+        and KWR.HUD.frame.score.value:find("-- - --", 1, true),
+        "A fresh but side-unresolved score was mislabeled as confirmed aging truth.")
+
     local previewScoreState = KWR.Util:Copy(verifyTruthState)
     previewScoreState.snapshot.context.preview = true
     previewScoreState.snapshot.score = {
