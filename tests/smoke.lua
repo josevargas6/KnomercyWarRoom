@@ -772,6 +772,35 @@ do
     local savedDb = KWR.Util:Copy(KWR_DB)
     KWR_DB = {
         schemaVersion = 60129,
+        profile = { hud = { focusMode = false } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "COMMANDER"
+        and KWR.db.profile.hud.focusMode == false,
+        "Combat Focus migration overwrote the legacy full-Commander preference.")
+    KWR_DB = {
+        schemaVersion = 60129,
+        profile = { hud = { focusMode = true } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+        and KWR.db.profile.hud.focusMode == true,
+        "Combat Focus migration did not preserve the legacy minimal-combat preference.")
+    KWR_DB = {
+        schemaVersion = 60130,
+        profile = { hud = { combatPreset = "REVIEW" } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
+        and KWR.db.profile.hud.focusMode == false,
+        "Review/Observer preset migration collapsed into another combat preset.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
+    KWR_DB = {
+        schemaVersion = 60129,
         profile = {
             cursor = {
                 reticleGuides = false,
@@ -5696,6 +5725,7 @@ KWR.CombatRoster:ResetVisualCache()
 KWR.CombatRoster:Show("TEAM")
 KWR.HUD.ready = true
 KWR.db.profile.hud.enabled = true
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 local coordinationState = KWR.Store:Get()
 do
     local fightNowState = KWR.Util:Copy(coordinationState)
@@ -5752,7 +5782,7 @@ assert(KWR.HUD.frame:IsShown(),
 assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
     and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill:IsShown(),
-    "Live Fight-Now card did not show its complete compact direction stack: width="
+    "Commander combat preset did not show its complete compact direction stack: width="
         .. tostring(KWR.HUD.frame.width)
         .. " height=" .. tostring(KWR.HUD.frame.height)
         .. " caller=" .. tostring(KWR.HUD.frame.caller:IsShown())
@@ -5760,7 +5790,6 @@ assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
 assert(KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.mine.heading.value == "NEXT"
     and KWR.HUD.frame.caller.heading.value == "POSTURE"
-    and KWR.HUD.frame.kill.heading.value == "KILL / CC"
     and KWR.HUD.frame.next.value.value:find("CALL:", 1, true)
     and KWR.HUD.frame.next.value.value:find("WHO:", 1, true)
     and KWR.HUD.frame.next.value.value:find("WHERE:", 1, true)
@@ -5777,7 +5806,7 @@ assert(KWR.HUD.frame.next.heading.value == "NOW"
     and not KWR.HUD.frame.next.value.value:find("%+%d")
     and not KWR.HUD.frame.mine.value.value:find("%+%d")
     and not KWR.HUD.frame.caller.value.value:find("%+%d"),
-    "Live Fight-Now card did not expose current/next calls, posture, kill, and CC direction.")
+    "Commander combat preset did not expose current/next calls, posture, kill, and CC direction.")
 do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
     local _, _, firstSectionY = KWR.HUD.frame.win:GetPoint(1)
@@ -5894,25 +5923,100 @@ assert(KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.value.value:find(
         KWR.Theme.combatColors.STOP.hex, 1, true),
     "Live local-fight card did not render synchronized kill and CC actors.")
-KWR.db.profile.hud.focusMode = true
+KWR.db.profile.hud.combatPreset = "COMBAT_FOCUS"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 292
+assert(KWR.HUD.frame.height == 436
     and KWR.HUD.frame.next:IsShown()
-    and KWR.HUD.frame.next.heading.value == "MY NEXT ACTION"
+    and KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.next.value.value ~= ""
+    and KWR.HUD.frame.mine.heading.value == "MY JOB"
+    and KWR.HUD.frame.caller.heading.value == "NEXT"
     and KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.heading.value == "LOCAL ACTION"
     and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+    and KWR.HUD.frame.truthBadge:IsShown()
+    and KWR.HUD.frame.truthBadge.currentTag ~= nil
+    and KWR.HUD.frame.score.value:find("-- - --", 1, true)
     and not KWR.HUD.frame.win:IsShown()
-    and not KWR.HUD.frame.mine:IsShown()
-    and not KWR.HUD.frame.caller:IsShown(),
-    "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
+    and KWR.HUD.frame.mine:IsShown()
+    and KWR.HUD.frame.caller:IsShown(),
+    "Combat Focus did not retain team NOW, MY JOB, NEXT, and the actionable local cue.")
+do
+    local authoritativeScoreState = KWR.Util:Copy(localFightHudState)
+    authoritativeScoreState.snapshot.score.source = "ui_widget"
+    authoritativeScoreState.snapshot.score.observedAt = currentTime
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(authoritativeScoreState)
+    assert(KWR.HUD.frame.score.value:find("0 - 1", 1, true)
+        and KWR.HUD.frame.truthBadge.currentTag == "LIVE",
+        "Combat Focus did not distinguish an authoritative score from an unknown placeholder: score="
+            .. tostring(KWR.HUD.frame.score.value)
+            .. " truth=" .. tostring(KWR.HUD.frame.truthBadge.currentTag))
+end
+do
+    local staleTruthState = KWR.Util:Copy(localFightHudState)
+    staleTruthState.snapshot.score.source = "ui_widget"
+    staleTruthState.snapshot.score.observedAt = currentTime - 6
+    staleTruthState.snapshot.objectives = { source = "none", rows = {} }
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(staleTruthState)
+    KWR.HUD.frame.truthBadge:GetScript("OnEnter")(KWR.HUD.frame.truthBadge)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "AGING"
+        and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("older than five seconds", 1, true),
+        "Combat Focus did not downgrade or explain stale widget evidence.")
+
+    local quietAgingState = KWR.Util:Copy(staleTruthState)
+    quietAgingState.snapshot.score.observedAt = currentTime
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(quietAgingState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "LIVE",
+        "Fresh widget evidence did not begin in the LIVE truth state.")
+    currentTime = currentTime + 6
+    KWR.HUD.frame._timerAccum = 0
+    KWR.HUD.frame.scripts.OnUpdate(KWR.HUD.frame, 1)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "AGING",
+        "Quiet widget evidence did not age without a separate Store update.")
+    currentTime = currentTime - 6
+
+    local verifyTruthState = KWR.Util:Copy(staleTruthState)
+    verifyTruthState.snapshot.score.source = "none"
+    verifyTruthState.snapshot.score.observedAt = nil
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(verifyTruthState)
+    KWR.HUD.frame.truthBadge:GetScript("OnEnter")(KWR.HUD.frame.truthBadge)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "VERIFY"
+        and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("No authoritative", 1, true),
+        "Combat Focus did not explain missing authoritative evidence.")
+
+    local unresolvedTeamState = KWR.Util:Copy(verifyTruthState)
+    unresolvedTeamState.snapshot.score.source = "team_unresolved"
+    unresolvedTeamState.snapshot.score.observedAt = currentTime
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(unresolvedTeamState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "VERIFY"
+        and KWR.HUD.frame.score.value:find("-- - --", 1, true),
+        "A fresh but side-unresolved score was mislabeled as confirmed aging truth.")
+
+    local previewScoreState = KWR.Util:Copy(verifyTruthState)
+    previewScoreState.snapshot.context.preview = true
+    previewScoreState.snapshot.score = {
+        friendly = 1240, enemy = 980, max = 1500,
+        source = "preview", observedAt = currentTime,
+    }
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(previewScoreState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "PREVIEW"
+        and not KWR.HUD.frame.score.value:find("-- - --", 1, true),
+        "Design preview did not preserve its labeled synthetic score presentation.")
+end
 do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
     local _, _, firstSectionY = KWR.HUD.frame.next:GetPoint(1)
-    assert(timerY == -88 and firstSectionY <= timerY - 18,
-        "Live HUD timer row overlaps the first focus section.")
+    local _, _, truthY = KWR.HUD.frame.truthBadge:GetPoint(1)
+    assert(timerY == -88 and truthY == -104
+        and firstSectionY <= truthY - 18,
+        "Live HUD timer/trust rows overlap the first focus section.")
 end
 do
     local teammateControlState = KWR.Util:Copy(localFightHudState)
@@ -5930,8 +6034,10 @@ do
     teamOnlyFocusState.assignments = {}
     KWR.HUD:Invalidate()
     KWR.HUD:Update(teamOnlyFocusState)
-    assert(KWR.HUD.frame.next.heading.value == "TEAM CALL",
-        "Minimal focus mode mislabeled a team-wide call as the player's assignment.")
+    assert(KWR.HUD.frame.next.heading.value == "NOW"
+        and KWR.HUD.frame.mine.heading.value == "MY JOB"
+        and KWR.HUD.frame.mine.value.value:find("Assignment pending", 1, true),
+        "Combat Focus did not keep team NOW distinct from a missing personal assignment.")
 end
 do
     local completedFocusState = KWR.Util:Copy(localFightHudState)
@@ -5955,12 +6061,24 @@ do
         and KWR.HUD.frame.caller:IsShown(),
         "Completed match remained trapped in minimal focus mode instead of restoring the review-ready HUD.")
 end
-KWR.db.profile.hud.focusMode = false
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
 assert(KWR.HUD.frame.height == 518 and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill.value.value:find("CC:", 1, true),
     "Leaving minimal live combat mode did not restore the full Fight-Now stack.")
+KWR.db.profile.hud.combatPreset = "REVIEW_OBSERVER"
+KWR.HUD:Invalidate()
+KWR.HUD:Update(localFightHudState)
+assert(KWR.HUD.frame.height == 548
+    and KWR.HUD.frame.win:IsShown()
+    and KWR.HUD.frame.caller:IsShown()
+    and KWR.HUD.frame.kill:IsShown()
+    and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
+    and KWR.HUD.frame.alertBadge:IsShown()
+    and KWR.HUD.frame.truthBadge:IsShown(),
+    "Review/Observer preset did not preserve the full call stack and provenance cues.")
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.CombatRoster:Update(localFightHudState)
 assert(KWR.CombatRoster.enemyFrame.targetSpotlight.nameText.value
     == "Knomercy CC - Priest P"
@@ -6087,6 +6205,7 @@ assert(KWR.HUD.frame.score.value == "RBG SETUP"
     and KWR.HUD.frame.alertBadge.text.value == "SETUP"
     and KWR.HUD.frame.alertBadge:IsShown()
     and KWR.HUD.frame.truthBadge:IsShown()
+    and KWR.HUD.frame.truthBadge.currentTag == "SETUP"
     and KWR.HUD.frame.refresh:IsShown()
     and KWR.HUD.frame.reassess:IsShown()
     and KWR.HUD.frame.win.heading.value == "SETUP GOAL"
@@ -6486,6 +6605,19 @@ assert(KWR.Options.namedChecks.autoReporter == nil
     and KWR.Options.namedChecks.battlefieldOrbs.check.kwrDisabled == false
     and KWR.Options.namedChecks.aarAutoOpen.check.kwrDisabled == true,
     "Options window did not separate advisory overlay dependencies from hard dependencies.")
+KWR.db.profile.hud.combatPreset = "COMMANDER"
+KWR.db.profile.hud.focusMode = false
+KWR.Options:Refresh()
+KWR.Options:SetCombatPreset("COMBAT_FOCUS")
+assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+    and KWR.db.profile.hud.focusMode == true
+    and KWR.Options.combatPresetButtons.COMBAT_FOCUS.selected == true,
+    "Combat Focus selector did not switch the active HUD preset.")
+KWR.Options:SetCombatPreset("REVIEW_OBSERVER")
+assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
+    and KWR.db.profile.hud.focusMode == false
+    and KWR.Options.combatPresetButtons.REVIEW_OBSERVER.selected == true,
+    "Review/Observer selector did not expose the third active HUD preset.")
 KWR.Options.namedChecks.highContrast.check:SetChecked(true)
 KWR.Options.namedChecks.highContrast.check.scripts.OnClick(
     KWR.Options.namedChecks.highContrast.check)
@@ -7243,8 +7375,12 @@ do
     local state = KWR.Store:Get()
     local savedObjectives = state.snapshot.objectives
     state.snapshot.objectives = {
+        source = "ui_widget",
+        observedAt = currentTime,
         rows = {
-            { pendingState = "INCOMING", timerRemaining = 17 },
+            { pendingState = "INCOMING", timerRemaining = 17,
+                timerLabel = "BLACKSMITH", source = "ui_widget",
+                pendingSource = "bg_system" },
         },
     }
     assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 0.50,
@@ -7258,6 +7394,11 @@ do
     KWR.Util.IsArenaContext = function() return false end
     KWR.db.profile.hud.enabled = true
     KWR.HUD.frame:Show()
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(state)
+    assert(KWR.HUD.frame.timer:GetText():find("BLACKSMITH", 1, true)
+        and KWR.HUD.frame.timer:GetText():find("| SYSTEM", 1, true),
+        "HUD timer omitted its semantic objective name or source provenance.")
     local firstToken = KWR.HUD:UpdateToken(state)
     state.snapshot.objectives.rows[1].timerRemaining = 16
     local secondToken = KWR.HUD:UpdateToken(state)

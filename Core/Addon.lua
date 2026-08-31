@@ -4,8 +4,8 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.9"
-KWR.schemaVersion = 60129
+KWR.version = "6.1.1-alpha.10"
+KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
 KWR.ready = false
@@ -20,7 +20,10 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
-            focusMode = false,
+            -- Combat Focus is the safe, low-density default. Commander and
+            -- Review/Observer remain explicit higher-context presets.
+            focusMode = true,
+            combatPreset = "COMBAT_FOCUS",
             point = "CENTER",
             relativePoint = "CENTER",
             x = -440,
@@ -287,6 +290,14 @@ end
 
 local function normalizeProfile(profile)
     local defaults = DEFAULTS.profile
+    local rawHud = type(profile) == "table"
+        and type(profile.hud) == "table"
+        and profile.hud or nil
+    local rawCombatPreset = rawHud and rawHud.combatPreset or nil
+    local legacyFocusMode
+    if rawHud then
+        legacyFocusMode = rawHud.focusMode
+    end
     local rawCombatRoster = type(profile) == "table"
         and type(profile.combatRoster) == "table"
         and profile.combatRoster or nil
@@ -418,7 +429,7 @@ local function normalizeProfile(profile)
         profile.combatRoster.teamMini, defaults.combatRoster.teamMini)
     profile.combatRoster.enemyMini = normalizePointBucket(
         profile.combatRoster.enemyMini, defaults.combatRoster.enemyMini)
-    profile.combatRoster.layoutVersion = 3
+    profile.combatRoster.layoutVersion = defaults.combatRoster.layoutVersion
     profile.combatRoster.anchorSpace = nil
     profile.combatRoster.panes = nil
     profile.combatRoster.splitToolbar = nil
@@ -467,6 +478,19 @@ local function normalizeProfile(profile)
         and profile.layoutMode ~= "STANDARD" and profile.layoutMode ~= "LARGE" then
         profile.layoutMode = defaults.layoutMode
     end
+    profile.hud.combatPreset = rawCombatPreset == nil
+        and (legacyFocusMode == false and "COMMANDER" or "COMBAT_FOCUS")
+        or KWR.Util:Upper(rawCombatPreset, defaults.hud.combatPreset, 24)
+    if profile.hud.combatPreset == "REVIEW"
+        or profile.hud.combatPreset == "OBSERVER" then
+        profile.hud.combatPreset = "REVIEW_OBSERVER"
+    end
+    if profile.hud.combatPreset ~= "COMBAT_FOCUS"
+        and profile.hud.combatPreset ~= "COMMANDER"
+        and profile.hud.combatPreset ~= "REVIEW_OBSERVER" then
+        profile.hud.combatPreset = defaults.hud.combatPreset
+    end
+    profile.hud.focusMode = profile.hud.combatPreset == "COMBAT_FOCUS"
     return profile
 end
 

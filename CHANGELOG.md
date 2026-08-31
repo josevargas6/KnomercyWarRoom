@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.1.1-alpha.10 - 2026-08-31
+
+- Make Combat Focus the default live battleground presentation while retaining
+  the fuller Commander preset.
+- Add truthful unknown-score display and concise LIVE/AGING/VERIFY/PREVIEW
+  trust cues to the compact HUD.
+- Select the earliest relevant objective timer deterministically and render its
+  semantic objective label instead of an ambiguous sync timer.
+- Preserve existing players' full Commander/minimal-combat preference while
+  making Combat Focus the new-install default.
+- Keep the Options toggle synchronized with the active Combat Focus or
+  Commander preset.
+
 ## 6.1.1-alpha.9 - 2026-08-27
 
 - Keep Blizzard's combined backpack and individual bag windows above KWR

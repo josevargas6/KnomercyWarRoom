@@ -1,5 +1,11 @@
 # KWR Sentinel Changelog
 
+## 6.1.1-alpha.10 - 2026-08-31
+
+- Synchronize Sentinel version and package provenance with Commander Alpha 10.
+- Preserve the reviewed Alpha 9 execution-card and transport behavior without
+  adding protected actions or widening the transport trust boundary.
+
 ## 6.1.1-alpha.9 - 2026-08-28
 
 - Synchronizes Sentinel's package metadata and public release templates with

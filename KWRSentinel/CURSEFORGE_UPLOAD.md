@@ -3,7 +3,7 @@
 Upload artifact:
 
 ```text
-<absolute path to certified KWR-Sentinel-6.1.1-alpha.9.zip>
+<absolute path to certified KWR-Sentinel-6.1.1-alpha.10.zip>
 ```
 
 Project:
@@ -14,8 +14,8 @@ https://www.curseforge.com/wow/addons/kwr-sentinel
 
 Required upload fields:
 
-- File: `KWR-Sentinel-6.1.1-alpha.9.zip`
-- Display name: `KWR Sentinel 6.1.1-alpha.9`
+- File: `KWR-Sentinel-6.1.1-alpha.10.zip`
+- Display name: `KWR Sentinel 6.1.1-alpha.10`
 - Release type: `Alpha`
 - Supported game: `World of Warcraft`
 - Supported flavor: `Retail`
@@ -60,7 +60,7 @@ Package evidence:
 
 Do not upload:
 
-- `KnomercyWarRoom-6.1.1-alpha.9.zip`
+- `KnomercyWarRoom-6.1.1-alpha.10.zip`
 - `KWR_<VERSION>_DEVELOPER.zip`
 - Discord bot files
 - SavedVariables or local WTF/account data

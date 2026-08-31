@@ -1,6 +1,6 @@
 # Candidate Field Capture Matrix
 
-Candidate: `6.1.1-alpha.9` (unbound until exact-head CI publishes its commit
+Candidate: `6.1.1-alpha.10` (unbound until exact-head CI publishes its commit
 and archive hashes)
 
 Before beginning any session, copy the Commander and Sentinel SHA-256 values
