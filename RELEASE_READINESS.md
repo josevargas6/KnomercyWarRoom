@@ -1,4 +1,4 @@
-# Release Readiness - 6.1.1-alpha.9
+# Release Readiness - 6.1.1-alpha.10
 
 This is the sole current-version, blocker, and promotion-status authority.
 GitHub committed content is the canonical development source; the live AddOns
@@ -6,34 +6,34 @@ folder is deployment evidence only after package-manifest verification.
 
 ## Current decision
 
-**6.1.1-alpha.9 is the Season 2 field-test candidate; 6.1.0 remains the
-immutable public stable baseline.** It contains the live-evidence, roster,
-event-work, and compact-runtime-data repairs recorded in the current changelog.
-Its offline certification, binary reproducibility, extracted-package audit,
-and exact Retail installation verification must complete against the alpha.9
-archive before promotion. The archive hashes are intentionally not embedded
-here: modifying a shipped document changes its archive. The versioned `SHA256`
-manifest and deployment certificate are the sole exact-hash authorities
-generated after the immutable archive is built.
+**6.1.1-alpha.10 is the authorized Season 2 developer field-test candidate;
+6.1.0 remains the immutable public stable baseline and 6.1.1-alpha.9 is the
+immediate field-test rollback baseline.** Alpha 10 adds the KWR-277 Combat
+Focus presentation, truthful score/trust states, semantic objective timers,
+and migration-safe Commander preset behavior. Its offline certification,
+binary reproducibility, extracted-package audit, and exact Retail installation
+verification must complete against the Alpha 10 archive before publication.
+The archive hashes are intentionally not embedded here: modifying a shipped
+document changes its archive. The versioned `SHA256` manifest and deployment
+certificate are the sole exact-hash authorities generated after the immutable
+archive is built.
 
 It is a field-test candidate, not yet a stable Retail-ready release. The owner
-authorized Alpha 5 field-test distribution on 2026-08-20 after source review,
-green CI, exact tagging, protected `production` approval, and public artifact
-verification. Candidate-bound live RBG evidence remains mandatory for any
-later stable promotion; source-only, historical, unbound, or simulated proof
-cannot substitute for that stable-release gate.
+authorized Alpha 10 developer-prerelease publication on 2026-08-31 after the
+weekly audit identified Alpha 9/10 publication drift. This authorization does
+not waive source review, green CI, exact tagging, protected `production`
+approval, package provenance, or public artifact verification. Candidate-bound
+live RBG evidence remains mandatory for any later stable promotion;
+source-only, historical, unbound, or simulated proof cannot substitute for
+that stable-release gate.
 
-The 2026-08-19 competitive-readiness refinement, KWR-270 field repair, and
-KWR-272 live-enhancement reconciliation are incorporated into the public Alpha
-9 baseline at `4a6bfd5f78afd4110a281080e2a50416599a9389`. PR #55 merged after all
-review conversations were resolved and exact-head `certify` run 33335658391
-passed. The public-main source passes local validation, deterministic Lua tests,
-binary reproducibility, and the extracted-package audit; the Commander
-candidate SHA-256 is
+Alpha 9 remains bound to clean source commit
+`4a6bfd5f78afd4110a281080e2a50416599a9389` and certified Commander hash
 `88B09C8CE037DB816CF28B84FE8122379312ADA7B2A367C856D37CE73C3AAAB1`.
-This evidence does not substitute for Retail field proof. Prior Alpha 5 package
-hashes remain historical to their recorded source snapshots and cannot certify
-the current branch.
+Alpha 10 must produce its own clean commit, hashes, package audit, deployment
+certificate, and public file IDs. Neither Alpha 9 nor historical Alpha 5
+evidence can certify Alpha 10, and no prerelease evidence substitutes for
+stable Retail field proof.
 
 The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
 recorded live-evidence gaps carried as refinement telemetry. It does not assert
@@ -50,20 +50,17 @@ and rollback-artifact creation.
 - [x] Source validation, source-drift, document-authority, control-surface,
   knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
   RBG-corpus gates pass.
-- [x] Build the current Alpha 9 source candidate under the authorized release
+- [ ] Build the current Alpha 10 source candidate under the authorized release
   workflow and prove Commander/Sentinel version parity, binary reproducibility,
   extracted-runtime integrity, and package audits. Exact installed-folder
   parity, hashes, and rollback remain part of the live deployment gate.
-- [x] Install the exact clean candidate with rollback snapshots and certify
-  installed-tree parity: Commander `88B09C8C...AAB1` at 398/398 entries and
-  Sentinel `75DFEADD...E7EAA` at 12/12 entries. The Alpha 9 deployment receipt
-  is bound to public source commit
-  `4a6bfd5f78afd4110a281080e2a50416599a9389`.
-- [x] PR #55 is merged to `main`; all review conversations are resolved and
-  exact-head `certify` run 33335658391 passed before the squash merge. Public
-  Alpha 9 `main` is `4a6bfd5f78afd4110a281080e2a50416599a9389`.
-- [ ] Tag and publish the exact public-release artifact only after the live
-  installation and field gates pass.
+- [ ] Install the exact clean Alpha 10 candidate with a rollback snapshot and
+  certify zero missing, changed, or extra Commander/Sentinel files.
+- [ ] Merge the reviewed Alpha 10 source to protected `main` after exact-head
+  `certify` passes.
+- [ ] Tag and publish the exact Alpha 10 developer-prerelease artifacts after
+  package and live-install certification. Stable promotion remains blocked on
+  candidate-bound field evidence.
 - [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
   flag-map stability and AAR, canonical carrier targets, combat-safe native-map
   behavior, taint/blocked actions, supported-resolution readability, and field
@@ -74,19 +71,17 @@ and rollback-artifact creation.
 - [x] Keep Sentinel cross-client transport disabled by default and outside the
   competitive-readiness release dependency. Any future opt-in promotion still
   requires its own ten-client, taint, expiry, teardown, and product-value proof.
-- [ ] From the green tagged commit, publish the explicit Alpha 9 field-test
+- [ ] From the green tagged commit, publish the explicit Alpha 10 field-test
   runtime ZIPs, checksums, manifest, and install guide; verify the public
   downloads and CurseForge file IDs before any announcement.
 
 Until every unchecked live item is evidenced, this candidate may be distributed
 only as an explicit **field-test prerelease, not a stable Retail release**.
 
-Alpha 43 remains the last published prerelease baseline. Its protected run
-completed on 2026-08-14 from commit
-`734254c98371cf9dc00235a58ed884de3000ec69`; CurseForge accepted Commander file
-`8650550` and Sentinel file `8650551`, and both release announcements succeeded.
-The stable cutover must generate new receipts and must not reuse those IDs or
-hashes. Render remains separately evidenced at Sentinel-bot commit
+Alpha 9 is the immediate public prerelease rollback baseline and Alpha 10 must
+generate new receipts without reusing its file IDs or hashes. The stable
+cutover must likewise generate new evidence. Render remains separately
+evidenced at Sentinel-bot commit
 `5ffdb7d2f60be3e673d284b62adf49a8f8d1727b`; this addon release does not alter
 bot deployment, Discord settings, GitHub issue integration, or AI integration.
 

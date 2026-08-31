@@ -1,30 +1,28 @@
 {
-    "schema":  "kwr-runtime-preflight",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-08-28T01:03:28Z",
-    "candidateVersion":  "6.1.1-alpha.9",
-    "node":  {
-                 "nodeOnPath":  true,
-                 "nodeOnPathSource":  "C:\\Users\\josev\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.19.0-win-x64\\node.exe",
-                 "bundledNodePath":  "C:\\Users\\josev\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
-                 "bundledNodeReadable":  true
-             },
-    "fengari":  {
-                    "fengariCmdOnPath":  null,
-                    "fengariPs1OnPath":  null,
-                    "accessibleCliPaths":  [
-                                               "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\fengari-node-cli\\src\\lua-cli.js"
-                                           ],
-                    "blockedCliPaths":  [
-
-                                        ]
-                },
-    "localLuaTools":  {
-                          "rootPath":  "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools",
-                          "present":  true,
-                          "cliReadable":  true,
-                          "packageReadable":  true
-                      },
-    "packageAuditReady":  true,
-    "recommendedNextStep":  "Run package-audit.ps1 against the current candidate artifacts."
+  "schema": "kwr-runtime-preflight",
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T14:52:33Z",
+  "candidateVersion": "6.1.1-alpha.10",
+  "node": {
+    "nodeOnPath": true,
+    "nodeOnPathSource": "C:\\Users\\josev\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.19.0-win-x64\\node.exe",
+    "bundledNodePath": "C:\\Users\\josev\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "bundledNodeReadable": true
+  },
+  "fengari": {
+    "fengariCmdOnPath": null,
+    "fengariPs1OnPath": null,
+    "accessibleCliPaths": [
+      "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools\\node_modules\\fengari-node-cli\\src\\lua-cli.js"
+    ],
+    "blockedCliPaths": []
+  },
+  "localLuaTools": {
+    "rootPath": "C:\\Users\\josev\\AppData\\Local\\Temp\\kwr-lua-tools",
+    "present": true,
+    "cliReadable": true,
+    "packageReadable": true
+  },
+  "packageAuditReady": true,
+  "recommendedNextStep": "Run package-audit.ps1 against the current candidate artifacts."
 }

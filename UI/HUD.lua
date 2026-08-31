@@ -6,7 +6,8 @@ KWR.HUD = HUD
 local HUD_WIDTH = 432
 local HUD_HEIGHT = 548
 local HUD_EXECUTION_HEIGHT = 518
-local HUD_FOCUS_HEIGHT = 292
+local HUD_FOCUS_HEIGHT = 358
+local HUD_FOCUS_EXCEPTION_HEIGHT = 436
 local HEADER_INSET = 12
 local SECTION_LEFT = 8
 local SECTION_RIGHT = -8
@@ -269,8 +270,10 @@ local function applyFocusLayout(frame)
     frame.alertBadge:Hide()
     frame.truthBadge:Hide()
     frame.alert:Hide()
-    placeSection(frame.next, -106, 104)
-    placeSection(frame.kill, -216, 72)
+    placeSection(frame.next, -106, 78)
+    placeSection(frame.mine, -188, 78)
+    placeSection(frame.caller, -270, 54)
+    placeSection(frame.kill, -330, 72)
 end
 
 local function commandCoverage(state)
@@ -526,9 +529,11 @@ function HUD:Create()
         self._timerAccum = 0
         if self.timerEndAt and self:IsShown() then
             local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
-            self.timer:SetText("SYNC " .. KWR.Util:Clock(remaining))
+            self.timer:SetText((self.timerLabel or "OBJECTIVE")
+                .. " " .. KWR.Util:Clock(remaining))
             if remaining <= 0 then
                 self.timerEndAt = nil
+                self.timerLabel = nil
                 self.timer:SetText("")
             end
         end
@@ -611,15 +616,15 @@ local function truthBadgeState(snapshot)
     local scoreSource = KWR.Util:Upper(snapshot and snapshot.score and snapshot.score.source, "NONE", 18)
     local objectiveSource = KWR.Util:Upper(snapshot and snapshot.objectives and snapshot.objectives.source, "NONE", 18)
     if context.preview == true then return "orange", "PREVIEW" end
-    if context.inPvP ~= true then return "muted", "NOT LIVE" end
+    if context.inPvP ~= true then return "muted", "VERIFY" end
     if scoreSource:find("WIDGET", 1, true) or objectiveSource:find("WIDGET", 1, true)
         or objectiveSource:find("PUBLIC", 1, true) then
         return "green", "LIVE"
     end
     if scoreSource == "NONE" and objectiveSource == "NONE" then
-        return "muted", "SETUP"
+        return "orange", "VERIFY"
     end
-    return "yellow", "PARTIAL"
+    return "yellow", "AGING"
 end
 
 local function updateToken(owner, state)
@@ -654,14 +659,40 @@ function HUD:UpdateToken(state)
     })
 end
 
-function HUD:ObjectiveTimerRemaining(snapshot)
+function HUD:ObjectiveTimer(snapshot, command)
     local objectives = snapshot and snapshot.objectives or {}
-    for _, objective in pairs(objectives.rows or {}) do
+    local candidates = {}
+    for index, objective in ipairs(objectives.rows or {}) do
         local candidate = type(objective) == "table"
             and KWR.Util:Number(objective.timerRemaining, nil) or nil
-        if candidate and candidate > 0 then return candidate end
+        if candidate and candidate > 0 then
+            candidates[#candidates + 1] = {
+                remaining = candidate,
+                key = KWR.Util:Text(objective.key or objective.id or objective.name
+                    or objective.label, "objective-" .. tostring(index), 64),
+                label = KWR.Util:Text(objective.timerLabel or objective.label
+                    or objective.name or objective.pendingState, "OBJECTIVE", 32),
+                state = KWR.Util:Text(objective.pendingState or objective.state, "", 24),
+                source = KWR.Util:Text(objective.source or objectives.source, "UNKNOWN", 24),
+            }
+        end
+    end
+    table.sort(candidates, function(a, b)
+        if a.remaining ~= b.remaining then return a.remaining < b.remaining end
+        return a.key < b.key
+    end)
+    if candidates[1] then return candidates[1] end
+    local expiresAt = command and KWR.Util:Number(command.expiresAt, nil)
+    if expiresAt and expiresAt > KWR.Util:Now() then
+        return { remaining = expiresAt - KWR.Util:Now(), key = "command-expiry",
+            label = "CALL HELD", state = "COMMAND", source = "COMMAND" }
     end
     return nil
+end
+
+function HUD:ObjectiveTimerRemaining(snapshot, command)
+    local timer = self:ObjectiveTimer(snapshot, command)
+    return timer and timer.remaining or nil
 end
 
 function HUD:ObjectiveTimerSignature(snapshot)
@@ -675,7 +706,9 @@ function HUD:ObjectiveTimerSignature(snapshot)
                 index,
                 objective.key or objective.id or objective.name or objective.label
                     or ("objective-" .. tostring(index)),
+                objective.timerLabel or objective.label or objective.name or "OBJECTIVE",
                 objective.pendingState or "",
+                objective.source or objectives.source or "UNKNOWN",
                 objective.timerEndAt or remaining,
             })
         end
@@ -706,9 +739,8 @@ function HUD:Update(state)
     local snapshot, command = state.snapshot, state.command
     local formationMode = snapshot.context.inPvP ~= true
     local matchComplete = snapshot.context.matchComplete == true
-    local focusMode = not formationMode
-        and not matchComplete
-        and KWR.db.profile.hud.focusMode == true
+    local focusMode = not formationMode and not matchComplete
+        and KWR.db.profile.hud.combatPreset ~= "COMMANDER"
     local formation = snapshot.formation or {}
     local sessionKey = KWR.Util:Text(snapshot and snapshot.context
         and snapshot.context.sessionKey,
@@ -847,13 +879,11 @@ function HUD:Update(state)
     frame.rescan:SetText(snapshot.context.inPvP and "REPEAT" or "RESCAN")
     frame.mode:SetText(snapshot.context.preview and "DESIGN PREVIEW"
         or (snapshot.context.inPvP and "LIVE BATTLEGROUND" or "QUEUE / SETUP"))
-    local timerRemaining = self:ObjectiveTimerRemaining(snapshot)
-    local commandTTL = command and command.expiresAt
-        and math.max(0, command.expiresAt - KWR.Util:Now()) or nil
-    timerRemaining = timerRemaining or commandTTL
-    if timerRemaining and timerRemaining > 0 then
-        frame.timerEndAt = KWR.Util:Now() + timerRemaining
-        frame.timer:SetText("SYNC " .. KWR.Util:Clock(timerRemaining))
+    local selectedTimer = self:ObjectiveTimer(snapshot, command)
+    if selectedTimer and selectedTimer.remaining > 0 then
+        frame.timerEndAt = KWR.Util:Now() + selectedTimer.remaining
+        frame.timerLabel = KWR.Util:Upper(selectedTimer.label, "OBJECTIVE", 32)
+        frame.timer:SetText(frame.timerLabel .. " " .. KWR.Util:Clock(selectedTimer.remaining))
     else
         frame.timerEndAt = nil
         frame.timer:SetText("")
@@ -865,18 +895,24 @@ function HUD:Update(state)
         frame.status:SetTextColor(KWR.Theme:Color(KWR.CommandView:StatusColor(command.status)))
     elseif matchComplete then
         applyFightNowLayout(frame)
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", fightNow.score)
+        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
+            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
             .. "  |  " .. KWR.Theme:CombatText(
                 fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     elseif focusMode then
         applyFocusLayout(frame)
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", fightNow.score)
+        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
+            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
             .. "  |  " .. KWR.Theme:CombatText(fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     else
         applyFightNowLayout(frame)
-        frame.score:SetText(KWR.Theme:CombatText("MOVE", fightNow.score)
+        local scoreText = snapshot.score and snapshot.score.friendly ~= nil
+            and snapshot.score.enemy ~= nil and fightNow.score or "-- - --"
+        frame.score:SetText(KWR.Theme:CombatText("MOVE", scoreText)
             .. "  |  " .. KWR.Theme:CombatText(
                 fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
@@ -927,8 +963,8 @@ function HUD:Update(state)
         frame.next.value:SetText(KWR.Util:Text(
             command.action, "Open Review / AAR and capture the lesson.", 180))
     elseif focusMode then
-        frame.next.heading:SetText(personalAction and "MY NEXT ACTION" or "TEAM CALL")
-        frame.next.value:SetText(personalAction or fightCallText(fightNow.current))
+        frame.next.heading:SetText("NOW")
+        frame.next.value:SetText(fightCallText(fightNow.current))
     else
         frame.next.heading:SetText("NOW")
         frame.next.value:SetText(fightCallText(fightNow.current))
@@ -949,6 +985,11 @@ function HUD:Update(state)
         frame.caller.heading:SetText("POST MATCH")
         frame.caller.value:SetText("Open Review / AAR\nSave evidence\nRecord the lesson")
     elseif focusMode then
+        frame.mine.heading:SetText("MY JOB")
+        frame.mine.value:SetText(personalAction or "Assignment pending; hold the team call.")
+        frame.caller.heading:SetText("NEXT")
+        frame.caller.value:SetText("TRIGGER: " .. KWR.CommandView:NextMoveText(state,
+            "Hold until the next verified swing."))
         frame.kill.heading:SetText("LOCAL ACTION")
         frame.kill.value:SetText(focusFightCall or "")
     else
@@ -969,10 +1010,10 @@ function HUD:Update(state)
     elseif matchComplete then
         frame.kill.value:SetText("Tactical calls closed. Capture the AAR before the next queue.")
     elseif focusMode then
-        frame:SetHeight(HUD_FOCUS_HEIGHT)
+        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
         frame.win:Hide()
-        frame.mine:Hide()
-        frame.caller:Hide()
+        frame.mine:Show()
+        frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     else
         frame.kill.value:SetText(localFightCall or "")
@@ -984,10 +1025,10 @@ function HUD:Update(state)
         frame.caller:Show()
         frame.kill:Show()
     elseif focusMode then
-        frame:SetHeight(HUD_FOCUS_HEIGHT)
+        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
         frame.win:Hide()
-        frame.mine:Hide()
-        frame.caller:Hide()
+        frame.mine:Show()
+        frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     else
         frame:SetHeight(HUD_EXECUTION_HEIGHT)

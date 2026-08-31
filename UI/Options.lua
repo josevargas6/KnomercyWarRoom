@@ -270,11 +270,13 @@ function Options:Create()
         function(value) return KWR.CommanderComm and KWR.CommanderComm:SetTransportEnabled(value) end)
     createCheck(self, commandCard,
         "hudFocusMode",
-        "Use minimal live combat mode",
-        "Shows only your next action and an actionable local target/peel cue during battleground combat.",
+        "Use Combat Focus preset",
+        "Shows the team call, your job, the next trigger, and only an actionable local exception during battleground combat. Turn it off for the full Commander stack.",
         -372,
-        function() return KWR.db.profile.hud.focusMode == true end,
+        function() return KWR.db.profile.hud.combatPreset ~= "COMMANDER" end,
         function(value)
+            KWR.db.profile.hud.combatPreset = value == true
+                and "COMBAT_FOCUS" or "COMMANDER"
             KWR.db.profile.hud.focusMode = value == true
             if KWR.HUD then KWR.HUD:Invalidate(); KWR.HUD:Update(KWR.Store:Get()) end
         end)

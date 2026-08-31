@@ -772,6 +772,27 @@ do
     local savedDb = KWR.Util:Copy(KWR_DB)
     KWR_DB = {
         schemaVersion = 60129,
+        profile = { hud = { focusMode = false } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "COMMANDER"
+        and KWR.db.profile.hud.focusMode == false,
+        "Combat Focus migration overwrote the legacy full-Commander preference.")
+    KWR_DB = {
+        schemaVersion = 60129,
+        profile = { hud = { focusMode = true } },
+    }
+    KWR:InitializeDatabase()
+    assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+        and KWR.db.profile.hud.focusMode == true,
+        "Combat Focus migration did not preserve the legacy minimal-combat preference.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
+    KWR_DB = {
+        schemaVersion = 60129,
         profile = {
             cursor = {
                 reticleGuides = false,
@@ -5696,6 +5717,7 @@ KWR.CombatRoster:ResetVisualCache()
 KWR.CombatRoster:Show("TEAM")
 KWR.HUD.ready = true
 KWR.db.profile.hud.enabled = true
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 local coordinationState = KWR.Store:Get()
 do
     local fightNowState = KWR.Util:Copy(coordinationState)
@@ -5752,7 +5774,7 @@ assert(KWR.HUD.frame:IsShown(),
 assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
     and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill:IsShown(),
-    "Live Fight-Now card did not show its complete compact direction stack: width="
+    "Commander combat preset did not show its complete compact direction stack: width="
         .. tostring(KWR.HUD.frame.width)
         .. " height=" .. tostring(KWR.HUD.frame.height)
         .. " caller=" .. tostring(KWR.HUD.frame.caller:IsShown())
@@ -5760,7 +5782,6 @@ assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
 assert(KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.mine.heading.value == "NEXT"
     and KWR.HUD.frame.caller.heading.value == "POSTURE"
-    and KWR.HUD.frame.kill.heading.value == "KILL / CC"
     and KWR.HUD.frame.next.value.value:find("CALL:", 1, true)
     and KWR.HUD.frame.next.value.value:find("WHO:", 1, true)
     and KWR.HUD.frame.next.value.value:find("WHERE:", 1, true)
@@ -5777,7 +5798,7 @@ assert(KWR.HUD.frame.next.heading.value == "NOW"
     and not KWR.HUD.frame.next.value.value:find("%+%d")
     and not KWR.HUD.frame.mine.value.value:find("%+%d")
     and not KWR.HUD.frame.caller.value.value:find("%+%d"),
-    "Live Fight-Now card did not expose current/next calls, posture, kill, and CC direction.")
+    "Commander combat preset did not expose current/next calls, posture, kill, and CC direction.")
 do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
     local _, _, firstSectionY = KWR.HUD.frame.win:GetPoint(1)
@@ -5894,20 +5915,22 @@ assert(KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.value.value:find(
         KWR.Theme.combatColors.STOP.hex, 1, true),
     "Live local-fight card did not render synchronized kill and CC actors.")
-KWR.db.profile.hud.focusMode = true
+KWR.db.profile.hud.combatPreset = "COMBAT_FOCUS"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 292
+assert(KWR.HUD.frame.height == 436
     and KWR.HUD.frame.next:IsShown()
-    and KWR.HUD.frame.next.heading.value == "MY NEXT ACTION"
+    and KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.next.value.value ~= ""
+    and KWR.HUD.frame.mine.heading.value == "MY JOB"
+    and KWR.HUD.frame.caller.heading.value == "NEXT"
     and KWR.HUD.frame.kill:IsShown()
     and KWR.HUD.frame.kill.heading.value == "LOCAL ACTION"
     and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
     and not KWR.HUD.frame.win:IsShown()
-    and not KWR.HUD.frame.mine:IsShown()
-    and not KWR.HUD.frame.caller:IsShown(),
-    "Minimal live combat mode did not retain the actionable local cue while hiding secondary sections.")
+    and KWR.HUD.frame.mine:IsShown()
+    and KWR.HUD.frame.caller:IsShown(),
+    "Combat Focus did not retain team NOW, MY JOB, NEXT, and the actionable local cue.")
 do
     local _, _, timerY = KWR.HUD.frame.timer:GetPoint(1)
     local _, _, firstSectionY = KWR.HUD.frame.next:GetPoint(1)
@@ -5930,8 +5953,10 @@ do
     teamOnlyFocusState.assignments = {}
     KWR.HUD:Invalidate()
     KWR.HUD:Update(teamOnlyFocusState)
-    assert(KWR.HUD.frame.next.heading.value == "TEAM CALL",
-        "Minimal focus mode mislabeled a team-wide call as the player's assignment.")
+    assert(KWR.HUD.frame.next.heading.value == "NOW"
+        and KWR.HUD.frame.mine.heading.value == "MY JOB"
+        and KWR.HUD.frame.mine.value.value:find("Assignment pending", 1, true),
+        "Combat Focus did not keep team NOW distinct from a missing personal assignment.")
 end
 do
     local completedFocusState = KWR.Util:Copy(localFightHudState)
@@ -5955,7 +5980,7 @@ do
         and KWR.HUD.frame.caller:IsShown(),
         "Completed match remained trapped in minimal focus mode instead of restoring the review-ready HUD.")
 end
-KWR.db.profile.hud.focusMode = false
+KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
 assert(KWR.HUD.frame.height == 518 and KWR.HUD.frame.caller:IsShown()
@@ -6486,6 +6511,15 @@ assert(KWR.Options.namedChecks.autoReporter == nil
     and KWR.Options.namedChecks.battlefieldOrbs.check.kwrDisabled == false
     and KWR.Options.namedChecks.aarAutoOpen.check.kwrDisabled == true,
     "Options window did not separate advisory overlay dependencies from hard dependencies.")
+KWR.db.profile.hud.combatPreset = "COMMANDER"
+KWR.db.profile.hud.focusMode = false
+KWR.Options:Refresh()
+KWR.Options.namedChecks.hudFocusMode.check:SetChecked(true)
+KWR.Options.namedChecks.hudFocusMode.check.scripts.OnClick(
+    KWR.Options.namedChecks.hudFocusMode.check)
+assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+    and KWR.db.profile.hud.focusMode == true,
+    "Combat Focus option did not switch the active HUD preset.")
 KWR.Options.namedChecks.highContrast.check:SetChecked(true)
 KWR.Options.namedChecks.highContrast.check.scripts.OnClick(
     KWR.Options.namedChecks.highContrast.check)
