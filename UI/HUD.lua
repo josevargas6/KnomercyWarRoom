@@ -571,6 +571,9 @@ function HUD:Create()
         self._timerAccum = (self._timerAccum or 0) + (elapsed or 0)
         if self._timerAccum < 0.20 then return end
         self._timerAccum = 0
+        if self:IsShown() and KWR.HUD and KWR.HUD.RefreshTruthBadge then
+            KWR.HUD:RefreshTruthBadge(self)
+        end
         if self.timerEndAt and self:IsShown() then
             local remaining = math.max(0, self.timerEndAt - KWR.Util:Now())
             self.timer:SetText((self.timerLabel or "OBJECTIVE")
@@ -688,6 +691,19 @@ local function truthBadgeState(snapshot)
     return "yellow", "AGING"
 end
 
+function HUD:RefreshTruthBadge(frame, snapshot)
+    frame = frame or self.frame
+    snapshot = snapshot or (self.lastState and self.lastState.snapshot)
+    if not frame or not frame.truthBadge or not snapshot then return nil end
+    local tone, tag = truthBadgeState(snapshot)
+    if frame.truthBadge.currentTag ~= tag then
+        frame.truthBadge:SetTone(tone)
+        frame.truthBadge:SetText(tag)
+        frame.truthBadge.currentTag = tag
+    end
+    return tag
+end
+
 local function scoreText(snapshot, fightNow)
     local score = snapshot and snapshot.score or {}
     local context = snapshot and snapshot.context or {}
@@ -759,7 +775,9 @@ function HUD:ObjectiveTimer(snapshot, command)
                 label = KWR.Util:Text(objective.timerLabel or objective.label
                     or objective.name or objective.pendingState, "OBJECTIVE", 32),
                 state = KWR.Util:Text(objective.pendingState or objective.state, "", 24),
-                source = KWR.Util:Text(objective.source or objectives.source, "UNKNOWN", 24),
+                source = KWR.Util:Text(objective.pendingSource
+                    or objective.timerSource or objective.source
+                    or objectives.source, "UNKNOWN", 24),
             }
         end
     end
@@ -794,7 +812,8 @@ function HUD:ObjectiveTimerSignature(snapshot)
                     or ("objective-" .. tostring(index)),
                 objective.timerLabel or objective.label or objective.name or "OBJECTIVE",
                 objective.pendingState or "",
-                objective.source or objectives.source or "UNKNOWN",
+                objective.pendingSource or objective.timerSource
+                    or objective.source or objectives.source or "UNKNOWN",
                 objective.timerEndAt or remaining,
             })
         end
@@ -1115,6 +1134,7 @@ function HUD:Update(state)
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     elseif reviewMode then
+        frame.kill.value:SetText(localFightCall or "")
         frame:SetHeight(HUD_REVIEW_HEIGHT)
         frame.win:Show()
         frame.mine:Show()

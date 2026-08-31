@@ -5966,6 +5966,19 @@ do
         and KWR.HUD.frame.truthBadge.tooltipLines[1]:find("older than five seconds", 1, true),
         "Combat Focus did not downgrade or explain stale widget evidence.")
 
+    local quietAgingState = KWR.Util:Copy(staleTruthState)
+    quietAgingState.snapshot.score.observedAt = currentTime
+    KWR.HUD:Invalidate()
+    KWR.HUD:Update(quietAgingState)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "LIVE",
+        "Fresh widget evidence did not begin in the LIVE truth state.")
+    currentTime = currentTime + 6
+    KWR.HUD.frame._timerAccum = 0
+    KWR.HUD.frame.scripts.OnUpdate(KWR.HUD.frame, 1)
+    assert(KWR.HUD.frame.truthBadge.currentTag == "AGING",
+        "Quiet widget evidence did not age without a separate Store update.")
+    currentTime = currentTime - 6
+
     local verifyTruthState = KWR.Util:Copy(staleTruthState)
     verifyTruthState.snapshot.score.source = "none"
     verifyTruthState.snapshot.score.observedAt = nil
@@ -6052,6 +6065,7 @@ assert(KWR.HUD.frame.height == 548
     and KWR.HUD.frame.win:IsShown()
     and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill:IsShown()
+    and KWR.HUD.frame.kill.value.value:find("Warrior-Z", 1, true)
     and KWR.HUD.frame.alertBadge:IsShown()
     and KWR.HUD.frame.truthBadge:IsShown(),
     "Review/Observer preset did not preserve the full call stack and provenance cues.")
@@ -7356,7 +7370,8 @@ do
         observedAt = currentTime,
         rows = {
             { pendingState = "INCOMING", timerRemaining = 17,
-                timerLabel = "BLACKSMITH", source = "ui_widget" },
+                timerLabel = "BLACKSMITH", source = "ui_widget",
+                pendingSource = "bg_system" },
         },
     }
     assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 0.50,
@@ -7373,7 +7388,7 @@ do
     KWR.HUD:Invalidate()
     KWR.HUD:Update(state)
     assert(KWR.HUD.frame.timer:GetText():find("BLACKSMITH", 1, true)
-        and KWR.HUD.frame.timer:GetText():find("| LIVE", 1, true),
+        and KWR.HUD.frame.timer:GetText():find("| SYSTEM", 1, true),
         "HUD timer omitted its semantic objective name or source provenance.")
     local firstToken = KWR.HUD:UpdateToken(state)
     state.snapshot.objectives.rows[1].timerRemaining = 16
