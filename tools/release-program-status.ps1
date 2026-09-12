@@ -1,5 +1,13 @@
 [CmdletBinding()]
-param([string]$OutFile = 'knowledge\release-program-status.json')
+param(
+    [string]$OutFile = 'knowledge\release-program-status.json',
+    [string]$EvidenceCandidateVersion = '6.1.1-alpha.12',
+    [string]$RecoveryReport = 'artifacts\source-recovery-accounting-20260912-r8.json',
+    [string]$ParityReport = 'artifacts\replay-semantic-parity-r8-20260912.json',
+    [string]$DiscrepancyReport = 'artifacts\replay-discrepancy-r8-20260912.json',
+    [string]$AdjudicationReport = 'artifacts\replay-adjudication-review-r7-20260912.json',
+    [string]$ReconciliationLedger = 'artifacts\release-source-review-ledger-20260912-r7.json'
+)
 
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
@@ -12,25 +20,26 @@ function Bool([object]$Value) { return $Value -eq $true }
 
 $candidate = Read-Receipt 'knowledge\candidate-package-report.json'
 $offline = Read-Receipt 'knowledge\offline-completion-audit.json'
-$recovery = Read-Receipt 'artifacts\source-recovery-accounting-20260912-r8.json'
-$parity = Read-Receipt 'artifacts\replay-semantic-parity-r8-20260912.json'
-$discrepancy = Read-Receipt 'artifacts\replay-discrepancy-r8-20260912.json'
-$adjudication = Read-Receipt 'artifacts\replay-adjudication-review-r7-20260912.json'
-$reconciliation = Read-Receipt 'artifacts\release-source-review-ledger-20260912-r7.json'
+$recovery = Read-Receipt $RecoveryReport
+$parity = Read-Receipt $ParityReport
+$discrepancy = Read-Receipt $DiscrepancyReport
+$adjudication = Read-Receipt $AdjudicationReport
+$reconciliation = Read-Receipt $ReconciliationLedger
 $packageAudit = if ($candidate -and $candidate.packageAudit -and $candidate.packageAudit.path) {
     Read-Receipt ([string]$candidate.packageAudit.path)
 } else { $null }
 $dirty = @(& git -C $root status --porcelain)
-$primaryPass = $discrepancy -and $discrepancy.summary.total -gt 0 `
+$evidenceBound = $candidate -and $candidate.candidateVersion -eq $EvidenceCandidateVersion
+$primaryPass = $evidenceBound -and $discrepancy -and $discrepancy.summary.total -gt 0 `
     -and $discrepancy.summary.primary -eq $discrepancy.summary.total `
     -and $discrepancy.summary.fallback -eq 0 -and $discrepancy.summary.unmatched -eq 0 `
     -and $discrepancy.summary.forbidden -eq 0
 
 $stages = @(
-    [ordered]@{ id='KWR-281-source-reconciliation'; status=if (Bool $reconciliation.summary.complete) {'PASS'} else {'OPEN'}; evidence='artifacts/release-source-review-ledger-20260912-r7.json' },
-    [ordered]@{ id='KWR-295-source-package-parity'; status=if (Bool $parity.pass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-semantic-parity-r8-20260912.json' },
-    [ordered]@{ id='KWR-295-strict-primary'; status=if ($primaryPass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-discrepancy-r8-20260912.json' },
-    [ordered]@{ id='KWR-295-named-adjudications'; status=if (Bool $adjudication.summary.complete) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-adjudication-review-r7-20260912.json' },
+    [ordered]@{ id='KWR-281-source-reconciliation'; status=if ($evidenceBound -and (Bool $reconciliation.summary.complete)) {'PASS'} else {'OPEN'}; evidence=$ReconciliationLedger },
+    [ordered]@{ id='KWR-295-source-package-parity'; status=if ($evidenceBound -and (Bool $parity.pass)) {'PASS'} else {'OPEN'}; evidence=$ParityReport },
+    [ordered]@{ id='KWR-295-strict-primary'; status=if ($primaryPass) {'PASS'} else {'OPEN'}; evidence=$DiscrepancyReport },
+    [ordered]@{ id='KWR-295-named-adjudications'; status=if ($evidenceBound -and (Bool $adjudication.summary.complete)) {'PASS'} else {'OPEN'}; evidence=$AdjudicationReport },
     [ordered]@{ id='OVR-22-package-audit'; status=if ($packageAudit -and $packageAudit.result -eq 'PASS') {'PASS'} else {'OPEN'}; evidence=if ($candidate) {$candidate.packageAudit.path} else {$null} },
     [ordered]@{ id='OVR-22-clean-provenance'; status=if ($dirty.Count -eq 0) {'PASS'} else {'OPEN'}; evidence='git status --porcelain' },
     [ordered]@{ id='offline-release-eligibility'; status=if (Bool $offline.offlinePrepared) {'PASS'} else {'OPEN'}; evidence='knowledge/offline-completion-audit.json' }
@@ -41,11 +50,11 @@ foreach ($index in 0..12) {
     # capture-tooling evidence.  IN_PROGRESS is intentionally not a pass: the
     # package-specific acceptance and external review gates still control that.
     $implemented = $index -ge 0 -and $index -le 12
-    $packageStatus = if ($package -eq 'P00' -and (Bool $recovery.summary.complete)) {'PASS'} elseif ($implemented) {'IN_PROGRESS'} else {'PLANNED'}
+    $packageStatus = if ($package -eq 'P00' -and $evidenceBound -and (Bool $recovery.summary.complete)) {'PASS'} elseif ($implemented) {'IN_PROGRESS'} else {'PLANNED'}
     $stages += [ordered]@{
         id = ('KWR-297-' + $package)
         status = $packageStatus
-        evidence = if ($package -eq 'P00') { 'artifacts/source-recovery-accounting-20260912-r8.json' } elseif ($implemented) { 'docs/tasks/kwr-297/' + $package + '-' + @{
+        evidence = if ($package -eq 'P00') { $RecoveryReport } elseif ($implemented) { 'docs/tasks/kwr-297/' + $package + '-' + @{
             P01='facts-context-capabilities'; P02='objective-engines'; P03='routes-assignments-formation'; P04='tactical-alternatives'; P05='command-lifecycle-secure-ui'; P06='aar-outcomes-learning'; P07='performance-scheduling'; P08='memory-persistence-packaging'; P09='commander-ux'; P10='sentinel-protocol'; P11='replay-certification-release'; P12='field-quality-comparison'
         }[$package] + '.md' } else { 'docs/tasks/KWR-297-s-tier-completion-packages.md' }
     }
@@ -60,6 +69,7 @@ foreach ($id in @('KWR-297-P13/KWR-298', 'KWR-297-P14/KWR-299')) {
 $report = [ordered]@{
     schema='kwr-release-program-status'; schemaVersion=1; generatedAt=[DateTime]::UtcNow.ToString('o')
     candidate=[ordered]@{ version=$candidate.candidateVersion; candidateID=$candidate.candidateID; distributionSha256=$candidate.distributionArtifact.sha256; buildDirectory=$candidate.buildOutputDirectory }
+    evidenceBinding=[ordered]@{ candidateVersion=$EvidenceCandidateVersion; matchesCandidate=[bool]$evidenceBound; recovery=$RecoveryReport; parity=$ParityReport; discrepancy=$DiscrepancyReport; reconciliation=$ReconciliationLedger }
     stages=$stages
     strictReplay=if ($discrepancy) {$discrepancy.summary} else {$null}
     adjudications=if ($adjudication) {$adjudication.summary} else {$null}
