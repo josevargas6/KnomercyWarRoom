@@ -8,9 +8,15 @@ return function(KWR)
     KWR.db.learning = old
     learning:OnInitialize()
     local migrated = KWR.db.learning
-    assert(migrated.schemaVersion == 2 and migrated.legacy.data == old
+    assert(migrated.schemaVersion == 2 and migrated.legacy.schemaVersion == 1
+        and migrated.legacy.reason == "UNVERIFIED_DELIVERY_AND_EXECUTION"
+        and migrated.legacy.sourceSchemaVersion == 0
+        and migrated.legacy.valueType == "table"
+        and migrated.legacy.topLevelEntries == 1
+        and migrated.legacy.retainedRawPayload == false
+        and migrated.legacy.data == nil
         and old.plans.legacy.wins == 99 and old.plans.malformed == false,
-        "Migration erased or relabeled historical learning")
+        "Migration retained raw or relabeled historical learning")
     learning:OnInitialize()
     assert(KWR.db.learning == migrated and learning:Summary().samples == 0,
         "Migration repeated or allowed unproven aggregates into live learning")

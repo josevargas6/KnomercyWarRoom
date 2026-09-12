@@ -26,6 +26,28 @@ local function packed(values)
     return table.concat(parts, "|")
 end
 
+-- Schema-1 aggregates cannot prove issued-call delivery or observed execution,
+-- so they must never become live doctrine. Keep a small migration receipt
+-- instead of a verbatim archive: SavedVariables otherwise preserve an
+-- unbounded, private legacy branch forever even though no consumer may read it.
+local function legacyReceipt(value, sourceSchemaVersion)
+    local entries = 0
+    if type(value) == "table" then
+        for _ in pairs(value) do
+            entries = entries + 1
+            if entries >= 10000 then break end
+        end
+    end
+    return {
+        schemaVersion = 1,
+        reason = "UNVERIFIED_DELIVERY_AND_EXECUTION",
+        sourceSchemaVersion = sourceSchemaVersion or 0,
+        valueType = type(value),
+        topLevelEntries = entries,
+        retainedRawPayload = false,
+    }
+end
+
 local function database()
     local db = KWR.db and KWR.db.learning
     if type(db) ~= "table" or db.schemaVersion ~= SCHEMA_VERSION
@@ -111,8 +133,7 @@ function Learning:OnInitialize()
         KWR.db.learning = {
             schemaVersion = SCHEMA_VERSION,
             plans = {}, processedEpisodes = {}, retiredThrough = 0,
-            legacy = { schemaVersion = 1, reason = "UNVERIFIED_DELIVERY_AND_EXECUTION",
-                data = existing },
+            legacy = legacyReceipt(existing, version),
         }
     end
     self:Prune()

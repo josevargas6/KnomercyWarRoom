@@ -4,9 +4,11 @@ Status: Accepted, September 9, 2026. Implements the persistence/consumer portion
 of REC-09 and OVR-18; public execution producers remain a separate open dependency.
 
 The old map/plan aggregates cannot prove delivery or execution. Learning schema
-2 transfers the entire previous learning branch into one `legacy.data` archive.
-It never reads that archive for tactical adjustments. Reinitialization does not
-copy it again. Unknown future schemas stay intact and produce no adjustment.
+2 records only a bounded `legacy` migration receipt (source schema, value type,
+top-level count and reason), never a verbatim `legacy.data` archive. It never
+reads historic aggregates for tactical adjustments. Reinitialization does not
+copy raw historical payloads again. Unknown future schemas stay intact and
+produce no adjustment.
 Malformed current buckets move into `quarantinedPlans`; damaged deduplication
 records remain intact and disable training rather than risk counting twice.
 The bootstrap preserves malformed legacy payloads for this migration instead of

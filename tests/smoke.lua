@@ -766,6 +766,8 @@ do
             interrupted = "bad",
         },
         learning = "bad",
+        aar = { privateHistory = { "old" } },
+        fieldIntel = { privateNotes = { "old" } },
         encounters = {
             players = "bad",
         },
@@ -797,6 +799,12 @@ do
         and #KWR.db.journal.history == 2
         and KWR.db.journal.interrupted == nil
         and type(KWR.db.learning.plans) == "table"
+        and KWR.db.aar == nil and KWR.db.fieldIntel == nil
+        and type(KWR.db.retiredLegacy) == "table"
+        and KWR.db.retiredLegacy.aar.reason == "UNOWNED_LEGACY_AAR_ROOT"
+        and KWR.db.retiredLegacy.aar.retainedRawPayload == false
+        and KWR.db.retiredLegacy.fieldIntel.reason == "UNOWNED_LEGACY_FIELD_INTEL_ROOT"
+        and KWR.db.retiredLegacy.fieldIntel.retainedRawPayload == false
         and type(KWR.db.encounters.players) == "table"
         and type(KWR.db.assignmentOverrides.players) == "table"
         and type(KWR.db.opponentModels.players) == "table",

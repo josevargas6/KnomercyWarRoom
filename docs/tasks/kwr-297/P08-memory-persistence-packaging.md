@@ -53,6 +53,11 @@ retained player or match text. In the pretest, the largest structures are
 (~109 KB) and `fieldIntel` (~100 KB). This is an inventory lead, not permission
 to delete history wholesale: each owner must define and test its own retention,
 migration and correction behavior before the r7 post-load size gate can pass.
+The current load migration now retires the unowned historical `aar` and
+`fieldIntel` roots to bounded metadata receipts, and Learning schema 2 does the
+same for unverified aggregates. It never carries those raw payloads forward.
+Current journal/AAR, opponent, and encounter owners still require their own
+post-load byte evidence.
 
 ## Correct implementation sequence
 

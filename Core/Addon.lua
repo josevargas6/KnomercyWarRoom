@@ -283,6 +283,26 @@ local function boundedList(source, maximum)
     return list
 end
 
+-- Some historical builds wrote private, unbounded branches that no current
+-- runtime owner reads. Retire those payloads to a tiny receipt at load time;
+-- retaining their raw tables would silently carry them into every future save.
+local function legacyReceipt(value, reason)
+    local entries = 0
+    if type(value) == "table" then
+        for _ in pairs(value) do
+            entries = entries + 1
+            if entries >= 10000 then break end
+        end
+    end
+    return {
+        schemaVersion = 1,
+        reason = reason,
+        valueType = type(value),
+        topLevelEntries = entries,
+        retainedRawPayload = false,
+    }
+end
+
 local function normalizePointBucket(bucket, defaults)
     bucket = normalizeAgainstDefaults(bucket, defaults)
     bucket.point = KWR.Util:Text(bucket.point, defaults.point, 24)
@@ -507,6 +527,24 @@ local function normalizeProfile(profile)
 end
 
 local function normalizeRootBranches(database)
+    database.retiredLegacy = type(database.retiredLegacy) == "table"
+        and database.retiredLegacy or {}
+    local function retire(key, value, reason)
+        if value ~= nil then
+            database.retiredLegacy[key] = legacyReceipt(value, reason)
+        end
+    end
+    -- These were historical standalone persistence roots. Current AAR uses
+    -- journal and current tactical intel uses owner modules; neither root has
+    -- a consumer or a valid migration contract.
+    if database.aar ~= nil then
+        retire("aar", database.aar, "UNOWNED_LEGACY_AAR_ROOT")
+        database.aar = nil
+    end
+    if database.fieldIntel ~= nil then
+        retire("fieldIntel", database.fieldIntel, "UNOWNED_LEGACY_FIELD_INTEL_ROOT")
+        database.fieldIntel = nil
+    end
     database.journal = type(database.journal) == "table" and database.journal or {}
     -- Bound during deserialization, before AAR's later owner-level compaction.
     -- Retain newest chronological records so a malformed or legacy oversized
