@@ -1,27 +1,23 @@
-# Release Readiness - 6.1.1-alpha.13
+# Release Readiness - 6.1.1-alpha.14
 
 ## Current operational truth — 2026-09-12
 
-**READY FOR DIAGNOSTIC FIELD TESTING; NOT READY FOR STABLE RELEASE.**
-`alpha13-persistence-20260912-1` (`6.1.1-alpha.13`) is the ready successor
-candidate in `artifacts/release-offline-candidate-20260912-r9`, tagged
-`v6.1.1-alpha.13`. Its Commander SHA-256 is
-`B588D602C0BD6AB89992958BC9EF10C5500B29719DD740C1CEE51FB3EA462B9C`.
-The clean-tree reproducibility and extracted package audit pass. It adds bounded
-load migration for inert legacy AAR/field-intel and unverified learning payloads.
+**FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
+`alpha14-layout-stability-20260912-1` (`6.1.1-alpha.14`) supersedes the failed
+alpha.13 field candidate. It contains the Commander-card mode latch, transient
+viewport guard, and live-card LayoutCoordinator isolation. It has not yet been
+packaged, installed, or field-tested; its exact archive hashes and deployment
+receipt will be recorded before any retest begins.
 
-Alpha.13 is **not installed yet** because World of Warcraft is running. The
-active client remains alpha.12/r8, installed under
-`artifacts/release-offline-install-20260912-r8/DEPLOYMENT.json`; it must be
-allowed to finish or exit before the verified alpha.13 backup/install/rehearsal.
-The installed r8 reconciliation records 142 matches, zero changes, and four
-reviewed DevTools-only source entries. Alpha.13 still needs its own post-install
-reconciliation and full source/package replay parity before it replaces r8 as
-the diagnostic candidate. P00's 62 recovery rows are fully accounted for;
-these are offline facts, not field certification.
+Alpha.13 produced valid identity/audit evidence, then failed native commander
+card acceptance: automatic compact/wide reflow, viewport collapse, and a
+Blizzard `Texture:SetTextCoord()` error from a nine-slice height of 35,583.
+The alpha.13 field run is evidence of a defect, not release approval. P00's 62
+recovery rows and alpha.13's 2,003 paired replay-parity records remain valid
+offline evidence, but do not certify the repaired alpha.14 candidate.
 
-Use [the field guide](docs/FIELD_TEST_20260909.md) and capture matrix for this
-candidate only. Current diagnostic blockers are `LIVE-TEAM-TRUTH`,
+The alpha.12 field guide is historical; use the alpha.14 handoff provided with
+its verified deployment receipt. Current diagnostic blockers are `LIVE-TEAM-TRUTH`,
 `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, and native-map/
 combat-safety proof. Field evidence must include `/kwr field`, `/kwr verify`,
 `/kwr perf`, `/kwr aar copy`, and a `/kwr bug` export for every failure.
