@@ -2,24 +2,23 @@
 
 ## Current operational truth — 2026-09-12
 
-`6.1.1-alpha.13` is the pending successor candidate for bounded legacy
-persistence migration. It must receive a clean build, package audit and fresh
-field install receipt before replacing the installed alpha.12 candidate below.
+**READY FOR DIAGNOSTIC FIELD TESTING; NOT READY FOR STABLE RELEASE.**
+`alpha13-persistence-20260912-1` (`6.1.1-alpha.13`) is the ready successor
+candidate in `artifacts/release-offline-candidate-20260912-r9`, tagged
+`v6.1.1-alpha.13`. Its Commander SHA-256 is
+`B588D602C0BD6AB89992958BC9EF10C5500B29719DD740C1CEE51FB3EA462B9C`.
+The clean-tree reproducibility and extracted package audit pass. It adds bounded
+load migration for inert legacy AAR/field-intel and unverified learning payloads.
 
-**READY FOR DIAGNOSTIC FIELD TESTING; NOT READY FOR STABLE RELEASE.** The only
-active local field candidate is `alpha12-kwr297-source-20260910-1`
-(`6.1.1-alpha.12`) from `artifacts/release-offline-candidate-20260912-r7`.
-`artifacts/release-offline-install-20260912-r7/DEPLOYMENT.json` verifies
-the installed Commander, Sentinel, and DevTools archives with zero drift and a
-passed rollback rehearsal. The Commander SHA-256 is
-`5C6C3E27426729BFC5D0E23E4035A1C13147C150C39CE850087EF76AE432A555`.
-
-The r7 extracted-package audit and reproducibility check pass; current
-source/install reconciliation records 142 matching entries with four reviewed
-DevTools-only source entries and no changed or installed-only runtime file.
-All 2,003 source and extracted-package replays match semantically and in
-provenance. P00's 62 historical recovery rows are fully accounted for against
-this candidate. These are offline/diagnostic facts, not field certification.
+Alpha.13 is **not installed yet** because World of Warcraft is running. The
+active client remains alpha.12/r8, installed under
+`artifacts/release-offline-install-20260912-r8/DEPLOYMENT.json`; it must be
+allowed to finish or exit before the verified alpha.13 backup/install/rehearsal.
+The installed r8 reconciliation records 142 matches, zero changes, and four
+reviewed DevTools-only source entries. Alpha.13 still needs its own post-install
+reconciliation and full source/package replay parity before it replaces r8 as
+the diagnostic candidate. P00's 62 recovery rows are fully accounted for;
+these are offline facts, not field certification.
 
 Use [the field guide](docs/FIELD_TEST_20260909.md) and capture matrix for this
 candidate only. Current diagnostic blockers are `LIVE-TEAM-TRUTH`,
