@@ -372,7 +372,25 @@ function Card:Render(host, state)
     host.timerEndAt = nil
     host:RegisterForDrag() -- Only the dedicated header handle moves the card.
     local scale = number(host:GetEffectiveScale(), 1)
-    local width, height = UIParent:GetWidth(), UIParent:GetHeight()
+    local width, height = number(UIParent:GetWidth(), 1920), number(UIParent:GetHeight(), 1080)
+    -- UIParent can briefly report a tiny geometry during client/instance UI
+    -- transitions.  Applying that transient value resizes the movable host to
+    -- a sliver, then screen clamping rewrites its visible position.  Reuse the
+    -- last real viewport instead; never turn a measurement glitch into a card
+    -- move.  The deliberately conservative bounds are below every supported
+    -- player viewport and do not mask a normal UI-scale change.
+    local validViewport = width >= 640 and height >= 480 and scale >= 0.25 and scale <= 4
+    if validViewport then
+        frame.lastViewport = { width = width, height = height, scale = scale }
+    elseif frame.lastViewport then
+        width, height, scale = frame.lastViewport.width, frame.lastViewport.height, frame.lastViewport.scale
+    else
+        -- Do not materialize a partial card before a usable viewport exists.
+        frame.fit = false
+        frame:Hide()
+        host:Hide()
+        return view
+    end
     local parts = { view.phase, view.map, view.bracket, view.score, view.winPath,
         tostring(view.objectiveClock and view.objectiveClock.deadline), tostring(view.next.deadline),
         tostring(width), tostring(height), tostring(scale),
@@ -402,6 +420,7 @@ function Card:Hide(host)
     host.commanderCard.lastLayoutKey = nil
     host.commanderCard.resolvedWide = nil
     host.commanderCard.requestedWide = nil
+    host.commanderCard.lastViewport = nil
     host:SetWidth(number(host.legacyCardWidth, 432))
     host.commanderCard:Hide()
     host:RegisterForDrag("LeftButton")
