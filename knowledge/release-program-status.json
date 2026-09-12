@@ -1,7 +1,7 @@
 {
   "schema": "kwr-release-program-status",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-12T17:17:35.8094699Z",
+  "generatedAt": "2026-09-12T17:17:52.8053212Z",
   "candidate": {
     "version": "6.1.1-alpha.12",
     "candidateID": "alpha12-kwr297-source-20260910-1",
@@ -36,7 +36,7 @@
     },
     {
       "id": "OVR-22-clean-provenance",
-      "status": "OPEN",
+      "status": "PASS",
       "evidence": "git status --porcelain"
     },
     {
@@ -224,7 +224,7 @@
     "invalid": 0,
     "complete": true
   },
-  "dirtyWorktreeEntries": 2,
+  "dirtyWorktreeEntries": 0,
   "releaseEligible": false,
   "policy": "Diagnostic field readiness is separate from release eligibility. This report never converts missing tactical review, a dirty worktree, or unverified field evidence into a pass."
 }
