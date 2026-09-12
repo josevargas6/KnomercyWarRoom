@@ -1,42 +1,50 @@
 {
   "schema": "kwr-release-program-status",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-12T17:17:52.8053212Z",
+  "generatedAt": "2026-09-12T21:33:46.6370826Z",
   "candidate": {
-    "version": "6.1.1-alpha.12",
-    "candidateID": "alpha12-kwr297-source-20260910-1",
-    "distributionSha256": "111D730E76C529DA3CF8DA7420D123D406E1C9434B2D4AC2AB4ED940AC53D2BC",
-    "buildDirectory": "artifacts/release-offline-candidate-20260912-r8"
+    "version": "6.1.1-alpha.13",
+    "candidateID": "alpha13-persistence-20260912-1",
+    "distributionSha256": "B588D602C0BD6AB89992958BC9EF10C5500B29719DD740C1CEE51FB3EA462B9C",
+    "buildDirectory": "artifacts/release-offline-candidate-20260912-r9"
+  },
+  "evidenceBinding": {
+    "candidateVersion": "6.1.1-alpha.13",
+    "matchesCandidate": true,
+    "recovery": "artifacts\\source-recovery-accounting-20260912-r9.json",
+    "parity": "artifacts\\replay-semantic-parity-r9-20260912.json",
+    "discrepancy": "artifacts\\replay-discrepancy-r9-20260912.json",
+    "reconciliation": "artifacts\\release-source-review-ledger-20260912-r7.json"
   },
   "stages": [
     {
       "id": "KWR-281-source-reconciliation",
       "status": "PASS",
-      "evidence": "artifacts/release-source-review-ledger-20260912-r7.json"
+      "evidence": "artifacts\\release-source-review-ledger-20260912-r7.json"
     },
     {
       "id": "KWR-295-source-package-parity",
       "status": "PASS",
-      "evidence": "artifacts/replay-semantic-parity-r8-20260912.json"
+      "evidence": "artifacts\\replay-semantic-parity-r9-20260912.json"
     },
     {
       "id": "KWR-295-strict-primary",
       "status": "OPEN",
-      "evidence": "artifacts/replay-discrepancy-r8-20260912.json"
+      "evidence": "artifacts\\replay-discrepancy-r9-20260912.json"
     },
     {
       "id": "KWR-295-named-adjudications",
       "status": "OPEN",
-      "evidence": "artifacts/replay-adjudication-review-r7-20260912.json"
+      "evidence": "artifacts\\replay-adjudication-review-r7-20260912.json"
     },
     {
       "id": "OVR-22-package-audit",
       "status": "PASS",
-      "evidence": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json"
+      "evidence": "artifacts/release-offline-candidate-20260912-r9/KWR_6_1_1_ALPHA_13_PACKAGE_AUDIT.json"
     },
     {
       "id": "OVR-22-clean-provenance",
-      "status": "PASS",
+      "status": "OPEN",
       "evidence": "git status --porcelain"
     },
     {
@@ -47,7 +55,7 @@
     {
       "id": "KWR-297-P00",
       "status": "PASS",
-      "evidence": "artifacts/source-recovery-accounting-20260912-r8.json"
+      "evidence": "artifacts\\source-recovery-accounting-20260912-r9.json"
     },
     {
       "id": "KWR-297-P01",
@@ -224,7 +232,7 @@
     "invalid": 0,
     "complete": true
   },
-  "dirtyWorktreeEntries": 0,
+  "dirtyWorktreeEntries": 1,
   "releaseEligible": false,
   "policy": "Diagnostic field readiness is separate from release eligibility. This report never converts missing tactical review, a dirty worktree, or unverified field evidence into a pass."
 }
