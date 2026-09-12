@@ -27,6 +27,7 @@ local BLIZZARD_WINDOWS = {
 }
 
 local MAX_CONTAINER_FRAMES = 13
+local lastScreenWidth, lastScreenHeight = 1920, 1080
 
 local KWR_STRATA = {
     { "MainWindow", "HIGH" },
@@ -39,7 +40,13 @@ local KWR_STRATA = {
 local function screenSize()
     local width = UIParent and UIParent.GetWidth and UIParent:GetWidth() or 1920
     local height = UIParent and UIParent.GetHeight and UIParent:GetHeight() or 1080
-    return math.max(1, width), math.max(1, height)
+    -- Retail can expose a 1px transitional UIParent geometry while changing
+    -- displays/instances.  Treat it as unavailable rather than scaling or
+    -- clamping every managed surface against that value.
+    if type(width) == "number" and type(height) == "number" and width >= 640 and height >= 480 then
+        lastScreenWidth, lastScreenHeight = width, height
+    end
+    return lastScreenWidth, lastScreenHeight
 end
 
 function LayoutCoordinator:AutoProfile()
@@ -231,6 +238,11 @@ end
 function LayoutCoordinator:ApplyHUD()
     local hud = KWR.HUD and KWR.HUD.frame
     if not hud then return end
+    -- CommanderCard owns the host's measured size, viewport fallback and
+    -- clamping while its complete live surface is active.  Calling GetWidth
+    -- here can force Blizzard's nine-slice layout on an incomplete render;
+    -- that is the Texture:SetTextCoord out-of-range path reported in field.
+    if hud.cardActive then return end
     local profile = self:Profile()
     applyScale(hud, visibleScale(hud, profile.scale, profile.margin))
     -- HUD.lua owns the deliberate 548px setup / 500px fight-mode sizes.
