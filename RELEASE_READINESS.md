@@ -1,6 +1,10 @@
-# Release Readiness - 6.1.1-alpha.12
+# Release Readiness - 6.1.1-alpha.13
 
 ## Current operational truth — 2026-09-12
+
+`6.1.1-alpha.13` is the pending successor candidate for bounded legacy
+persistence migration. It must receive a clean build, package audit and fresh
+field install receipt before replacing the installed alpha.12 candidate below.
 
 **READY FOR DIAGNOSTIC FIELD TESTING; NOT READY FOR STABLE RELEASE.** The only
 active local field candidate is `alpha12-kwr297-source-20260910-1`

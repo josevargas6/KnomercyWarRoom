@@ -8,7 +8,7 @@ BuildInfo.productName = "KWR Commander"
 BuildInfo.watermark = nil
 -- External deployment receipts map this ID to exact ZIP/file hashes. Do not
 -- embed an archive's own hash in its payload (that would be circular).
-BuildInfo.candidateID = "alpha12-kwr297-source-20260910-1"
+BuildInfo.candidateID = "alpha13-persistence-20260912-1"
 
 function BuildInfo:HasBundledDeveloperTools()
     return self.channel ~= "production"
