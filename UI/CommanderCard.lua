@@ -230,7 +230,11 @@ function Card:Layout(frame, viewportWidth, viewportHeight, scale)
     local unit = 1 / scale
     local pad, gap, bodySize = 10 * unit, 8 * unit, 13 * unit
     local availableWidth, availableHeight = viewportWidth - 24 * unit, viewportHeight - 24 * unit
-    local maxWidth = math.min(availableWidth, 1800 * unit)
+    -- The Commander surface has a deliberately bounded reading width.  A
+    -- tall assignment list must not turn a fit retry into a near-full-screen
+    -- overlay that hides the game.  The small extra allowance lets WIDE solve
+    -- ordinary wrapping without changing the operator's whole workspace.
+    local maxWidth = math.min(availableWidth, 1120 * unit)
     local labels = KWR.CommandView.CardStrings
     local content = self:Content(frame.view)
     frame.bounds = {}
