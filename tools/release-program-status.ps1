@@ -1,12 +1,12 @@
 [CmdletBinding()]
 param(
     [string]$OutFile = 'knowledge\release-program-status.json',
-    [string]$EvidenceCandidateVersion = '6.1.1-alpha.13',
-    [string]$RecoveryReport = 'artifacts\source-recovery-accounting-20260912-r9.json',
-    [string]$ParityReport = 'artifacts\replay-semantic-parity-r9-20260912.json',
-    [string]$DiscrepancyReport = 'artifacts\replay-discrepancy-r9-20260912.json',
+    [string]$EvidenceCandidateVersion = '6.1.1-alpha.14',
+    [string]$RecoveryReport = 'artifacts\source-recovery-accounting-20260912-r10.json',
+    [string]$ParityReport = 'artifacts\replay-semantic-parity-r10-20260912.json',
+    [string]$DiscrepancyReport = 'artifacts\replay-discrepancy-r10-20260912.json',
     [string]$AdjudicationReport = 'artifacts\replay-adjudication-review-r7-20260912.json',
-    [string]$ReconciliationLedger = 'artifacts\release-source-review-ledger-20260912-r7.json'
+    [string]$ReconciliationLedger = 'artifacts\release-source-reconciliation-20260912-r10.json'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -30,13 +30,16 @@ $packageAudit = if ($candidate -and $candidate.packageAudit -and $candidate.pack
 } else { $null }
 $dirty = @(& git -C $root status --porcelain)
 $evidenceBound = $candidate -and $candidate.candidateVersion -eq $EvidenceCandidateVersion
+$reconciliationPass = $evidenceBound -and $reconciliation -and $reconciliation.summary -and `
+    $reconciliation.summary.match -gt 0 -and $reconciliation.summary.changed -eq 0 `
+    -and $reconciliation.summary.installedOnly -eq 0
 $primaryPass = $evidenceBound -and $discrepancy -and $discrepancy.summary.total -gt 0 `
     -and $discrepancy.summary.primary -eq $discrepancy.summary.total `
     -and $discrepancy.summary.fallback -eq 0 -and $discrepancy.summary.unmatched -eq 0 `
     -and $discrepancy.summary.forbidden -eq 0
 
 $stages = @(
-    [ordered]@{ id='KWR-281-source-reconciliation'; status=if ($evidenceBound -and (Bool $reconciliation.summary.complete)) {'PASS'} else {'OPEN'}; evidence=$ReconciliationLedger },
+    [ordered]@{ id='KWR-281-source-reconciliation'; status=if ($reconciliationPass) {'PASS'} else {'OPEN'}; evidence=$ReconciliationLedger },
     [ordered]@{ id='KWR-295-source-package-parity'; status=if ($evidenceBound -and (Bool $parity.pass)) {'PASS'} else {'OPEN'}; evidence=$ParityReport },
     [ordered]@{ id='KWR-295-strict-primary'; status=if ($primaryPass) {'PASS'} else {'OPEN'}; evidence=$DiscrepancyReport },
     [ordered]@{ id='KWR-295-named-adjudications'; status=if ($evidenceBound -and (Bool $adjudication.summary.complete)) {'PASS'} else {'OPEN'}; evidence=$AdjudicationReport },

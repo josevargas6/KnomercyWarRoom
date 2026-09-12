@@ -1,36 +1,36 @@
 {
   "schema": "kwr-release-program-status",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-12T21:34:05.9921464Z",
+  "generatedAt": "2026-09-12T06:02:12.1898661Z",
   "candidate": {
-    "version": "6.1.1-alpha.13",
-    "candidateID": "alpha13-persistence-20260912-1",
-    "distributionSha256": "B588D602C0BD6AB89992958BC9EF10C5500B29719DD740C1CEE51FB3EA462B9C",
-    "buildDirectory": "artifacts/release-offline-candidate-20260912-r9"
+    "version": "6.1.1-alpha.14",
+    "candidateID": "alpha14-layout-stability-20260912-1",
+    "distributionSha256": "6B891D5CD2BCAAE2D71D975F212C39A14AF9AE351E1E5EB272D613A8F8DF6406",
+    "buildDirectory": "artifacts/release-offline-candidate-20260912-r10b"
   },
   "evidenceBinding": {
-    "candidateVersion": "6.1.1-alpha.13",
+    "candidateVersion": "6.1.1-alpha.14",
     "matchesCandidate": true,
-    "recovery": "artifacts\\source-recovery-accounting-20260912-r9.json",
-    "parity": "artifacts\\replay-semantic-parity-r9-20260912.json",
-    "discrepancy": "artifacts\\replay-discrepancy-r9-20260912.json",
-    "reconciliation": "artifacts\\release-source-review-ledger-20260912-r7.json"
+    "recovery": "artifacts\\source-recovery-accounting-20260912-r10.json",
+    "parity": "artifacts\\replay-semantic-parity-r10-20260912.json",
+    "discrepancy": "artifacts\\replay-discrepancy-r10-20260912.json",
+    "reconciliation": "artifacts\\release-source-reconciliation-20260912-r10.json"
   },
   "stages": [
     {
       "id": "KWR-281-source-reconciliation",
       "status": "PASS",
-      "evidence": "artifacts\\release-source-review-ledger-20260912-r7.json"
+      "evidence": "artifacts\\release-source-reconciliation-20260912-r10.json"
     },
     {
       "id": "KWR-295-source-package-parity",
-      "status": "PASS",
-      "evidence": "artifacts\\replay-semantic-parity-r9-20260912.json"
+      "status": "OPEN",
+      "evidence": "artifacts\\replay-semantic-parity-r10-20260912.json"
     },
     {
       "id": "KWR-295-strict-primary",
       "status": "OPEN",
-      "evidence": "artifacts\\replay-discrepancy-r9-20260912.json"
+      "evidence": "artifacts\\replay-discrepancy-r10-20260912.json"
     },
     {
       "id": "KWR-295-named-adjudications",
@@ -40,11 +40,11 @@
     {
       "id": "OVR-22-package-audit",
       "status": "PASS",
-      "evidence": "artifacts/release-offline-candidate-20260912-r9/KWR_6_1_1_ALPHA_13_PACKAGE_AUDIT.json"
+      "evidence": "artifacts/release-offline-candidate-20260912-r10b/KWR_6_1_1_ALPHA_14_PACKAGE_AUDIT.json"
     },
     {
       "id": "OVR-22-clean-provenance",
-      "status": "PASS",
+      "status": "OPEN",
       "evidence": "git status --porcelain"
     },
     {
@@ -55,7 +55,7 @@
     {
       "id": "KWR-297-P00",
       "status": "PASS",
-      "evidence": "artifacts\\source-recovery-accounting-20260912-r9.json"
+      "evidence": "artifacts\\source-recovery-accounting-20260912-r10.json"
     },
     {
       "id": "KWR-297-P01",
@@ -128,95 +128,7 @@
       "evidence": "docs/tasks/KWR-299-command-followthrough-feedback.md"
     }
   ],
-  "strictReplay": {
-    "total": 2003,
-    "primary": 0,
-    "fallback": 578,
-    "unmatched": 1425,
-    "forbidden": 0,
-    "byProfile": [
-      {
-        "mapProfile": "ab_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 75,
-        "unmatched": 125,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "bfg_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 75,
-        "unmatched": 125,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "dhr_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 40,
-        "unmatched": 160,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "dwg_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 75,
-        "unmatched": 125,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "eots_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 75,
-        "unmatched": 125,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "shore_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 40,
-        "unmatched": 160,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "ssm_standard",
-        "total": 200,
-        "primary": 0,
-        "fallback": 40,
-        "unmatched": 160,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "tok_standard",
-        "total": 201,
-        "primary": 0,
-        "fallback": 76,
-        "unmatched": 125,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "tp_standard",
-        "total": 201,
-        "primary": 0,
-        "fallback": 41,
-        "unmatched": 160,
-        "forbidden": 0
-      },
-      {
-        "mapProfile": "wsg_standard",
-        "total": 201,
-        "primary": 0,
-        "fallback": 41,
-        "unmatched": 160,
-        "forbidden": 0
-      }
-    ]
-  },
+  "strictReplay": null,
   "adjudications": {
     "queued": 2003,
     "validReviews": 0,
@@ -225,14 +137,12 @@
     "complete": false
   },
   "sourceInstallReconciliation": {
-    "total": 4,
-    "reviewed": 4,
-    "deferred": 0,
-    "missing": 0,
-    "invalid": 0,
-    "complete": true
+    "match": 142,
+    "changed": 0,
+    "sourceOnly": 4,
+    "installedOnly": 0
   },
-  "dirtyWorktreeEntries": 0,
+  "dirtyWorktreeEntries": 2,
   "releaseEligible": false,
   "policy": "Diagnostic field readiness is separate from release eligibility. This report never converts missing tactical review, a dirty worktree, or unverified field evidence into a pass."
 }
