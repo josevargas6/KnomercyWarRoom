@@ -1,26 +1,29 @@
-# Release Readiness - 6.1.1-alpha.14
+# Release Readiness - 6.1.1-alpha.15
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha14-layout-stability-20260912-1` (`6.1.1-alpha.14`) supersedes the failed
-alpha.13 field candidate. It contains the Commander-card mode latch, transient
-viewport guard, and live-card LayoutCoordinator isolation. It has not yet been
-packaged, installed, or field-tested; its exact archive hashes and deployment
-receipt will be recorded before any retest begins.
+`alpha15-field-safety-20260912-1` (`6.1.1-alpha.15`) is the unbuilt successor
+to the installed alpha.14 candidate. It adds a bounded Commander-card fit width,
+combat-safe expanded-board dismissal, a Close-means-dismiss policy rather than a
+surface-restoration cascade, Options centering, and stable Setup/Sentinel anchors.
+Its exact archive hashes and deployment receipt must be recorded before retest.
 
-Alpha.13 produced valid identity/audit evidence, then failed native commander
-card acceptance: automatic compact/wide reflow, viewport collapse, and a
-Blizzard `Texture:SetTextCoord()` error from a nine-slice height of 35,583.
-The alpha.13 field run is evidence of a defect, not release approval. P00's 62
-recovery rows and alpha.13's 2,003 paired replay-parity records remain valid
-offline evidence, but do not certify the repaired alpha.14 candidate.
+Alpha.14 was packaged, installed, and field-tested. It recognized live battleground
+data and produced valid assignments without runtime errors, but failed release
+acceptance: the expanded board could trap the player behind protected combat UI;
+closing it could reopen Commander/card surfaces; the card could occupy the whole
+screen; Sentinel/Setup placement could obstruct native UI; measured memory reached
+39.33 MB (32 MB hard limit); and strategic refresh P95 was 29.15 ms (target <2 ms).
+This is defect evidence, not release approval. P00's 62 recovery rows and
+alpha.13's 2,003 paired replay-parity records remain valid offline evidence, but
+do not certify alpha.15.
 
-The alpha.12 field guide is historical; use the alpha.14 handoff provided with
-its verified deployment receipt. Current diagnostic blockers are `LIVE-TEAM-TRUTH`,
-`LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, and native-map/
-combat-safety proof. Field evidence must include `/kwr field`, `/kwr verify`,
-`/kwr perf`, `/kwr aar copy`, and a `/kwr bug` export for every failure.
+Current diagnostic blockers are `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
+`LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, memory/refresh budgets, command-delivery
+evidence, and native-map/combat-safety proof. Field evidence must include
+`/kwr field`, `/kwr verify`, `/kwr perf`, `/kwr aar copy`, and a `/kwr bug` export
+for every failure.
 
 Stable release remains blocked by a clean source-bound/tagged package, remaining
 offline completion, the 2,003-item replay adjudication/independent tactical
