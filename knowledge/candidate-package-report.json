@@ -1,114 +1,114 @@
 {
-    "schema":  "kwr-candidate-package-report",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-09-12T09:12:52Z",
-    "candidateVersion":  "6.1.1-alpha.12",
-    "candidateID":  "alpha12-kwr297-source-20260910-1",
-    "buildOutputDirectory":  "artifacts/release-offline-candidate-20260912-r7",
-    "distributionArtifact":  {
-                                 "name":  "KnomercyWarRoom-6.1.1-alpha.12.zip",
-                                 "path":  "artifacts/release-offline-candidate-20260912-r7/KnomercyWarRoom-6.1.1-alpha.12.zip",
-                                 "size":  889543,
-                                 "sha256":  "5C6C3E27426729BFC5D0E23E4035A1C13147C150C39CE850087EF76AE432A555"
-                             },
-    "developerArtifact":  {
-                              "name":  "KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
-                              "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
-                              "size":  15871490,
-                              "sha256":  "B0649A9B12C1D208BD4F4EB6F091DABB110480B9F5FC6BBEB59CC975C72A65F0"
-                          },
-    "sentinelArtifact":  {
-                             "name":  "KWR-Sentinel-6.1.1-alpha.12.zip",
-                             "path":  "artifacts/release-offline-candidate-20260912-r7/KWR-Sentinel-6.1.1-alpha.12.zip",
-                             "size":  30052,
-                             "sha256":  "92FAC40EB7AF1ADB91A4337CCB46E38C66BF41A384C96E461016BCC517FABCC7"
-                         },
-    "hashManifest":  {
-                         "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_SHA256.txt",
-                         "lines":  [
-                                       "5C6C3E27426729BFC5D0E23E4035A1C13147C150C39CE850087EF76AE432A555  KnomercyWarRoom-6.1.1-alpha.12.zip",
-                                       "92FAC40EB7AF1ADB91A4337CCB46E38C66BF41A384C96E461016BCC517FABCC7  KWR-Sentinel-6.1.1-alpha.12.zip"
-                                   ]
-                     },
-    "developerHashManifest":  {
-                                  "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_DEVELOPER_CHECKSUM.txt",
-                                  "lines":  [
-                                                "B0649A9B12C1D208BD4F4EB6F091DABB110480B9F5FC6BBEB59CC975C72A65F0  KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
-                                                "5689AA5E0AFECD69C5A43DEC66EFCEA10F1DA94F9EC291B0CD32DBB1154839C4  KWR_DevTools-6.1.1-alpha.12.zip"
-                                            ]
-                              },
-    "sourceManifest":  {
-                           "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "D42B2CA8C79A676544763B81C6FF740F73D327BBDF83307745F74139FBD10D60",
-                           "distributionEntryCount":  399,
-                           "developerDigest":  "6CB3C0103770E36691BF7513ED5E3D5E5A5719C5F3AF71B36442CA90222198A4",
-                           "developerEntryCount":  9098,
-                           "sentinelDigest":  "1C9BE97C7CE04FD52F2F89D90DC7E64E7037D7E77C7EE1EB822A30E9DE03DF7D",
-                           "sentinelEntryCount":  12
-                       },
-    "buildProvenance":  {
-                            "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-09-12T09:05:16.5619696Z",
-                            "sentinelIncluded":  true,
-                            "powershellEdition":  "Desktop",
-                            "powershellVersion":  "5.1.26100.9444",
-                            "nodeAvailableOnBuildPath":  true,
-                            "npmAvailableOnBuildPath":  true,
-                            "fengariAvailableOnBuildPath":  false,
-                            "gitAvailable":  true
-                        },
-    "reproducibility":  {
-                            "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_REPRODUCIBILITY.json",
-                            "result":  "PASS",
-                            "distributionDigestMatch":  true,
-                            "developerDigestMatch":  true,
-                            "notes":  [
-                                          "Two clean builds were executed with the primary package audit intact and nested reproducibility/package-audit recursion disabled in the secondary pass.",
-                                          "Canonical entry order and timestamps produced matching binary SHA-256 hashes for every archive."
-                                      ]
-                        },
-    "packageAudit":  {
-                         "path":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-09-12T09:11:19.6913955Z",
-                         "result":  "PASS",
-                         "hashesVerified":  4,
-                         "distributionEntries":  399,
-                         "developerEntries":  9098,
-                         "extractedDistributionRuntime":  "PASS",
-                         "extractedDeveloperRuntime":  "PASS",
-                         "reproducibilityCheck":  "PASS_COMPATIBLE"
-                     },
-    "environmentCertification":  {
-                                     "buildExecuted":  true,
-                                     "packageAuditInThisWorkspace":  "CERTIFIED_IN_WORKSPACE",
-                                     "runtimeBlocker":  null,
-                                     "runtimePreflightPath":  "knowledge/runtime-preflight.json",
-                                     "notes":  [
-                                                   "The exact distribution and developer ZIPs were created in this workspace.",
-                                                   "The reproducibility report was created in this workspace.",
-                                                   "Extracted-runtime package certification was completed in this workspace.",
-                                                   "Live install and upgrade proof still require real client execution and field evidence."
-                                               ]
-                                 },
-    "operatorPaths":  {
-                          "addonsRoot":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns",
-                          "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
-                          "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
-                          "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
-                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.12"
-                      },
-    "fieldEvidenceBinding":  {
-                                 "candidateID":  "alpha12-kwr297-source-20260910-1",
-                                 "candidateVersion":  "6.1.1-alpha.12",
-                                 "distributionSha256":  "5C6C3E27426729BFC5D0E23E4035A1C13147C150C39CE850087EF76AE432A555",
-                                 "evidenceScope":  "candidate",
-                                 "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.12.zip",
-                                 "requiredProof":  [
-                                                       "Screenshot or text capture of installed TOC version.",
-                                                       "Recorded distribution ZIP SHA256 used for install.",
-                                                       "Backup location for pre-session SavedVariables.",
-                                                       "Proof whether the session was clean install or upgrade install.",
-                                                       "Any /kwr verify, bug, screenshot, or AAR evidence tied to this same hash."
-                                                   ]
-                             }
+  "schema": "kwr-candidate-package-report",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-12T17:16:17Z",
+  "candidateVersion": "6.1.1-alpha.12",
+  "candidateID": "alpha12-kwr297-source-20260910-1",
+  "buildOutputDirectory": "artifacts/release-offline-candidate-20260912-r8",
+  "distributionArtifact": {
+    "name": "KnomercyWarRoom-6.1.1-alpha.12.zip",
+    "path": "artifacts/release-offline-candidate-20260912-r8/KnomercyWarRoom-6.1.1-alpha.12.zip",
+    "size": 891385,
+    "sha256": "111D730E76C529DA3CF8DA7420D123D406E1C9434B2D4AC2AB4ED940AC53D2BC"
+  },
+  "developerArtifact": {
+    "name": "KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
+    "size": 15732869,
+    "sha256": "57B9EF4D09408CEDAEF1303A1CFCA8B0EAA8ACC9044AC1CC7C868CABE3827984"
+  },
+  "sentinelArtifact": {
+    "name": "KWR-Sentinel-6.1.1-alpha.12.zip",
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR-Sentinel-6.1.1-alpha.12.zip",
+    "size": 30147,
+    "sha256": "1BBE3EEC1A14F6F00E1EF8D06A0504AB225547CBFB5647E227114B6D91A27B35"
+  },
+  "hashManifest": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_SHA256.txt",
+    "lines": [
+      "111D730E76C529DA3CF8DA7420D123D406E1C9434B2D4AC2AB4ED940AC53D2BC  KnomercyWarRoom-6.1.1-alpha.12.zip",
+      "1BBE3EEC1A14F6F00E1EF8D06A0504AB225547CBFB5647E227114B6D91A27B35  KWR-Sentinel-6.1.1-alpha.12.zip"
+    ]
+  },
+  "developerHashManifest": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_DEVELOPER_CHECKSUM.txt",
+    "lines": [
+      "57B9EF4D09408CEDAEF1303A1CFCA8B0EAA8ACC9044AC1CC7C868CABE3827984  KWR_6_1_1_ALPHA_12_DEVELOPER.zip",
+      "F637408EFB5648C148B48151529D10E0E99F51F20661353ECD5D666CF91C3016  KWR_DevTools-6.1.1-alpha.12.zip"
+    ]
+  },
+  "sourceManifest": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_SOURCE_MANIFEST.json",
+    "distributionDigest": "4F58A22C8EF3BD8C2E8504F7FFFD825DC4990F4D865EC629F0D8212547478BCE",
+    "distributionEntryCount": 399,
+    "developerDigest": "A21015D1B3216ED008DCE0ACC3FF2CF5428953207B1E868AACAA5EE47DF0D9FC",
+    "developerEntryCount": 9099,
+    "sentinelDigest": "1C9BE97C7CE04FD52F2F89D90DC7E64E7037D7E77C7EE1EB822A30E9DE03DF7D",
+    "sentinelEntryCount": 12
+  },
+  "buildProvenance": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_BUILD_PROVENANCE.json",
+    "builtAtUtc": "2026-09-12T16:41:42.5265458Z",
+    "sentinelIncluded": true,
+    "powershellEdition": "Core",
+    "powershellVersion": "7.6.5",
+    "nodeAvailableOnBuildPath": true,
+    "npmAvailableOnBuildPath": true,
+    "fengariAvailableOnBuildPath": false,
+    "gitAvailable": true
+  },
+  "reproducibility": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_REPRODUCIBILITY.json",
+    "result": "PASS",
+    "distributionDigestMatch": true,
+    "developerDigestMatch": true,
+    "notes": [
+      "Two clean builds were executed with the primary package audit intact and nested reproducibility/package-audit recursion disabled in the secondary pass.",
+      "Canonical entry order and timestamps produced matching binary SHA-256 hashes for every archive."
+    ]
+  },
+  "packageAudit": {
+    "path": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json",
+    "auditedAtUtc": "2026-09-12T16:48:14.4474973Z",
+    "result": "PASS",
+    "hashesVerified": 4,
+    "distributionEntries": 399,
+    "developerEntries": 9099,
+    "extractedDistributionRuntime": "PASS",
+    "extractedDeveloperRuntime": "PASS",
+    "reproducibilityCheck": "PASS_COMPATIBLE"
+  },
+  "environmentCertification": {
+    "buildExecuted": true,
+    "packageAuditInThisWorkspace": "CERTIFIED_IN_WORKSPACE",
+    "runtimeBlocker": null,
+    "runtimePreflightPath": "knowledge/runtime-preflight.json",
+    "notes": [
+      "The exact distribution and developer ZIPs were created in this workspace.",
+      "The reproducibility report was created in this workspace.",
+      "Extracted-runtime package certification was completed in this workspace.",
+      "Live install and upgrade proof still require real client execution and field evidence."
+    ]
+  },
+  "operatorPaths": {
+    "addonsRoot": "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns",
+    "kwrInstallFolder": "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
+    "savedVariablesFolder": "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\<ACCOUNT>\\\\SavedVariables",
+    "savedVariablesFilePattern": "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
+    "backupFolderSuggestion": "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\<ACCOUNT>\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.12"
+  },
+  "fieldEvidenceBinding": {
+    "candidateID": "alpha12-kwr297-source-20260910-1",
+    "candidateVersion": "6.1.1-alpha.12",
+    "distributionSha256": "111D730E76C529DA3CF8DA7420D123D406E1C9434B2D4AC2AB4ED940AC53D2BC",
+    "evidenceScope": "candidate",
+    "canonicalArtifact": "KnomercyWarRoom-6.1.1-alpha.12.zip",
+    "requiredProof": [
+      "Screenshot or text capture of installed TOC version.",
+      "Recorded distribution ZIP SHA256 used for install.",
+      "Backup location for pre-session SavedVariables.",
+      "Proof whether the session was clean install or upgrade install.",
+      "Any /kwr verify, bug, screenshot, or AAR evidence tied to this same hash."
+    ]
+  }
 }

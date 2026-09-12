@@ -12,9 +12,9 @@ function Bool([object]$Value) { return $Value -eq $true }
 
 $candidate = Read-Receipt 'knowledge\candidate-package-report.json'
 $offline = Read-Receipt 'knowledge\offline-completion-audit.json'
-$recovery = Read-Receipt 'artifacts\source-recovery-accounting-20260912-r7.json'
-$parity = Read-Receipt 'artifacts\replay-semantic-parity-r7-provenance-20260912.json'
-$discrepancy = Read-Receipt 'artifacts\replay-discrepancy-r7-20260912.json'
+$recovery = Read-Receipt 'artifacts\source-recovery-accounting-20260912-r8.json'
+$parity = Read-Receipt 'artifacts\replay-semantic-parity-r8-20260912.json'
+$discrepancy = Read-Receipt 'artifacts\replay-discrepancy-r8-20260912.json'
 $adjudication = Read-Receipt 'artifacts\replay-adjudication-review-r7-20260912.json'
 $reconciliation = Read-Receipt 'artifacts\release-source-review-ledger-20260912-r7.json'
 $packageAudit = if ($candidate -and $candidate.packageAudit -and $candidate.packageAudit.path) {
@@ -28,8 +28,8 @@ $primaryPass = $discrepancy -and $discrepancy.summary.total -gt 0 `
 
 $stages = @(
     [ordered]@{ id='KWR-281-source-reconciliation'; status=if (Bool $reconciliation.summary.complete) {'PASS'} else {'OPEN'}; evidence='artifacts/release-source-review-ledger-20260912-r7.json' },
-    [ordered]@{ id='KWR-295-source-package-parity'; status=if (Bool $parity.pass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-semantic-parity-r7-provenance-20260912.json' },
-    [ordered]@{ id='KWR-295-strict-primary'; status=if ($primaryPass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-discrepancy-r7-20260912.json' },
+    [ordered]@{ id='KWR-295-source-package-parity'; status=if (Bool $parity.pass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-semantic-parity-r8-20260912.json' },
+    [ordered]@{ id='KWR-295-strict-primary'; status=if ($primaryPass) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-discrepancy-r8-20260912.json' },
     [ordered]@{ id='KWR-295-named-adjudications'; status=if (Bool $adjudication.summary.complete) {'PASS'} else {'OPEN'}; evidence='artifacts/replay-adjudication-review-r7-20260912.json' },
     [ordered]@{ id='OVR-22-package-audit'; status=if ($packageAudit -and $packageAudit.result -eq 'PASS') {'PASS'} else {'OPEN'}; evidence=if ($candidate) {$candidate.packageAudit.path} else {$null} },
     [ordered]@{ id='OVR-22-clean-provenance'; status=if ($dirty.Count -eq 0) {'PASS'} else {'OPEN'}; evidence='git status --porcelain' },
@@ -45,7 +45,7 @@ foreach ($index in 0..12) {
     $stages += [ordered]@{
         id = ('KWR-297-' + $package)
         status = $packageStatus
-        evidence = if ($package -eq 'P00') { 'artifacts/source-recovery-accounting-20260912-r7.json' } elseif ($implemented) { 'docs/tasks/kwr-297/' + $package + '-' + @{
+        evidence = if ($package -eq 'P00') { 'artifacts/source-recovery-accounting-20260912-r8.json' } elseif ($implemented) { 'docs/tasks/kwr-297/' + $package + '-' + @{
             P01='facts-context-capabilities'; P02='objective-engines'; P03='routes-assignments-formation'; P04='tactical-alternatives'; P05='command-lifecycle-secure-ui'; P06='aar-outcomes-learning'; P07='performance-scheduling'; P08='memory-persistence-packaging'; P09='commander-ux'; P10='sentinel-protocol'; P11='replay-certification-release'; P12='field-quality-comparison'
         }[$package] + '.md' } else { 'docs/tasks/KWR-297-s-tier-completion-packages.md' }
     }

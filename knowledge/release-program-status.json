@@ -1,230 +1,230 @@
-﻿{
-    "schema":  "kwr-release-program-status",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-09-12T16:36:54.8177265Z",
-    "candidate":  {
-                      "version":  "6.1.1-alpha.12",
-                      "candidateID":  "alpha12-kwr297-source-20260910-1",
-                      "distributionSha256":  "5C6C3E27426729BFC5D0E23E4035A1C13147C150C39CE850087EF76AE432A555",
-                      "buildDirectory":  "artifacts/release-offline-candidate-20260912-r7"
-                  },
-    "stages":  [
-                   {
-                       "id":  "KWR-281-source-reconciliation",
-                       "status":  "PASS",
-                       "evidence":  "artifacts/release-source-review-ledger-20260912-r7.json"
-                   },
-                   {
-                       "id":  "KWR-295-source-package-parity",
-                       "status":  "PASS",
-                       "evidence":  "artifacts/replay-semantic-parity-r7-provenance-20260912.json"
-                   },
-                   {
-                       "id":  "KWR-295-strict-primary",
-                       "status":  "OPEN",
-                       "evidence":  "artifacts/replay-discrepancy-r7-20260912.json"
-                   },
-                   {
-                       "id":  "KWR-295-named-adjudications",
-                       "status":  "OPEN",
-                       "evidence":  "artifacts/replay-adjudication-review-r7-20260912.json"
-                   },
-                   {
-                       "id":  "OVR-22-package-audit",
-                       "status":  "PASS",
-                       "evidence":  "artifacts/release-offline-candidate-20260912-r7/KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json"
-                   },
-                   {
-                       "id":  "OVR-22-clean-provenance",
-                       "status":  "OPEN",
-                       "evidence":  "git status --porcelain"
-                   },
-                   {
-                       "id":  "offline-release-eligibility",
-                       "status":  "OPEN",
-                       "evidence":  "knowledge/offline-completion-audit.json"
-                   },
-                   {
-                       "id":  "KWR-297-P00",
-                       "status":  "PASS",
-                       "evidence":  "artifacts/source-recovery-accounting-20260912-r7.json"
-                   },
-                   {
-                       "id":  "KWR-297-P01",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P01-facts-context-capabilities.md"
-                   },
-                   {
-                       "id":  "KWR-297-P02",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P02-objective-engines.md"
-                   },
-                   {
-                       "id":  "KWR-297-P03",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P03-routes-assignments-formation.md"
-                   },
-                   {
-                       "id":  "KWR-297-P04",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P04-tactical-alternatives.md"
-                   },
-                   {
-                       "id":  "KWR-297-P05",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P05-command-lifecycle-secure-ui.md"
-                   },
-                   {
-                       "id":  "KWR-297-P06",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P06-aar-outcomes-learning.md"
-                   },
-                   {
-                       "id":  "KWR-297-P07",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P07-performance-scheduling.md"
-                   },
-                   {
-                       "id":  "KWR-297-P08",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P08-memory-persistence-packaging.md"
-                   },
-                   {
-                       "id":  "KWR-297-P09",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P09-commander-ux.md"
-                   },
-                   {
-                       "id":  "KWR-297-P10",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P10-sentinel-protocol.md"
-                   },
-                   {
-                       "id":  "KWR-297-P11",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P11-replay-certification-release.md"
-                   },
-                   {
-                       "id":  "KWR-297-P12",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/kwr-297/P12-field-quality-comparison.md"
-                   },
-                   {
-                       "id":  "KWR-297-P13/KWR-298",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/KWR-298-commander-callout-card-rebuild.md"
-                   },
-                   {
-                       "id":  "KWR-297-P14/KWR-299",
-                       "status":  "IN_PROGRESS",
-                       "evidence":  "docs/tasks/KWR-299-command-followthrough-feedback.md"
-                   }
-               ],
-    "strictReplay":  {
-                         "total":  2003,
-                         "primary":  0,
-                         "fallback":  578,
-                         "unmatched":  1425,
-                         "forbidden":  0,
-                         "byProfile":  [
-                                           {
-                                               "mapProfile":  "ab_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  75,
-                                               "unmatched":  125,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "bfg_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  75,
-                                               "unmatched":  125,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "dhr_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  40,
-                                               "unmatched":  160,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "dwg_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  75,
-                                               "unmatched":  125,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "eots_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  75,
-                                               "unmatched":  125,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "shore_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  40,
-                                               "unmatched":  160,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "ssm_standard",
-                                               "total":  200,
-                                               "primary":  0,
-                                               "fallback":  40,
-                                               "unmatched":  160,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "tok_standard",
-                                               "total":  201,
-                                               "primary":  0,
-                                               "fallback":  76,
-                                               "unmatched":  125,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "tp_standard",
-                                               "total":  201,
-                                               "primary":  0,
-                                               "fallback":  41,
-                                               "unmatched":  160,
-                                               "forbidden":  0
-                                           },
-                                           {
-                                               "mapProfile":  "wsg_standard",
-                                               "total":  201,
-                                               "primary":  0,
-                                               "fallback":  41,
-                                               "unmatched":  160,
-                                               "forbidden":  0
-                                           }
-                                       ]
-                     },
-    "adjudications":  {
-                          "queued":  2003,
-                          "validReviews":  0,
-                          "missingReviews":  2003,
-                          "invalidReviews":  0,
-                          "complete":  false
-                      },
-    "sourceInstallReconciliation":  {
-                                        "total":  4,
-                                        "reviewed":  4,
-                                        "deferred":  0,
-                                        "missing":  0,
-                                        "invalid":  0,
-                                        "complete":  true
-                                    },
-    "dirtyWorktreeEntries":  212,
-    "releaseEligible":  false,
-    "policy":  "Diagnostic field readiness is separate from release eligibility. This report never converts missing tactical review, a dirty worktree, or unverified field evidence into a pass."
+{
+  "schema": "kwr-release-program-status",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-12T17:17:35.8094699Z",
+  "candidate": {
+    "version": "6.1.1-alpha.12",
+    "candidateID": "alpha12-kwr297-source-20260910-1",
+    "distributionSha256": "111D730E76C529DA3CF8DA7420D123D406E1C9434B2D4AC2AB4ED940AC53D2BC",
+    "buildDirectory": "artifacts/release-offline-candidate-20260912-r8"
+  },
+  "stages": [
+    {
+      "id": "KWR-281-source-reconciliation",
+      "status": "PASS",
+      "evidence": "artifacts/release-source-review-ledger-20260912-r7.json"
+    },
+    {
+      "id": "KWR-295-source-package-parity",
+      "status": "PASS",
+      "evidence": "artifacts/replay-semantic-parity-r8-20260912.json"
+    },
+    {
+      "id": "KWR-295-strict-primary",
+      "status": "OPEN",
+      "evidence": "artifacts/replay-discrepancy-r8-20260912.json"
+    },
+    {
+      "id": "KWR-295-named-adjudications",
+      "status": "OPEN",
+      "evidence": "artifacts/replay-adjudication-review-r7-20260912.json"
+    },
+    {
+      "id": "OVR-22-package-audit",
+      "status": "PASS",
+      "evidence": "artifacts/release-offline-candidate-20260912-r8/KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json"
+    },
+    {
+      "id": "OVR-22-clean-provenance",
+      "status": "OPEN",
+      "evidence": "git status --porcelain"
+    },
+    {
+      "id": "offline-release-eligibility",
+      "status": "OPEN",
+      "evidence": "knowledge/offline-completion-audit.json"
+    },
+    {
+      "id": "KWR-297-P00",
+      "status": "PASS",
+      "evidence": "artifacts/source-recovery-accounting-20260912-r8.json"
+    },
+    {
+      "id": "KWR-297-P01",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P01-facts-context-capabilities.md"
+    },
+    {
+      "id": "KWR-297-P02",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P02-objective-engines.md"
+    },
+    {
+      "id": "KWR-297-P03",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P03-routes-assignments-formation.md"
+    },
+    {
+      "id": "KWR-297-P04",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P04-tactical-alternatives.md"
+    },
+    {
+      "id": "KWR-297-P05",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P05-command-lifecycle-secure-ui.md"
+    },
+    {
+      "id": "KWR-297-P06",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P06-aar-outcomes-learning.md"
+    },
+    {
+      "id": "KWR-297-P07",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P07-performance-scheduling.md"
+    },
+    {
+      "id": "KWR-297-P08",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P08-memory-persistence-packaging.md"
+    },
+    {
+      "id": "KWR-297-P09",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P09-commander-ux.md"
+    },
+    {
+      "id": "KWR-297-P10",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P10-sentinel-protocol.md"
+    },
+    {
+      "id": "KWR-297-P11",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P11-replay-certification-release.md"
+    },
+    {
+      "id": "KWR-297-P12",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/kwr-297/P12-field-quality-comparison.md"
+    },
+    {
+      "id": "KWR-297-P13/KWR-298",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/KWR-298-commander-callout-card-rebuild.md"
+    },
+    {
+      "id": "KWR-297-P14/KWR-299",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/tasks/KWR-299-command-followthrough-feedback.md"
+    }
+  ],
+  "strictReplay": {
+    "total": 2003,
+    "primary": 0,
+    "fallback": 578,
+    "unmatched": 1425,
+    "forbidden": 0,
+    "byProfile": [
+      {
+        "mapProfile": "ab_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 75,
+        "unmatched": 125,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "bfg_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 75,
+        "unmatched": 125,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "dhr_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 40,
+        "unmatched": 160,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "dwg_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 75,
+        "unmatched": 125,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "eots_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 75,
+        "unmatched": 125,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "shore_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 40,
+        "unmatched": 160,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "ssm_standard",
+        "total": 200,
+        "primary": 0,
+        "fallback": 40,
+        "unmatched": 160,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "tok_standard",
+        "total": 201,
+        "primary": 0,
+        "fallback": 76,
+        "unmatched": 125,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "tp_standard",
+        "total": 201,
+        "primary": 0,
+        "fallback": 41,
+        "unmatched": 160,
+        "forbidden": 0
+      },
+      {
+        "mapProfile": "wsg_standard",
+        "total": 201,
+        "primary": 0,
+        "fallback": 41,
+        "unmatched": 160,
+        "forbidden": 0
+      }
+    ]
+  },
+  "adjudications": {
+    "queued": 2003,
+    "validReviews": 0,
+    "missingReviews": 2003,
+    "invalidReviews": 0,
+    "complete": false
+  },
+  "sourceInstallReconciliation": {
+    "total": 4,
+    "reviewed": 4,
+    "deferred": 0,
+    "missing": 0,
+    "invalid": 0,
+    "complete": true
+  },
+  "dirtyWorktreeEntries": 2,
+  "releaseEligible": false,
+  "policy": "Diagnostic field readiness is separate from release eligibility. This report never converts missing tactical review, a dirty worktree, or unverified field evidence into a pass."
 }
