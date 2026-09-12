@@ -608,6 +608,7 @@ function MainWindow:Create(initialPage)
     frame:SetClampedToScreen(true)
     KWR.Theme:Style(frame, "commandCenter", "borderHi")
     KWR.Theme:MakeMovable(frame, profile)
+    frame:SetAttribute("kwr-dismiss-on-hide", false)
     frame:Hide()
 
     frame.logo = KWR.Theme:Title(frame, 24)
@@ -679,7 +680,11 @@ function MainWindow:Create(initialPage)
     local close = CreateFrame("Button", nil, frame,
         "SecureHandlerClickTemplate,UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -4, -4)
-    close:SetAttribute("_onclick", [[self:GetParent():Hide()]])
+    close:SetAttribute("_onclick", [[
+        local board = self:GetParent()
+        board:SetAttribute("kwr-dismiss-on-hide", true)
+        board:Hide()
+    ]])
     close:SetScript("OnClick", function() MainWindow:Hide() end)
     frame:SetScript("OnHide", function() MainWindow:OnFrameHidden() end)
 
@@ -1725,6 +1730,13 @@ function MainWindow:Show(page)
         KWR:Print("War Room will open when combat ends; secure controls cannot change visibility in combat.", true)
         return
     end
+    -- A later automatic lifecycle hide should restore the compact surfaces;
+    -- only an explicit close marks this board as a full combat-surface
+    -- dismissal.
+    self.dismissOnHide = false
+    if not (InCombatLockdown and InCombatLockdown()) then
+        self.frame:SetAttribute("kwr-dismiss-on-hide", false)
+    end
     self:SuppressCompactSurfaces()
     if page and not createdFrame then
         if InCombatLockdown and InCombatLockdown() then
@@ -1801,9 +1813,19 @@ function MainWindow:RestoreCompactSurfaces()
 end
 
 function MainWindow:OnFrameHidden()
-    -- Hiding the protected board through the secure close button is legal in
-    -- combat; restoring the optional compact roster may not be.  Defer only
-    -- that restoration, never the operator's dismissal of the board itself.
+    -- A close means "get KWR out of my way", not "replace this board with a
+    -- different KWR surface".  The secure close button records this intent
+    -- before hiding the protected board, including during combat.
+    local dismissed = self.dismissOnHide == true
+        or (self.frame and self.frame:GetAttribute("kwr-dismiss-on-hide") == true)
+    self.dismissOnHide = nil
+    if dismissed then
+        self.compactRestore = nil
+        return
+    end
+    -- Lifecycle hides still restore the prior compact presentation.  Hiding
+    -- the protected board is legal in combat; restoring optional roster
+    -- frames may not be, so defer only that restoration.
     if InCombatLockdown and InCombatLockdown() then
         self.pendingCompactRestore = true
         return
@@ -1811,13 +1833,21 @@ function MainWindow:OnFrameHidden()
     self:RestoreCompactSurfaces()
 end
 
-function MainWindow:Hide()
+function MainWindow:Hide(restoreCompact)
     if self.frame and InCombatLockdown and InCombatLockdown() then
-        self.pendingVisibility = { shown = false }
+        self.pendingVisibility = { shown = false, restoreCompact = restoreCompact == true }
         KWR:Print("War Room will close when combat ends; secure controls cannot change visibility in combat.", true)
         return
     end
-    if self.frame then self.frame:Hide() else self:RestoreCompactSurfaces() end
+    if self.frame then
+        self.dismissOnHide = restoreCompact ~= true
+        self.frame:SetAttribute("kwr-dismiss-on-hide", self.dismissOnHide)
+        self.frame:Hide()
+    elseif restoreCompact == true then
+        self:RestoreCompactSurfaces()
+    elseif KWR.HUD and KWR.HUD.SetSuppressed then
+        KWR.HUD:SetSuppressed(true)
+    end
 end
 
 function MainWindow:FlushCombatVisibility()
@@ -1830,7 +1860,7 @@ function MainWindow:FlushCombatVisibility()
     local pending = self.pendingVisibility
     self.pendingVisibility = nil
     if pending then
-        if pending.shown then self:Show(pending.page) else self:Hide() end
+        if pending.shown then self:Show(pending.page) else self:Hide(pending.restoreCompact) end
     elseif pendingPage and self.frame and self.frame:IsShown() then
         self:SetPage(pendingPage)
     elseif self.frame and self.frame:IsShown() and self.compactRestore
