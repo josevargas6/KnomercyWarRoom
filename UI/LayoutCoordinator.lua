@@ -245,9 +245,10 @@ function LayoutCoordinator:ApplyHUD()
     if hud.cardActive then return end
     local profile = self:Profile()
     applyScale(hud, visibleScale(hud, profile.scale, profile.margin))
-    -- HUD.lua owns the deliberate 548px setup / 500px fight-mode sizes.
-    -- The coordinator only keeps the active mode's frame inside the viewport.
-    self:Clamp(hud, profile.margin)
+    -- HUD.lua owns its geometry.  In particular, polling Clamp here compares
+    -- effective-scale coordinates to UIParent coordinates and can walk the
+    -- Setup Center from one side of the screen to the other.  A saved anchor
+    -- must remain stable until the operator drags it or explicitly resets it.
 end
 
 function LayoutCoordinator:ApplyOptions()
@@ -268,96 +269,17 @@ end
 function LayoutCoordinator:ApplySentinel()
     local sentinel = _G.KWRSentinel
     local sentinelProfile = sentinel and sentinel.db and sentinel.db.profile
-    if not sentinelProfile or not sentinel.HUD or not sentinel.Panels then return end
+    if not sentinelProfile or not sentinel.HUD then return end
     local hud = sentinel.HUD.frame
-    local status = sentinel.Panels.statusFrame
+    local status = sentinel.Panels and sentinel.Panels.statusFrame
     if not hud then return end
-
-    local hudProfile = sentinelProfile.hud
-    local panelsProfile = sentinelProfile.panels
-    local hudMoving = hud.KWRDragging == true
-    local statusMoving = status and status.KWRDragging == true
-    -- Do not replace anchors or clamp a Sentinel panel during a live drag.
-    -- The drop handler owns persistence for that movement.
-    local manageHud = hudProfile.layoutManaged ~= false and not hudMoving
-    local manageStatus = status and panelsProfile.layoutManaged ~= false and not statusMoving
-    if not manageHud and not manageStatus then
-        self:Clamp(hud, self:Profile().margin)
-        self:Clamp(status, self:Profile().margin)
-        return
-    end
-
-    local width, height = screenSize()
     local margin = self:Profile().margin
+    -- Sentinel's old candidate search re-anchored the panel whenever a KWR
+    -- surface appeared or disappeared.  That makes it sweep between screen
+    -- sides and still cannot account for Blizzard bags/minimap.  Retain the
+    -- user/default anchor; positioning is now explicit drag/reset behavior.
     applyScale(hud, visibleScale(hud, self:Profile().scale, margin))
     applyScale(status, visibleScale(status, self:Profile().scale, margin))
-    local hudWidth, hudHeight = hud:GetWidth(), hud:GetHeight()
-    local statusWidth = status and status:GetWidth() or 320
-    local statusHeight = status and status:GetHeight() or 168
-    local gap = 12
-    local occupied = {}
-    for _, frame in ipairs({
-        KWR.MainWindow and KWR.MainWindow.frame,
-        KWR.MainWindow and KWR.MainWindow.launcherMenu,
-        KWR.HUD and KWR.HUD.frame,
-        KWR.CombatRoster and KWR.CombatRoster.teamFrame,
-        KWR.CombatRoster and KWR.CombatRoster.enemyFrame,
-    }) do
-        local rect = frameRect(frame)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-    if not manageHud then
-        local rect = frameRect(hud)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-    if status and not manageStatus then
-        local rect = frameRect(status)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-
-    local candidates = {
-        { side = "RIGHT", top = height - margin },
-        { side = "LEFT", top = height - margin },
-        { side = "RIGHT", top = hudHeight + statusHeight + gap + margin },
-        { side = "LEFT", top = hudHeight + statusHeight + gap + margin },
-    }
-    local best
-    for _, candidate in ipairs(candidates) do
-        local hudLeft = candidate.side == "RIGHT" and width - margin - hudWidth or margin
-        local statusLeft = candidate.side == "RIGHT" and width - margin - statusWidth or margin
-        local statusTop = candidate.top - hudHeight - gap
-        local hudRect = { left = hudLeft, right = hudLeft + hudWidth,
-            bottom = candidate.top - hudHeight, top = candidate.top }
-        local statusRect = { left = statusLeft, right = statusLeft + statusWidth,
-            bottom = statusTop - statusHeight, top = statusTop }
-        local overlap = manageHud and manageStatus
-            and intersectionArea(hudRect, statusRect) or 0
-        for _, rect in ipairs(occupied) do
-            if manageHud then overlap = overlap + intersectionArea(hudRect, rect) end
-            if manageStatus then overlap = overlap + intersectionArea(statusRect, rect) end
-        end
-        if not best or overlap < best.overlap then
-            best = { overlap = overlap, hud = hudRect, status = statusRect }
-        end
-    end
-    if not best then return end
-    if manageHud then
-        if setSentinelAnchor(hudProfile, "TOPLEFT", best.hud.left, best.hud.top - height) then
-            hud:ClearAllPoints()
-            hud:SetPoint(hudProfile.point, UIParent, hudProfile.relativePoint,
-                hudProfile.x, hudProfile.y)
-        end
-    end
-    if manageStatus then
-        local statusProfile = panelsProfile.status
-        if setSentinelAnchor(statusProfile, "TOPLEFT", best.status.left, best.status.top - height) then
-            status:ClearAllPoints()
-            status:SetPoint(statusProfile.point, UIParent, statusProfile.relativePoint,
-                statusProfile.x, statusProfile.y)
-        end
-    end
-    self:Clamp(hud, margin)
-    self:Clamp(status, margin)
 end
 
 function LayoutCoordinator:Apply()

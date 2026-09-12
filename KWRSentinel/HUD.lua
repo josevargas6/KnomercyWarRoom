@@ -674,6 +674,15 @@ function HUD:Update()
             view[key] = value
         end
     end
+    -- A WORLD/queue card contains no live assignment or reviewed target.  It
+    -- should yield to Blizzard utility UI (bags, map, vendor) rather than
+    -- occupy screen space with an inert "WORLD UNKNOWN" surface.
+    if not livePvpContext(view) then
+        if self.frame then self.frame:Hide() end
+        if self.targetCue then self.targetCue:Hide() end
+        if Sentinel.Panels then Sentinel.Panels:Update(nil) end
+        return
+    end
     local frame = self:Create()
     local winState = deriveWinState(view)
     local trust = trustState(view)
