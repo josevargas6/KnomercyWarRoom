@@ -175,6 +175,10 @@ function Card:Create(host)
         frame.pending = nil
         local profile = KWR.db.profile.hud
         profile.cardWide = not profile.cardWide
+        -- A manual choice supersedes a previously latched automatic fallback.
+        -- The next layout records this explicit preference as its stable mode.
+        frame.resolvedWide = nil
+        frame.requestedWide = nil
         Card:Render(host, KWR.HUD.lastState)
     end)
     frame.copy = KWR.Theme:Button(frame, "COPY CALL", 110, 26, function()
@@ -317,12 +321,23 @@ function Card:Layout(frame, viewportWidth, viewportHeight, scale)
         frame.layoutWidth = width
         return frame.contentHeight
     end
-    local wide = KWR.db.profile.hud.cardWide == true
+    -- A complete card can require WIDE for one call and not the next.  Do not
+    -- restart that decision on every truth refresh: changing width triggers
+    -- WoW's screen clamp and makes the saved card appear to jump.  Latch the
+    -- resolved mode for the active card; only an explicit WIDE-button choice
+    -- (or hiding the card) is allowed to replace it.
+    local requestedWide = KWR.db.profile.hud.cardWide == true
+    if frame.requestedWide ~= requestedWide then
+        frame.requestedWide = requestedWide
+        frame.resolvedWide = requestedWide
+    end
+    local wide = frame.resolvedWide == true
     local width = math.min(maxWidth, (wide and 1050 or 590) * unit)
     local height = arrange(width, wide)
     if height > availableHeight and not wide then
         wide, width = true, math.min(maxWidth, 1050 * unit)
         height = arrange(width, wide)
+        frame.resolvedWide = true
     end
     if height > availableHeight and width < maxWidth then
         width = maxWidth
@@ -385,6 +400,8 @@ function Card:Hide(host)
     host.commanderCard.sectionHeightFloors = nil
     host.commanderCard.contentHeightFloors = nil
     host.commanderCard.lastLayoutKey = nil
+    host.commanderCard.resolvedWide = nil
+    host.commanderCard.requestedWide = nil
     host:SetWidth(number(host.legacyCardWidth, 432))
     host.commanderCard:Hide()
     host:RegisterForDrag("LeftButton")
