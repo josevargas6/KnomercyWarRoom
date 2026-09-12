@@ -509,6 +509,11 @@ local function compareAlternatives(candidates)
             score = candidate.decisionScore or candidate.probability or 0,
             reason = reason,
             legal = candidate.legal ~= false,
+            success = candidate.success,
+            abort = candidate.abort,
+            reversible = candidate.reversible == true,
+            opportunityCost = candidate.opportunityCost,
+            evidence = KWR.Util:Copy(candidate.evidence or {}),
         }
     end
     return results
@@ -783,6 +788,10 @@ local function candidateSimulation(snapshot, prediction, ourSummary, enemySummar
         candidate.heuristic = true
     end
     table.sort(candidates, function(a, b)
+        -- Objective legality is an executable constraint, not a score term.
+        -- A strong-looking prohibited trade must never become the selected
+        -- action merely because its heuristic or response adjustment is high.
+        if a.legal ~= b.legal then return a.legal == true end
         if a.probability ~= b.probability then return a.probability > b.probability end
         return a.id < b.id
     end)
@@ -821,6 +830,7 @@ local function applyEnemyResponsePlanning(snapshot, prediction, result)
                 .. " adjust " .. tostring(responsePlan.consequenceAdjustment or 0)
     end
     table.sort(result.simulations, function(a, b)
+        if a.legal ~= b.legal then return a.legal == true end
         if a.decisionScore ~= b.decisionScore then
             return a.decisionScore > b.decisionScore
         end
@@ -830,7 +840,8 @@ local function applyEnemyResponsePlanning(snapshot, prediction, result)
         and KWR.Util:Copy(result.simulations[1]) or nil
     result.expectedOutcome = result.simulations[1] and result.simulations[1].outcome
     result.recommendationMode = result.simulations[1] and result.simulations[1].id
-    result.projectedWinProbability = result.simulations[1] and result.simulations[1].probability
+    -- This is an ordered heuristic utility, not calibrated win probability.
+    result.projectedDecisionUtility = result.simulations[1] and result.simulations[1].decisionScore
     result.decisionScore = result.simulations[1] and result.simulations[1].decisionScore
     result.projection = result.simulations[1] and result.simulations[1].projection
     result.alternativeReview = compareAlternatives(result.simulations)
@@ -920,6 +931,7 @@ function Strategist:Evaluate(snapshot, prediction)
     end
     local currentState = strategicState(snapshot, prediction)
     result.state = currentState
+    local learningContext = KWR.Learning and KWR.Learning:Context(snapshot)
     for _, battlePlan in ipairs(KWR.BattlePlans:Get(snapshot.context.mapKey)) do
         local feasible, missing = requirementFit(ourSummary, battlePlan.requires)
         local score = 0
@@ -974,7 +986,8 @@ function Strategist:Evaluate(snapshot, prediction)
         score = score + readiness + matchup
         if not feasible then score = score - 35 end
         if KWR.Learning and KWR.Learning.Adjustment then
-            score = score + KWR.Learning:Adjustment(snapshot.context.mapKey, battlePlan.id)
+            score = score + KWR.Learning:Adjustment(
+                snapshot.context.mapKey, battlePlan.id, learningContext)
         end
         result.candidates[#result.candidates + 1] = {
             plan = battlePlan,
@@ -1041,7 +1054,7 @@ function Strategist:Evaluate(snapshot, prediction)
         and KWR.Util:Copy(simulations[1]) or nil
     result.expectedOutcome = simulations[1] and simulations[1].outcome
     result.recommendationMode = simulations[1] and simulations[1].id
-    result.projectedWinProbability = simulations[1] and simulations[1].probability
+    result.projectedDecisionUtility = simulations[1] and simulations[1].decisionScore
     result.decisionScore = simulations[1] and simulations[1].decisionScore
     result.projection = simulations[1] and simulations[1].projection
     result.alternativeReview = compareAlternatives(simulations)
@@ -1053,6 +1066,12 @@ function Strategist:Evaluate(snapshot, prediction)
                 action = candidate.plan.action,
                 score = candidate.score,
                 feasible = candidate.feasible,
+                missing = KWR.Util:Copy(candidate.missing or {}),
+                goal = candidate.plan.why,
+                switchIf = candidate.plan.switchIf,
+                abort = candidate.plan.stop,
+                roles = KWR.Util:Copy(candidate.plan.assignments or {}),
+                tags = KWR.Util:Copy(candidate.plan.tags or {}),
             }
         end
     end

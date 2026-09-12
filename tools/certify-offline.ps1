@@ -1,7 +1,10 @@
 [CmdletBinding()]
 param(
     [string]$OutputDirectory = "C:\Users\josev\Desktop\KWR\Builds",
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [string]$ReplayParityReceiptPath = "",
+    [string]$ReplayDiscrepancyReportPath = "",
+    [string]$ReplayAdjudicationReviewPath = ""
 )
 
 # The one supported offline certification entrypoint. It is safe to run from a
@@ -11,6 +14,34 @@ $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 function Invoke-KwrTool([string]$Name, [string[]]$Arguments = @()) {
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "tools\$Name") @Arguments
     if ($LASTEXITCODE -ne 0) { throw "$Name failed." }
+}
+function Require-KwrJsonReceipt([string]$Path, [string]$ExpectedSchema, [string]$Name) {
+    if ([string]::IsNullOrWhiteSpace($Path)) { throw "$Name is required for full offline certification." }
+    $fullPath = if ([IO.Path]::IsPathRooted($Path)) { [IO.Path]::GetFullPath($Path) } else { Join-Path $root $Path }
+    if (-not (Test-Path -LiteralPath $fullPath -PathType Leaf)) { throw "$Name is missing: $fullPath" }
+    try { $receipt = Get-Content -LiteralPath $fullPath -Raw | ConvertFrom-Json }
+    catch { throw "$Name is not valid JSON: $fullPath" }
+    if ($receipt.schema -ne $ExpectedSchema) { throw "$Name has unexpected schema: $fullPath" }
+    return $receipt
+}
+function Assert-StrictReplayEvidence {
+    $parity = Require-KwrJsonReceipt $ReplayParityReceiptPath 'kwr-replay-semantic-parity' 'Replay parity receipt'
+    $discrepancy = Require-KwrJsonReceipt $ReplayDiscrepancyReportPath 'kwr-replay-discrepancy-report' 'Replay discrepancy report'
+    $reviews = Require-KwrJsonReceipt $ReplayAdjudicationReviewPath 'kwr-replay-contract-adjudication-review-report' 'Replay adjudication review report'
+    $parityValid = $parity.schemaVersion -ge 2 -and $parity.pass -eq $true `
+        -and $parity.sourceCount -ge 1 -and $parity.sourceCount -eq $parity.packageCount `
+        -and @($parity.provenanceDifferences).Count -eq 0 -and @($parity.manifests.errors).Count -eq 0
+    if (-not $parityValid) { throw 'Replay parity receipt does not prove complete provenance equality.' }
+    $strictPrimary = $discrepancy.summary.total -eq $parity.sourceCount `
+        -and $discrepancy.summary.primary -eq $discrepancy.summary.total `
+        -and $discrepancy.summary.fallback -eq 0 -and $discrepancy.summary.unmatched -eq 0 `
+        -and $discrepancy.summary.forbidden -eq 0
+    if (-not $strictPrimary) {
+        throw 'Replay discrepancy report does not meet the strict primary gate.'
+    }
+    $reviewsComplete = $reviews.summary.complete -eq $true -and $reviews.summary.queued -eq $parity.sourceCount `
+        -and $reviews.summary.validReviews -eq $parity.sourceCount
+    if (-not $reviewsComplete) { throw 'Replay adjudication review report is incomplete.' }
 }
 
 Invoke-KwrTool 'runtime-preflight.ps1'
@@ -24,6 +55,7 @@ Invoke-KwrTool 'test-lua.ps1' @('-Suite', 'All')
 Invoke-KwrTool 'performance-benchmark.ps1'
 if (-not $SkipBuild) {
     Invoke-KwrTool 'build.ps1' @('-OutputDirectory', $OutputDirectory, '-IncludeSentinel')
+    Assert-StrictReplayEvidence
     Invoke-KwrTool 'candidate-package-report.ps1' @('-BuildOutputDirectory', $OutputDirectory)
     Invoke-KwrTool 'field-readiness-report.ps1'
     Invoke-KwrTool 'field-blocker-report.ps1'

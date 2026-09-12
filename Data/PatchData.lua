@@ -15,8 +15,8 @@ local PACKS = {
     ["12.1.0"] = {
         interface = 120100,
         season = "Midnight Season 2",
-        captured = "2026-08-30",
-        officialHotfixReviewed = "2026-08-27",
+        captured = "2026-09-07",
+        officialHotfixReviewed = "2026-09-04",
         source = "BLIZZARD_HOTFIXES",
         reviewed = true,
         cooldowns = {},
@@ -24,7 +24,7 @@ local PACKS = {
         disabledPlans = {},
         hotfixWatchlist = {
             status = "OFFICIAL_UNMODELED",
-            effectiveDate = "2026-08-27",
+            effectiveDate = "2026-09-04",
             source = "Blizzard official hotfix notes",
             sourceURL = "https://worldofwarcraft.blizzard.com/en-us/news/24296142",
             policy = "Advisory only. KWR does not alter capability ratings, predictions, or doctrine until player-reviewed Retail evidence supports a bounded update.",
@@ -43,6 +43,9 @@ local PACKS = {
                 "August 26: Training Grounds Arena matches now end when game-controlled opponents surrender; this is lifecycle evidence only, not an RBG rules or capability change",
                 "August 27: Vicious Saddle progress repaired; this is reward-progression provenance only",
                 "August 27: Blur PvP-adjustment leakage into PvE repaired; intended PvP values are unchanged and no KWR capability or doctrine change is inferred",
+                "September 1: PvP healer trinket primary stat, Devourer damage, Havoc Rain from Above, and Druid Innervate tuning are field-observation watch items; no capability rating or target-priority value is inferred",
+                "September 2: Balance Faerie Swarm raid-frame presentation and Preservation Rewind-versus-Cyclone fixes are observed Retail behavior; they do not grant KWR hidden aura, cooldown, or healing certainty",
+                "September 4: the official ledger contains no new PvP, RBG objective, or addon API change for this patch pack",
             },
         },
         seasonPrepCorpus = {
@@ -60,6 +63,8 @@ local PACKS = {
             "August 25 direct PvP class tuning is acknowledged, but no cooldown, capability, target-priority, or doctrine override is inferred without reviewed Retail evidence.",
             "The August 26 Training Grounds surrender correction is lifecycle evidence only and does not alter RBG objectives, capabilities, target priority, or doctrine.",
             "The August 27 Vicious Saddle correction is reward-progression provenance only; the Blur correction restores intended PvE scope without changing the reviewed PvP value or KWR doctrine.",
+            "The September 1 PvP tuning and September 2 PvP fixes are reviewed as advisory field watches; KWR does not convert them into numerical capability, target-priority, cooldown, or doctrine overrides without reviewed Retail evidence.",
+            "The official ledger was reviewed through September 4, 2026. Recheck it immediately before a clean candidate build or field session.",
             "The Will of the Forsaken PvP-trinket display change is presentation evidence only; KWR never invents or starts a trinket cooldown without observing the trinket itself.",
             "The 12.0.7 static ladder snapshot remains excluded from Season 2 meta influence until a separately reviewed 12.1 snapshot exists.",
             "Season-preparation gearing, simulation cases, and provisional compositions still require Retail validation before stable strategic certification.",

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$OutputDirectory)
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
@@ -8,6 +8,13 @@ $outcomesPath = Join-Path $root "tests\outcomes"
 $labelsPath = Join-Path $root "tests\golden"
 $jsonOutPath = Join-Path $root "knowledge\scenario-calibration.json"
 $luaOutPath = Join-Path $root "Data\ScenarioCalibration.lua"
+if ($OutputDirectory) {
+    $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
+    [IO.Directory]::CreateDirectory((Join-Path $outputRoot 'Data')) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $outputRoot 'knowledge')) | Out-Null
+    $luaOutPath = Join-Path $outputRoot ('Data/' + [IO.Path]::GetFileName($luaOutPath))
+    $jsonOutPath = Join-Path $outputRoot ('knowledge/' + [IO.Path]::GetFileName($jsonOutPath))
+}
 
 function Get-DisciplineRule {
     param(
@@ -636,67 +643,12 @@ $luaData = ConvertTo-PlainData -Value ([ordered]@{
     scenarios = $runtimeScenarioMap
 })
 
-$lua = @(
-'local _, KWR = ...'
-''
-'local ScenarioCalibration = {}'
-'KWR.ScenarioCalibration = ScenarioCalibration'
-''
-'local phaseIndex = nil'
-''
-('local DATA = ' + (To-LuaLiteral -Value $luaData))
-''
-'function ScenarioCalibration:Count()'
-'    local count = 0'
-'    for _ in pairs(DATA.scenarios or {}) do count = count + 1 end'
-'    return count'
-'end'
-''
-'function ScenarioCalibration:Get(scenarioID)'
-'    local row = DATA.scenarios and DATA.scenarios[scenarioID]'
-'    return row and KWR.Util:Copy(row) or nil'
-'end'
-''
-'function ScenarioCalibration:GetMapSummary(mapKey)'
-'    mapKey = KWR.Util:Upper(mapKey, nil, 24)'
-'    local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil'
-'    return row and KWR.Util:Copy(row) or nil'
-'end'
-''
-'function ScenarioCalibration:GetMapPhaseSummary(mapKey, phase)'
-'    mapKey = KWR.Util:Upper(mapKey, nil, 24)'
-'    phase = KWR.Util:Upper(phase, nil, 24)'
-'    local row = mapKey and phase and DATA.maps and DATA.maps[mapKey]'
-'    row = row and row.phaseSummaries and row.phaseSummaries[phase] or nil'
-'    return row and KWR.Util:Copy(row) or nil'
-'end'
-''
-'function ScenarioCalibration:GetByMapAndPhase(mapKey, phase)'
-'    mapKey = KWR.Util:Upper(mapKey, nil, 24)'
-'    phase = KWR.Util:Upper(phase, nil, 24)'
-'    if not mapKey or not phase then'
-'        return nil'
-'    end'
-'    if not phaseIndex then'
-'        phaseIndex = {}'
-'        for _, row in pairs(DATA.scenarios or {}) do'
-'            if row.mapKey and row.phase then'
-'                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}'
-'                phaseIndex[row.mapKey][row.phase] = row'
-'            end'
-'        end'
-'    end'
-'    local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil'
-'    return row and KWR.Util:Copy(row) or nil'
-'end'
-''
-'function ScenarioCalibration:Shared()'
-'    return KWR.Util:Copy(DATA.shared or {})'
-'end'
-''
-'KWR:RegisterModule("ScenarioCalibration", ScenarioCalibration)'
-) -join "`n"
-[IO.File]::WriteAllText($luaOutPath, $lua + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+$template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'templates/ScenarioCalibration.lua.in')).Replace("`r`n", "`n")
+if ([regex]::Matches($template, '@KWR_DATA@').Count -ne 1) {
+    throw 'Scenario runtime template must contain exactly one data token.'
+}
+$lua = $template.Replace('@KWR_DATA@', (To-LuaLiteral -Value $luaData)).TrimEnd() + "`n"
+[IO.File]::WriteAllText($luaOutPath, $lua, [Text.UTF8Encoding]::new($false))
 
 Write-Output "KWR scenario calibration build"
 Write-Output "Scenario rows: $($scenarios.Count)"

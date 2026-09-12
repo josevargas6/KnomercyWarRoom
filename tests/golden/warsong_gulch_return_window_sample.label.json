@@ -1,0 +1,23 @@
+{
+  "schema": "kwr-golden-label-schema",
+  "schemaVersion": 1,
+  "kind": "golden_decision_label",
+  "labelId": "wsg-standard-return-window-001-label",
+  "replayId": "wsg-standard-return-window-001",
+  "mapProfile": "wsg_standard",
+  "reviewers": [{ "reviewerId": "developer-fixture-contract", "role": "fixture-contract", "agreed": true }],
+  "decision": {
+    "acceptablePrimaryActions": ["PLAN:CHECK"],
+    "acceptableFallbackActions": ["CALL:HOLD", "WHERE:OUR_FC"],
+    "forbiddenActions": ["CALL:ALL_MID"],
+    "mustStay": ["our_fc"],
+    "requiredCapabilities": ["peel", "killConfirm"],
+    "validTargetClasses": [],
+    "successConditions": ["convert_next_return", "preserve_our_fc"],
+    "abortConditions": ["our_fc_shell_breaks"],
+    "maxDelaySeconds": 7,
+    "forceUncertaintyWhen": []
+  },
+  "coverage": { "problemTypes": ["OBJECTIVE_THREAT"], "phase": "MIDGAME", "truthBand": "HIGH" },
+  "rationale": "Current planner output conservatively holds the OFC shell during the return window; this fixture label is not player field evidence."
+}

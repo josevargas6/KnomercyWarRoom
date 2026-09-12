@@ -1,15 +1,28 @@
 [CmdletBinding()]
 param(
-    [ValidateSet("All", "Smoke", "Soak", "Replay", "Sentinel")]
+    [ValidateSet("All", "Smoke", "Soak", "Replay", "Sentinel", "DevTools", "Host", "Card")]
     [string]$Suite = "All",
     [string]$ReplayPath = "tests/replays/twin_peaks_recovery_sample.json",
     [string]$ReplayLabelPath,
-    [string]$ReplayOutputPath
+    [string]$ReplayOutputPath,
+    [switch]$ReplayNonStrict,
+    [string]$AddonRoot,
+    [string]$DeveloperToolsRoot,
+    [string]$ReceiptFile
 )
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot 'hash-utils.ps1')
 $script:lastLuaOutput = @()
+$startedAt = [DateTime]::UtcNow
+$completedStages = [System.Collections.Generic.List[string]]::new()
+$passed = $false
+$failure = $null
+$receiptPath = if ($ReceiptFile) {
+    if ([IO.Path]::IsPathRooted($ReceiptFile)) { [IO.Path]::GetFullPath($ReceiptFile) }
+    else { [IO.Path]::GetFullPath((Join-Path $root $ReceiptFile)) }
+} else { $null }
 
 function New-LuaRuntime {
     param(
@@ -221,19 +234,60 @@ $previousLocation = Get-Location
 try {
     Set-Location -LiteralPath $root
 
+    if ($Suite -eq 'All' -or $Suite -eq 'DevTools') {
+        . (Join-Path $PSScriptRoot 'release-manifest.ps1')
+        $stagedTools = $DeveloperToolsRoot
+        $ownsStage = -not $stagedTools
+        $stageBase = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
+        if ($ownsStage) {
+            $stagedTools = Join-Path $stageBase ('kwr-devtools-test-' + [guid]::NewGuid().ToString('N'))
+        }
+        try {
+            if ($ownsStage) { New-DeveloperToolsStage -SourceRoot $root -DestinationRoot $stagedTools }
+            $version = ((Get-Content (Join-Path $root 'KnomercyWarRoom.toc') |
+                Where-Object { $_ -match '^## Version:' }) -replace '^## Version:\s*', '').Trim()
+            Invoke-LuaCheck -Runtime $runtime -Arguments @(
+                'tests/developer-tools.lua', $stagedTools, $root, $version
+            ) -ExpectedMarker 'KWR_DEVTOOLS_PASS' -Name 'Developer Tools lifecycle'
+            $completedStages.Add('developerTools')
+        } finally {
+            if ($ownsStage -and (Test-Path -LiteralPath $stagedTools)) {
+                $resolvedStage = [IO.Path]::GetFullPath($stagedTools)
+                if (-not $resolvedStage.StartsWith($stageBase.TrimEnd('\') + '\',
+                    [StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected test staging path.' }
+                Remove-Item -LiteralPath $resolvedStage -Recurse -Force
+            }
+        }
+    }
+
     if ($Suite -eq "All" -or $Suite -eq "Smoke") {
         Invoke-LuaCheck -Runtime $runtime -Arguments @("tests/smoke.lua") `
             -ExpectedMarker "KWR_SMOKE_PASS" -Name "smoke"
+        $completedStages.Add('smoke')
     }
 
     if ($Suite -eq "All" -or $Suite -eq "Sentinel") {
         Invoke-LuaCheck -Runtime $runtime -Arguments @("tests/sentinel-transport.lua") `
             -ExpectedMarker "KWR_SENTINEL_TRANSPORT_PASS" -Name "Sentinel transport"
+        $completedStages.Add('sentinel')
     }
 
     if ($Suite -eq "All" -or $Suite -eq "Soak") {
         Invoke-LuaCheck -Runtime $runtime -Arguments @("tests/soak.lua") `
             -ExpectedMarker "KWR_SOAK_PASS" -Name "soak"
+        $completedStages.Add('soak')
+    }
+
+    if ($Suite -eq 'Host') {
+        Invoke-LuaCheck -Runtime $runtime -Arguments @('tests/host-performance.lua') `
+            -ExpectedMarker 'KWR_HOST_BENCHMARK_PASS' -Name 'measured host refresh'
+        $completedStages.Add('host')
+    }
+
+    if ($Suite -eq 'Card') {
+        Invoke-LuaCheck -Runtime $runtime -Arguments @('tests/commander-card.lua') `
+            -ExpectedMarker 'KWR_COMMANDER_CARD_PASS' -Name 'commander card'
+        $completedStages.Add('card')
     }
 
     if ($Suite -eq "All" -or $Suite -eq "Replay") {
@@ -247,11 +301,29 @@ try {
                 $ReplayLabelPath = $companionLabel
             }
         }
-        $replayArguments = @(
-            "tools/replay-test-runner.lua"
-            $ReplayPath
-            "--check"
-        )
+        $replayArguments = @("tools/replay-test-runner.lua", $ReplayPath)
+        $replayHarness = $null
+        if ($AddonRoot) {
+            $resolvedAddonRoot = [IO.Path]::GetFullPath($AddonRoot)
+            if (-not (Test-Path -LiteralPath $resolvedAddonRoot -PathType Container)) {
+                throw "Replay addon root was not found: $AddonRoot"
+            }
+            # Fixtures and the replay driver intentionally stay outside the player
+            # package. This harness changes only the addon load root, proving the
+            # extracted production modules make the same decision.
+            $replayHarness = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath ("kwr-replay-package-" + [guid]::NewGuid().ToString('N') + '.lua')
+            $luaAddonRoot = $resolvedAddonRoot.Replace('\', '/')
+            $luaDriverRoot = (Join-Path $root 'tests').Replace('\', '/')
+            $luaRunner = (Join-Path $root 'tools\replay-test-runner.lua').Replace('\', '/')
+            @"
+_G.KWR_TEST_ROOT = [[$luaAddonRoot]]
+_G.KWR_TEST_DRIVER_ROOT = [[$luaDriverRoot]]
+_G.KWR_TEST_RELEASE_ONLY = true
+dofile([[$luaRunner]])
+"@ | Set-Content -LiteralPath $replayHarness -Encoding UTF8
+            $replayArguments[0] = $replayHarness
+        }
+        if (-not $ReplayNonStrict) { $replayArguments += "--check" }
         if ($ReplayLabelPath) {
             if (-not (Test-Path -LiteralPath $ReplayLabelPath -PathType Leaf)) {
                 throw "Replay label was not found: $ReplayLabelPath"
@@ -288,6 +360,7 @@ try {
 
             Invoke-LuaCheck -Runtime $runtime -Arguments $replayArguments `
                 -ExpectedMarker "KWR_REPLAY_RUN_PASS" -Name "replay"
+            $completedStages.Add('replay')
 
             if ($ReplayOutputPath) {
                 $bridgePrefix = "KWR_REPLAY_JSON_OUT "
@@ -307,14 +380,36 @@ try {
                 }
             }
         } finally {
+            if ($replayHarness -and (Test-Path -LiteralPath $replayHarness)) {
+                Remove-Item -LiteralPath $replayHarness -Force
+            }
             foreach ($name in $bridgeNames) {
                 [Environment]::SetEnvironmentVariable(
                     $name, $previousBridge[$name], "Process")
             }
         }
     }
+    $passed = $true
+} catch {
+    $failure = $_.Exception.Message
+    throw
 } finally {
     Set-Location -LiteralPath $previousLocation
+    if ($receiptPath) {
+        $parent = Split-Path -Parent $receiptPath
+        if ($parent -and -not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
+        [pscustomobject]@{
+            schema = 'kwr-lua-test-receipt'
+            schemaVersion = 1
+            suite = $Suite
+            startedAt = $startedAt.ToString('o')
+            finishedAt = [DateTime]::UtcNow.ToString('o')
+            passed = $passed
+            completedStages = @($completedStages)
+            failure = $failure
+            toolSha256 = Get-KwrFileSha256 -LiteralPath $PSCommandPath
+        } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $receiptPath -Encoding UTF8
+    }
 }
 
 Write-Output "KWR_LUA_TESTS_PASS suite=$Suite"

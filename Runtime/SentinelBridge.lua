@@ -119,15 +119,28 @@ local function buildScore(state)
     local command = state.command or {}
     local mapKey = snapshot.context and snapshot.context.mapKey
     local definition = KWR.Maps:Get(mapKey)
+    -- Nil is meaningful: an unavailable protected/widget value must not cross
+    -- the bridge as a fabricated 0.  Sentinel renders this as UNKNOWN.
+    local friendly = number(score.friendly, nil)
+    local enemy = number(score.enemy, nil)
+    -- Sensors deliberately retain numeric zero defaults when no widget or
+    -- assigned side exists. Numeric presence alone cannot certify score truth.
+    local evidence = KWR.Verification:ScoreEvidence(snapshot)
+    local scoreKnown = KWR.Util:EvidenceUsable(evidence, "HIGH")
+    if not scoreKnown then friendly, enemy = nil, nil end
     return {
         mapKey = mapKey,
         mapName = text(snapshot.context and snapshot.context.mapName, "World", 64),
         mapShort = definition and definition.short or text(mapKey, "WORLD", 16),
-        status = text(prediction.status
+        status = scoreKnown and text(prediction.status
             or (snapshot.context and snapshot.context.inPvP and "WAITING" or "WORLD"),
-            "WAITING", 16),
-        friendly = number(score.friendly, 0) or 0,
-        enemy = number(score.enemy, 0) or 0,
+            "WAITING", 16) or "UNKNOWN",
+        friendly = friendly,
+        enemy = enemy,
+        known = scoreKnown,
+        source = evidence.source,
+        observedAt = evidence.observedAt,
+        expiresAt = evidence.expiresAt,
         max = number(score.max, 0) or 0,
         timeToWin = clockOrUnknown(prediction.timeToWin),
         friendlyTime = clockOrUnknown(prediction.friendlyTime),

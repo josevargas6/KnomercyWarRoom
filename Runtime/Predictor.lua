@@ -10,6 +10,12 @@ local function n(value, fallback)
     return KWR.Util:Number(value, fallback) or fallback
 end
 
+local function scoreNeeded(score, definition, side)
+    local value = score and score[side .. "Needed"]
+    return n(value, math.max(n(definition and definition.maxScore, 0)
+        - n(score and score[side], 0), 0))
+end
+
 local function timeToWin(maxScore, score, pointsPerTick, tickSeconds)
     maxScore = n(maxScore, 0)
     score = n(score, 0)
@@ -127,6 +133,10 @@ local function nodePrediction(snapshot, definition)
         return waiting(snapshot, "Waiting for score and objective widgets.")
     end
     local score, objectives = snapshot.score, snapshot.objectives
+    -- Replay and public-widget snapshots may omit derived remaining-score fields.
+    -- Derive the same conservative value used by ScoreModel rather than crashing
+    -- or treating an absent projection as a zero-score emergency.
+    local enemyNeeded = scoreNeeded(score, definition, "enemy")
     local isBlitz = snapshot.context.isBlitz == true
     local friendlyBases = n(objectives.friendly, 0)
     local enemyBases = n(objectives.enemy, 0)
@@ -149,8 +159,8 @@ local function nodePrediction(snapshot, definition)
         pointsFor(definition, projectedEnemyBases, isBlitz), definition.tickSeconds)
     local incomingStatus = incomingFriendlyTime < incomingEnemyTime and "WIN"
         or (incomingEnemyTime < incomingFriendlyTime and "LOSE" or "TIE")
-    local urgency = status == "LOSE" and (score.enemyNeeded <= 250 and 95 or 78)
-        or (status == "WIN" and (score.enemyNeeded <= 250 and 72 or 35) or 58)
+    local urgency = status == "LOSE" and (enemyNeeded <= 250 and 95 or 78)
+        or (status == "WIN" and (enemyNeeded <= 250 and 72 or 35) or 58)
     local needed = math.max(minimum - friendlyBases, 0)
     local captureSeconds = isBlitz and definition.blitzCaptureSeconds or definition.captureSeconds
     local captureDeadline = enemyTime < INF and math.max(0, enemyTime - (captureSeconds or 0)) or nil
@@ -310,9 +320,10 @@ local function orbPrediction(snapshot, definition)
     local hasOrbState = hasObjectives(snapshot) == true
     local friendly = n(objectives.friendlyActive, 0)
     local enemy = n(objectives.enemyActive, 0)
+    local enemyNeeded = scoreNeeded(score, definition, "enemy")
     local status = score.friendly > score.enemy and "WIN" or (score.enemy > score.friendly and "LOSE" or "TIE")
     local urgency = hasOrbState and enemy > friendly and 86
-        or (score.enemyNeeded <= 250 and 92 or (status == "LOSE" and 74 or 55))
+        or (enemyNeeded <= 250 and 92 or (status == "LOSE" and 74 or 55))
     local action = hasOrbState and enemy > friendly
         and "Kill the highest-value enemy carrier and recover an orb."
         or (hasOrbState and friendly > enemy
@@ -339,9 +350,10 @@ local function cartPrediction(snapshot, definition)
     local hasCartState = hasObjectives(snapshot) == true
     local friendly = n(objectives.friendlyActive, 0)
     local enemy = n(objectives.enemyActive, 0)
+    local enemyNeeded = scoreNeeded(score, definition, "enemy")
     local status = score.friendly > score.enemy and "WIN" or (score.enemy > score.friendly and "LOSE" or "TIE")
     local urgency = hasCartState and enemy > friendly and 86
-        or (score.enemyNeeded <= 250 and 94 or (status == "LOSE" and 76 or 60))
+        or (enemyNeeded <= 250 and 94 or (status == "LOSE" and 76 or 60))
     local action
     if definition.key == "DEEPHAUL" then
         action = hasCartState and enemy > friendly
@@ -374,8 +386,9 @@ local function resourcePrediction(snapshot, definition)
         return waiting(snapshot, "Waiting for resource score data.")
     end
     local score = snapshot.score
+    local enemyNeeded = scoreNeeded(score, definition, "enemy")
     local status = score.friendly > score.enemy and "WIN" or (score.enemy > score.friendly and "LOSE" or "TIE")
-    local urgency = status == "LOSE" and (score.enemyNeeded <= 250 and 94 or 78) or 52
+    local urgency = status == "LOSE" and (enemyNeeded <= 250 and 94 or 78) or 52
     return {
         status = status, urgency = urgency,
         condition = status == "LOSE" and "Resource deficit: the next clean spawn must convert."

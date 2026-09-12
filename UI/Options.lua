@@ -136,7 +136,9 @@ function Options:Refresh()
         button:SetSelected((KWR.db.profile.layoutMode or "AUTO") == mode)
     end
     for preset, button in pairs(self.combatPresetButtons or {}) do
-        button:SetSelected((KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS") == preset)
+        local selected = KWR.db.profile.hud.cardLayout == "COMPLETE" and "COMMANDER"
+            or (KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS")
+        button:SetSelected(selected == preset)
     end
 end
 
@@ -146,6 +148,7 @@ function Options:SetCombatPreset(preset)
         return false
     end
     KWR.db.profile.hud.combatPreset = preset
+    KWR.db.profile.hud.cardLayout = preset == "COMMANDER" and "COMPLETE" or "LEGACY"
     KWR.db.profile.hud.focusMode = preset == "COMBAT_FOCUS"
     if KWR.HUD then
         KWR.HUD:Invalidate()
@@ -240,7 +243,14 @@ function Options:Create()
         "Shows the compact KWR command-center view in battlegrounds and world/group-build setup, but not arena or PvE instances.",
         -72,
         function() return KWR.db.profile.hud.enabled end,
-        function(value) KWR.HUD:SetEnabled(value) end)
+        function(value)
+            if KWR.HUD and KWR.HUD.SetEnabled then
+                KWR.HUD:SetEnabled(value)
+                return true
+            end
+            KWR:Print("Command center is unavailable; reload the UI after resolving addon errors.", true)
+            return false
+        end)
     createCheck(self, commandCard,
         "hudLocked",
         "Lock compact center position",
@@ -402,8 +412,8 @@ function Options:Create()
 
     local reviewCard = createOptionCard(content,
         "Review And AAR",
-        "Controls onboarding messages, manual evidence capture, and safe preview behavior.",
-        0, -458, 342, 316)
+        "Keeps private team coaching separate from opt-in product diagnostics.",
+        0, -458, 342, 350)
     createCheck(self, reviewCard,
         "showLoadMessage",
         "Show login message",
@@ -424,8 +434,8 @@ function Options:Create()
         })
     createCheck(self, reviewCard,
         "aarEnabled",
-        "Record manual AAR evidence exports",
-        "Keeps the manual evidence export path available for reviewed match capture.",
+        "Record local team AAR",
+        "Stores a compact private review for you and your recurring team. It is never sent automatically.",
         -172,
         function() return KWR.db.profile.aar.enabled end,
         function(value)
@@ -435,12 +445,29 @@ function Options:Create()
                     "AAR capture was disabled before battleground completion.")
             end
         end)
-    if KWR.BuildInfo and KWR.BuildInfo:HasPreview() then
+    createCheck(self, reviewCard,
+        "developmentMode",
+        "Enable development diagnostics",
+        "Opt in to product/meta evidence, performance, verification, and forensic AAR capture. Sharing remains manual.",
+        -222,
+        function()
+            return KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        end,
+        function(value)
+            if KWR.BuildInfo then
+                local enabled, message = KWR.BuildInfo:SetDevelopmentMode(value)
+                if not enabled then
+                    KWR:Print(message or "Developer Tools could not be enabled.", true)
+                    return false
+                end
+            end
+        end)
+    do
         createCheck(self, reviewCard,
             "previewEnabled",
             "Enable design preview outside battlegrounds",
             "Allows preview mode only outside live battleground data.",
-            -222,
+            -272,
             function() return KWR.db.profile.preview end,
             function(value)
                 local context = KWR.Store:Get().snapshot.context
@@ -452,13 +479,16 @@ function Options:Create()
                 KWR.db.profile.preview = value
                 KWR.MatchRuntime:ForceRefresh("options-preview")
                 KWR.MainWindow:Show("TACTICAL")
-            end)
+            end, {
+                available = function() return KWR.BuildInfo:HasPreview() end,
+                unavailableText = "Enable matching Developer Tools outside combat to use preview.",
+            })
     end
 
     local presentationCard = createOptionCard(content,
         "Battleground Auto-Show",
         "Auto-manages KWR command surfaces. Use Shift-M for the native battlefield map.",
-        0, -792, 342, 196)
+        0, -826, 342, 196)
     createCheck(self, presentationCard,
         "presentationEnabled",
         "Auto-manage compact battleground surfaces",
@@ -550,11 +580,15 @@ function Options:Create()
             end
         end)
     local diagnostics = KWR.Theme:Button(utilityCard, "Copy Field Diagnostic", 168, 28, function()
-        if KWR.Verification and KWR.Verification.FieldReport then
+        if not (KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()) then
+            KWR:Print("Development diagnostics are off. Enable them before reproducing the issue.", true)
+        elseif KWR.Verification and KWR.Verification.FieldReport then
             KWR.CopyDialog:ShowText("KWR Field Diagnostic",
                 KWR.Verification:FieldReport(), {
                     note = "Local diagnostic only. It records data coverage, refresh health, and safe observation state for field testing.",
                 })
+        else
+            KWR:Print("KWR_DevTools is not loaded. Enable development mode out of combat first.", true)
         end
     end)
     diagnostics:SetPoint("TOPLEFT", 10, -174)

@@ -4,7 +4,8 @@ local Builder = {}
 KWR.BoardStateBuilder = Builder
 
 local function keyFor(row)
-    return KWR.Util:Text(row and (row.guid or row.name or row.label), "unknown", 80)
+    return KWR.Util:Text(row and (row.objectiveID or row.id or row.nodeID
+        or row.guid or row.name or row.label), "unknown", 80)
 end
 
 local function shortLabel(row, fallback)
@@ -41,7 +42,7 @@ function Builder:Build(snapshot, factStore)
 
     for index, fact in ipairs(facts) do
         KWR.BoardStateTypes:AddBounded(board.facts, {
-            id = fact.id or KWR.BoardStateTypes:EvidenceID(fact.type, fact.subject, index),
+            id = fact.id or KWR.BoardStateTypes:EvidenceID(fact.type, fact.subject),
             type = fact.type,
             subject = fact.subject,
             confidence = KWR.BoardStateTypes:Confidence(fact.confidence),
@@ -50,25 +51,41 @@ function Builder:Build(snapshot, factStore)
         }, "facts")
     end
 
-    for index, objective in ipairs(snapshot.objectives or {}) do
+    local objectiveRows = snapshot.objectives and (snapshot.objectives.rows or snapshot.objectives) or {}
+    local objectiveFacts = {}
+    local enemyFacts, friendlyFacts = {}, {}
+    for _, fact in ipairs(facts) do
+        if fact.type == "OBJECTIVE" and fact.subject then objectiveFacts[fact.subject] = fact end
+        if fact.type == "ENEMY" and fact.subject then enemyFacts[fact.subject] = fact end
+        if fact.type == "FRIENDLY" and fact.subject then friendlyFacts[fact.subject] = fact end
+    end
+    for index, objective in ipairs(objectiveRows) do
+        local objectiveID = keyFor(objective)
+        local objectiveFact = objectiveFacts[objectiveID]
         KWR.BoardStateTypes:AddBounded(board.objectives, {
-            id = keyFor(objective),
+            id = objectiveID,
             label = shortLabel(objective, "Objective"),
             owner = KWR.Util:Text(objective.owner, "UNKNOWN", 24),
             state = KWR.Util:Text(objective.state, "UNKNOWN", 32),
             kind = KWR.Util:Text(objective.kind, board.context.kind or "OBJECTIVE", 32),
             priority = KWR.Util:Number(objective.priority, index) or index,
             confidence = confidenceFor(objective, "UNKNOWN"),
-            evidenceID = KWR.BoardStateTypes:EvidenceID("objective", keyFor(objective), index),
+            evidenceID = objectiveFact and objectiveFact.id
+                or KWR.BoardStateTypes:EvidenceID("objective", objectiveID),
+            observedAt = objectiveFact and objectiveFact.observedAt,
+            expiresAt = objectiveFact and objectiveFact.expiresAt,
+            source = objectiveFact and objectiveFact.source or KWR.Util:Text(objective.source, "unknown", 32),
             x = KWR.Util:Number(objective.x, nil),
             y = KWR.Util:Number(objective.y, nil),
         }, "objectives")
     end
 
     for index, enemy in ipairs(snapshot.enemies or {}) do
+        local enemyID = keyFor(enemy)
+        local enemyFact = enemyFacts[KWR.Util:CanonicalPlayerKey(enemy.name, enemy.guid) or enemyID]
         KWR.BoardStateTypes:AddBounded(board.enemies, {
             source = enemy,
-            id = keyFor(enemy),
+            id = enemyID,
             guid = enemy.guid,
             name = enemy.name,
             shortName = shortLabel(enemy, "Enemy"),
@@ -85,6 +102,9 @@ function Builder:Build(snapshot, factStore)
                 or (enemy.combat and enemy.combat.priorityCast ~= nil),
             killable = enemy.killable == true
                 or (enemy.combat and enemy.combat.killable == true),
+            targetIntent = KWR.Util:Text(enemy.targetIntent
+                or (enemy.combat and enemy.combat.targetIntent), "NONE", 32),
+            commitEligible = enemy.combat and enemy.combat.commitEligible == true,
             overextended = enemy.overextended == true
                 or (enemy.combat and enemy.combat.overextended == true),
             carrier = enemy.carrier == true,
@@ -93,27 +113,32 @@ function Builder:Build(snapshot, factStore)
             healerPressure = enemy.healerPressure == true,
             cooldownWindow = enemy.cooldownWindow == true,
             confidence = confidenceFor(enemy, "INFERRED"),
-            evidenceID = KWR.BoardStateTypes:EvidenceID("enemy", keyFor(enemy), index),
+            evidenceID = enemyFact and enemyFact.id
+                or KWR.BoardStateTypes:EvidenceID("enemy", enemyID),
         }, "enemies")
     end
 
     for index, player in ipairs(snapshot.roster or {}) do
+        local playerID = keyFor(player)
+        local friendlyFact = friendlyFacts[KWR.Util:CanonicalPlayerKey(player.name, player.guid) or playerID]
         KWR.BoardStateTypes:AddBounded(board.friendlies, {
             source = player,
-            id = keyFor(player),
+            id = playerID,
             guid = player.guid,
             name = player.name,
             shortName = shortLabel(player, "Player"),
             role = roleOf(player),
             spec = player.spec,
             classFile = player.classFile,
-            dead = player.dead == true,
-            connected = player.connected ~= false,
+            dead = KWR.Util:OptionalBoolean(player.dead),
+            connected = KWR.Util:OptionalBoolean(player.connected),
+            visible = KWR.Util:OptionalBoolean(player.visible),
             assignment = player.assignment,
             location = player.location,
             currentTargetGUID = player.currentTargetGUID,
-            confidence = confidenceFor(player, "CONFIRMED"),
-            evidenceID = KWR.BoardStateTypes:EvidenceID("friendly", keyFor(player), index),
+            confidence = confidenceFor(player, "UNKNOWN"),
+            evidenceID = friendlyFact and friendlyFact.id
+                or KWR.BoardStateTypes:EvidenceID("friendly", playerID),
         }, "friendlies")
     end
 

@@ -1,0 +1,23 @@
+{
+  "schema": "kwr-golden-label-schema",
+  "schemaVersion": 1,
+  "kind": "golden_decision_label",
+  "labelId": "tok-standard-orb-control-001-label",
+  "replayId": "tok-standard-orb-control-001",
+  "mapProfile": "tok_standard",
+  "reviewers": [{ "reviewerId": "developer-fixture-contract", "role": "fixture-contract", "agreed": true }],
+  "decision": {
+    "acceptablePrimaryActions": ["PLAN:PACE_AHEAD"],
+    "acceptableFallbackActions": ["CALL:HOLD", "WHERE:MID"],
+    "forbiddenActions": ["CALL:FULL_CHASE"],
+    "mustStay": ["friendly_carrier"],
+    "requiredCapabilities": ["peel", "control"],
+    "validTargetClasses": [],
+    "successConditions": ["protect_high_value_orb", "deny_enemy_pickup"],
+    "abortConditions": ["friendly_carrier_exposed"],
+    "maxDelaySeconds": 6,
+    "forceUncertaintyWhen": []
+  },
+  "coverage": { "problemTypes": ["OBJECTIVE_THREAT"], "phase": "MIDGAME", "truthBand": "HIGH" },
+  "rationale": "Migrated from the existing fixture expected-label contract; it is not player field evidence."
+}

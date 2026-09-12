@@ -5,6 +5,8 @@ local ObjectiveIntel = {
     carriers = {},
     timers = {},
     auraCache = {},
+    resourceCycle = nil,
+    transitions = {},
     maxEvents = 24,
 }
 KWR.ObjectiveIntel = ObjectiveIntel
@@ -43,6 +45,12 @@ local MESSAGE_GRAMMARS = {
         },
         assault = {
             "^(.+) has assaulted the (.+)!$",
+        },
+        resourceSpawn = {
+            "^Azerite fissures begin to erupt!$",
+        },
+        resourceCollected = {
+            "^(.+) has collected Azerite!$",
         },
         teamMap = {
             Alliance = "Alliance",
@@ -108,6 +116,16 @@ local function sessionMapKey(sessionKey)
     return KWR.Util:Text(sessionKey, "", 96):match("^([^:]+)")
 end
 
+-- System-chat intake can initially identify only a map (for example
+-- "WSG:true"), while Sensor snapshots provide mapID and instanceID.  Once
+-- both sides provide a real instance identity, however, a different instance
+-- is a different match and must never retain objective facts from the prior
+-- one.
+local function sessionInstanceID(sessionKey)
+    local instance = KWR.Util:Text(sessionKey, "", 96):match("^[^:]*:[^:]*:([^:]+):")
+    return instance and instance ~= "" and instance ~= "0" and instance or nil
+end
+
 local function sessionPhase(sessionKey)
     local normalized = KWR.Util:Upper(sessionKey, "", 96)
     if normalized:find(":PVP:", 1, true) then return "PVP" end
@@ -133,6 +151,11 @@ local function sameSession(stored, desired)
     if not storedMap or not desiredMap or storedMap ~= desiredMap then
         return false
     end
+    local storedInstance = sessionInstanceID(stored)
+    local desiredInstance = sessionInstanceID(desired)
+    if storedInstance and desiredInstance and storedInstance ~= desiredInstance then
+        return false
+    end
     local storedPhase = sessionPhase(stored)
     local desiredPhase = sessionPhase(desired)
     local storedMode = sessionMode(stored)
@@ -142,14 +165,30 @@ local function sameSession(stored, desired)
 end
 
 local function addEvent(self, kind, text, objective, player)
-    self.events[#self.events + 1] = {
+    self.eventSerial = (self.eventSerial or 0) + 1
+    local observedAt = KWR.Util:Number(KWR.Util:Call(time), nil)
+    local event = {
         at = KWR.Util:Now(),
+        observedAt = observedAt,
+        id = "bg:" .. tostring(observedAt or 0) .. ":" .. tostring(self.eventSerial),
+        source = "BG_SYSTEM",
         kind = kind,
         text = KWR.Util:Text(text, "", 160),
         objective = objective,
         player = player,
     }
+    self.events[#self.events + 1] = event
+    if event.objective and KWR.ObjectiveRules then
+        local previous = self.transitions[event.objective]
+        local transition = KWR.ObjectiveRules:Transition(previous, event, {
+            mapKey = self.mapKey or sessionMapKey(self.sessionKey),
+        })
+        if transition.accepted then
+            self.transitions[event.objective] = transition
+        end
+    end
     while #self.events > self.maxEvents do table.remove(self.events, 1) end
+    return event
 end
 
 local function clearCarrier(self, objective)
@@ -255,6 +294,9 @@ function ObjectiveIntel:Reset(sessionKey)
     self.carriers = {}
     self.timers = {}
     self.auraCache = {}
+    self.resourceCycle = nil
+    self.transitions = {}
+    self.eventSerial = 0
 end
 
 function ObjectiveIntel:OnInitialize()
@@ -267,12 +309,54 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
     message = KWR.Util:Text(message, "", 160)
     if message == "" then return end
     local grammar = activeGrammar()
+    self.mapKey = mapKey or self.mapKey
     local matchMessage = grammar.normalize and normalizeLocaleMessage(message) or message
     if mapKey and mapKey ~= "WORLD" and mapKey ~= "UNKNOWN" then
         local desired = tostring(mapKey) .. ":true"
         if not sameSession(self.sessionKey, desired) then
             self:Reset(desired)
         end
+    end
+
+    if mapKey == "SEETHING" and matchFirst(matchMessage, grammar.resourceSpawn) then
+        local now = KWR.Util:Now()
+        local cycle = self.resourceCycle
+        -- Blizzard can deliver the same battleground sentence through more
+        -- than one system channel. Keep one cycle and one timeline event.
+        if not cycle or now - (cycle.startedAt or 0) > 1 then
+            self.resourceCycle = {
+                id = KWR.Util:Signature({ "SEETHING", "FISSURE", now }),
+                startedAt = now,
+                source = "BG_SYSTEM",
+                collections = {},
+            }
+            addEvent(self, "RESOURCE_SPAWN", message, "Next Spawn")
+        end
+        return
+    end
+
+    local resourcePlayer = mapKey == "SEETHING"
+        and matchFirst(matchMessage, grammar.resourceCollected) or nil
+    if resourcePlayer then
+        local now = KWR.Util:Now()
+        self.resourceCycle = self.resourceCycle or {
+            id = KWR.Util:Signature({ "SEETHING", "FISSURE", now }),
+            startedAt = now,
+            source = "BG_SYSTEM",
+            collections = {},
+        }
+        local collection = {
+            player = resourcePlayer,
+            playerKey = normalizeName(resourcePlayer),
+            observedAt = now,
+            source = "BG_SYSTEM",
+        }
+        local collections = self.resourceCycle.collections
+        collections[#collections + 1] = collection
+        while #collections > 8 do table.remove(collections, 1) end
+        self.resourceCycle.lastCollection = collection
+        addEvent(self, "RESOURCE_COLLECTED", message, nil, resourcePlayer)
+        return
     end
 
     local player = matchFirst(matchMessage, grammar.orbPickup)
@@ -317,11 +401,11 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
         return
     end
 
-    local returnedFlag = localizedFlagObjective(grammar,
-        localizedToken(matchMessage, grammar.teamMap))
+    local returnedFlag = matchFirst(matchMessage, grammar.flagReturn)
+        and localizedFlagObjective(grammar, localizedToken(matchMessage, grammar.teamMap))
     if returnedFlag then
         clearFlagCarriers(self, returnedFlag)
-        addEvent(self, "FLAG_STATE", message, returnedFlag)
+        addEvent(self, "FLAG_RETURN", message, returnedFlag)
         return
     end
 
@@ -330,13 +414,13 @@ function ObjectiveIntel:ObserveMessage(message, mapKey)
         localizedToken(matchMessage, grammar.teamMap)) or nil
     if capturedFlag then
         clearFlagCarriers(self, capturedFlag)
-        addEvent(self, "FLAG_STATE", message, capturedFlag)
+        addEvent(self, "FLAG_CAPTURE", message, capturedFlag, capturedBy)
         return
     end
 
     if matchFirst(matchMessage, grammar.globalFlagReset) or isGlobalFlagReset(message) then
         clearFlagCarriers(self)
-        addEvent(self, "FLAG_STATE", message)
+        addEvent(self, "FLAG_RESET", message)
         return
     end
 
@@ -548,6 +632,41 @@ function ObjectiveIntel:Apply(snapshot)
     table.sort(carriers, function(a, b) return a.objective < b.objective end)
     snapshot.objectives.carriers = carriers
     snapshot.objectives.events = KWR.Util:Copy(self.events)
+    snapshot.objectives.transitions = {}
+    for objective, transition in pairs(self.transitions or {}) do
+        local copy = KWR.Util:Copy(transition)
+        copy.objective = objective
+        snapshot.objectives.transitions[#snapshot.objectives.transitions + 1] = copy
+    end
+    table.sort(snapshot.objectives.transitions, function(a, b)
+        return KWR.Util:Text(a.objective, "", 64) < KWR.Util:Text(b.objective, "", 64)
+    end)
+    if snapshot.context and snapshot.context.mapKey == "SEETHING"
+        and self.resourceCycle then
+        local cycle = KWR.Util:Copy(self.resourceCycle)
+        cycle.active = {}
+        for _, row in ipairs(snapshot.objectives.rows or {}) do
+            if KWR.Util:Upper(row.state, "", 20) == "ACTIVE" then
+                cycle.active[#cycle.active + 1] = {
+                    label = KWR.Util:Text(row.label, "Unknown", 64),
+                    owner = KWR.Util:Upper(row.owner, "UNKNOWN", 16),
+                    source = KWR.Util:Text(row.source, "unknown", 32),
+                }
+            end
+        end
+        table.sort(cycle.active, function(a, b) return a.label < b.label end)
+        cycle.target = cycle.active[1] and cycle.active[1].label or nil
+        cycle.state = cycle.target and "ACTIVE" or "REVEALING"
+        if cycle.lastCollection then
+            local _, owner = findEntity(snapshot, cycle.lastCollection.playerKey)
+            cycle.lastCollection.owner = owner or "UNKNOWN"
+        end
+        for _, collection in ipairs(cycle.collections or {}) do
+            local _, owner = findEntity(snapshot, collection.playerKey)
+            collection.owner = owner or "UNKNOWN"
+        end
+        snapshot.objectives.resourceCycle = cycle
+    end
     snapshot.objectives.timers = {}
     for node, timer in pairs(self.timers) do
         local copy = KWR.Util:Copy(timer)
@@ -567,6 +686,7 @@ function ObjectiveIntel:Apply(snapshot)
         carriers = #carriers,
         timers = #snapshot.objectives.timers,
         observedEvents = #self.events,
+        transitions = #snapshot.objectives.transitions,
         qualified = snapshot.objectives.source == "ui_widget"
             or #carriers > 0 or #snapshot.objectives.timers > 0,
     }

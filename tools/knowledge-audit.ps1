@@ -590,6 +590,14 @@ try {
     $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
 }
 
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (
+        Join-Path $root 'tools\scenario-generation-audit.ps1')
+    if ($LASTEXITCODE -ne 0) { $errors.Add('Scenario runtime generation audit failed.') }
+} catch {
+    $errors.Add("Scenario runtime generation audit failed: $($_.Exception.Message)")
+}
+
 $nexusGeneratedPath = Join-Path $root "Data\StrategistNexusCorpus.lua"
 $nexusTempPath = Join-Path ([IO.Path]::GetTempPath()) (
     "kwr-strategist-nexus-" + [guid]::NewGuid().ToString("N") + ".lua")

@@ -209,25 +209,44 @@ local function callTone(call)
     return "MOVE"
 end
 
-local function fightCallText(call)
+-- The map registry owns canonical names. This secondary pass only keeps
+-- combined planner phrases readable in the compact card.
+local PVP_LOCATION_SHORTHAND = {
+    { "Lumber Mill", "LM" }, { "Blacksmith", "BS" }, { "Gold Mine", "GM" },
+    { "Waterworks", "WW" }, { "Lighthouse", "LH" }, { "Stables", "ST" },
+    { "Farm", "FARM" }, { "Mine", "M" },
+}
+
+local function compactLocationText(mapKey, value, fallback, limit)
+    local text = KWR.CommandView:CompactMapText(mapKey, value, fallback or "", limit or 96)
+    for _, replacement in ipairs(PVP_LOCATION_SHORTHAND) do
+        text = text:gsub(replacement[1], replacement[2])
+    end
+    return KWR.Util:Text(text, fallback or "", limit or 96)
+end
+
+local function fightCallText(call, mapKey)
     call = call or {}
     local tone = callTone(call)
+    local where = compactLocationText(mapKey, call.where, "FIELD", 48)
     return table.concat({
         KWR.Theme:CombatText(tone, "CALL:") .. " "
             .. KWR.Util:Upper(call.what, "HOLD", 24),
         KWR.Theme:CombatText("TARGET", stackedNames("WHO:", call.who, "TEAM", 56)),
         KWR.Theme:CombatText("MOVE", "WHERE:") .. " "
-            .. KWR.Util:Upper(call.where, "FIELD", 24),
+            .. KWR.Util:Upper(where, "FIELD", 24),
         KWR.Theme:CombatText("CARRY", "WHEN:") .. " "
             .. KWR.Util:Upper(call.when, "NOW", 24),
     }, "\n")
 end
 
-local function fightPostureText(model)
+local function fightPostureText(model, mapKey)
+    local offense = compactLocationText(mapKey,
+        model and model.offense, "TEAM -> FIELD", 96)
     return KWR.Theme:CombatText("TARGET",
             stackedValue("DEF:", model and model.defense, "ASSIGNED DEF", 56))
         .. "\n" .. KWR.Theme:CombatText("MOVE",
-            stackedValue("OFF:", model and model.offense, "TEAM -> FIELD", 56))
+            stackedValue("OFF:", offense, "TEAM -> FIELD", 56))
 end
 
 local function applySetupLayout(frame)
@@ -571,6 +590,10 @@ function HUD:Create()
         self._timerAccum = (self._timerAccum or 0) + (elapsed or 0)
         if self._timerAccum < 0.20 then return end
         self._timerAccum = 0
+        if self.cardActive and KWR.CommanderCard then
+            KWR.CommanderCard:Tick(self)
+            return
+        end
         if self:IsShown() and KWR.HUD and KWR.HUD.RefreshTruthBadge then
             KWR.HUD:RefreshTruthBadge(self)
         end
@@ -750,6 +773,11 @@ function HUD:UpdateToken(state)
     local command = state and state.command or {}
     local combat = snapshot.combat or {}
     local target = combat.localTarget or combat.killTarget or {}
+    if KWR.db.profile.hud.cardLayout == "COMPLETE" then
+        -- The legacy 160-byte signature drops late actors/CC rows. The complete
+        -- card consumes full published revisions and caches its measured content.
+        return state and state.revision or state
+    end
     return KWR.Util:Signature({
         true,
         self:ObjectiveTimerSignature(snapshot),
@@ -845,6 +873,12 @@ function HUD:Update(state)
     end
     local frame = self:Create()
     local snapshot, command = state.snapshot, state.command
+    if KWR.db.profile.hud.cardLayout == "COMPLETE" and snapshot.context.inPvP == true
+        and snapshot.context.preview ~= true then
+        KWR.CommanderCard:Render(frame, state)
+        return
+    end
+    KWR.CommanderCard:Hide(frame)
     local formationMode = snapshot.context.inPvP ~= true
     local matchComplete = snapshot.context.matchComplete == true
     local combatPreset = KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS"
@@ -1060,7 +1094,8 @@ function HUD:Update(state)
         or (KWR.Theme:CombatText("CARRY", "TO WIN:")
             .. " " .. fightNow.winPath
             .. "\n" .. KWR.Theme:CombatText("MOVE", "NEXT:")
-            .. " " .. fightNow.nextObjective)))
+            .. " " .. compactLocationText(snapshot.context.mapKey,
+                fightNow.nextObjective, "WAIT", 96))))
     local learning = KWR.db.profile.guidanceMode == "LEARNING"
     if formationMode then
         local currentComp = formation.currentComp or formation.archetype or {}
@@ -1115,9 +1150,9 @@ function HUD:Update(state)
         frame.kill.value:SetText(focusFightCall or "")
     else
         frame.mine.heading:SetText("NEXT")
-        frame.mine.value:SetText(fightCallText(fightNow.next))
+        frame.mine.value:SetText(fightCallText(fightNow.next, snapshot.context.mapKey))
         frame.caller.heading:SetText("POSTURE")
-        frame.caller.value:SetText(fightPostureText(fightNow))
+        frame.caller.value:SetText(fightPostureText(fightNow, snapshot.context.mapKey))
     end
 
     frame.kill.heading:SetText(formationMode and "NEXT STEP"
@@ -1131,14 +1166,17 @@ function HUD:Update(state)
     elseif matchComplete then
         frame.kill.value:SetText("Tactical calls closed. Capture the AAR before the next queue.")
     elseif focusMode then
-        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
+        -- The command card is intentionally a fixed surface.  Changing its
+        -- height as local-focus/CC truth arrives moves a CENTER-anchored card
+        -- under the caller and looks like a visual glitch.
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Hide()
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     elseif reviewMode then
         frame.kill.value:SetText(localFightCall or "")
-        frame:SetHeight(HUD_REVIEW_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()
@@ -1153,19 +1191,19 @@ function HUD:Update(state)
         frame.caller:Show()
         frame.kill:Show()
     elseif focusMode then
-        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Hide()
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     elseif reviewMode then
-        frame:SetHeight(HUD_REVIEW_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:Show()
     else
-        frame:SetHeight(HUD_EXECUTION_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()

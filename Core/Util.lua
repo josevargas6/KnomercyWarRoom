@@ -25,6 +25,11 @@ function Util:Number(value, fallback)
     return number
 end
 
+function Util:OptionalBoolean(value)
+    if self:IsSecret(value) or type(value) ~= "boolean" then return nil end
+    return value
+end
+
 function Util:Boolean(value, fallback)
     if value == nil or self:IsSecret(value) or type(value) ~= "boolean" then
         return fallback == true
@@ -70,16 +75,18 @@ function Util:Upper(value, fallback, maxLength)
     return ok and upper or (fallback or "")
 end
 
+local function unwrapCall(ok, ...)
+    if not ok then return nil end
+    return ...
+end
+
 function Util:Call(callable, ...)
     if type(callable) ~= "function" then
         return nil
     end
-    local results = { pcall(callable, ...) }
-    if not results[1] then
-        return nil
-    end
-    table.remove(results, 1)
-    return unpack(results)
+    -- API tuples can contain interior and trailing nils. Forward the complete
+    -- tuple without a temporary table whose length can truncate those values.
+    return unwrapCall(pcall(callable, ...))
 end
 
 function Util:Now()
@@ -134,25 +141,33 @@ function Util:DaysSinceDate(text, nowEpoch)
     return math.max(0, math.floor((nowEpoch - thenEpoch) / 86400))
 end
 
+local function evidenceNumber(util, value)
+    value = util:Number(value, nil)
+    if value and value == value and value >= 0 and value < math.huge then return value end
+end
+
 function Util:Evidence(value, source, observedAt, ttl, confidence, verified)
-    local now = self:Now()
-    observedAt = self:Number(observedAt, nil)
-    ttl = math.max(0, self:Number(ttl, 0) or 0)
+    local now = evidenceNumber(self, self:Now())
+    observedAt = evidenceNumber(self, observedAt)
+    ttl = evidenceNumber(self, ttl)
     local known = value ~= nil and not self:IsSecret(value)
-    local age = observedAt and math.max(0, now - observedAt) or nil
-    local fresh = known and observedAt ~= nil and (ttl == 0 or age <= ttl)
+    local timeValid = now ~= nil and observedAt ~= nil and observedAt <= now and ttl ~= nil
+    local age = timeValid and (now - observedAt) or nil
+    local fresh = known and timeValid and (ttl == 0 or age <= ttl)
+    local copiedValue
+    if known then copiedValue = self:Copy(value) end
     return {
-        value = known and self:Copy(value) or nil,
+        value = copiedValue,
         source = self:Text(source, "unknown", 40),
         observedAt = observedAt,
         age = age,
         ttl = ttl,
-        expiresAt = observedAt and ttl > 0 and (observedAt + ttl) or nil,
+        expiresAt = observedAt and ttl and ttl > 0 and (observedAt + ttl) or nil,
         confidence = self:Upper(confidence,
             fresh and "MEDIUM" or "NONE", 12),
         verified = verified == true,
         state = not known and "UNKNOWN"
-            or (not observedAt and "UNVERIFIED"
+            or (not timeValid and "UNVERIFIED"
             or (fresh and (verified and "VERIFIED" or "OBSERVED") or "STALE")),
         fresh = fresh == true,
     }
@@ -160,6 +175,12 @@ end
 
 function Util:EvidenceUsable(record, minimumConfidence)
     if type(record) ~= "table" or record.fresh ~= true then return false end
+    if record.value == nil or self:IsSecret(record.value) then return false end
+    local now = evidenceNumber(self, self:Now())
+    local observedAt = evidenceNumber(self, record.observedAt)
+    local ttl = evidenceNumber(self, record.ttl)
+    if not now or not observedAt or not ttl or observedAt > now
+        or (ttl > 0 and now - observedAt > ttl) then return false end
     local rank = { NONE = 0, LOW = 1, MEDIUM = 2, HIGH = 3 }
     local actual = rank[self:Upper(record.confidence, "NONE", 12)] or 0
     local required = rank[self:Upper(minimumConfidence, "LOW", 12)] or 1

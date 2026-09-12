@@ -1875,8 +1875,13 @@ function MainWindow:TogglePreview()
 end
 
 function MainWindow:ArmFieldTest()
+    local enabled, message = KWR.BuildInfo:SetDevelopmentMode(true)
+    if not enabled then
+        KWR:Print(message, true)
+        return false
+    end
     KWR:ActivateFieldProfile(true)
-    KWR.db.profile.fieldReviewContext = "Diagnostic"
+    self:SetFieldReviewContext("Diagnostic")
     KWR.HUD:SetEnabled(true)
     KWR.CombatRoster:Show("BOTH")
     KWR.CursorRing:SetEnabled(true)
@@ -1887,16 +1892,34 @@ function MainWindow:ArmFieldTest()
     end
     if KWR.Presentation then KWR.Presentation:RefreshNow() end
     KWR.MatchRuntime:ForceRefresh("field-test-arm")
-    KWR:Print("Season 2 field mode armed: live HUD, roster, reticle, Sentinel transport, automatic AAR, and command mode are active.", true)
-    KWR:Print("Next: run /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
+    KWR:Print("Field capture armed in Diagnostic context: HUD, roster, Sentinel transport, and AAR are active.", true)
+    KWR:Print("If leading, use /kwr commander before the match. After communicating a call, use /kwr delivered for its confirmation token.", true)
+    KWR:Print("Capture /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
 end
 
 function MainWindow:ShowSeason2EvidenceRun()
+    if not (KWR.Season2Readiness and KWR.Season2Readiness.Report) then
+        KWR:Print("Season 2 evidence tools require KWR_DevTools. Use /kwr dev on outside combat.", true)
+        return false
+    end
     self:Show("INTEL")
     KWR.CopyDialog:ShowText("KWR Season 2 Watch + Evidence Run",
         KWR.Season2Readiness:Report(KWR.Store:Get()), {
             note = "Official hotfixes are advisory until reviewed with real Retail evidence. This checklist and every export remain local until you manually copy them.",
         })
+end
+
+function MainWindow:SetFieldReviewContext(context)
+    if context ~= "Commander" and context ~= "Spectator" and context ~= "Diagnostic" then
+        return false
+    end
+    if KWR.db.profile.fieldReviewContext ~= context then
+        KWR.db.profile.fieldReviewContext = context
+        if KWR.Commander then KWR.Commander:ResetSession() end
+        KWR.MatchRuntime:ForceRefresh("field-context-" .. context:lower())
+    end
+    KWR:Print("Field review context: " .. context .. ".", true)
+    return true
 end
 
 function MainWindow:ShowAARExport()

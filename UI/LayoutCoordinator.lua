@@ -95,6 +95,12 @@ function LayoutCoordinator:Clamp(frame, margin)
     if not frame or not frame.IsShown or not frame:IsShown() then return end
     if frame.KWRDragging then return end
     local width, height = screenSize()
+    -- A failed/incomplete render can leave a frame with impossible geometry.
+    -- Let the owning surface repair that state rather than asking Blizzard's
+    -- backdrop logic to clamp invalid dimensions.
+    local frameWidth, frameHeight = frame:GetWidth(), frame:GetHeight()
+    if not frameWidth or not frameHeight or frameWidth <= 0 or frameHeight <= 0
+        or frameWidth > width * 2 or frameHeight > height * 2 then return end
     local left, right = frame:GetLeft(), frame:GetRight()
     local bottom, top = frame:GetBottom(), frame:GetTop()
     if not left or not right or not bottom or not top then return end
@@ -160,6 +166,10 @@ function LayoutCoordinator:BlizzardWindowOpen()
 end
 
 function LayoutCoordinator:ApplyStrata()
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingApply = true
+        return false
+    end
     local lowered = self:BlizzardWindowOpen()
     local strata = lowered and "MEDIUM" or nil
     for _, entry in ipairs(KWR_STRATA) do
@@ -185,6 +195,7 @@ function LayoutCoordinator:ApplyStrata()
     if menu and menu.SetFrameStrata then
         menu:SetFrameStrata(lowered and "MEDIUM" or "HIGH")
     end
+    return true
 end
 
 function LayoutCoordinator:ApplyMainWindow()
@@ -338,17 +349,14 @@ function LayoutCoordinator:ApplySentinel()
 end
 
 function LayoutCoordinator:Apply()
-    -- Strata changes touch only KWR-owned, unprotected shell frames. Keep
-    -- Blizzard bags and panels above KWR even when combat blocks re-anchoring.
-    self:ApplyStrata()
     if InCombatLockdown and InCombatLockdown() then
         self.pendingApply = true
         return false
     end
-    -- Layout changes re-anchor frames and scroll containers. Retail can mark
-    -- those operations protected while combat is active, so no periodic or
-    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
+    -- Native frame relationships can protect strata as well as anchors.
+    -- Apply deferred layout work after PLAYER_REGEN_ENABLED.
     self.pendingApply = nil
+    self:ApplyStrata()
     self:ApplyMainWindow()
     self:ApplyHUD()
     self:ApplyOptions()

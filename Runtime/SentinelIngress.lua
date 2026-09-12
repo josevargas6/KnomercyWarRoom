@@ -8,6 +8,7 @@ KWR.SentinelIngress = SentinelIngress
 
 local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1 }
 local MAX_PACKET_AGE = 15
+local MAX_SENDERS, MAX_ENEMIES, MAX_OBJECTIVES = 20, 20, 8
 
 local function text(value, maximum)
     return KWR.Util:Text(value, "", maximum or 64)
@@ -15,6 +16,51 @@ end
 
 local function senderKey(value)
     return text(value, 96):lower()
+end
+
+local function trimKeys(tableValue, maximum, keep, timestamp)
+    local count = 0
+    for _ in pairs(tableValue) do count = count + 1 end
+    if tableValue[keep] or count < maximum then return end
+    local oldestKey, oldestAt
+    for key, value in pairs(tableValue) do
+        local at = timestamp(value) or 0
+        if not oldestAt or at < oldestAt or (at == oldestAt and key < oldestKey) then
+            oldestKey, oldestAt = key, at
+        end
+    end
+    if oldestKey then tableValue[oldestKey] = nil end
+end
+
+local function removeSenderEverywhere(self, key)
+    self.byPlayer[key], self.lastSeqBySender[key] = nil, nil
+    for enemy, families in pairs(self.byEnemy) do
+        for kind, senders in pairs(families) do
+            senders[key] = nil
+            if not next(senders) then families[kind] = nil end
+        end
+        if not next(families) then self.byEnemy[enemy] = nil end
+    end
+    for objective, senders in pairs(self.byObjective) do
+        senders[key] = nil
+        if not next(senders) then self.byObjective[objective] = nil end
+    end
+end
+
+local function ensureSenderCapacity(self, key)
+    if self.byPlayer[key] then return end
+    local count, oldestKey, oldestAt = 0, nil, nil
+    for sender, record in pairs(self.byPlayer) do
+        count = count + 1
+        local at = KWR.Util:Number(record.updatedAt, 0) or 0
+        if not oldestAt or at < oldestAt or (at == oldestAt and sender < oldestKey) then
+            oldestKey, oldestAt = sender, at
+        end
+    end
+    if count >= MAX_SENDERS and oldestKey then
+        removeSenderEverywhere(self, oldestKey)
+        self.diagnostics.evicted = (self.diagnostics.evicted or 0) + 1
+    end
 end
 
 local function unescape(value)
@@ -80,6 +126,11 @@ function SentinelIngress:Accept(packet, sender, state)
         return false
     end
     local key = senderKey(sender)
+    if key == "" then
+        self.diagnostics.malformed = self.diagnostics.malformed + 1
+        return false
+    end
+    ensureSenderCapacity(self, key)
     local record = self.byPlayer[key] or { packets = {} }
     local receiptAt = KWR.Util:Now()
     if math.abs(receiptAt - (packet.timestamp or 0)) > MAX_PACKET_AGE then
@@ -122,6 +173,11 @@ function SentinelIngress:Accept(packet, sender, state)
     if packet.kind == "OBS_CARRIER" then
         local objective = text(body.label, 64):lower()
         if objective ~= "" then
+            trimKeys(self.byObjective, MAX_OBJECTIVES, objective, function(senders)
+                local newest = 0
+                for _, observation in pairs(senders or {}) do newest = math.max(newest, observation.at or 0) end
+                return newest
+            end)
             self.byObjective[objective] = self.byObjective[objective] or {}
             self.byObjective[objective][key] = {
                 body = body, kind = packet.kind, at = record.updatedAt, sender = key,
@@ -132,6 +188,13 @@ function SentinelIngress:Accept(packet, sender, state)
         -- target scan can publish visibility and a cast in the same tick;
         -- neither may overwrite the other before the merge consumes them.
         local enemyKey = enemy:lower()
+        trimKeys(self.byEnemy, MAX_ENEMIES, enemyKey, function(families)
+            local newest = 0
+            for _, senders in pairs(families or {}) do
+                for _, observation in pairs(senders or {}) do newest = math.max(newest, observation.at or 0) end
+            end
+            return newest
+        end)
         self.byEnemy[enemyKey] = self.byEnemy[enemyKey] or {}
         self.byEnemy[enemyKey][packet.kind] = self.byEnemy[enemyKey][packet.kind] or {}
         self.byEnemy[enemyKey][packet.kind][key] = {
@@ -145,7 +208,12 @@ end
 function SentinelIngress:Expire()
     local now = KWR.Util:Now()
     for key, record in pairs(self.byPlayer) do
-        if now - (record.updatedAt or 0) > 10 then self.byPlayer[key] = nil end
+        if now - (record.updatedAt or 0) > 10 then
+            -- A sender-generation ledger is useful only while the sender is
+            -- retained. Leaving it behind makes invented, expired identities
+            -- accumulate even though their visible records are bounded.
+            removeSenderEverywhere(self, key)
+        end
     end
     for enemyKey, families in pairs(self.byEnemy) do
         for kind, senders in pairs(families) do

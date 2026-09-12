@@ -2,7 +2,7 @@
 ## Title: |cff33aaffKnomercy War Room|r
 ## Notes: Rated Battleground command, prediction, assignment, and battlefield awareness.
 ## Author: Jose / Knomercy War Room Project
-## Version: 6.1.1-alpha.10
+## Version: 6.1.1-alpha.12
 ## SavedVariables: KWR_DB
 ## IconTexture: Interface\AddOns\KnomercyWarRoom\Assets\Brand\Minimap\kwr_micro_icon_16.png
 ## Category: PvP
@@ -15,6 +15,7 @@ Core\Addon.lua
 Core\BuildInfo.lua
 Core\Diagnostics.lua
 Core\CommandView.lua
+Core\CommanderCardView.lua
 Core\Util.lua
 Core\CommandReview.lua
 Core\Store.lua
@@ -83,6 +84,7 @@ State\DRTracker.lua
 
 Intelligence\EnemyProblemDetector.lua
 Intelligence\AssignmentScorer.lua
+Intelligence\AssignmentFeasibility.lua
 Intelligence\AssignmentOptimizer.lua
 Intelligence\KillTargetSelector.lua
 Intelligence\CommandReasonBuilder.lua
@@ -110,7 +112,9 @@ Runtime\Commander.lua
 Runtime\Learning.lua
 Runtime\SafetyMonitor.lua
 Runtime\AAR.lua
+Runtime\CommandFollowthrough.lua
 Runtime\MemoryBudget.lua
+Runtime\TruthContract.lua
 Runtime\Verification.lua
 Runtime\Season2Readiness.lua
 Runtime\SentinelIngress.lua
@@ -142,9 +146,9 @@ UI\CombatRosterVisuals.lua
 UI\CombatRosterState.lua
 UI\CombatRoster.lua
 UI\HUD.lua
+UI\CommanderCard.lua
 UI\Presentation.lua
 UI\MainWindowReports.lua
-UI\ReporterMap.lua
 UI\MainWindowShell.lua
 UI\MainWindowLauncher.lua
 UI\MainWindowCommands.lua

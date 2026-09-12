@@ -81,6 +81,9 @@ $report = [ordered]@{
     schemaVersion = 1
     generatedAt = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
     candidateVersion = $version
+    candidateID = if ($packageReport -and $packageReport.candidateID) {
+        [string]$packageReport.candidateID
+    } else { $null }
     blockingDefects = @(
         [ordered]@{
             id = "LIVE-TEAM-TRUTH"

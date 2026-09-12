@@ -27,6 +27,7 @@ local MODE_COLORS = {
 local RETICLE_COLORS = {
     TARGET = COMBAT_COLORS.TARGET,
     KILL = COMBAT_COLORS.KILL,
+    PRESSURE = COMBAT_COLORS.STOP,
     STOP = COMBAT_COLORS.STOP,
     SWAP = COMBAT_COLORS.SWAP,
     IMMUNE = COMBAT_COLORS.IMMUNE,
@@ -328,9 +329,9 @@ function CursorRing:CreateReticleFrame()
     frame.pulse:SetPoint("CENTER")
     applyEnemyRingTexture(frame.pulse)
 
-    frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
-    frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
+    -- Native nameplate dimensions can become secret in combat. Plain holders
+    -- avoid BackdropTemplate processing those dimensions during size changes.
+    frame.labelPlate = CreateFrame("Frame", nil, frame)
     -- Action text is deliberately absent for a neutral target. The native
     -- nameplate already establishes identity; this compact tab appears only
     -- when KWR has a specific action such as KILL, CAST, or SWAP.
@@ -338,9 +339,7 @@ function CursorRing:CreateReticleFrame()
     frame.labelPlate:SetSize(54, 14)
     frame.label = KWR.Theme:Title(frame.labelPlate, 9, "CENTER")
     frame.label:SetAllPoints()
-    frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    KWR.Theme:Style(frame.detailPlate, "panel", "border")
-    frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
+    frame.detailPlate = CreateFrame("Frame", nil, frame)
     frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 2)
     frame.detailPlate:SetSize(112, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
@@ -432,13 +431,13 @@ function CursorRing:CreateTacticalBadgeFrame(unit)
     local frame = self.tacticalBadgeFrames[unit]
     if frame then return frame end
 
-    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    -- This holder follows a native nameplate; keep protected dimensions out
+    -- of backdrop calculations while retaining the tactical text.
+    frame = CreateFrame("Frame", nil, UIParent)
     frame:SetFrameStrata("TOOLTIP")
     frame:SetFrameLevel(9041)
     frame:EnableMouse(false)
     frame:SetSize(64, 14)
-    KWR.Theme:Style(frame, "panel", "borderHi")
-    frame:SetBackdropColor(0, 0, 0, 0.64)
     frame.text = KWR.Theme:Title(frame, 8, "CENTER")
     frame.text:SetAllPoints()
     frame:Hide()
@@ -477,14 +476,15 @@ local function nameplateReadoutWidgets(plate)
 end
 
 -- Blizzard's nameplate container can include large invisible bounds that vary
--- by unit and client layout. Anchor KWR tokens to the visible health bar
--- instead, so every player marker shares the same screen-space alignment.
+-- by unit and client layout. Prefer the visible identity text: some friendly
+-- plate skins offset the internal health bar from the displayed player center,
+-- which made role markers look horizontally misplaced in a stacked group.
 local IDENTITY_GAP = 8
 local function identityAnchor(plate)
     local unitFrame = plate and plate.UnitFrame
     local kind = type(unitFrame)
     if kind ~= "table" and kind ~= "userdata" then return plate end
-    return unitFrame and (unitFrame.healthBar or unitFrame.name or unitFrame.nameText)
+    return unitFrame and (unitFrame.name or unitFrame.nameText or unitFrame.healthBar)
         or plate
 end
 
@@ -647,9 +647,10 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         if not model.texCoords and not isFriend then model.badge = "?" end
     end
     local combat = state and state.snapshot and state.snapshot.combat or {}
-    if not isFriend and (sameEntity(record, combat.localTarget)
-        or sameEntity(record, combat.killTarget)) then
+    if not isFriend and sameEntity(record, combat.killTarget) then
         model.ringColor = ORB_COLORS.KILL.outer
+    elseif not isFriend and sameEntity(record, combat.localTarget) then
+        model.ringColor = ORB_COLORS.STOP.outer
     elseif priorityCast then
         model.ringColor = ORB_COLORS.STOP.outer
     end
@@ -943,8 +944,6 @@ function CursorRing:ApplyReticleState(state)
     end
     local label = KWR.Util:Text(state.label, "TARGET", 24)
     local showAction = label ~= "TARGET"
-    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], showAction and 0.62 or 0)
-    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], showAction and 0.48 or 0)
     frame.label:SetText(showAction and label or "")
     local detail = KWR.Util:Text(state.detail, "", 64)
     frame.detail:SetText(showAction and detail or "")
@@ -966,7 +965,7 @@ function CursorRing:ResolveReticleState(state)
     end
     local localTarget = combat.localTarget
     local commandTarget = combat.killTarget
-    local localKill = targetRecord and localTarget and localTarget.key == targetRecord.key
+    local localPressure = targetRecord and localTarget and localTarget.key == targetRecord.key
     local commandKill = targetRecord and commandTarget and commandTarget.key == targetRecord.key
     local wrongLocal = targetRecord and localTarget and localTarget.key ~= targetRecord.key
     local wrongCommand = targetRecord and commandTarget and commandTarget.key ~= targetRecord.key
@@ -1014,22 +1013,22 @@ function CursorRing:ResolveReticleState(state)
             classFile = targetClass,
         }
     end
-    if localKill then
+    if commandKill then
         return {
             mode = "KILL",
             label = "KILL",
-            detail = KWR.Util:Text(combat.localTargetReason or combat.killReason,
-                "Local kill target", 32),
+            detail = KWR.Util:Text(combat.killReason,
+                "Observed kill window", 32),
             pulse = true,
             classFile = targetClass,
         }
     end
-    if commandKill then
+    if localPressure then
         return {
-            mode = "KILL",
-            label = "FOCUS",
-            detail = KWR.Util:Text(combat.killReason or combat.localTargetReason,
-                "Priority target", 32),
+            mode = "PRESSURE",
+            label = "PRESSURE",
+            detail = KWR.Util:Text(combat.localTargetReason,
+                "Preferred local target", 32),
             pulse = true,
             classFile = targetClass,
         }
@@ -1242,8 +1241,12 @@ local function updateToken(_, state)
 end
 
 function CursorRing:OnUpdate(elapsed)
-    self.elapsed = (self.elapsed or 0) + (KWR.Util:Number(elapsed, 0) or 0)
+    elapsed = KWR.Util:Number(elapsed, 0) or 0
+    if elapsed ~= elapsed or elapsed < 0 or elapsed == math.huge then return end
+    self.elapsed = (self.elapsed or 0) + elapsed
     if self.elapsed < (1 / 30) then return end
+    -- Timers need every frame's time, including frames skipped by this throttle.
+    elapsed = self.elapsed
     self.elapsed = 0
     if self.frame and self.frame:IsShown() then
         local x, y = KWR.Util:Call(GetCursorPosition)
@@ -1269,7 +1272,7 @@ function CursorRing:OnUpdate(elapsed)
     end
     self.reticleRetry = (self.reticleRetry or 0) + elapsed
     if self.reticleRetry >= 0.20 then
-        self.reticleRetry = 0
+        self.reticleRetry = self.reticleRetry % 0.20
         if (self.reticlePending or (self.reticle and self.reticle:IsShown()))
             and (KWR.db.profile.cursor.reticleEnabled ~= false) then
             self:RefreshReticle()
@@ -1277,7 +1280,7 @@ function CursorRing:OnUpdate(elapsed)
     end
     self.orbRetry = (self.orbRetry or 0) + elapsed
     if self.orbRetry >= 0.25 then
-        self.orbRetry = 0
+        self.orbRetry = self.orbRetry % 0.25
         if KWR.db.profile.cursor.battlefieldOrbs ~= false then
             self:RefreshOrbs()
             self:RefreshDriver()

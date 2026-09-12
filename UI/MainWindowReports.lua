@@ -311,8 +311,10 @@ function MainWindowReports:BuildExplainPayload(state, helpers)
         "ALTERNATIVES:",
         #alternatives > 0 and table.concat(alternatives, "\n") or "None",
         "",
-        "LEARNING: " .. tostring(learning.samples) .. " reviewed samples across "
-            .. tostring(learning.plans) .. " plans.",
+        "LEARNING: " .. tostring(learning.samples) .. " observed decision episodes across "
+            .. tostring(learning.plans) .. " team/patch/plan contexts.",
+        learning.quarantined and "Legacy results preserved separately; excluded from tactical adjustments." or "",
+        learning.unavailable and "Learning unavailable: stored schema or integrity requires review." or "",
     }, "\n")
 end
 
@@ -353,7 +355,10 @@ function MainWindowReports:BuildAlternativesPayload(state)
             tostring(simulation.projection or "UNKNOWN"),
             simulation.legal == false and "BLOCKED" or "READY")
         lines[#lines + 1] = "   WHY NOT FIRST: " .. tostring(row.reason or "Weaker reviewed edge.")
-        lines[#lines + 1] = "   WIN IF: " .. tostring(simulation.outcome or "Objective converts cleanly.")
+        lines[#lines + 1] = "   WIN IF: " .. tostring(row.success
+            or simulation.success or simulation.outcome or "Objective converts cleanly.")
+        lines[#lines + 1] = "   ABORT: " .. tostring(row.abort
+            or simulation.abort or "Authoritative state invalidates the call.")
         lines[#lines + 1] = "   RISK: " .. tostring(simulation.risk or "Unknown")
         lines[#lines + 1] = ""
     end
@@ -371,6 +376,10 @@ end
 
 function MainWindowReports:BuildPerformancePayload(state)
     local diagnostics = state.diagnostics or {}
+    local memorySummary = KWR.MemoryBudget and KWR.MemoryBudget:Summary(true) or {}
+    local memoryKB = memorySummary.memoryKB
+    local strategicMemoryAge = diagnostics.memorySampleAt
+        and math.max(0, KWR.Util:Now() - diagnostics.memorySampleAt) or nil
     local boot = KWR.bootDiagnostics or {}
     local capabilityCache = KWR.Capabilities:CacheStats()
     local decisionCache = KWR.Strategist:CacheStats()
@@ -453,7 +462,13 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Tactical execution reasons: " .. topCounterText(
             diagnostics.tacticalRefreshReasons, 6),
         "Latest slow stages: " .. (#slowStages > 0 and table.concat(slowStages, ", ") or "unavailable"),
-        string.format("KWR addon memory: %.1f KB (same GetAddOnMemoryUsage sample)", diagnostics.memoryKB or 0),
+        memoryKB and string.format("KWR addon memory now: %.1f KB (%s; age %.1fs; %s)", memoryKB,
+            memorySummary.sampleStatus or "CACHED", memorySummary.sampleAgeSeconds or 0,
+            memorySummary.sampleReason or "unknown") or "KWR addon memory now: unavailable",
+        strategicMemoryAge and string.format(
+            "Strategic memory sample: %.1f KB (%.1fs ago)",
+            diagnostics.memoryKB or 0, strategicMemoryAge)
+            or "Strategic memory sample: pending",
         string.format("Performance watchdog: mode %s | sampled events %d | widget drops %d | points drops %d",
             tostring(KWR.MemoryBudget and KWR.MemoryBudget.degradationMode or "FULL"),
             #(diagnostics.eventTrace or {}), diagnostics.widgetEventsCoalesced or 0,
@@ -479,7 +494,7 @@ function MainWindowReports:BuildPerformancePayload(state)
                 and math.max(0, KWR.Util:Now() - KWR.CommandAudio.lastAcknowledgedAt) or 0),
         "",
         "COMMAND STABILITY:",
-        string.format("Issued %d | replacements %d | stabilized %d | suppressed %d | reversals %d",
+        string.format("Generated %d | replacements %d | stabilized %d | suppressed %d | reversals %d",
             stability.issued or 0, stability.replacements or 0, stability.stabilized or 0,
             stability.suppressed or 0, stability.reversals or 0),
         string.format("Budget %s | %s | reversal %.1f%% | pre-move %.1f%%",

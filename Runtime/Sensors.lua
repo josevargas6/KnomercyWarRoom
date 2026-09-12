@@ -790,8 +790,8 @@ local function captureRoster(mapID)
                 end
                 classFile = text(classFile, "", 24)
                 if classFile ~= "" then raidClasses[index] = classFile:upper() end
-                if type(online) == "boolean" then raidConnected[index] = online end
-                if type(isDead) == "boolean" then raidDead[index] = isDead end
+                raidConnected[index] = Util:OptionalBoolean(online)
+                raidDead[index] = Util:OptionalBoolean(isDead)
                 rosterRole = text(rosterRole, "", 12)
                 if rosterRole ~= "" and rosterRole ~= "NONE" then
                     raidRoles[index] = rosterRole
@@ -916,14 +916,17 @@ local function captureRoster(mapID)
             end
             local dead = raidDead[unitIndex]
             if dead == nil and unitStable then
-                dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
+                dead = Util:OptionalBoolean(Util:Call(UnitIsDeadOrGhost, unit))
             end
-            dead = dead == true
             local connected = raidConnected[unitIndex]
             if connected == nil and unitStable then
-                connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
+                connected = Util:OptionalBoolean(Util:Call(UnitIsConnected, unit))
             end
-            if connected == nil then connected = true end
+            local visible, inCombat
+            if unitStable then
+                visible = Util:OptionalBoolean(Util:Call(UnitIsVisible, unit))
+                inCombat = Util:OptionalBoolean(Util:Call(UnitAffectingCombat, unit))
+            end
             local health = unitStable
                 and number(Util:Call(UnitHealth, unit), nil) or nil
             local healthMax = unitStable
@@ -970,16 +973,14 @@ local function captureRoster(mapID)
                 role = role,
                 dead = dead,
                 connected = connected,
-                inCombat = unitStable
-                    and Util:Boolean(Util:Call(UnitAffectingCombat, unit), false)
-                    or false,
+                inCombat = inCombat,
                 health = health,
                 healthMax = healthMax,
                 healthPercent = health and healthMax and healthMax > 0
                     and Util:Clamp((health / healthMax) * 100, 0, 100) or nil,
                 x = x,
                 y = y,
-                visible = true,
+                visible = visible,
                 lastSeenAt = observedAt,
                 location = location or (mapID and "Position restricted" or "Formation"),
                 locationSource = location and "Friendly Map Position" or "Group Unit",
@@ -1174,9 +1175,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         self.lastScoreRequestAt = -999
     end
 
-    local directBlitz = inPvP and C_PvP
-        and type(C_PvP.IsBrawlSoloRBG) == "function"
-        and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false
+    local directBlitz, blitzIndicatorSource = KWR.TeamResolver:BlitzIndicator(inPvP)
     local directBrawl = inPvP and C_PvP
         and type(C_PvP.IsInBrawl) == "function"
         and Util:Boolean(Util:Call(C_PvP.IsInBrawl), false) or false
@@ -1184,6 +1183,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         and C_PvP.IsRatedBattleground or IsRatedBattleground
     local isRated = inPvP and type(ratedProvider) == "function"
         and Util:Boolean(Util:Call(ratedProvider), false) or false
+    if directBlitz == true and blitzIndicatorSource == "C_PvP.IsRatedSoloRBG" then isRated = true end
     local context = {
         inPvP = inPvP,
         instanceType = instanceType,
@@ -1193,7 +1193,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         kind = definition and definition.kind or (inPvP and "UNKNOWN" or "WORLD"),
         phase = inPvP and "ACTIVE" or "WORLD",
         instanceID = number(instanceID, nil),
-        isBlitz = directBlitz,
+        isBlitz = directBlitz == true,
         isBrawl = directBrawl,
         brawlSource = directBrawl and "C_PvP.IsInBrawl" or "unconfirmed",
         isRated = isRated,
@@ -1220,14 +1220,13 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         self.scoreboardDirty = false
     end
     local scoreboardBlitz, blitzEvidence =
-        KWR.TeamResolver:DetectBlitz(scoreboardRows)
-    if directBlitz then
-        self.blitzSource = "C_PvP.IsBrawlSoloRBG"
-    elseif scoreboardBlitz then
-        self.blitzSource = blitzEvidence.source
-    end
-    context.isBlitz = self.blitzSource ~= nil
-    context.blitzSource = self.blitzSource or "unconfirmed"
+        KWR.TeamResolver:DetectBlitz(scoreboardRows, directBlitz, blitzIndicatorSource)
+    -- Recompute from explicit evidence. Roster size must never latch a ruleset.
+    self.blitzSource = scoreboardBlitz and blitzEvidence.source or nil
+    context.isBlitz = scoreboardBlitz
+    context.blitzSource = blitzEvidence.source
+    context.blitzKnown = blitzEvidence.known
+    context.blitzHint = blitzEvidence.scoreboardHint
     roster, context.rosterHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
         roster, assigned, scoreboardRows, expectedRosterCount)
     -- Every consumer receives the same validated roster. Do not leave this to

@@ -1,5 +1,28 @@
 # KWR 6.0 Architecture
 
+## Current architecture status — 2026-09-04
+
+The developer-tool separation is being recovered under
+[ADR-001](docs/architecture/ADR-001-developer-tools-package.md). Commander retains
+Runtime/TruthContract.lua; the build stages optional reporting modules from their
+single canonical source. This is an implementation change awaiting final package
+and live verification, not a release certificate.
+
+The module ownership principles below remain the design reference. Versioned
+Alpha descriptions, historical retention counts and Reporter mini-map references
+are not current implementation certificates. The installed player addon has
+runtime projections and a separate optional DevTools path that must be reconciled
+into canonical source under OVR-01/11 in `PRODUCT_ROADMAP.md`.
+
+The overhaul keeps one MatchRuntime and Store, makes FactStore/BoardState faithful
+read-only projections, separates preferred target from observed vulnerability,
+filters assignment feasibility before scoring, and uses one Commander play
+lifecycle/deadline across execution and presentation. These are required changes,
+not assertions that the current source already meets them. Native `Shift-M`
+remains the battlefield map; Reporter detail belongs on the existing board.
+Current memory/retention targets and verification are in the active roadmap;
+promotion remains governed by `RELEASE_READINESS.md`.
+
 ## Runtime flow
 
 1. `MatchRuntime` owns battleground lifecycle, active events, and the single live ticker.
@@ -99,6 +122,15 @@ The Scout mockup documents the workflow between compact and expanded states; it 
 
 ## Data confidence
 
+Local execution cues follow [ADR-004](docs/architecture/ADR-004-local-countdown.md):
+an explicit leader start records one deadline; every local surface projects it.
+This cue is neither canonical ActivePlay identity nor a remote synchronized timer.
+
+Scenario module generation follows
+[ADR-002](docs/architecture/ADR-002-scenario-generation.md): Lua templates own
+executable lookup contracts, and the knowledge gate compares isolated regenerated
+modules against canonical Data output. Runtime loads only those generated modules.
+
 - Public score/objective widgets: authoritative when sanitized successfully.
 - Scoreboard identity: roster-known, not proof of visibility.
 - Target, focus, mouseover, nameplate, or ally-target evidence: observed/last-seen.
@@ -108,6 +140,11 @@ The Scout mockup documents the workflow between compact and expanded states; it 
   remains unknown unless Blizzard exposes a separate permitted source.
 - Murlok snapshot: dated advisory specialization context, never individual-player truth.
 - Missing cooldown, aura, trinket, health, or position: unknown.
+- Evidence freshness is checked at construction and use; future/invalid time
+  cannot become current truth. See [ADR-005](docs/architecture/ADR-005-evidence-time.md).
+- Friendly connection/death/visibility retain public true/false/unknown values;
+  executable availability requires explicit alive and online readings. See
+  [ADR-003](docs/architecture/ADR-003-friendly-availability.md).
 - Preview fixtures: visual review only and always labeled not live.
 
 ## Extending a map

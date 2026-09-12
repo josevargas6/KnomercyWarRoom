@@ -1,10 +1,19 @@
 # Battleground Verification Matrix
 
-This matrix is the release authority for map-specific behavior. A battleground
-is not considered verified because its window opens; its sensor truth,
+This matrix records map-specific verification requirements. Release decisions
+belong to `RELEASE_READINESS.md`; active tasks and expanded map acceptance belong
+to `PRODUCT_ROADMAP.md`. A battleground is not verified because its window opens;
+its sensor truth,
 prediction, command, assignment, presentation, and match result must all agree.
 
-## Automated coverage
+The September 4 audit did not clear live map gates. These ten profiles are existing
+support declarations, not a verified current rated queue pool. Confirm map/bracket
+availability before release. A partial scoreboard with eight players per side
+must not establish Blitz. Standard and Blitz require separate rules and evidence.
+The roadmap retains at least 20 reviewed matches per advertised map for stable
+strategic certification; one/three-match milestones below are preliminary only.
+
+## Historical automated coverage and ongoing invariants
 
 The Alpha 28 `/kwr test` and `tests/smoke.lua` suite contains 275 deterministic
 diagnostics and must prove:
@@ -32,11 +41,21 @@ team side, bracket, score state, or result. One clean match gives initial
 coverage. Three clean matches per map provide beta confidence. Stable promotion
 requires both winning and losing live evidence for every map family.
 
+Do not begin a certification record from a dirty local build. Before queueing,
+record the clean candidate tag/commit, Commander and Sentinel ZIP SHA-256 values,
+source-manifest digest, Retail client build, locale, resolution and UI scale.
+Keep the matching archive, install receipt and SavedVariables backup with the
+field record. A screenshot without these fields cannot clear a release gate.
+Run `tools/client-build-preflight.ps1` against that exact installation and retain
+its JSON receipt with the match record. Its metadata pass is necessary context;
+it does not substitute for an in-game load or API-behavior observation.
+
 Use this compact record for each match:
 
 ```text
-Date / version:
-Map / bracket:
+Date / candidate tag+commit / Commander SHA-256 / Sentinel SHA-256:
+Retail client build / locale / resolution / UI scale:
+Map / bracket / queue type:
 Assigned team / native faction:
 Result / final score:
 Score and objectives: PASS / FAIL
@@ -45,10 +64,19 @@ Strategy and assignments: PASS / FAIL
 Roster and specializations: PASS / FAIL
 Quick Call: PASS / FAIL / NOT TESTED
 AAR: PASS / FAIL
-BugSack errors:
-CPU / memory / FPS:
-Evidence: screenshots + /kwr verify + /kwr evidence
+BugSack errors / taint / blocked actions:
+CPU / memory / FPS / event-to-display sample:
+Evidence: screenshots + /kwr verify + /kwr explain + /kwr perf + /kwr evidence + AAR
 ```
+
+The exact in-game release gates are: one clean install and rollback rehearsal;
+complete win and loss evidence for each advertised map family and each supported
+Standard/Blitz branch; native/mercenary/cross-faction team identity; carrier and
+objective transitions; command replacement/expiry; secure click and Quick Call
+safety through combat; 30-minute memory/FPS/CPU/event-to-display samples; no
+taint or blocked actions; match-end/exit AAR; and, if Sentinel transport is
+advertised, a multi-client leadership/reload/packet-loss session. Any failure
+creates a candidate-bound defect; it is not silently waived by a later match.
 
 | Battleground | Unique mechanic KWR must answer | Automated proof | Live proof status |
 | --- | --- | --- | --- |

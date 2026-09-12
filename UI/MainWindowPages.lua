@@ -308,7 +308,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             .. (nextRecruit and ("\nNEXT: " .. nextRecruit.label) or ""))
     else
         if teamfight and teamfight.displayEligible == true then
-            local card = KWR.TeamfightCommandCard:Build(teamfight)
+            local card = KWR.TeamfightCommandCard:Build(teamfight, state)
             page.nextCard.value:SetText(table.concat(card.lines or KWR.CommandView:CompactPrimaryLines(
                 state, "Play objective"), "\n"))
         else
@@ -1474,7 +1474,8 @@ function MainWindowPages:RenderIntel(page, state, helpers)
     end
     page.historyCard.note:SetText(string.format("Showing latest %d of %d matches",
         math.min(#page.historyCard.rows, #history), #history))
-    local season2Lines = KWR.Season2Readiness and KWR.Season2Readiness:SummaryLines(state) or {}
+    local season2Lines = KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        and KWR.Season2Readiness and KWR.Season2Readiness:SummaryLines(state) or {}
     page.insightCard.value:SetText(table.concat({
         season2Lines[1] or "SEASON 2 HOTFIX WATCH  UNAVAILABLE",
         season2Lines[2] or "Advisory status unavailable.",

@@ -15,6 +15,7 @@ $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
 $distributionZip = Join-Path $outputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $outputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
+$developerToolsZip = Join-Path $outputRoot ("KWR_DevTools-{0}.zip" -f $version)
 $sentinelRoot = Join-Path $root "KWRSentinel"
 $sentinelZip = $null
 if (Test-Path -LiteralPath $sentinelRoot) {
@@ -34,7 +35,7 @@ $provenanceFile = Join-Path $outputRoot ("KWR_{0}_BUILD_PROVENANCE.json" -f $saf
 $reproducibilityFile = Join-Path $outputRoot ("KWR_{0}_REPRODUCIBILITY.json" -f $safeVersion)
 $packageAuditFile = Join-Path $outputRoot ("KWR_{0}_PACKAGE_AUDIT.json" -f $safeVersion)
 
-foreach ($path in @($distributionZip, $developerZip, $hashFile, $developerHashFile, $sourceManifestFile, $provenanceFile)) {
+foreach ($path in @($distributionZip, $developerZip, $developerToolsZip, $hashFile, $developerHashFile, $sourceManifestFile, $provenanceFile)) {
     if (-not $path) {
         continue
     }
@@ -387,6 +388,22 @@ try {
     $distributionExtract = Join-Path $tempRoot "distribution"
     Expand-Archive -LiteralPath $distributionZip -DestinationPath $distributionExtract
     $distributionAddonRoot = Join-Path $distributionExtract "KnomercyWarRoom"
+    $developerToolsExtract = Join-Path $tempRoot 'developer-tools'
+    Expand-Archive -LiteralPath $developerToolsZip -DestinationPath $developerToolsExtract
+    $developerToolsAddonRoot = Join-Path $developerToolsExtract 'KWR_DevTools'
+    $expectedDeveloperToolsRoot = Join-Path $tempRoot 'expected-developer-tools'
+    New-DeveloperToolsStage -SourceRoot $root -DestinationRoot $expectedDeveloperToolsRoot
+    $actualToolsManifest = @(Get-DirectoryManifestEntries -RootPath $developerToolsAddonRoot)
+    $expectedToolsManifest = @(Get-DirectoryManifestEntries -RootPath $expectedDeveloperToolsRoot)
+    if ((Get-ManifestDigest -Entries $actualToolsManifest) -ne
+        (Get-ManifestDigest -Entries $expectedToolsManifest)) {
+        throw 'Extracted Developer Tools differs from its canonical source transform.'
+    }
+    $actualToolsDigest = Get-ManifestDigest -Entries $actualToolsManifest
+    $toolsEntries = @(Get-ZipEntries $developerToolsZip)
+    if (@($toolsEntries | Where-Object { $_ -notlike 'KWR_DevTools/*' }).Count -gt 0) {
+        throw 'Developer Tools archive contains entries outside its addon root.'
+    }
     $distributionTocPath = Join-Path $distributionExtract "KnomercyWarRoom\KnomercyWarRoom.toc"
     $distributionTocText = Get-Content -LiteralPath $distributionTocPath -Raw
     foreach ($entry in Get-ReleaseExcludedEntries) {
@@ -399,6 +416,17 @@ try {
     }
 
     $fengari = Get-FengariInvocation
+    $developerToolsHarness = Join-Path $tempRoot 'developer-tools-test.lua'
+    $toolsTestPath = (Join-Path $root 'tests\developer-tools.lua').Replace('\', '/')
+    $toolsRootPath = $developerToolsAddonRoot.Replace('\', '/')
+    $commanderRootPath = $distributionAddonRoot.Replace('\', '/')
+    Set-Content -LiteralPath $developerToolsHarness -Encoding UTF8 -Value @(
+        "arg = { [[$toolsRootPath]], [[$commanderRootPath]], [[$version]] }",
+        "dofile([[$toolsTestPath]])"
+    )
+    $developerToolsExit = Invoke-FengariScript -Invocation $fengari `
+        -ScriptPath $developerToolsHarness -ExpectedMarker 'KWR_DEVTOOLS_PASS'
+    if ($developerToolsExit -ne 0) { throw 'Extracted Developer Tools lifecycle test failed.' }
     $distributionSmokeHarness = Join-Path $tempRoot "distribution-smoke.lua"
     $distributionSoakHarness = Join-Path $tempRoot "distribution-soak.lua"
     New-PackageHarnessScript -Path $distributionSmokeHarness -AddonRoot $distributionAddonRoot -DriverRoot (Join-Path $root "tests") -ScriptPath (Join-Path $root "tests\smoke.lua")
@@ -465,6 +493,10 @@ $developerActual = Get-KwrFileSha256 -LiteralPath $developerZip
 if ($developerHashes[$developerName] -ne $developerActual) {
     throw "SHA-256 mismatch for $developerName"
 }
+$developerToolsName = [IO.Path]::GetFileName($developerToolsZip)
+if ($developerHashes[$developerToolsName] -ne (Get-KwrFileSha256 -LiteralPath $developerToolsZip)) {
+    throw "SHA-256 mismatch for $developerToolsName"
+}
 
 $sourceManifest = Get-Content -LiteralPath $sourceManifestFile -Raw | ConvertFrom-Json
 $provenance = Get-Content -LiteralPath $provenanceFile -Raw | ConvertFrom-Json
@@ -474,6 +506,10 @@ if (Test-Path -LiteralPath $reproducibilityFile) {
 }
 if (-not $sourceManifest.distribution.digest) {
     throw "Source manifest is missing the distribution digest."
+}
+if ($sourceManifest.developerTools.digest -ne $actualToolsDigest -or
+    $sourceManifest.developerTools.entryCount -ne $actualToolsManifest.Count) {
+    throw 'Source manifest does not match the extracted Developer Tools package.'
 }
 if (-not $provenance.outputArtifacts -or $provenance.outputArtifacts.Count -lt 2) {
     throw "Build provenance is missing artifact summaries."
@@ -529,7 +565,7 @@ Write-Output "Developer entries: $($developerEntries.Count)"
 if ($hasSentinel) {
     Write-Output "Sentinel entries: $($sentinelEntries.Count)"
 }
-$hashCount = if ($hasSentinel) { 3 } else { 2 }
+$hashCount = if ($hasSentinel) { 4 } else { 3 }
 Write-Output "Hashes verified: $hashCount"
 Write-Output "Extracted distribution smoke and soak: passed"
 Write-Output "Extracted developer smoke and soak: passed"
@@ -546,10 +582,13 @@ $packageAudit = [pscustomobject]@{
     outputDirectory = $outputRoot
     distributionEntries = $distributionEntries.Count
     developerEntries = $developerEntries.Count
+    developerToolsEntries = $actualToolsManifest.Count
+    developerToolsDigest = $actualToolsDigest
     sentinelEntries = if ($hasSentinel) { $sentinelEntries.Count } else { $null }
     hashesVerified = $hashCount
     extractedDistributionRuntime = "PASS"
     extractedDeveloperRuntime = "PASS"
+    extractedDeveloperToolsLifecycle = "PASS"
     reproducibilityCheck = if ($SkipReproducibilityCheck) { "SKIPPED_BY_REQUEST" } else { "PASS_COMPATIBLE" }
 }
 Write-JsonFile -Path $packageAuditFile -Data $packageAudit

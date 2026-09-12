@@ -1,5 +1,159 @@
 # Changelog
 
+- In-progress KWR-297 source candidate: new complete commander HUD separates
+  strategic NOW, NEXT, duties, local fight and CC; measures wrapped full-name
+  text and adapts its width. Card clicks record reversible manual follow-through
+  in AAR, without inventing delivery or success. New learning contributions can
+  be retracted on qualified correction. Native UI, full consumer integration,
+  cross-match byte budgets and the broader release program remain open.
+
+- Local field repair `alpha12-fieldfix-20260909-1`: Sentinel shares the production
+  score-evidence gate; unavailable, unresolved and expired scores stay UNKNOWN.
+  New verification/AAR captures carry a candidate ID. Field instructions explain
+  Diagnostic mode and per-call attestation. External build report paths remain
+  usable, readiness gates stay honest, and host timings use a real clock.
+
+- Store publication now owns copied state branches and uses deterministic listener
+  delivery. Formation cache invalidation includes rated/blitz context and retains
+  caller-safe copies.
+
+- Encounter history now uses stable player identity, bounded last-seen retention,
+  expiry and recovery quarantine. Repeated refreshes update the existing record
+  rather than reallocating it.
+
+- Added a narrow public execution observation: an explicitly delivered command
+  can record a matching local BG-system objective assault. It remains activity
+  evidence only, with no match-result credit or learning effect.
+
+- Team AAR now defaults to bounded coaching history, with detailed diagnostic
+  capture opt-in for each new match. Fixed active timeline trimming, bounded
+  objective deduplication, preserved opening/latest calls and forced the first
+  call into the initial checkpoint. Missing telemetry is labeled unavailable.
+
+- Offline learning repair: preserve unverified legacy aggregates, isolate team/
+  bracket/patch/plan contexts, count observed decision episodes, and prevent
+  duplicate training across reloads and ledger eviction. Damaged and future
+  saved data stays preserved. Public execution producers and final release
+  certification remain in progress.
+
+- Offline overhaul checkpoint: added explicit per-call delivery confirmation via
+  `/kwr delivered`, preserved confirmation in AAR without execution credit,
+  bounded active checkpoints to 30 seconds, and normalized legacy AAR credit
+  while retaining the original interpretation for inspection. Field-candidate
+  and stable-release gates remain open.
+
+KWR-281 offline recovery now separates generated recommendation diagnostics from
+delivery certification. Generated calls remain unscored for field delivery;
+new AAR reviews and learning intake require separately bound delivery and public
+execution evidence. Saving feedback or recording a victory cannot supply that
+evidence. Existing churn diagnostics remain available. Delivery capture,
+retention and legacy-learning migration are still in progress.
+
+KWR-290 separates pressure/watch targets from observed kill commitments. A
+current observed window is now required for `killTarget`, a team KILL, execution
+primary target and KILL reticle; pressure remains available without pretending it
+is a kill. The dirty interim `observed-kill-intent-20260907-package` passed
+extracted player/developer runtime, knowledge, lifecycle, transport and four
+ZIP-hash checks; it skips clean reproducibility and is not installed or stable
+release evidence.
+
+KWR-289 rejects future/invalid evidence times and invalid TTLs, retains observed
+false/zero values, and rechecks expiry when evidence is consumed. Source
+regressions and the real aggressive-commit truth gate pass. The dirty interim
+`evidence-freshness-20260907-package` also passed extracted player/developer
+runtime, knowledge, lifecycle, transport and four-ZIP-hash checks; it skipped
+clean reproducibility and is not installed or stable-release evidence.
+
+KWR-288 replaces invented five-second cues with an explicit local leader-started
+countdown (`/kwr countdown 1..10`, `/kwr countdown cancel`). Unstarted calls stay
+on leader call; changed plans, match state and expiry cancel timing. Cards,
+execution text and local kill-call timing use one deadline, and delayed speech
+rejects obsolete countdown text. This does not synchronize remote clients.
+
+Implementation in progress — 2026-09-05 (KWR-281/282): generate a matching optional
+Developer Tools package from canonical modules while retaining production truth
+gating. Recovered developer-mode controls and corrected their Options layout.
+The local recovery packages pass extracted startup, lifecycle and bounded-state
+tests; clean reproducibility and field certification remain open. Subsequent
+source fixes reject malformed sync fields/encoding, read public cast/channel
+spell IDs correctly, and preserve marker retry time across frame rates. These
+changes do not update the installed addon or promote a stable release.
+
+KWR-283/284 source regressions now retain canonical objective rows, preserve
+original observation time, separate preferred targets from observed killability,
+exclude known unavailable actors and remove player-name capability bonuses.
+Explicit Solo RBG APIs identify Blitz; an 8+8 scoreboard subset remains a hint.
+Source smoke and validation pass; the next extracted package and live gates remain.
+
+The interim `audited-regressions-20260905-02` package subsequently passed the
+eight-regression extraction gate. KWR-285 now centralizes routine memory polling
+and reports measured/cached/unavailable status with the last successful sample
+age. Its source and `memory-sampling-20260905-package` extracted tests pass;
+real CPU/FPS and final candidate certification remain open.
+
+KWR-286 restores generator parity for the three scenario modules through Lua
+build templates and an isolated regeneration gate. Full and compact map/phase
+lookups share deterministic indexes; existing expert season eligibility remains.
+This is build/runtime consistency work, not new field evidence or a deployment.
+The combined `generation-availability-20260906-package` subsequently passed its
+extracted runtime/knowledge gate and four ZIP checksums.
+
+KWR-287 preserves unknown friendly connection/death/visibility readings instead
+of defaulting to online/alive/visible. Local control assignments require known
+availability and role; unknown roles no longer inherit damage-role base scores.
+The later scoreboard-repair follow-up preserves known offline and unknown unit
+state; its source smoke passes but it awaits the next extracted package.
+
+Implementation in progress — 2026-09-04 (KWR-281 / OVR-01): preserve source,
+installed addons and SavedVariables; begin selective recovery of installed
+improvements. API calls now preserve sparse/trailing-nil results without a
+temporary result table. Nameplate captions use plain holders, and layout strata
+changes defer until combat ends. Regression coverage checks these contracts.
+Source reconciliation and candidate certification remain open; no deployed
+version or stable-release status changed.
+
+Documentation update — 2026-09-04: completed the source/installed-runtime audit
+and replaced the active overhaul sequence in `PRODUCT_ROADMAP.md` with 22 ordered
+work packages. Eight defects reproduce in both runtimes; existing automated
+checks still pass. Release/QA/design/meta notes now distinguish those blockers,
+simulated timing and unverified live/package evidence. This documentation change
+does not implement the fixes, bump the addon version or certify a release.
+
+## 6.1.1-alpha.12 - 2026-09-01
+
+- Reconcile Reporter identities across name/key-to-GUID enrichment so one
+  enemy remains one bounded movement track instead of inflating pressure and
+  arrival analysis.
+- Hold an equivalent resolved ActivePlay briefly until live score, objective,
+  carrier/location, or roster truth changes; terminal calls no longer recycle
+  as a fresh `NO_ACTIVE_PLAY` command on tactical refreshes.
+- Derive bounded AAR command evidence from real score, objective, team, and
+  terminal-play sources when a command omitted its explicit evidence list.
+- Replace tactical full-snapshot deep copies with copy-on-write enemy rows and
+  label fresh versus historical memory samples in performance telemetry.
+- Adds adaptive non-critical strategic and tactical refresh backpressure when
+  live P95 timings exceed the performance budget; score, flag, and match-end
+  truth remain immediate.
+- Tightens persistent and runtime retention caps, samples live memory sooner,
+  and drops only derived presentation caches under hard pressure.
+- Adds regression coverage for high-cost tactical backpressure and hard-cap
+  cache trimming.
+
+## 6.1.1-alpha.11 - 2026-08-31
+
+- Retire terminal ActivePlay state before composing its successor, and make
+  match completion an explicit complete/no-active-play result.
+- Convert observed Seething Shore fissure and Azerite collection messages into
+  bounded cycle truth and actionable location calls without ownership inference.
+- Gate urgent reassignment calls on a verified coverage break, retain coherent
+  HOLD decisions through settle noise, and reuse bounded tactical observations
+  for non-critical event bursts.
+- Synchronize performance and retention memory reporting to one fresh sample,
+  enforce the documented hard-cap degradation state, and show VERIFY SCORE
+  instead of an invented scoring path at an unknown 0-0 opening.
+- Prevent duplicate combat-roster identities during secure rebinding by holding
+  ambiguous unit bindings for a safe post-combat refresh.
+
 ## 6.1.1-alpha.10 - 2026-08-31
 
 - Make Combat Focus the default live battleground presentation while retaining

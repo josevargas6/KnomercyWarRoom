@@ -10,7 +10,6 @@ function Planner:Plan(snapshot)
     local problems = KWR.EnemyProblemDetector:Detect(localState)
     local assignments = KWR.AssignmentOptimizer:Optimize(localState, problems, snapshot)
     local killTarget = KWR.KillTargetSelector:Select(problems, assignments)
-    local countdown = KWR.CountdownState:Build(5)
     local authoritative = snapshot
         and snapshot.context
         and snapshot.context.inPvP == true
@@ -30,12 +29,11 @@ function Planner:Plan(snapshot)
         title = "LOCAL TEAMFIGHT CALL",
         assignments = assignments,
         killTarget = killTarget,
-        countdown = countdown,
         problems = problems,
         boardRevision = board and board.revision,
         boardSummary = board and board.summary,
         optimizer = KWR.AssignmentOptimizer.lastSearch,
-        confidence = (#assignments >= 2 and killTarget) and "HIGH"
+        confidence = killTarget and killTarget.confidence
             or (#assignments > 0 and "MEDIUM" or "UNKNOWN"),
         generatedAt = KWR.Util:Now(),
         authoritative = authoritative == true,
@@ -46,10 +44,14 @@ function Planner:Plan(snapshot)
             automation = "FORBIDDEN",
         },
     }
+    plan.countdown = KWR.CountdownState:Build(snapshot, plan)
+    local window = KWR.CountdownState:Text(plan.countdown)
     for _, assignment in ipairs(assignments) do
+        assignment.window = window
         assignment.debugReasons = KWR.CommandReasonBuilder:ForAssignment(assignment)
     end
     if killTarget then
+        killTarget.window = window
         killTarget.debugReasons = KWR.CommandReasonBuilder:ForAssignment({
             problemReasons = killTarget.reasons,
             reasons = { "+ killable target selected after support assignments" },

@@ -205,7 +205,7 @@ local function localFightCall(snapshot, current)
     result.what = kill.mode == "PRESSURE" and "PRESS" or "KILL"
     result.where = safeLocation(snapshot.context and snapshot.context.mapKey,
         kill.location, result.what)
-    result.when = "NOW"
+    result.when = kill.mode == "PRESSURE" and "NOW" or KWR.CountdownState:Text(execution.countdown)
     result.localTarget = KWR.Util:ShortName(kill.target)
     result.source = "LOCAL_FIGHT"
     return result
@@ -248,6 +248,11 @@ function CommandView:FightNow(state)
     local definition = KWR.Maps and KWR.Maps:Get(context.mapKey)
     local shortMap = definition and definition.short or "BG"
     local score = snapshot.score or {}
+    local scoreKnown = score.source == "ui_widget" or score.source == "preview_synthetic"
+        or score.authoritative == true
+        or ((KWR.Util:Number(score.max, 0) or 0) > 0
+            and ((KWR.Util:Number(score.friendly, 0) or 0) > 0
+                or (KWR.Util:Number(score.enemy, 0) or 0) > 0))
     local projection, projectionTone = projectionText(prediction.status or command.status)
     local defense = KWR.Util:Text(response.stayerText, "", 160)
     if defense == "" or defense == "Assigned defenders" then
@@ -261,13 +266,25 @@ function CommandView:FightNow(state)
             KWR.Util:Number(score.enemy, 0) or 0),
         projection = projection,
         projectionTone = projectionTone,
-        winPath = winPath(context.kind, prediction.status or command.status, prediction),
-        nextObjective = nextCall.where ~= "FIELD" and nextCall.where or current.where,
+        winPath = scoreKnown and winPath(context.kind,
+            prediction.status or command.status, prediction) or "VERIFY SCORE",
+        -- A strategic call may name more than one objective. Keep that whole
+        -- instruction readable on compact surfaces instead of abbreviating
+        -- only exact single-node names.
+        nextObjective = self:CompactMapText(context.mapKey,
+            nextCall.where ~= "FIELD" and nextCall.where
+                or (scoreKnown and current.where or "WAIT"), "WAIT", 120),
         current = current,
         next = nextCall,
         defense = KWR.Util:Upper(defense, "ASSIGNED DEF", 72),
         offense = current.who .. " -> " .. current.where,
     }
+end
+
+function CommandView:StrategicWinPath(state, scoreKnown)
+    if not scoreKnown then return "VERIFY SCORE" end
+    local snapshot, command, prediction = state.snapshot or {}, state.command or {}, state.prediction or {}
+    return winPath((snapshot.context or {}).kind, prediction.status or command.status, prediction)
 end
 
 function CommandView:DisplayCallVerb(verb, context)

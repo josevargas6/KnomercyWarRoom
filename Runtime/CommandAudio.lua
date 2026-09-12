@@ -28,12 +28,40 @@ function Audio:SetEnabled(enabled)
 end
 
 function Audio:CanSpeak(packet)
+    if type(packet) == "table" and packet.countdown and packet.countdown.id then
+        local projected = KWR.CountdownState:Project(packet.countdown)
+        if projected.state == "UNTIMED" or projected.text ~= packet.countdown.text then return false end
+    end
     return self:IsEnabled()
         and KWR.SafeSpeechAdapter:IsAvailable()
         and type(packet) == "table"
         and packet.audible == true
         and packet.authoritative == true
         and KWR.Util:Text(packet.spokenText, "", 600) ~= ""
+end
+
+function Audio:IsCurrent(packet)
+    -- A queued voice callback may outlive the Store revision that made it.
+    -- Old packets lacking lifecycle identity remain usable for legacy/manual
+    -- callers, but every production builder packet binds to exact command ID
+    -- and revision before it is allowed to speak.
+    if type(packet) ~= "table" then return false end
+    local commandId = KWR.Util:Text(packet.commandId, "", 192)
+    local revision = KWR.Util:Number(packet.commandRevision, nil)
+    if commandId == "" or revision == nil then return true end
+    local state = KWR.Store and KWR.Store.Get and KWR.Store:Get() or nil
+    local command = state and state.command or nil
+    if type(command) ~= "table" or command.commandId ~= commandId
+        or command.commandRevision ~= revision then
+        return false
+    end
+    local current = state.snapshot and state.snapshot.executionCommand or nil
+    local signature = KWR.Util:Text(packet.signature, "", 240)
+    if type(current) == "table" and signature ~= ""
+        and KWR.Util:Text(current.signature, "", 240) ~= signature then
+        return false
+    end
+    return true
 end
 
 function Audio:SpeakPacket(packet, force)
@@ -49,8 +77,9 @@ function Audio:SpeakPacket(packet, force)
         KWR.Util:Number(settings.minimumInterval, 6) or 6, 2, 30)
     local now = KWR.Util:Now()
     local delay = force and 0 or math.max(0, minimum - (now - (self.lastSpokenAt or 0)))
-    local function speak()
-        if token ~= Audio.pendingToken or not Audio:CanSpeak(packet) then return end
+    local function speak(requireCurrent)
+        if token ~= Audio.pendingToken or (requireCurrent and not Audio:IsCurrent(packet))
+            or not Audio:CanSpeak(packet) then return end
         KWR.SafeSpeechAdapter:Stop()
         local ok = KWR.SafeSpeechAdapter:Speak(packet.spokenText, settings)
         if ok then
@@ -59,10 +88,10 @@ function Audio:SpeakPacket(packet, force)
         end
     end
     if delay > 0 and C_Timer and type(C_Timer.After) == "function" then
-        C_Timer.After(delay, speak)
+        C_Timer.After(delay, function() speak(true) end)
         return true, "queued"
     end
-    speak()
+    speak(false)
     return true, "spoken"
 end
 

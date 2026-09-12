@@ -29,7 +29,7 @@ function Builder:Summary(plan)
     end
     if plan and plan.killTarget then
         parts[#parts + 1] = KWR.CommandVocabulary:FormatAssignment(
-            "Team", "Kill", plan.killTarget.target) .. " in 5"
+            "Team", "Kill", plan.killTarget.target) .. " - " .. KWR.CountdownState:Text(plan.countdown)
     end
     return table.concat(parts, " | ")
 end

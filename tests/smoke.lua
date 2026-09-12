@@ -9,6 +9,15 @@ CLASS_ICON_TCOORDS = {
     PRIEST = { 0.25, 0.5, 0, 0.25 },
     MAGE = { 0.5, 0.75, 0, 0.25 },
     DRUID = { 0.75, 1, 0, 0.25 },
+    ROGUE = { 0.5, 0.75, 0, 0.25 },
+    HUNTER = { 0, 0.25, 0.25, 0.5 },
+    SHAMAN = { 0.25, 0.5, 0.25, 0.5 },
+    WARLOCK = { 0.75, 1, 0.25, 0.5 },
+    PALADIN = { 0, 0.25, 0.5, 0.75 },
+    DEATHKNIGHT = { 0.25, 0.5, 0.5, 0.75 },
+    MONK = { 0.5, 0.75, 0.5, 0.75 },
+    DEMONHUNTER = { 0.75, 1, 0.5, 0.75 },
+    EVOKER = { 0, 0.25, 0.75, 1 },
 }
 KWR_DB = {
     schemaVersion = 60001,
@@ -174,6 +183,14 @@ Object.__index = function(tableValue, key)
         return function(self, ...)
             self.vertexColor = { ... }
         end
+    elseif key == "SetTexture" then
+        return function(self, value) self.texture = value end
+    elseif key == "GetVerticalScroll" then
+        return function(self) return rawget(self, "verticalScroll") or 0 end
+    elseif key == "SetVerticalScroll" then
+        return function(self, value) self.verticalScroll = value end
+    elseif key == "GetVerticalScrollRange" then
+        return function(self) return rawget(self, "verticalScrollRange") or 0 end
     elseif key == "GetWidth" then
         return function(self) return rawget(self, "width") or 0 end
     elseif key == "GetHeight" then
@@ -189,7 +206,11 @@ Object.__index = function(tableValue, key)
     elseif key == "GetFrameStrata" then
         return function(self) return self.frameStrata end
     end
-    return function() end
+    -- Unknown frame methods may be no-ops, but absent data fields must be nil
+    -- like native frames. Treating every missing field as a function masks
+    -- initialization bugs and breaks optional projection/click state.
+    if type(key) == "string" and key:match("^[A-Z]") then return function() end end
+    return nil
 end
 
 function CreateFrame(frameType, name, parent, template)
@@ -437,6 +458,7 @@ local files = {
     "Core/Addon.lua",
     "Core/BuildInfo.lua",
     "Core/CommandView.lua",
+    "Core/CommanderCardView.lua",
     "Core/Util.lua",
     "Core/CommandReview.lua",
     "Core/Store.lua",
@@ -499,6 +521,7 @@ local files = {
     "State/DRTracker.lua",
     "Intelligence/EnemyProblemDetector.lua",
     "Intelligence/AssignmentScorer.lua",
+    "Intelligence/AssignmentFeasibility.lua",
     "Intelligence/AssignmentOptimizer.lua",
     "Intelligence/KillTargetSelector.lua",
     "Intelligence/CommandReasonBuilder.lua",
@@ -525,6 +548,8 @@ local files = {
     "Runtime/Learning.lua",
     "Runtime/SafetyMonitor.lua",
     "Runtime/AAR.lua",
+    "Runtime/CommandFollowthrough.lua",
+    "Runtime/TruthContract.lua",
     "Runtime/Verification.lua",
     "Runtime/Season2Readiness.lua",
     "Runtime/MemoryBudget.lua",
@@ -554,6 +579,7 @@ local files = {
     "UI/CombatRosterState.lua",
     "UI/CombatRoster.lua",
     "UI/HUD.lua",
+    "UI/CommanderCard.lua",
     "UI/MainWindowReports.lua",
     "UI/MainWindowShell.lua",
     "UI/MainWindowLauncher.lua",
@@ -570,6 +596,8 @@ local releaseOnly = rawget(_G, "KWR_TEST_RELEASE_ONLY") == true
 local optionalFiles = {
     ["Core/Diagnostics.lua"] = true,
     ["Runtime/Preview.lua"] = true,
+    ["Runtime/Verification.lua"] = true,
+    ["Runtime/Season2Readiness.lua"] = true,
 }
 function ResolveAddonPath(path)
     if (rawget(_G, "KWR_TEST_ROOT") or ".") == "." then
@@ -606,6 +634,36 @@ for _, path in ipairs(files) do
         chunk("KnomercyWarRoom", namespace)
         namespace = _G.KWR or namespace
     end
+end
+
+do
+    local function pack(...)
+        return { n = select("#", ...), ... }
+    end
+    local tuple = pack(KWR.Util:Call(function()
+        return "cast", nil, 42, nil, false, nil, "cast-id", false, 12345, nil
+    end))
+    assert(tuple.n == 10 and tuple[1] == "cast" and tuple[2] == nil
+        and tuple[3] == 42 and tuple[5] == false and tuple[7] == "cast-id"
+        and tuple[8] == false and tuple[9] == 12345 and tuple[10] == nil,
+        "API wrapper changed sparse return positions or lost a trailing nil.")
+    assert(pack(KWR.Util:Call(function() end)).n == 0,
+        "API wrapper invented a result for a function with zero returns.")
+    assert(KWR.Util:Call(function() return false end) == false,
+        "API wrapper converted a successful false result into failure.")
+    assert(KWR.Util:Call(function() error("expected API failure") end) == nil
+        and KWR.Util:Call(nil) == nil,
+        "API wrapper failed to contain an unavailable or throwing API.")
+end
+
+-- Source tests explicitly exercise the bundled developer runtime. Extracted
+-- player tests retain the production channel and cannot use synthetic preview.
+if not releaseOnly then KWR.BuildInfo.channel = "local" end
+if releaseOnly then
+    assert(KWR.Verification and type(KWR.Verification.Contract) == "function"
+        and KWR.Verification.CurrentReport == nil and KWR.Preview == nil
+        and KWR.Season2Readiness == nil,
+        "Player package must keep the truth gate and exclude developer modules.")
 end
 
 local bootstrap = assert(_G.KWR_BootstrapFrame, "Bootstrap frame was not created.")
@@ -743,6 +801,23 @@ do
         and type(KWR.db.assignmentOverrides.players) == "table"
         and type(KWR.db.opponentModels.players) == "table",
         "SavedVariables type normalization did not recover malformed fields safely.")
+    KWR_DB = savedDb
+    KWR:InitializeDatabase()
+end
+do
+    local savedDb = KWR.Util:Copy(KWR_DB)
+    local history = {}
+    for index = 1, 12 do history[index] = { id = "loaded-history-" .. tostring(index) } end
+    KWR_DB = { schemaVersion = KWR.schemaVersion, journal = { history = history } }
+    KWR:InitializeDatabase()
+    assert(#KWR.db.journal.history == 8
+        and KWR.db.journal.history[1].id == "loaded-history-5"
+        and KWR.db.journal.history[8].id == "loaded-history-12",
+        "Current-schema SavedVariables loaded an unbounded or wrongly ordered AAR history.")
+    KWR:InitializeDatabase()
+    assert(#KWR.db.journal.history == 8
+        and KWR.db.journal.history[1].id == "loaded-history-5",
+        "AAR history load bound was not idempotent.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
 end
@@ -1136,6 +1211,25 @@ do
     KWR.Util.Now = savedNow
 end
 do
+    -- A same-map rematch has a different instanceID. It is not a continuation
+    -- of the old objective state, even when map and PvP phase are identical.
+    KWR.ObjectiveIntel:Reset("WSG:2107:111:PVP:LIVE")
+    KWR.ObjectiveIntel.carriers["Alliance Flag"] = {
+        objective = "Alliance Flag", kind = "FLAG", player = "PriorCarrier",
+        playerKey = "priorcarrier", source = "BG_SYSTEM",
+    }
+    KWR.ObjectiveIntel.timers["Farm"] = {
+        objective = "Farm", assaulter = "PriorAssault", startedAt = 10, endsAt = 80,
+        source = "BG_SYSTEM",
+    }
+    local rematch = { context = { mapKey = "WSG", mapID = 2107, instanceID = 222,
+        inPvP = true }, objectives = { rows = {}, flags = {} }, roster = {}, enemies = {} }
+    KWR.ObjectiveIntel:Apply(rematch)
+    assert(#rematch.objectives.carriers == 0 and #rematch.objectives.timers == 0
+        and next(KWR.ObjectiveIntel.carriers) == nil and next(KWR.ObjectiveIntel.timers) == nil,
+        "ObjectiveIntel carried carrier or timer state into a same-map rematch.")
+end
+do
     KWR.ObjectiveIntel:Reset("WSG:true")
     KWR.ObjectiveIntel.carriers["Alliance Flag"] = {
         objective = "Alliance Flag", kind = "FLAG", color = "Alliance",
@@ -1168,11 +1262,17 @@ do
     }
     KWR.ObjectiveIntel:ObserveMessage("The Alliance flag was returned to its base!", "WSG")
     assert(KWR.ObjectiveIntel.carriers["Alliance Flag"] == nil
-        and KWR.ObjectiveIntel.carriers["Horde Flag"] ~= nil,
+        and KWR.ObjectiveIntel.carriers["Horde Flag"] ~= nil
+        and KWR.ObjectiveIntel.events[#KWR.ObjectiveIntel.events].kind == "FLAG_RETURN",
         "ObjectiveIntel returned-message handling cleared unrelated flag carriers.")
     KWR.ObjectiveIntel:ObserveMessage("Verite captured the Horde flag!", "WSG")
-    assert(KWR.ObjectiveIntel.carriers["Horde Flag"] == nil,
-        "ObjectiveIntel capture-message handling did not clear the captured flag carrier.")
+    assert(KWR.ObjectiveIntel.carriers["Horde Flag"] == nil
+        and KWR.ObjectiveIntel.events[#KWR.ObjectiveIntel.events].kind == "FLAG_CAPTURE"
+        and KWR.ObjectiveIntel.events[#KWR.ObjectiveIntel.events].player == "Verite",
+        "ObjectiveIntel capture-message handling did not retain the typed capture fact.")
+    assert(KWR.ObjectiveIntel.transitions["Horde Flag"]
+        and KWR.ObjectiveIntel.transitions["Horde Flag"].state == "CAPTURED",
+        "ObjectiveIntel did not publish the accepted canonical flag transition.")
     KWR.ObjectiveIntel.carriers = {
         ["Alliance Flag"] = {
             objective = "Alliance Flag",
@@ -1190,8 +1290,9 @@ do
         },
     }
     KWR.ObjectiveIntel:ObserveMessage("The flags are now placed at their bases.", "WSG")
-    assert(next(KWR.ObjectiveIntel.carriers) == nil,
-        "ObjectiveIntel global reset message did not clear all flag carriers.")
+    assert(next(KWR.ObjectiveIntel.carriers) == nil
+        and KWR.ObjectiveIntel.events[#KWR.ObjectiveIntel.events].kind == "FLAG_RESET",
+        "ObjectiveIntel global reset message did not retain a typed reset fact.")
 end
 do
     local savedLocale = mockLocale
@@ -1202,7 +1303,8 @@ do
         and KWR.ObjectiveIntel.carriers["Horde Flag"].player == "Verite",
         "ObjectiveIntel did not resolve the reviewed German flag pickup grammar.")
     KWR.ObjectiveIntel:ObserveMessage("Verite hat die Flagge der Horde erobert!", "WSG")
-    assert(KWR.ObjectiveIntel.carriers["Horde Flag"] == nil,
+    assert(KWR.ObjectiveIntel.carriers["Horde Flag"] == nil
+        and KWR.ObjectiveIntel.events[#KWR.ObjectiveIntel.events].kind == "FLAG_CAPTURE",
         "ObjectiveIntel did not resolve the reviewed German flag capture grammar.")
     local allianceContext = { team = { faction = "Alliance" } }
     local hordeContext = { team = { faction = "Horde" } }
@@ -1476,8 +1578,7 @@ do
         roster = fullRoster,
         enemies = {
             {
-                key = "Enemy-1-A",
-                guid = "Enemy-1-A",
+                key = "Enemy-TestRealm",
                 name = "Enemy-TestRealm",
                 shortName = "Enemy",
                 classFile = "ROGUE",
@@ -1552,10 +1653,19 @@ assert(KWR.MemoryBudget:PressureLevel(24.9) == "OK", "Memory budget did not clas
 assert(KWR.MemoryBudget:PressureLevel(25.1) == "SOFT", "Memory budget did not classify soft pressure correctly.")
 assert(KWR.MemoryBudget:PressureLevel(28.1) == "WARNING", "Memory budget did not classify warning pressure correctly.")
 assert(KWR.MemoryBudget:PressureLevel(32.1) == "FAIL", "Memory budget did not classify fail pressure correctly.")
+assert(KWR.MemoryBudget.checkEveryRevisions == 10
+    and KWR.MemoryBudget:Cap("runtimeDurationSamples", 0) == 60
+    and KWR.MemoryBudget:Cap("opponentProfiles", 0) == 160,
+    "Memory budget did not apply the live-field retention caps.")
 do
     local calls = 0
     local originalMeasureMB = KWR.MemoryBudget.MeasureMB
     local originalTrim = KWR.MemoryBudget.Trim
+    local originalMeasured = KWR.MemoryBudget.lastMeasuredMB
+    local originalAttempt = KWR.MemoryBudget.lastSampleAttemptAt
+    local originalMeasuredAt = KWR.MemoryBudget.lastMeasuredAt
+    local originalReason = KWR.MemoryBudget.lastSampleReason
+    KWR.MemoryBudget.lastSampleAttemptAt = nil
     KWR.MemoryBudget.MeasureMB = function()
         calls = calls + 1
         return 26
@@ -1570,8 +1680,38 @@ do
     })
     KWR.MemoryBudget.MeasureMB = originalMeasureMB
     KWR.MemoryBudget.Trim = originalTrim
+    KWR.MemoryBudget.lastMeasuredMB = originalMeasured
+    KWR.MemoryBudget.lastSampleAttemptAt = originalAttempt
+    KWR.MemoryBudget.lastMeasuredAt = originalMeasuredAt
+    KWR.MemoryBudget.lastSampleReason = originalReason
     assert(calls == 1,
         "MemoryBudget did not measure against the current Store state callback payload.")
+end
+do
+    local originalMeasureMB = KWR.MemoryBudget.MeasureMB
+    local originalTrim = KWR.MemoryBudget.Trim
+    local originalMeasured = KWR.MemoryBudget.lastMeasuredMB
+    local originalAttempt = KWR.MemoryBudget.lastSampleAttemptAt
+    local originalMeasuredAt = KWR.MemoryBudget.lastMeasuredAt
+    local originalReason = KWR.MemoryBudget.lastSampleReason
+    KWR.MemoryBudget.MeasureMB = function() return 40 end
+    KWR.MemoryBudget.Trim = function() end
+    local measured = KWR.MemoryBudget:Sample({
+        revision = 40,
+        snapshot = { context = { inPvP = true } },
+    }, true, true)
+    local summary = KWR.MemoryBudget:Summary()
+    KWR.MemoryBudget.MeasureMB = originalMeasureMB
+    KWR.MemoryBudget.Trim = originalTrim
+    KWR.MemoryBudget.lastMeasuredMB = originalMeasured
+    KWR.MemoryBudget.lastSampleAttemptAt = originalAttempt
+    KWR.MemoryBudget.lastMeasuredAt = originalMeasuredAt
+    KWR.MemoryBudget.lastSampleReason = originalReason
+    assert(measured == 40 and summary.currentMB == 40
+        and summary.memoryKB == 40960
+        and summary.pressure == "FAIL"
+        and summary.degradationMode == "CRITICAL_LIVE_ONLY",
+        "MemoryBudget did not synchronize a hard-cap sample with pressure and degradation truth.")
 end
 do
     local savedStrategyCache = KWR.Strategist.cache
@@ -1610,6 +1750,33 @@ do
     KWR.CombatIntel.byName = savedByName
 end
 do
+    local savedFormationCache = KWR.FormationAdvisor.cache
+    local savedReporterMemory = KWR.Reporter.memory
+    local savedDurationSamples = KWR.MatchRuntime.durationSamples
+    local savedTacticalSamples = KWR.MatchRuntime.tacticalDurationSamples
+    KWR.FormationAdvisor.cache = { signature = "optional-presentation" }
+    KWR.Reporter.memory = { rotations = { "optional" }, routes = { "optional" }, revision = 9 }
+    KWR.MatchRuntime.durationSamples = {}
+    KWR.MatchRuntime.tacticalDurationSamples = {}
+    for index = 1, 40 do
+        KWR.MatchRuntime.durationSamples[index] = index
+        KWR.MatchRuntime.tacticalDurationSamples[index] = index
+    end
+    KWR.MemoryBudget:Trim({
+        revision = 100,
+        snapshot = { context = { inPvP = true } },
+    }, true)
+    assert(KWR.FormationAdvisor.cache == nil
+        and #(KWR.Reporter.memory.rotations or {}) == 0
+        and #KWR.MatchRuntime.durationSamples == 30
+        and #KWR.MatchRuntime.tacticalDurationSamples == 30,
+        "Hard memory trim retained optional live caches beyond the hard-cap allowance.")
+    KWR.FormationAdvisor.cache = savedFormationCache
+    KWR.Reporter.memory = savedReporterMemory
+    KWR.MatchRuntime.durationSamples = savedDurationSamples
+    KWR.MatchRuntime.tacticalDurationSamples = savedTacticalSamples
+end
+do
     KWR.FormationAdvisor.cache = nil
     KWR.FormationAdvisor.cacheHits = 0
     KWR.FormationAdvisor.cacheMisses = 0
@@ -1622,11 +1789,50 @@ do
     }
     KWR.FormationAdvisor:Evaluate(formationSnapshot)
     KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    local mutableResult = KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    mutableResult.currentComp.name = "Corrupted"
+    mutableResult.recommendations[1] = { reason = "Corrupted" }
+    local protectedResult = KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    assert(protectedResult.currentComp.name ~= "Corrupted"
+        and (not protectedResult.recommendations[1]
+            or protectedResult.recommendations[1].reason ~= "Corrupted"),
+        "Formation cache exposed mutable internals to callers.")
     formationSnapshot.roster[1].connected = false
     KWR.FormationAdvisor:Evaluate(formationSnapshot)
-    assert(KWR.FormationAdvisor.cacheHits == 1
-        and KWR.FormationAdvisor.cacheMisses == 2,
+    formationSnapshot.roster[1].connected = true
+    formationSnapshot.roster[1].dead = true
+    KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    formationSnapshot.roster[1].dead = false
+    formationSnapshot.context.isBlitz = true
+    KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    assert(KWR.FormationAdvisor.cacheHits >= 3
+        and KWR.FormationAdvisor.cacheMisses == 4,
         "Formation cache did not reuse identical truth or invalidate on connection changes.")
+end
+do
+    local blitzFormation = KWR.FormationAdvisor:Evaluate({
+        context = { mapKey = "WORLD", kind = "BATTLEGROUND", isRated = true, isBlitz = true },
+        roster = {
+            { shortName = "Tank", classFile = "WARRIOR", spec = "Protection", role = "TANK" },
+            { shortName = "Disc", classFile = "PRIEST", spec = "Discipline", role = "HEALER" },
+            { shortName = "Holy", classFile = "PRIEST", spec = "Holy", role = "HEALER" },
+            { shortName = "Balance", classFile = "DRUID", spec = "Balance", role = "DAMAGER" },
+            { shortName = "Havoc", classFile = "DEMONHUNTER", spec = "Havoc", role = "DAMAGER" },
+            { shortName = "Unholy", classFile = "DEATHKNIGHT", spec = "Unholy", role = "DAMAGER" },
+            { shortName = "Frost", classFile = "MAGE", spec = "Frost", role = "DAMAGER" },
+            { shortName = "Affliction", classFile = "WARLOCK", spec = "Affliction", role = "DAMAGER" },
+        },
+    })
+    assert(blitzFormation.ruleset == "BLITZ_8"
+        and blitzFormation.targetSize == 8
+        and blitzFormation.complete
+        and blitzFormation.openSlots == 0
+        and blitzFormation.needs.TANK == 0
+        and blitzFormation.needs.HEALER == 0
+        and blitzFormation.needs.DAMAGER == 0,
+        "Formation advisor did not apply the eight-player Blitz role target.")
+    assert(#(blitzFormation.buildRequirements or {}) <= 8,
+        "Formation advisor exposed a ten-player build requirement list in Blitz.")
 end
 do
     local filtered = KWR.Assignments:FilterRoster({
@@ -1887,7 +2093,7 @@ mockInstanceType = "brawl"
 assert(KWR.MatchRuntime:ForceRefresh("smoke-brawl-context"),
     "Brawl context refresh failed.")
 assert(KWR.Store:Get().snapshot.context.isBrawl == true
-    and KWR.Verification:BuildEntry(KWR.Store:Get()).bracket == "BRAWL",
+    and (releaseOnly or KWR.Verification:BuildEntry(KWR.Store:Get()).bracket == "BRAWL"),
     "Brawl context was mislabeled as a standard battleground.")
 mockInstanceType = "pvp"
 assert(KWR.MatchRuntime:ForceRefresh("smoke-standard-context"),
@@ -2255,10 +2461,11 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-08-27"
+        and watchlist.effectiveDate == "2026-09-04"
         and string.find(watchlist.sourceURL or "", "24296142", 1, true)
         and #(watchlist.affected or {}) >= 12,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
+    if not releaseOnly then
     local evidenceRun = KWR.Season2Readiness:Build(KWR.Store:Get())
     local evidenceReport = KWR.Season2Readiness:Report(KWR.Store:Get())
     assert(evidenceRun.watchlist == watchlist
@@ -2267,6 +2474,7 @@ do
         and evidenceReport:find("Carrier target", 1, true)
         and evidenceReport:find("local capture only", 1, true),
         "Season 2 evidence run did not preserve bounded local-only capture guidance.")
+    end
 end
 do
     local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
@@ -2357,9 +2565,10 @@ assert(observedEnemy and observedEnemy.shortName == "EnemyHealer"
         .. tostring(observedEnemy and observedEnemy.locationState))
 assert(KWR.EnemyIntel:DescribeLocation(observedEnemy, "ARATHI", true):match("^ENGAGED WITH"),
     "Local enemy truth did not promote to ENGAGED commander language.")
-assert(KWR.Store:Get().snapshot.combat.killTarget
-    and KWR.Store:Get().snapshot.combat.killTarget.shortName == "EnemyHealer",
-    "Local in-combat enemy was not selected as the kill target.")
+assert(KWR.Store:Get().snapshot.combat.localTarget
+    and KWR.Store:Get().snapshot.combat.localTarget.shortName == "EnemyHealer"
+    and KWR.Store:Get().snapshot.combat.killTarget == nil,
+    "Local in-combat enemy without a qualifying window was not kept as pressure only.")
 mockScoreboardRows = {
     mockScoreboardRows[1],
     mockScoreboardRows[2],
@@ -2389,21 +2598,23 @@ mockLiveEnemies.nameplate8 = {
 }
 KWR.MatchRuntime:HandleEvent("NAME_PLATE_UNIT_ADDED", "nameplate8")
 local contestedState = KWR.Store:Get()
-assert(contestedState.snapshot.combat.killTarget
-    and contestedState.snapshot.combat.killTarget.shortName == "EnemyHealer",
-    "Higher-priority engaged healer did not remain the kill target while a second enemy was live.")
+assert(contestedState.snapshot.combat.localTarget
+    and contestedState.snapshot.combat.localTarget.shortName == "EnemyHealer"
+    and contestedState.snapshot.combat.killTarget == nil,
+    "Higher-priority engaged pressure target manufactured a kill window while a second enemy was live.")
 mockLiveEnemies.nameplate7 = nil
 KWR.MatchRuntime:HandleEvent("NAME_PLATE_UNIT_REMOVED", "nameplate7")
 assert(KWR.EnemyIntel.observedTokens.nameplate7 == nil,
     "Enemy observer did not release the removed nameplate token.")
 local promotedState = KWR.Store:Get()
-assert(promotedState.snapshot.combat.killTarget
-    and promotedState.snapshot.combat.killTarget.shortName == "EnemyMage",
-    "Next-best engaged target did not promote after the prior kill target disappeared.")
+assert(promotedState.snapshot.combat.localTarget
+    and promotedState.snapshot.combat.localTarget.shortName == "EnemyMage"
+    and promotedState.snapshot.combat.killTarget == nil,
+    "Next-best engaged pressure target manufactured a kill window after the prior target disappeared.")
 assert(promotedState.snapshot.enemies[1]
     and promotedState.snapshot.enemies[1].shortName == "EnemyMage"
     and promotedState.snapshot.enemies[1].locationState == "ENGAGED",
-    "Remaining live enemy did not retain engaged truth during kill-target promotion.")
+    "Remaining live enemy did not retain engaged truth during pressure-target promotion.")
 mockLiveEnemies = {}
 KWR.MatchRuntime:HandleEvent("NAME_PLATE_UNIT_REMOVED", "nameplate8")
 mockScoreboardRows = {
@@ -2457,12 +2668,13 @@ assert(type(liveState.snapshot.strategy.trust) == "table"
     "Strategist did not expose a strategy trust model.")
 assert(liveState.snapshot.strategy.theoryActive == true
     and liveState.snapshot.strategy.projectionBasis == "IMMEDIATE_THEORY_FIRST"
-    and liveState.snapshot.strategy.recommendationMode ~= "VERIFY"
     and type(liveState.snapshot.strategy.executionGate) == "table"
-    and liveState.snapshot.strategy.executionGate.status == "COMMIT_ALLOWED"
-    and liveState.snapshot.strategy.trust.commitAuthorized == true,
+    and ((liveState.snapshot.strategy.executionGate.status == "COMMIT_ALLOWED"
+            and liveState.snapshot.strategy.trust.commitAuthorized == true)
+        or (liveState.snapshot.strategy.executionGate.status == "VERIFY_BEFORE_COMMIT"
+            and liveState.snapshot.strategy.trust.commitAuthorized == false)),
     string.format(
-        "Reviewed 12.1 capabilities and authoritative live truth did not activate a bounded commit (theory=%s basis=%s mode=%s gate=%s authorized=%s reason=%s source=%s conflicts=%s unresolved=%s).",
+        "Reviewed 12.1 capabilities did not keep the commit gate aligned with live movement truth (theory=%s basis=%s mode=%s gate=%s authorized=%s reason=%s source=%s conflicts=%s unresolved=%s).",
         tostring(liveState.snapshot.strategy.theoryActive),
         tostring(liveState.snapshot.strategy.projectionBasis),
         tostring(liveState.snapshot.strategy.recommendationMode),
@@ -2549,6 +2761,23 @@ assert(conflictedStrategy.trust
     and conflictedStrategy.recommendationMode ~= "VERIFY"
     and conflictedStrategy.executionGate.status == "VERIFY_BEFORE_COMMIT",
     "Strategist did not suppress hard commits when objective evidence conflicted.")
+do
+    -- P04: an objective-rule prohibition must survive both heuristic ranking
+    -- and later enemy-response scoring.  Only HOLD is legal in this synthetic
+    -- public state; a higher numerical forbidden alternative must not publish.
+    local savedIsActionLegal = KWR.ObjectiveRules.IsActionLegal
+    KWR.ObjectiveRules.IsActionLegal = function(_, _, action)
+        return action == "HOLD", action == "HOLD" and "FIXTURE_ALLOWED" or "FIXTURE_PROHIBITED"
+    end
+    KWR.Strategist.cache = nil
+    local legalOnly = KWR.Strategist:Evaluate(
+        conflictedSnapshot, KWR.Predictor:Evaluate(conflictedSnapshot))
+    KWR.ObjectiveRules.IsActionLegal = savedIsActionLegal
+    KWR.Strategist.cache = nil
+    assert(legalOnly.selectedAction and legalOnly.selectedAction.id == "HOLD"
+        and legalOnly.selectedAction.legal == true,
+        "Objective-rule-gated strategic alternative was still selected after scoring")
+end
 assert(liveState.assignments[1].backupRole == "Defense Floater"
     and liveState.assignments[1].assignmentConfidence == "HIGH"
     and type(liveState.assignments[1].coverageEffect) == "string",
@@ -2583,10 +2812,51 @@ local pinnedOK, pinnedMessage = KWR.AssignmentOverrides:Pin(
     liveState.snapshot, liveState.assignments, pinnedName)
 assert(pinnedOK == true and pinnedMessage:find("Pinned override:", 1, true),
     "Commander pin override did not persist the current assignment.")
+local overrideSafetyAssignments = KWR.Util:Copy(liveState.assignments)
+overrideSafetyAssignments[#overrideSafetyAssignments + 1] = KWR.Util:Copy(overrideSafetyAssignments[1])
+overrideSafetyAssignments[#overrideSafetyAssignments].name = "Coverage Backup"
+overrideSafetyAssignments[#overrideSafetyAssignments].shortName = "Coverage Backup"
+overrideSafetyAssignments[#overrideSafetyAssignments].guid = "Player-Coverage-Backup"
 local heldOK, heldMessage = KWR.AssignmentOverrides:SetLocation(
-    liveState.snapshot, liveState.assignments, pinnedName, "Lumber Mill")
+    liveState.snapshot, overrideSafetyAssignments, pinnedName, "Lumber Mill")
 assert(heldOK == true and heldMessage:find("Location override:", 1, true),
     "Commander location override did not accept a known battleground objective.")
+do
+    local sole = KWR.Util:Copy(liveState.assignments[1])
+    local soleSnapshot = KWR.Util:Copy(liveState.snapshot)
+    soleSnapshot.objectives = { rows = { { label = sole.location, owner = "FRIENDLY" } } }
+    soleSnapshot.roster = { { name = sole.name, shortName = sole.shortName,
+        guid = sole.guid, connected = true, dead = false } }
+    local ok, message = KWR.AssignmentOverrides:SetLocation(soleSnapshot,
+        { sole }, sole.name, "Lumber Mill")
+    assert(ok == false and message:find("objective uncovered", 1, true),
+        "Commander override moved the final defender from a friendly objective.")
+end
+do
+    local unavailable = KWR.Util:Copy(liveState.assignments[1])
+    unavailable.dead = true
+    local unavailableSnapshot = KWR.Util:Copy(liveState.snapshot)
+    unavailableSnapshot.roster = { {
+        name = unavailable.name, shortName = unavailable.shortName, guid = unavailable.guid,
+        dead = true, connected = true,
+    } }
+    local ok, message = KWR.AssignmentOverrides:SetRole(unavailableSnapshot,
+        { unavailable }, unavailable.name, "Main Fight")
+    assert(ok == false and message:find("player is unavailable", 1, true),
+        "Commander override reassigned an unavailable player.")
+end
+do
+    local lockedUnavailable = KWR.Util:Copy(liveState.assignments[1])
+    lockedUnavailable.dead = true
+    local lockedSnapshot = KWR.Util:Copy(liveState.snapshot)
+    lockedSnapshot.roster = { { name = lockedUnavailable.name,
+        shortName = lockedUnavailable.shortName, guid = lockedUnavailable.guid,
+        dead = true, connected = true } }
+    KWR.AssignmentOverrides:Apply(lockedSnapshot, { lockedUnavailable })
+    assert(lockedUnavailable.manualOverride ~= true
+        and lockedUnavailable.overrideBlocked == "PLAYER_UNAVAILABLE",
+        "Persisted commander override reactivated for an unavailable player.")
+end
 KWR.MatchRuntime:ForceRefresh("override-test")
 local updatedState = KWR.Store:Get()
 liveState = updatedState
@@ -2601,6 +2871,7 @@ local overrideLines = KWR.AssignmentOverrides:DescribeActive(
 assert(#overrideLines == 1 and overrideLines[1]:find("Lumber Mill", 1, true),
     "Commander override export omitted the active map lock.")
 mockMercenary = false
+if not releaseOnly then
 local verificationReport = KWR.Verification:CurrentReport()
 assert(verificationReport:find("Assigned team: Horde / right", 1, true),
     "Live verification report omitted assigned-team evidence.")
@@ -2660,6 +2931,7 @@ assert(verificationReport:find("OBJ: ", 1, true)
     and verificationReport:find(" via ", 1, true)
     and verificationReport:find("Objective conflicts:", 1, true),
     "Live verification report omitted per-objective source-resolution evidence.")
+end
 local sentinelView = KWR.SentinelBridge:BuildView("TestPlayer", liveState)
 assert(sentinelView and sentinelView.source == "KWR",
     "Sentinel bridge did not produce a player relay view.")
@@ -2678,6 +2950,37 @@ assert(sentinelView.score
     and sentinelView.score.status == liveState.prediction.status
     and sentinelView.score.commandWhen == liveState.command.when,
     "Sentinel bridge did not publish score pace and command timing.")
+do
+    local unknownScoreState = KWR.Util:Copy(liveState)
+    unknownScoreState.snapshot.score = { friendly = 0, enemy = 0, max = 1500, source = "none" }
+    local unknownScoreView = KWR.SentinelBridge:BuildView("TestPlayer", unknownScoreState)
+    assert(unknownScoreView.score.known == false
+        and unknownScoreView.score.friendly == nil
+        and unknownScoreView.score.enemy == nil
+        and unknownScoreView.score.status == "UNKNOWN",
+        "Sentinel bridge fabricated zero scores for unavailable truth.")
+    local observedZeroState = KWR.Util:Copy(unknownScoreState)
+    observedZeroState.snapshot.score = { friendly = 0, enemy = 0, max = 1500,
+        source = "ui_widget", observedAt = KWR.Util:Now() }
+    local observedZeroView = KWR.SentinelBridge:BuildView("TestPlayer", observedZeroState)
+    assert(observedZeroView.score.known == true
+        and observedZeroView.score.friendly == 0
+        and observedZeroView.score.enemy == 0,
+        "Sentinel bridge lost an observed zero-zero score.")
+    for _, score in ipairs({
+        { friendly = 1, enemy = 0, source = "team_unresolved", observedAt = KWR.Util:Now() },
+        { friendly = 0, enemy = 0, source = "ui_widget", observedAt = KWR.Util:Now() - 6 },
+        { friendly = 0, enemy = 0, source = "ui_widget", observedAt = KWR.Util:Now() + 1 },
+        { friendly = 0, enemy = 0, source = "ui_widget" },
+        { friendly = 0, source = "ui_widget", observedAt = KWR.Util:Now() },
+    }) do
+        unknownScoreState.snapshot.score = score
+        local view = KWR.SentinelBridge:BuildView("TestPlayer", unknownScoreState)
+        assert(view.score.known == false and view.score.friendly == nil
+            and view.score.enemy == nil and view.score.status == "UNKNOWN",
+            "Sentinel accepted incomplete, unassigned, missing-time or expired score evidence.")
+    end
+end
 local currentWatch = liveState.snapshot.combat
     and (liveState.snapshot.combat.localTarget
         or liveState.snapshot.combat.killTarget)
@@ -2690,6 +2993,8 @@ assert(sentinelView.watch and sentinelView.watch.reason ~= ""
     "Sentinel bridge did not publish the current local watch target.")
 do
     KWR_TEST_COMM = KWR.CommanderComm
+    local checkEnvelope = assert(loadfile(ResolveTestPath("tests/fixtures/sync_envelope.lua")))()
+    assert(checkEnvelope(KWR_TEST_COMM) >= 300, "Commander parser vectors did not run")
     assert(KWR_TEST_COMM:TransportEnabled() == false
         and KWR_TEST_COMM:SetTransportEnabled(true),
         "Commander transport did not remain opt-in before explicit Field-mode activation.")
@@ -2732,6 +3037,16 @@ do
         "Commander accepted a duplicate Sentinel sequence.")
     assert(not KWR_TEST_COMM:Receive("KWRSync1", "v=2|sid=x", "INSTANCE_CHAT", "TestPlayer"),
         "Commander accepted a malformed or future-version Sentinel envelope.")
+    for _, malformed in ipairs({
+        "v=2|sid=x|seq=1|kind=STATE|ts=1|ep=e|src=s|extra=x",
+        "v=2|sid=x|ts=1|kind=STATE|ep=e|src=s|body=x|junk=x",
+        "v=2|sid=x|seq=1|kind=STATE|ep=e|src=s|body=x|junk=x",
+        "v=2|sid=x|seq=1|seq=2|kind=STATE|ts=1|ep=e|src=s|body=x",
+        string.rep("x", KWR_TEST_COMM.MAX_BYTES + 1),
+    }) do
+        local ok, packet = pcall(KWR_TEST_COMM.Decode, KWR_TEST_COMM, malformed)
+        assert(ok and packet == nil, "Malformed Commander envelope threw instead of rejecting.")
+    end
     KWR_TEST_STALE_EPOCH = table.concat({
         "v=2", "sid=" .. KWR_TEST_SESSION, "seq=4", "kind=STATE", "ts=" .. tostring(math.floor(KWR.Util:Now())), "ep=wrongepoch",
         "src=" .. KWR_TEST_ROSTER_SENDER:lower(), "body=alive=1;connected=1;reach=UNKNOWN",
@@ -2770,11 +3085,23 @@ do
     C_ChatInfo.SendAddonMessage = function() return 0 end
     assert(KWR_TEST_COMM:Send("STATE", "alive=1;connected=1;reach=UNKNOWN", liveState),
         "Commander did not accept Retail's numeric addon-message success result.")
+    local sentBeforeOff = KWR_TEST_COMM.diagnostics.sent
+    KWR_TEST_COMM.relay.test = { signature = "stale", sentAt = KWR.Util:Now() }
+    KWR.db.profile.sentinelTransportEnabled = false
+    assert(not KWR_TEST_COMM:Send("STATE", "alive=1", liveState)
+        and KWR_TEST_COMM.diagnostics.sent == sentBeforeOff,
+        "Commander sent at the final transport boundary while OFF.")
+    assert(KWR_TEST_COMM:SetTransportEnabled(false) and next(KWR_TEST_COMM.relay) == nil,
+        "Disabling Commander transport retained stale relay state.")
+    assert(KWR_TEST_COMM:SetTransportEnabled(true)
+        and KWR_TEST_COMM:Send("STATE", "alive=1", liveState),
+        "Commander transport did not send again after an explicit re-enable.")
     C_ChatInfo.SendAddonMessage = KWR_TEST_SEND
     Enum = KWR_TEST_ENUM
 end
 local clearedOK = KWR.AssignmentOverrides:Clear(pinnedName)
 assert(clearedOK == true, "Commander override clear did not remove the active player lock.")
+if not releaseOnly then
 assert(#KWR.Verification.ledger > 0, "Verification ledger did not record live transitions.")
 do
     local savedLedger = KWR.Verification.ledger
@@ -2800,6 +3127,7 @@ do
     assert(buildCount == 1,
         "Verification still built a full entry for duplicate live state.")
 end
+end
 assert(liveState.prediction.status == "WIN", "Pipeline did not project the Arathi 3-2 win.")
 assert(type(liveState.command.stability) == "table"
     and type(liveState.command.stabilitySummary) == "table"
@@ -2824,8 +3152,8 @@ do
         lifetimes = { total = 0, count = 0, shortest = nil, longest = 0, samples = {} },
     }
     local insufficient = KWR.Commander:GetStabilityMetrics()
-    assert(insufficient.certificationStatus == "INSUFFICIENT_SAMPLE"
-        and insufficient.commandHealth == "PASS"
+    assert(insufficient.generatorCertificationStatus == "INSUFFICIENT_SAMPLE"
+        and insufficient.generatorCommandHealth == "PASS"
         and type(insufficient.preMovementInvalidationRate) == "number",
         "Commander certification gate did not preserve insufficient-sample PASS behavior.")
 
@@ -2842,7 +3170,7 @@ do
         lifetimes = { total = 0, count = 0, shortest = nil, longest = 0, samples = {} },
     }
     local evaluationOnly = KWR.Commander:GetStabilityMetrics()
-    assert(evaluationOnly.certificationStatus == "INSUFFICIENT_SAMPLE"
+    assert(evaluationOnly.generatorCertificationStatus == "INSUFFICIENT_SAMPLE"
         and evaluationOnly.evaluations == 20
         and evaluationOnly.issued == 1,
         "Commander certification still treated repeated evaluations as published command evidence.")
@@ -2859,8 +3187,8 @@ do
         lifetimes = { total = 0, count = 0, shortest = nil, longest = 0, samples = {} },
     }
     local ready = KWR.Commander:GetStabilityMetrics()
-    assert(ready.certificationStatus == "READY"
-        and ready.commandHealth == "PASS",
+    assert(ready.generatorCertificationStatus == "READY"
+        and ready.generatorCommandHealth == "PASS",
         "Commander certification gate did not mark a stable command sample ready.")
 
     KWR.Commander.metrics = {
@@ -2875,8 +3203,8 @@ do
         lifetimes = { total = 30, count = 3, shortest = 8, longest = 12, samples = { 8, 10, 12 } },
     }
     local watch = KWR.Commander:GetStabilityMetrics()
-    assert(watch.certificationStatus == "REVIEW_REQUIRED"
-        and watch.commandHealth == "WATCH"
+    assert(watch.generatorCertificationStatus == "REVIEW_REQUIRED"
+        and watch.generatorCommandHealth == "WATCH"
         and watch.medianLifetime == 10,
         "Commander certification gate did not flag short command lifetimes for review.")
 
@@ -2892,8 +3220,8 @@ do
         lifetimes = { total = 100, count = 4, shortest = 20, longest = 30, samples = { 20, 25, 25, 30 } },
     }
     local failed = KWR.Commander:GetStabilityMetrics()
-    assert(failed.certificationStatus == "FAIL_REVIEW"
-        and failed.commandHealth == "REVIEW"
+    assert(failed.generatorCertificationStatus == "FAIL_REVIEW"
+        and failed.generatorCommandHealth == "REVIEW"
         and failed.reversalRate > 0.05,
         "Commander certification gate did not fail excessive reversal churn.")
     KWR.Commander.metrics = savedCommanderMetrics
@@ -3760,10 +4088,17 @@ KWR.Store.state.command = KWR.Util:Copy(succeededNodeCommand)
 succeededNodeCommand = KWR.Commander:Compose(
     nodeCaptureSuccessSnapshot, gilneasPrediction, liveState.assignments)
 assert(succeededNodeCommand.activePlayDecision
-    and succeededNodeCommand.activePlayDecision.invalidation == nil
+    and (succeededNodeCommand.activePlayDecision.invalidation == nil
+        or (succeededNodeCommand.activePlayDecision.terminalOutcomeHeld == true
+            and succeededNodeCommand.activePlayDecision.replacementAllowed == false))
     and (KWR.Commander:GetStabilityMetrics().invalidations or 0)
         == (postSuccessStability.invalidations or 0),
-    "A terminal ActivePlay transition was counted again on a later refresh.")
+    string.format("Terminal replay state invalidation=%s held=%s replace=%s metrics=%s/%s",
+        tostring(succeededNodeCommand.activePlayDecision.invalidation),
+        tostring(succeededNodeCommand.activePlayDecision.terminalOutcomeHeld),
+        tostring(succeededNodeCommand.activePlayDecision.replacementAllowed),
+        tostring(KWR.Commander:GetStabilityMetrics().invalidations),
+        tostring(postSuccessStability.invalidations)))
 local flagPreviousState = {
     activePlay = {
         id = "ACTIVE_ESCORT_OFC",
@@ -4952,6 +5287,70 @@ assert(deadSpawnResourceCommand.activePlayDecision
     and deadSpawnResourceCommand.activePlayDecision.invalidation == "NEXT_SPAWN_STATE_CHANGED"
     and deadSpawnResourceCommand.activePlayDecision.replacementAllowed == true,
     "Resource spawn play did not invalidate when its specific target spawn was no longer free.")
+do
+    local savedIntel = {
+        sessionKey = KWR.ObjectiveIntel.sessionKey,
+        events = KWR.ObjectiveIntel.events,
+        carriers = KWR.ObjectiveIntel.carriers,
+        timers = KWR.ObjectiveIntel.timers,
+        auraCache = KWR.ObjectiveIntel.auraCache,
+        resourceCycle = KWR.ObjectiveIntel.resourceCycle,
+    }
+    KWR.ObjectiveIntel:Reset("SEETHING:PVP:test-cycle")
+    KWR.ObjectiveIntel:ObserveMessage("Azerite fissures begin to erupt!", "SEETHING")
+    KWR.ObjectiveIntel:ObserveMessage("Azerite fissures begin to erupt!", "SEETHING")
+    KWR.ObjectiveIntel:ObserveMessage("Verite has collected Azerite!", "SEETHING")
+    local seethingObserved = {
+        context = { mapKey = "SEETHING", kind = "RESOURCE", inPvP = true },
+        roster = {
+            { name = "Verite-TestRealm", shortName = "Verite", unit = "player" },
+        },
+        enemies = {},
+        objectives = {
+            source = "vignette",
+            rows = {
+                { label = "North", owner = "UNKNOWN", state = "ACTIVE", source = "vignette" },
+                { label = "South", owner = "UNKNOWN", state = "AVAILABLE", source = "vignette" },
+            },
+        },
+    }
+    KWR.ObjectiveIntel:Apply(seethingObserved)
+    local spawnEvents = 0
+    for _, event in ipairs(seethingObserved.objectives.events or {}) do
+        if event.kind == "RESOURCE_SPAWN" then spawnEvents = spawnEvents + 1 end
+    end
+    assert(spawnEvents == 1
+        and seethingObserved.objectives.resourceCycle
+        and seethingObserved.objectives.resourceCycle.target == "North"
+        and seethingObserved.objectives.resourceCycle.state == "ACTIVE"
+        and seethingObserved.objectives.resourceCycle.lastCollection.owner == "FRIENDLY",
+        "Seething fissure/collection observations were not deduplicated, targeted, and owner-resolved conservatively.")
+    seethingObserved.score = { friendly = 0, enemy = 0, max = 1500, source = "none" }
+    seethingObserved.strategy = {
+        action = "ROTATE TO NEXT SPAWN",
+        target = "Next Spawn",
+        objectiveDecision = { target = "Next Spawn" },
+        trust = {},
+    }
+    seethingObserved.responsePackage = { qualified = false, target = "Next Spawn" }
+    KWR.Store.state.activePlay = nil
+    KWR.Store.state.command = nil
+    KWR.Commander.lastActivePlay = nil
+    KWR.Commander.lastCommand = nil
+    local seethingCommand = KWR.Commander:Compose(
+        seethingObserved, { status = "WAITING", urgency = 35 }, {})
+    assert(seethingCommand.objectiveOverride == "North"
+        and seethingCommand.activePlay.objective == "North"
+        and seethingCommand.action:find("active Azerite fissure observed", 1, true)
+        and not seethingCommand.action:find("friendly", 1, true),
+        "Commander did not use the observed Seething fissure target without inventing ownership.")
+    KWR.ObjectiveIntel.sessionKey = savedIntel.sessionKey
+    KWR.ObjectiveIntel.events = savedIntel.events
+    KWR.ObjectiveIntel.carriers = savedIntel.carriers
+    KWR.ObjectiveIntel.timers = savedIntel.timers
+    KWR.ObjectiveIntel.auraCache = savedIntel.auraCache
+    KWR.ObjectiveIntel.resourceCycle = savedIntel.resourceCycle
+end
 local liveLine1, liveLine2 = KWR.CommandView:SummaryLines(liveState)
 assert(liveLine2:find("ACTION:", 1, true), "Commander view did not publish an ACTION line.")
 local healerSeen, friendlyLeak = false, false
@@ -4985,8 +5384,11 @@ do
         end
     end
     local detected, evidence = KWR.TeamResolver:DetectBlitz(blitzRows)
-    assert(detected == true and evidence.horde == 8 and evidence.alliance == 8,
-        "Exact 8v8 scoreboard truth did not identify a Blitz session.")
+    assert(detected == false and evidence.known == false
+        and evidence.scoreboardHint == "scoreboard_8v8" and evidence.horde == 8 and evidence.alliance == 8,
+        "An 8v8 scoreboard subset was promoted from hint to Blitz truth.")
+    assert(KWR.TeamResolver:DetectBlitz({}, true, "C_PvP.IsRatedSoloRBG") == true,
+        "Explicit rated Solo RBG evidence required a hydrated scoreboard")
     table.remove(blitzRows)
     assert(KWR.TeamResolver:DetectBlitz(blitzRows) == false,
         "Partial scoreboard truth incorrectly identified a Blitz session.")
@@ -5185,8 +5587,7 @@ do
         },
         enemies = {
             {
-                key = "Enemy-1-A",
-                guid = "Enemy-1-A",
+                key = "Enemy-TestRealm",
                 name = "Enemy-TestRealm",
                 shortName = "Enemy",
                 classFile = "ROGUE",
@@ -5198,6 +5599,10 @@ do
         },
     }
     local observedA = KWR.Reporter:Observe(reporterSnapshot)
+    reporterSnapshot.enemies[1].key = "Enemy-1-A"
+    reporterSnapshot.enemies[1].guid = "Enemy-1-A"
+    reporterSnapshot.enemies[1].lastSeenAt = KWR.Util:Now()
+    local observedIdentity = KWR.Reporter:Observe(reporterSnapshot)
     reporterSnapshot.roster = {
         {
             key = "Player-1-B",
@@ -5226,6 +5631,23 @@ do
         and observedA.enemy[1].x == 0.68 and observedA.enemy[1].y == 0.72
         and observedA.enemy[1].mapSource == "map_location",
         "Reporter did not resolve an enemy location-only track for the tactical map.")
+    assert(observedIdentity.coverage and observedIdentity.coverage.enemy == 1
+        and observedIdentity.enemy and #observedIdentity.enemy == 1
+        and observedIdentity.enemy[1].key == "Enemy-1-A",
+        "Reporter duplicated an enemy while replacing a name/key with a GUID.")
+end
+do
+    local reviewed = KWR.CommandReview:BuildRecord({
+        action = "RETURN EFC",
+        activePlayDecision = { terminalOutcomeHeld = true },
+    }, {
+        context = { team = { source = "scoreboard_self" } },
+        score = { source = "ui_widget" },
+        objectives = { source = "battleground_system" },
+    }, {}, {})
+    assert(#(reviewed.evidence or {}) >= 3
+        and reviewed.evidence[1] == "score:ui_widget",
+        "Command review did not derive bounded evidence from live truth sources.")
 end
 assert(KWR.AAR.active ~= nil, "AAR did not open a live match journal.")
 assert(KWR.AAR:DetermineResult({
@@ -5309,11 +5731,11 @@ if not releaseOnly then
     local completed = KWR.AAR:GetHistory()[1]
     assert(completed.result == "VICTORY", "AAR did not record the assigned Horde team's victory.")
     assert(completed.addonVersion == KWR.version
+        and completed.candidateID == KWR.BuildInfo.candidateID
         and completed.schemaVersion == KWR.schemaVersion
-        and completed.performance and completed.performance.samples > 0
-        and completed.performance.maxRefreshMs >= 0
+        and completed.captureMode == "TEAM" and completed.performance == nil
         and completed.safety and completed.safety.total == 0,
-        "AAR did not bind version, performance, and safety evidence to the completed match.")
+        "Default team AAR did not bind version/safety or retained opt-in telemetry.")
     completed.primaryPlanID = completed.primaryPlanID or "AB_STABLE_THREE"
     completed.result = "VICTORY"
     KWR.AAR:SaveFeedback(completed.id, { wonBy = "Objectives", notes = "Reviewed smoke match." })
@@ -5340,10 +5762,16 @@ if not releaseOnly then
     assert(strengthButton.selected == true
         and KWR.AARWindow.frame.strength.value == "Coordination",
         "Clicked AAR selection did not retain its selected state.")
-    assert(KWR.Learning:Summary().samples == 1, "Reviewed AAR did not enter bounded learning.")
+    assert(KWR.Learning:Summary().samples == 0, "Feedback without delivery/observation entered learning.")
     assert(KWR.Learning:Adjustment(completed.mapKey, completed.primaryPlanID) == 0,
         "Learning affected decisions before the minimum sample size.")
     local exportText = KWR.AAR:Export(completed)
+    assert(exportText:find("Candidate: " .. KWR.BuildInfo.candidateID, 1, true),
+        "New AAR export lost its candidate identity.")
+    local legacyCapture = KWR.Util:Copy(completed)
+    legacyCapture.candidateID = nil
+    assert(KWR.AAR:Export(legacyCapture):find("Candidate: UNBOUND", 1, true),
+        "Old AAR was relabeled as the current candidate.")
     assert(type(exportText) == "string"
         and exportText:find("Command Stability:", 1, true)
         and exportText:find("Stability budget:", 1, true)
@@ -5410,7 +5838,14 @@ local missingScoreOK, missingScoreCommand = pcall(function()
     }, {})
 end)
 assert(missingScoreOK and missingScoreCommand and missingScoreCommand.status == "COMPLETE"
-    and missingScoreCommand.reason:find("FINAL SCORE 0%-0", 1) ~= nil,
+    and missingScoreCommand.reason:find("FINAL SCORE 0%-0", 1) ~= nil
+    and missingScoreCommand.activePlay
+    and missingScoreCommand.activePlay.matchComplete == true
+    and missingScoreCommand.activePlay.phase == "EXPIRED"
+    and missingScoreCommand.activePlayOutcome.status == "COMPLETE"
+    and missingScoreCommand.activePlayOutcome.reason
+        == "The battleground ended; no active play remains."
+    and missingScoreCommand.activePlayTransition.trigger == "MATCH_COMPLETE",
     "Commander did not degrade safely when final match score data was missing.")
 local partialScoreOK, partialScoreCommand = pcall(function()
     return KWR.Commander:Compose({
@@ -5439,6 +5874,7 @@ if releaseOnly then
     print("KWR_SMOKE_PASS checks=0")
     return
 end
+KWR.db.profile.hud.cardLayout = "LEGACY"
 local noteEnemy = KWR.Store:Get().snapshot.enemies and KWR.Store:Get().snapshot.enemies[1]
 assert(noteEnemy and noteEnemy.key, "Enemy tracker did not expose an enemy note target.")
 assert(KWR.MainWindow.frame == nil
@@ -5614,6 +6050,16 @@ do
     assert(KWR.CombatRoster.teamRows[1].nameText.value == "Boundnewone"
         and KWR.CombatRoster.teamRows[2].nameText.value == "Boundnewtwo",
         "Combat roster visuals did not follow changed secure raid-unit occupants.")
+    local ambiguousUnitState = KWR.Util:Copy(changedState)
+    ambiguousUnitState.revision = changedState.revision + 1
+    ambiguousUnitState.snapshot.roster[2].unit = "raid1"
+    KWR.CombatRoster:Update(ambiguousUnitState)
+    assert(KWR.CombatRoster.teamRows[1].nameText.value == ""
+        or KWR.CombatRoster.teamRows[2].nameText.value == ""
+        or KWR.CombatRoster.teamRows[1].nameText.value
+            ~= KWR.CombatRoster.teamRows[2].nameText.value,
+        "Combat roster rendered duplicate identities when secure unit truth was ambiguous.")
+    KWR.CombatRoster:Update(changedState)
     local unstableState = KWR.Util:Copy(changedState)
     unstableState.revision = changedState.revision + 1
     unstableState.snapshot.roster[2].unit = nil
@@ -5776,13 +6222,23 @@ do
         "Fight-Now model did not preserve WHAT, WHO, WHERE, WHEN, posture, and BG win-path direction.")
     coordinationState = fightNowState
 end
+do
+    local unknownScoreState = KWR.Util:Copy(coordinationState)
+    unknownScoreState.snapshot.score = { friendly = 0, enemy = 0, max = 1500, source = "none" }
+    local unknownScoreFightNow = KWR.CommandView:FightNow(unknownScoreState)
+    assert(unknownScoreFightNow.winPath == "VERIFY SCORE",
+        "Fight-Now claimed a Seething scoring path without authoritative score truth.")
+end
+-- These assertions retain the explicit legacy fallback contract. The complete
+-- default surface is exercised through production handlers in commander_card_layout.
+KWR.db.profile.hud.cardLayout = "LEGACY"
 KWR.HUD:Update(coordinationState)
 assert(KWR.HUD.frame:IsShown(),
     "Compact HUD did not open for coordination test.")
-assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 518
+assert(KWR.HUD.frame.width == 432 and KWR.HUD.frame.height == 548
     and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill:IsShown(),
-    "Commander combat preset did not show its complete compact direction stack: width="
+    "Commander combat preset did not retain the fixed compact direction stack: width="
         .. tostring(KWR.HUD.frame.width)
         .. " height=" .. tostring(KWR.HUD.frame.height)
         .. " caller=" .. tostring(KWR.HUD.frame.caller:IsShown())
@@ -5926,7 +6382,7 @@ assert(KWR.HUD.frame.kill:IsShown()
 KWR.db.profile.hud.combatPreset = "COMBAT_FOCUS"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 436
+assert(KWR.HUD.frame.height == 548
     and KWR.HUD.frame.next:IsShown()
     and KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.next.value.value ~= ""
@@ -6046,7 +6502,7 @@ do
     completedFocusState.command.action = "Open Review / AAR"
     KWR.HUD:Invalidate()
     KWR.HUD:Update(completedFocusState)
-    assert(KWR.HUD.frame.height == 518
+    assert(KWR.HUD.frame.height == 548
         and KWR.HUD.frame.next.heading.value == "REVIEW / AAR"
         and KWR.HUD.frame.next.value.value:find("Open Review / AAR", 1, true)
         and KWR.HUD.frame.kill.heading.value == "MATCH COMPLETE"
@@ -6064,7 +6520,7 @@ end
 KWR.db.profile.hud.combatPreset = "COMMANDER"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 518 and KWR.HUD.frame.caller:IsShown()
+assert(KWR.HUD.frame.height == 548 and KWR.HUD.frame.caller:IsShown()
     and KWR.HUD.frame.kill.value.value:find("CC:", 1, true),
     "Leaving minimal live combat mode did not restore the full Fight-Now stack.")
 KWR.db.profile.hud.combatPreset = "REVIEW_OBSERVER"
@@ -6085,12 +6541,12 @@ assert(KWR.CombatRoster.enemyFrame.targetSpotlight.nameText.value
     and KWR.CombatRoster.enemyFrame.targetSpotlight.detailText.value
     == "KILL: Warrior W"
     and KWR.CombatRoster.enemyFrame.targetSpotlight.actionText.value
-    == "SWITCH IN 5 4 3 2 1",
+    == "ON LEADER CALL",
     "Enemy tracker call card did not expose the CC actor, target classes, initials, and switch countdown.")
 local localFightView = KWR.CommandView:FightNow(localFightHudState)
 assert(localFightView.current.what == "KILL"
     and localFightView.current.where == "LM"
-    and localFightView.current.when == "NOW"
+    and localFightView.current.when == "ON LEADER CALL"
     and localFightView.current.source == "LOCAL_FIGHT"
     and localFightView.next.when == "AFTER FIGHT",
     "Fight Now did not synchronize its current recommendation with the confirmed local fight.")
@@ -6580,7 +7036,8 @@ assert(explainTitle == "KWR Command Review"
 local alternativesTitle, alternativesText = KWR.MainWindowReports:BuildAlternativesPayload(KWR.Store:Get())
 assert(alternativesTitle == "KWR Alternate Plans"
     and alternativesText:find("CURRENT CALL:", 1, true)
-    and alternativesText:find("OTHER REVIEWED PATHS:", 1, true),
+    and alternativesText:find("OTHER REVIEWED PATHS:", 1, true)
+    and alternativesText:find("ABORT:", 1, true),
     "Alternate-plan payload did not summarize the current call and fallback paths.")
 KWR.MainWindow:ShowAlternatives()
 assert(KWR.CopyDialog.frame.title:GetText() == "KWR Alternate Plans"
@@ -6590,6 +7047,21 @@ SlashCmdList.KWR("alts")
 assert(KWR.CopyDialog.frame.title:GetText() == "KWR Alternate Plans"
     and KWR.CopyDialog.frame.edit:GetText():find("OTHER REVIEWED PATHS:", 1, true),
     "Slash alternatives command did not open the alternate-plan review.")
+do
+    local originalHandleSlash = KWR.AssignmentOverrides.HandleSlash
+    local overrideCalls, receivedInput = 0, nil
+    KWR.AssignmentOverrides.HandleSlash = function(_, rawInput)
+        overrideCalls = overrideCalls + 1
+        receivedInput = rawInput
+        return { message = "override test" }
+    end
+    SlashCmdList.KWR("override pin Player-Example")
+    assert(overrideCalls == 1 and receivedInput == "override pin Player-Example",
+        "Override slash dispatch did not preserve the player-name input.")
+    SlashCmdList.KWR("overrideable pin Player-Example")
+    assert(overrideCalls == 1, "Unrelated slash prefix reached the override handler.")
+    KWR.AssignmentOverrides.HandleSlash = originalHandleSlash
+end
 KWR.MainWindow:UpdateTactical(KWR.Store:Get())
 assert(KWR.MainWindow.pages.TACTICAL.altButton.label:GetText() == "ALTS",
     "Tactical controls did not relabel the commander alternatives button during PvP.")
@@ -6987,10 +7459,10 @@ local reviewedEnemy = {
 identifierState.snapshot.combat.localTarget = reviewedEnemy
 local reviewedIdentifier = KWR.CursorRing:BuildIdentifierModel(
     reviewedEnemy, false, identifierState, false)
-assert(reviewedIdentifier.ringColor[1] == KWR.Theme.combatColors.KILL.outer[1]
-    and reviewedIdentifier.ringColor[2] == KWR.Theme.combatColors.KILL.outer[2]
-    and reviewedIdentifier.ringColor[3] == KWR.Theme.combatColors.KILL.outer[3],
-    "Battlefield identifier kill color diverged from the shared crosshair palette.")
+assert(reviewedIdentifier.ringColor[1] == KWR.Theme.combatColors.STOP.outer[1]
+    and reviewedIdentifier.ringColor[2] == KWR.Theme.combatColors.STOP.outer[2]
+    and reviewedIdentifier.ringColor[3] == KWR.Theme.combatColors.STOP.outer[3],
+    "Battlefield identifier pressure color diverged from the shared crosshair palette.")
 assert(KWR.Theme:Color("KWR_COLOR_PRIMARY") == KWR.Theme:Color("gold")
     and KWR.Theme:Color("KWR_COLOR_SURFACE") == KWR.Theme:Color("panel")
     and KWR.Theme.tokens.colors.KWR_COLOR_BG[1] > 0
@@ -7046,6 +7518,10 @@ assert(flagCarrierIdentifier.kind == "FLAG"
 do
     local previousNamePlateApi = C_NamePlate
     local nativePlate = CreateFrame("Frame")
+    nativePlate.UnitFrame = {
+        healthBar = CreateFrame("Frame", nil, nativePlate),
+        name = CreateFrame("Frame", nil, nativePlate),
+    }
     C_NamePlate = {
         GetNamePlateForUnit = function(unit)
             return unit == "player" and nativePlate or nil
@@ -7078,8 +7554,9 @@ do
     local markerPoint = nativeMarker.points and nativeMarker.points[1]
     assert(nativeMarker:IsShown()
         and markerPoint and markerPoint[1] == "BOTTOM"
-        and markerPoint[2] == nativePlate and markerPoint[3] == "TOP",
-        "Standalone native marker was not anchored above its Blizzard nameplate.")
+        and markerPoint[2] == nativePlate.UnitFrame.name
+        and markerPoint[3] == "TOP",
+        "Standalone native marker was not centered on its visible Blizzard nameplate identity.")
     assert(nativeMarker.ring.width >= 58 and nativeMarker.ring.height >= 58
         and nativeMarker.icon.width == 38 and nativeMarker.icon.height == 38
         and nativeMarker.ring:IsShown()
@@ -7129,16 +7606,16 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         healthMax = 1000,
     }
     local reticleLocal = KWR.CursorRing:ResolveReticleState(reticlePreviewState)
-    assert(reticleLocal.label == "KILL",
-        "Reticle did not distinguish the current local target from generic kill state.")
+    assert(reticleLocal.label == "PRESSURE",
+        "Reticle did not distinguish a local pressure target from a team kill state.")
     KWR.CursorRing:ApplyReticleState(reticleLocal)
     assert(KWR.CursorRing.reticle.outer.vertexColor[1]
-        == KWR.Theme.combatColors.KILL.outer[1]
+        == KWR.Theme.combatColors.STOP.outer[1]
         and KWR.CursorRing.reticle.outer.vertexColor[2]
-            == KWR.Theme.combatColors.KILL.outer[2]
+            == KWR.Theme.combatColors.STOP.outer[2]
         and KWR.CursorRing.reticle.outer.vertexColor[3]
-            == KWR.Theme.combatColors.KILL.outer[3],
-        "Target reticle kill color diverged from the shared crosshair palette.")
+            == KWR.Theme.combatColors.STOP.outer[3],
+        "Target reticle pressure color diverged from the shared crosshair palette.")
     assert(KWR.CursorRing.reticle.targetIcon.texture ~= nil,
         "Target reticle did not place the target class icon at its centre.")
     KWR.CursorRing:ApplyReticle()
@@ -7147,9 +7624,13 @@ if previewState and previewState.snapshot and previewState.snapshot.context
         "Reticle polish did not retain a compact action-only tactical cue.")
     assert(KWR.CursorRing.reticle.targetIcon.width >= 26,
         "Target reticle did not retain a combat-legible central PvP icon.")
-    assert(KWR.CursorRing.reticle.labelPlate.backdropColor[4] == 0
-        and KWR.CursorRing.reticle.detailPlate.backdropColor[4] == 0,
-        "Reticle caption plates painted an opaque background over the battlefield.")
+    assert(rawget(KWR.CursorRing.reticle.labelPlate, "template") == nil
+        and rawget(KWR.CursorRing.reticle.detailPlate, "template") == nil
+        and rawget(KWR.CursorRing.reticle.labelPlate, "backdropColor") == nil
+        and rawget(KWR.CursorRing.reticle.detailPlate, "backdropColor") == nil,
+        "Nameplate captions reintroduced backdrop processing of combat dimensions.")
+    assert(rawget(KWR.CursorRing:CreateTacticalBadgeFrame("test-caption"), "template") == nil,
+        "Nameplate tactical badge reintroduced a combat-unsafe backdrop template.")
     reticlePreviewState.snapshot.combat.localTarget = pivotEnemy
     reticlePreviewState.snapshot.combat.killTarget = pivotEnemy
     local reticleSwap = KWR.CursorRing:ResolveReticleState(reticlePreviewState)
@@ -7385,6 +7866,11 @@ do
     }
     assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 0.50,
         "Adaptive tactical delay ignored a contested objective row.")
+    local savedTacticalP95 = KWR.MatchRuntime.diagnostics.p95TacticalDurationMs
+    KWR.MatchRuntime.diagnostics.p95TacticalDurationMs = 13
+    assert(KWR.MatchRuntime:AdaptiveTacticalDelay("UPDATE_MOUSEOVER_UNIT") == 1.25,
+        "Adaptive tactical delay did not add backpressure after an expensive live sample.")
+    KWR.MatchRuntime.diagnostics.p95TacticalDurationMs = savedTacticalP95
     assert(KWR.HUD:ObjectiveTimerRemaining(state.snapshot) == 17,
         "HUD timer selection ignored an active objective row.")
     local savedAllowsCommandSurfaces = KWR.Util.AllowsCommandSurfaces
@@ -7852,9 +8338,9 @@ do
         and signalAudit.activeDisabled == 0
         and signalAudit.activeUnknown == 0,
         "Active teamfight problems were not fully covered by the signal registry.")
-    assert(plan.countdown and plan.countdown.ticks[1] == 5
-        and plan.countdown.ticks[#plan.countdown.ticks] == "GO",
-        "Teamfight planner did not generate the five-second countdown.")
+    assert(plan.countdown and plan.countdown.state == "UNTIMED"
+        and #plan.countdown.ticks == 0,
+        "Teamfight planner invented a countdown without an explicit start.")
     assert(byActor.Knomercy.debugReasons and #byActor.Knomercy.debugReasons > 0
         and byActor.Stan.debugReasons and #byActor.Stan.debugReasons > 0,
         "Teamfight planner did not produce debug reasons.")
@@ -7875,8 +8361,8 @@ do
         "Crosshair presenter did not produce assignment and kill-target markers.")
     assert(KWR.TargetAssistFrame:Build(byActor.Stan).message == "Select the assigned target.",
         "Target assist presenter produced the wrong manual guidance.")
-    assert(KWR.CountdownFrame:Build(plan.countdown).ticks[6] == "GO",
-        "Countdown presenter did not preserve the GO tick.")
+    assert(KWR.CountdownFrame:Build(plan.countdown).state == "UNTIMED",
+        "Countdown presenter invented a GO tick.")
     assert(#KWR.DebugReasonPanel:Build(plan) == 3,
         "Debug reason panel did not expose all command reasons.")
     local forbidden = KWR.CommandVocabulary:ContainsForbiddenLanguage(plan.summary)
@@ -7966,8 +8452,17 @@ do
     KWR.CommandAudio.lastSignature = nil
     KWR.CommandAudio.lastSpokenAt = -100
     local audioPacket = KWR.ExecutionCommandBuilder:Build(
-        teamfightSnapshot, {}, {}, { action = "Collapse now." })
-    KWR.CommandAudio:SpeakPacket(audioPacket, false)
+        teamfightSnapshot, {}, {}, { action = "Collapse now.",
+            commandId = "audio-smoke-command", commandRevision = 17 })
+    assert(audioPacket.commandId == "audio-smoke-command"
+        and audioPacket.commandRevision == 17,
+        "Execution packet did not preserve command lifecycle identity for delayed consumers.")
+    local audioDidSpeak, audioStatus = KWR.CommandAudio:SpeakPacket(audioPacket, true)
+    assert(audioDidSpeak and KWR.CommandAudio.lastSignature
+            == KWR.Util:Text(audioPacket.signature, "", 240),
+        "Synchronized audio did not retain its packet signature after speaking: "
+            .. tostring(audioStatus) .. " / " .. tostring(audioPacket.audible)
+            .. " / " .. tostring(audioPacket.authoritative))
     KWR.CommandAudio:SpeakPacket(audioPacket, false)
     assert(spoken == 1, "Unchanged synchronized command signature replayed audio.")
 
@@ -8019,8 +8514,8 @@ assert(KWR.db.profile.launcher.angle == 225
     and KWR.db.profile.combatRoster.enemyMini.x == 170,
     "Coordinated layout reset did not restore launcher and combat-roster positions.")
 
--- Native bag windows must remain above the command HUD. Strata-only changes
--- are safe during combat; all anchoring and scaling work stays deferred.
+-- Native bag priority applies outside combat. Every layout mutation, including
+-- direct strata updates, must defer until combat ends.
 do
     local coordinator = KWR.LayoutCoordinator
     local combinedBags = CreateFrame("Frame", "ContainerFrameCombinedBags", UIParent)
@@ -8049,17 +8544,29 @@ do
     assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
         "KWR surface strata did not recover after every bag closed.")
 
-combinedBags:Show()
-mockCombat = true
-assert(coordinator:Apply() == false and coordinator.pendingApply == true
-        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
-        "Combat lockdown blocked the safe native-bag strata update.")
-combinedBags:Hide()
-assert(coordinator:Apply() == false
+    combinedBags:Show()
+    mockCombat = true
+    local setStrata = KWR.HUD.frame.SetFrameStrata
+    KWR.HUD.frame.SetFrameStrata = function(frame, strata)
+        assert(not mockCombat, "Protected frame strata changed in combat.")
+        return setStrata(frame, strata)
+    end
+    assert(coordinator:Apply() == false and coordinator.pendingApply == true
         and KWR.HUD.frame:GetFrameStrata() == "HIGH",
-        "Combat lockdown blocked strata recovery after the bag closed.")
+        "Layout changed native bag priority during combat lockdown.")
+    assert(coordinator:ApplyStrata() == false,
+        "Direct strata update bypassed combat lockdown.")
     mockCombat = false
+    coordinator.eventFrame:GetScript("OnEvent")(
+        coordinator.eventFrame, "PLAYER_REGEN_ENABLED")
+    assert(coordinator.pendingApply == nil
+        and KWR.HUD.frame:GetFrameStrata() == "MEDIUM",
+        "Deferred bag priority was not applied when combat ended.")
+    combinedBags:Hide()
     coordinator:Apply()
+    assert(KWR.HUD.frame:GetFrameStrata() == "HIGH",
+        "Normal strata did not recover after the bags closed.")
+    KWR.HUD.frame.SetFrameStrata = setStrata
     _G.ContainerFrameCombinedBags = nil
     _G.ContainerFrame1 = nil
 end
@@ -8198,7 +8705,72 @@ do
     KWR.Strategist.cache = savedStrategyCache
 end
 
+do
+    local oldReticle = KWR.db.profile.cursor.reticleEnabled
+    local oldOrbs = KWR.db.profile.cursor.battlefieldOrbs
+    KWR.db.profile.cursor.reticleEnabled = true
+    KWR.db.profile.cursor.battlefieldOrbs = true
+    local counts = {}
+    for _, fps in ipairs({ 30, 60, 144 }) do
+        local probe = setmetatable({
+            reticlePending = true,
+            reticle = { IsShown = function() return true end, pulseActive = true,
+                pulse = { SetAlpha = function() end } },
+            reticleCalls = 0, orbCalls = 0,
+            RefreshReticle = function(self) self.reticleCalls = self.reticleCalls + 1 end,
+            RefreshOrbs = function(self) self.orbCalls = self.orbCalls + 1 end,
+            RefreshDriver = function() end,
+            frame = { IsShown = function() return false end },
+        }, { __index = KWR.CursorRing })
+        -- Explicit counters prevent inherited state from earlier UI tests.
+        probe.elapsed, probe.reticleRetry, probe.orbRetry, probe.reticlePulse = 0, 0, 0, 0
+        for _ = 1, fps * 10 do probe:OnUpdate(1 / fps) end
+        assert(probe.reticleCalls >= 49 and probe.reticleCalls <= 50
+            and probe.orbCalls >= 39 and probe.orbCalls <= 40,
+            "Marker cadence lost elapsed time at " .. fps .. " FPS")
+        assert(probe.reticlePulse >= 9.95 and probe.reticlePulse <= 10.01,
+            "Marker pulse did not follow elapsed time")
+        counts[#counts + 1] = { probe.reticleCalls, probe.orbCalls }
+        local beforeReticle, beforeOrb = probe.reticleCalls, probe.orbCalls
+        probe:OnUpdate(5)
+        probe:OnUpdate(0)
+        assert(probe.reticleCalls == beforeReticle + 1 and probe.orbCalls == beforeOrb + 1,
+            "Marker stall caused a catch-up refresh burst")
+        local beforeElapsed = probe.elapsed
+        probe:OnUpdate(-1)
+        probe:OnUpdate(math.huge)
+        probe:OnUpdate(0 / 0)
+        assert(probe.elapsed == beforeElapsed, "Invalid frame time poisoned marker timers")
+    end
+    for index = 2, #counts do
+        assert(math.abs(counts[index][1] - counts[1][1]) <= 1
+            and math.abs(counts[index][2] - counts[1][2]) <= 1,
+            "Marker retry rates differ by frame rate")
+    end
+    KWR.db.profile.cursor.reticleEnabled = oldReticle
+    KWR.db.profile.cursor.battlefieldOrbs = oldOrbs
+end
+
 local result = { passed = 0, failed = 0 }
+local commanderCardState = assert(loadfile(ResolveTestPath("tests/fixtures/commander_card.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/command_followthrough.lua")))()(KWR, commanderCardState)
+assert(loadfile(ResolveTestPath("tests/fixtures/followthrough_learning.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/commander_card_layout.lua")))()(KWR, commanderCardState)
+assert(loadfile(ResolveTestPath("tests/fixtures/tactical_truth.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/observation_bracket.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/memory_sampling.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/scenario_contracts.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/friendly_availability.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/assignment_feasibility.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/sentinel_ingress_bounds.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/explicit_countdown.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/evidence_freshness.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/delivery_provenance.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/public_execution_observation.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/encounter_history.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/store_ownership.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/learning_episodes.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/aar_retention.lua")))()(KWR)
 if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
     result = KWR.Diagnostics:Run()
     if result.failed > 0 then

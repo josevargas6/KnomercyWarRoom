@@ -177,6 +177,8 @@ function New-DailyProgressMessage {
     $lines.Add("Build: $script:currentAddonVersion")
     if ($evidenceVersion -ne $script:currentAddonVersion) {
         $lines.Add("Evidence baseline: $evidenceVersion (refresh required for $script:currentAddonVersion).")
+    } else {
+        $lines.Add("Evidence baseline: $evidenceVersion.")
     }
     $lines.Add(
         "Offline base: $($Readiness.offlineStatus.supportedMaps) maps, " +
@@ -258,6 +260,8 @@ function New-OpsMessage {
     $lines.Add("Candidate: $script:currentAddonVersion")
     if ($evidenceVersion -ne $script:currentAddonVersion) {
         $lines.Add("Evidence baseline: $evidenceVersion (refresh required for $script:currentAddonVersion).")
+    } else {
+        $lines.Add("Evidence baseline: $evidenceVersion.")
     }
     $lines.Add("Offline prepared: $(if ($Audit.offlinePrepared) { "YES" } else { "NO" })")
     $lines.Add("Field-testing prepared: $(if ($Audit.fieldTestingPrepared) { "YES" } else { "NO" })")

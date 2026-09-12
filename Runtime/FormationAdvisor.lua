@@ -7,8 +7,20 @@ local FormationAdvisor = {
 }
 KWR.FormationAdvisor = FormationAdvisor
 
-local TARGET_SIZE = 10
-local TARGET_ROLES = { TANK = 1, HEALER = 3, DAMAGER = 6 }
+local RULESETS = {
+    RBG_10 = {
+        id = "RBG_10",
+        label = "Rated Battleground",
+        targetSize = 10,
+        roles = { TANK = 1, HEALER = 3, DAMAGER = 6 },
+    },
+    BLITZ_8 = {
+        id = "BLITZ_8",
+        label = "Rated Battleground Blitz",
+        targetSize = 8,
+        roles = { TANK = 1, HEALER = 2, DAMAGER = 5 },
+    },
+}
 local ROLE_ORDER = { "TANK", "HEALER", "DAMAGER" }
 
 local ARCHETYPE_TAGS = {
@@ -75,9 +87,22 @@ local function roleForSpec(classFile, spec)
     return role or "DAMAGER"
 end
 
-local function compRequirements(comp)
-    local requirements = {}
+local function targetCompTokens(comp, roleTargets)
+    local tokens, selected = {}, {}
     for _, token in ipairs(comp and comp.specs or {}) do
+        local classFile, spec = tokenParts(token)
+        local role = classFile and spec and roleForSpec(classFile, spec) or nil
+        if role and (selected[role] or 0) < (roleTargets[role] or 0) then
+            selected[role] = (selected[role] or 0) + 1
+            tokens[#tokens + 1] = token
+        end
+    end
+    return tokens
+end
+
+local function compRequirements(comp, roleTargets)
+    local requirements = {}
+    for _, token in ipairs(targetCompTokens(comp, roleTargets)) do
         local classFile, spec = tokenParts(token)
         if classFile and spec then
             requirements[#requirements + 1] = {
@@ -171,10 +196,10 @@ local function takeReplacementPlayer(candidates, preferredRole, fallbackRole)
     return bestIndex and table.remove(candidates, bestIndex) or nil
 end
 
-local function targetRecommendations(comp, roster, openSlots, overages, needs)
+local function targetRecommendations(comp, roster, openSlots, overages, needs, roleTargets)
     local missing = {}
     local existing = existingSpecs(roster)
-    for targetOrder, token in ipairs(comp and comp.specs or {}) do
+    for targetOrder, token in ipairs(targetCompTokens(comp, roleTargets)) do
         local key = tokenKey(token)
         if key and (existing[key] or 0) > 0 then
             existing[key] = existing[key] - 1
@@ -367,6 +392,9 @@ local function formationSignature(snapshot)
     local profile = KWR.db and KWR.db.profile and KWR.db.profile.formation or {}
     local parts = {
         KWR.Util:Text(context.mapKey, "WORLD", 32),
+        KWR.Util:Text(context.kind, "WORLD", 24),
+        context.isRated == true and "RATED" or "UNRATED",
+        context.isBlitz == true and "BLITZ_8" or "RBG_10",
         KWR.Util:Text(profile.selectedCompID, "AUTO", 64),
     }
     for _, player in ipairs(snapshot and snapshot.roster or {}) do
@@ -383,6 +411,11 @@ local function formationSignature(snapshot)
     return table.concat(parts, "\031")
 end
 
+local function rulesetFor(snapshot)
+    local context = snapshot and snapshot.context or {}
+    return context.isBlitz == true and RULESETS.BLITZ_8 or RULESETS.RBG_10
+end
+
 function FormationAdvisor:Evaluate(snapshot)
     local signature = formationSignature(snapshot)
     if self.cache and self.cache.signature == signature then
@@ -390,23 +423,25 @@ function FormationAdvisor:Evaluate(snapshot)
         return KWR.Util:Copy(self.cache.result)
     end
     self.cacheMisses = self.cacheMisses + 1
-    local roster = snapshot.roster or {}
+    local roster = type(snapshot and snapshot.roster) == "table" and snapshot.roster or {}
     local summary = KWR.Capabilities:Summarize(roster)
     local detected = KWR.Compositions:Detect(summary)
     local tierMatch = KWR.Compositions:MatchTier(roster,
         snapshot.context and snapshot.context.mapKey)
     local archetype = #roster >= 4 and detected.id or "BALANCED"
+    local ruleset = rulesetFor(snapshot)
+    local targetRoles = ruleset.roles
     local needs = {
-        TANK = math.max(TARGET_ROLES.TANK - summary.tanks, 0),
-        HEALER = math.max(TARGET_ROLES.HEALER - summary.healers, 0),
-        DAMAGER = math.max(TARGET_ROLES.DAMAGER - summary.damage, 0),
+        TANK = math.max(targetRoles.TANK - summary.tanks, 0),
+        HEALER = math.max(targetRoles.HEALER - summary.healers, 0),
+        DAMAGER = math.max(targetRoles.DAMAGER - summary.damage, 0),
     }
     local overages = {
-        TANK = math.max(summary.tanks - TARGET_ROLES.TANK, 0),
-        HEALER = math.max(summary.healers - TARGET_ROLES.HEALER, 0),
-        DAMAGER = math.max(summary.damage - TARGET_ROLES.DAMAGER, 0),
+        TANK = math.max(summary.tanks - targetRoles.TANK, 0),
+        HEALER = math.max(summary.healers - targetRoles.HEALER, 0),
+        DAMAGER = math.max(summary.damage - targetRoles.DAMAGER, 0),
     }
-    local openSlots = math.max(TARGET_SIZE - #roster, 0)
+    local openSlots = math.max(ruleset.targetSize - #roster, 0)
     local totalNeeds = needs.TANK + needs.HEALER + needs.DAMAGER
     local replacementsNeeded = math.max(totalNeeds - openSlots, 0)
     local currentComp, currentCompSource = currentCompRead(tierMatch, archetype)
@@ -414,7 +449,8 @@ function FormationAdvisor:Evaluate(snapshot)
         resolveBuildTarget(snapshot, tierMatch, archetype)
     local recommendations = {}
     if buildTarget and buildTarget.specs and #buildTarget.specs > 0 then
-        recommendations = targetRecommendations(buildTarget, roster, openSlots, overages, needs)
+        recommendations = targetRecommendations(buildTarget, roster, openSlots, overages, needs,
+            targetRoles)
     end
     if #recommendations == 0 then
         local existing = existingSpecs(roster)
@@ -526,7 +562,9 @@ function FormationAdvisor:Evaluate(snapshot)
     end
     local positioning, positioningTitle = compPositioning(buildTarget)
     local result = {
-        targetSize = TARGET_SIZE,
+        ruleset = ruleset.id,
+        rulesetLabel = ruleset.label,
+        targetSize = ruleset.targetSize,
         players = #roster,
         openSlots = openSlots,
         complete = openSlots == 0 and needs.TANK == 0 and needs.HEALER == 0 and needs.DAMAGER == 0,
@@ -541,7 +579,7 @@ function FormationAdvisor:Evaluate(snapshot)
         currentCompSource = currentCompSource,
         tierMatch = KWR.Util:Copy(tierMatch),
         buildTarget = KWR.Util:Copy(buildTarget),
-        buildRequirements = compRequirements(buildTarget),
+        buildRequirements = compRequirements(buildTarget, targetRoles),
         buildTargetSource = buildTargetSource,
         selectedCompID = selectedCompID,
         availableComps = KWR.Util:Copy(availableComps),

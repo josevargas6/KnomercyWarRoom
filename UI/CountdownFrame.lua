@@ -4,7 +4,7 @@ local CountdownFrame = {}
 KWR.CountdownFrame = CountdownFrame
 
 function CountdownFrame:Build(countdown)
-    return countdown or { seconds = 0, ticks = {}, state = "UNKNOWN" }
+    return KWR.CountdownState:Project(countdown)
 end
 
 KWR:RegisterModule("CountdownFrame", CountdownFrame)

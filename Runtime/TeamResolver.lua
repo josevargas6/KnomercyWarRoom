@@ -363,7 +363,23 @@ function TeamResolver:ReadRows()
     return rows
 end
 
-function TeamResolver:DetectBlitz(rows)
+local BLITZ_INDICATORS = { "IsRatedSoloRBG", "IsBrawlSoloRBG", "IsSoloRBG" }
+
+function TeamResolver:BlitzIndicator(inPvP)
+    if inPvP ~= true then return false, "outside_battleground" end
+    local known = 0
+    for _, name in ipairs(BLITZ_INDICATORS) do
+        local value = KWR.Util:Call(C_PvP and C_PvP[name])
+        if not KWR.Util:IsSecret(value) and type(value) == "boolean" then
+            if value then return true, "C_PvP." .. name end
+            known = known + 1
+        end
+    end
+    if known == #BLITZ_INDICATORS then return false, "C_PvP.solo_indicators" end
+    return nil, "unconfirmed"
+end
+
+function TeamResolver:DetectBlitz(rows, indicator, indicatorSource)
     local counts = {
         [HORDE_SCORE_FACTION] = 0,
         [ALLIANCE_SCORE_FACTION] = 0,
@@ -376,11 +392,14 @@ function TeamResolver:DetectBlitz(rows)
             known = known + 1
         end
     end
-    local detected = known == 16
+    local scoreboardHint = known == 16
         and counts[HORDE_SCORE_FACTION] == 8
         and counts[ALLIANCE_SCORE_FACTION] == 8
-    return detected, {
-        source = detected and "scoreboard_8v8" or "scoreboard_inconclusive",
+    if KWR.Util:IsSecret(indicator) or type(indicator) ~= "boolean" then indicator = nil end
+    return indicator == true, {
+        source = indicator ~= nil and (indicatorSource or "explicit_indicator") or "unconfirmed",
+        known = indicator ~= nil,
+        scoreboardHint = scoreboardHint and "scoreboard_8v8" or "scoreboard_inconclusive",
         horde = counts[HORDE_SCORE_FACTION],
         alliance = counts[ALLIANCE_SCORE_FACTION],
     }
@@ -494,9 +513,10 @@ function TeamResolver:ReconcileFriendlyRoster(roster, assigned, rows, expectedCo
         player.specSource = row.spec and row.spec ~= ""
             and "scoreboard" or player.specSource
         player.role = KWR.Util:Text(row.role, player.role or "NONE", 12)
-        player.connected = matched and matched.connected ~= false or true
-        player.dead = matched and matched.dead == true or false
-        player.visible = matched and matched.visible == true or false
+        -- Scoreboard identity cannot fill missing physical unit observations.
+        player.connected = KWR.Util:OptionalBoolean(matched and matched.connected)
+        player.dead = KWR.Util:OptionalBoolean(matched and matched.dead)
+        player.visible = KWR.Util:OptionalBoolean(matched and matched.visible)
         player.lastSeenAt = KWR.Util:Now()
         player.location = matched and matched.location or "Position restricted"
         player.locationSource = matched and matched.locationSource or "PvP Scoreboard"

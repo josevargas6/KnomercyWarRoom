@@ -4,7 +4,9 @@ local MemoryBudget = {
     softCapMB = 25,
     warningCapMB = 28,
     hardCapMB = 32,
-    checkEveryRevisions = 20,
+    -- Detect a live growth trend before it survives a full objective cycle.
+    checkEveryRevisions = 10,
+    minimumSampleInterval = 30,
     lastTrimRevision = 0,
     lastTrimAt = 0,
     lastMeasuredMB = 0,
@@ -18,15 +20,16 @@ local MemoryBudget = {
         aarDecisionReviews = 12,
         aarPlayerLocations = 8,
         aarPlayerNotes = 6,
-        encounterPlayers = 240,
-        opponentProfiles = 240,
-        opponentProcessedMatches = 120,
-        enemyNotes = 320,
-        learningBuckets = 120,
-        verificationLedger = 60,
+        encounterPlayers = 160,
+        opponentProfiles = 160,
+        opponentProcessedMatches = 80,
+        enemyNotes = 160,
+        learningBuckets = 80,
+        learningProcessedEpisodes = 120,
+        verificationLedger = 30,
         commandHistory = 16,
         objectiveEvents = 24,
-        runtimeDurationSamples = 120,
+        runtimeDurationSamples = 60,
         reporterPoints = 8,
         reporterEvents = 20,
         reporterExportPoints = 4,
@@ -96,6 +99,7 @@ local MemoryBudget = {
                 purpose = "Keep bounded plan-learning outcomes for reviewed matches.",
                 caps = {
                     maxBuckets = "learningBuckets",
+                    maxProcessedEpisodes = "learningProcessedEpisodes",
                 },
                 prune = {
                     { module = "Learning", method = "Prune" },
@@ -174,13 +178,18 @@ end
 function MemoryBudget:MeasureMB()
     if type(UpdateAddOnMemoryUsage) ~= "function"
         or type(GetAddOnMemoryUsage) ~= "function" then
-        return nil
+        return nil, "API_UNAVAILABLE"
     end
-    if not (InCombatLockdown and InCombatLockdown()) then
-        KWR.Util:Call(UpdateAddOnMemoryUsage)
-    end
-    local kb = KWR.Util:Number(KWR.Util:Call(GetAddOnMemoryUsage, KWR.name), nil)
-    return kb and (kb / 1024) or nil
+    if InCombatLockdown and InCombatLockdown() then return nil, "COMBAT_DEFERRED" end
+    -- This refresh API returns no value on success; pcall distinguishes that
+    -- from an error. A cached read is not a new memory measurement.
+    local refreshed = pcall(UpdateAddOnMemoryUsage)
+    if not refreshed then return nil, "REFRESH_FAILED" end
+    local read, value = pcall(GetAddOnMemoryUsage, KWR.name)
+    if not read then return nil, "READ_FAILED" end
+    local kb = KWR.Util:Number(value, nil)
+    if not kb or kb ~= kb or kb < 0 or kb == math.huge then return nil, "INVALID_READING" end
+    return kb / 1024, "MEASURED"
 end
 
 function MemoryBudget:Retention()
@@ -363,6 +372,23 @@ function MemoryBudget:Trim(state, force)
         if KWR.CombatIntel and KWR.CombatIntel.Reset then
             KWR.CombatIntel:Reset()
         end
+        -- These are derived presentation caches, never battlefield truth.
+        -- Discard them before live memory pressure can affect the command
+        -- path or exceed the addon hard ceiling.
+        if KWR.FormationAdvisor then KWR.FormationAdvisor.cache = nil end
+        if KWR.Reporter then
+            KWR.Reporter.memory = { rotations = {}, routes = {}, revision = 0 }
+        end
+        if KWR.MatchRuntime then
+            local runtime = KWR.MatchRuntime
+            while #(runtime.durationSamples or {}) > 30 do
+                table.remove(runtime.durationSamples, 1)
+            end
+            while #(runtime.tacticalDurationSamples or {}) > 30 do
+                table.remove(runtime.tacticalDurationSamples, 1)
+            end
+            runtime.diagnostics.eventTrace = {}
+        end
     end
 end
 
@@ -375,12 +401,59 @@ function MemoryBudget:PressureLevel(mb)
     return "OK"
 end
 
-function MemoryBudget:Summary()
+function MemoryBudget:Sample(state, allowTrim, forceRefresh)
+    local currentNow = now()
+    local fresh = false
+    if forceRefresh == true or self.lastSampleAttemptAt == nil
+        or currentNow < self.lastSampleAttemptAt
+        or currentNow - self.lastSampleAttemptAt >= self.minimumSampleInterval then
+        self.lastSampleAttemptAt = currentNow
+        local measured, reason = self:MeasureMB()
+        if measured and measured == measured and measured >= 0 and measured < math.huge then
+            self.lastMeasuredMB = measured
+            self.lastMeasuredAt = currentNow
+            fresh = true
+        end
+        self.lastSampleReason = fresh and "MEASURED" or (reason or "UNAVAILABLE")
+    else
+        if self.lastSampleReason == "MEASURED" or self.lastSampleReason == nil then
+            self.lastSampleReason = "SAMPLE_INTERVAL"
+        end
+    end
+    local currentMB = self.lastMeasuredAt ~= nil and self.lastMeasuredMB or nil
+    local pressure = self:PressureLevel(currentMB)
+    self.lastPressure = pressure
+    self.degradationMode = pressure == "FAIL" and "CRITICAL_LIVE_ONLY"
+        or pressure == "WARNING" and "REDUCED_DETAIL"
+        or pressure == "SOFT" and "CACHE_GUARDED" or "FULL"
+    if allowTrim ~= true then return currentMB, fresh end
+    if pressure == "FAIL" then
+        self:Trim(state, true)
+    elseif pressure == "WARNING" then
+        self:Trim(state, false)
+        self:Trim(state, true)
+        if KWR.EnemyIntel and KWR.EnemyIntel.PruneStaleRecords then
+            KWR.EnemyIntel:PruneStaleRecords(KWR.Util:Now())
+        end
+    elseif pressure == "SOFT" then
+        self:Trim(state, false)
+    elseif state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP ~= true then
+        self:Trim(state, false)
+    end
+    return currentMB, fresh
+end
+
+function MemoryBudget:Summary(refresh)
     local db = KWR.db or {}
     -- Use the last synchronized sample so /kwr perf and the retention panel
     -- report the same addon-wide metric instead of two different timestamps.
-    local currentMB = self.lastMeasuredMB and self.lastMeasuredMB > 0
-        and self.lastMeasuredMB or self:MeasureMB()
+    local currentMB, fresh
+    if refresh == true or self.lastMeasuredAt == nil then
+        currentMB, fresh = self:Sample(nil, false, refresh == true)
+    else
+        currentMB = self.lastMeasuredMB
+    end
     return {
         softCapMB = self.softCapMB,
         warningCapMB = self.warningCapMB,
@@ -388,6 +461,10 @@ function MemoryBudget:Summary()
         currentMB = currentMB,
         memoryKB = currentMB and (currentMB * 1024) or nil,
         memorySource = "GetAddOnMemoryUsage(KnomercyWarRoom)",
+        sampledAt = self.lastMeasuredAt,
+        sampleAgeSeconds = self.lastMeasuredAt and math.max(0, now() - self.lastMeasuredAt) or nil,
+        sampleStatus = currentMB == nil and "UNAVAILABLE" or (fresh and "MEASURED" or "CACHED"),
+        sampleReason = self.lastSampleReason or "UNAVAILABLE",
         degradationMode = self.degradationMode or "FULL",
         pressure = self:PressureLevel(currentMB),
         history = {
@@ -414,6 +491,10 @@ function MemoryBudget:Summary()
             count = countKeys(db.learning and db.learning.plans),
             cap = self:Cap("learningBuckets", 120),
         },
+        learningEpisodes = {
+            count = countKeys(db.learning and db.learning.processedEpisodes),
+            cap = self:Cap("learningProcessedEpisodes", 120),
+        },
         verificationLedger = {
             count = #(KWR.Verification and KWR.Verification.ledger or {}),
             cap = self:Cap("verificationLedger", 60),
@@ -439,13 +520,16 @@ function MemoryBudget:Summary()
 end
 
 function MemoryBudget:Report()
-    local summary = self:Summary()
+    local summary = self:Summary(true)
     local lines = {
         string.format("Memory target: %.1f MB", summary.softCapMB or 0),
         string.format("Memory warning: %.1f MB", summary.warningCapMB or 0),
         string.format("Memory fail: %.1f MB", summary.hardCapMB or 0),
         string.format("Measured addon memory: %s",
             summary.currentMB and string.format("%.2f MB", summary.currentMB) or "unavailable"),
+        string.format("Memory sample: %s | age %s | %s", summary.sampleStatus,
+            summary.sampleAgeSeconds and string.format("%.1fs", summary.sampleAgeSeconds) or "unknown",
+            summary.sampleReason),
         string.format("Pressure state: %s", tostring(summary.pressure or "NONE")),
         string.format("Degradation mode: %s", tostring(summary.degradationMode or "FULL")),
         string.format("AAR history: %d / %d",
@@ -460,6 +544,8 @@ function MemoryBudget:Report()
             summary.enemyNotes.count or 0, summary.enemyNotes.cap or 0),
         string.format("Learning plans: %d / %d",
             summary.learningPlans.count or 0, summary.learningPlans.cap or 0),
+        string.format("Learning episode ledger: %d / %d",
+            summary.learningEpisodes.count or 0, summary.learningEpisodes.cap or 0),
         string.format("Verification ledger: %d / %d",
             summary.verificationLedger.count or 0, summary.verificationLedger.cap or 0),
         string.format("Command history: %d / %d",
@@ -501,26 +587,13 @@ function MemoryBudget:Update(state)
     if not state or (state.revision or 0) % self.checkEveryRevisions ~= 0 then
         return
     end
-    local mb = self:MeasureMB()
-    self.lastMeasuredMB = mb or self.lastMeasuredMB or 0
-    local pressure = self:PressureLevel(mb)
-    self.lastPressure = pressure
-    self.degradationMode = pressure == "FAIL" and "CRITICAL_LIVE_ONLY"
-        or pressure == "WARNING" and "REDUCED_DETAIL"
-        or pressure == "SOFT" and "CACHE_GUARDED" or "FULL"
-    if pressure == "FAIL" then
-        self:Trim(state, true)
-    elseif pressure == "WARNING" then
-        self:Trim(state, false)
-        self:Trim(state, true)
-        if KWR.EnemyIntel and KWR.EnemyIntel.PruneStaleRecords then
-            KWR.EnemyIntel:PruneStaleRecords(KWR.Util:Now())
-        end
-    elseif pressure == "SOFT" then
-        self:Trim(state, false)
-    elseif state.snapshot and state.snapshot.context and state.snapshot.context.inPvP ~= true then
-        self:Trim(state, false)
+    -- Preview is a static fixture and is exercised heavily by offline soak
+    -- tests. It has no live retention value, so do not spend its refresh
+    -- budget measuring/pruning addon memory.
+    if state.snapshot and state.snapshot.context and state.snapshot.context.preview == true then
+        return
     end
+    self:Sample(state, true)
 end
 
 function MemoryBudget:OnInitialize()

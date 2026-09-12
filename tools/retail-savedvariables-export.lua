@@ -20,6 +20,26 @@ local function count(records)
     return total
 end
 
+-- This is a diagnostic size approximation, not a serializer and not an
+-- evidence substitute for the exact file-byte budget.  It deliberately emits
+-- only structure and lengths so a local footprint receipt cannot expose player
+-- names, notes, call text, or other retained content.
+local function approximateBytes(value, seen)
+    local valueType = type(value)
+    if valueType == "string" then return #value + 2 end
+    if valueType == "number" then return #tostring(value) end
+    if valueType == "boolean" then return value and 4 or 5 end
+    if valueType ~= "table" then return 0 end
+    seen = seen or {}
+    if seen[value] then return 0 end
+    seen[value] = true
+    local total = 4
+    for key, child in pairs(value) do
+        total = total + approximateBytes(key, seen) + approximateBytes(child, seen) + 4
+    end
+    return total
+end
+
 local function emit(...)
     local values = { ... }
     for index = 1, #values do
@@ -36,6 +56,17 @@ end
 local journal = type(KWR_DB.journal) == "table" and KWR_DB.journal or {}
 local history = type(journal.history) == "table" and journal.history or {}
 emit("META", KWR_DB.schemaVersion, #history, journal.interrupted and "YES" or "NO")
+
+local rootKeys = {}
+for key in pairs(KWR_DB) do
+    rootKeys[#rootKeys + 1] = tostring(key)
+end
+table.sort(rootKeys)
+for _, key in ipairs(rootKeys) do
+    local value = KWR_DB[key]
+    emit("FOOTPRINT", key, type(value) == "table" and count(value) or 0,
+        approximateBytes(value))
+end
 
 for index, entry in ipairs(history) do
     local stability = type(entry.commandStability) == "table" and entry.commandStability or {}

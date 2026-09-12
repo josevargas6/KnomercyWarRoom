@@ -1,11 +1,23 @@
 [CmdletBinding()]
 param(
-    [string]$OutFile = "knowledge\field-test-readiness.json"
+    [string]$OutFile = "knowledge\field-test-readiness.json",
+    [string]$CandidatePackageReportPath = "knowledge\candidate-package-report.json"
 )
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
-$outPath = Join-Path $root $OutFile
+. (Join-Path $PSScriptRoot "release-manifest.ps1")
+$outPath = if ([IO.Path]::IsPathRooted($OutFile)) {
+    [IO.Path]::GetFullPath($OutFile)
+} else {
+    Join-Path $root $OutFile
+}
+function Resolve-KwrReportPath {
+    param([AllowNull()][string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $null }
+    if ([IO.Path]::IsPathRooted($Path)) { return [IO.Path]::GetFullPath($Path) }
+    return Join-Path $root $Path
+}
 
 $matrix = Get-Content -LiteralPath (Join-Path $root "knowledge\rbg-scenario-matrix.json") -Raw | ConvertFrom-Json
 $manifest = Get-Content -LiteralPath (Join-Path $root "knowledge\corpus-manifest.json") -Raw | ConvertFrom-Json
@@ -19,22 +31,53 @@ $runtimePreflight = if (Test-Path -LiteralPath $runtimePreflightPath) {
 }
 $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
 $version = [regex]::Match($toc, "## Version:\s*(.+)").Groups[1].Value.Trim()
-$packageReportPath = Join-Path $root "knowledge\candidate-package-report.json"
+$packageReportPath = Resolve-KwrReportPath $CandidatePackageReportPath
 $packageReport = if (Test-Path -LiteralPath $packageReportPath) {
     Get-Content -LiteralPath $packageReportPath -Raw | ConvertFrom-Json
 } else { $null }
-$offlineGatePassed = $packageReport -and
+$candidateProvenance = $null
+if ($packageReport -and $packageReport.buildProvenance -and $packageReport.buildProvenance.path) {
+    $provenancePath = Resolve-KwrReportPath ([string]$packageReport.buildProvenance.path)
+    if (Test-Path -LiteralPath $provenancePath) {
+        $candidateProvenance = Get-Content -LiteralPath $provenancePath -Raw | ConvertFrom-Json
+    }
+}
+$candidateArtifactPath = if ($packageReport -and $packageReport.distributionArtifact) {
+    Resolve-KwrReportPath ([string]$packageReport.distributionArtifact.path)
+} else { $null }
+$candidateArtifactSha256 = if ($packageReport -and $packageReport.distributionArtifact) {
+    [string]$packageReport.distributionArtifact.sha256
+} else { $null }
+$candidateArtifactVerified = $candidateArtifactPath -and
+    (Test-Path -LiteralPath $candidateArtifactPath -PathType Leaf) -and
+    $candidateArtifactSha256 -match '^[A-Fa-f0-9]{64}$' -and
+    ((Get-KwrFileSha256 -LiteralPath $candidateArtifactPath) -eq $candidateArtifactSha256.ToUpperInvariant())
+$currentGit = Get-GitProvenance -RootPath $root
+$candidateSourceBound = $candidateProvenance -and $candidateProvenance.git -and
+    $candidateProvenance.git.available -eq $true -and
+    $candidateProvenance.git.dirty -eq $false -and
+    $currentGit.available -eq $true -and
+    $currentGit.dirty -eq $false -and
+    $candidateProvenance.git.commit -eq $currentGit.commit
+$offlineGatePassed = $packageReport -and $candidateSourceBound -and $candidateArtifactVerified -and
     $packageReport.candidateVersion -eq $version -and
     $packageReport.packageAudit.result -eq "PASS" -and
     $packageReport.environmentCertification.packageAuditInThisWorkspace -eq "CERTIFIED_IN_WORKSPACE"
+$eligibilityBlockers = @(
+    if (-not $candidateArtifactVerified) { 'Candidate archive path/hash is not verified.' }
+    if (-not $candidateProvenance) { 'Candidate build provenance path is not readable.' }
+    if (-not $candidateSourceBound) { 'Current and built source must match and both must be clean for full release eligibility.' }
+    if (-not $packageReport -or $packageReport.packageAudit.result -ne 'PASS') { 'Candidate package audit has not passed.' }
+)
 $captureMatrixPath = Join-Path $root "docs\CANDIDATE_FIELD_CAPTURE_MATRIX_2026-07-29.md"
 $captureMatrix = if (Test-Path -LiteralPath $captureMatrixPath) {
     Get-Content -LiteralPath $captureMatrixPath -Raw
 } else {
     ""
 }
-$evidenceBaselineMatch = [regex]::Match($captureMatrix, '(?m)^Candidate:\s*(.+)$')
-$evidenceBaseline = $evidenceBaselineMatch.Groups[1].Value.Trim().Trim([char]0x60)
+$evidenceBaselineMatch = [regex]::Match(
+    $captureMatrix, '(?m)^Candidate:\s*`?(?<version>[0-9A-Za-z.-]+)`?')
+$evidenceBaseline = $evidenceBaselineMatch.Groups['version'].Value.Trim()
 if ([string]::IsNullOrWhiteSpace($evidenceBaseline)) {
     $evidenceBaseline = $version
 }
@@ -74,6 +117,9 @@ $report = [ordered]@{
     candidate = [ordered]@{
         addon = "Knomercy War Room"
         version = $version
+        candidateID = if ($packageReport -and $packageReport.candidateID) {
+            [string]$packageReport.candidateID
+        } else { $null }
         build = $version
         evidenceBaseline = $evidenceBaseline
         date = [DateTime]::UtcNow.ToString("yyyy-MM-dd")
@@ -89,10 +135,23 @@ $report = [ordered]@{
         knowledgeAuditPassed = [bool]$offlineGatePassed
         corpusAuditPassed = [bool]$offlineGatePassed
         decisionBenchmarkPassed = [bool]$offlineGatePassed
+        # Retain legacy fields for readers, but do not misrepresent them as
+        # independent execution receipts. Full eligibility is a different gate.
+        legacyPassedFieldsMeaning = 'Combined clean-source/package eligibility; individual test execution is recorded in separate receipts.'
+        fullEligibilityPassed = [bool]$offlineGatePassed
+        eligibilityBlockers = $eligibilityBlockers
         deterministicLuaRuntimeAvailable = [bool]$runtimeAvailable
+        candidateSourceBound = [bool]$candidateSourceBound
+        candidateArtifactVerified = [bool]$candidateArtifactVerified
+        candidateArtifactSha256 = $candidateArtifactSha256
+        candidateCommit = if ($candidateProvenance -and $candidateProvenance.git) { $candidateProvenance.git.commit } else { $null }
+        currentCommit = $currentGit.commit
+        currentGitDirty = $currentGit.dirty
         gateEvidence = @(
             "knowledge/candidate-package-report.json",
-            "knowledge/runtime-preflight.json"
+            "knowledge/runtime-preflight.json",
+            "candidate build provenance must name the current clean commit",
+            "candidate distribution ZIP must match the reported SHA-256"
         )
     }
     liveRequirements = [ordered]@{
@@ -130,6 +189,7 @@ $report = [ordered]@{
     maps = $mapRows
     blockingConditions = @(
         "No field certification without exact hashed package evidence.",
+        "A package report from a different or dirty source commit cannot certify the current field candidate.",
         "Any code, data, TOC, or package change invalidates affected live evidence.",
         "Offline readiness does not certify live behavior by itself."
     )

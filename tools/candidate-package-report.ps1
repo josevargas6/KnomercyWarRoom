@@ -18,6 +18,11 @@ $buildOutputRoot = [IO.Path]::GetFullPath($buildOutputPath)
 $outPath = Join-Path $root $OutFile
 $toc = Get-Content -LiteralPath (Join-Path $root "KnomercyWarRoom.toc") -Raw
 $version = [regex]::Match($toc, "## Version:\s*(.+)").Groups[1].Value.Trim()
+$buildInfo = Get-Content -LiteralPath (Join-Path $root "Core\BuildInfo.lua") -Raw
+$candidateID = [regex]::Match($buildInfo, 'BuildInfo\.candidateID\s*=\s*"([^"]+)"').Groups[1].Value.Trim()
+if ([string]::IsNullOrWhiteSpace($candidateID)) {
+    throw "Core/BuildInfo.lua must declare a candidateID for field-evidence binding."
+}
 $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 
 $distributionZip = Join-Path $buildOutputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
@@ -54,7 +59,8 @@ function Get-ReportPath {
     if ($fullPath.StartsWith($rootPrefix, [StringComparison]::OrdinalIgnoreCase)) {
         return $fullPath.Substring($rootPrefix.Length).Replace('\', '/')
     }
-    return Split-Path -Leaf $fullPath
+    # External build folders must remain resolvable by receipt consumers.
+    return $fullPath.Replace('\', '/')
 }
 
 function New-ArtifactReport {
@@ -113,6 +119,7 @@ $report = [ordered]@{
     schemaVersion = 1
     generatedAt = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
     candidateVersion = $version
+    candidateID = $candidateID
     buildOutputDirectory = Get-ReportPath -Path $buildOutputRoot
     distributionArtifact = $distributionArtifact
     developerArtifact = $developerArtifact
@@ -195,6 +202,7 @@ $report = [ordered]@{
         backupFolderSuggestion = "World of Warcraft\\_retail_\\WTF\\Account\\<ACCOUNT>\\SavedVariables\\KWR_Backups\\$version"
     }
     fieldEvidenceBinding = [ordered]@{
+        candidateID = $candidateID
         candidateVersion = $version
         distributionSha256 = $distributionArtifact.sha256
         evidenceScope = $EvidenceScope

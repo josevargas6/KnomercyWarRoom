@@ -1074,10 +1074,10 @@ function Diagnostics:Run()
             and (index == 1 or candidate.probability
                 <= decisionStrategy.simulations[index - 1].probability)
     end
-    check("Lightweight win-path simulation ranks five bounded candidate actions",
+    check("Lightweight decision-utility simulation ranks five bounded candidate actions",
         simulationsValid == true
-            and decisionStrategy.projectedWinProbability
-                == decisionStrategy.simulations[1].probability)
+            and decisionStrategy.projectedDecisionUtility
+                == decisionStrategy.simulations[1].decisionScore)
     check("Candidate actions include objective, opportunity cost, reversibility, success, and abort semantics",
         decisionStrategy.selectedAction
             and decisionStrategy.selectedAction.target ~= nil
@@ -1370,11 +1370,12 @@ function Diagnostics:Run()
     KWR.CombatIntel:ObserveSpell(
         "RangeEnemy-1", "RangeEnemyOne", 42292, "SPELL_CAST_SUCCESS")
     local localRangeAnalysis = KWR.CombatIntel:Analyze(localRangeSnapshot)
-    check("Combat intelligence can promote a safely observed local-range target before combat flags appear",
-        localRangeAnalysis.killTarget
-            and localRangeAnalysis.killTarget.guid == "RangeEnemy-1"
+    check("Combat intelligence preserves a safely observed local-range target as pressure before combat flags appear",
+        localRangeAnalysis.localTarget
+            and localRangeAnalysis.localTarget.guid == "RangeEnemy-1"
+            and localRangeAnalysis.killTarget == nil
             and localRangeAnalysis.localEnemies == 2,
-        localRangeAnalysis.killReason)
+        localRangeAnalysis.localTargetReason)
     localRangeSnapshot.roster = {
         { guid = "Friendly-1", name = "FriendlyOne", shortName = "FriendlyOne",
             classFile = "WARRIOR", spec = "Arms", role = "DAMAGER",
@@ -1407,16 +1408,18 @@ function Diagnostics:Run()
         },
     }
     local isolationAnalysis = KWR.CombatIntel:Analyze(localRangeSnapshot)
-    check("Combat intelligence prefers the isolated actionable target over the similarly pressured supported target",
-        isolationAnalysis.killTarget
-            and isolationAnalysis.killTarget.guid == "IsolatedEnemy",
-        isolationAnalysis.killReason)
+    check("Combat intelligence keeps an isolated target as pressure when nearby support availability is unknown",
+        isolationAnalysis.localTarget
+            and isolationAnalysis.localTarget.guid == "IsolatedEnemy"
+            and isolationAnalysis.killTarget == nil,
+        isolationAnalysis.localTargetReason)
     localRangeSnapshot.enemies[3].dead = true
     local nextTargetAnalysis = KWR.CombatIntel:Analyze(localRangeSnapshot)
-    check("Combat intelligence promotes the next best actionable target when the current kill target dies",
-        nextTargetAnalysis.killTarget
-            and nextTargetAnalysis.killTarget.guid == "SupportedEnemy",
-        nextTargetAnalysis.killReason)
+    check("Combat intelligence preserves the next actionable target as pressure when the current kill target dies",
+        nextTargetAnalysis.localTarget
+            and nextTargetAnalysis.localTarget.guid == "SupportedEnemy"
+            and nextTargetAnalysis.killTarget == nil,
+        nextTargetAnalysis.localTargetReason)
     KWR.CombatIntel:Reset()
     local protectedSnapshot = fixture("ARATHI",
         { friendly = 500, enemy = 500, max = 1500 },
@@ -1446,7 +1449,7 @@ function Diagnostics:Run()
     local decisionReviews = KWR.AAR:BuildDecisionReviews({
         {
             at = 1, action = "HOLD BS", recommendationMode = "HOLD",
-            expectedOutcome = "Preserve score", projectedWinProbability = 72,
+            expectedOutcome = "Preserve score", projectedDecisionUtility = 72,
             confidence = "HIGH", risk = "LOW",
             simulations = {
                 { id = "HOLD", probability = 72 },
@@ -1455,7 +1458,10 @@ function Diagnostics:Run()
         },
     }, "VICTORY")
     check("Counterfactual review logs recommendation, alternative, and actual result without auto-learning",
-        decisionReviews[1] and decisionReviews[1].outcomeAligned == true
+        decisionReviews[1] and decisionReviews[1].outcomeAligned == nil
+            and decisionReviews[1].decisionQuality == "NOT_SCORED"
+            and decisionReviews[1].executionQuality == "NOT_ISSUED"
+            and decisionReviews[1].actualResult == "VICTORY"
             and decisionReviews[1].competingOption == "ROTATE"
             and decisionReviews[1].evidenceReview == "DEVELOPER_REVIEW_REQUIRED")
     local aarExport = KWR.AAR:Export({

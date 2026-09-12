@@ -11,6 +11,7 @@ local Store = {
     notifyGeneration = 0,
     notifyPassGeneration = 0,
     notifyFlushing = false,
+    listenerSequence = 0,
 }
 KWR.Store = Store
 
@@ -290,11 +291,13 @@ function Store:Subscribe(owner, callback)
     if type(owner) ~= "table" or type(callback) ~= "function" then
         return
     end
+    self.listenerSequence = self.listenerSequence + 1
     self.listeners[owner] = {
         callback = callback,
         selector = nil,
         lastToken = nil,
         lastGeneration = 0,
+        order = self.listenerSequence,
     }
 end
 
@@ -302,12 +305,25 @@ function Store:SubscribeFiltered(owner, callback, selector)
     if type(owner) ~= "table" or type(callback) ~= "function" then
         return
     end
+    self.listenerSequence = self.listenerSequence + 1
     self.listeners[owner] = {
         callback = callback,
         selector = type(selector) == "function" and selector or nil,
         lastToken = nil,
         lastGeneration = 0,
+        order = self.listenerSequence,
     }
+end
+
+local function notificationQueue(listeners)
+    local queue = {}
+    for owner, listener in pairs(listeners or {}) do
+        queue[#queue + 1] = { owner = owner, listener = listener }
+    end
+    table.sort(queue, function(a, b)
+        return (a.listener.order or 0) < (b.listener.order or 0)
+    end)
+    return queue
 end
 
 function Store:Unsubscribe(owner)
@@ -328,14 +344,7 @@ end
 function Store:QueueNotifications(previous, nextState)
     self.notifyGeneration = (self.notifyGeneration or 0) + 1
     if type(self.notifyQueue) ~= "table" then
-        local queue = {}
-        for owner, listener in pairs(self.listeners) do
-            queue[#queue + 1] = {
-                owner = owner,
-                listener = listener,
-            }
-        end
-        self.notifyQueue = queue
+        self.notifyQueue = notificationQueue(self.listeners)
         self.notifyIndex = 1
         self.notifyPassGeneration = self.notifyGeneration
     end
@@ -422,14 +431,7 @@ function Store:FlushNotifications()
             self:FlushNotifications()
         end)
     elseif (self.notifyGeneration or 0) > passGeneration then
-        local nextQueue = {}
-        for owner, listener in pairs(self.listeners) do
-            nextQueue[#nextQueue + 1] = {
-                owner = owner,
-                listener = listener,
-            }
-        end
-        self.notifyQueue = nextQueue
+        self.notifyQueue = notificationQueue(self.listeners)
         self.notifyIndex = 1
         self.notifyPassGeneration = self.notifyGeneration
         self.notifyScheduled = true
@@ -449,7 +451,14 @@ end
 
 function Store:Publish(snapshot, prediction, assignments, command, diagnostics)
     local previous = self:Get()
-    snapshot = reconcileSnapshot(previous.snapshot, snapshot)
+    -- Producers retain and mutate their working tables on later stages. Make
+    -- publication own every incoming branch before reconciliation can reuse a
+    -- proven-equal branch from the prior immutable state.
+    snapshot = reconcileSnapshot(previous.snapshot, KWR.Util:Copy(snapshot or {}))
+    prediction = KWR.Util:Copy(prediction or {})
+    assignments = KWR.Util:Copy(assignments or {})
+    command = KWR.Util:Copy(command or {})
+    diagnostics = KWR.Util:Copy(diagnostics or previous.diagnostics or {})
     local activePlay = type(command) == "table" and command.activePlay or nil
     local nextState = {
         revision = (previous.revision or 0) + 1,
@@ -459,7 +468,7 @@ function Store:Publish(snapshot, prediction, assignments, command, diagnostics)
         assignments = reconcileBranch(previous.assignments, assignments),
         command = reconcileBranch(previous.command, command),
         activePlay = reconcileBranch(previous.activePlay, activePlay),
-        diagnostics = reconcileBranch(previous.diagnostics, diagnostics or previous.diagnostics),
+        diagnostics = reconcileBranch(previous.diagnostics, diagnostics),
         mode = snapshot and snapshot.context and snapshot.context.preview and "PREVIEW" or "LIVE",
     }
     self.state = nextState

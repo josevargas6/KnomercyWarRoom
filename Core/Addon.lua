@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.10"
+KWR.version = "6.1.1-alpha.12"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -20,6 +20,8 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
+            cardLayout = "COMPLETE",
+            cardWide = false,
             -- Combat Focus is the safe, low-density default. Commander and
             -- Review/Observer remain explicit higher-context presets.
             focusMode = true,
@@ -156,6 +158,7 @@ local DEFAULTS = {
             autoRoster = true,
         },
         showLoadMessage = true,
+        developmentMode = false,
         preview = false,
         aar = {
             enabled = true,
@@ -265,12 +268,16 @@ local function normalizeAgainstDefaults(current, defaults)
     return normalized
 end
 
-local function boundedList(source)
+local function boundedList(source, maximum)
     if type(source) ~= "table" then
         return {}
     end
     local list = {}
-    for index = 1, #source do
+    local first = 1
+    if type(maximum) == "number" and maximum >= 0 then
+        first = math.max(1, #source - math.floor(maximum) + 1)
+    end
+    for index = first, #source do
         list[#list + 1] = source[index]
     end
     return list
@@ -454,6 +461,8 @@ local function normalizeProfile(profile)
     end
     profile.showLoadMessage = KWR.Util:Boolean(
         profile.showLoadMessage, defaults.showLoadMessage)
+    profile.developmentMode = KWR.Util:Boolean(
+        profile.developmentMode, defaults.developmentMode)
     profile.preview = KWR.Util:Boolean(profile.preview, defaults.preview)
     profile.aar = normalizeAgainstDefaults(profile.aar, defaults.aar)
     profile.aar.enabled = KWR.Util:Boolean(profile.aar.enabled, defaults.aar.enabled)
@@ -491,21 +500,35 @@ local function normalizeProfile(profile)
         profile.hud.combatPreset = defaults.hud.combatPreset
     end
     profile.hud.focusMode = profile.hud.combatPreset == "COMBAT_FOCUS"
+    if profile.hud.cardLayout ~= "COMPLETE" and profile.hud.cardLayout ~= "LEGACY" then
+        profile.hud.cardLayout = "COMPLETE"
+    end
     return profile
 end
 
 local function normalizeRootBranches(database)
     database.journal = type(database.journal) == "table" and database.journal or {}
-    database.journal.history = boundedList(database.journal.history)
+    -- Bound during deserialization, before AAR's later owner-level compaction.
+    -- Retain newest chronological records so a malformed or legacy oversized
+    -- table cannot briefly load an unbounded history into the live runtime.
+    database.journal.history = boundedList(database.journal.history, 8)
     database.journal.interrupted = type(database.journal.interrupted) == "table"
         and database.journal.interrupted or nil
     database.enemyNotes = type(database.enemyNotes) == "table" and database.enemyNotes or {}
-    database.encounters = type(database.encounters) == "table" and database.encounters or {}
-    database.encounters.players = type(database.encounters.players) == "table"
-        and database.encounters.players or {}
-    database.learning = type(database.learning) == "table" and database.learning or {}
-    database.learning.plans = type(database.learning.plans) == "table"
-        and database.learning.plans or {}
+    if type(database.encounters) ~= "table" then
+        database.encounters = { legacyPayload = database.encounters, players = {} }
+    elseif type(database.encounters.players) ~= "table" then
+        database.encounters.legacyPlayers = database.encounters.players
+        database.encounters.players = {}
+    end
+    if type(database.learning) ~= "table" then
+        database.learning = { legacyPayload = database.learning, plans = {} }
+    elseif (tonumber(database.learning.schemaVersion) or 0) < 2 then
+        if type(database.learning.plans) ~= "table" then
+            database.learning.legacyPlans = database.learning.plans
+            database.learning.plans = {}
+        end
+    end
     database.assignmentOverrides = type(database.assignmentOverrides) == "table"
         and database.assignmentOverrides or {}
     database.assignmentOverrides.players =
@@ -613,7 +636,8 @@ function KWR:InitializeModules()
     local totalStarted = type(debugprofilestop) == "function" and debugprofilestop() or 0
     for _, name in ipairs(self.moduleOrder) do
         local started = type(debugprofilestop) == "function" and debugprofilestop() or 0
-        self:CallModule(self.modules[name], "OnInitialize")
+        local module = self.modules[name]
+        module.__kwrInitialized = self:CallModule(module, "OnInitialize") == true
         if started > 0 and type(debugprofilestop) == "function" then
             self.bootDiagnostics.moduleMs[name] = math.max(0, debugprofilestop() - started)
         end
@@ -635,7 +659,8 @@ end
 
 function KWR:EnableModules()
     for _, name in ipairs(self.moduleOrder) do
-        self:CallModule(self.modules[name], "OnEnable")
+        local module = self.modules[name]
+        module.__kwrEnabled = self:CallModule(module, "OnEnable") == true
     end
 end
 
@@ -660,6 +685,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
         KWR.ready = true
     elseif event == "PLAYER_LOGIN" then
         KWR:EnableModules()
+        if KWR.db.profile.developmentMode and KWR.BuildInfo then
+            local restored, message = KWR.BuildInfo:RestoreDeveloperTools()
+            if not restored then KWR:Print(message, true) end
+        end
         if KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentBuild() then
             KWR:Print("KWR DEVELOPMENT BUILD - NOT FOR PRODUCTION USE", true)
         end

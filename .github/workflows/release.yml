@@ -68,7 +68,7 @@ jobs:
         # production approval never waits on an opaque long-running step.
         timeout-minutes: 25
         run: |
-          ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
+          ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel -RequireCleanGit
           $version = ((Get-Content "KnomercyWarRoom.toc" | Where-Object { $_ -match "^## Version:" }) -replace "^## Version:\s*", "").Trim()
           $safe = $version.ToUpperInvariant().Replace('.', '_').Replace('-', '_')
           ./tools/candidate-package-report.ps1 `

@@ -5,7 +5,8 @@ param(
     [ValidateSet('production','development','local')]
     [string]$Channel = 'production',
     [switch]$SkipPackageAudit,
-    [switch]$SkipReproducibilityAudit
+    [switch]$SkipReproducibilityAudit,
+    [switch]$RequireCleanGit
 )
 
 $ErrorActionPreference = "Stop"
@@ -16,6 +17,16 @@ $sourceTocPath = Join-Path $root "KnomercyWarRoom.toc"
 $releaseManifest = Join-Path $PSScriptRoot "release-manifest.ps1"
 . (Join-Path $PSScriptRoot "hash-utils.ps1")
 . $releaseManifest
+
+if ($RequireCleanGit) {
+    $gitProvenance = Get-GitProvenance -RootPath $root
+    if (-not $gitProvenance.available) {
+        throw "Official build requires a Git worktree: $($gitProvenance.reason)"
+    }
+    if ($gitProvenance.dirty -eq $true) {
+        throw "Official build requires a clean Git worktree. Commit, stash, or remove local changes first."
+    }
+}
 
 function New-ArtifactSummary {
     param(
@@ -118,7 +129,8 @@ function Invoke-NestedBuildForReproducibility {
         [string]$BuildScriptPath,
         [Parameter(Mandatory = $true)]
         [string]$NestedOutputDirectory,
-        [switch]$IncludeSentinel
+        [switch]$IncludeSentinel,
+        [switch]$RequireCleanGit
     )
 
     # Compression output is runtime-specific. Reuse the current PowerShell host
@@ -128,6 +140,7 @@ function Invoke-NestedBuildForReproducibility {
     & $currentHost -NoProfile -ExecutionPolicy Bypass -File $BuildScriptPath `
         -OutputDirectory $NestedOutputDirectory `
         $(if ($IncludeSentinel) { "-IncludeSentinel" }) `
+        $(if ($RequireCleanGit) { "-RequireCleanGit" }) `
         -SkipPackageAudit `
         -SkipReproducibilityAudit
     if ($LASTEXITCODE -ne 0) {
@@ -150,6 +163,7 @@ $safeVersion = $version.ToUpperInvariant().Replace(".", "_").Replace("-", "_")
 $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
 $distributionZip = Join-Path $outputRoot ("KnomercyWarRoom-{0}.zip" -f $version)
 $developerZip = Join-Path $outputRoot ("KWR_{0}_DEVELOPER.zip" -f $safeVersion)
+$developerToolsZip = Join-Path $outputRoot ("KWR_DevTools-{0}.zip" -f $version)
 $sentinelZip = $null
 $hasSentinel = $IncludeSentinel -and (Test-Path -LiteralPath $sentinelRoot)
 if ($hasSentinel) {
@@ -172,6 +186,8 @@ try {
     $developerSource = Join-Path $developerRoot "src\KnomercyWarRoom"
     [IO.Directory]::CreateDirectory($distributionRoot) | Out-Null
     [IO.Directory]::CreateDirectory($developerSource) | Out-Null
+    $developerToolsRoot = Join-Path $tempRoot 'developer-tools\KWR_DevTools'
+    New-DeveloperToolsStage -SourceRoot $root -DestinationRoot $developerToolsRoot
     if ($hasSentinel) {
         [IO.Directory]::CreateDirectory((Join-Path $tempRoot "distribution\KWRSentinel")) | Out-Null
     }
@@ -267,10 +283,14 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     # clean reproducibility build and extracted-runtime audit without helping
     # an addon developer validate, test, or modify the package.
     $developerFieldEvidence = Join-Path $developerSource "docs\field-evidence"
+    if (-not [IO.Path]::GetFullPath($developerFieldEvidence).StartsWith(
+        $tempRoot.TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Refusing to remove field evidence outside the temporary build.'
+    }
     Remove-Item -LiteralPath $developerFieldEvidence -Recurse -Force -ErrorAction SilentlyContinue
     Copy-Item -LiteralPath (Join-Path $root "DEVELOPMENT.md") -Destination (Join-Path $developerRoot "README.md")
 
-    foreach ($path in @($distributionZip, $developerZip, $sentinelZip, $hashFile, $developerHashFile, $publicManifestFile)) {
+    foreach ($path in @($distributionZip, $developerZip, $developerToolsZip, $sentinelZip, $hashFile, $developerHashFile, $publicManifestFile)) {
         if (-not $path) {
             continue
         }
@@ -283,6 +303,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KnomercyWarRoom") -DestinationPath $distributionZip
     Write-Output "KWR build checkpoint: compressing developer archive"
     New-KwrArchive -SourceDirectory (Join-Path $tempRoot "developer\KnomercyWarRoom-Developer") -DestinationPath $developerZip
+    New-KwrArchive -SourceDirectory $developerToolsRoot -DestinationPath $developerToolsZip
     if ($hasSentinel) {
         Write-Output "KWR build checkpoint: compressing Sentinel archive"
         New-KwrArchive -SourceDirectory (Join-Path $tempRoot "distribution\KWRSentinel") -DestinationPath $sentinelZip
@@ -290,6 +311,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
 
     $distributionHash = Get-KwrFileSha256 -LiteralPath $distributionZip
     $developerHash = Get-KwrFileSha256 -LiteralPath $developerZip
+    $developerToolsHash = Get-KwrFileSha256 -LiteralPath $developerToolsZip
     # Player-facing checksums must name only player-facing downloads.  The
     # developer ZIP and its checksum remain in the retention-bound CI artifact.
     $hashLines = @(
@@ -300,11 +322,13 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
         $hashLines += "$sentinelHash  $([IO.Path]::GetFileName($sentinelZip))"
     }
     $hashLines | Set-Content -LiteralPath $hashFile -Encoding ASCII
-    @("$developerHash  $([IO.Path]::GetFileName($developerZip))") |
+    @("$developerHash  $([IO.Path]::GetFileName($developerZip))",
+        "$developerToolsHash  $([IO.Path]::GetFileName($developerToolsZip))") |
         Set-Content -LiteralPath $developerHashFile -Encoding ASCII
 
     $distributionEntries = Get-DirectoryManifestEntries -RootPath $distributionRoot
     $developerEntries = Get-DirectoryManifestEntries -RootPath $developerRoot
+    $developerToolsEntries = Get-DirectoryManifestEntries -RootPath $developerToolsRoot
     $distributionDigest = Get-ManifestDigest -Entries $distributionEntries
     $developerDigest = Get-ManifestDigest -Entries $developerEntries
     $sentinelEntries = @()
@@ -317,6 +341,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
     $artifactSummaries = @(
         New-ArtifactSummary -Path $distributionZip
         New-ArtifactSummary -Path $developerZip
+        New-ArtifactSummary -Path $developerToolsZip
     )
     if ($hasSentinel) {
         $artifactSummaries += New-ArtifactSummary -Path $sentinelZip
@@ -343,6 +368,11 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
             digest = $developerDigest
             entryCount = $developerEntries.Count
             entries = $developerEntries
+        }
+        developerTools = [pscustomobject]@{
+            digest = Get-ManifestDigest -Entries $developerToolsEntries
+            entryCount = $developerToolsEntries.Count
+            entries = $developerToolsEntries
         }
         sentinel = if ($hasSentinel) {
             [pscustomobject]@{
@@ -417,7 +447,8 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
             Invoke-NestedBuildForReproducibility `
                 -BuildScriptPath (Join-Path $PSScriptRoot "build.ps1") `
                 -NestedOutputDirectory $reproTempRoot `
-                -IncludeSentinel:$IncludeSentinel
+                -IncludeSentinel:$IncludeSentinel `
+                -RequireCleanGit:$RequireCleanGit
             $nestedSourceManifestFile = Join-Path $reproTempRoot ("KWR_{0}_SOURCE_MANIFEST.json" -f $safeVersion)
             if (-not (Test-Path -LiteralPath $nestedSourceManifestFile)) {
                 throw "Nested build is missing the source manifest."
@@ -507,6 +538,7 @@ $releaseTocPath = Join-Path $distributionRoot "KnomercyWarRoom.toc"
 
     Write-Output "Distribution: $distributionZip"
     Write-Output "Developer:    $developerZip"
+    Write-Output "DevTools:     $developerToolsZip"
     if ($hasSentinel) {
         Write-Output "Sentinel:     $sentinelZip"
     } elseif (Test-Path -LiteralPath $sentinelRoot) {

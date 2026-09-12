@@ -4,7 +4,9 @@ param(
     [string]$SavedVariablesPath,
     [string]$DeploymentCertificationPath = "knowledge\deployment-certification.json",
     [string]$OutFile = "knowledge\retail-field-certification.json",
-    [string]$ExportFile
+    [string]$ExportFile,
+    [ValidateRange(1, [int]::MaxValue)]
+    [int]$MaxSerializedBytes = 1048576
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,6 +38,7 @@ $candidateSchema = [int][regex]::Match(
 $deployment = Get-Content -LiteralPath $deploymentPath -Raw | ConvertFrom-Json
 $savedItem = Get-Item -LiteralPath $savedPath
 $savedHash = Get-KwrFileSha256 -LiteralPath $savedPath
+$serializedBytes = [int64]$savedItem.Length
 
 function Find-RetailEvidenceRuntime {
     $pathNode = Get-Command "node" -ErrorAction SilentlyContinue
@@ -106,6 +109,7 @@ $exportLines = if ($ExportFile) {
 
 $meta = $null
 $matches = @()
+$footprints = @()
 foreach ($line in @($exportLines)) {
     # PowerShell's negative split count keeps the complete string instead of
     # splitting it. Use the normal tab split so exporter META/MATCH records are
@@ -116,6 +120,12 @@ foreach ($line in @($exportLines)) {
             schemaVersion = [int]$fields[1]
             historyCount = [int]$fields[2]
             interruptedCheckpoint = $fields[3] -eq "YES"
+        }
+    } elseif ($fields[0] -eq "FOOTPRINT" -and $fields.Count -ge 4) {
+        $footprints += [pscustomobject][ordered]@{
+            key = $fields[1]
+            shallowEntries = [int]($fields[2] -as [int])
+            approximateBytes = [int64]($fields[3] -as [int64])
         }
     } elseif ($fields[0] -eq "MATCH" -and $fields.Count -ge 21) {
         $matches += [pscustomobject][ordered]@{
@@ -220,6 +230,11 @@ if ($bound -and $completed.Count -gt 0 -and $performanceMatches.Count -eq $compl
 } else {
     $missing += "field CPU and memory budgets"
 }
+if ($serializedBytes -le $MaxSerializedBytes) {
+    $proven += "serialized SavedVariables budget"
+} else {
+    $missing += "serialized SavedVariables budget"
+}
 foreach ($gate in @(
     "supported-resolution readability screenshots",
     "expanded Team truth screenshot",
@@ -238,6 +253,10 @@ $report = [ordered]@{
     source = [ordered]@{
         fileName = $savedItem.Name
         sha256 = $savedHash
+        serializedBytes = $serializedBytes
+        serializedBudgetBytes = $MaxSerializedBytes
+        serializedBudgetPass = $serializedBytes -le $MaxSerializedBytes
+        topLevelFootprints = @($footprints | Sort-Object @{Expression='approximateBytes';Descending=$true}, key)
         lastWriteTimeUtc = $savedItem.LastWriteTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ")
         historyCount = $meta.historyCount
         candidateMatchCount = $candidateMatches.Count

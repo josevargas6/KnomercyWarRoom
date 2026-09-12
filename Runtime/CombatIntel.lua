@@ -98,17 +98,28 @@ local function coordinateDistance(x1, y1, x2, y2)
     return math.sqrt((dx * dx) + (dy * dy))
 end
 
+local function confirmedFriendlyAvailable(player)
+    return KWR.Util:OptionalBoolean(player and player.dead) == false
+        and KWR.Util:OptionalBoolean(player and player.connected) == true
+end
+
 local function localSupportState(snapshot, enemy)
     local x, y = KWR.Util:Number(enemy and enemy.x, nil), KWR.Util:Number(enemy and enemy.y, nil)
     if not x or not y then
         return { known = false, friendly = 0, enemy = 0, healerSupport = 0 }
     end
-    local nearby = { known = true, friendly = 0, enemy = 0, healerSupport = 0 }
+    local nearby = { known = true, friendly = 0, enemy = 0, healerSupport = 0,
+        unknownFriendly = 0 }
     for _, player in ipairs(snapshot and snapshot.roster or {}) do
-        if player ~= enemy and not player.dead then
+        if player ~= enemy then
             local range = coordinateDistance(x, y, player.x, player.y)
             if range and range <= 0.09 then
-                nearby.friendly = nearby.friendly + 1
+                if confirmedFriendlyAvailable(player) then
+                    nearby.friendly = nearby.friendly + 1
+                else
+                    nearby.known = false
+                    nearby.unknownFriendly = nearby.unknownFriendly + 1
+                end
             end
         end
     end
@@ -430,6 +441,14 @@ function CombatIntel:Score(enemy, evidence, metaActive, snapshot)
 end
 
 function CombatIntel:Analyze(snapshot)
+    for _, enemy in ipairs(snapshot.enemies or {}) do
+        enemy.localKillTarget = false
+        enemy.localPressureTarget = false
+        enemy.targetIntent = "NONE"
+        enemy.combat = enemy.combat or {}
+        enemy.combat.targetIntent = "NONE"
+        enemy.combat.commitEligible = false
+    end
     if not snapshot.context.inPvP then
         if self.sessionKey then self:Reset() end
         return {
@@ -440,6 +459,12 @@ function CombatIntel:Analyze(snapshot)
             localTargetReason = "No safely observed enemy in local fight range.",
             killTarget = nil,
             killReason = "No safely observed enemy in local fight range.",
+            targetIntent = {
+                kind = "NONE",
+                commitEligible = false,
+                confidence = "UNKNOWN",
+                reason = "No safely observed enemy in local fight range.",
+            },
             updatedAt = KWR.Util:Now(),
             resourceEconomy = {
                 confidence = "NONE", advantage = 0,
@@ -461,7 +486,7 @@ function CombatIntel:Analyze(snapshot)
     elseif self.sessionKey ~= sessionKey then
         self.sessionKey = sessionKey
     end
-    local best, localCount, topPriorityCast = nil, 0, nil
+    local best, bestKill, localCount, topPriorityCast = nil, nil, 0, nil
     local knowledge = snapshot.knowledgeStatus or {}
     local swapGuidance
     local resource = {
@@ -566,13 +591,26 @@ function CombatIntel:Analyze(snapshot)
             if not best or score > best.score or (score == best.score and enemy.name < best.enemy.name) then
                 best = { enemy = enemy, score = score, reasons = reasons }
             end
+            if enemy.killable == true and (not bestKill or score > bestKill.score
+                or (score == bestKill.score and enemy.name < bestKill.enemy.name)) then
+                bestKill = { enemy = enemy, score = score, reasons = reasons }
+            end
         end
     end
     if best then
-        best.enemy.localKillTarget = true
-        best.enemy.killable = true
-        best.enemy.combat = best.enemy.combat or {}
-        best.enemy.combat.killable = true
+        best.enemy.localPressureTarget = true
+    end
+    if bestKill then
+        bestKill.enemy.localKillTarget = true
+        bestKill.enemy.targetIntent = "OBSERVED_KILL_WINDOW"
+        bestKill.enemy.combat.targetIntent = "OBSERVED_KILL_WINDOW"
+        bestKill.enemy.combat.commitEligible = true
+    elseif best then
+        best.enemy.targetIntent = "PRESSURE"
+        best.enemy.combat.targetIntent = "PRESSURE"
+    elseif swapGuidance then
+        swapGuidance.enemy.targetIntent = "SWAP"
+        swapGuidance.enemy.combat.targetIntent = "SWAP"
     end
     local enemyCount = #(snapshot.enemies or {})
     local resourceAdvantage = KWR.Util:Clamp(
@@ -582,6 +620,22 @@ function CombatIntel:Analyze(snapshot)
         -40, 80)
     local resourceConfidence = resource.observed >= 4 and "HIGH"
         or (resource.observed >= 1 and "MEDIUM" or "LOW")
+    local intent = {
+        kind = bestKill and "OBSERVED_KILL_WINDOW"
+            or (best and "PRESSURE" or (swapGuidance and "SWAP" or "NONE")),
+        target = bestKill and KWR.Util:Copy(bestKill.enemy)
+            or (best and KWR.Util:Copy(best.enemy)
+                or (swapGuidance and KWR.Util:Copy(swapGuidance.enemy) or nil)),
+        targetGUID = bestKill and bestKill.enemy.guid
+            or (best and best.enemy.guid or (swapGuidance and swapGuidance.enemy.guid or nil)),
+        reason = bestKill and table.concat(bestKill.reasons, ", ")
+            or (best and table.concat(best.reasons, ", ")
+                or (swapGuidance and swapGuidance.text
+                    or "No safely observed enemy in local fight range.")),
+        confidence = bestKill and KWR.Util:Text(bestKill.enemy.confidence, "CONFIRMED", 24)
+            or (best and KWR.Util:Text(best.enemy.confidence, "CONFIRMED", 24) or "UNKNOWN"),
+        commitEligible = bestKill ~= nil,
+    }
     return {
         observedSpells = self.observed,
         localEnemies = localCount,
@@ -590,11 +644,12 @@ function CombatIntel:Analyze(snapshot)
         localTargetReason = best and table.concat(best.reasons, ", ")
             or (swapGuidance and swapGuidance.text
                 or "No safely observed enemy in local fight range."),
-        killTarget = best and KWR.Util:Copy(best.enemy) or nil,
-        killScore = best and math.floor(best.score + 0.5) or nil,
-        killReason = best and table.concat(best.reasons, ", ")
+        killTarget = bestKill and KWR.Util:Copy(bestKill.enemy) or nil,
+        killScore = bestKill and math.floor(bestKill.score + 0.5) or nil,
+        killReason = bestKill and table.concat(bestKill.reasons, ", ")
             or (swapGuidance and swapGuidance.text
                 or "No safely observed enemy in local fight range."),
+        targetIntent = intent,
         priorityCast = topPriorityCast,
         updatedAt = KWR.Util:Now(),
         resourceEconomy = {

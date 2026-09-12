@@ -28,7 +28,28 @@ local function direction(dx, dy)
 end
 
 local function entityKey(entity, fallback)
-    return KWR.Util:Text(entity.key or entity.guid or entity.name, fallback, 80)
+    return KWR.Util:Text(entity.guid or entity.key or entity.name, fallback, 80)
+end
+
+local function identityAlias(value)
+    value = KWR.Util:Text(value, "", 80)
+    return value ~= "" and value:lower() or nil
+end
+
+local function entityAliases(entity, fallback)
+    local aliases, seen = {}, {}
+    local function add(value)
+        local alias = identityAlias(value)
+        if alias and not seen[alias] then
+            seen[alias] = true
+            aliases[#aliases + 1] = alias
+        end
+    end
+    add(entity and entity.guid)
+    add(entity and entity.key)
+    add(entity and entity.name)
+    if #aliases == 0 then add(fallback) end
+    return aliases
 end
 
 local function locationPosition(mapKey, label)
@@ -200,7 +221,28 @@ end
 function Reporter:Track(team, entity, observedAt, now)
     local x, y = KWR.Util:Number(entity.x, nil), KWR.Util:Number(entity.y, nil)
     local key = entityKey(entity, team .. ":unknown")
-    local track = self.tracks[team][key] or {
+    local aliases = entityAliases(entity, team .. ":unknown")
+    local tracks = self.tracks[team]
+    local track = tracks[key]
+    if not track then
+        for _, candidate in pairs(tracks) do
+            for _, alias in ipairs(aliases) do
+                if candidate.aliases and candidate.aliases[alias] then
+                    track = candidate
+                    break
+                end
+            end
+            if track then break end
+        end
+    end
+    if track and track.key ~= key then
+        -- Unit data commonly arrives first with a name/key and later with a
+        -- GUID. Move the same history forward instead of creating a second
+        -- enemy that can distort pressure and arrival calculations.
+        tracks[track.key] = nil
+        track.key = key
+    end
+    track = track or {
         key = key,
         team = team,
         name = KWR.Util:Text(entity.shortName or entity.name, "Unknown", 40),
@@ -208,7 +250,10 @@ function Reporter:Track(team, entity, observedAt, now)
         points = {},
         direction = "HOLDING",
         distance = 0,
+        aliases = {},
     }
+    track.aliases = track.aliases or {}
+    for _, alias in ipairs(aliases) do track.aliases[alias] = true end
     local previousLocation = track.location
     local at = KWR.Util:Number(observedAt, KWR.Util:Now())
     if x and y then
@@ -265,7 +310,7 @@ function Reporter:Track(team, entity, observedAt, now)
         self.memory.revision = (self.memory.revision or 0) + 1
         track.lastMemoryAt = at
     end
-    self.tracks[team][key] = track
+    tracks[key] = track
     return track
 end
 
@@ -299,11 +344,20 @@ function Reporter:PruneTracks(snapshot, now)
     local roster = snapshot and snapshot.roster or {}
     local presentFriendly = {}
     for _, player in ipairs(roster) do
-        presentFriendly[entityKey(player, "friendly:unknown")] = true
+        for _, alias in ipairs(entityAliases(player, "friendly:unknown")) do
+            presentFriendly[alias] = true
+        end
     end
     if #roster > 0 then
-        for key in pairs(self.tracks.friendly or {}) do
-            if presentFriendly[key] ~= true then
+        for key, track in pairs(self.tracks.friendly or {}) do
+            local present = false
+            for alias in pairs(track.aliases or {}) do
+                if presentFriendly[alias] then
+                    present = true
+                    break
+                end
+            end
+            if not present then
                 self.tracks.friendly[key] = nil
             end
         end

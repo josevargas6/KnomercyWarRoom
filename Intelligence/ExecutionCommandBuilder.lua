@@ -274,6 +274,8 @@ local function localKill(mode, enemy, source, reason)
         mode = mode,
         target = callLabel(enemy.shortName or enemy.name
             or (source and source.target)),
+        targetFullName = KWR.Util:Text(enemy.fullName or enemy.name or enemy.shortName,
+            source and source.target or ""),
         targetGUID = enemy.guid or (source and source.targetGUID),
         healthPercent = KWR.Util:Number(enemy.healthPercent, nil),
         location = location ~= "" and location or nil,
@@ -310,11 +312,13 @@ local function buildLocalFight(packet, snapshot)
                 actor = callLabel(control.actor),
                 actorGUID = control.actorGUID,
                 target = callLabel(control.target),
+                targetFullName = KWR.Util:Text(enemy.fullName or enemy.name or control.target, ""),
                 targetGUID = control.targetGUID,
                 verb = control.verb or "Subdue",
                 assigned = control.assigned == true,
                 state = state,
                 confidence = control.confidence or "UNKNOWN",
+                location = KWR.Util:Text(enemy.location, ""),
             }
             if state == "ACTIVE" then hasActiveControl = true end
             if #controls >= 3 then break end
@@ -590,14 +594,15 @@ function Builder:Build(snapshot, prediction, assignments, command)
             objective = objectiveForKill(snapshot, killTarget),
             confidence = killTarget.confidence or "UNKNOWN",
         } or nil,
-        countdown = KWR.Util:Copy(teamfight.countdown
-            or { seconds = 0, ticks = {}, state = "UNKNOWN" }),
+        countdown = KWR.CountdownState:Build(snapshot, teamfight),
         confidence = teamfight.displayEligible == true
             and (teamfight.confidence or "UNKNOWN")
             or (handoff and handoff.confidence) or "UNKNOWN",
         personalByKey = {},
         commandAction = KWR.Util:Text(command and command.action, "", 180),
         canonicalCommandSignature = command and command.signature or nil,
+        commandId = KWR.Util:Text(command and command.commandId, "", 192),
+        commandRevision = KWR.Util:Number(command and command.commandRevision, nil),
         predictionCondition = KWR.Util:Text(prediction and prediction.condition, "", 180),
     }
     if handoff then
@@ -606,7 +611,7 @@ function Builder:Build(snapshot, prediction, assignments, command)
             and ("GO ON " .. handoff.objective:upper() .. " DROP")
             or ("HOLD UNTIL " .. handoff.objective:upper() .. " DROPS")
     elseif packet.primaryTarget then
-        packet.trigger = "GO IN " .. tostring(packet.countdown.seconds or 5)
+        packet.trigger = KWR.CountdownState:Text(packet.countdown)
     else
         packet.trigger = ""
     end
@@ -621,6 +626,8 @@ function Builder:Build(snapshot, prediction, assignments, command)
         and packet.confidence ~= "UNKNOWN"
     local signatureParts = {
         packet.canonicalCommandSignature or "",
+        packet.commandId or "",
+        packet.commandRevision or "",
         packet.commandAction or "",
         handoff and handoff.actor or "",
         handoff and handoff.objective or "",
@@ -648,7 +655,8 @@ function Builder:Build(snapshot, prediction, assignments, command)
     signatureParts[#signatureParts + 1] = packet.localFight.kill
         and packet.localFight.kill.location or ""
     signatureParts[#signatureParts + 1] = packet.localFight.phase
-    signatureParts[#signatureParts + 1] = packet.trigger
+    signatureParts[#signatureParts + 1] = packet.countdown.id or "UNTIMED"
+    signatureParts[#signatureParts + 1] = packet.countdown.id and packet.countdown.state or packet.trigger
     signatureParts[#signatureParts + 1] = packet.confidence
     packet.signature = KWR.Util:Signature(signatureParts)
     return packet

@@ -38,13 +38,27 @@ function Assert-Throws {
 }
 
 $hashProbe = Join-Path $root "tools\test-automation.ps1"
-$nativeHash = (Get-FileHash -LiteralPath $hashProbe -Algorithm SHA256).Hash.ToUpperInvariant()
+# This baseline deliberately bypasses Get-FileHash. The automation suite runs
+# under a minimal no-profile host where that cmdlet may be unavailable, and the
+# following assertion must still prove the fallback implementation's result.
+$stream = [IO.File]::OpenRead($hashProbe)
+$algorithm = [Security.Cryptography.SHA256]::Create()
+try {
+    $nativeHash = ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-', '')
+} finally {
+    $algorithm.Dispose()
+    $stream.Dispose()
+}
 Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
-    -Message "Shared SHA-256 utility disagrees with the native checksum."
-function Get-FileHash { throw "forced module-load failure" }
-Assert-True -Condition ((Get-KwrFileSha256 -LiteralPath $hashProbe) -eq $nativeHash) `
+    -Message "Shared SHA-256 utility disagrees with the platform checksum."
+# Keep the failure injection in a child scope. It verifies the fallback without
+# altering functions inherited by the later automation scripts.
+$fallbackHash = & {
+    function Get-FileHash { throw "forced module-load failure" }
+    Get-KwrFileSha256 -LiteralPath $hashProbe
+}
+Assert-True -Condition ($fallbackHash -eq $nativeHash) `
     -Message "Shared SHA-256 utility did not recover from a missing hash cmdlet."
-Remove-Item -LiteralPath function:Get-FileHash -Force
 
 . (Join-Path $PSScriptRoot "curseforge-upload-http.ps1")
 
@@ -163,6 +177,13 @@ Assert-True `
 Assert-True `
     -Condition ($buildScript -notmatch 'PASS_WITH_DOCUMENTED_EXCEPTION|Compress-Archive did not produce byte-identical') `
     -Message "Build still permits a non-deterministic ZIP-container exception."
+Assert-True `
+    -Condition ($buildScript -match '\[switch\]\$RequireCleanGit' -and $buildScript -match 'Official build requires a clean Git worktree') `
+    -Message "Build does not enforce the opt-in clean-worktree release gate."
+$releaseWorkflow = Get-Content -LiteralPath (Join-Path $root ".github\workflows\release.yml") -Raw
+Assert-True `
+    -Condition ($releaseWorkflow -match 'build\.ps1.*-RequireCleanGit') `
+    -Message "Release workflow does not require a clean Git worktree."
 
 $deploymentCertificationScript = Get-Content -LiteralPath (Join-Path $root "tools\deployment-certify.ps1") -Raw
 Assert-True `
@@ -206,6 +227,13 @@ foreach ($requiredPath in @(
     "tools\deployment-certify.ps1",
     "tools\replay-test-runner.lua",
     "tools\test-lua.ps1",
+    "tools\test-decision-benchmark.ps1",
+    "tools\test-field-readiness-report.ps1",
+    "tools\test-replay-contract-cluster-report.ps1",
+    "tools\test-replay-contract-adjudication-review.ps1",
+    "tools\test-source-install-review-packet.ps1",
+    "tools\test-source-install-review-ledger.ps1",
+    "tools\test-test-lua-receipt.ps1",
     "tools\test-social-copy.ps1"
     "tools\hash-utils.ps1"
 )) {
@@ -318,6 +346,42 @@ Assert-True `
 Assert-True `
     -Condition ($candidateReportTool -match 'backupFolderSuggestion.*\$version') `
     -Message "Candidate package backup guidance is pinned to a stale version."
+
+& (Join-Path $root "tools\test-field-readiness-report.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Field-readiness provenance regression test failed."
+
+& (Join-Path $root "tools\test-field-evidence-import.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Field-evidence import regression test failed."
+
+& (Join-Path $root "tools\test-replay-contract-cluster-report.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Replay-contract cluster-report regression test failed."
+
+& (Join-Path $root "tools\test-replay-contract-adjudication-review.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Replay-contract adjudication-review regression test failed."
+
+& (Join-Path $root "tools\test-replay-semantic-parity.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Replay source/package semantic-parity regression test failed."
+
+& (Join-Path $root "tools\test-source-install-review-packet.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Source/install review-packet regression test failed."
+
+& (Join-Path $root "tools\test-source-install-review-ledger.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Source/install review-ledger regression test failed."
+
+& (Join-Path $root "tools\test-source-recovery-accounting.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Source-recovery accounting regression test failed."
+
+& (Join-Path $root "tools\test-test-lua-receipt.ps1")
+Assert-True -Condition ($LASTEXITCODE -eq 0) `
+    -Message "Lua test receipt regression test failed."
 
 $taskContracts = @(Get-ChildItem -LiteralPath (Join-Path $root 'docs\tasks') -Recurse -File -Filter 'KWR-*.md')
 $taskIds = @($taskContracts | ForEach-Object {

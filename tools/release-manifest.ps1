@@ -2,8 +2,71 @@
 
 function Get-ReleaseExcludedEntries {
     return @(
-        "Core\Diagnostics.lua"
+        "Core\Diagnostics.lua",
+        "Runtime\Preview.lua",
+        "Runtime\Verification.lua",
+        "Runtime\Season2Readiness.lua",
+        # Retired support-map surface. It remains in source for recovery
+        # history, but the player package must neither ship nor load it.
+        "UI\ReporterMap.lua"
     )
+}
+
+function Get-DeveloperToolsModules {
+    return @('Diagnostics', 'Preview', 'Verification', 'Season2Readiness')
+}
+
+function New-DeveloperToolsStage {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourceRoot,
+        [Parameter(Mandatory = $true)][string]$DestinationRoot
+    )
+
+    $sourcePath = [IO.Path]::GetFullPath($SourceRoot)
+    $destinationPath = [IO.Path]::GetFullPath($DestinationRoot)
+    if ((Test-Path -LiteralPath $destinationPath) -and
+        @(Get-ChildItem -LiteralPath $destinationPath -Force).Count -gt 0) {
+        throw 'Developer Tools staging requires an empty destination.'
+    }
+    [IO.Directory]::CreateDirectory($destinationPath) | Out-Null
+    $commanderToc = Get-Content -LiteralPath (Join-Path $sourcePath 'KnomercyWarRoom.toc')
+    $version = (($commanderToc | Where-Object { $_ -match '^## Version:' }) -replace '^## Version:\s*', '').Trim()
+    if ($version -notmatch '^[0-9A-Za-z.-]+$') { throw 'Invalid Commander version.' }
+    $interface = @($commanderToc | Where-Object { $_ -match '^## Interface:' })
+    if ($interface.Count -ne 1) { throw 'Commander Interface metadata is missing or duplicated.' }
+    $encoding = [Text.UTF8Encoding]::new($false)
+    foreach ($name in @('DevBootstrap', 'DevActivate')) {
+        $text = [IO.File]::ReadAllText((Join-Path $sourcePath "KWR_DevTools\$name.lua"))
+        [IO.File]::WriteAllText((Join-Path $destinationPath "$name.lua"),
+            $text.Replace('@KWR_VERSION@', $version), $encoding)
+    }
+    foreach ($name in Get-DeveloperToolsModules) {
+        $sourceFile = if ($name -eq 'Diagnostics') {
+            Join-Path $sourcePath 'Core\Diagnostics.lua'
+        } else {
+            Join-Path $sourcePath "Runtime\$name.lua"
+        }
+        $text = [IO.File]::ReadAllText($sourceFile)
+        if ($text -notmatch '^local _, KWR = \.\.\.') {
+            throw "Unexpected namespace declaration in developer module: $name"
+        }
+        $text = [regex]::Replace($text, '^local _, KWR = \.\.\.',
+            "local KWR = _G.KWR`nif not KWR then return end")
+        [IO.File]::WriteAllText((Join-Path $destinationPath "$name.lua"), $text, $encoding)
+    }
+    $toc = @(
+        $interface[0],
+        '## Title: |cff33aaffKWR Developer Tools|r',
+        '## Notes: Optional local preview, verification, and field-report tools.',
+        "## Version: $version",
+        '## RequiredDeps: KnomercyWarRoom',
+        '## LoadOnDemand: 1',
+        '## Category: Development',
+        '',
+        'DevBootstrap.lua'
+    ) + @(Get-DeveloperToolsModules | ForEach-Object { "$_.lua" }) + @('DevActivate.lua')
+    [IO.File]::WriteAllText((Join-Path $destinationPath 'KWR_DevTools.toc'),
+        ($toc -join "`n") + "`n", $encoding)
 }
 
 function Get-ProductionPackageDirectories {

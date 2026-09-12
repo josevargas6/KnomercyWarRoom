@@ -5,10 +5,22 @@ Knomercy War Room is a player-controlled Rated Battleground command system for W
 The suite release direction, component boundaries, recovery state, and ordered
 backlog are defined in `PRODUCT_ROADMAP.md`. Release status is defined solely
 by `RELEASE_READINESS.md`.
+For the active local field session, use
+[`docs/FIELD_TEST_20260909.md`](docs/FIELD_TEST_20260909.md). Its candidate,
+hashes, deployment receipt, and capture steps are the operational truth;
+historical Alpha paragraphs below are context only.
 All versioned recovery and Alpha 29 descriptions below are historical feature
 context. The TOC-aligned release decision is solely `RELEASE_READINESS.md`.
-The complete path from this candidate to an expert-tier, competitively
-benchmarked release is recorded in the changelog and dated evidence.
+The 2026-09-04 audit and single ordered overhaul backlog are in
+[PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md): 22 work packages with code ownership,
+implementation steps, acceptance tests and rollback. Eight defects reproduce in
+source and installed modules despite the existing tests passing. Stable promotion
+remains blocked in [RELEASE_READINESS.md](RELEASE_READINESS.md).
+
+Development starts by reconciling the installed runtime/DevTools split with the
+canonical source. Do not deploy this checkout over a newer installed candidate
+until package identity and rollback are verified. This audit updates documentation;
+it does not implement or certify the overhaul.
 The offline Decision Lab schema contract now begins in
 `knowledge/schemas/replay-schema.json`,
 `knowledge/schemas/golden-label-schema.json`,
@@ -193,6 +205,8 @@ Restart World of Warcraft or reload the UI.
 - `/kwr mode` - Toggle compact Command and expanded Learning guidance.
 - `/kwr refresh` - Request one authoritative refresh.
 - `/kwr reassess` - Rebuild the battlefield plan and publish assignment changes.
+- `/kwr countdown 5` - Start a local 1–10 second execution cue as group leader for the current eligible target. It is not a remote synchronized timer.
+- `/kwr countdown cancel` - Cancel that local cue; calls return to on leader call.
 - `/kwr options` - Open settings.
 - `/kwr cursor` - Toggle the optional Cursor Ring.
 - `/kwr test` - Developer build only. Run deterministic diagnostics.

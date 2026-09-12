@@ -1,4 +1,46 @@
-﻿# KWR 6.1 Alpha 9 QA Checklist
+# KWR candidate QA checklist
+
+## Active overhaul acceptance — 2026-09-04
+
+Use the tasks, map matrix, performance budgets and quality scorecard in
+[PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md). Only
+[RELEASE_READINESS.md](RELEASE_READINESS.md) records promotion status. Historical
+Alpha 9 checks below remain regression requirements, not current certification.
+
+Each receipt identifies commit, applicable package hashes, client build, map,
+bracket, locale, assigned side, review context, UI scale/resolution, other addons
+and clean/upgrade installation. Separate simulated, real-host and client timing.
+
+- [ ] Canonical source reproduces installed projections and optional DevTools.
+- [ ] All eight audit probes are permanent passing regressions: objective shape,
+  observation time, candidate/killable distinction, unavailable actors, partial
+  8v8 classification, malformed packets, cast tuple and marker elapsed time.
+- [ ] Active-play expiry, failed-play reissue, real countdown and emergency
+  invalidation agree across all surfaces on one revision/deadline.
+- [ ] Secret, unknown, stale and conflicting values never become fabricated
+  readiness, reach, positions or confident execution facts.
+- [ ] Full fresh acceptance replays exercise current source AND extracted
+  production code; missing cases and stale hashes fail.
+- [ ] Every advertised map/bracket meets the active mechanic/live matrix;
+  historical profiles and Blitz/standard samples do not substitute for proof.
+- [ ] Real CPU includes publication/render tail and delivery latency; matched
+  FPS, 30-minute memory plateau and repeated-queue tests meet roadmap budgets.
+- [ ] Secure clicks match displayed identity in combat/token churn; native map,
+  health, markers, hidden panels and audio remain safe and readable.
+- [ ] 1080p/1440p/4K at UI scales 0.65/0.8/1.0, high contrast, supported locales
+  and UTF-8/cross-realm names pass usability checks.
+- [ ] AAR separates recommendation/delivery/execution/result; learning rejects
+  ineligible episodes and manual sharing supports redaction.
+- [ ] Clean install, Alpha 10/12 upgrade, malformed/future SavedVariables and
+  rollback preserve user data with explicit unsupported-schema recovery.
+- [ ] Commander alone is useful; remote Sentinel passes its separate physical
+  client, safety, expiry and value matrix before capability promotion.
+- [ ] Zero fabricated/impossible calls, Lua errors or KWR-attributable taint/
+  blocked actions; all required source/package/live receipts are retained.
+
+No live boxes were cleared by this audit. Existing source validation, knowledge,
+smoke, mock transport, soak and one fallback replay passed, while the new probes
+still reproduced defects in both source and installed modules.
 
 ## Alpha 9 intelligence checks
 
