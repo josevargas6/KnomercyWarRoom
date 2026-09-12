@@ -670,10 +670,18 @@ function MainWindow:Create(initialPage)
     frame.headerRule:SetPoint("TOPRIGHT", -18, -86)
     frame.headerRule:SetHeight(1)
 
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    -- The Objectives page owns secure quick-call buttons, which means the
+    -- expanded board can become protected while a match is running.  A normal
+    -- Lua OnClick may only queue Hide() until combat ends, trapping the player
+    -- behind this large review surface.  Give the close affordance a small
+    -- secure click handler so its hardware click can dismiss the protected
+    -- parent immediately.
+    local close = CreateFrame("Button", nil, frame,
+        "SecureHandlerClickTemplate,UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -4, -4)
+    close:SetAttribute("_onclick", [[self:GetParent():Hide()]])
     close:SetScript("OnClick", function() MainWindow:Hide() end)
-    frame:SetScript("OnHide", function() MainWindow:RestoreCompactSurfaces() end)
+    frame:SetScript("OnHide", function() MainWindow:OnFrameHidden() end)
 
     local tabBar = CreateFrame("Frame", nil, frame)
     tabBar:SetPoint("TOPLEFT", 18, -94)
@@ -1792,6 +1800,17 @@ function MainWindow:RestoreCompactSurfaces()
     KWR.MainWindowShell:RestoreCompactSurfaces(self, self.lastState or KWR.Store:Get())
 end
 
+function MainWindow:OnFrameHidden()
+    -- Hiding the protected board through the secure close button is legal in
+    -- combat; restoring the optional compact roster may not be.  Defer only
+    -- that restoration, never the operator's dismissal of the board itself.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingCompactRestore = true
+        return
+    end
+    self:RestoreCompactSurfaces()
+end
+
 function MainWindow:Hide()
     if self.frame and InCombatLockdown and InCombatLockdown() then
         self.pendingVisibility = { shown = false }
@@ -1817,6 +1836,10 @@ function MainWindow:FlushCombatVisibility()
     elseif self.frame and self.frame:IsShown() and self.compactRestore
         and KWR.CombatRoster and KWR.CombatRoster:AnyShown() then
         KWR.CombatRoster:Request(false, nil, false)
+    end
+    if self.pendingCompactRestore then
+        self.pendingCompactRestore = nil
+        self:RestoreCompactSurfaces()
     end
 end
 
