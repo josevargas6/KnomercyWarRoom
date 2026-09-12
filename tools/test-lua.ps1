@@ -7,6 +7,7 @@ param(
     [string]$ReplayOutputPath,
     [switch]$ReplayNonStrict,
     [string]$AddonRoot,
+    [switch]$SourceRuntime,
     [string]$DeveloperToolsRoot,
     [string]$ReceiptFile
 )
@@ -315,10 +316,14 @@ try {
             $luaAddonRoot = $resolvedAddonRoot.Replace('\', '/')
             $luaDriverRoot = (Join-Path $root 'tests').Replace('\', '/')
             $luaRunner = (Join-Path $root 'tools\replay-test-runner.lua').Replace('\', '/')
-            @"
+            # An extracted player package must remain production-only. The raw
+            # source tree is intentionally broader (it includes developer
+            # modules), so source-vs-package replay parity opts in explicitly.
+            $luaReleaseOnly = if ($SourceRuntime) { 'false' } else { 'true' }
+@"
 _G.KWR_TEST_ROOT = [[$luaAddonRoot]]
 _G.KWR_TEST_DRIVER_ROOT = [[$luaDriverRoot]]
-_G.KWR_TEST_RELEASE_ONLY = true
+_G.KWR_TEST_RELEASE_ONLY = $luaReleaseOnly
 dofile([[$luaRunner]])
 "@ | Set-Content -LiteralPath $replayHarness -Encoding UTF8
             $replayArguments[0] = $replayHarness

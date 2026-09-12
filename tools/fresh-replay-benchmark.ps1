@@ -6,6 +6,7 @@ param(
     [int]$MaxReplays = 0,
     [int]$StartIndex = 0,
     [string]$AddonRoot,
+    [switch]$SourceRuntime,
     [switch]$SkipDecisionBenchmark
 )
 
@@ -83,7 +84,8 @@ foreach ($entry in $selected) {
         $ErrorActionPreference = "Continue"
         $runOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "test-lua.ps1") `
             -Suite Replay -ReplayPath $entry.file.FullName -ReplayLabelPath $entry.label -ReplayOutputPath $out -ReplayNonStrict `
-            $(if ($AddonRoot) { @('-AddonRoot', $resolvedAddonRoot) }) 2>&1)
+            $(if ($AddonRoot) { @('-AddonRoot', $resolvedAddonRoot) }) `
+            $(if ($SourceRuntime) { @('-SourceRuntime') }) 2>&1)
         $runExitCode = $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $previousErrorActionPreference
@@ -122,6 +124,7 @@ $manifest = [ordered]@{
         replayRunnerSha256 = Get-KwrFileSha256 -LiteralPath (Join-Path $PSScriptRoot "replay-test-runner.lua")
         testDriverSha256 = Get-KwrFileSha256 -LiteralPath (Join-Path $PSScriptRoot "test-lua.ps1")
         addonRoot = $resolvedAddonRoot
+        sourceRuntime = [bool]$SourceRuntime
     }
     coverage = [ordered]@{ totalReplays = $allReplays.Count; reviewedLabels = $labels.Count; selected = $selected.Count; missingLabels = $missingLabels; complete = $coveragePass }
     runs = $runs
