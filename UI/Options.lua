@@ -163,6 +163,18 @@ function Options:SetLayoutMode(mode)
         return false
     end
     KWR.db.profile.layoutMode = mode
+    -- A scale preset is an explicit presentation choice, not a drag.  Keep
+    -- the active modal centered while its effective scale changes; otherwise
+    -- a saved edge/old-scale anchor makes it look as though the cards resized
+    -- away from the operator.  Do not disturb the independently movable HUD,
+    -- roster, Sentinel, or main command board.
+    local profile = KWR.db.profile.options
+    profile.point, profile.relativePoint, profile.x, profile.y = "CENTER", "CENTER", 0, 0
+    local frame = self.frame
+    if frame and frame:IsShown() then
+        frame:ClearAllPoints()
+        frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end
     if KWR.LayoutCoordinator then KWR.LayoutCoordinator:Apply() end
     self:Refresh()
     return true
