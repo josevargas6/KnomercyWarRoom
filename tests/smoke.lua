@@ -6684,6 +6684,9 @@ assert(KWR.HUD.frame.score.value == "RBG SETUP"
     and KWR.HUD.frame.next.value.value:find("CURRENT:", 1, true)
     and KWR.HUD.frame.next.value.value:find("NEED:", 1, true)
     and KWR.HUD.frame.caller.heading.value == "QUEUE CHECK"
+    and KWR.HUD.frame.next.height == 116
+    and KWR.HUD.frame.caller.height == 78
+    and KWR.HUD.frame.kill.height == 62
     and not KWR.HUD.frame.caller.value.value:find("CALL READ", 1, true)
     and KWR.HUD.frame.kill.heading.value == "NEXT STEP"
     and not KWR.HUD.frame.kill.value.value:find("local target", 1, true),

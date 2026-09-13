@@ -269,10 +269,13 @@ local function applySetupLayout(frame)
     frame.alert:SetPoint("TOPRIGHT", -10, -112)
     frame.alert:Show()
     placeSection(frame.win, -136, 52)
-    placeSection(frame.next, -194, 124)
-    placeSection(frame.mine, -324, 52)
-    placeSection(frame.caller, -382, 88)
-    placeSection(frame.kill, -476, 72)
+    -- Keep a real bottom inset. The old stack ended exactly at -548 (the
+    -- parent height), so a panel border could extend outside the setup card at
+    -- some effective UI scales.
+    placeSection(frame.next, -194, 116)
+    placeSection(frame.mine, -316, 52)
+    placeSection(frame.caller, -374, 78)
+    placeSection(frame.kill, -458, 62)
 end
 
 local function applyFightNowLayout(frame)
@@ -525,6 +528,10 @@ function HUD:Create()
     local profile = KWR.db.profile.hud
     local frame = CreateFrame("Frame", "KWR_CommandHUD", UIParent, "BackdropTemplate")
     frame:SetSize(HUD_WIDTH, HUD_HEIGHT)
+    -- A child must never paint outside the bounded field surface. Geometry is
+    -- still laid out with an inset above; clipping is the final safety rail for
+    -- unusual UI scales or an interrupted native reflow.
+    if frame.SetClipsChildren then frame:SetClipsChildren(true) end
     frame:SetPoint(profile.point, UIParent, profile.relativePoint, profile.x, profile.y)
     frame:SetFrameStrata("HIGH")
     frame:SetToplevel(true)

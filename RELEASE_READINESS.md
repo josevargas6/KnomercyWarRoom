@@ -1,19 +1,14 @@
-# Release Readiness - 6.1.1-alpha.17
+# Release Readiness - 6.1.1-alpha.18
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha17-bounded-field-safety-20260913-1` (`6.1.1-alpha.17`) was reproducibly
-built, extracted-package audited, installed, and restore-rehearsed on
-2026-09-13. It migrates every older field profile to the compact
-lower-right focus HUD, prevents the complete Commander card from rendering as a
-live-PvP overlay, enforces the intended 358 px / 436 px focus-card bounds, and
-makes Reset Window Positions recover the safe field anchor instead of a centered
-combat board. It also adds an explicit HUD Hide control and keeps a live right
-click from opening the full tactical board. Distribution SHA-256 is
-`51F1E2395000E81771B8543FD25B7594FB3EE248CDC757CF0C41AE3ABB4C401F`; deployment
-receipt: `artifacts/release-offline-install-20260913-r13/DEPLOYMENT.json`.
-This authorizes a safety-only retest, not a stable-release claim.
+`alpha18-contained-setup-card-20260913-1` (`6.1.1-alpha.18`) is the unbuilt
+successor to the installed alpha.17 candidate. It retains alpha.17's compact
+lower-right field safeguards and fixes the setup-card containment defect: setup
+rows now have a real bottom inset and the parent clips children during abnormal
+native reflow. Exact archive hashes and a deployment receipt are required before
+retest. This will authorize a safety-only retest, not a stable-release claim.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander
