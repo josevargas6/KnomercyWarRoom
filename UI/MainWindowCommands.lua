@@ -151,9 +151,11 @@ function MainWindowCommands:Register(owner, helpers)
         elseif input == "reportermini" then
             KWR:Print("KWR Support View is retired. Use the launcher's OPEN BATTLEFIELD MAP button or /kwr battlefield.", true)
         elseif input == "copy" then
-            KWR.CopyDialog:ShowCompact("KWR Compact Call",
-                helpers.compactCommandText(KWR.Store:Get()), {
-                    note = "Short manual copy only.",
+            KWR.CopyDialog:ShowText("KWR Command Call",
+                helpers.manualCommandText(KWR.Store:Get()), {
+                    width = 660,
+                    height = 350,
+                    note = "Full manual call. Review every line, then select and copy it yourself.",
                 })
         elseif input == "alts" or input == "alternatives" then
             owner:ShowAlternatives()

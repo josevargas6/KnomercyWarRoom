@@ -1,5 +1,10 @@
 # Changelog
 
+- Field-repair candidate `alpha20-full-manual-copy-20260913-1`: Copy Call and
+  `/kwr copy` now open a bounded multiline manual export containing the complete
+  ACTION, WHO, and trigger/abort information. They no longer reuse the clipped
+  display summary. Setup-assignment export uses a bounded readable dialog.
+
 - In-progress KWR-297 source candidate: new complete commander HUD separates
   strategic NOW, NEXT, duties, local fight and CC; measures wrapped full-name
   text and adapts its width. Card clicks record reversible manual follow-through

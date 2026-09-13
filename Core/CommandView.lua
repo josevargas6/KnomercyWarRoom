@@ -498,6 +498,42 @@ function CommandView:CompactCommandText(state)
     return self:CompactMapText(mapKey, table.concat(lines, " | "))
 end
 
+-- This is deliberately separate from CompactCommandText.  The latter is a
+-- display-sized summary; using it as a manual export silently dropped the end
+-- of a real call.  A player who opens a copy window must receive the complete
+-- safe text, arranged in lines that can be reviewed before they copy it.
+function CommandView:ManualCommandText(state, fallback)
+    state = state or {}
+    local command = state.command or {}
+    local decision = command.objectiveDecision or {}
+    local action = KWR.Util:Text(command.action, fallback or "PLAY OBJECTIVE")
+    local who = KWR.Util:Text(command.who, "Team")
+    local trigger = command.switchIf
+    local triggerLabel = "TRIGGER"
+    if trigger == nil or trigger == "" then
+        trigger = decision.success
+    end
+    if trigger == nil or trigger == "" then
+        trigger = decision.abort
+        triggerLabel = "ABORT"
+    end
+    if trigger == nil or trigger == "" then
+        trigger = command.when or "NOW"
+        triggerLabel = "WHEN"
+    end
+
+    local lines = {
+        "ACTION: " .. action,
+        "WHO: " .. who,
+        triggerLabel .. ": " .. KWR.Util:Text(trigger, "NOW"),
+    }
+    local stayers = self:CallStayers(command)
+    if stayers and stayers ~= "" then
+        lines[#lines + 1] = "STAY: " .. stayers
+    end
+    return table.concat(lines, "\n")
+end
+
 local function tightNextText(mapKey, value)
     local text = KWR.Util:Text(value, "", 220)
     if text == "" then return "" end

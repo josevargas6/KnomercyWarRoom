@@ -1,15 +1,16 @@
-# Release Readiness - 6.1.1-alpha.19
+# Release Readiness - 6.1.1-alpha.20
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha19-responsive-options-20260913-1` (`6.1.1-alpha.19`) is the unbuilt
+`alpha20-full-manual-copy-20260913-1` (`6.1.1-alpha.20`) is the unbuilt
 successor to the installed alpha.17 candidate. It retains alpha.17's compact
-lower-right field safeguards, contains setup rows with a real bottom inset and
-child clipping, and reflows Compact Options into one equal-width vertical card
-column instead of a clipped two-column canvas. Exact archive hashes and a
-deployment receipt are required before retest. This will authorize a
-safety-only retest, not a stable-release claim.
+lower-right field safeguards, alpha.18's contained setup rows, and alpha.19's
+single-column Compact Options layout. It also replaces the clipped compact-call
+export with a complete labelled, multiline manual-copy surface and bounds the
+assignment export window. Exact archive hashes and a deployment receipt are
+required before retest. This will authorize a safety-only retest, not a
+stable-release claim.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander

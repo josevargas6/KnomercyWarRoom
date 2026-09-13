@@ -5367,6 +5367,24 @@ do
 end
 local liveLine1, liveLine2 = KWR.CommandView:SummaryLines(liveState)
 assert(liveLine2:find("ACTION:", 1, true), "Commander view did not publish an ACTION line.")
+do
+    local fullAction = "HOLD: " .. string.rep("keep the scoring requirement stable ", 11)
+        .. "keep the scoring requirement stable"
+    local fullTrigger = string.rep("only pivot after the objective truth changes ", 7)
+        .. "only pivot after the objective truth changes"
+    local manualCopy = KWR.CommandView:ManualCommandText({
+        command = {
+            action = fullAction,
+            who = "Frostholt, Haazt",
+            switchIf = fullTrigger,
+        },
+    })
+    assert(manualCopy:find("ACTION: " .. fullAction, 1, true)
+        and manualCopy:find("WHO: Frostholt, Haazt", 1, true)
+        and manualCopy:find("TRIGGER: " .. fullTrigger, 1, true)
+        and not manualCopy:find("...", 1, true),
+        "Manual command export truncated a call instead of preserving the full copy text.")
+end
 local healerSeen, friendlyLeak = false, false
 for _, enemy in ipairs(liveState.snapshot.enemies or {}) do
     if enemy.shortName == "EnemyHealer" then healerSeen = true end

@@ -178,6 +178,10 @@ local function compactCommandText(state)
     return KWR.CommandView:CompactCommandText(state)
 end
 
+local function manualCommandText(state)
+    return KWR.CommandView:ManualCommandText(state)
+end
+
 local function updateToken(owner, state)
     local allowed = KWR.Util:AllowsCommandSurfaces(state)
     local arena = KWR.Util:IsArenaContext(state)
@@ -875,8 +879,11 @@ function MainWindow:BuildTacticalPage(page)
     end)
     rescan:SetPoint("LEFT", refresh, "RIGHT", 4, 0)
     local copy = KWR.Theme:Button(controls, "COPY", 40, 23, function()
-        local command = KWR.Store:Get().command
-        KWR.CopyDialog:ShowCompact("KWR Compact Call", compactCommandText(KWR.Store:Get()))
+        KWR.CopyDialog:ShowText("KWR Command Call", manualCommandText(KWR.Store:Get()), {
+            width = 660,
+            height = 350,
+            note = "Full manual call. Review every line, then select and copy it yourself.",
+        })
     end)
     copy:SetPoint("LEFT", rescan, "RIGHT", 4, 0)
     local mini = KWR.Theme:Button(controls, "MINI", 40, 23, function()
@@ -1124,6 +1131,8 @@ function MainWindow:BuildTeamPage(page)
         local state = KWR.Store:Get()
         KWR.CopyDialog:ShowText("KWR Setup Assignments",
             KWR.Assignments:LineExport(state.assignments, state.snapshot.context.mapKey), {
+                width = 600,
+                height = 390,
                 note = "One player per line. Copy this setup list manually if you want to share it.",
             })
     end)
@@ -1992,6 +2001,7 @@ function MainWindow:RegisterCommands()
         previewAvailable = previewAvailable,
         diagnosticsAvailable = diagnosticsAvailable,
         compactCommandText = compactCommandText,
+        manualCommandText = manualCommandText,
     })
 end
 
