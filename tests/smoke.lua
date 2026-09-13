@@ -776,7 +776,11 @@ do
     }
     KWR:InitializeDatabase()
     assert(type(KWR.db.profile.hud) == "table"
-        and KWR.db.profile.hud.point == "CENTER"
+        and KWR.db.profile.hud.point == "BOTTOMRIGHT"
+        and KWR.db.profile.hud.relativePoint == "BOTTOMRIGHT"
+        and KWR.db.profile.hud.cardLayout == "LEGACY"
+        and KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+        and KWR.db.profile.hud.fieldSurfaceVersion == 2
         and KWR.db.profile.main.page == "TACTICAL"
         and KWR.db.profile.main.x == 0
         and KWR.db.profile.cursor.enabled == false
@@ -858,9 +862,10 @@ do
         profile = { hud = { focusMode = false } },
     }
     KWR:InitializeDatabase()
-    assert(KWR.db.profile.hud.combatPreset == "COMMANDER"
-        and KWR.db.profile.hud.focusMode == false,
-        "Combat Focus migration overwrote the legacy full-Commander preference.")
+    assert(KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
+        and KWR.db.profile.hud.focusMode == true
+        and KWR.db.profile.hud.cardLayout == "LEGACY",
+        "Field-safety migration did not retire the legacy full-Commander preference.")
     KWR_DB = {
         schemaVersion = 60129,
         profile = { hud = { focusMode = true } },
@@ -871,7 +876,7 @@ do
         "Combat Focus migration did not preserve the legacy minimal-combat preference.")
     KWR_DB = {
         schemaVersion = 60130,
-        profile = { hud = { combatPreset = "REVIEW" } },
+        profile = { hud = { combatPreset = "REVIEW", fieldSurfaceVersion = 2 } },
     }
     KWR:InitializeDatabase()
     assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
@@ -1013,8 +1018,9 @@ assert(KWR.EndgameDoctrine:Select("ARATHI", {
     delayWins = true,
 }).branch == "STALL",
     "Endgame doctrine did not select the stall branch.")
-assert(KWR.db.profile.hud.point == "CENTER" and KWR.db.profile.hud.x == -440,
-    "Legacy HUD placement did not migrate.")
+assert(KWR.db.profile.hud.point == "BOTTOMRIGHT" and KWR.db.profile.hud.x == -18
+    and KWR.db.profile.hud.cardLayout == "LEGACY",
+    "Field HUD did not migrate to the compact lower-right safety placement.")
 assert(KWR.Store:Get().command, "Command state was not published.")
 assert(KWR.Store:Get().snapshot.formation.openSlots == 9,
     "Formation advisor did not count open slots: "
@@ -1620,21 +1626,21 @@ do
             page = "COMMAND",
             expectPage = "TACTICAL",
             hud = { point = "TOP", relativePoint = "TOP", x = 0, y = -180 },
-            expectHud = { point = "CENTER", relativePoint = "CENTER", x = -440, y = 0 },
+            expectHud = { point = "BOTTOMRIGHT", relativePoint = "BOTTOMRIGHT", x = -18, y = 168 },
         },
         {
             version = 60002,
             page = "TACTICAL",
             expectPage = "TACTICAL",
             hud = { point = "BOTTOM", relativePoint = "BOTTOM", x = 11, y = 22 },
-            expectHud = { point = "BOTTOM", relativePoint = "BOTTOM", x = 11, y = 22 },
+            expectHud = { point = "BOTTOMRIGHT", relativePoint = "BOTTOMRIGHT", x = -18, y = 168 },
         },
         {
             version = KWR.schemaVersion - 1,
             page = "TACTICAL",
             expectPage = "TACTICAL",
             hud = { point = "LEFT", relativePoint = "LEFT", x = 33, y = 44 },
-            expectHud = { point = "LEFT", relativePoint = "LEFT", x = 33, y = 44 },
+            expectHud = { point = "BOTTOMRIGHT", relativePoint = "BOTTOMRIGHT", x = -18, y = 168 },
         },
     }
     for _, case in ipairs(matrix) do
@@ -1651,7 +1657,7 @@ do
             and KWR.db.profile.hud.relativePoint == case.expectHud.relativePoint
             and KWR.db.profile.hud.x == case.expectHud.x
             and KWR.db.profile.hud.y == case.expectHud.y,
-            "SavedVariables schema matrix did not preserve the reviewed migration boundary at "
+            "SavedVariables schema matrix did not apply the reviewed field-safety migration at "
                 .. tostring(case.version) .. ".")
     end
     KWR_DB = savedDb
