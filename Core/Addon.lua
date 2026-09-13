@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.15"
+KWR.version = "6.1.1-alpha.16"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -20,16 +20,19 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
-            cardLayout = "COMPLETE",
+            -- Live combat is a compact lower-right surface.  The complete
+            -- Commander reading card is never an automatic field overlay.
+            cardLayout = "LEGACY",
             cardWide = false,
+            fieldSurfaceVersion = 2,
             -- Combat Focus is the safe, low-density default. Commander and
             -- Review/Observer remain explicit higher-context presets.
             focusMode = true,
             combatPreset = "COMBAT_FOCUS",
-            point = "CENTER",
-            relativePoint = "CENTER",
-            x = -440,
-            y = 0,
+            point = "BOTTOMRIGHT",
+            relativePoint = "BOTTOMRIGHT",
+            x = -18,
+            y = 168,
             audio = {
                 enabled = true,
                 voiceID = nil,
@@ -189,7 +192,7 @@ local DEFAULTS = {
     },
 }
 
-local FIELD_ACTIVATION_VERSION = 1
+local FIELD_ACTIVATION_VERSION = 2
 
 local function activateFieldProfile(profile, force)
     profile = type(profile) == "table" and profile or {}
@@ -200,6 +203,13 @@ local function activateFieldProfile(profile, force)
     profile.preview = false
     profile.guidanceMode = "COMMAND"
     profile.hud.enabled = true
+    profile.hud.cardLayout = "LEGACY"
+    profile.hud.cardWide = false
+    profile.hud.combatPreset = "COMBAT_FOCUS"
+    profile.hud.focusMode = true
+    profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
+    profile.hud.x, profile.hud.y = -18, 168
+    profile.hud.fieldSurfaceVersion = 2
     profile.cursor.enabled = true
     profile.combatRoster.shown = true
     profile.combatRoster.mode = "BOTH"
@@ -321,6 +331,8 @@ local function normalizeProfile(profile)
         and type(profile.hud) == "table"
         and profile.hud or nil
     local rawCombatPreset = rawHud and rawHud.combatPreset or nil
+    local savedFieldSurfaceVersion = rawHud
+        and (KWR.Util:Number(rawHud.fieldSurfaceVersion, 0) or 0) or 0
     local legacyFocusMode
     if rawHud then
         legacyFocusMode = rawHud.focusMode
@@ -521,8 +533,21 @@ local function normalizeProfile(profile)
     end
     profile.hud.focusMode = profile.hud.combatPreset == "COMBAT_FOCUS"
     if profile.hud.cardLayout ~= "COMPLETE" and profile.hud.cardLayout ~= "LEGACY" then
-        profile.hud.cardLayout = "COMPLETE"
+        profile.hud.cardLayout = defaults.hud.cardLayout
     end
+    -- Alpha.15 demonstrated that preserving the old complete-card preference
+    -- can put a viewport-sized review board over live combat.  This is a
+    -- safety migration, not a cosmetic default: all older field profiles
+    -- become the bounded lower-right focus surface exactly once.
+    if savedFieldSurfaceVersion < 2 then
+        profile.hud.cardLayout = "LEGACY"
+        profile.hud.cardWide = false
+        profile.hud.combatPreset = "COMBAT_FOCUS"
+        profile.hud.focusMode = true
+        profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
+        profile.hud.x, profile.hud.y = -18, 168
+    end
+    profile.hud.fieldSurfaceVersion = 2
     return profile
 end
 

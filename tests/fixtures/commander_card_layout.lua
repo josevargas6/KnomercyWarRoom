@@ -26,11 +26,19 @@ return function(KWR, input)
     for _, section in pairs(card.sections) do metrics(section.heading) metrics(section.value) end
     KWR.db.profile.hud.cardLayout = "COMPLETE"
     KWR.db.profile.hud.cardWide = false
+    KWR.CommanderCard:Hide(host)
+    card:Hide()
     local state = KWR.Util:Copy(input)
     state.snapshot.capturedAt = GetTime()
     state.snapshot.executionCommand.generatedAt = GetTime()
     KWR.HUD:Update(state)
-    assert(host.cardActive and card:IsShown() and not host.kill:IsShown(), "HUD did not select the complete production surface")
+    assert(not host.cardActive and not card:IsShown(),
+        "Live HUD selected the complete Commander review surface")
+    -- The complete card still has independent review-geometry coverage, but
+    -- it is no longer a live-combat HUD selection.
+    KWR.CommanderCard:Render(host, state)
+    assert(host.cardActive and card:IsShown() and not host.kill:IsShown(),
+        "Explicit Commander review render did not materialize the card")
     local rows = {}
     local function boundsCheck()
         for key, box in pairs(card.bounds) do

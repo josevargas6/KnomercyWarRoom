@@ -1,27 +1,27 @@
-# Release Readiness - 6.1.1-alpha.15
+# Release Readiness - 6.1.1-alpha.16
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha15-field-safety-20260912-1` (`6.1.1-alpha.15`) is the unbuilt successor
-to the installed alpha.14 candidate. It adds a bounded Commander-card fit width,
-combat-safe expanded-board dismissal, a Close-means-dismiss policy rather than a
-surface-restoration cascade, Options centering, and stable Setup/Sentinel anchors.
-Its exact archive hashes and deployment receipt must be recorded before retest.
+`alpha16-compact-field-safety-20260912-1` (`6.1.1-alpha.16`) is the unbuilt
+successor to the installed alpha.15 candidate. It migrates every older field
+profile to the compact lower-right focus HUD and prevents the complete Commander
+card from rendering as a live-PvP overlay. It also isolates AAR's saved anchor
+and dialog layer from the periodic layout coordinator. Its exact archive hashes
+and deployment receipt must be recorded before retest.
 
-Alpha.14 was packaged, installed, and field-tested. It recognized live battleground
-data and produced valid assignments without runtime errors, but failed release
-acceptance: the expanded board could trap the player behind protected combat UI;
-closing it could reopen Commander/card surfaces; the card could occupy the whole
-screen; Sentinel/Setup placement could obstruct native UI; measured memory reached
-39.33 MB (32 MB hard limit); and strategic refresh P95 was 29.15 ms (target <2 ms).
-This is defect evidence, not release approval. P00's 62 recovery rows and
-alpha.13's 2,003 paired replay-parity records remain valid offline evidence, but
-do not certify alpha.15.
+Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
+match without runtime errors, but failed release acceptance: the complete Commander
+card obstructed combat, strategic refresh P95 reached 35.02 ms (target <2 ms),
+and addon memory peaked at 38.22 MB (32 MB hard limit). Assignment integrity was
+WARN because every live assignment location was unknown; command delivery remained
+unverified. This is defect evidence, not release approval. P00's 62 recovery rows
+and alpha.13's 2,003 paired replay-parity records remain valid offline evidence,
+but do not certify alpha.16.
 
 Current diagnostic blockers are `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
 `LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, memory/refresh budgets, command-delivery
-evidence, and native-map/combat-safety proof. Field evidence must include
+evidence, AAR-anchor stability, and native-map/combat-safety proof. Field evidence must include
 `/kwr field`, `/kwr verify`, `/kwr perf`, `/kwr aar copy`, and a `/kwr bug` export
 for every failure.
 

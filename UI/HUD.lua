@@ -876,11 +876,9 @@ function HUD:Update(state)
     end
     local frame = self:Create()
     local snapshot, command = state.snapshot, state.command
-    if KWR.db.profile.hud.cardLayout == "COMPLETE" and snapshot.context.inPvP == true
-        and snapshot.context.preview ~= true then
-        KWR.CommanderCard:Render(frame, state)
-        return
-    end
+    -- The complete Commander card is a review surface, never a live-combat
+    -- overlay.  A field HUD must remain bounded and leave the battlefield
+    -- visible even when a call carries a full eight-player assignment list.
     KWR.CommanderCard:Hide(frame)
     local formationMode = snapshot.context.inPvP ~= true
     local matchComplete = snapshot.context.matchComplete == true

@@ -1946,7 +1946,7 @@ function MainWindow:ArmFieldTest()
     if KWR.Presentation then KWR.Presentation:RefreshNow() end
     KWR.MatchRuntime:ForceRefresh("field-test-arm")
     KWR:Print("Field capture armed in Diagnostic context: HUD, roster, Sentinel transport, and AAR are active.", true)
-    KWR:Print("If leading, use /kwr commander before the match. After communicating a call, use /kwr delivered for its confirmation token.", true)
+    KWR:Print("Field HUD is compact and lower-right. After communicating a call, use /kwr delivered for its confirmation token.", true)
     KWR:Print("Capture /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
 end
 

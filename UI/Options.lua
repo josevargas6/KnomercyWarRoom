@@ -147,6 +147,12 @@ function Options:SetCombatPreset(preset)
         and preset ~= "REVIEW_OBSERVER" then
         return false
     end
+    local state = KWR.Store and KWR.Store:Get() or nil
+    if preset == "COMMANDER" and state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true then
+        KWR:Print("Commander review layout is unavailable during live combat. Focus stays active.", true)
+        return false
+    end
     KWR.db.profile.hud.combatPreset = preset
     KWR.db.profile.hud.cardLayout = preset == "COMMANDER" and "COMPLETE" or "LEGACY"
     KWR.db.profile.hud.focusMode = preset == "COMBAT_FOCUS"

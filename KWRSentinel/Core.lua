@@ -4,7 +4,7 @@ Sentinel = Sentinel or {}
 _G.KWRSentinel = Sentinel
 
 Sentinel.name = addonName or "KWRSentinel"
-Sentinel.version = "6.1.1-alpha.15"
+Sentinel.version = "6.1.1-alpha.16"
 Sentinel.modules = {}
 Sentinel.moduleOrder = {}
 Sentinel.ready = false
