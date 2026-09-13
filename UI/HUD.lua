@@ -277,7 +277,7 @@ end
 
 local function applyFightNowLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -296,7 +296,7 @@ end
 
 local function applyFocusLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -313,7 +313,7 @@ end
 
 local function applyReviewLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -569,6 +569,12 @@ function HUD:Create()
         KWR.MatchRuntime:Reassess()
     end)
     frame.request:SetPoint("TOPRIGHT", -74, -8)
+    frame.dismiss = KWR.Theme:Button(frame, "HIDE", 48, 18, function()
+        -- This is an explicit player escape hatch.  It disables only the KWR
+        -- field HUD; no gameplay, secure action, or Blizzard menu is touched.
+        HUD:SetEnabled(false)
+    end)
+    frame.dismiss:SetPoint("TOPRIGHT", -10, -8)
     frame.refresh = KWR.Theme:Button(frame, "REFRESH", 58, 18, function()
         KWR.MatchRuntime:ForceRefresh("hud-refresh")
     end)
@@ -645,7 +651,15 @@ function HUD:Create()
     end
 
     frame:SetScript("OnMouseUp", function(_, button)
-        if button == "RightButton" then KWR.MainWindow:Show("TACTICAL") end
+        -- A fight card must not turn an incidental right click into a full
+        -- command-board overlay during a battleground.  Review remains
+        -- available outside live play through the explicit command surface.
+        local state = HUD.lastState
+        local inPvP = state and state.snapshot and state.snapshot.context
+            and state.snapshot.context.inPvP == true
+        if button == "RightButton" and not inPvP then
+            KWR.MainWindow:Show("TACTICAL")
+        end
     end)
     self.frame = frame
     return frame
@@ -1043,11 +1057,13 @@ function HUD:Update(state)
     end
     if formationMode then
         applySetupLayout(frame)
+        frame.dismiss:Hide()
         frame.score:SetText("RBG SETUP")
         frame.status:SetText(string.format("FORMING  |  %d OPEN", formation.openSlots or 0))
         frame.status:SetTextColor(KWR.Theme:Color(KWR.CommandView:StatusColor(command.status)))
     elseif matchComplete then
         applyFightNowLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1055,12 +1071,14 @@ function HUD:Update(state)
         frame.status:SetText("")
     elseif focusMode then
         applyFocusLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     elseif reviewMode then
         applyReviewLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1068,6 +1086,7 @@ function HUD:Update(state)
         frame.status:SetText("")
     else
         applyFightNowLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1170,14 +1189,14 @@ function HUD:Update(state)
         -- The command card is intentionally a fixed surface.  Changing its
         -- height as local-focus/CC truth arrives moves a CENTER-anchored card
         -- under the caller and looks like a visual glitch.
-        frame:SetHeight(HUD_HEIGHT)
+        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
         frame.win:Hide()
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     elseif reviewMode then
         frame.kill.value:SetText(localFightCall or "")
-        frame:SetHeight(HUD_HEIGHT)
+        frame:SetHeight(HUD_REVIEW_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()
@@ -1192,7 +1211,7 @@ function HUD:Update(state)
         frame.caller:Show()
         frame.kill:Show()
     elseif focusMode then
-        frame:SetHeight(HUD_HEIGHT)
+        frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
         frame.win:Hide()
         frame.mine:Show()
         frame.caller:Show()

@@ -307,7 +307,12 @@ function LayoutCoordinator:Reset()
     if KWR.db and KWR.db.profile then
         local profile = KWR.db.profile
         profile.main.point, profile.main.relativePoint, profile.main.x, profile.main.y = "CENTER", "CENTER", 0, 0
-        profile.hud.point, profile.hud.relativePoint, profile.hud.x, profile.hud.y = "CENTER", "CENTER", -440, 0
+        -- Reset must recover the field-safe surface, not restore the old
+        -- centered board that obscured live combat in alpha.15.
+        profile.hud.point, profile.hud.relativePoint, profile.hud.x, profile.hud.y = "BOTTOMRIGHT", "BOTTOMRIGHT", -18, 168
+        profile.hud.cardLayout, profile.hud.cardWide = "LEGACY", false
+        profile.hud.combatPreset, profile.hud.focusMode = "COMBAT_FOCUS", true
+        profile.hud.fieldSurfaceVersion = 3
         profile.options.point, profile.options.relativePoint, profile.options.x, profile.options.y = "CENTER", "CENTER", 0, 0
         profile.launcher.angle = 225
         local roster = profile.combatRoster
@@ -326,7 +331,7 @@ function LayoutCoordinator:Reset()
         if frame then frame:ClearAllPoints() end
     end
     if KWR.MainWindow and KWR.MainWindow.frame then KWR.MainWindow.frame:SetPoint("CENTER") end
-    if KWR.HUD and KWR.HUD.frame then KWR.HUD.frame:SetPoint("CENTER", UIParent, "CENTER", -440, 0) end
+    if KWR.HUD and KWR.HUD.frame then KWR.HUD.frame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -18, 168) end
     if KWR.Options and KWR.Options.frame then KWR.Options.frame:SetPoint("CENTER") end
     if KWR.MainWindow and KWR.MainWindow.launcher then
         KWR.MainWindow:PositionLauncher()

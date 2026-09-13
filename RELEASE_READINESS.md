@@ -1,14 +1,17 @@
-# Release Readiness - 6.1.1-alpha.16
+# Release Readiness - 6.1.1-alpha.17
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha16-compact-field-safety-20260912-1` (`6.1.1-alpha.16`) is the unbuilt
-successor to the installed alpha.15 candidate. It migrates every older field
-profile to the compact lower-right focus HUD and prevents the complete Commander
-card from rendering as a live-PvP overlay. It also isolates AAR's saved anchor
-and dialog layer from the periodic layout coordinator. Its exact archive hashes
-and deployment receipt must be recorded before retest.
+`alpha17-bounded-field-safety-20260913-1` (`6.1.1-alpha.17`) is the next
+source candidate. It migrates every older field profile to the compact
+lower-right focus HUD, prevents the complete Commander card from rendering as a
+live-PvP overlay, enforces the intended 358 px / 436 px focus-card bounds, and
+makes Reset Window Positions recover the safe field anchor instead of a centered
+combat board. It also adds an explicit HUD Hide control and keeps a live right
+click from opening the full tactical board. It has not yet been packaged or
+installed; exact archive hashes and a deployment receipt are required before
+retest.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander
@@ -17,7 +20,7 @@ and addon memory peaked at 38.22 MB (32 MB hard limit). Assignment integrity was
 WARN because every live assignment location was unknown; command delivery remained
 unverified. This is defect evidence, not release approval. P00's 62 recovery rows
 and alpha.13's 2,003 paired replay-parity records remain valid offline evidence,
-but do not certify alpha.16.
+but do not certify alpha.17.
 
 Current diagnostic blockers are `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
 `LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, memory/refresh budgets, command-delivery

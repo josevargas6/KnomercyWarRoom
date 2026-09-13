@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.16"
+KWR.version = "6.1.1-alpha.17"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -24,7 +24,7 @@ local DEFAULTS = {
             -- Commander reading card is never an automatic field overlay.
             cardLayout = "LEGACY",
             cardWide = false,
-            fieldSurfaceVersion = 2,
+            fieldSurfaceVersion = 3,
             -- Combat Focus is the safe, low-density default. Commander and
             -- Review/Observer remain explicit higher-context presets.
             focusMode = true,
@@ -192,7 +192,7 @@ local DEFAULTS = {
     },
 }
 
-local FIELD_ACTIVATION_VERSION = 2
+local FIELD_ACTIVATION_VERSION = 3
 
 local function activateFieldProfile(profile, force)
     profile = type(profile) == "table" and profile or {}
@@ -209,7 +209,7 @@ local function activateFieldProfile(profile, force)
     profile.hud.focusMode = true
     profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
     profile.hud.x, profile.hud.y = -18, 168
-    profile.hud.fieldSurfaceVersion = 2
+    profile.hud.fieldSurfaceVersion = 3
     profile.cursor.enabled = true
     profile.combatRoster.shown = true
     profile.combatRoster.mode = "BOTH"
@@ -539,7 +539,7 @@ local function normalizeProfile(profile)
     -- can put a viewport-sized review board over live combat.  This is a
     -- safety migration, not a cosmetic default: all older field profiles
     -- become the bounded lower-right focus surface exactly once.
-    if savedFieldSurfaceVersion < 2 then
+    if savedFieldSurfaceVersion < 3 then
         profile.hud.cardLayout = "LEGACY"
         profile.hud.cardWide = false
         profile.hud.combatPreset = "COMBAT_FOCUS"
@@ -547,7 +547,7 @@ local function normalizeProfile(profile)
         profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
         profile.hud.x, profile.hud.y = -18, 168
     end
-    profile.hud.fieldSurfaceVersion = 2
+    profile.hud.fieldSurfaceVersion = 3
     return profile
 end
 

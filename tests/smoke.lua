@@ -780,7 +780,7 @@ do
         and KWR.db.profile.hud.relativePoint == "BOTTOMRIGHT"
         and KWR.db.profile.hud.cardLayout == "LEGACY"
         and KWR.db.profile.hud.combatPreset == "COMBAT_FOCUS"
-        and KWR.db.profile.hud.fieldSurfaceVersion == 2
+        and KWR.db.profile.hud.fieldSurfaceVersion == 3
         and KWR.db.profile.main.page == "TACTICAL"
         and KWR.db.profile.main.x == 0
         and KWR.db.profile.cursor.enabled == false
@@ -876,7 +876,7 @@ do
         "Combat Focus migration did not preserve the legacy minimal-combat preference.")
     KWR_DB = {
         schemaVersion = 60130,
-        profile = { hud = { combatPreset = "REVIEW", fieldSurfaceVersion = 2 } },
+        profile = { hud = { combatPreset = "REVIEW", fieldSurfaceVersion = 3 } },
     }
     KWR:InitializeDatabase()
     assert(KWR.db.profile.hud.combatPreset == "REVIEW_OBSERVER"
@@ -6396,7 +6396,7 @@ assert(KWR.HUD.frame.kill:IsShown()
 KWR.db.profile.hud.combatPreset = "COMBAT_FOCUS"
 KWR.HUD:Invalidate()
 KWR.HUD:Update(localFightHudState)
-assert(KWR.HUD.frame.height == 548
+assert(KWR.HUD.frame.height == 436
     and KWR.HUD.frame.next:IsShown()
     and KWR.HUD.frame.next.heading.value == "NOW"
     and KWR.HUD.frame.next.value.value ~= ""
@@ -6411,7 +6411,8 @@ assert(KWR.HUD.frame.height == 548
     and not KWR.HUD.frame.win:IsShown()
     and KWR.HUD.frame.mine:IsShown()
     and KWR.HUD.frame.caller:IsShown(),
-    "Combat Focus did not retain team NOW, MY JOB, NEXT, and the actionable local cue.")
+    "Combat Focus did not retain team NOW, MY JOB, NEXT, and the actionable local cue; height="
+        .. tostring(KWR.HUD.frame.height))
 do
     local authoritativeScoreState = KWR.Util:Copy(localFightHudState)
     authoritativeScoreState.snapshot.score.source = "ui_widget"
@@ -6494,7 +6495,7 @@ do
     teammateControlState.snapshot.executionCommand.localFight.controls[1].actor = "Teammate-Z"
     KWR.HUD:Invalidate()
     KWR.HUD:Update(teammateControlState)
-    assert(not KWR.HUD.frame.kill:IsShown(),
+    assert(KWR.HUD.frame.height == 358 and not KWR.HUD.frame.kill:IsShown(),
         "Minimal focus mode presented another player's assigned control as the local peel action.")
 end
 do
