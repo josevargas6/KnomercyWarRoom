@@ -151,13 +151,10 @@ local function tacticalStrategicSignature(snapshot)
     end
     table.sort(enemies)
     for _, value in ipairs(enemies) do parts[#parts + 1] = value end
-    local priorityCast = snapshot and snapshot.combat
-        and snapshot.combat.priorityCast or {}
-    parts[#parts + 1] = table.concat({
-        KWR.Util:Text(priorityCast.sourceGUID or priorityCast.source, "none", 96),
-        KWR.Util:Text(priorityCast.spellID or priorityCast.name, "none", 64),
-        KWR.Util:Text(priorityCast.response, "none", 32),
-    }, ":")
+    -- Cast accents are tactical presentation truth.  They are intentionally
+    -- excluded from this signature: a spell start/stop must not rebuild the
+    -- entire objective, strategy, assignment, and command pipeline. The
+    -- tactical publication below still updates the local-fight surface.
     return KWR.Util:Signature(parts)
 end
 
@@ -213,8 +210,10 @@ local function allowsScoreboardReuse(reason)
 end
 
 local function tacticalCaptureRequired(reason)
-    return EMERGENCY_TACTICAL_EVENTS[reason] == true
-        or reason == "PLAYER_TARGET_CHANGED"
+    -- A cast needs an immediate tactical update, but it does not require a
+    -- fresh full enemy-roster capture. Target/focus/nameplate transitions do;
+    -- those are the events that can change the observed local target itself.
+    return reason == "PLAYER_TARGET_CHANGED"
         or reason == "PLAYER_FOCUS_CHANGED"
         or reason == "ARENA_OPPONENT_UPDATE"
         or reason == "NAME_PLATE_UNIT_ADDED"

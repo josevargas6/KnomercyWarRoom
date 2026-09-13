@@ -1,5 +1,10 @@
 # Changelog
 
+- Performance-repair candidate `alpha22-tactical-backpressure-20260913-1`:
+  cast-only changes refresh tactical presentation without recapturing the full
+  enemy roster or escalating a full strategic rebuild. Target, focus, arena,
+  and nameplate changes retain fresh-capture behavior.
+
 - Field-repair candidate `alpha21-honest-setup-status-20260913-1`: an incomplete
   or unavailable setup roster is labeled FORMING rather than READY; its detail
   states the number of open slots.

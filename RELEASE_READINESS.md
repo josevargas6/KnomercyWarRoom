@@ -1,16 +1,18 @@
-# Release Readiness - 6.1.1-alpha.21
+# Release Readiness - 6.1.1-alpha.22
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha21-honest-setup-status-20260913-1` (`6.1.1-alpha.21`) is the unbuilt
+`alpha22-tactical-backpressure-20260913-1` (`6.1.1-alpha.22`) is the unbuilt
 successor to the installed alpha.17 candidate. It retains alpha.17's compact
 lower-right field safeguards, alpha.18's contained setup rows, and alpha.19's
 single-column Compact Options layout. It also replaces the clipped compact-call
 export with a complete labelled, multiline manual-copy surface and bounds the
 assignment export window. Setup roster labels now remain FORMING until the
-roster is full and available. Exact archive hashes and a deployment receipt are
-required before retest. This will authorize a safety-only retest, not a stable-release claim.
+roster is full and available. It also keeps cast-only tactical changes out of
+the full strategic rebuild path while retaining fresh target/focus/nameplate
+truth. Exact archive hashes and a deployment receipt are required before retest.
+This will authorize a safety-only retest, not a stable-release claim.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander
