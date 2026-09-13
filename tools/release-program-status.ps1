@@ -1,12 +1,12 @@
 [CmdletBinding()]
 param(
     [string]$OutFile = 'knowledge\release-program-status.json',
-    [string]$EvidenceCandidateVersion = '6.1.1-alpha.14',
-    [string]$RecoveryReport = 'artifacts\source-recovery-accounting-20260912-r10.json',
-    [string]$ParityReport = 'artifacts\replay-semantic-parity-r10-20260912.json',
-    [string]$DiscrepancyReport = 'artifacts\replay-discrepancy-r10-20260912.json',
+    [string]$EvidenceCandidateVersion = '6.1.1-alpha.15',
+    [string]$RecoveryReport = 'artifacts\source-recovery-accounting-20260912-r11.json',
+    [string]$ParityReport = 'artifacts\replay-semantic-parity-r11-20260912.json',
+    [string]$DiscrepancyReport = 'artifacts\replay-discrepancy-r11-20260912.json',
     [string]$AdjudicationReport = 'artifacts\replay-adjudication-review-r7-20260912.json',
-    [string]$ReconciliationLedger = 'artifacts\release-source-reconciliation-20260912-r10.json'
+    [string]$ReconciliationLedger = 'artifacts\release-source-reconciliation-20260912-r11.json'
 )
 
 $ErrorActionPreference = 'Stop'
