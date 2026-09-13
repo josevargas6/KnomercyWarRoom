@@ -1,26 +1,26 @@
 {
   "schema": "kwr-release-program-status",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T04:42:07.6847758Z",
+  "generatedAt": "2026-09-13T05:38:10.7518102Z",
   "candidate": {
-    "version": "6.1.1-alpha.16",
-    "candidateID": "alpha16-compact-field-safety-20260912-1",
-    "distributionSha256": "A08BE33CED0D81B0B3E68468D2C739285DFFC35626BC0D75F839CBA6B840CABD",
-    "buildDirectory": "artifacts/release-offline-candidate-20260912-r12c"
+    "version": "6.1.1-alpha.17",
+    "candidateID": "alpha17-bounded-field-safety-20260913-1",
+    "distributionSha256": "51F1E2395000E81771B8543FD25B7594FB3EE248CDC757CF0C41AE3ABB4C401F",
+    "buildDirectory": "artifacts/release-offline-candidate-20260913-r13"
   },
   "evidenceBinding": {
-    "candidateVersion": "6.1.1-alpha.16",
+    "candidateVersion": "6.1.1-alpha.17",
     "matchesCandidate": true,
     "recovery": "artifacts\\source-recovery-accounting-20260912-r12.json",
     "parity": "artifacts\\replay-semantic-parity-r12-20260912.json",
     "discrepancy": "artifacts\\replay-discrepancy-r12-20260912.json",
-    "reconciliation": "artifacts\\release-source-reconciliation-20260912-r12.json"
+    "reconciliation": "artifacts\\release-source-reconciliation-20260913-r13.json"
   },
   "stages": [
     {
       "id": "KWR-281-source-reconciliation",
       "status": "PASS",
-      "evidence": "artifacts\\release-source-reconciliation-20260912-r12.json"
+      "evidence": "artifacts\\release-source-reconciliation-20260913-r13.json"
     },
     {
       "id": "KWR-295-source-package-parity",
@@ -40,7 +40,7 @@
     {
       "id": "OVR-22-package-audit",
       "status": "PASS",
-      "evidence": "artifacts/release-offline-candidate-20260912-r12c/KWR_6_1_1_ALPHA_16_PACKAGE_AUDIT.json"
+      "evidence": "artifacts/release-offline-candidate-20260913-r13/KWR_6_1_1_ALPHA_17_PACKAGE_AUDIT.json"
     },
     {
       "id": "OVR-22-clean-provenance",
