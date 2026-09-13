@@ -261,6 +261,9 @@ function LayoutCoordinator:ApplyOptions()
     if options:GetWidth() ~= targetWidth or options:GetHeight() ~= targetHeight then
         options:SetSize(targetWidth, targetHeight)
     end
+    if KWR.Options and KWR.Options.ApplyResponsiveLayout then
+        KWR.Options:ApplyResponsiveLayout(targetWidth)
+    end
     applyScale(options, visibleScale(options, profile.scale, profile.margin))
     self:Clamp(options, profile.margin)
 end

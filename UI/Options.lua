@@ -36,6 +36,10 @@ local function createOptionCard(parent, title, summary, x, y, width, height)
     if type(parent.kwrCards) == "table" then
         parent.kwrCards[#parent.kwrCards + 1] = card.kwrGeometry
     end
+    if type(parent.kwrCardFrames) == "table" then
+        parent.kwrCardFrames[#parent.kwrCardFrames + 1] = card
+    end
+    card.kwrChecks = {}
     card.summary = KWR.Theme:Font(card, 8, "muted", "LEFT")
     card.summary:SetPoint("TOPLEFT", 10, -34)
     card.summary:SetPoint("TOPRIGHT", -10, -34)
@@ -44,6 +48,23 @@ local function createOptionCard(parent, title, summary, x, y, width, height)
     if card.summary.SetNonSpaceWrap then card.summary:SetNonSpaceWrap(true) end
     card.summary:SetText(summary)
     return card
+end
+
+local function setCardGeometry(card, x, y, width, height)
+    if not card or not card.kwrGeometry then return end
+    card:ClearAllPoints()
+    card:SetPoint("TOPLEFT", x, y)
+    card:SetSize(width, height)
+    local geometry = card.kwrGeometry
+    geometry.x, geometry.y, geometry.width, geometry.height = x, y, width, height
+    if card.kwrChildBottomLocal then
+        geometry.childBottom = y + card.kwrChildBottomLocal
+    end
+    for _, check in ipairs(card.kwrChecks or {}) do
+        if check.label and check.label.SetWidth then
+            check.label:SetWidth(math.max(120, width - 52))
+        end
+    end
 end
 
 local function registerCheck(self, key, check, getter, setter, options)
@@ -95,9 +116,10 @@ local function createCheck(self, parent, key, label, summary, y, getter, setter,
     end
     check.summary:SetText(summary)
     if parent and parent.kwrGeometry then
-        parent.kwrGeometry.childBottom = math.min(
-            parent.kwrGeometry.childBottom or (parent.kwrGeometry.y - parent.kwrGeometry.height),
-            parent.kwrGeometry.y + y - 48)
+        parent.kwrChildBottomLocal = math.min(parent.kwrChildBottomLocal
+            or -parent.kwrGeometry.height, y - 48)
+        parent.kwrGeometry.childBottom = parent.kwrGeometry.y + parent.kwrChildBottomLocal
+        parent.kwrChecks[#parent.kwrChecks + 1] = check
     end
     registerCheck(self, key, check, getter, setter, {
         label = label,
@@ -182,6 +204,7 @@ function Options:SetLayoutMode(mode)
         frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     end
     if KWR.LayoutCoordinator then KWR.LayoutCoordinator:Apply() end
+    self:ApplyResponsiveLayout()
     self:Refresh()
     return true
 end
@@ -245,6 +268,7 @@ function Options:Create()
     frame.content = CreateFrame("Frame", nil, frame.scroll)
     frame.content:SetSize(724, 1366)
     frame.content.kwrCards = {}
+    frame.content.kwrCardFrames = {}
     if frame.scroll.SetScrollChild then
         frame.scroll:SetScrollChild(frame.content)
     end
@@ -331,8 +355,10 @@ function Options:Create()
         button:SetPoint("TOPLEFT", 10 + ((index - 1) * 106), -394)
         self.combatPresetButtons[preset] = button
     end
-    commandCard.kwrGeometry.childBottom = math.min(
-        commandCard.kwrGeometry.childBottom, -430)
+    commandCard.kwrChildBottomLocal = math.min(
+        commandCard.kwrChildBottomLocal, -430)
+    commandCard.kwrGeometry.childBottom = commandCard.kwrGeometry.y
+        + commandCard.kwrChildBottomLocal
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
@@ -660,7 +686,44 @@ function Options:Create()
     end
 
     self.frame = frame
+    self:ApplyResponsiveLayout()
     return frame
+end
+
+function Options:ApplyResponsiveLayout(outerWidth)
+    local frame = self.frame
+    local content = frame and frame.content
+    if not content then return end
+    outerWidth = outerWidth or (frame.GetWidth and frame:GetWidth()) or 780
+    local contentWidth = math.max(320, math.floor(outerWidth - 44))
+    local mode = KWR.db and KWR.db.profile and KWR.db.profile.layoutMode or "AUTO"
+    local singleColumn = mode == "COMPACT" or contentWidth < 676
+    local cards = content.kwrCardFrames or {}
+    if #cards < 7 then return end
+
+    if singleColumn then
+        local width = contentWidth
+        setCardGeometry(cards[1], 0, 0, width, 440)
+        setCardGeometry(cards[2], 0, -452, width, 556)
+        setCardGeometry(cards[3], 0, -1020, width, 350)
+        setCardGeometry(cards[4], 0, -1382, width, 196)
+        setCardGeometry(cards[5], 0, -1590, width, 216)
+        setCardGeometry(cards[6], 0, -1818, width, 350)
+        setCardGeometry(cards[7], 0, -2180, width, 112)
+        content:SetSize(width, 2304)
+    else
+        local columnWidth = math.floor((contentWidth - 24) / 2)
+        local right = columnWidth + 24
+        setCardGeometry(cards[1], 0, 0, columnWidth, 440)
+        setCardGeometry(cards[2], right, 0, columnWidth, 556)
+        setCardGeometry(cards[3], 0, -458, columnWidth, 350)
+        setCardGeometry(cards[4], 0, -826, columnWidth, 196)
+        setCardGeometry(cards[5], right, -574, columnWidth, 216)
+        setCardGeometry(cards[6], right, -868, columnWidth, 350)
+        setCardGeometry(cards[7], 0, -1240, contentWidth, 112)
+        content:SetSize(contentWidth, 1366)
+    end
+    frame.kwrSingleColumn = singleColumn
 end
 
 function Options:Inventory()

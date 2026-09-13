@@ -1,14 +1,15 @@
-# Release Readiness - 6.1.1-alpha.18
+# Release Readiness - 6.1.1-alpha.19
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha18-contained-setup-card-20260913-1` (`6.1.1-alpha.18`) is the unbuilt
+`alpha19-responsive-options-20260913-1` (`6.1.1-alpha.19`) is the unbuilt
 successor to the installed alpha.17 candidate. It retains alpha.17's compact
-lower-right field safeguards and fixes the setup-card containment defect: setup
-rows now have a real bottom inset and the parent clips children during abnormal
-native reflow. Exact archive hashes and a deployment receipt are required before
-retest. This will authorize a safety-only retest, not a stable-release claim.
+lower-right field safeguards, contains setup rows with a real bottom inset and
+child clipping, and reflows Compact Options into one equal-width vertical card
+column instead of a clipped two-column canvas. Exact archive hashes and a
+deployment receipt are required before retest. This will authorize a
+safety-only retest, not a stable-release claim.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander

@@ -7137,6 +7137,22 @@ assert(#optionsInventory >= 12 and optionsAudit.ok == true,
     "Options window did not expose a complete auditable inventory or clean card geometry: "
         .. table.concat(optionsAudit.issues or {}, "; "))
 do
+    KWR.Options:SetLayoutMode("COMPACT")
+    local cards = KWR.Options.frame.content.kwrCardFrames
+    local contentWidth = KWR.Options.frame.content.width
+    local compactAudit = KWR.Options:LayoutAudit()
+    assert(KWR.Options.frame.kwrSingleColumn == true
+        and KWR.Options.frame.content.height == 2304
+        and #cards == 7
+        and cards[1].kwrGeometry.x == 0
+        and cards[2].kwrGeometry.x == 0
+        and cards[7].kwrGeometry.width == contentWidth
+        and compactAudit.ok == true,
+        "Compact Options did not reflow every card into one equal-width, vertically scrollable column: "
+            .. table.concat(compactAudit.issues or {}, "; "))
+    KWR.Options:SetLayoutMode("STANDARD")
+end
+do
     local launcher = KWR.MainWindow.launcherMenu
     if not launcher then
         KWR.MainWindow:ToggleLauncherMenu()
