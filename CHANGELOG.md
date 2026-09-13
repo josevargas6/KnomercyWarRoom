@@ -1,5 +1,10 @@
 # Changelog
 
+- Field-readability candidate `alpha23-plain-language-fight-card-20260913-1`:
+  the in-combat Fight Now card expands its personal assignment and locations
+  into plain language (for example, `Cart Healer -> Primary Cart`) instead of
+  internal compact labels such as `CART-H -> PC`.
+
 - Performance-repair candidate `alpha22-tactical-backpressure-20260913-1`:
   cast-only changes refresh tactical presentation without recapturing the full
   enemy roster or escalating a full strategic rebuild. Target, focus, arena,

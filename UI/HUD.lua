@@ -180,7 +180,10 @@ local function focusFightText(localFight, mapKey)
         local details = { KWR.Util:TextClip(kill.target, "Enemy", 24) }
         local health = KWR.Util:Number(kill.healthPercent, nil)
         if health then details[#details + 1] = tostring(math.floor(health + 0.5)) .. "%" end
-        local location = KWR.Util:TextClip(kill.location, "", 48)
+        local location = KWR.Util:Text(kill.location, "", 48)
+        if KWR.Maps and type(KWR.Maps.CanonicalLocation) == "function" then
+            location = KWR.Maps:CanonicalLocation(mapKey, location)
+        end
         if location ~= "" then
             details[#details + 1] = "@ " .. KWR.Maps:AbbreviateLocation(mapKey, location)
         end
@@ -225,10 +228,31 @@ local function compactLocationText(mapKey, value, fallback, limit)
     return KWR.Util:Text(text, fallback or "", limit or 96)
 end
 
+-- The fight card is read during combat, not used as a compact roster export.
+-- Keep its locations in the map's plain language so a player never has to
+-- decode an abbreviation such as PC (Primary Cart) before acting.
+local function readableLocationText(mapKey, value, fallback, limit)
+    local text = KWR.Util:Text(value, fallback or "", limit or 96)
+    if KWR.Maps and type(KWR.Maps.CanonicalLocation) == "function" then
+        text = KWR.Maps:CanonicalLocation(mapKey, text)
+    end
+    return KWR.Util:Text(text, fallback or "", limit or 96)
+end
+
+local function readableAssignmentText(assignment, mapKey)
+    assignment = type(assignment) == "table" and assignment or nil
+    if not assignment then return nil end
+    local role = KWR.Util:Text(assignment.role or assignment.shortRole, "Assignment", 48)
+    local location = readableLocationText(mapKey,
+        assignment.target or assignment.location or assignment.window, "", 64)
+    if location == "" or location == "Formation" then return role end
+    return role .. " -> " .. location
+end
+
 local function fightCallText(call, mapKey)
     call = call or {}
     local tone = callTone(call)
-    local where = compactLocationText(mapKey, call.where, "FIELD", 48)
+    local where = readableLocationText(mapKey, call.where, "FIELD", 48)
     return table.concat({
         KWR.Theme:CombatText(tone, "CALL:") .. " "
             .. KWR.Util:Upper(call.what, "HOLD", 24),
@@ -941,9 +965,8 @@ function HUD:Update(state)
     elseif teamfight and teamfight.displayEligible == true then
         mine = mine or teamfightAssignment(teamfight)
     end
-    local personalAction = synchronizedMine and synchronizedMine.display
-        or (mine and KWR.Assignments:CompactLabel(
-            mine, snapshot.context.mapKey) or nil)
+    local personalAction = readableAssignmentText(synchronizedMine, snapshot.context.mapKey)
+        or readableAssignmentText(mine, snapshot.context.mapKey)
     local enemy = snapshot.combat and (snapshot.combat.localTarget
         or snapshot.combat.killTarget)
         or (snapshot.enemies and snapshot.enemies[1])
