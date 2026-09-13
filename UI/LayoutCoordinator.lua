@@ -33,7 +33,6 @@ local KWR_STRATA = {
     { "MainWindow", "HIGH" },
     { "HUD", "HIGH" },
     { "Options", "HIGH" },
-    { "AARWindow", "HIGH" },
     { "CopyDialog", "HIGH" },
 }
 

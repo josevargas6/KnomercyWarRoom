@@ -221,6 +221,10 @@ function AARWindow:Create()
     frame:SetFrameStrata("FULLSCREEN_DIALOG")
     frame:SetToplevel(true)
     frame:SetClampedToScreen(true)
+    -- AAR owns its dialog stratum and saved anchor.  The shared layout
+    -- coordinator deliberately does not touch this review surface: it must
+    -- never be re-layered or repositioned by a periodic combat/UI refresh.
+    frame.kwrOwnsLayout = true
     KWR.Theme:Style(frame, "background", "borderHi")
     frame:SetBackdropColor(0.01, 0.02, 0.04, 0.97)
     KWR.Theme:MakeMovable(frame, profile)
