@@ -1,5 +1,9 @@
 # Changelog
 
+- Field-repair candidate `alpha21-honest-setup-status-20260913-1`: an incomplete
+  or unavailable setup roster is labeled FORMING rather than READY; its detail
+  states the number of open slots.
+
 - Field-repair candidate `alpha20-full-manual-copy-20260913-1`: Copy Call and
   `/kwr copy` now open a bounded multiline manual export containing the complete
   ACTION, WHO, and trigger/abort information. They no longer reuse the clipped

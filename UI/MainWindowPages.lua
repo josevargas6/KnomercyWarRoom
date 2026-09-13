@@ -961,13 +961,18 @@ function MainWindowPages:RenderTeam(page, state, helpers)
     page.summaryCard.value:SetText(string.format(
         "%d / %d PLAYERS   |   %d TANK   |   %d HEALERS   |   %d DAMAGE",
         #roster, displayCapacity, tanks, healers, damage))
-    page.summaryCard.readyBadge:SetTone(helpers.readinessTone(dead, formation.openSlots))
-    page.summaryCard.readyBadge:SetText(dead == 0 and "READY" or (tostring(dead) .. " UNAVAILABLE"))
-    page.summaryCard.openBadge:SetTone((formation.openSlots or 0) > 0 and "yellow" or "green")
-    page.summaryCard.openBadge:SetText((formation.openSlots or 0) > 0
-        and (tostring(formation.openSlots or 0) .. " OPEN") or "FULL")
-    page.summaryCard.detail:SetText((dead == 0 and "Command unit ready."
-        or (tostring(dead) .. " players down."))
+    local openSlots = formation.openSlots or math.max(0, displayCapacity - #roster)
+    local rosterComplete = dead == 0 and openSlots == 0
+    page.summaryCard.readyBadge:SetTone(rosterComplete and "green"
+        or helpers.readinessTone(dead, openSlots))
+    page.summaryCard.readyBadge:SetText(dead > 0 and (tostring(dead) .. " UNAVAILABLE")
+        or (rosterComplete and "READY" or "FORMING"))
+    page.summaryCard.openBadge:SetTone(openSlots > 0 and "yellow" or "green")
+    page.summaryCard.openBadge:SetText(openSlots > 0
+        and (tostring(openSlots) .. " OPEN") or "FULL")
+    page.summaryCard.detail:SetText((dead > 0 and (tostring(dead) .. " players down.")
+        or (rosterComplete and "Command unit ready."
+            or ("Roster forming: " .. tostring(openSlots) .. " open.")))
         .. " Assignments use role, specialization capabilities, and map doctrine.")
     for index, row in ipairs(page.rosterCard.rows) do
         local player = roster[index]
