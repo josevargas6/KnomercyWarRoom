@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.24"
+KWR.version = "6.1.1-alpha.25"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -95,11 +95,11 @@ local DEFAULTS = {
             -- In a target call, preserve one native health bar: the current
             -- enemy. Other hostile plates keep only KWR's compact class/color
             -- shield so the battlefield remains readable.
-            focusNameplates = true,
-            battlefieldOrbs = true,
+            focusNameplates = false,
+            battlefieldOrbs = false,
             markerMode = "NATIVE",
             markerPresentationVersion = 2,
-            assignmentBadges = true,
+            assignmentBadges = false,
             arenaLightweight = true,
             worldPvPReticle = true,
         },
@@ -133,7 +133,7 @@ local DEFAULTS = {
             mode = "BOTH",
             teamShown = false,
             enemyShown = false,
-            autoShowInPvP = true,
+            autoShowInPvP = false,
             combatVisuals = true,
             teamMini = {
                 point = "CENTER",
@@ -162,10 +162,12 @@ local DEFAULTS = {
         },
         showLoadMessage = true,
         developmentMode = false,
+        persistentOpponentHistory = false,
+        persistentLearning = false,
         preview = false,
         aar = {
             enabled = true,
-            autoOpen = true,
+            autoOpen = false,
         },
         -- Cross-client relay is opt-in with the Sentinel companion. Field
         -- mode enables the complete reviewed bridge explicitly.
@@ -217,13 +219,13 @@ local function activateFieldProfile(profile, force)
     profile.combatRoster.mode = "BOTH"
     profile.combatRoster.teamShown = true
     profile.combatRoster.enemyShown = true
-    profile.combatRoster.autoShowInPvP = true
+    profile.combatRoster.autoShowInPvP = false
     profile.combatRoster.combatVisuals = true
     profile.presentation.enabled = true
     profile.presentation.autoReporter = true
     profile.presentation.autoRoster = true
     profile.aar.enabled = true
-    profile.aar.autoOpen = true
+    profile.aar.autoOpen = false
     profile.sentinelTransportEnabled = true
     profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
     return true
@@ -398,8 +400,8 @@ local function normalizeProfile(profile)
         guideStyle = defaults.cursor.reticleGuideStyle
     end
     profile.cursor.reticleGuideStyle = guideStyle
-    profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
-        profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
+    profile.cursor.focusNameplates = false
+    profile.cursor.battlefieldOrbs = false
     local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
     if markerMode ~= "NATIVE" and markerMode ~= "TACTICAL_ONLY" and markerMode ~= "OFF" then
         markerMode = defaults.cursor.markerMode
@@ -409,8 +411,7 @@ local function normalizeProfile(profile)
     -- Preserve explicit OFF/TACTICAL_ONLY and battlefield-orb opt-outs when
     -- stamping the presentation version onto an older profile.
     profile.cursor.markerPresentationVersion = defaults.cursor.markerPresentationVersion
-    profile.cursor.assignmentBadges = KWR.Util:Boolean(
-        profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
+    profile.cursor.assignmentBadges = false
     profile.cursor.arenaLightweight = KWR.Util:Boolean(
         profile.cursor.arenaLightweight, defaults.cursor.arenaLightweight)
     profile.cursor.worldPvPReticle = KWR.Util:Boolean(
@@ -588,14 +589,9 @@ local function normalizeRootBranches(database)
         database.encounters.legacyPlayers = database.encounters.players
         database.encounters.players = {}
     end
-    if type(database.learning) ~= "table" then
-        database.learning = { legacyPayload = database.learning, plans = {} }
-    elseif (tonumber(database.learning.schemaVersion) or 0) < 2 then
-        if type(database.learning.plans) ~= "table" then
-            database.learning.legacyPlans = database.learning.plans
-            database.learning.plans = {}
-        end
-    end
+    -- Persistent doctrine learning was retired; current commands use the
+    -- reviewed map doctrine and live public truth only.
+    database.learning = nil
     database.assignmentOverrides = type(database.assignmentOverrides) == "table"
         and database.assignmentOverrides or {}
     database.assignmentOverrides.players =
@@ -607,13 +603,8 @@ local function normalizeRootBranches(database)
     database.assignmentOverrides.ambiguousLegacy =
         type(database.assignmentOverrides.ambiguousLegacy) == "table"
         and database.assignmentOverrides.ambiguousLegacy or {}
-    database.opponentModels = type(database.opponentModels) == "table"
-        and database.opponentModels or {}
-    database.opponentModels.players = type(database.opponentModels.players) == "table"
-        and database.opponentModels.players or {}
-    database.opponentModels.processedMatches =
-        type(database.opponentModels.processedMatches) == "table"
-        and database.opponentModels.processedMatches or {}
+    -- Do not retain per-opponent tendency profiles between sessions.
+    database.opponentModels = nil
     return database
 end
 

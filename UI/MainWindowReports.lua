@@ -73,7 +73,8 @@ function MainWindowReports:BuildExplainPayload(state, helpers)
         alternatives[#alternatives + 1] = (alternative.feasible and "READY  " or "BLOCKED  ")
             .. alternative.id .. " - " .. alternative.action
     end
-    local learning = KWR.Learning:Summary()
+    local learning = KWR.Learning and KWR.Learning.Summary
+        and KWR.Learning:Summary() or { samples = 0, plans = 0, unavailable = true }
     local decision = strategy.objectiveDecision or {}
     local counter = strategy.counter or {}
     local confidenceEvidence = {}

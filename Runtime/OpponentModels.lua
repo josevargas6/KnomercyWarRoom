@@ -208,6 +208,12 @@ local function localSupport(snapshot, enemy)
 end
 
 function OpponentModels:OnInitialize()
+    if KWR.db.profile.persistentOpponentHistory ~= true then
+        KWR.db.opponentModels = nil
+        self.disabled = true
+        return
+    end
+    self.disabled = false
     if KWR.MemoryBudget then
         KWR.MemoryBudget:Bind(self, "OpponentModels")
     end
@@ -228,6 +234,7 @@ function OpponentModels:ResetSession(sessionKey)
 end
 
 function OpponentModels:Prune()
+    if self.disabled or type(KWR.db.opponentModels) ~= "table" then return end
     local players = KWR.db.opponentModels.players or {}
     local count = 0
     for _ in pairs(players) do count = count + 1 end
@@ -246,6 +253,7 @@ function OpponentModels:Prune()
 end
 
 function OpponentModels:PruneProcessedMatches()
+    if self.disabled or type(KWR.db.opponentModels) ~= "table" then return end
     local processed = KWR.db.opponentModels.processedMatches or {}
     local rows = {}
     for id, at in pairs(processed) do
@@ -264,6 +272,7 @@ function OpponentModels:PruneProcessedMatches()
 end
 
 function OpponentModels:Ensure(entity)
+    if self.disabled then return nil end
     local key = profileKey(entity)
     if not key then return nil end
     local players = KWR.db.opponentModels.players
@@ -336,6 +345,7 @@ function OpponentModels:Throttle(profile, token, interval)
 end
 
 function OpponentModels:ObserveEnemy(snapshot, enemy)
+    if self.disabled then return nil end
     local profile = self:Ensure(enemy)
     if not profile then return nil end
     local mapKey = KWR.Util:Text(snapshot and snapshot.context and snapshot.context.mapKey,
@@ -408,6 +418,17 @@ function OpponentModels:ObserveEnemy(snapshot, enemy)
 end
 
 function OpponentModels:Observe(snapshot)
+    if self.disabled then
+        return {
+            summary = {
+                knownProfiles = 0, trustedProfiles = 0, score = 0,
+                label = "NONE", reason = "Persistent opponent history is disabled.",
+                authorized = false,
+            },
+            profiles = {},
+        }
+    end
+    if self.disabled then return end
     if not snapshot or not snapshot.context or snapshot.context.inPvP ~= true then
         if self.sessionKey ~= nil then self:ResetSession(nil) end
         return {
@@ -464,6 +485,7 @@ function OpponentModels:Observe(snapshot)
 end
 
 function OpponentModels:RecordMatch(entry)
+    if self.disabled then return false end
     if not entry or not entry.id then return false end
     local processed = KWR.db.opponentModels.processedMatches
     if processed[entry.id] ~= nil then return false end
@@ -497,6 +519,12 @@ function OpponentModels:RecordMatch(entry)
 end
 
 function OpponentModels:Describe(entity)
+    if self.disabled then
+        return { key = profileKey(entity), score = 0, label = "NONE",
+            reason = "Persistent opponent history is disabled.", strengths = {}, weaknesses = {},
+            topLocations = {}, authorized = false, traits = {}, traitSummary = "Unavailable.",
+            commanderTakeaway = "Use live evidence.", noteSummary = "No persistent profile." }
+    end
     local key = profileKey(entity)
     local profile = key and KWR.db.opponentModels.players[key] or nil
     if not profile then

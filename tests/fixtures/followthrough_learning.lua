@@ -1,8 +1,10 @@
 return function(KWR)
-    local saved = { db = KWR.db.learning, time = _G.time, limit = KWR.Learning.maxProcessedEpisodes }
+    local saved = { db = KWR.db.learning, time = _G.time, limit = KWR.Learning.maxProcessedEpisodes,
+        disabled = KWR.Learning.disabled }
     local at = 102
     _G.time = function() return at end
     KWR.db.learning = { schemaVersion = 2, plans = {}, processedEpisodes = {}, retiredThrough = 0 }
+    KWR.Learning.disabled = false
     local context = { schemaVersion = 1, teamKey = "test-team", bracket = "RBG_10", mapKey = "ARATHI",
         patch = KWR.PatchData.activePatch, planRevision = KWR.version }
     local command = { commandId = "call", commandRevision = 1, sessionKey = "ARATHI:test-session", planID = "HOLD", learningContext = context,
@@ -37,6 +39,7 @@ return function(KWR)
     assert(KWR.Learning:RecordReviewed(nextEntry) and KWR.Learning:Summary().samples == 1,
         "Evicted correction identity left unreviewable aggregate credit")
     assert(not KWR.Learning:RecordReviewed(entry), "Ledger eviction permitted replayed feedback to train twice")
-    _G.time, KWR.db.learning, KWR.Learning.maxProcessedEpisodes = saved.time, saved.db, saved.limit
+    _G.time, KWR.db.learning, KWR.Learning.maxProcessedEpisodes, KWR.Learning.disabled =
+        saved.time, saved.db, saved.limit, saved.disabled
     print("KWR_FOLLOWTHROUGH_LEARNING_PASS")
 end

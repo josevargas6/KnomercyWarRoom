@@ -1,6 +1,9 @@
 return function(KWR)
     local learning = KWR.Learning
     local saved = KWR.db.learning
+    local savedEnabled = KWR.db.profile.persistentLearning
+    local savedDisabled = learning.disabled
+    KWR.db.profile.persistentLearning = true
     local savedEpoch = time
     local savedBuckets, savedEpisodes = learning.maxBuckets, learning.maxProcessedEpisodes
     time = function() return 100 end
@@ -119,6 +122,8 @@ return function(KWR)
     assert(migrated.processedEpisodes.corrupt == "bad" and learning:Summary().unavailable
         and not learning:RecordReviewed(entry), "Corrupt ledger was erased or allowed training")
     KWR.db.learning = saved
+    KWR.db.profile.persistentLearning = savedEnabled
+    learning.disabled = savedDisabled
     time = savedEpoch
     learning.maxBuckets, learning.maxProcessedEpisodes = savedBuckets, savedEpisodes
 end

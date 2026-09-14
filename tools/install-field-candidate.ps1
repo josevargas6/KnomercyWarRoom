@@ -4,7 +4,8 @@ param(
     [Parameter(Mandatory=$true)][string]$WorkDirectory,
     [Parameter(Mandatory=$true)][string]$BackupDirectory,
     [string]$AddOnsDirectory = 'D:\Program Files\World of Warcraft\_retail_\Interface\AddOns',
-    [switch]$Install
+    [switch]$Install,
+    [switch]$InstallDeveloperTools
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -13,7 +14,8 @@ $build = [IO.Path]::GetFullPath($BuildDirectory)
 $work = [IO.Path]::GetFullPath($WorkDirectory)
 $backup = [IO.Path]::GetFullPath($BackupDirectory)
 $addons = [IO.Path]::GetFullPath($AddOnsDirectory).TrimEnd('\')
-$names = @('KnomercyWarRoom','KWRSentinel','KWR_DevTools')
+$names = @('KnomercyWarRoom','KWRSentinel')
+if ($InstallDeveloperTools) { $names += 'KWR_DevTools' }
 if (Get-Process WoW,WoWClassic -ErrorAction SilentlyContinue) { throw 'Exit World of Warcraft before preparation or installation.' }
 foreach ($destination in @($work,$backup)) {
     if (Test-Path -LiteralPath $destination) { throw "Use a new evidence/backup directory: $destination" }
@@ -50,7 +52,8 @@ $provenanceFiles = @(Get-ChildItem -LiteralPath $build -Filter '*_BUILD_PROVENAN
 if ($provenanceFiles.Count -ne 1) { throw 'Expected one build provenance receipt.' }
 $provenance = Get-Content -LiteralPath $provenanceFiles[0].FullName -Raw | ConvertFrom-Json
 $version = [string]$provenance.candidate
-$archives = @("KnomercyWarRoom-$version.zip", "KWR-Sentinel-$version.zip", "KWR_DevTools-$version.zip")
+$archives = @("KnomercyWarRoom-$version.zip", "KWR-Sentinel-$version.zip")
+if ($InstallDeveloperTools) { $archives += "KWR_DevTools-$version.zip" }
 [IO.Directory]::CreateDirectory($work) | Out-Null
 [IO.Directory]::CreateDirectory($backup) | Out-Null
 $stage = Join-Path $work 'stage'

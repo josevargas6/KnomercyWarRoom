@@ -785,7 +785,7 @@ do
         and KWR.db.profile.main.x == 0
         and KWR.db.profile.cursor.enabled == false
         and KWR.db.profile.cursor.reticleEnabled == true
-        and KWR.db.profile.cursor.battlefieldOrbs == true
+        and KWR.db.profile.cursor.battlefieldOrbs == false
         and KWR.db.profile.cursor.arenaLightweight == true
         and KWR.db.profile.cursor.worldPvPReticle == true
         and KWR.db.profile.combatRoster.layoutVersion == 3
@@ -796,13 +796,16 @@ do
         and type(KWR.db.profile.combatRoster.enemyMini) == "table"
         and type(KWR.db.profile.presentation) == "table"
         and KWR.db.profile.aar.enabled == true
-        and KWR.db.profile.aar.autoOpen == true
+        and KWR.db.profile.aar.autoOpen == false
+        and KWR.db.profile.combatRoster.autoShowInPvP == false
+        and KWR.db.profile.persistentLearning == false
+        and KWR.db.profile.persistentOpponentHistory == false
         and KWR.db.profile.sentinelTransportEnabled == false
         and KWR.db.profile.showLoadMessage == true
         and type(KWR.db.journal.history) == "table"
         and #KWR.db.journal.history == 2
         and KWR.db.journal.interrupted == nil
-        and type(KWR.db.learning.plans) == "table"
+        and KWR.db.learning == nil
         and KWR.db.aar == nil and KWR.db.fieldIntel == nil
         and type(KWR.db.retiredLegacy) == "table"
         and KWR.db.retiredLegacy.aar.reason == "UNOWNED_LEGACY_AAR_ROOT"
@@ -811,7 +814,7 @@ do
         and KWR.db.retiredLegacy.fieldIntel.retainedRawPayload == false
         and type(KWR.db.encounters.players) == "table"
         and type(KWR.db.assignmentOverrides.players) == "table"
-        and type(KWR.db.opponentModels.players) == "table",
+        and KWR.db.opponentModels == nil,
         "SavedVariables type normalization did not recover malformed fields safely.")
     KWR_DB = savedDb
     KWR:InitializeDatabase()
@@ -7110,7 +7113,6 @@ KWR.Options:Create()
 KWR.Options:Refresh()
 assert(KWR.Options.namedChecks.autoReporter == nil
     and KWR.Options.namedChecks.reticleEnabled.check.kwrDisabled == false
-    and KWR.Options.namedChecks.battlefieldOrbs.check.kwrDisabled == false
     and KWR.Options.namedChecks.aarAutoOpen.check.kwrDisabled == true,
     "Options window did not separate advisory overlay dependencies from hard dependencies.")
 KWR.db.profile.hud.combatPreset = "COMMANDER"
@@ -7137,16 +7139,10 @@ KWR.db.profile.accessibility.highContrast = false
 KWR.Options.namedChecks.reticleEnabled.check:SetChecked(false)
 KWR.Options.namedChecks.reticleEnabled.check.scripts.OnClick(
     KWR.Options.namedChecks.reticleEnabled.check)
-KWR.Options.namedChecks.battlefieldOrbs.check:SetChecked(false)
-KWR.Options.namedChecks.battlefieldOrbs.check.scripts.OnClick(
-    KWR.Options.namedChecks.battlefieldOrbs.check)
-assert(KWR.db.profile.cursor.reticleEnabled == false
-    and KWR.db.profile.cursor.battlefieldOrbs == false,
-    "Disabled cursor-ring dependencies prevented overlay preferences from being unchecked.")
+assert(KWR.db.profile.cursor.reticleEnabled == false,
+    "Reticle preference could not be disabled.")
 KWR.db.profile.cursor.reticleEnabled = true
-KWR.db.profile.cursor.battlefieldOrbs = true
 KWR.db.profile.presentation.enabled = true
-KWR.db.profile.cursor.enabled = true
 KWR.db.profile.aar.enabled = true
 KWR.Options:Refresh()
 local optionsInventory = KWR.Options:Inventory()
@@ -7188,6 +7184,10 @@ end
 do
     local originalRecords = KWR.Util:Copy(KWR.EnemyIntel.records)
     local originalNotes = KWR.Util:Copy(KWR.db.enemyNotes)
+    local originalOpponentModels = KWR.Util:Copy(KWR.db.opponentModels)
+    local originalOpponentDisabled = KWR.OpponentModels.disabled
+    KWR.db.opponentModels = { players = {}, processedMatches = {} }
+    KWR.OpponentModels.disabled = false
     local originalProfiles = KWR.Util:Copy(KWR.db.opponentModels.players)
     local enemyKey = "Player-Trait"
     KWR.EnemyIntel.records[enemyKey] = {
@@ -7245,6 +7245,8 @@ do
     KWR.EnemyIntel.records = originalRecords
     KWR.db.enemyNotes = originalNotes
     KWR.db.opponentModels.players = originalProfiles
+    KWR.db.opponentModels = originalOpponentModels
+    KWR.OpponentModels.disabled = originalOpponentDisabled
 end
 do
     local read = KWR.Reporter:BattlefieldRead("Mine under observed pressure.",
@@ -7579,9 +7581,9 @@ do
             return unit == "player" and nativePlate or nil
         end,
     }
-    KWR.db.profile.cursor.battlefieldOrbs = true
-    KWR.db.profile.cursor.markerMode = "NATIVE"
-    KWR.db.profile.cursor.assignmentBadges = true
+    KWR.db.profile.cursor.battlefieldOrbs = false
+    KWR.db.profile.cursor.markerMode = "OFF"
+    KWR.db.profile.cursor.assignmentBadges = false
     KWR.CursorRing.assignmentIndex = {
         testplayer = { role = "Anchor Defender", job = "defend" },
     }
@@ -7600,33 +7602,16 @@ do
             enemies = {},
         },
     }
-    assert(KWR.CursorRing:RefreshOrbForUnit("player", markerState),
-        "Standalone native marker did not render on a visible friendly plate.")
-    local nativeMarker = KWR.CursorRing.orbFrames.player
-    local markerPoint = nativeMarker.points and nativeMarker.points[1]
-    assert(nativeMarker:IsShown()
-        and markerPoint and markerPoint[1] == "BOTTOM"
-        and markerPoint[2] == nativePlate.UnitFrame.name
-        and markerPoint[3] == "TOP",
-        "Standalone native marker was not centered on its visible Blizzard nameplate identity.")
-    assert(nativeMarker.ring.width >= 58 and nativeMarker.ring.height >= 58
-        and nativeMarker.icon.width == 38 and nativeMarker.icon.height == 38
-        and nativeMarker.ring:IsShown()
-        and not nativeMarker.square:IsShown()
-        and not nativeMarker.name:IsShown(),
-        "Friendly role identifier did not keep the normal Blizzard nameplate clear.")
-    local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames.player
-    assert(assignmentBadge and assignmentBadge:IsShown()
-        and assignmentBadge.text.value == "DEFEND",
-        "Friendly assignment marker did not expose the authoritative DEFEND badge.")
-    KWR.db.profile.cursor.markerMode = "TACTICAL_ONLY"
-    assert(not KWR.CursorRing:RefreshOrbForUnit("player", markerState)
-        and not nativeMarker:IsShown() and assignmentBadge:IsShown(),
-        "Tactical-only mode did not suppress the native token while retaining the KWR assignment badge.")
-    KWR.db.profile.cursor.markerMode = "OFF"
-    KWR.CursorRing:RefreshOrbForUnit("player", markerState)
-    assert(not nativeMarker:IsShown() and not assignmentBadge:IsShown(),
-        "Disabled marker mode left a stale native token or assignment badge.")
+    assert(not KWR.CursorRing:RefreshOrbForUnit("player", markerState),
+        "Retired player identity marker rendered on a visible friendly plate.")
+    local nativeMarker = KWR.CursorRing.orbFrames and KWR.CursorRing.orbFrames.player
+    local markerPoint = nativeMarker and nativeMarker.points and nativeMarker.points[1]
+    assert(not nativeMarker or (not nativeMarker:IsShown() and markerPoint == nil),
+        "Retired player identity marker left a visible nameplate token.")
+    local assignmentBadge = KWR.CursorRing.tacticalBadgeFrames
+        and KWR.CursorRing.tacticalBadgeFrames.player
+    assert(not assignmentBadge or not assignmentBadge:IsShown(),
+        "Retired assignment badge remained visible.")
     KWR.CursorRing:HideAllOrbs()
     C_NamePlate = previousNamePlateApi
     KWR.db.profile.cursor.markerMode = "NATIVE"
@@ -8664,6 +8649,10 @@ end
 -- data, reviewed AAR context wins, and the Nexus fallback describes its own
 -- candidate rather than the primary enemy-response instruction.
 do
+    local savedOpponentModels = KWR.Util:Copy(KWR.db.opponentModels)
+    local savedOpponentDisabled = KWR.OpponentModels.disabled
+    KWR.db.opponentModels = { players = {}, processedMatches = {} }
+    KWR.OpponentModels.disabled = false
     local savedPlayers = KWR.Util:Copy(KWR.db.opponentModels.players)
     local savedSessionKey = KWR.OpponentModels.sessionKey
     local savedSeen = KWR.Util:Copy(KWR.OpponentModels.sessionSeen)
@@ -8686,6 +8675,8 @@ do
     KWR.OpponentModels.sessionSeen = savedSeen
     KWR.OpponentModels.sampleTokens = savedTokens
     KWR.OpponentModels.deathState = savedDeathState
+    KWR.db.opponentModels = savedOpponentModels
+    KWR.OpponentModels.disabled = savedOpponentDisabled
 
     local authorityActive = { friendlyTeam = {}, enemyTeam = {} }
     KWR.AAR:CaptureTeams(authorityActive, {
@@ -8759,9 +8750,7 @@ end
 
 do
     local oldReticle = KWR.db.profile.cursor.reticleEnabled
-    local oldOrbs = KWR.db.profile.cursor.battlefieldOrbs
     KWR.db.profile.cursor.reticleEnabled = true
-    KWR.db.profile.cursor.battlefieldOrbs = true
     local counts = {}
     for _, fps in ipairs({ 30, 60, 144 }) do
         local probe = setmetatable({
@@ -8778,16 +8767,16 @@ do
         probe.elapsed, probe.reticleRetry, probe.orbRetry, probe.reticlePulse = 0, 0, 0, 0
         for _ = 1, fps * 10 do probe:OnUpdate(1 / fps) end
         assert(probe.reticleCalls >= 49 and probe.reticleCalls <= 50
-            and probe.orbCalls >= 39 and probe.orbCalls <= 40,
-            "Marker cadence lost elapsed time at " .. fps .. " FPS")
+            and probe.orbCalls == 0,
+            "Reticle cadence or retired-marker idle contract failed at " .. fps .. " FPS")
         assert(probe.reticlePulse >= 9.95 and probe.reticlePulse <= 10.01,
             "Marker pulse did not follow elapsed time")
         counts[#counts + 1] = { probe.reticleCalls, probe.orbCalls }
         local beforeReticle, beforeOrb = probe.reticleCalls, probe.orbCalls
         probe:OnUpdate(5)
         probe:OnUpdate(0)
-        assert(probe.reticleCalls == beforeReticle + 1 and probe.orbCalls == beforeOrb + 1,
-            "Marker stall caused a catch-up refresh burst")
+        assert(probe.reticleCalls == beforeReticle + 1 and probe.orbCalls == beforeOrb,
+            "Reticle stall caused a catch-up refresh burst")
         local beforeElapsed = probe.elapsed
         probe:OnUpdate(-1)
         probe:OnUpdate(math.huge)
@@ -8796,11 +8785,10 @@ do
     end
     for index = 2, #counts do
         assert(math.abs(counts[index][1] - counts[1][1]) <= 1
-            and math.abs(counts[index][2] - counts[1][2]) <= 1,
-            "Marker retry rates differ by frame rate")
+            and counts[index][2] == 0,
+            "Retired marker work ran at a frame-rate-dependent cadence")
     end
     KWR.db.profile.cursor.reticleEnabled = oldReticle
-    KWR.db.profile.cursor.battlefieldOrbs = oldOrbs
 end
 
 local result = { passed = 0, failed = 0 }

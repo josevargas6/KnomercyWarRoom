@@ -147,7 +147,9 @@ function AAR:ReconcileFollowthrough()
     self.followthroughReviewQueued = nil
     for _, entry in ipairs(self:GetHistory()) do
         if entry.followthroughPending then
-            KWR.Learning:RecordReviewed(entry)
+            if KWR.Learning and KWR.Learning.RecordReviewed then
+                KWR.Learning:RecordReviewed(entry)
+            end
             entry.followthroughPending = nil
         end
     end

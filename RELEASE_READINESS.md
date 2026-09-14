@@ -1,18 +1,21 @@
-# Release Readiness - 6.1.1-alpha.24
+# Release Readiness - 6.1.1-alpha.25
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha24-retired-cursor-ring-20260913-1` (`6.1.1-alpha.24`) is the unbuilt
-successor to the installed alpha.17 candidate. It retains alpha.17's compact
+`alpha25-core-field-simplification-20260913-1` (`6.1.1-alpha.25`) is the
+unbuilt successor to the installed alpha.24 candidate. It retains alpha.17's compact
 lower-right field safeguards, alpha.18's contained setup rows, and alpha.19's
 single-column Compact Options layout. It also replaces the clipped compact-call
 export with a complete labelled, multiline manual-copy surface and bounds the
 assignment export window. Setup roster labels now remain FORMING until the
 roster is full and available. Its Fight Now card expands player-facing job and
 location labels instead of requiring combat-time shorthand decoding. It retires
-the player-following PvP cursor ring while preserving independent target and
-nameplate overlays. It also keeps cast-only tactical changes out of
+the player-following PvP cursor ring, always-on player identity markers,
+assignment badges, and focus-only native-nameplate suppression. Target reticles
+remain available; opponent/doctrine history is no longer retained between
+sessions; roster/AAR opening is manual-only; and Developer Tools is an explicit
+separate-addon install. It also keeps cast-only tactical changes out of
 the full strategic rebuild path while retaining fresh target/focus/nameplate
 truth. Exact archive hashes and a deployment receipt are required before retest.
 This will authorize a safety-only retest, not a stable-release claim.

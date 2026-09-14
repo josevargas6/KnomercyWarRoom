@@ -1,5 +1,12 @@
 # Changelog
 
+- Core-field candidate `alpha25-core-field-simplification-20260913-1`:
+  retired always-on player identity markers, assignment badges, focus-only
+  native-nameplate suppression, and persistent opponent/doctrine histories.
+  Combat roster and AAR are manual-only by default. Developer Tools remains a
+  separate optional addon and is excluded from normal field installation unless
+  explicitly requested.
+
 - Field-simplicity candidate `alpha24-retired-cursor-ring-20260913-1`:
   retired the player-following PvP cursor ring and its option/slash control.
   Target reticles, legal nameplate markers, assignment badges, and combat

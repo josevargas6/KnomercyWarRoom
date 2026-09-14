@@ -693,14 +693,10 @@ function CursorRing:ApplyIdentifierVisual(frame, model, percent)
 end
 
 function CursorRing:RefreshOrbForUnit(unit, state)
-    local profile = KWR.db.profile.cursor or {}
-    local frame = self:CreateOrbFrame(unit)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
-    if profile.battlefieldOrbs == false or not inPvP then
-        frame:Hide()
-        return false
-    end
+    -- Retired field surface: keep this compatibility method inert so an old
+    -- caller or SavedVariables value can never restore player markers.
+    return false
+--[[
     if type(UnitExists) ~= "function" then
         frame:Hide()
         return false
@@ -764,34 +760,19 @@ function CursorRing:RefreshOrbForUnit(unit, state)
 
     frame:Show()
     return true
+]]
 end
 
 function CursorRing:RefreshOrbs()
-    local state = currentState(self.lastState)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
-    if not inPvP or KWR.db.profile.cursor.battlefieldOrbs == false then
-        self:HideAllOrbs()
-        return
-    end
-    local focusMode = KWR.db.profile.cursor.focusNameplates ~= false
-    local hasEnemyTarget = type(UnitExists) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
-        and type(UnitCanAttack) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
-    self.orbVisibleCount = 0
+    -- Always-on identity markers, assignment badges, and native-nameplate
+    -- suppression were retired: they add repeated plate scans without changing
+    -- the local command. Restore and hide any legacy frames once.
+    self:HideAllOrbs()
     for unit in pairs(self.activePlates or {}) do
         local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
             and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
-        local isFriend = type(UnitIsFriend) == "function"
-            and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
-        local isCurrentTarget = unit == "target"
-            or (type(UnitIsUnit) == "function"
-                and KWR.Util:Boolean(KWR.Util:Call(UnitIsUnit, unit, "target"), false))
-        self:ApplyFocusReadout(plate, focusMode and hasEnemyTarget and not isFriend and not isCurrentTarget)
-        if self:RefreshOrbForUnit(unit, state) then
-            self.orbVisibleCount = self.orbVisibleCount + 1
-        end
+        self:RestoreFocusReadout(plate)
+        self:HideTacticalBadge(unit)
     end
 end
 
@@ -1148,13 +1129,6 @@ function CursorRing:Update(state)
         self:RefreshDriver()
         return
     end
-    self.assignmentIndex = {}
-    for _, assignment in ipairs(state.assignments or {}) do
-        local full = KWR.Util:Text(assignment.name, "", 64):lower()
-        local short = KWR.Util:Text(assignment.shortName, "", 64):lower()
-        if full ~= "" then self.assignmentIndex[full] = assignment end
-        if short ~= "" then self.assignmentIndex[short] = assignment end
-    end
     self:RefreshReticle()
     self:RefreshOrbs()
     self:RefreshDriver()
@@ -1182,8 +1156,6 @@ local function updateToken(_, state)
         execution.actionOpportunity and execution.actionOpportunity.action,
         execution.recovery and execution.recovery.open,
         target.key or target.name,
-        KWR.db.profile.cursor.markerMode,
-        KWR.db.profile.cursor.assignmentBadges,
         KWR.db.profile.cursor.arenaLightweight,
         KWR.db.profile.cursor.worldPvPReticle,
     })
@@ -1213,14 +1185,6 @@ function CursorRing:OnUpdate(elapsed)
             self:RefreshReticle()
         end
     end
-    self.orbRetry = (self.orbRetry or 0) + elapsed
-    if self.orbRetry >= 0.25 then
-        self.orbRetry = self.orbRetry % 0.25
-        if KWR.db.profile.cursor.battlefieldOrbs ~= false then
-            self:RefreshOrbs()
-            self:RefreshDriver()
-        end
-    end
 end
 
 function CursorRing:SetEnabled(enabled)
@@ -1241,13 +1205,13 @@ function CursorRing:SetReticleGuides(enabled)
 end
 
 function CursorRing:SetBattlefieldOrbs(enabled)
-    KWR.db.profile.cursor.battlefieldOrbs = enabled == true
+    KWR.db.profile.cursor.battlefieldOrbs = false
     self:RefreshOrbs()
     self:RefreshDriver()
 end
 
 function CursorRing:SetAssignmentBadges(enabled)
-    KWR.db.profile.cursor.assignmentBadges = enabled == true
+    KWR.db.profile.cursor.assignmentBadges = false
     self:RefreshOrbs()
     self:RefreshDriver()
 end

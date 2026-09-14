@@ -81,6 +81,7 @@ local function retract(db, contribution)
 end
 
 function Learning:CanCorrectFollowthrough(entry, command)
+    if self.disabled then return false end
     local db = database()
     if not db or db.integrityFailure then return false end
     local episode = packed({ entry.id, command.commandId, tostring(command.commandRevision) })
@@ -89,6 +90,7 @@ function Learning:CanCorrectFollowthrough(entry, command)
 end
 
 function Learning:Context(snapshot)
+    if self.disabled then return nil end
     local context = snapshot and snapshot.context or {}
     if context.inPvP ~= true or context.isRated ~= true or context.preview == true then return nil end
     local expected = context.isBlitz == true and 8 or 10
@@ -124,6 +126,12 @@ function Learning:ContextKey(context, planID)
 end
 
 function Learning:OnInitialize()
+    if KWR.db.profile.persistentLearning ~= true then
+        KWR.db.learning = nil
+        self.disabled = true
+        return
+    end
+    self.disabled = false
     if KWR.MemoryBudget then KWR.MemoryBudget:Bind(self, "Learning") end
     local existing = KWR.db.learning
     local version = type(existing) == "table" and KWR.Util:Number(existing.schemaVersion, 0) or 0
@@ -140,6 +148,7 @@ function Learning:OnInitialize()
 end
 
 function Learning:RecordReviewed(entry)
+    if self.disabled then return false end
     local db = database()
     if not db or db.integrityFailure or type(entry) ~= "table" or entry.partial == true
         or entry.truthQualified ~= true or entry.reviewContext ~= "Commander"
@@ -256,6 +265,7 @@ function Learning:Prune()
 end
 
 function Learning:Adjustment(mapKey, planID, context)
+    if self.disabled then return 0 end
     if KWR.AAR and KWR.AAR.followthroughReviewQueued then return 0 end
     local db = database()
     local key = self:ContextKey(context, planID)
@@ -270,6 +280,10 @@ function Learning:Adjustment(mapKey, planID, context)
 end
 
 function Learning:Summary()
+    if self.disabled then
+        return { plans = 0, samples = 0, patch = KWR.PatchData.activePatch,
+            scope = "DISABLED", quarantined = false, unavailable = true }
+    end
     local db = database()
     local plans, samples = 0, 0
     for _, bucket in pairs(db and db.plans or {}) do
@@ -284,6 +298,7 @@ function Learning:Summary()
 end
 
 function Learning:Reset()
+    if self.disabled then return end
     local db = database()
     if db then db.plans = {} end
     -- Keep deduplication so old exports cannot retrain after reset.

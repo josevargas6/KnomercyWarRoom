@@ -1632,11 +1632,11 @@ function Diagnostics:Run()
         KWR.OpponentModels:Observe(opponentSnapshot)
     end
     local opponentProfile = KWR.OpponentModels:Describe(opponentSnapshot.enemies[1])
-    check("Opponent model builds a bounded persistent tendency profile from repeated legal observations",
-        opponentProfile.label ~= "NONE"
-            and type(opponentProfile.strengths) == "table"
-            and type(opponentProfile.weaknesses) == "table")
-    check("Enemy rows expose persistent profile detail for note hover and review",
+    check("Persistent opponent profiling is retired from the field build",
+        KWR.db.profile.persistentOpponentHistory == false
+            and opponentProfile.label == "NONE"
+            and opponentProfile.authorized == false)
+    check("Enemy rows retain live detail and manual notes without a persistent profile",
         (function()
             KWR.EnemyIntel:Reset("diagnostic-opponents")
             KWR.EnemyIntel:Upsert({
@@ -1794,8 +1794,8 @@ function Diagnostics:Run()
     check("Runtime event subscriptions remain initialization-stable",
         KWR.MatchRuntime.frame
             and KWR.MatchRuntime.frame:IsEventRegistered("UPDATE_UI_WIDGET"))
-    check("Combat roster prepares automatically at battleground entry by default",
-        KWR.db.profile.combatRoster.autoShowInPvP == true)
+    check("Combat roster remains manual by default",
+        KWR.db.profile.combatRoster.autoShowInPvP == false)
     local currentRoster = live.snapshot and live.snapshot.roster or {}
     check("Player specialization uses the direct player specialization API",
         not currentRoster[1] or currentRoster[1].unit ~= "player"

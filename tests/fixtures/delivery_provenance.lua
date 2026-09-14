@@ -2,6 +2,9 @@ return function(KWR)
     local savedMetrics = KWR.Commander.metrics
     local savedContext = KWR.db.profile.fieldReviewContext
     local savedLearning = KWR.Util:Copy(KWR.db.learning)
+    local savedLearningDisabled = KWR.Learning.disabled
+    KWR.db.learning = { schemaVersion = 2, plans = {}, processedEpisodes = {}, retiredThrough = 0 }
+    KWR.Learning.disabled = false
     local savedTime, savedEpoch = GetTime, time
     GetTime = function() return 100 end
     time = function() return 100 end
@@ -163,6 +166,7 @@ return function(KWR)
     KWR.Commander.metrics = savedMetrics
     KWR.db.profile.fieldReviewContext = savedContext
     KWR.db.learning = savedLearning
+    KWR.Learning.disabled = savedLearningDisabled
     GetTime = savedTime
     time = savedEpoch
 end
