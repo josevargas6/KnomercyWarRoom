@@ -204,7 +204,6 @@ function MainWindowCommands:Register(owner, helpers)
             if KWR.Presentation then KWR.Presentation:RefreshNow() end
             KWR:Print("Battleground auto-show: "
                 .. (KWR.db.profile.presentation.enabled == false and "OFF" or "ON"), true)
-        elseif input == "cursor" then KWR.CursorRing:Toggle()
         elseif input == "reticle" then KWR.CursorRing:ToggleReticle()
         elseif input == "test" then
             if helpers.diagnosticsAvailable() then
@@ -259,7 +258,7 @@ function MainWindowCommands:Register(owner, helpers)
                 "/kwr", "field", "commander", "spectator", "diagnostic", "dev [on|off|status]", "bug", "tactical", "battlefield", "reporter", "roster", "teammini", "enemymini",
                 "objectives", "team", "enemies", "assignments", "intel", "aar", "aar copy",
                 "aar clear", "season2 [aar]", "override", "hud", "copy", "alts", "explain", "perf", "verify", "evidence",
-                "mode", "refresh", "reassess", "options", "presentation", "cursor", "reticle",
+                "mode", "refresh", "reassess", "options", "presentation", "reticle",
                 "status", "countdown [1..10|cancel]", "delivered [call token]",
             }
             if helpers.previewAvailable() then

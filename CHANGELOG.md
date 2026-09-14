@@ -1,5 +1,10 @@
 # Changelog
 
+- Field-simplicity candidate `alpha24-retired-cursor-ring-20260913-1`:
+  retired the player-following PvP cursor ring and its option/slash control.
+  Target reticles, legal nameplate markers, assignment badges, and combat
+  roster accents remain available independently.
+
 - Field-readability candidate `alpha23-plain-language-fight-card-20260913-1`:
   the in-combat Fight Now card expands its personal assignment and locations
   into plain language (for example, `Cart Healer -> Primary Cart`) instead of

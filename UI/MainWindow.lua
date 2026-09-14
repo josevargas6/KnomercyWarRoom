@@ -1946,7 +1946,6 @@ function MainWindow:ArmFieldTest()
     self:SetFieldReviewContext("Diagnostic")
     KWR.HUD:SetEnabled(true)
     KWR.CombatRoster:Show("BOTH")
-    KWR.CursorRing:SetEnabled(true)
     local sentinel = _G.KWRSentinel
     if sentinel and sentinel.ActivateFieldProfile then
         sentinel:ActivateFieldProfile(true)

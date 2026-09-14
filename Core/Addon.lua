@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.23"
+KWR.version = "6.1.1-alpha.24"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -210,7 +210,9 @@ local function activateFieldProfile(profile, force)
     profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
     profile.hud.x, profile.hud.y = -18, 168
     profile.hud.fieldSurfaceVersion = 3
-    profile.cursor.enabled = true
+    -- The player-following cursor ring is retired. Target reticles and
+    -- nameplate identifiers remain independent presentation features.
+    profile.cursor.enabled = false
     profile.combatRoster.shown = true
     profile.combatRoster.mode = "BOTH"
     profile.combatRoster.teamShown = true
@@ -368,7 +370,9 @@ local function normalizeProfile(profile)
     local savedReticleSize = type(profile.cursor) == "table"
         and KWR.Util:Number(profile.cursor.reticleSize, nil) or nil
     profile.cursor = normalizeAgainstDefaults(profile.cursor, defaults.cursor)
-    profile.cursor.enabled = KWR.Util:Boolean(profile.cursor.enabled, defaults.cursor.enabled)
+    -- Never resurrect the retired cursor-following ring from an older
+    -- SavedVariables profile.
+    profile.cursor.enabled = false
     profile.cursor.size = KWR.Util:Number(profile.cursor.size, defaults.cursor.size)
     profile.cursor.alpha = KWR.Util:Number(profile.cursor.alpha, defaults.cursor.alpha)
     profile.cursor.reticleEnabled = KWR.Util:Boolean(

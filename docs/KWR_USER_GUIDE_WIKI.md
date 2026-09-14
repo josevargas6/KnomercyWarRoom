@@ -92,7 +92,6 @@ Sentinel utilities:
 | `/kwr aar` | Open the latest After Action Review |
 | `/kwr aar copy` | Open the manual AAR copy box |
 | `/kwr options` | Open settings |
-| `/kwr cursor` | Toggle the optional Cursor Ring |
 | `/kwr mode` | Toggle compact Command or expanded Learning guidance |
 | `/kwr copy` | Prepare a one-line current call for manual copying |
 

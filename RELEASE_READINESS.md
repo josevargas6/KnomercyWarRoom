@@ -1,16 +1,18 @@
-# Release Readiness - 6.1.1-alpha.23
+# Release Readiness - 6.1.1-alpha.24
 
 ## Current operational truth — 2026-09-12
 
 **FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha23-plain-language-fight-card-20260913-1` (`6.1.1-alpha.23`) is the unbuilt
+`alpha24-retired-cursor-ring-20260913-1` (`6.1.1-alpha.24`) is the unbuilt
 successor to the installed alpha.17 candidate. It retains alpha.17's compact
 lower-right field safeguards, alpha.18's contained setup rows, and alpha.19's
 single-column Compact Options layout. It also replaces the clipped compact-call
 export with a complete labelled, multiline manual-copy surface and bounds the
 assignment export window. Setup roster labels now remain FORMING until the
 roster is full and available. Its Fight Now card expands player-facing job and
-location labels instead of requiring combat-time shorthand decoding. It also keeps cast-only tactical changes out of
+location labels instead of requiring combat-time shorthand decoding. It retires
+the player-following PvP cursor ring while preserving independent target and
+nameplate overlays. It also keeps cast-only tactical changes out of
 the full strategic rebuild path while retaining fresh target/focus/nameplate
 truth. Exact archive hashes and a deployment receipt are required before retest.
 This will authorize a safety-only retest, not a stable-release claim.

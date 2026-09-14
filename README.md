@@ -208,7 +208,6 @@ Restart World of Warcraft or reload the UI.
 - `/kwr countdown 5` - Start a local 1–10 second execution cue as group leader for the current eligible target. It is not a remote synchronized timer.
 - `/kwr countdown cancel` - Cancel that local cue; calls return to on leader call.
 - `/kwr options` - Open settings.
-- `/kwr cursor` - Toggle the optional Cursor Ring.
 - `/kwr test` - Developer build only. Run deterministic diagnostics.
 - `/kwr status` - Print the compact current status.
 

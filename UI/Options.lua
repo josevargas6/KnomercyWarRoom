@@ -362,76 +362,56 @@ function Options:Create()
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
-        "Cursor ring, reticle, guide lines, and live nameplate overlays.",
+        "Target reticle, guide lines, and live nameplate overlays.",
         366, 0, 342, 556)
-    createCheck(self, targetCard,
-        "cursorEnabled",
-        "Enable cursor ring",
-        "Shows the battlefield cursor ring while KWR is active.",
-        -72,
-        function() return KWR.db.profile.cursor.enabled end,
-        function(value) KWR.CursorRing:SetEnabled(value) end)
     createCheck(self, targetCard,
         "reticleEnabled",
         "Enable target command reticle",
         "Shows the target reticle on your current enemy target.",
-        -126,
+        -72,
         function() return KWR.db.profile.cursor.reticleEnabled ~= false end,
-        function(value) KWR.CursorRing:SetReticleEnabled(value) end,
-        {
-            available = function() return KWR.db.profile.cursor.enabled == true end,
-            unavailableText = "Requires cursor ring.",
-            allowToggleWhenUnavailable = true,
-        })
+        function(value) KWR.CursorRing:SetReticleEnabled(value) end)
     createCheck(self, targetCard,
         "reticleGuides",
         "Show target-axis guides",
         "Shows one subtle horizontal and vertical axis through the selected target lock.",
-        -180,
+        -126,
         function() return KWR.db.profile.cursor.reticleGuides ~= false end,
         function(value) KWR.CursorRing:SetReticleGuides(value) end,
         {
-            available = function()
-                return KWR.db.profile.cursor.enabled == true
-                    and KWR.db.profile.cursor.reticleEnabled ~= false
-            end,
-            unavailableText = "Requires cursor ring and reticle.",
+            available = function() return KWR.db.profile.cursor.reticleEnabled ~= false end,
+            unavailableText = "Requires target reticle.",
             allowToggleWhenUnavailable = true,
         })
     createCheck(self, targetCard,
         "focusNameplates",
         "Focus target health bar only",
         "Hides non-target hostile health/name readouts and keeps class shields visible.",
-        -234,
+        -180,
         function() return KWR.db.profile.cursor.focusNameplates ~= false end,
         function(value)
             KWR.db.profile.cursor.focusNameplates = value == true
             KWR.CursorRing:RefreshOrbs()
-        end,
-        {
-            available = function() return KWR.db.profile.cursor.enabled == true end,
-            unavailableText = "Requires cursor ring.",
-            allowToggleWhenUnavailable = true,
-        })
+        end)
     createCheck(self, targetCard,
         "battlefieldOrbs",
         "Show always-on player identity markers",
         "Shows circular class icons above every visible player. Friendly healers use a role icon; orb and flag carriers replace the normal identity icon. Blizzard nameplates remain visible.",
-        -288,
+        -234,
         function() return KWR.db.profile.cursor.battlefieldOrbs ~= false end,
         function(value) KWR.CursorRing:SetBattlefieldOrbs(value) end)
     createCheck(self, targetCard,
         "assignmentBadges",
         "Show tactical assignment badges",
         "Shows a compact DEFEND, STRIKE, ESCORT, ROTATE, RESERVE, HEAL, or CARRY badge on assigned friendly nameplates.",
-        -342,
+        -288,
         function() return KWR.db.profile.cursor.assignmentBadges ~= false end,
         function(value) KWR.CursorRing:SetAssignmentBadges(value) end)
     createCheck(self, targetCard,
         "combatVisuals",
         "Show target spotlight and cast accents",
         "Enables kill-target glow and must-stop cast accents on the roster.",
-        -396,
+        -342,
         function() return KWR.db.profile.combatRoster.combatVisuals ~= false end,
         function(value)
             KWR.db.profile.combatRoster.combatVisuals = value
@@ -443,14 +423,14 @@ function Options:Create()
         "arenaLightweight",
         "Keep lightweight target layer in arenas",
         "Hides Commander boards and rosters while retaining only legal player nameplate markers and the target reticle.",
-        -450,
+        -396,
         function() return KWR.db.profile.cursor.arenaLightweight ~= false end,
         function(value) KWR.CursorRing:SetArenaLightweight(value) end)
     createCheck(self, targetCard,
         "worldPvPReticle",
         "Keep target reticle in world PvP",
         "Shows the KWR target reticle only for attackable player targets outside instances. It never changes TAB bindings or targets mobs/pets.",
-        -504,
+        -450,
         function() return KWR.db.profile.cursor.worldPvPReticle ~= false end,
         function(value) KWR.CursorRing:SetWorldPvPReticle(value) end)
 

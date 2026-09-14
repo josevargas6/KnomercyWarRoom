@@ -797,7 +797,6 @@ end
 
 function CursorRing:Create()
     if self.driver then return self.driver end
-    self:CreateCursorFrame()
     self:CreateReticleFrame()
     self.activePlates = self.activePlates or {}
     local driver = CreateFrame("Frame", "KWR_CursorRingDriver", UIParent)
@@ -824,34 +823,24 @@ end
 
 function CursorRing:RefreshDriver()
     if not self.driver then return end
-    local cursorEnabled = KWR.db.profile.cursor.enabled == true
     local reticleEnabled = KWR.db.profile.cursor.reticleEnabled ~= false
     local state = currentState(self.lastState)
-    local context = state and state.snapshot and state.snapshot.context or {}
     local isArena = KWR.Util:IsArenaContext(state)
-    local isWorld = KWR.Util:Text(context.instanceType, "none", 16) == "none"
-    local cursorAllowed = cursorEnabled and not isArena and not isWorld
     local reticleAllowed = self:AllowsReticleContext(state)
         and (not isArena or self:AllowsLightweightArena(state))
     local hasTarget = reticleAllowed and reticleEnabled and type(UnitExists) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
-    self.driver:SetShown(cursorAllowed
-        or self.reticlePending == true
+    self.driver:SetShown(self.reticlePending == true
         or (self.reticle and self.reticle:IsShown())
         or hasTarget
         or (self.orbVisibleCount or 0) > 0)
 end
 
 function CursorRing:Apply()
-    local profile = KWR.db.profile.cursor
-    local frame = self:CreateCursorFrame()
-    local size = KWR.Util:Clamp(profile.size or 104, 56, 180)
-    profile.size = size
-    frame:SetSize(size, size)
-    frame.inner:SetSize(math.floor(size * 0.18), math.floor(size * 0.18))
-    frame:SetAlpha(KWR.Util:Clamp(profile.alpha or 0.95, 0.2, 1))
-    self:ApplyMode(self.mode or "NEUTRAL")
-    frame:SetShown(profile.enabled == true)
+    -- The player-following cursor ring was retired. Keep this method as a
+    -- harmless compatibility entrypoint for old SavedVariables/callers.
+    KWR.db.profile.cursor.enabled = false
+    if self.frame then self.frame:Hide() end
     self:RefreshDriver()
 end
 
@@ -1160,39 +1149,11 @@ function CursorRing:Update(state)
         return
     end
     self.assignmentIndex = {}
-    if self.frame and KWR.db.profile.cursor.enabled == true then
-        self.frame:Show()
-    end
     for _, assignment in ipairs(state.assignments or {}) do
         local full = KWR.Util:Text(assignment.name, "", 64):lower()
         local short = KWR.Util:Text(assignment.shortName, "", 64):lower()
         if full ~= "" then self.assignmentIndex[full] = assignment end
         if short ~= "" then self.assignmentIndex[short] = assignment end
-    end
-    if KWR.db.profile.cursor.enabled == true then
-        local snapshot = state.snapshot or {}
-        local combat = snapshot.combat or {}
-        local execution = snapshot.strategy
-            and snapshot.strategy.executionAssessment or {}
-        local collapse = execution.collapse or {}
-        local pressure = execution.pressureForecast or {}
-        local recovery = execution.recovery or {}
-        local action = execution.actionOpportunity or {}
-        local mode = "NEUTRAL"
-        if combat.priorityCast and combat.priorityCast.priority == "MUST_STOP" then
-            mode = "DANGER"
-        elseif collapse.state == "CRITICAL" then
-            mode = "DANGER"
-        elseif combat.priorityCast or pressure.state == "RISING" then
-            mode = "CAUTION"
-        elseif action.action == "ROTATE" or action.action == "REALLOCATE" then
-            mode = "ROTATE"
-        elseif recovery.open then
-            mode = "RECOVERY"
-        elseif execution.active and execution.confidence == "NONE" then
-            mode = "UNKNOWN"
-        end
-        if mode ~= self.mode then self:ApplyMode(mode) end
     end
     self:RefreshReticle()
     self:RefreshOrbs()
@@ -1201,18 +1162,6 @@ end
 
 local function updateToken(_, state)
     local arena = KWR.Util:IsArenaContext(state)
-    if KWR.db.profile.cursor.enabled ~= true then
-        return KWR.Util:Signature({
-            arena,
-            false,
-            KWR.db.profile.cursor.reticleEnabled,
-            KWR.db.profile.cursor.battlefieldOrbs,
-            KWR.db.profile.cursor.markerMode,
-            KWR.db.profile.cursor.assignmentBadges,
-            KWR.db.profile.cursor.arenaLightweight,
-            KWR.db.profile.cursor.worldPvPReticle,
-        })
-    end
     local snapshot = state and state.snapshot or {}
     local combat = snapshot.combat or {}
     local execution = snapshot.strategy and snapshot.strategy.executionAssessment or {}
@@ -1220,7 +1169,7 @@ local function updateToken(_, state)
     local target = combat.localTarget or combat.killTarget or {}
     return KWR.Util:Signature({
         arena,
-        true,
+        "CURSOR_RING_RETIRED",
         state and state.revision or 0,
         snapshot.context and snapshot.context.sessionKey,
         snapshot.context and snapshot.context.mapKey,
@@ -1248,20 +1197,6 @@ function CursorRing:OnUpdate(elapsed)
     -- Timers need every frame's time, including frames skipped by this throttle.
     elapsed = self.elapsed
     self.elapsed = 0
-    if self.frame and self.frame:IsShown() then
-        local x, y = KWR.Util:Call(GetCursorPosition)
-        x, y = KWR.Util:Number(x, nil), KWR.Util:Number(y, nil)
-        if x and y then
-            local scale = UIParent:GetEffectiveScale()
-            if not scale or scale == 0 then scale = 1 end
-            x, y = x / scale, y / scale
-            if x ~= self.lastX or y ~= self.lastY then
-                self.frame:ClearAllPoints()
-                self.frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
-                self.lastX, self.lastY = x, y
-            end
-        end
-    end
     if self.reticle and self.reticle:IsShown() and self.reticle.pulseActive then
         self.reticlePulse = (self.reticlePulse or 0) + elapsed
         local pulse = 0.18 + (math.sin(self.reticlePulse * 6.2) + 1) * 0.16
@@ -1289,9 +1224,8 @@ function CursorRing:OnUpdate(elapsed)
 end
 
 function CursorRing:SetEnabled(enabled)
-    KWR.db.profile.cursor.enabled = enabled == true
+    KWR.db.profile.cursor.enabled = false
     self:Apply()
-    if enabled then self:Update(currentState()) end
 end
 
 function CursorRing:SetReticleEnabled(enabled)
