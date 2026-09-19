@@ -743,6 +743,22 @@ function Sensors:ResolveSpecialization(unit)
     return resolveSpecialization(unit)
 end
 
+function Sensors:RefreshSpecialization(unit, record, observedAt, stable)
+    local checkedAt = record and (record.checkedAt or record.observedAt)
+    if stable and (not checkedAt or observedAt < checkedAt
+        or observedAt - checkedAt >= SPEC_REFRESH_INTERVAL) then
+        local id, name, role, source = self:ResolveSpecialization(unit)
+        if name and name ~= "" then
+            return { id = id, name = name, role = role,
+                observedAt = observedAt, checkedAt = observedAt }, source
+        end
+        -- A failed API attempt throttles retries but does not renew evidence.
+        record = record or {}
+        record.checkedAt = observedAt
+    end
+    return record, record and record.name and "cache" or nil
+end
+
 local function raidUnitMatchesRosterName(rosterName, unitName, shortCounts)
     local rosterFull = Util:CanonicalName(rosterName)
     local unitFull = Util:CanonicalName(unitName)
@@ -888,26 +904,9 @@ local function captureRoster(mapID)
             local cacheRecord = Sensors.specCache[cacheKey]
                 or Sensors.specCache[name:lower()]
             local specID, specName, specRole, specSource
-            local cacheExpired = not cacheRecord
-                or (observedAt - (cacheRecord.observedAt or 0)) >= SPEC_REFRESH_INTERVAL
-            if unitStable and cacheExpired then
-                specID, specName, specRole, specSource = resolveSpecialization(unit)
-            elseif cacheRecord then
+            cacheRecord, specSource = Sensors:RefreshSpecialization(unit, cacheRecord, observedAt, unitStable)
+            if cacheRecord then
                 specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
-                specSource = "cache"
-            end
-            if (not specName or specName == "") and cacheRecord then
-                specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
-                specSource = "cache"
-            end
-            if specName and specName ~= "" and specSource ~= "cache" then
-                cacheRecord = {
-                    id = specID,
-                    name = specName,
-                    role = specRole,
-                    observedAt = observedAt,
-                }
-                Sensors.specCache[cacheKey] = cacheRecord
             end
             if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             if cacheRecord then
@@ -1008,6 +1007,13 @@ function Sensors:InvalidateSpecialization(unit)
     if type(unit) ~= "string" or Util:IsSecret(unit) then return end
     local guid = Util:Text(Util:Call(UnitGUID, unit), "", 80)
     local name = Util:UnitName(unit)
+    local byGUID = guid ~= "" and self.specCache[guid] or nil
+    local byName = name and name ~= "" and self.specCache[name:lower()] or nil
+    -- Raid rows and unit APIs can expose different realm-qualified aliases.
+    -- Invalidate the identity's shared record, not only one spelling of it.
+    for key, record in pairs(self.specCache) do
+        if record == byGUID or record == byName then self.specCache[key] = nil end
+    end
     if guid ~= "" then self.specCache[guid] = nil end
     if name and name ~= "" then self.specCache[name:lower()] = nil end
 end

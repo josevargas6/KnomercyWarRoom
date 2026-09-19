@@ -5982,8 +5982,13 @@ do
     mockRaid = true
     mockRaidTokensStable = true
     mockInspectSpec = 258
+    for index = 1, 10 do KWR.Sensors:InvalidateSpecialization("raid" .. index) end
     assert(KWR.MatchRuntime:ForceRefresh("smoke-inspect-observed"), "Observed-spec refresh failed.")
-    assert(KWR.Store:Get().snapshot.roster[1].spec == "Shadow", "Observed teammate spec was not captured.")
+    assert(KWR.Store:Get().snapshot.roster[1].spec == "Shadow", "Observed teammate spec was not captured: "
+        .. tostring(KWR.Store:Get().snapshot.roster[1].name) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.roster[1].spec) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.roster[1].unit) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.roster[1].specSource))
     mockInspectSpec = nil
     assert(KWR.MatchRuntime:ForceRefresh("smoke-inspect-retained"), "Retained-spec refresh failed.")
     assert(KWR.Store:Get().snapshot.roster[1].spec == "Shadow",
@@ -6002,6 +6007,7 @@ do
     mockRaidTokensStable = false
 end
 mockDirectPlayerSpec = true
+KWR.Sensors:InvalidateSpecialization("player")
 assert(KWR.MatchRuntime:ForceRefresh("smoke-player-spec"), "Direct player-spec refresh failed.")
 assert(KWR.Store:Get().snapshot.roster[1].spec == "Unholy"
     and KWR.Store:Get().snapshot.roster[1].role == "DAMAGER"

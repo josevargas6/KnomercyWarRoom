@@ -64,9 +64,11 @@ return function(KWR)
     namespace.Sensors:OnInitialize()
     local sensor = namespace.Sensors
     sensor.specCache = { other = { id = 99 }, player = { id = 1 } }
+    sensor.specCache.shortAlias = sensor.specCache.player
     UnitGUID = function() return "player" end
     sensor:InvalidateSpecialization("player")
-    assert(sensor.specCache.player == nil and sensor.specCache.other.id == 99,
+    assert(sensor.specCache.player == nil and sensor.specCache.shortAlias == nil
+        and sensor.specCache.other.id == 99,
         "Specialization invalidation erased unrelated evidence")
     sensor.ResolveSpecialization = function() return 251, "Frost", "DAMAGER" end
     load("Runtime/RosterInspector.lua")
@@ -81,6 +83,16 @@ return function(KWR)
     inspector.pendingGUID, inspector.pendingUnit = "recycled", "player"
     inspector:InspectReady("recycled")
     assert(sensor.specCache.recycled == nil and queued == 1, "Recycled token inherited another player's spec")
+    local attempts = 0
+    sensor.ResolveSpecialization = function() attempts = attempts + 1 end
+    local record = { id = 251, name = "Frost", observedAt = now - 10 }
+    for tick = 0, 49 do
+        record = sensor:RefreshSpecialization("player", record, now + tick / 10, true)
+    end
+    assert(attempts == 1 and record.observedAt == now - 10 and record.name == "Frost",
+        "Failed spec reads spun or renewed old observation timestamps")
+    sensor:RefreshSpecialization("player", record, now + 5, true)
+    assert(attempts == 2, "Failed spec read did not resume at its retry deadline")
 
     load("Runtime/Commander.lua")
     local commander = namespace.Commander
