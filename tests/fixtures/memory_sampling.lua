@@ -80,6 +80,13 @@ return function(KWR)
         and budget.degradationMode == "CRITICAL_LIVE_ONLY"
         and budget:Cap("opponentProcessedMatches", 0) == 80,
         "Recovery lost hard-pressure handling or processed-match retention")
+    locked = true
+    for index = 1, 100 do
+        clock = 50 + index
+        budget:Sample({ revision = index * 10, snapshot = { context = { inPvP = true } } }, true)
+    end
+    assert(trims == 1 and budget.peakMeasuredMB == 40,
+        "Stale high memory caused repeated destructive trims or lost the sampled peak")
     local originalBudget = KWR.MemoryBudget
     KWR.MemoryBudget = budget
     locked, clock = true, 55

@@ -1749,7 +1749,7 @@ do
     local savedByName = KWR.CombatIntel.byName
     local savedTrimPersistent = KWR.MemoryBudget.TrimPersistent
     local savedTrimLive = KWR.MemoryBudget.TrimLive
-    local retained = { defensives = { [1] = { expiresAt = 999 } } }
+    local retained = { lastObservedAt = KWR.Util:Now() - 601, defensives = { [1] = { expiresAt = 999 } } }
     KWR.CombatIntel.byGUID = { ["Player-Memory"] = retained }
     KWR.CombatIntel.byName = { memorytarget = retained }
     KWR.MemoryBudget.TrimPersistent = function() end
@@ -1783,11 +1783,11 @@ do
         revision = 100,
         snapshot = { context = { inPvP = true } },
     }, true)
-    assert(KWR.FormationAdvisor.cache == nil
+    assert(KWR.FormationAdvisor.cache and KWR.FormationAdvisor.cache.signature == "optional-presentation"
         and #(KWR.Reporter.memory.rotations or {}) == 0
         and #KWR.MatchRuntime.durationSamples == 30
         and #KWR.MatchRuntime.tacticalDurationSamples == 30,
-        "Hard memory trim retained optional live caches beyond the hard-cap allowance.")
+        "Hard memory trim thrashed the bounded formation cache or failed to trim optional history.")
     KWR.FormationAdvisor.cache = savedFormationCache
     KWR.Reporter.memory = savedReporterMemory
     KWR.MatchRuntime.durationSamples = savedDurationSamples
@@ -6225,6 +6225,7 @@ do
         stayerText = "HOME: Cinder",
     }
     fightNowState.prediction = { status = "LOSE" }
+    fightNowState.command.responsePackage = fightNowState.snapshot.responsePackage
     fightNowState.command.when = "NOW"
     fightNowState.command.activePlay = {
         id = "CURRENT",
@@ -8025,14 +8026,12 @@ assert(#scheduled == 1 and KWR.MatchRuntime.pending == true,
     "Runtime queue did not coalesce simultaneous refresh requests.")
 currentTime = currentTime + 1
 scheduled[1].callback()
-assert(#scheduled == 2
+assert(#scheduled == 1
     and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 1,
-    "Runtime queue discarded the newest coalesced truth update.")
-currentTime = currentTime + 1
-scheduled[2].callback()
+    "Runtime queue duplicated a capture for already-consumed coalesced events.")
 assert(KWR.MatchRuntime.pending == false
-    and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 2,
-    "Runtime queue did not complete its bounded follow-up refresh.")
+    and KWR.MatchRuntime.diagnostics.refreshes == queueRefreshes + 1,
+    "Runtime queue did not finish its newest-truth capture.")
 scheduled = {}
 KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
 KWR.MatchRuntime.pending = false
@@ -8048,15 +8047,11 @@ KWR.MatchRuntime:Queue("queue-storm-2", 0.02)
 currentTime = currentTime + 1
 scheduled[1].callback()
 assert(#scheduled == 2,
-    "Runtime queue did not schedule a single bounded follow-up under churn.")
-KWR.MatchRuntime:Queue("queue-storm-3", 0.02)
-currentTime = currentTime + 1
-scheduled[2].callback()
-assert(#scheduled == 3
-    and (KWR.MatchRuntime.diagnostics.queueFollowups or 0) == queueFollowups + 1,
-    "Runtime queue chained more than one coalesced follow-up before settling.")
+    "Runtime queue lost the explicit hydration settle deadline.")
+assert((KWR.MatchRuntime.diagnostics.queueFollowups or 0) == queueFollowups,
+    "Already-consumed events were counted as newest-truth followups.")
 currentTime = currentTime + 20
-scheduled[3].callback()
+scheduled[2].callback()
 assert(KWR.MatchRuntime.pending == false
     and KWR.MatchRuntime.followupChainCount == 0,
     "Runtime queue did not clear follow-up chain state after settle refresh.")
@@ -8811,6 +8806,7 @@ assert(loadfile(ResolveTestPath("tests/fixtures/encounter_history.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/store_ownership.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/learning_episodes.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/aar_retention.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/runtime_ownership.lua")))()(KWR)
 if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
     result = KWR.Diagnostics:Run()
     if result.failed > 0 then

@@ -1,5 +1,17 @@
 # Changelog
 
+- Runtime ownership candidate `alpha26-runtime-clock-ownership-20260919-1`:
+  fixes relative-versus-absolute play deadlines and aging retained countdowns;
+  retains issued assignments with the call, honors explicit commander overrides,
+  and rejects conflicting unissued response destinations. Inspection updates only
+  accepted identities, cached reads no longer renew evidence timestamps, and
+  pre-capture bursts no longer force duplicate strategic passes. Static capability
+  caches are bounded, repeated token scans and aura-triggered health paints are
+  removed, and plain-text normalization avoids unnecessary allocations. Memory
+  pressure recovery runs once per measured sample, preserves current combat truth
+  and bounded useful caches, and reports sampled peaks honestly. Live CPU and
+  peak-memory targets remain unverified for this new candidate.
+
 - Core-field candidate `alpha25-core-field-simplification-20260913-1`:
   retired always-on player identity markers, assignment badges, focus-only
   native-nameplate suppression, and persistent opponent/doctrine histories.

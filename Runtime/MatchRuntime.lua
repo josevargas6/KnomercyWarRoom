@@ -988,6 +988,15 @@ function Runtime:Refresh(reason)
             end
             command = KWR.Commander:Compose(snapshot, prediction, assignments)
             command = KWR.Commander:ObservePublicExecution(snapshot, command)
+            if command.activePlayDecision and command.activePlayDecision.retained then
+                local previous = KWR.Store:Get()
+                -- Retention is a plan transaction, not just an old headline.
+                -- Do not publish unissued candidate jobs under a retained call.
+                assignments = previous.assignments or assignments
+                snapshot.responsePackage = previous.snapshot and previous.snapshot.responsePackage
+                    or snapshot.responsePackage
+                snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
+            end
             snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
                 snapshot, prediction, assignments, command)
             snapshot.commandEmphasis = KWR.CommandEmphasis:Build(
@@ -1078,7 +1087,9 @@ function Runtime:Schedule(reason, delay, revision)
         if token ~= Runtime.timerToken then return end
         local dueAt = Runtime.pendingDueAt or KWR.Util:Now()
         local completedReason = Runtime.pendingReason or reason or "queued"
-        local completedRevision = Runtime.pendingRevision or revision or 0
+        -- Capture reads the current APIs, so all events received BEFORE it
+        -- starts are consumed by this pass, not by a redundant second pass.
+        local completedRevision = Runtime.queueRevision or revision or 0
         local completedSettle = Runtime.pendingSettle == true
         clearQueueState(Runtime)
         Runtime:UpdateLifecycle()
@@ -1091,7 +1102,7 @@ function Runtime:Schedule(reason, delay, revision)
             and now + 0.001 < Runtime.requiredSettleAt
         local canChainFollowup = completedSettle ~= true
             and (Runtime.followupChainCount or 0) < MAX_CHAINED_FOLLOWUPS
-        if timerMatured and hasNewRevision and canChainFollowup then
+        if timerMatured and hasNewRevision and canChainFollowup and not Runtime.pending then
             Runtime.diagnostics.queueFollowups =
                 (Runtime.diagnostics.queueFollowups or 0) + 1
             Runtime.followupChainCount = (Runtime.followupChainCount or 0) + 1
@@ -1250,6 +1261,9 @@ function Runtime:HandleEvent(event, ...)
     end
     if event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED"
         or event == "PLAYER_SPECIALIZATION_CHANGED" then
+        if event == "PLAYER_SPECIALIZATION_CHANGED" and KWR.Sensors then
+            KWR.Sensors:InvalidateSpecialization((...))
+        end
         if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
         self:Queue(event, 0.05)
         return
@@ -1328,10 +1342,10 @@ function Runtime:HandleEvent(event, ...)
             -- Friendly bars update directly in CombatRoster. A full strategy
             -- rebuild is only needed when the friendly unit carries an
             -- objective whose health or stacks can alter the call.
-            if KWR.CombatRoster then
+            if event ~= "UNIT_AURA" and KWR.CombatRoster then
                 KWR.CombatRoster:UpdateHealthForUnit(unit)
             end
-            if KWR.MainWindow then
+            if event ~= "UNIT_AURA" and KWR.MainWindow then
                 KWR.MainWindow:UpdateHealthForUnit(unit)
             end
             self.diagnostics.lightweightEvents =

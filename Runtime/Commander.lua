@@ -15,6 +15,21 @@ local Commander = {
 }
 KWR.Commander = Commander
 
+function Commander:TimingText(command)
+    command = command or {}
+    local play = command.activePlay or {}
+    if play.matchComplete then return "MATCH END" end
+    if play.phase == "FAILED" or play.phase == "EXPIRED" then return "REASSESS" end
+    if play.phase == "SUCCEEDED" then return "COMPLETE" end
+    local deadline = KWR.Util:Number(play.timingDeadlineAt, nil)
+    if deadline and play.timingKind then
+        local remaining = deadline - KWR.Util:Now()
+        if remaining <= 0 then return "REASSESS" end
+        return play.timingKind .. " " .. KWR.Util:Clock(math.ceil(remaining))
+    end
+    return command.when or "NOW"
+end
+
 -- Process-local serials deliberately survive match resets. They identify a call
 -- for explicit confirmation; they are not a durable learning episode key.
 local reviewSerial = 0
@@ -1123,7 +1138,8 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
     local responseDelay = timing.responseDelay
     local groupDelay = timing.groupDelay
     local arrival = now + responseDelay + groupDelay
-    local resolution = prediction.captureDeadline
+    -- Predictor returns durations; play lifecycle compares absolute uptime.
+    local resolution = prediction.captureDeadline and (now + prediction.captureDeadline)
         or ((prediction.timeToWin and family ~= "WORLD") and (now + prediction.timeToWin) or nil)
         or (arrival + baseCommit)
     local hardDeadline = resolution and (resolution + math.max(4, math.floor(baseCommit * 0.25))) or nil
@@ -1150,6 +1166,14 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         moverActors = KWR.Util:Copy(response and response.moverActors),
         stayerActors = KWR.Util:Copy(response and response.stayerActors),
         actorAssignments = KWR.Util:Copy(response and response.actorAssignments),
+        timingKind = previousPlay and previousPlay.id == id and previousPlay.timingKind
+            or prediction.captureDeadline ~= nil and "BY"
+            or (prediction.status == "WIN" and prediction.timeToWin ~= nil and "HOLD") or nil,
+        timingDeadlineAt = previousPlay and previousPlay.id == id
+            and previousPlay.timingDeadlineAt
+            or (prediction.captureDeadline ~= nil and now + prediction.captureDeadline)
+            or (prediction.status == "WIN" and prediction.timeToWin ~= nil and now + prediction.timeToWin)
+            or nil,
         issuedAt = previousPlay and previousPlay.id == id and previousPlay.issuedAt or now,
         minimumCommitUntil = previousPlay and previousPlay.id == id
             and previousPlay.minimumCommitUntil or (now + baseCommit),
@@ -2194,6 +2218,18 @@ function Commander:Compose(snapshot, prediction, assignments)
     end
     local integrity = snapshot.assignmentIntegrity or {}
     local urgentReassignment = actionableReassignment(integrity, snapshot)
+    if urgentReassignment then
+        local assignedReplacement = false
+        for _, assignment in ipairs(assignments) do
+            if (assignment.shortName or assignment.name) == urgentReassignment.replacement
+                and assignment.location == urgentReassignment.expected
+                and assignment.connected ~= false and assignment.dead ~= true then
+                assignedReplacement = true
+            end
+        end
+        -- Integrity proposes relief; it cannot order an actor to two locations.
+        if not assignedReplacement then urgentReassignment = nil end
+    end
     local recovery = response.recovery or {}
     if not finalStatus and snapshot.context.inPvP and urgentReassignment then
         local replacement = urgentReassignment.replacement or "nearest floater"
@@ -2403,6 +2439,22 @@ function Commander:Compose(snapshot, prediction, assignments)
     local previousPlayForTransition = previousPlay
         and KWR.Util:Copy(previousPlay) or nil
     local invalidation = invalidationReason(updatedPreviousPlay, snapshot, now)
+    if updatedPreviousPlay and not invalidation then
+        local previousAssignments = previousState.assignments or {}
+        for _, assignment in ipairs(assignments) do
+            for _, previous in ipairs(previousAssignments) do
+                local same = assignment.guid and assignment.guid == previous.guid
+                    or (not assignment.guid and assignment.name == previous.name)
+                if same and (assignment.manualOverride or previous.manualOverride)
+                    and (assignment.manualOverride ~= previous.manualOverride
+                        or assignment.role ~= previous.role
+                        or assignment.location ~= previous.location
+                        or assignment.priority ~= previous.priority) then
+                    invalidation = "ASSIGNMENT_OVERRIDE_CHANGED"
+                end
+            end
+        end
+    end
     local terminalOutcomeHeld = terminalReissueHeld(
         self, updatedPreviousPlay, candidatePlay, snapshot, invalidation, now)
     if previousWasTerminal and not terminalOutcomeHeld then
@@ -2434,6 +2486,9 @@ function Commander:Compose(snapshot, prediction, assignments)
         command.who = previousState.command and previousState.command.who or command.who
         command.when = previousState.command and previousState.command.when or command.when
         command.reason = previousState.command and previousState.command.reason or command.reason
+        command.responsePackage = previousState.command and previousState.command.responsePackage or command.responsePackage
+        command.objectiveDecision = previousState.command and previousState.command.objectiveDecision or command.objectiveDecision
+        command.switchIf = previousState.command and previousState.command.switchIf or command.switchIf
         command.signature = previousState.command and previousState.command.signature or command.signature
         command.bypass = "ACTIVE_PLAY_HOLD"
         command.stabilized = true
@@ -2442,6 +2497,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         activePlay.phase = currentPlayPhase(activePlay, snapshot, now)
     end
     command.activePlay = activePlay
+    command.when = self:TimingText(command)
     command.activePlayCandidate = candidatePlay
     command.activePlayTrend = trendSummary(trend)
     local lostCommitmentTime = updatedPreviousPlay and updatedPreviousPlay.minimumCommitUntil

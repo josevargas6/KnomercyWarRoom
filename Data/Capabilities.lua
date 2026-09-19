@@ -76,6 +76,7 @@ local HERO_MODIFIERS = {
 
 local resolvedCache = {}
 local cacheHits, cacheMisses = 0, 0
+local resolvedPatch
 
 local function deriveRatings(tags, role)
     local ratings = {}
@@ -230,17 +231,30 @@ local function key(classFile, spec)
         .. KWR.Util:Text(spec, "", 32):lower()
 end
 
-function Capabilities:Get(classFile, spec, heroTalent)
+local function resolve(classFile, spec, heroTalent)
+    local patch = KWR.PatchData:Get()
+    if resolvedPatch ~= patch then
+        resolvedCache = {}
+        resolvedPatch = patch
+    end
     local lookup = key(classFile, spec)
+    -- Unknown specs share one sentinel; arbitrary names cannot grow the cache.
+    if not DATA[lookup] then lookup = "UNKNOWN" end
     local heroName = KWR.Util:Text(heroTalent, "", 48):lower()
+    local heroKey = KWR.Util:Upper(classFile, "", 24) .. ":" .. heroName
+    local hero = HERO_MODIFIERS[heroKey]
+    if not hero or lookup == "UNKNOWN" then heroName = "" end
     local cacheKey = lookup .. ":" .. heroName
-    if resolvedCache[cacheKey] then
+    if resolvedCache[cacheKey] ~= nil then
         cacheHits = cacheHits + 1
-        return KWR.Util:Copy(resolvedCache[cacheKey])
+        return resolvedCache[cacheKey] or nil
     end
     cacheMisses = cacheMisses + 1
     local base = DATA[lookup]
-    if not base then return nil end
+    if not base then
+        resolvedCache[cacheKey] = false
+        return nil
+    end
     local result = KWR.Util:Copy(base)
     local overlay = KWR.PatchData:Capability(lookup)
     if overlay then
@@ -254,8 +268,6 @@ function Capabilities:Get(classFile, spec, heroTalent)
             end
         end
     end
-    local heroKey = KWR.Util:Upper(classFile, "", 24) .. ":" .. heroName
-    local hero = HERO_MODIFIERS[heroKey]
     if hero then
         for rating, delta in pairs(hero.ratings or {}) do
             result.ratings[rating] = math.max(1, math.min(5,
@@ -269,20 +281,16 @@ function Capabilities:Get(classFile, spec, heroTalent)
         result.heroConfidence = hero.confidence
     end
     resolvedCache[cacheKey] = result
-    return KWR.Util:Copy(result)
+    return result
+end
+
+function Capabilities:Get(classFile, spec, heroTalent)
+    return KWR.Util:Copy(resolve(classFile, spec, heroTalent))
 end
 
 -- Hot-path accessor. Callers must treat the returned table as read-only.
 function Capabilities:Resolve(classFile, spec, heroTalent)
-    local lookup = key(classFile, spec)
-    local heroName = KWR.Util:Text(heroTalent, "", 48):lower()
-    local cacheKey = lookup .. ":" .. heroName
-    if resolvedCache[cacheKey] then
-        cacheHits = cacheHits + 1
-    else
-        self:Get(classFile, spec, heroTalent)
-    end
-    return resolvedCache[cacheKey]
+    return resolve(classFile, spec, heroTalent)
 end
 
 function Capabilities:CacheStats()

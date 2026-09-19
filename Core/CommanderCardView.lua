@@ -161,7 +161,7 @@ function View:CommanderCard(state)
     local strings = self.CardStrings
     local play = record(command.activePlay or state.activePlay)
     local candidate = record(command.activePlayCandidate)
-    local response = record(snapshot.responsePackage or command.responsePackage)
+    local response = record(command.responsePackage or snapshot.responsePackage)
     local execution = record(snapshot.executionCommand)
     local localFight = record(execution.localFight)
     local now = finite(KWR.Util:Now())
@@ -200,7 +200,7 @@ function View:CommanderCard(state)
     card.now = { action = text(play.action or command.action, strings.noOrder, 512, errors),
         location = text(play.objective or response.target or record(command.objectiveDecision).target,
             strings.unknownLocation, 160, errors),
-        timing = text(command.when, "On leader call", 128, errors),
+        timing = text(KWR.Commander:TimingText(command), "On leader call", 128, errors),
         condition = text(command.condition, "", 512, errors),
         abort = rules(play.abortRules, command.abort, errors) }
     local movers = actors(nonempty(play.moverActors) or nonempty(play.movers)
@@ -209,9 +209,10 @@ function View:CommanderCard(state)
     local stayers = actors(nonempty(play.stayerActors) or nonempty(response.stayerActors)
         or nonempty(response.stayers) or nonempty(play.stayers), snapshot.roster, errors)
     local reserves = actors(response.reserve or play.reserve, snapshot.roster, errors)
-    addDuties(card.duties, movers, "MOVE", state.assignments, card.now.location, errors)
-    addDuties(card.duties, stayers, "STAY", state.assignments, strings.unknownLocation, errors)
-    addDuties(card.duties, reserves, "RESERVE", state.assignments, strings.unknownLocation, errors)
+    local issuedAssignments = play.actorAssignments or state.assignments
+    addDuties(card.duties, movers, "MOVE", issuedAssignments, card.now.location, errors)
+    addDuties(card.duties, stayers, "STAY", issuedAssignments, strings.unknownLocation, errors)
+    addDuties(card.duties, reserves, "RESERVE", issuedAssignments, strings.unknownLocation, errors)
     local assigned = actors(play.actorAssignments or response.actorAssignments or state.assignments, snapshot.roster, errors)
     for _, actor in ipairs(assigned) do
         local found = false

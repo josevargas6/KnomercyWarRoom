@@ -18,6 +18,7 @@ function Util:Number(value, fallback)
     if type(value) ~= "number" and type(value) ~= "string" then
         return fallback
     end
+    if type(value) == "number" then return value end
     local ok, number = pcall(tonumber, value)
     if not ok or number == nil or self:IsSecret(number) then
         return fallback
@@ -46,14 +47,23 @@ function Util:Text(value, fallback, maxLength)
     if valueType ~= "string" and valueType ~= "number" and valueType ~= "boolean" then
         return fallback
     end
-    local ok, text = pcall(tostring, value)
-    if not ok or self:IsSecret(text) then
-        return fallback
+    local text = value
+    if valueType ~= "string" then
+        local ok
+        ok, text = pcall(tostring, value)
+        if not ok or self:IsSecret(text) then return fallback end
     end
-    text = text:gsub("|T.-|t", ""):gsub("|A.-|a", "")
-    text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    text = text:gsub("[\r\n;]", " "):gsub("%s+", " ")
-    text = text:gsub("^%s+", ""):gsub("%s+$", "")
+    -- Most hot-path values are already plain identifiers. Keep the same safety
+    -- boundary without allocating eight replacement strings for each lookup.
+    if text:find("|", 1, true) then
+        text = text:gsub("|T.-|t", ""):gsub("|A.-|a", "")
+        text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    end
+    if text:find("[\r\n;\t\v\f]") or text:find("  ", 1, true)
+        or text:sub(1, 1) == " " or text:sub(-1) == " " then
+        text = text:gsub("[\r\n;]", " "):gsub("%s+", " ")
+        text = text:gsub("^%s+", ""):gsub("%s+$", "")
+    end
     if maxLength and #text > maxLength then
         text = text:sub(1, math.max(1, maxLength - 3)) .. "..."
     end

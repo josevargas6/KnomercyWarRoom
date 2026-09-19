@@ -334,6 +334,9 @@ end
 function CommandReview:CompactResponsePackage(response)
     response = type(response) == "table" and response or {}
     return {
+        actionID = clean(response.actionID, "", 32),
+        target = clean(response.target, "", 64),
+        shortTarget = clean(response.shortTarget, "", 32),
         action = clean(response.action, "HOLD CURRENT PLAN", 120),
         moverText = clean(response.moverText, "Team", 100),
         stayerText = clean(response.stayerText, "Assigned defenders", 100),

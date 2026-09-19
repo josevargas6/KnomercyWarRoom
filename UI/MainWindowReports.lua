@@ -440,13 +440,14 @@ function MainWindowReports:BuildPerformancePayload(state)
         string.format("Strategic last: %.3f ms", diagnostics.lastDurationMs or 0),
         string.format("Strategic average: %.3f ms", diagnostics.averageDurationMs or 0),
         "Duration samples: strategic " .. tostring(sampleCount)
-            .. " / 120, tactical " .. tostring(tacticalSampleCount) .. " / 120",
-        "Strategic duration samples: " .. tostring(sampleCount) .. " / 120",
+            .. " / " .. tostring(KWR.MatchRuntime.maxDurationSamples)
+            .. ", tactical " .. tostring(tacticalSampleCount) .. " / " .. tostring(KWR.MatchRuntime.maxTacticalDurationSamples),
+        "Strategic duration samples: " .. tostring(sampleCount) .. " / " .. tostring(KWR.MatchRuntime.maxDurationSamples),
         "Strategic " .. p95Text,
         string.format("Strategic maximum: %.3f ms", diagnostics.maxDurationMs or 0),
         string.format("Tactical last: %.3f ms", diagnostics.lastTacticalDurationMs or 0),
         string.format("Tactical average: %.3f ms", diagnostics.averageTacticalDurationMs or 0),
-        "Tactical duration samples: " .. tostring(tacticalSampleCount) .. " / 120",
+        "Tactical duration samples: " .. tostring(tacticalSampleCount) .. " / " .. tostring(KWR.MatchRuntime.maxTacticalDurationSamples),
         tacticalP95Text,
         string.format("Tactical maximum: %.3f ms", diagnostics.maxTacticalDurationMs or 0),
         string.format("Tactical queue: coalesced %d / absorbed %d / escalated %d",
@@ -463,6 +464,8 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Tactical execution reasons: " .. topCounterText(
             diagnostics.tacticalRefreshReasons, 6),
         "Latest slow stages: " .. (#slowStages > 0 and table.concat(slowStages, ", ") or "unavailable"),
+        memorySummary.peakMeasuredMB and string.format("Session sampled memory peak: %.2f MB (not a continuous combat peak)", memorySummary.peakMeasuredMB)
+            or "Session sampled memory peak: unavailable",
         memoryKB and string.format("KWR addon memory now: %.1f KB (%s; age %.1fs; %s)", memoryKB,
             memorySummary.sampleStatus or "CACHED", memorySummary.sampleAgeSeconds or 0,
             memorySummary.sampleReason or "unknown") or "KWR addon memory now: unavailable",

@@ -113,7 +113,7 @@ end
 
 local function callWhen(play, command, current)
     if current then
-        return KWR.Util:Upper(command and command.when, "NOW", 20)
+        return KWR.Util:Upper(KWR.Commander:TimingText(command), "NOW", 20)
     end
     local arrival = KWR.Util:Number(play and play.expectedArrivalAt, nil)
     if arrival then
@@ -225,7 +225,7 @@ function CommandView:FightNow(state)
     local context = snapshot.context or {}
     local command = state.command or {}
     local prediction = state.prediction or {}
-    local response = snapshot.responsePackage or command.responsePackage or {}
+    local response = command.responsePackage or snapshot.responsePackage or {}
     local activePlay = command.activePlay or state.activePlay or {}
     local candidate = command.activePlayCandidate or {}
     local strategicCurrent = callModel(

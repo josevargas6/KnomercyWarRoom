@@ -174,6 +174,38 @@ function CombatIntel:Reset()
     self.sessionKey = nil
 end
 
+function CombatIntel:Prune(snapshot)
+    local protected, seen, records = {}, {}, {}
+    for _, enemy in ipairs(snapshot and snapshot.enemies or {}) do
+        local record = self:GetRecord(enemy.guid, enemy.name, false)
+        if record then protected[record] = true end
+    end
+    for _, index in ipairs({ self.byGUID, self.byName }) do
+        for _, record in pairs(index) do
+            if not seen[record] then
+                seen[record] = true
+                records[#records + 1] = record
+            end
+        end
+    end
+    table.sort(records, function(a, b)
+        if protected[a] ~= protected[b] then return protected[a] == true end
+        return (a.lastObservedAt or 0) > (b.lastObservedAt or 0)
+    end)
+    local keep, now = {}, KWR.Util:Now()
+    for index, record in ipairs(records) do
+        if index <= 80 and (protected[record] or now - (record.lastObservedAt or 0) <= 600) then
+            keep[record] = true
+        end
+    end
+    -- Both aliases must be removed together; active enemy evidence survives.
+    for _, index in ipairs({ self.byGUID, self.byName }) do
+        for key, record in pairs(index) do
+            if not keep[record] then index[key] = nil end
+        end
+    end
+end
+
 function CombatIntel:GetRecord(guid, name, create)
     guid = KWR.Util:Text(guid, "", 80)
     local short = normalizedName(name)

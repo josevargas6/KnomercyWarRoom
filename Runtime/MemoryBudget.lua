@@ -363,19 +363,15 @@ function MemoryBudget:Trim(state, force)
     self:TrimLive(state)
     if force and state and state.snapshot and state.snapshot.context
         and state.snapshot.context.inPvP == true then
-        -- Hard ceiling protection: discard optional decision/execution caches
-        -- during the match rather than allowing a retained-object climb.
-        if KWR.Strategist then
-            KWR.Strategist.cache = nil
-            KWR.Strategist.executionCache = nil
-        end
-        if KWR.CombatIntel and KWR.CombatIntel.Reset then
-            KWR.CombatIntel:Reset()
+        -- Prune bounded history, not current evidence or one-result caches.
+        -- Clearing those caches under pressure immediately reallocates them
+        -- and resetting CombatIntel destroys live defensive/cast evidence.
+        if KWR.CombatIntel and KWR.CombatIntel.Prune then
+            KWR.CombatIntel:Prune(state.snapshot)
         end
         -- These are derived presentation caches, never battlefield truth.
         -- Discard them before live memory pressure can affect the command
         -- path or exceed the addon hard ceiling.
-        if KWR.FormationAdvisor then KWR.FormationAdvisor.cache = nil end
         if KWR.Reporter then
             KWR.Reporter.memory = { rotations = {}, routes = {}, revision = 0 }
         end
@@ -412,6 +408,7 @@ function MemoryBudget:Sample(state, allowTrim, forceRefresh)
         if measured and measured == measured and measured >= 0 and measured < math.huge then
             self.lastMeasuredMB = measured
             self.lastMeasuredAt = currentNow
+            self.peakMeasuredMB = math.max(self.peakMeasuredMB or 0, measured)
             fresh = true
         end
         self.lastSampleReason = fresh and "MEASURED" or (reason or "UNAVAILABLE")
@@ -427,10 +424,17 @@ function MemoryBudget:Sample(state, allowTrim, forceRefresh)
         or pressure == "WARNING" and "REDUCED_DETAIL"
         or pressure == "SOFT" and "CACHE_GUARDED" or "FULL"
     if allowTrim ~= true then return currentMB, fresh end
+    -- A combat-deferred measurement is not a new pressure observation. Apply
+    -- expensive hard-pressure recovery once per successful sample, not every
+    -- notification using the same old value.
+    if self.lastPressureTrimAt == self.lastMeasuredAt and (pressure == "FAIL" or pressure == "WARNING") then
+        return currentMB, fresh
+    end
     if pressure == "FAIL" then
+        self.lastPressureTrimAt = self.lastMeasuredAt
         self:Trim(state, true)
     elseif pressure == "WARNING" then
-        self:Trim(state, false)
+        self.lastPressureTrimAt = self.lastMeasuredAt
         self:Trim(state, true)
         if KWR.EnemyIntel and KWR.EnemyIntel.PruneStaleRecords then
             KWR.EnemyIntel:PruneStaleRecords(KWR.Util:Now())
@@ -459,6 +463,7 @@ function MemoryBudget:Summary(refresh)
         warningCapMB = self.warningCapMB,
         hardCapMB = self.hardCapMB,
         currentMB = currentMB,
+        peakMeasuredMB = self.peakMeasuredMB,
         memoryKB = currentMB and (currentMB * 1024) or nil,
         memorySource = "GetAddOnMemoryUsage(KnomercyWarRoom)",
         sampledAt = self.lastMeasuredAt,

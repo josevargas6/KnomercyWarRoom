@@ -900,7 +900,7 @@ local function captureRoster(mapID)
                 specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
                 specSource = "cache"
             end
-            if specName and specName ~= "" then
+            if specName and specName ~= "" and specSource ~= "cache" then
                 cacheRecord = {
                     id = specID,
                     name = specName,
@@ -1002,18 +1002,14 @@ end
 
 function Sensors:OnInitialize()
     Util = KWR.Util
-    if EventRegistry and type(EventRegistry.RegisterFrameEventAndCallback) == "function" then
-        for _, event in ipairs({ "INSPECT_READY", "PLAYER_SPECIALIZATION_CHANGED" }) do
-            local eventName = event
-            EventRegistry:RegisterFrameEventAndCallback(eventName, function()
-                -- Keep normal refreshes cheap, but let an explicit inspection
-                -- or specialization event make the next snapshot immediately
-                -- eligible to refresh its cached spec evidence.
-                Sensors.specCache = {}
-                if KWR.MatchRuntime then KWR.MatchRuntime:Queue(eventName, 0.05) end
-            end, self)
-        end
-    end
+end
+
+function Sensors:InvalidateSpecialization(unit)
+    if type(unit) ~= "string" or Util:IsSecret(unit) then return end
+    local guid = Util:Text(Util:Call(UnitGUID, unit), "", 80)
+    local name = Util:UnitName(unit)
+    if guid ~= "" then self.specCache[guid] = nil end
+    if name and name ~= "" then self.specCache[name:lower()] = nil end
 end
 
 function Sensors:ObserveWidget(widgetInfo)

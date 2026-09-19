@@ -1,24 +1,29 @@
-# Release Readiness - 6.1.1-alpha.25
+# Release Readiness - 6.1.1-alpha.26
 
-## Current operational truth — 2026-09-12
+## Current operational truth — 2026-09-19
 
-**FIELD TEST PAUSED FOR A REPAIRED SUCCESSOR; NOT READY FOR STABLE RELEASE.**
-`alpha25-core-field-simplification-20260913-1` (`6.1.1-alpha.25`) is the
-unbuilt successor to the installed alpha.24 candidate. It retains alpha.17's compact
-lower-right field safeguards, alpha.18's contained setup rows, and alpha.19's
-single-column Compact Options layout. It also replaces the clipped compact-call
-export with a complete labelled, multiline manual-copy surface and bounds the
-assignment export window. Setup roster labels now remain FORMING until the
-roster is full and available. Its Fight Now card expands player-facing job and
-location labels instead of requiring combat-time shorthand decoding. It retires
-the player-following PvP cursor ring, always-on player identity markers,
-assignment badges, and focus-only native-nameplate suppression. Target reticles
-remain available; opponent/doctrine history is no longer retained between
-sessions; roster/AAR opening is manual-only; and Developer Tools is an explicit
-separate-addon install. It also keeps cast-only tactical changes out of
-the full strategic rebuild path while retaining fresh target/focus/nameplate
-truth. Exact archive hashes and a deployment receipt are required before retest.
-This will authorize a safety-only retest, not a stable-release claim.
+**ALPHA26 OFFLINE REPAIR; LIVE PERFORMANCE CERTIFICATION STILL REQUIRED.**
+Alpha25 was built, audited, installed with matching Sentinel and separate
+Developer Tools on September 18, and field-tested. Its completed Arathi Basin
+capture reported zero runtime errors but strategic P95 34.561 ms, tactical P95
+8.222 ms, and sampled memory as high as 44.26 MB before falling to 13.64 MB after
+the match. These are failures, not release approval or proof of a retained leak.
+
+`alpha26-runtime-clock-ownership-20260919-1` (`6.1.1-alpha.26`) repairs clock
+units, retained plan consistency, inspection invalidation, redundant captures,
+bounded capability lookup and stale-memory recovery thrashing. Current combat
+evidence and bounded caches survive pressure pruning. The source runtime suite
+passes including deterministic long-uptime and 1,001-event burst regressions.
+Packaging and deployment receipts, not this prose, establish the installed bytes.
+The 2 ms P95, 4 ms routine maximum and 32 MB hard memory goals are unchanged;
+alpha26 has no live performance result yet. See
+[the bounded field checklist](docs/ALPHA26_FIELD_CHECKLIST.md).
+
+Existing compact lower-right field safeguards, contained setup/options layouts,
+complete manual copying and plain-language roles remain. Retired cursor/player
+markers and persistent opponent/doctrine histories remain retired. Roster/AAR
+auto-opening defaults are off; existing explicit saved preferences are preserved.
+Developer Tools remains a separate optional addon, installed here for diagnostics.
 
 Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
 match without runtime errors, but failed release acceptance: the complete Commander

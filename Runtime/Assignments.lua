@@ -388,6 +388,12 @@ local function friendlyControlled(snapshot, definition, context)
 end
 
 local function assaultTarget(snapshot, definition)
+    -- Use the planner's destination before falling back to map priorities.
+    local strategy = snapshot.strategy or {}
+    local target = strategy.target or (strategy.objectiveDecision or {}).target
+    if target and definition.positions and definition.positions[target] then
+        return target
+    end
     local enemy, available = {}, {}
     for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         if definition.positions and definition.positions[row.label] then
@@ -1350,6 +1356,15 @@ function Assignments:ResponsePackage(snapshot, assignments)
     local qualified = opportunity.score
         and opportunity.score >= 85
         and (confidence == "MEDIUM" or confidence == "HIGH")
+    local assignmentConflict = false
+    if actionID == "REINFORCE" or actionID == "ROTATE" or actionID == "PREPARE_PRESSURE" then
+        for _, actor in ipairs(moverActors) do
+            if actor.location ~= target then assignmentConflict = true end
+        end
+        if #moverActors == 0 then assignmentConflict = true end
+    end
+    -- An execution assessment is a proposal, not a second assignment engine.
+    qualified = qualified and not assignmentConflict
     local criticalGap
     local releaseTarget
     for _, row in ipairs(integrity.coverageLedger or {}) do
@@ -1375,6 +1390,7 @@ function Assignments:ResponsePackage(snapshot, assignments)
     return {
         active = execution.active == true,
         qualified = qualified == true,
+        assignmentConflict = assignmentConflict,
         actionID = actionID,
         action = actionText[actionID] or "HOLD CURRENT PLAN",
         target = target,
