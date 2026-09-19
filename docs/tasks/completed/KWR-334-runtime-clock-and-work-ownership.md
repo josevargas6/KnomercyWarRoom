@@ -4,7 +4,7 @@ title: Repair runtime clock and work ownership
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: completed
 dependencies: []
 affected_modules: [MatchRuntime, Sensors, RosterInspector, Capabilities, Util, Commander]
 authority_references: [AGENTS.md, DESIGN_CONTRACT.md, RELEASE_POLICY.md, RELEASE_READINESS.md, BATTLEGROUND_VERIFICATION.md]
@@ -53,12 +53,37 @@ while WoW runs. Offline clocks cannot certify Retail CPU or peak memory.
 - [x] Retained calls cannot freeze their countdown or mix candidate duties.
 - [x] Inspection preserves unrelated identities and refreshes only changed truth.
 - [x] Burst work is bounded and newest truth is not discarded.
-- [ ] Regression, soak, validation and package checks pass.
-- [ ] Remaining live measurements are explicitly identified, not marked passed.
+- [x] Regression, soak, validation and package checks pass.
+- [x] Remaining live measurements are explicitly identified, not marked passed.
 
 Automated runtime suite passed on September 19: smoke 276 checks, burst/clock/cache
 ownership regression, Developer Tools lifecycle, Sentinel transport, 500-refresh
 soak and replay. Soak durations use an injected clock and are not live CPU proof.
+
+Final source commit: `2a8c260ae9d838492d957179f2ac1d400999bed4` (clean at build).
+Follow-up inspection coverage verifies failed-read retry limits and invalidation
+of shared short-name/realm-qualified aliases without renewing old evidence.
+
+Final evidence, September 19:
+
+- `artifacts/alpha26-runtime-final-tests.json`: full Lua suite PASS.
+- `artifacts/alpha26-runtime-20260919-final/KWR_6_1_1_ALPHA_26_PACKAGE_AUDIT.json`:
+  extracted distribution/developer smoke and soak, hashes and reproducibility PASS.
+- Source validation: zero errors/warnings; full knowledge audit: zero errors.
+- `artifacts/alpha26-install-20260919/DEPLOYMENT.json`: INSTALLED_VERIFIED;
+  Commander, Sentinel and separate LoadOnDemand Developer Tools all alpha26;
+  zero missing, changed or extra files against the final archives.
+- `artifacts/alpha26-backup-20260919`: previous addon files and four KWR
+  SavedVariables files backed up; isolated restore rehearsal PASS.
+
+Completion means the offline repair and authorized diagnostic installation, not
+stable-release approval. Remaining Retail CPU/peak-memory, taint, readability,
+decision/delivery and map-family evidence remains unverified. Follow
+`docs/ALPHA26_FIELD_CHECKLIST.md`: at most two normal games, then targeted
+reproduction or explicitly restricted/unverified scope, not an open-ended grind.
+Generated release reports retain their broader release scenarios and strict
+clean-source certification requirements; they do not prescribe extra matches for
+this bounded repair check or certify this diagnostic install as a public release.
 
 # Verification
 

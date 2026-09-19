@@ -15,6 +15,12 @@ bounded capability lookup and stale-memory recovery thrashing. Current combat
 evidence and bounded caches survive pressure pruning. The source runtime suite
 passes including deterministic long-uptime and 1,001-event burst regressions.
 Packaging and deployment receipts, not this prose, establish the installed bytes.
+The final clean build at `2a8c260` passed source validation, full Lua tests,
+knowledge audit and extracted-package/reproducibility checks. It is installed
+with matching Sentinel and separate LoadOnDemand Developer Tools; all three
+installed trees match their archives with zero differences. Receipt:
+`artifacts/alpha26-install-20260919/DEPLOYMENT.json`. Previous files and KWR
+SavedVariables are recoverable from `artifacts/alpha26-backup-20260919`.
 The 2 ms P95, 4 ms routine maximum and 32 MB hard memory goals are unchanged;
 alpha26 has no live performance result yet. See
 [the bounded field checklist](docs/ALPHA26_FIELD_CHECKLIST.md).

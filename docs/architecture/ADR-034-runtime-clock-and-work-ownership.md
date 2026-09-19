@@ -1,6 +1,6 @@
 # ADR-034: Runtime work and issued-clock ownership
 
-Status: accepted for implementation; live performance certification pending.
+Status: implemented and regression-tested; live performance certification pending.
 
 ## Decision
 
@@ -9,6 +9,9 @@ creation. A later revision must never cancel an earlier critical deadline.
 RosterInspector owns INSPECT_READY acceptance; Sensors invalidates only the
 identity reported by a specialization change. Read operations must not refresh
 the observation timestamp of cached evidence.
+Failed reads have a separate retry timestamp, so API throttling cannot falsely
+renew observation age. Identity invalidation removes every alias of the shared
+record, including short roster names and realm-qualified unit names.
 
 Predictor durations are seconds remaining. Commander converts them to monotonic
 absolute times when issuing a play, then retains those times with the issued
