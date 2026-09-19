@@ -3,6 +3,22 @@
 Candidate: `alpha26-runtime-clock-ownership-20260919-1`.
 Purpose: measure the remaining Retail-only limits, not repeat every scenario.
 
+## Any random rated battleground counts
+
+Use the next battleground the queue gives you. No flag map, base-defense map,
+particular objective event, win, or different second map is required. Two games
+on the same map count. Do not leave/requeue to obtain a testing map.
+
+The common test is CPU/memory, errors and blocked actions, card visibility and
+controls, agreement between calls and assignments, timing when displayed, and
+match-end/AAR behavior. These checks apply across battleground types.
+
+Flag/carrier changes, base defense, carts and other mechanics are opportunistic:
+capture them only if they occur naturally. If they do not occur, record
+NOT_OBSERVED (or NOT_APPLICABLE for that map). This neither fails the game nor
+awards that mechanic a pass. Map-specific coverage gaps belong to engineering
+replay/targeted reproduction, not extra random queues for you.
+
 ## Before queueing
 
 - Confirm Commander, Sentinel and Developer Tools all show `6.1.1-alpha.26`.
@@ -21,14 +37,17 @@ Purpose: measure the remaining Retail-only limits, not repeat every scenario.
 ## Game 2, only if needed
 
 - Repeat the performance and end-of-match exports to distinguish a repeatable
-  failure from a loading spike. A different map is useful, not mandatory.
+  failure from a loading spike. Whatever map is offered counts, including a repeat.
 - Confirm manually opened AAR/Options keep their position and contents fit.
 
 ## Decision after two games
 
+Collection is complete after at most two games regardless of which maps appeared.
+Completion of collection is separate from whether an observed check passed.
 No open-ended match grind. A repeated defect becomes a deterministic replay or
 instrumented reproduction. An unobserved scenario stays explicitly unverified
-and requires a targeted test or restricted feature scope; it does not become PASS.
+and requires an engineering-owned targeted test or restricted feature scope;
+it does not become PASS and does not require you to queue for a particular map.
 Timing correctness is already tested offline with long uptime and event bursts.
 
 Live CPU goals remain P95 <2 ms and routine max <4 ms. Memory target is 25 MB,

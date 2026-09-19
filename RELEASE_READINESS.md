@@ -22,8 +22,22 @@ installed trees match their archives with zero differences. Receipt:
 `artifacts/alpha26-install-20260919/DEPLOYMENT.json`. Previous files and KWR
 SavedVariables are recoverable from `artifacts/alpha26-backup-20260919`.
 The 2 ms P95, 4 ms routine maximum and 32 MB hard memory goals are unchanged;
-alpha26 has no live performance result yet. See
+alpha26 now has live performance failures: strategic P95 22.415/33.962 ms,
+tactical P95 6.087/7.095 ms and sampled memory peaks 35.83/38.12 MB. The supplied
+Silvershard verification binds to the installed alpha26 candidate; the standalone
+NODE telemetry has no embedded build ID. Both reports record zero runtime errors.
+See `docs/evidence/ALPHA26_RANDOM_RATED_2026-09-19.md` and
 [the bounded field checklist](docs/ALPHA26_FIELD_CHECKLIST.md).
+
+The owner's alpha26 collection uses at most two randomly offered rated
+battlegrounds; any map or repeated map counts. No flag/base-defense map or specific
+mechanic is a prerequisite. Missing mechanics are NOT_OBSERVED/NOT_APPLICABLE,
+not a failed session and not a fabricated pass. After two games, engineering owns
+remaining replay/targeted reproduction or scope decisions. This completes the
+bounded field collection without claiming every map family has live certification.
+The supplied NODE/CART captures already establish repeat CPU/memory failures;
+do not request further random games to establish them or to obtain a flag map.
+The next step is engineering profiling/reproduction, not release promotion.
 
 Existing compact lower-right field safeguards, contained setup/options layouts,
 complete manual copying and plain-language roles remain. Retired cursor/player

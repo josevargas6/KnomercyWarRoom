@@ -6,6 +6,7 @@
     "schemaVersion",
     "generatedAt",
     "candidateVersion",
+    "fieldTestPolicy",
     "blockingDefects",
     "recommendedSessions",
     "liveOnlyGates"
