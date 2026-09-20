@@ -113,10 +113,16 @@ function Optimizer:Optimize(localState, problems, snapshot)
 
     local candidateSets = {}
     local rejected = {}
+    local friendlyStates = {}
     for _, problem in ipairs(problemRows) do
         local set = {}
         for _, player in ipairs(localState and localState.friendlies or {}) do
-            local friendly = KWR.FriendlyRoleState:Build(player)
+            -- Availability/profile are actor facts, not problem-specific work.
+            local friendly = friendlyStates[player]
+            if not friendly then
+                friendly = KWR.FriendlyRoleState:Build(player)
+                friendlyStates[player] = friendly
+            end
             if friendly.available == true then
                 local feasibility = KWR.AssignmentFeasibility:Evaluate(player, {
                     targetLocation = problem.targetLocation or problem.objectiveLocation,

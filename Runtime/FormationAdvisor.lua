@@ -403,8 +403,8 @@ local function formationSignature(snapshot)
             KWR.Util:Text(player.classFile, "UNKNOWN", 24),
             KWR.Util:Text(player.spec, "Unknown", 48),
             KWR.Util:Text(player.role, "NONE", 16),
-            player.dead == true and "DEAD" or "ALIVE",
-            player.connected == false and "OFFLINE" or "ONLINE",
+            KWR.Util:Text(player.heroTalent, "", 48),
+            KWR.Util:Text(player.specSource, "", 48),
         }, ":")
     end
     table.sort(parts)
@@ -418,7 +418,8 @@ end
 
 function FormationAdvisor:Evaluate(snapshot)
     local signature = formationSignature(snapshot)
-    if self.cache and self.cache.signature == signature then
+    local patch = KWR.PatchData:Get()
+    if self.cache and self.cache.signature == signature and self.cache.patch == patch then
         self.cacheHits = self.cacheHits + 1
         return KWR.Util:Copy(self.cache.result)
     end
@@ -590,6 +591,7 @@ function FormationAdvisor:Evaluate(snapshot)
         reason = reason,
     }
     self.cache = {
+        patch = patch,
         signature = signature,
         result = KWR.Util:Copy(result),
     }

@@ -355,6 +355,11 @@ local function containsMap(comp, mapKey)
     return false
 end
 
+-- Reviewed composition definitions are module-owned static data. Compile their
+-- spec counts once; a score tick must not rebuild the same lookup tables.
+local TIER_SPEC_COUNTS = {}
+for _, comp in ipairs(TIER_COMPS) do TIER_SPEC_COUNTS[comp] = countSpecs(comp.specs) end
+
 local function tierWeight(tier)
     return TIER_ORDER[tier] or 0
 end
@@ -368,47 +373,52 @@ function Compositions:MatchTier(roster, mapKey)
     local known = 0
     for _, count in pairs(actual) do known = known + count end
     if known == 0 then return nil end
-    local best
+    local best, bestMatched, bestMapFit
     for _, comp in ipairs(TIER_COMPS) do
-        local wanted = countSpecs(comp.specs)
-        local matched, missing = 0, {}
+        local wanted = TIER_SPEC_COUNTS[comp]
+        local matched = 0
         for key, count in pairs(wanted) do
             local have = actual[key] or 0
             matched = matched + math.min(have, count)
-            if have < count then
-                missing[#missing + 1] = key .. (count - have > 1 and (" x" .. (count - have)) or "")
-            end
         end
-        local score = matched / #comp.specs
         local mapFit = not mapKey or mapKey == "WORLD" or containsMap(comp, mapKey)
-        local candidate = {
-            id = comp.id,
-            tier = comp.tier,
-            name = comp.name,
-            win = comp.win,
-            assignments = comp.assignments,
-            counter = comp.counter,
-            maps = KWR.Util:Copy(comp.maps),
-            source = comp.source,
-            matched = matched,
-            known = known,
-            total = #comp.specs,
-            score = score,
-            mapFit = mapFit,
-            missing = missing,
-            exact = #roster == #comp.specs and known == #comp.specs and matched == #comp.specs,
-        }
-        candidate.qualified = #roster == #comp.specs and known >= 8 and score >= 0.8
-        candidate.confidence = candidate.exact and "EXACT"
-            or (candidate.qualified and "LIKELY" or "PARTIAL")
-        if not best or candidate.matched > best.matched
-            or (candidate.matched == best.matched and candidate.mapFit and not best.mapFit)
-            or (candidate.matched == best.matched and candidate.mapFit == best.mapFit
-                and candidate.id < best.id) then
-            best = candidate
+        if not best or matched > bestMatched
+            or (matched == bestMatched and mapFit and not bestMapFit)
+            or (matched == bestMatched and mapFit == bestMapFit and comp.id < best.id) then
+            best, bestMatched, bestMapFit = comp, matched, mapFit
         end
     end
-    return best
+    if not best then return nil end
+    local missing = {}
+    for key, count in pairs(TIER_SPEC_COUNTS[best]) do
+        local have = actual[key] or 0
+        if have < count then
+            missing[#missing + 1] = key .. (count - have > 1 and (" x" .. (count - have)) or "")
+        end
+    end
+    local comp, matched, mapFit = best, bestMatched, bestMapFit
+    local score = matched / #comp.specs
+    local candidate = {
+        id = comp.id,
+        tier = comp.tier,
+        name = comp.name,
+        win = comp.win,
+        assignments = comp.assignments,
+        counter = comp.counter,
+        maps = KWR.Util:Copy(comp.maps),
+        source = comp.source,
+        matched = matched,
+        known = known,
+        total = #comp.specs,
+        score = score,
+        mapFit = mapFit,
+        missing = missing,
+        exact = #roster == #comp.specs and known == #comp.specs and matched == #comp.specs,
+    }
+    candidate.qualified = #roster == #comp.specs and known >= 8 and score >= 0.8
+    candidate.confidence = candidate.exact and "EXACT"
+        or (candidate.qualified and "LIKELY" or "PARTIAL")
+    return candidate
 end
 
 function Compositions:TierAll()

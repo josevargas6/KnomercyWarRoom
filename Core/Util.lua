@@ -203,7 +203,12 @@ function Util:Copy(source)
     end
     local target = {}
     for key, value in pairs(source) do
-        target[key] = self:Copy(value)
+        -- Scalars already have value semantics; recurse only into owned tables.
+        if type(value) == "table" then
+            target[key] = self:Copy(value)
+        else
+            target[key] = value
+        end
     end
     return target
 end

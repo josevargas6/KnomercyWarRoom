@@ -1,4 +1,17 @@
-# Release Readiness - 6.1.1-alpha.26
+# Release Readiness - 6.1.1-alpha.27
+
+## Alpha27 engineering repair — 2026-09-20
+
+Candidate `alpha27-bounded-runtime-projections-20260920-1` removes redundant
+publication copies and repeated derived work. Instrumented host NODE/CART traces
+show 43.5%/42.2% less elapsed CPU and 58.3%/58.0% fewer copied tables than alpha26;
+all 20 decision records per workload match. This is not Retail timing or measured
+memory certification. Publication projection is now included in runtime duration;
+notification/UI, communications and audio remain outside that measurement.
+See `docs/adr/ADR-035-bounded-runtime-projections.md`. Existing random-map,
+two-game collection policy is unchanged. No stable release approval is implied.
+
+## Previous candidate evidence
 
 ## Current operational truth — 2026-09-19
 

@@ -85,6 +85,8 @@ function EncounterHistory:Prune(now)
         return a.key < b.key
     end)
     for index = self.maxPlayers + 1, #rows do players[rows[index].key] = nil end
+    self.lastPruneAt = now
+    self.pruneRequired = false
 end
 
 function EncounterHistory:Find(entity)
@@ -140,6 +142,9 @@ function EncounterHistory:Observe(entity, team, mapKey, currentSeason, now)
         KWR.db.encounters.players[storedKey] = nil
     end
     KWR.db.encounters.players[identity] = nextRecord
+    if not storedKey or storedKey ~= identity or not previous.identityKey then
+        self.pruneRequired = true
+    end
     return nextRecord
 end
 
@@ -171,6 +176,7 @@ function EncounterHistory:Enrich(snapshot)
     if self.sessionKey ~= sessionKey then
         self.sessionKey = sessionKey
         self.sessionSeen = {}
+        self.pruneRequired = true
     end
     local currentSeason, now = season(), stamp()
     for _, player in ipairs(snapshot.roster or {}) do self:Apply(player, currentSeason) end
@@ -185,7 +191,13 @@ function EncounterHistory:Enrich(snapshot)
             self:Observe(enemy, "ENEMY", snapshot.context.mapKey, currentSeason, now)
         end
     end
-    self:Prune(now)
+    -- Spec enrichment is per refresh; sorting the whole persistent history is
+    -- not. New identities enforce capacity immediately, aging is checked once
+    -- per five seconds (and immediately if the wall clock moves backwards).
+    if self.pruneRequired or not self.lastPruneAt or now < self.lastPruneAt
+        or now - self.lastPruneAt >= 5 then
+        self:Prune(now)
+    end
     return snapshot
 end
 

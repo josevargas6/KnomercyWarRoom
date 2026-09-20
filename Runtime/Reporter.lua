@@ -380,6 +380,7 @@ function Reporter:ObjectiveETAs(snapshot)
     local result = {}
     if not objectiveEvidenceFresh(snapshot) then return result end
     local mapKey = snapshot.context and snapshot.context.mapKey
+    local movement = {}
     for _, objective in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         local x, y = KWR.Util:Number(objective.x, nil), KWR.Util:Number(objective.y, nil)
         if x and y then
@@ -402,7 +403,13 @@ function Reporter:ObjectiveETAs(snapshot)
                             and (track.age or 999) <= 10
                         local range = track.x and track.y
                             and distance(track.x, track.y, x, y) or nil
-                        local speed, source = travelSpeed(track)
+                        local motion = movement[track]
+                        if not motion then
+                            local speed, source = travelSpeed(track)
+                            motion = { speed = speed, source = source }
+                            movement[track] = motion
+                        end
+                        local speed, source = motion.speed, motion.source
                         local eta = range and math.ceil(range / math.max(speed, 0.001)) or nil
                         local etaSource = positionObserved and source == "OBSERVED"
                             and "OBSERVED_POSITION_SPEED" or "ESTIMATED_POSITION_OR_SPEED"

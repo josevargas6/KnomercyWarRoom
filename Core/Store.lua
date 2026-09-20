@@ -18,25 +18,41 @@ KWR.Store = Store
 local NOTIFY_BATCH_SIZE = 8
 local NOTIFY_BUDGET_MS = 1.5
 
+local function shallowCopy(source)
+    local result = {}
+    for key, value in pairs(source) do result[key] = value end
+    return result
+end
+
 local function reconcileBranch(previousValue, nextValue)
-    if previousValue ~= nil and KWR.Util:DeepEqual(previousValue, nextValue) then
-        return previousValue
+    if previousValue == nextValue then return previousValue end
+    if type(nextValue) ~= "table" then return nextValue end
+    if type(previousValue) ~= "table" then return KWR.Util:Copy(nextValue) end
+    -- Reconcile before allocating, not after copying the entire snapshot.
+    -- Only changed paths acquire owned tables; equal immutable branches retain
+    -- identity. Never retain a producer's mutable input table on a changed path.
+    local target
+    for key, value in pairs(nextValue) do
+        local owned = reconcileBranch(previousValue[key], value)
+        if owned ~= previousValue[key] then
+            target = target or shallowCopy(previousValue)
+            target[key] = owned
+        end
     end
-    return nextValue
+    for key in pairs(previousValue) do
+        if nextValue[key] == nil then
+            target = target or shallowCopy(previousValue)
+            target[key] = nil
+        end
+    end
+    return target or previousValue
 end
 
 local function reconcileSnapshot(previousSnapshot, nextSnapshot)
     if type(nextSnapshot) ~= "table" then
         return nextSnapshot
     end
-    previousSnapshot = type(previousSnapshot) == "table" and previousSnapshot or {}
-    local keys = {}
-    for key in pairs(previousSnapshot) do keys[key] = true end
-    for key in pairs(nextSnapshot) do keys[key] = true end
-    for key in pairs(keys) do
-        nextSnapshot[key] = reconcileBranch(previousSnapshot[key], nextSnapshot[key])
-    end
-    return nextSnapshot
+    return reconcileBranch(previousSnapshot, nextSnapshot)
 end
 
 local function defaults()
@@ -449,26 +465,28 @@ function Store:FlushNotifications()
     end
 end
 
-function Store:Publish(snapshot, prediction, assignments, command, diagnostics)
+function Store:Publish(snapshot, prediction, assignments, command, diagnostics, finalizeDiagnostics)
     local previous = self:Get()
-    -- Producers retain and mutate their working tables on later stages. Make
-    -- publication own every incoming branch before reconciliation can reuse a
-    -- proven-equal branch from the prior immutable state.
-    snapshot = reconcileSnapshot(previous.snapshot, KWR.Util:Copy(snapshot or {}))
-    prediction = KWR.Util:Copy(prediction or {})
-    assignments = KWR.Util:Copy(assignments or {})
-    command = KWR.Util:Copy(command or {})
-    diagnostics = KWR.Util:Copy(diagnostics or previous.diagnostics or {})
+    -- Producers can mutate their working tables later; reconciliation owns
+    -- changed paths and reuses only branches from the previous published state.
+    snapshot = reconcileSnapshot(previous.snapshot, snapshot or {})
+    prediction = reconcileBranch(previous.prediction, prediction or {})
+    assignments = reconcileBranch(previous.assignments, assignments or {})
+    command = reconcileBranch(previous.command, command or {})
+    -- Runtime timing includes snapshot ownership/reconciliation. Finalize before
+    -- notification so subscribers receive complete diagnostics with the state.
+    if finalizeDiagnostics then diagnostics = finalizeDiagnostics() or diagnostics end
+    diagnostics = reconcileBranch(previous.diagnostics, diagnostics or previous.diagnostics or {})
     local activePlay = type(command) == "table" and command.activePlay or nil
     local nextState = {
         revision = (previous.revision or 0) + 1,
         capturedAt = KWR.Util:Now(),
         snapshot = snapshot,
-        prediction = reconcileBranch(previous.prediction, prediction),
-        assignments = reconcileBranch(previous.assignments, assignments),
-        command = reconcileBranch(previous.command, command),
+        prediction = prediction,
+        assignments = assignments,
+        command = command,
         activePlay = reconcileBranch(previous.activePlay, activePlay),
-        diagnostics = reconcileBranch(previous.diagnostics, diagnostics),
+        diagnostics = diagnostics,
         mode = snapshot and snapshot.context and snapshot.context.preview and "PREVIEW" or "LIVE",
     }
     self.state = nextState

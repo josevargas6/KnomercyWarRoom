@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet("All", "Smoke", "Soak", "Replay", "Sentinel", "DevTools", "Host", "Card")]
+    [ValidateSet("All", "Smoke", "Soak", "Replay", "Sentinel", "DevTools", "Host", "Card", "Profile")]
     [string]$Suite = "All",
     [string]$ReplayPath = "tests/replays/twin_peaks_recovery_sample.json",
     [string]$ReplayLabelPath,
@@ -283,6 +283,12 @@ try {
         Invoke-LuaCheck -Runtime $runtime -Arguments @('tests/host-performance.lua') `
             -ExpectedMarker 'KWR_HOST_BENCHMARK_PASS' -Name 'measured host refresh'
         $completedStages.Add('host')
+    }
+
+    if ($Suite -eq 'Profile') {
+        Invoke-LuaCheck -Runtime $runtime -Arguments @('tests/runtime-profile.lua') `
+            -ExpectedMarker 'KWR_RUNTIME_PROFILE_PASS' -Name 'instrumented host attribution'
+        $completedStages.Add('profile')
     }
 
     if ($Suite -eq 'Card') {

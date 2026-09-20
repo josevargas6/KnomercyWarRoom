@@ -1,5 +1,13 @@
 # Changelog
 
+- Bounded-runtime candidate `alpha27-bounded-runtime-projections-20260920-1`:
+  replaces copy-then-compare publication with isolated structural sharing;
+  bounds repeated roster summaries, history pruning, actor profiles and movement
+  estimates; materializes only the winning composition. Runtime duration now
+  includes state projection before notification. Deterministic NODE/CART traces
+  preserve decisions with less host CPU and copying. Retail CPU and sampled peak
+  memory certification remain pending; no thresholds were raised.
+
 - Runtime ownership candidate `alpha26-runtime-clock-ownership-20260919-1`:
   fixes relative-versus-absolute play deadlines and aging retained countdowns;
   retains issued assignments with the call, honors explicit commander overrides,

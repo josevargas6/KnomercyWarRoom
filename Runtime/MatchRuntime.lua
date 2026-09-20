@@ -652,17 +652,18 @@ function Runtime:RefreshTactical(reason)
         self.diagnostics.lastTacticalReason = reason or "tactical"
         incrementCounter(self.diagnostics.tacticalRefreshReasons,
             reason or "tactical")
-        if started > 0 and type(debugprofilestop) == "function" then
-            recordTacticalDuration(self,
-                math.max(0, debugprofilestop() - started))
-        end
         self.lastTacticalRefreshAt = KWR.Util:Now()
         KWR.Store:Publish(
             snapshot,
             state.prediction,
             state.assignments,
             state.command,
-            KWR.Util:Copy(self.diagnostics))
+            self.diagnostics, function()
+                if started > 0 and type(debugprofilestop) == "function" then
+                    recordTacticalDuration(self, math.max(0, debugprofilestop() - started))
+                end
+                return self.diagnostics
+            end)
         if strategicTruthChanged
             and ((self.diagnostics.events or 0) < 500
                 or KWR.Util:Now() - (self.lastTacticalEscalationAt or 0)
@@ -1009,42 +1010,49 @@ function Runtime:Refresh(reason)
         self.diagnostics.lastReason = reason or "refresh"
         incrementCounter(self.diagnostics.strategicRefreshReasons,
             reason or "refresh")
-        if started > 0 and type(debugprofilestop) == "function" then
-            local duration = math.max(0, debugprofilestop() - started)
-            self.diagnostics.lastDurationMs = duration
-            self.diagnostics.maxDurationMs = math.max(self.diagnostics.maxDurationMs or 0, duration)
-            self.durationSamples[#self.durationSamples + 1] = duration
-            if reason == "PLAYER_ENTERING_WORLD" or reason == "ZONE_CHANGED_NEW_AREA"
-                or reason == "login" then
-                self.diagnostics.transitionRefreshes = (self.diagnostics.transitionRefreshes or 0) + 1
-                self.diagnostics.lastTransitionDurationMs = duration
+        local publicationStarted = profileStages and debugprofilestop() or 0
+        local function finalizeDiagnostics()
+            recordStage(self, "Publish", publicationStarted)
+            if started > 0 and type(debugprofilestop) == "function" then
+                local duration = math.max(0, debugprofilestop() - started)
+                self.diagnostics.lastDurationMs = duration
+                self.diagnostics.maxDurationMs = math.max(self.diagnostics.maxDurationMs or 0, duration)
+                self.durationSamples[#self.durationSamples + 1] = duration
+                if reason == "PLAYER_ENTERING_WORLD" or reason == "ZONE_CHANGED_NEW_AREA"
+                    or reason == "login" then
+                    self.diagnostics.transitionRefreshes = (self.diagnostics.transitionRefreshes or 0) + 1
+                    self.diagnostics.lastTransitionDurationMs = duration
+                end
+                while #self.durationSamples > (self.maxDurationSamples or 120) do
+                    table.remove(self.durationSamples, 1)
+                end
+                self.diagnostics.durationSampleCount = #self.durationSamples
+                if self.diagnostics.refreshes % 10 == 0 then
+                    local metrics = timingMetrics(self.durationSamples)
+                    self.diagnostics.averageDurationMs = metrics.average
+                    self.diagnostics.p50DurationMs = metrics.p50
+                    self.diagnostics.p95DurationMs = metrics.p95
+                    self.diagnostics.p99DurationMs = metrics.p99
+                    self.diagnostics.maxDurationMs = metrics.max
+                    local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.Sample
+                        and KWR.MemoryBudget:Sample(nil, false) or nil
+                    self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
+                        and (memoryMB * 1024) or 0
+                    self.diagnostics.memorySampleAt = KWR.MemoryBudget and KWR.MemoryBudget.lastMeasuredAt
+                end
             end
-            while #self.durationSamples > (self.maxDurationSamples or 120) do
-                table.remove(self.durationSamples, 1)
-            end
-            self.diagnostics.durationSampleCount = #self.durationSamples
-            if self.diagnostics.refreshes % 10 == 0 then
-                local metrics = timingMetrics(self.durationSamples)
-                self.diagnostics.averageDurationMs = metrics.average
-                self.diagnostics.p50DurationMs = metrics.p50
-                self.diagnostics.p95DurationMs = metrics.p95
-                self.diagnostics.p99DurationMs = metrics.p99
-                self.diagnostics.maxDurationMs = metrics.max
-                local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.Sample
-                    and KWR.MemoryBudget:Sample(nil, false) or nil
-                self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
-                    and (memoryMB * 1024) or 0
-                self.diagnostics.memorySampleAt = KWR.MemoryBudget and KWR.MemoryBudget.lastMeasuredAt
-            end
+            return self.diagnostics
         end
         self.lastRefreshAt = KWR.Util:Now()
         self.lastStrategicRefreshAt = self.lastRefreshAt
         self.lastTacticalStrategicSignature = tacticalStrategicSignature(snapshot)
         if KWR.Store and KWR.Store.Publish then
             local published = KWR.Store:Publish(
-                snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
+                snapshot, prediction, assignments, command, self.diagnostics, finalizeDiagnostics)
             if KWR.CommandAudio then KWR.CommandAudio:Observe(published) end
             if KWR.CommanderComm then KWR.CommanderComm:Relay(published) end
+        else
+            finalizeDiagnostics()
         end
     end, runtimeErrorHandler)
     if not ok then

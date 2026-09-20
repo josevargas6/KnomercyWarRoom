@@ -1822,9 +1822,14 @@ do
     formationSnapshot.roster[1].dead = false
     formationSnapshot.context.isBlitz = true
     KWR.FormationAdvisor:Evaluate(formationSnapshot)
-    assert(KWR.FormationAdvisor.cacheHits >= 3
-        and KWR.FormationAdvisor.cacheMisses == 4,
-        "Formation cache did not reuse identical truth or invalidate on connection changes.")
+    assert(KWR.FormationAdvisor.cacheHits >= 5
+        and KWR.FormationAdvisor.cacheMisses == 2,
+        "Formation rebuilt static composition on death/connectivity or ignored bracket changes.")
+    formationSnapshot.roster[1].specSource = "historical"
+    local historicalFormation = KWR.FormationAdvisor:Evaluate(formationSnapshot)
+    assert(KWR.FormationAdvisor.cacheMisses == 3
+        and historicalFormation.summary.likelySpecs == 1,
+        "Formation cache failed to invalidate changed specialization provenance.")
 end
 do
     local blitzFormation = KWR.FormationAdvisor:Evaluate({
@@ -8813,6 +8818,7 @@ assert(loadfile(ResolveTestPath("tests/fixtures/store_ownership.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/learning_episodes.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/aar_retention.lua")))()(KWR)
 assert(loadfile(ResolveTestPath("tests/fixtures/runtime_ownership.lua")))()(KWR)
+assert(loadfile(ResolveTestPath("tests/fixtures/runtime_projection_cost.lua")))()(KWR)
 if KWR.Diagnostics and type(KWR.Diagnostics.Run) == "function" then
     result = KWR.Diagnostics:Run()
     if result.failed > 0 then

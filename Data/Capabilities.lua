@@ -326,7 +326,32 @@ function Capabilities:Count()
     return count
 end
 
+local summaryCache = {}
+local summaryPatch
+local SUMMARY_FIELDS = { "classFile", "spec", "heroTalent", "role", "specSource" }
+
+local function summaryKey(roster)
+    local parts = {}
+    for _, player in ipairs(roster or {}) do
+        for _, field in ipairs(SUMMARY_FIELDS) do
+            local value = KWR.Util:Text(player[field], "", 96)
+            parts[#parts + 1] = #value .. ":" .. value
+        end
+    end
+    return table.concat(parts)
+end
+
 function Capabilities:Summarize(roster)
+    local patch = KWR.PatchData:Get()
+    if summaryPatch ~= patch then
+        summaryCache, summaryPatch = {}, patch
+    end
+    local signature = summaryKey(roster)
+    for _, cached in ipairs(summaryCache) do
+        if cached.signature == signature then
+            return KWR.Util:Copy(cached.result)
+        end
+    end
     local summary = {
         players = 0, tanks = 0, healers = 0, damage = 0,
         melee = 0, ranged = 0, knownSpecs = 0, provisional = 0,
@@ -374,6 +399,10 @@ function Capabilities:Summarize(roster)
     summary.confidence = summary.knownSpecs == 0 and "UNKNOWN"
         or ((summary.confirmedSpecs or 0) == summary.players and "CONFIRMED"
         or (summary.coverage >= 0.8 and "LIKELY" or "ESTIMATED"))
+    -- Four roster compositions, not a per-player or per-match history. Results
+    -- remain caller-owned so downstream annotations cannot poison the cache.
+    if #summaryCache >= 4 then table.remove(summaryCache, 1) end
+    summaryCache[#summaryCache + 1] = { signature = signature, result = KWR.Util:Copy(summary) }
     return summary
 end
 
