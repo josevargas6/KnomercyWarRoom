@@ -1,14 +1,14 @@
 {
     "schema":  "kwr-field-test-readiness",
     "schemaVersion":  1,
-    "generatedAt":  "2026-09-19T18:24:32Z",
+    "generatedAt":  "2026-09-20T05:51:04Z",
     "candidate":  {
                       "addon":  "Knomercy War Room",
-                      "version":  "6.1.1-alpha.26",
-                      "candidateID":  "alpha26-runtime-clock-ownership-20260919-1",
-                      "build":  "6.1.1-alpha.26",
-                      "evidenceBaseline":  "6.1.1-alpha.26",
-                      "date":  "2026-09-19"
+                      "version":  "6.1.1-alpha.27",
+                      "candidateID":  "alpha27-bounded-runtime-projections-20260920-1",
+                      "build":  "6.1.1-alpha.27",
+                      "evidenceBaseline":  "6.1.1-alpha.27",
+                      "date":  "2026-09-20"
                   },
     "offlineStatus":  {
                           "supportedMaps":  10,
@@ -29,9 +29,9 @@
                           "deterministicLuaRuntimeAvailable":  true,
                           "candidateSourceBound":  false,
                           "candidateArtifactVerified":  true,
-                          "candidateArtifactSha256":  "89DDEEE6216741C1B19B0F6ABF9676A19DE1FF564C46FA2A567565A2D4FE74AA",
-                          "candidateCommit":  "2a8c260ae9d838492d957179f2ac1d400999bed4",
-                          "currentCommit":  "2a8c260ae9d838492d957179f2ac1d400999bed4",
+                          "candidateArtifactSha256":  "E3785C99DF89347406064A8885B68D582F2017FE124E745C89F876F6DD485ADF",
+                          "candidateCommit":  "834868202d4dbf487c544556dac4903bdf76e985",
+                          "currentCommit":  "834868202d4dbf487c544556dac4903bdf76e985",
                           "currentGitDirty":  true,
                           "gateEvidence":  [
                                                "knowledge/candidate-package-report.json",

@@ -11,6 +11,16 @@ notification/UI, communications and audio remain outside that measurement.
 See `docs/adr/ADR-035-bounded-runtime-projections.md`. Existing random-map,
 two-game collection policy is unchanged. No stable release approval is implied.
 
+Alpha27 is installed with matching Sentinel and separate Developer Tools from
+clean runtime commit `8348682`. Full source tests, validation, knowledge audit,
+extracted-package smoke/soak and reproducibility checks passed. Deployment receipt
+`artifacts/alpha27-install-20260920/DEPLOYMENT.json` confirms zero file differences
+for all three addons. Backup: `artifacts/alpha27-backup-20260920` (including four
+saved-variable files and a verified restore rehearsal). The strict generated
+public-release eligibility report remains false; this installation is explicitly
+an owner-authorized diagnostic candidate, not CurseForge release certification.
+The current owner checklist is `docs/ALPHA27_FIELD_CHECKLIST.md`.
+
 ## Previous candidate evidence
 
 ## Current operational truth — 2026-09-19
