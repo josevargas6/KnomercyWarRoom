@@ -15,6 +15,7 @@ local Runtime = {
     lastEnemyCaptureAt = 0,
     lastWidgetQueueAt = 0,
     lastPointsQueueAt = 0,
+    lastBattlefieldStatusQueueAt = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -65,6 +66,10 @@ local MAX_CHAINED_FOLLOWUPS = 1
 local STRATEGIC_ESCALATION_DWELL = 1.50
 local ENEMY_CAPTURE_INTERVAL = 1.00
 local ROSTER_PRESENTATION_TIMEOUT = 8
+-- UPDATE_BATTLEFIELD_STATUS is a high-frequency status pulse, not a world
+-- transition. Preserve its newest truth with one trailing refresh instead of
+-- repeatedly scheduling a transition-hydration sweep.
+local BATTLEFIELD_STATUS_REFRESH_INTERVAL = 1.00
 
 local CRITICAL_REFRESH_REASONS = {
     UPDATE_UI_WIDGET = true,
@@ -141,20 +146,17 @@ local function tacticalStrategicSignature(snapshot)
     for _, enemy in ipairs(snapshot and snapshot.enemies or {}) do
         enemies[#enemies + 1] = table.concat({
             KWR.Util:Text(enemy.key or enemy.guid or enemy.name, "unknown", 96),
-            enemy.visible == true and "visible" or "hidden",
-            enemy.localRange == true and "local" or "remote",
-            enemy.localEngaged == true and "engaged" or "idle",
-            KWR.Util:Text(enemy.location, "unknown", 48),
             enemy.dead == true and "dead" or "alive",
             enemy.carrier == true and "carrier" or "none",
         }, ":")
     end
     table.sort(enemies)
     for _, value in ipairs(enemies) do parts[#parts + 1] = value end
-    -- Cast accents are tactical presentation truth.  They are intentionally
-    -- excluded from this signature: a spell start/stop must not rebuild the
-    -- entire objective, strategy, assignment, and command pipeline. The
-    -- tactical publication below still updates the local-fight surface.
+    -- Visibility, local range, engagement, location and casts are tactical
+    -- presentation truth. They intentionally do not rebuild objectives,
+    -- strategy and assignments: the tactical publication below updates the
+    -- local-fight surface. Carrier and death state can materially change the
+    -- battlefield plan, so they retain a bounded escalation path.
     return KWR.Util:Signature(parts)
 end
 
@@ -1238,14 +1240,27 @@ function Runtime:RescanRoster()
     return ok
 end
 
+function Runtime:QueueBattlefieldStatus()
+    local now = KWR.Util:Now()
+    local elapsed = now - (self.lastBattlefieldStatusQueueAt or 0)
+    if elapsed < BATTLEFIELD_STATUS_REFRESH_INTERVAL then
+        self.diagnostics.battlefieldStatusCoalesced =
+            (self.diagnostics.battlefieldStatusCoalesced or 0) + 1
+        self:Queue("UPDATE_BATTLEFIELD_STATUS",
+            BATTLEFIELD_STATUS_REFRESH_INTERVAL - elapsed)
+        return
+    end
+    self.lastBattlefieldStatusQueueAt = now
+    self:Queue("UPDATE_BATTLEFIELD_STATUS", 0.12)
+end
+
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
     incrementCounter(self.diagnostics.eventReasons, event or "unknown")
     appendEventTrace(self, event)
     if event == "PLAYER_ENTERING_WORLD"
         or event == "PLAYER_LEAVING_WORLD"
-        or event == "ZONE_CHANGED_NEW_AREA"
-        or event == "UPDATE_BATTLEFIELD_STATUS" then
+        or event == "ZONE_CHANGED_NEW_AREA" then
         local inPvP = isPvP()
         if not inPvP then
             self:ResetTransientTruth()
@@ -1259,6 +1274,11 @@ function Runtime:HandleEvent(event, ...)
         end
         self:Queue(event, 0.05)
         self:ScheduleTransitionSweep(event, false)
+        return
+    end
+    if event == "UPDATE_BATTLEFIELD_STATUS" then
+        self:UpdateLifecycle()
+        self:QueueBattlefieldStatus()
         return
     end
     if event == "GROUP_ROSTER_UPDATE" then

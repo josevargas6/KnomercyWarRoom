@@ -8022,6 +8022,37 @@ do
     KWR.MatchRuntime.active = savedActive
     scheduled = {}
 end
+do
+    local savedActive = KWR.MatchRuntime.active
+    local savedUpdateLifecycle = KWR.MatchRuntime.UpdateLifecycle
+    local savedTransitionSweep = KWR.MatchRuntime.ScheduleTransitionSweep
+    local sweeps = 0
+    KWR.MatchRuntime.active = true
+    KWR.MatchRuntime.UpdateLifecycle = function() end
+    KWR.MatchRuntime.ScheduleTransitionSweep = function() sweeps = sweeps + 1 end
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.lastBattlefieldStatusQueueAt = currentTime - 0.10
+    KWR.MatchRuntime:HandleEvent("UPDATE_BATTLEFIELD_STATUS")
+    assert(#scheduled == 1 and KWR.MatchRuntime.pending == true
+        and KWR.MatchRuntime.pendingReason == "UPDATE_BATTLEFIELD_STATUS"
+        and sweeps == 0,
+        "Battlefield status pulse scheduled a transition sweep or lost its trailing refresh.")
+    KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
+    KWR.MatchRuntime.pending = false
+    KWR.MatchRuntime.pendingDueAt = nil
+    KWR.MatchRuntime.pendingRevision = nil
+    KWR.MatchRuntime.pendingReason = nil
+    KWR.MatchRuntime.pendingSettle = nil
+    KWR.MatchRuntime.active = savedActive
+    KWR.MatchRuntime.UpdateLifecycle = savedUpdateLifecycle
+    KWR.MatchRuntime.ScheduleTransitionSweep = savedTransitionSweep
+    scheduled = {}
+end
 KWR.MatchRuntime.timerToken = (KWR.MatchRuntime.timerToken or 0) + 1
 KWR.MatchRuntime.pending = false
 KWR.MatchRuntime.pendingDueAt = nil

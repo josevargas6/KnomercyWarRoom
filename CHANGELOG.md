@@ -1,5 +1,12 @@
 # Changelog
 
+- Battlefield-status candidate `alpha28-bounded-battleground-status-20260920-1`:
+  stops `UPDATE_BATTLEFIELD_STATUS` from creating a transition hydration sweep
+  for every pulse. Status bursts now have one bounded trailing refresh. Enemy
+  visibility, range, engagement and location changes stay tactical; carrier and
+  death truth retain strategic escalation. This responds to the alpha27 Twin
+  Peaks live performance failure. Retail performance remains unverified.
+
 - Bounded-runtime candidate `alpha27-bounded-runtime-projections-20260920-1`:
   replaces copy-then-compare publication with isolated structural sharing;
   bounds repeated roster summaries, history pruning, actor profiles and movement

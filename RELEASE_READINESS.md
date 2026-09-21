@@ -1,4 +1,16 @@
-# Release Readiness - 6.1.1-alpha.27
+# Release Readiness - 6.1.1-alpha.28
+
+## Alpha28 live-evidence repair — 2026-09-20
+
+The verified alpha27 Twin Peaks field export established a live failure: 436
+`UPDATE_BATTLEFIELD_STATUS` pulses resulted in 612 strategic refreshes,
+strategic P95 29.133 ms, tactical P95 5.810 ms, and a 40.47 MB sampled peak.
+Alpha28 separates these status pulses from actual world/zone transitions and
+prevents tactical movement/visibility churn from escalating strategic work.
+It is an engineering repair only until a replacement field candidate is built,
+installed after WoW closes, and tested. Alpha27 remains the active installation.
+
+## Previous candidate evidence
 
 ## Alpha27 engineering repair — 2026-09-20
 
