@@ -1,9 +1,9 @@
 {
     "schema":  "kwr-field-blocker-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-09-20T05:51:04Z",
-    "candidateVersion":  "6.1.1-alpha.27",
-    "candidateID":  "alpha27-bounded-runtime-projections-20260920-1",
+    "generatedAt":  "2026-09-21T01:56:16Z",
+    "candidateVersion":  "6.1.1-alpha.28",
+    "candidateID":  "alpha28-bounded-battleground-status-20260920-1",
     "fieldTestPolicy":  {
                             "scope":  "Bounded diagnostic field test; separate from full release certification",
                             "eligibleMaps":  "ANY_RATED_BG",
@@ -21,8 +21,8 @@
                             {
                                 "id":  "LIVE-TEAM-TRUTH",
                                 "priority":  "P1",
-                                "status":  "LIVE_ONLY",
-                                "offlineStatus":  "PASS",
+                                "status":  "OFFLINE_OPEN",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Expanded Team health and specialization provenance",
                                 "liveProofNeeded":  "one live battleground screenshot proving expanded Team health plus compact/expanded HIST agreement",
                                 "bestMap":  "ANY_RATED_BG",
@@ -32,7 +32,7 @@
                                 "id":  "LIVE-STABILITY",
                                 "priority":  "P1",
                                 "status":  "HISTORICAL_UNBOUND_FAILURE",
-                                "offlineStatus":  "PASS",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Command churn and AAR stability reporting",
                                 "liveProofNeeded":  "any rated match with /kwr verify, /kwr perf, and AAR; evaluate observed commands and label insufficient command samples NOT_OBSERVED, not a wrong-map failure",
                                 "bestMap":  "ANY_RATED_BG",
@@ -41,8 +41,8 @@
                             {
                                 "id":  "LIVE-CARRIER-TARGET",
                                 "priority":  "P1",
-                                "status":  "LIVE_ONLY",
-                                "offlineStatus":  "PASS",
+                                "status":  "OFFLINE_OPEN",
+                                "offlineStatus":  "BLOCKED",
                                 "title":  "Raw flag-event prose entering the command-target path",
                                 "liveProofNeeded":  "if a carrier state change occurs naturally, capture its canonical target; otherwise NOT_OBSERVED, without failing the session or requesting another map; retain targeted replay/reproduction coverage separately",
                                 "bestMap":  "ANY_RATED_BG",
@@ -93,7 +93,7 @@
                           "evidence-backed decision quality"
                       ],
     "offlineGate":  {
-                        "status":  "PASS",
+                        "status":  "BLOCKED",
                         "evidence":  [
                                          "knowledge/candidate-package-report.json",
                                          "knowledge/runtime-preflight.json"

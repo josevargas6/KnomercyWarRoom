@@ -4,7 +4,7 @@ title: Bound battlefield-status refresh storms
 owner: Codex
 priority: critical
 risk: high
-status: in_progress
+status: completed
 dependencies: [KWR-336]
 affected_modules: [Runtime/MatchRuntime, Runtime/Sensors]
 authority_references: [AGENTS.md, RELEASE_POLICY.md, RELEASE_READINESS.md]
@@ -48,15 +48,26 @@ WoW is running.
 
 # Acceptance criteria
 
-- [ ] A status pulse schedules no transition sweep.
-- [ ] Burst status truth receives one trailing refresh.
-- [ ] Full regression, soak, validation, knowledge and package checks pass.
-- [ ] Candidate and remaining Retail validation limits are documented.
+- [x] A status pulse schedules no transition sweep.
+- [x] Burst status truth receives one trailing refresh.
+- [x] Full regression, soak, validation, knowledge and package checks pass.
+- [x] Candidate and remaining Retail validation limits are documented.
 
 # Verification
 
 Run deterministic event/queue regression plus full source and extracted-package
 tests. A follow-up field session can use any offered rated battleground.
+
+Completed engineering/deployment evidence: source commit
+`d87d3fbc99619c10530e1fca225842e3a21f24f0`; reproducible build
+`artifacts/alpha28-status-20260920-final`; full deterministic suite and package
+audit passed. `artifacts/alpha28-install-20260920/DEPLOYMENT.json` records
+INSTALLED_VERIFIED with zero differences for Commander, Sentinel and DevTools;
+the restore rehearsal passed and four saved-variable files are backed up under
+`artifacts/alpha28-backup-20260920`.
+
+This completes the targeted repair and diagnostic deployment. Retail timing,
+sampled peak memory, taint and delivery remain separate field-release gates.
 
 # Rollback
 

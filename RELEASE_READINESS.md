@@ -8,7 +8,13 @@ strategic P95 29.133 ms, tactical P95 5.810 ms, and a 40.47 MB sampled peak.
 Alpha28 separates these status pulses from actual world/zone transitions and
 prevents tactical movement/visibility churn from escalating strategic work.
 It is an engineering repair only until a replacement field candidate is built,
-installed after WoW closes, and tested. Alpha27 remains the active installation.
+installed after WoW closes, and tested. Alpha28 was built reproducibly and is
+installed with matching Sentinel and Developer Tools. Receipt:
+`artifacts/alpha28-install-20260920/DEPLOYMENT.json` (zero differences; restore
+rehearsal PASS). Backup: `artifacts/alpha28-backup-20260920`, including four
+saved-variable files. It remains a diagnostic field candidate, not public-release
+certification. Use `docs/ALPHA28_FIELD_CHECKLIST.md` for the bounded follow-up.
+
 
 ## Previous candidate evidence
 
