@@ -10,7 +10,7 @@ Knomercy War Room is a player-controlled Rated Battleground command system for
 World of Warcraft Retail. It turns verified battlefield state into one clear
 next call, assignment, win condition, and abort condition for the team.
 
-The next synchronized Commander candidate is `6.1.1-alpha.12`. It remains
+The next synchronized Commander candidate is `6.1.1-alpha.29`. It remains
 unbound until a clean tagged package, replay gate, and Retail field evidence
 are complete; do not publish versioned candidate copy before that gate clears.
 KWR never auto-casts, changes targets, sends visible chat, or performs
@@ -26,7 +26,7 @@ KWR Sentinel is the compact player execution client for Knomercy War Room. It
 shows commander trust, match state, personal job, movement authority, target
 responsibility, and one hold/win instruction without automating gameplay.
 
-The optional Sentinel companion will version-match the next Commander candidate.
+The optional Sentinel companion `6.1.1-alpha.29` version-matches the next Commander candidate.
 It can receive Commander `KWRSync1` relays from another team member or work as
 a safe standalone fallback when no Commander relay is available.
 
