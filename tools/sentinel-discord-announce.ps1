@@ -28,6 +28,9 @@ if ([string]::IsNullOrWhiteSpace($commanderVersionLine)) {
     throw "Could not determine Commander version from $commanderTocPath."
 }
 $sourceCommanderVersion = ($commanderVersionLine -replace "^## Version:\s*", "").Trim()
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $Version = $sourceVersion
+}
 if ([string]::IsNullOrWhiteSpace($CommanderVersion)) {
     $CommanderVersion = $sourceCommanderVersion
 }
@@ -53,13 +56,19 @@ if (-not $match.Success) {
 
 $message = $match.Groups[1].Value.Trim()
 $commanderVersionPlaceholder = "__KWR_COMMANDER_VERSION__"
-$message = $message.Replace(
-    "Commander $sourceCommanderVersion",
-    "Commander $commanderVersionPlaceholder")
-if (-not [string]::IsNullOrWhiteSpace($Version)) {
-    $message = $message.Replace($sourceVersion, $Version)
+$commanderMention = [regex]::Match($message, 'Commander\s+(\d+(?:\.\d+)*(?:-[A-Za-z0-9.]+)?)')
+if ($commanderMention.Success) {
     $message = $message.Replace(
-        $sourceVersion.ToUpperInvariant().Replace('.', '_').Replace('-', '_'),
+        $commanderMention.Value,
+        "Commander $commanderVersionPlaceholder")
+}
+$sentinelMention = [regex]::Match($message, 'KWR Sentinel\s+(\d+(?:\.\d+)*(?:-[A-Za-z0-9.]+)?)')
+if ($sentinelMention.Success) {
+    # Announcement source copy may predate the TOC. Derive its literal version
+    # from the message itself so a current release never inherits stale links.
+    $message = $message.Replace($sentinelMention.Groups[1].Value, $Version)
+    $message = $message.Replace(
+        $sentinelMention.Groups[1].Value.ToUpperInvariant().Replace('.', '_').Replace('-', '_'),
         $Version.ToUpperInvariant().Replace('.', '_').Replace('-', '_'))
 }
 $message = $message.Replace($commanderVersionPlaceholder, $CommanderVersion)

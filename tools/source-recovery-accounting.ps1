@@ -91,9 +91,9 @@ $accounted = foreach ($row in $rows | Sort-Object addon,path) {
     $currentReview = $currentReviews[$key]
     $baselineApplies = $row.reviewStatus -eq 'reviewed' -and $row.disposition -and $row.disposition -ne 'DEFER' `
         -and (($exists -and $row.sourceSha256 -eq $currentSourceHash) -or (-not $exists -and -not $row.sourceSha256))
-    $currentCandidateStatus = if ($currentEntry -and $currentEntry.state -eq 'MATCH' -and $currentEntry.sourceSha256 -eq $currentSourceHash) {
+    $currentCandidateStatus = if ($exists -and $currentEntry -and $currentEntry.state -eq 'MATCH' -and $currentEntry.sourceSha256 -eq $currentSourceHash) {
         'CURRENT_CANDIDATE_MATCH'
-    } elseif ($currentEntry -and $currentEntry.state -eq 'SOURCE_ONLY' -and $currentReview -and $currentReview.reviewStatus -eq 'reviewed' -and $currentReview.sourceSha256 -eq $currentEntry.sourceSha256) {
+    } elseif ($exists -and $currentEntry -and $currentEntry.state -eq 'SOURCE_ONLY' -and $currentReview -and $currentReview.reviewStatus -eq 'reviewed' -and $currentReview.sourceSha256 -eq $currentEntry.sourceSha256 -and $currentEntry.sourceSha256 -eq $currentSourceHash) {
         'CURRENT_CANDIDATE_REVIEWED_SOURCE_ONLY'
     } elseif (-not $currentEntry -and $exists -and $packageAuditPass -and $releaseExcluded.ContainsKey($path)) {
         'CURRENT_CANDIDATE_RELEASE_EXCLUDED'

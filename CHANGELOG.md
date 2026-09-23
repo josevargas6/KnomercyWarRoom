@@ -4,8 +4,11 @@
   Season 2 PvP hotfixes through September 22 without inventing spec ratings;
   makes automatic premade targets honor a known battleground's map fit; adds an
   advisory Augmentation flag-escort shell; and reuses fresh scoreboard rows on
-  unrelated objective/status pulses. Retail performance, remaining live defects,
-  and public-release eligibility remain unverified.
+  unrelated objective/status pulses. Release automation now renders Sentinel
+  announcements from the template's actual source version and tests historical
+  recovery accounting against the current checkout instead of stale candidate
+  hashes. Retail performance, remaining live defects, and public-release
+  eligibility remain unverified.
 
 - Battlefield-status candidate `alpha28-bounded-battleground-status-20260920-1`:
   stops `UPDATE_BATTLEFIELD_STATUS` from creating a transition hydration sweep

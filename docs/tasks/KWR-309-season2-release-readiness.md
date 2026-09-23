@@ -6,7 +6,7 @@ owner: unassigned
 priority: high
 risk: medium
 dependencies: [live-field-certification, protected-release-workflow]
-affected_modules: [Data/PatchData.lua, Data/Compositions.lua, Runtime/FormationAdvisor.lua, tests/smoke.lua]
+affected_modules: [Data/PatchData.lua, Data/Compositions.lua, Runtime/FormationAdvisor.lua, Runtime/MatchRuntime.lua, tools/sentinel-discord-announce.ps1, tools/source-recovery-accounting.ps1, tests/smoke.lua]
 authority_references: [AGENTS.md, RELEASE_POLICY.md, RELEASE_READINESS.md]
 ---
 
@@ -28,6 +28,7 @@ The patch watch stops at September 4. Automatic target selection treats one extr
 - Prefer a map-compatible automatic target on a known battleground; retain a user-selected target as an explicit choice.
 - Preserve role-balanced, ten-player shells and add an advisory flag-carrier escort build with Augmentation support.
 - Keep release authorization, exact package provenance, and live certification separate from local test readiness.
+- Ensure announcement dry runs substitute independent Commander and Sentinel versions, and release automation contract tests survive unrelated source revisions.
 
 # Non-goals
 
@@ -44,6 +45,7 @@ No SavedVariables schema change. No new live combat API calls. World-context adv
 - [ ] Known-map automatic selection never chooses a map-incompatible shell when a compatible shell is available.
 - [ ] A flag-map Augmentation escort shell is available and not mislabeled as a proven tier.
 - [ ] Relevant Lua, knowledge, package, and release audits pass or report explicit holds.
+- [ ] Protected CI passes; live certification and public publication remain separate gates.
 
 # Verification
 
