@@ -16,19 +16,33 @@ function Assert-True {
 try {
     New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
     $tool = Join-Path $root 'tools\source-recovery-accounting.ps1'
-    $baseline = Join-Path $root 'artifacts\source-install-review-ledger-20260908-live-session.json'
-    foreach ($path in @($tool, $baseline)) {
-        Assert-True (Test-Path -LiteralPath $path -PathType Leaf) "Required P00 evidence is absent: $path"
-    }
-    # Historical r7 candidate hashes are not the current source. Construct a
-    # scoped contract fixture from this checkout instead of letting a new
-    # version make the positive test stale by definition.
+    Assert-True (Test-Path -LiteralPath $tool -PathType Leaf) "Required tool is absent: $tool"
+    # CI must not depend on a local, untracked historical ledger. Build a
+    # deterministic 62-row contract fixture from the current checkout.
     $sourceOnlyPath = 'Core\Diagnostics.lua'
     $releaseExcludedPath = 'UI\ReporterMap.lua'
-    $historical = Get-Content -LiteralPath $baseline -Raw | ConvertFrom-Json
+    $candidates = @(
+        Get-ChildItem -LiteralPath (Join-Path $root 'Core'), (Join-Path $root 'UI'), (Join-Path $root 'Runtime') -Filter '*.lua' -File -Recurse |
+            ForEach-Object { [IO.Path]::GetRelativePath($root, $_.FullName).Replace('/', '\') } |
+            Sort-Object -Unique
+    )
+    Assert-True ($sourceOnlyPath -in $candidates -and $releaseExcludedPath -in $candidates) 'Required source-only or release-excluded fixture file is missing.'
+    $selected = @($sourceOnlyPath, $releaseExcludedPath) + @($candidates | Where-Object { $_ -ne $sourceOnlyPath -and $_ -ne $releaseExcludedPath } | Select-Object -First 60)
+    Assert-True ($selected.Count -eq 62) 'The source recovery fixture needs 62 unique source files.'
+    $baseline = Join-Path $tempRoot 'historical-ledger.json'
+    $historicalRows = @($selected | ForEach-Object {
+        [ordered]@{
+            addon='Commander'; path=$_; sourceSha256=('0' * 64); installedSha256=('1' * 64)
+            reviewStatus='missing'; disposition=$null; recordPath=$null
+        }
+    })
+    [ordered]@{
+        schema='kwr-source-install-review-ledger-report'; schemaVersion=1
+        summary=@{ total=62 }; rows=$historicalRows
+    } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $baseline -Encoding UTF8
     $entries = @{ Commander = @(); Sentinel = @() }
     $reviews = @()
-    foreach ($row in @($historical.rows)) {
+    foreach ($row in $historicalRows) {
         $sourceRoot = if ($row.addon -eq 'Sentinel') { Join-Path $root 'KWRSentinel' } else { $root }
         $sourceFile = Join-Path $sourceRoot $row.path
         if (-not (Test-Path -LiteralPath $sourceFile -PathType Leaf)) { continue }
