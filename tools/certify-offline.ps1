@@ -44,7 +44,14 @@ function Assert-StrictReplayEvidence {
     if (-not $reviewsComplete) { throw 'Replay adjudication review report is incomplete.' }
 }
 
-Invoke-KwrTool 'runtime-preflight.ps1'
+if ($SkipBuild) {
+    # Source-only CI certification must not rewrite the tracked, machine-bound
+    # runtime receipt before the official clean-worktree package build.
+    $preflightOut = Join-Path ([IO.Path]::GetTempPath()) ('kwr-runtime-preflight-' + [guid]::NewGuid().ToString('N') + '.json')
+    Invoke-KwrTool 'runtime-preflight.ps1' @('-OutFile', $preflightOut)
+} else {
+    Invoke-KwrTool 'runtime-preflight.ps1'
+}
 Invoke-KwrTool 'validate.ps1'
 # A new TOC version cannot have a candidate-bound package receipt until the
 # exact archive exists.  Audit durable knowledge first, omitting only the
@@ -52,7 +59,12 @@ Invoke-KwrTool 'validate.ps1'
 Invoke-KwrTool 'knowledge-audit.ps1' @('-AllowGeneratedEvidenceOmission')
 Invoke-KwrTool 'season2-rbg-simulation-audit.ps1'
 Invoke-KwrTool 'test-lua.ps1' @('-Suite', 'All')
-Invoke-KwrTool 'performance-benchmark.ps1'
+if ($SkipBuild) {
+    $benchmarkOut = Join-Path ([IO.Path]::GetTempPath()) ('kwr-offline-benchmark-' + [guid]::NewGuid().ToString('N') + '.json')
+    Invoke-KwrTool 'performance-benchmark.ps1' @('-OutFile', $benchmarkOut)
+} else {
+    Invoke-KwrTool 'performance-benchmark.ps1'
+}
 if (-not $SkipBuild) {
     Invoke-KwrTool 'build.ps1' @('-OutputDirectory', $OutputDirectory, '-IncludeSentinel')
     Assert-StrictReplayEvidence

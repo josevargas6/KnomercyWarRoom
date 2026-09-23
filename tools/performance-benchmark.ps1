@@ -54,7 +54,7 @@ $report = [ordered]@{
     }
     assertions = @('30 real host samples after five warm-up refreshes', 'nearest-rank P50/P95/P99/max ordering', 'no synthetic elapsed costs', 'refresh calls completed successfully')
 }
-$target = Join-Path $root $OutFile
+$target = if ([IO.Path]::IsPathRooted($OutFile)) { [IO.Path]::GetFullPath($OutFile) } else { Join-Path $root $OutFile }
 [IO.File]::WriteAllText($target, (($report | ConvertTo-Json -Depth 6) + [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
 if (-not $pass) { throw "Host benchmark did not produce valid measurements." }
 Write-Output "KWR OFFLINE PERFORMANCE BENCHMARK PASS"
