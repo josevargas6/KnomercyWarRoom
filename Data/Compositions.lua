@@ -279,9 +279,23 @@ local TIER_COMPS = {
             seasonPriority = 19,
             seasonNote = "Early Season 2 watch: only select with real stealth coordination and disciplined defenders.",
         }),
+    tierComp("S2_FLAG_ESCORT_AUG", "S2 WATCH", "Flag Escort / Aug Support",
+        { "DRUID:Guardian", "EVOKER:Preservation", "MONK:Mistweaver", "PRIEST:Discipline",
+          "EVOKER:Augmentation", "DEATHKNIGHT:Unholy", "ROGUE:Subtlety",
+          "HUNTER:Marksmanship", "DRUID:Balance", "WARLOCK:Affliction" },
+        "Keep a mobile carrier alive with healer coverage and Augmentation support while a separate kill group creates the return window.",
+        "Guardian carries; Pres/MW escort; Aug supports the carrier route and timed push; Disc joins offense; Rogue/DK/MM hunt the enemy carrier; Balance/Affliction control approaches.",
+        "Separate the escort from its healers, deny the timed push, and protect the return route.",
+        { "WSG", "TWINPEAKS" }, {
+            source = "USER_REQUESTED_FIELD_THEORY_2026_09_23",
+            metaStatus = "ADVISORY_PRE_LIVE",
+            seasonPriority = 18,
+            seasonNote = "Flag-map theory only. Augmentation support is an assigned job, not a validated Season 2 ranking or an automatic action.",
+        }),
 }
 
 local TIER_ORDER = {
+    ["S2 WATCH"] = 6,
     ["S2 WATCH S"] = 7,
     ["S2 WATCH A"] = 6,
     ["S+"] = 5,

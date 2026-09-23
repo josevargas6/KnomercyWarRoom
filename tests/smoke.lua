@@ -1910,6 +1910,39 @@ do
     assert(KWR.Sensors.scoreboardDirty == true,
         "Scoreboard invalidation did not mark cached team truth dirty.")
 end
+do
+    local originalCapture = KWR.Sensors.Capture
+    local originalPreview = KWR.db.profile.preview
+    KWR.db.profile.preview = false
+    local reuseByReason = {}
+    KWR.Sensors.Capture = function(sensor, message, reuse)
+        local reason = KWR.MatchRuntime.testCaptureReason
+        if reason and reuseByReason[reason] == nil then
+            reuseByReason[reason] = reuse
+        end
+        return originalCapture(sensor, message, reuse)
+    end
+    for _, reason in ipairs({ "AREA_POIS_UPDATED", "UPDATE_BATTLEFIELD_STATUS",
+        "BATTLEGROUND_POINTS_UPDATE", "UPDATE_UI_WIDGET", "UPDATE_BATTLEFIELD_SCORE" }) do
+        KWR.MatchRuntime.testCaptureReason = reason
+        assert(KWR.MatchRuntime:ForceRefresh(reason),
+            "Scoreboard reuse policy refresh failed for " .. reason .. ".")
+    end
+    KWR.MatchRuntime.testCaptureReason = nil
+    KWR.Sensors.Capture = originalCapture
+    KWR.db.profile.preview = originalPreview
+    assert(reuseByReason.AREA_POIS_UPDATED == true
+        and reuseByReason.UPDATE_BATTLEFIELD_STATUS == true
+        and reuseByReason.BATTLEGROUND_POINTS_UPDATE == true
+        and reuseByReason.UPDATE_UI_WIDGET == true
+        and reuseByReason.UPDATE_BATTLEFIELD_SCORE == false,
+        "Objective pulses reread stable scoreboard rows or score changes reused stale rows: "
+            .. tostring(reuseByReason.AREA_POIS_UPDATED) .. "/"
+            .. tostring(reuseByReason.UPDATE_BATTLEFIELD_STATUS) .. "/"
+            .. tostring(reuseByReason.BATTLEGROUND_POINTS_UPDATE) .. "/"
+            .. tostring(reuseByReason.UPDATE_UI_WIDGET) .. "/"
+            .. tostring(reuseByReason.UPDATE_BATTLEFIELD_SCORE))
+end
 assert(KWR.MatchRuntime.frame:IsEventRegistered("UPDATE_UI_WIDGET"),
     "Active events were not registered during initialization.")
 local worldRefreshes = KWR.MatchRuntime.diagnostics.refreshes
@@ -2483,7 +2516,7 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-09-04"
+        and watchlist.effectiveDate == "2026-09-22"
         and string.find(watchlist.sourceURL or "", "24296142", 1, true)
         and #(watchlist.affected or {}) >= 12,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
@@ -2508,6 +2541,30 @@ do
     assert(seasonTwoComp and seasonTwoComp.seasonPriority > 0
         and seasonTwoComp.source == "SEASON_2_EARLY_META_WATCH_2026_08_11",
         "Season 2 formation comp did not retain advisory source provenance.")
+    local escort = KWR.Compositions:FindTier("S2_FLAG_ESCORT_AUG")
+    assert(escort and #escort.specs == 10
+        and escort.metaStatus == "ADVISORY_PRE_LIVE"
+        and escort.specs[5] == "EVOKER:Augmentation",
+        "Flag-map Augmentation escort was missing or presented as validated meta.")
+    local selected = KWR.db.profile.formation.selectedCompID
+    KWR.db.profile.formation.selectedCompID = nil
+    local mapFit = KWR.FormationAdvisor:Evaluate({
+        context = { mapKey = "TEMPLE", inPvP = false },
+        roster = {
+            { classFile = "DRUID", spec = "Guardian", role = "TANK" },
+            { classFile = "PRIEST", spec = "Discipline", role = "HEALER" },
+            { classFile = "MONK", spec = "Mistweaver", role = "HEALER" },
+            { classFile = "EVOKER", spec = "Preservation", role = "HEALER" },
+            { classFile = "DRUID", spec = "Balance", role = "DAMAGER" },
+            { classFile = "ROGUE", spec = "Subtlety", role = "DAMAGER" },
+            { classFile = "ROGUE", spec = "Outlaw", role = "DAMAGER" },
+            { classFile = "HUNTER", spec = "Marksmanship", role = "DAMAGER" },
+            { classFile = "MAGE", spec = "Frost", role = "DAMAGER" },
+        },
+    })
+    KWR.db.profile.formation.selectedCompID = selected
+    assert(mapFit.buildTarget and mapFit.buildTarget.mapFit == true,
+        "Automatic build target selected a shell that does not support the known battleground.")
 end
 do
     for _, mapKey in ipairs({

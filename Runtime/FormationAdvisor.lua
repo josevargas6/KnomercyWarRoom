@@ -295,37 +295,42 @@ local function currentCompRead(tierMatch, archetype)
 end
 
 local function autoBuildTarget(availableComps, roster, mapKey)
-    local actual = existingSpecs(roster)
+    local mapKnown = mapKey ~= nil and mapKey ~= "" and mapKey ~= "WORLD"
+        and mapKey ~= "UNKNOWN"
+    local hasMapFit = false
+    if mapKnown then
+        for _, comp in ipairs(availableComps or {}) do
+            if comp.mapFit == true then
+                hasMapFit = true
+                break
+            end
+        end
+    end
     local best
     for _, comp in ipairs(availableComps or {}) do
-        local wanted = 0
-        local matched = 0
-        for _, token in ipairs(comp.specs or {}) do
-            wanted = wanted + 1
-            local key = tokenKey(token)
-            if key and (actual[key] or 0) > 0 then
-                matched = matched + 1
-                actual[key] = actual[key] - 1
+        -- Never recommend a shell for a different known map merely because
+        -- it matches one more existing spec. Explicit user selection still
+        -- remains possible through resolveBuildTarget above.
+        if not hasMapFit or comp.mapFit == true then
+            local remaining = existingSpecs(roster)
+            local matched = 0
+            for _, token in ipairs(comp.specs or {}) do
+                local key = tokenKey(token)
+                if key and (remaining[key] or 0) > 0 then
+                    matched = matched + 1
+                    remaining[key] = remaining[key] - 1
+                end
+            end
+            local score = (matched * 100) + ((comp.mapCount or 0) * 0.1)
+            if not best or score > best.score
+                or (score == best.score and tostring(comp.id) < tostring(best.id)) then
+                best = {
+                    comp = comp,
+                    matched = matched,
+                    score = score,
+                }
             end
         end
-        for _, token in ipairs(comp.specs or {}) do
-            local key = tokenKey(token)
-            if key and actual[key] ~= nil then
-                actual[key] = actual[key] + math.min(actual[key] >= 0 and 0 or 0, 0)
-            end
-        end
-        local score = (matched * 100)
-            + ((comp.mapFit == true or mapKey == "WORLD") and 20 or 0)
-            + ((comp.mapCount or 0) * 0.1)
-        if not best or score > best.score
-            or (score == best.score and tostring(comp.id) < tostring(best.id)) then
-            best = {
-                comp = comp,
-                matched = matched,
-                score = score,
-            }
-        end
-        actual = existingSpecs(roster)
     end
     return best
 end

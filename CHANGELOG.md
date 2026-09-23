@@ -1,5 +1,12 @@
 # Changelog
 
+- Diagnostic candidate `alpha29-season2-mapfit-20260923-1`: reviews official
+  Season 2 PvP hotfixes through September 22 without inventing spec ratings;
+  makes automatic premade targets honor a known battleground's map fit; adds an
+  advisory Augmentation flag-escort shell; and reuses fresh scoreboard rows on
+  unrelated objective/status pulses. Retail performance, remaining live defects,
+  and public-release eligibility remain unverified.
+
 - Battlefield-status candidate `alpha28-bounded-battleground-status-20260920-1`:
   stops `UPDATE_BATTLEFIELD_STATUS` from creating a transition hydration sweep
   for every pulse. Status bursts now have one bounded trailing refresh. Enemy

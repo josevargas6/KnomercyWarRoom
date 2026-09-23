@@ -206,7 +206,15 @@ end
 
 local function allowsScoreboardReuse(reason)
     reason = tostring(reason or "")
-    return reason == "coalesced-followup" or reason == "settle-refresh"
+    -- Objective/status pulses do not themselves invalidate scoreboard rows.
+    -- UPDATE_BATTLEFIELD_SCORE and roster/spec changes mark the cache dirty;
+    -- Sensors also imposes a 1.5-second age limit. Avoid rereading the full
+    -- scoreboard on each unrelated pulse during a live team fight.
+    return reason == "AREA_POIS_UPDATED"
+        or reason == "UPDATE_BATTLEFIELD_STATUS"
+        or reason == "BATTLEGROUND_POINTS_UPDATE"
+        or reason == "UPDATE_UI_WIDGET"
+        or reason == "coalesced-followup" or reason == "settle-refresh"
         or reason == "INSPECT_READY" or reason == "inspect-ready"
         or reason:find("%-settle$") ~= nil
 end

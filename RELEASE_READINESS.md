@@ -1,4 +1,16 @@
-# Release Readiness - 6.1.1-alpha.28
+# Release Readiness - 6.1.1-alpha.29
+
+## Alpha29 local diagnostic candidate — 2026-09-23
+
+The September 22 official PvP ledger is reflected as an advisory watch, not
+an inferred ladder ranking. Automatic premade selection now requires map fit
+for known battlegrounds, and a theory-only Augmentation flag-escort shell is
+available. A fresh, non-dirty scoreboard may be reused for unrelated public
+objective/status pulses; actual scoreboard changes still invalidate it. The
+source checks are necessary but do not certify Retail CPU/memory, live UI,
+taint, tactical quality, or the remaining field blockers. This is not an
+approved stable public release. KWR-309 records verification and rollback.
+
 
 ## Alpha28 live-evidence repair — 2026-09-20
 
