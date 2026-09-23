@@ -10,7 +10,7 @@ The approved endgame mockups define the product direction. They are not diagnost
 4. **Enemy Tracker** - a dense all-in-one intelligence table with priority, seen age, identity, health when visible, location evidence, readiness fields, and notes.
 5. **Compact combat roster** - Team and Enemy minimize into clean clickable
    class-colored health bars with role symbols and a local kill-target glow.
-6. **Reporter intelligence** - an always-running movement knowledge base used for calls, exposed on demand as the compact Support View with an optional READ/NEXT/FEED drawer or the expanded map-centric report.
+6. **Reporter intelligence** - bounded background evidence used for calls and exposed on the existing Tactical Command Board; native `Shift-M` owns battlefield-map display. The historical Support View does not authorize another live map window.
 7. **Learning loop** - match history, doctrine, evidence-based insights, and an After Action Review form.
 
 ## Non-negotiable principles
@@ -25,7 +25,25 @@ The approved endgame mockups define the product direction. They are not diagnost
   compact-roster target/focus and Objectives quick-call buttons.
 - New capability belongs in a named domain module, not a patch file or duplicate page.
 
-## Alpha 25 mapping
+## Current overhaul contract — 2026-09-04
+
+The vision is one fast, player-controlled command system: a justified win path,
+one team call, named movers/stayers, my job/location, a supported deadline,
+success/abort conditions and a fallback. Local target preference remains distinct
+from an observed kill opportunity. Unknown facts, stale observations and
+unavailable actors cannot become confident execution instructions.
+
+[PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) owns the active sequence and measurable
+acceptance tests. Preserve module ownership and replace weak contracts in
+reviewable stages. Correctness and performance come before additional strategy
+volume or surfaces. [RELEASE_READINESS.md](RELEASE_READINESS.md) owns promotion.
+
+Ten-player organized RBGs are primary; advertised Blitz support requires separate
+verified rules and roster sizing. Preserve native health/names by default;
+icon-only plates are explicit. HUD, board and optional audio share a play
+revision and deadline.
+
+## Historical Alpha 25 mapping
 
 | Mockup surface | Alpha 25 implementation |
 | --- | --- |
@@ -44,5 +62,7 @@ The approved endgame mockups define the product direction. They are not diagnost
 | Minimap launcher | Draggable KWR launcher |
 
 Reporter, Team, Enemy, and combat processing do not depend on page visibility.
-The remaining gap to stable is live in-client validation, not another
-architectural rewrite. Sentinel remains an optional separately packaged path.
+The September 4 audit identifies reproducible correctness defects, source/package
+reconciliation, performance measurement gaps and live verification work. Stable
+readiness requires all of them. Sentinel remains optional and separately packaged,
+with transport off by default until independently verified.

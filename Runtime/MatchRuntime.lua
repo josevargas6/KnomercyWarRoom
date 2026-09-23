@@ -15,6 +15,7 @@ local Runtime = {
     lastEnemyCaptureAt = 0,
     lastWidgetQueueAt = 0,
     lastPointsQueueAt = 0,
+    lastBattlefieldStatusQueueAt = 0,
     ticker = nil,
     lastMessage = "",
     diagnostics = {
@@ -58,9 +59,17 @@ local STRATEGIC_HEARTBEAT_INTERVAL = 15
 local QUIET_TACTICAL_REFRESH_INTERVAL = 0.75
 local EMERGENCY_TACTICAL_REFRESH_INTERVAL = 0.05
 local MAX_CHAINED_FOLLOWUPS = 1
-local STRATEGIC_ESCALATION_DWELL = 0.50
-local ENEMY_CAPTURE_INTERVAL = 0.75
+-- A tactical truth change is useful, but repeatedly rebuilding the entire
+-- strategic pipeline during a large team fight is not.  Keep score/flag
+-- events immediate; let tactical escalation settle long enough to publish
+-- the newest local truth in one strategic pass.
+local STRATEGIC_ESCALATION_DWELL = 1.50
+local ENEMY_CAPTURE_INTERVAL = 1.00
 local ROSTER_PRESENTATION_TIMEOUT = 8
+-- UPDATE_BATTLEFIELD_STATUS is a high-frequency status pulse, not a world
+-- transition. Preserve its newest truth with one trailing refresh instead of
+-- repeatedly scheduling a transition-hydration sweep.
+local BATTLEFIELD_STATUS_REFRESH_INTERVAL = 1.00
 
 local CRITICAL_REFRESH_REASONS = {
     UPDATE_UI_WIDGET = true,
@@ -137,23 +146,17 @@ local function tacticalStrategicSignature(snapshot)
     for _, enemy in ipairs(snapshot and snapshot.enemies or {}) do
         enemies[#enemies + 1] = table.concat({
             KWR.Util:Text(enemy.key or enemy.guid or enemy.name, "unknown", 96),
-            enemy.visible == true and "visible" or "hidden",
-            enemy.localRange == true and "local" or "remote",
-            enemy.localEngaged == true and "engaged" or "idle",
-            KWR.Util:Text(enemy.location, "unknown", 48),
             enemy.dead == true and "dead" or "alive",
             enemy.carrier == true and "carrier" or "none",
         }, ":")
     end
     table.sort(enemies)
     for _, value in ipairs(enemies) do parts[#parts + 1] = value end
-    local priorityCast = snapshot and snapshot.combat
-        and snapshot.combat.priorityCast or {}
-    parts[#parts + 1] = table.concat({
-        KWR.Util:Text(priorityCast.sourceGUID or priorityCast.source, "none", 96),
-        KWR.Util:Text(priorityCast.spellID or priorityCast.name, "none", 64),
-        KWR.Util:Text(priorityCast.response, "none", 32),
-    }, ":")
+    -- Visibility, local range, engagement, location and casts are tactical
+    -- presentation truth. They intentionally do not rebuild objectives,
+    -- strategy and assignments: the tactical publication below updates the
+    -- local-fight surface. Carrier and death state can materially change the
+    -- battlefield plan, so they retain a bounded escalation path.
     return KWR.Util:Signature(parts)
 end
 
@@ -182,7 +185,7 @@ local function runtimeErrorHandler(err)
 end
 
 local function previewAvailable()
-    return KWR.Preview and type(KWR.Preview.Build) == "function"
+    return KWR.BuildInfo and KWR.BuildInfo:HasPreview()
 end
 
 local PREVIEW_RECOMPUTE_REASONS = {
@@ -202,7 +205,29 @@ local function canReusePreview(runtime, reason)
 end
 
 local function allowsScoreboardReuse(reason)
-    return reason == "coalesced-followup" or reason == "settle-refresh"
+    reason = tostring(reason or "")
+    -- Objective/status pulses do not themselves invalidate scoreboard rows.
+    -- UPDATE_BATTLEFIELD_SCORE and roster/spec changes mark the cache dirty;
+    -- Sensors also imposes a 1.5-second age limit. Avoid rereading the full
+    -- scoreboard on each unrelated pulse during a live team fight.
+    return reason == "AREA_POIS_UPDATED"
+        or reason == "UPDATE_BATTLEFIELD_STATUS"
+        or reason == "BATTLEGROUND_POINTS_UPDATE"
+        or reason == "UPDATE_UI_WIDGET"
+        or reason == "coalesced-followup" or reason == "settle-refresh"
+        or reason == "INSPECT_READY" or reason == "inspect-ready"
+        or reason:find("%-settle$") ~= nil
+end
+
+local function tacticalCaptureRequired(reason)
+    -- A cast needs an immediate tactical update, but it does not require a
+    -- fresh full enemy-roster capture. Target/focus/nameplate transitions do;
+    -- those are the events that can change the observed local target itself.
+    return reason == "PLAYER_TARGET_CHANGED"
+        or reason == "PLAYER_FOCUS_CHANGED"
+        or reason == "ARENA_OPPONENT_UPDATE"
+        or reason == "NAME_PLATE_UNIT_ADDED"
+        or reason == "NAME_PLATE_UNIT_REMOVED"
 end
 
 local function clearQueueState(runtime)
@@ -225,16 +250,46 @@ local function recordStage(runtime, name, started)
     runtime.diagnostics.stageMs[name] = math.max(0, debugprofilestop() - started)
 end
 
-local function percentile95(samples)
+local function tacticalSnapshot(currentSnapshot)
+    local snapshot = {}
+    for key, value in pairs(currentSnapshot or {}) do
+        snapshot[key] = value
+    end
+    return snapshot
+end
+
+local function copyTacticalEnemies(enemies)
+    local result = {}
+    for index, enemy in ipairs(enemies or {}) do
+        local copy = {}
+        for key, value in pairs(enemy) do copy[key] = value end
+        if type(enemy.combat) == "table" then
+            copy.combat = {}
+            for key, value in pairs(enemy.combat) do copy.combat[key] = value end
+        end
+        result[index] = copy
+    end
+    return result
+end
+
+local function timingMetrics(samples)
     local ordered, total = {}, 0
     for index, sample in ipairs(samples or {}) do
         ordered[index] = sample
         total = total + sample
     end
     table.sort(ordered)
-    local percentileIndex = math.max(1, math.ceil(#ordered * 0.95))
-    return #ordered > 0 and total / #ordered or 0,
-        ordered[percentileIndex] or 0
+    local count = #ordered
+    local function percentile(fraction)
+        return count > 0 and ordered[math.max(1, math.ceil(count * fraction))] or 0
+    end
+    return {
+        average = count > 0 and total / count or 0,
+        p50 = percentile(0.50),
+        p95 = percentile(0.95),
+        p99 = percentile(0.99),
+        max = count > 0 and ordered[count] or 0,
+    }
 end
 
 local function recordTacticalDuration(runtime, duration)
@@ -249,8 +304,12 @@ local function recordTacticalDuration(runtime, duration)
     end
     diagnostics.tacticalDurationSampleCount = #runtime.tacticalDurationSamples
     if diagnostics.tacticalRefreshes % 10 == 0 then
-        diagnostics.averageTacticalDurationMs, diagnostics.p95TacticalDurationMs =
-            percentile95(runtime.tacticalDurationSamples)
+        local metrics = timingMetrics(runtime.tacticalDurationSamples)
+        diagnostics.averageTacticalDurationMs = metrics.average
+        diagnostics.p50TacticalDurationMs = metrics.p50
+        diagnostics.p95TacticalDurationMs = metrics.p95
+        diagnostics.p99TacticalDurationMs = metrics.p99
+        diagnostics.maxTacticalDurationMs = metrics.max
     end
 end
 
@@ -339,6 +398,7 @@ local function stableIdentityCount(rows)
 end
 
 function Runtime:ResetTransientTruth()
+    if KWR.CountdownState then KWR.CountdownState:Cancel("RUNTIME_RESET") end
     self.lastFriendlyHealthSyncAt = nil
     self.postMatchTruth = nil
     self.rosterPresentation = nil
@@ -548,9 +608,20 @@ function Runtime:RefreshTactical(reason)
 
     local started = type(debugprofilestop) == "function" and debugprofilestop() or 0
     local ok, message = xpcall(function()
-        local snapshot = KWR.Util:Copy(currentSnapshot)
+        -- Tactical work only replaces enemy/combat presentation fields. A
+        -- top-level copy keeps the published strategic snapshot immutable
+        -- while avoiding a full deep copy for every target/cast event.
+        local snapshot = tacticalSnapshot(currentSnapshot)
         local stageStarted = started
-        if KWR.EnemyIntel and KWR.EnemyIntel.Capture then
+        local now = KWR.Util:Now()
+        local reuseEnemyTruth = not tacticalCaptureRequired(reason)
+            and (now - (self.lastEnemyCaptureAt or 0)) < ENEMY_CAPTURE_INTERVAL
+            and type(currentSnapshot.enemies) == "table"
+        if reuseEnemyTruth then
+            snapshot.enemies = copyTacticalEnemies(currentSnapshot.enemies)
+            self.diagnostics.tacticalEnemyReuse =
+                (self.diagnostics.tacticalEnemyReuse or 0) + 1
+        elseif KWR.EnemyIntel and KWR.EnemyIntel.Capture then
             local observed = KWR.EnemyIntel:Capture(
                 snapshot.context,
                 snapshot.roster,
@@ -560,9 +631,9 @@ function Runtime:RefreshTactical(reason)
                 and snapshot.context.team.scoreFaction or nil
             snapshot.enemies = KWR.EnemyIntel:FilterPublishedTruth(
                 snapshot.roster, observed, scoreFaction)
-            self.lastEnemyCaptureAt = KWR.Util:Now()
+            self.lastEnemyCaptureAt = now
         else
-            snapshot.enemies = KWR.Util:Copy(currentSnapshot.enemies or {})
+            snapshot.enemies = copyTacticalEnemies(currentSnapshot.enemies)
         end
         recordStage(self, "TacticalEnemy", stageStarted)
         stageStarted = type(debugprofilestop) == "function" and debugprofilestop() or 0
@@ -591,17 +662,18 @@ function Runtime:RefreshTactical(reason)
         self.diagnostics.lastTacticalReason = reason or "tactical"
         incrementCounter(self.diagnostics.tacticalRefreshReasons,
             reason or "tactical")
-        if started > 0 and type(debugprofilestop) == "function" then
-            recordTacticalDuration(self,
-                math.max(0, debugprofilestop() - started))
-        end
         self.lastTacticalRefreshAt = KWR.Util:Now()
         KWR.Store:Publish(
             snapshot,
             state.prediction,
             state.assignments,
             state.command,
-            KWR.Util:Copy(self.diagnostics))
+            self.diagnostics, function()
+                if started > 0 and type(debugprofilestop) == "function" then
+                    recordTacticalDuration(self, math.max(0, debugprofilestop() - started))
+                end
+                return self.diagnostics
+            end)
         if strategicTruthChanged
             and ((self.diagnostics.events or 0) < 500
                 or KWR.Util:Now() - (self.lastTacticalEscalationAt or 0)
@@ -638,9 +710,12 @@ function Runtime:AdaptiveTacticalDelay(reason)
             break
         end
     end
-    if activeFight or contested then return TACTICAL_REFRESH_INTERVAL end
+    local p95 = KWR.Util:Number(self.diagnostics.p95TacticalDurationMs, 0) or 0
+    local tacticalInterval = p95 >= 12 and 1.25
+        or (p95 >= 6 and 0.85) or TACTICAL_REFRESH_INTERVAL
+    if activeFight or contested then return tacticalInterval end
     if LOW_PRIORITY_TACTICAL_EVENTS[reason] then
-        return QUIET_TACTICAL_REFRESH_INTERVAL
+        return math.max(QUIET_TACTICAL_REFRESH_INTERVAL, tacticalInterval)
     end
     return TACTICAL_REFRESH_INTERVAL
 end
@@ -705,6 +780,10 @@ function Runtime:Start()
         self.ticker = C_Timer.NewTicker(1, function()
             if not Runtime.active then return end
             local now = KWR.Util:Now()
+            if KWR.CountdownState and KWR.CountdownState.active
+                and not Runtime.pending and not Runtime.tacticalPending then
+                Runtime:RefreshTactical("countdown-tick")
+            end
             if now - (Runtime.lastStrategicRefreshAt or 0)
                 >= STRATEGIC_HEARTBEAT_INTERVAL and not Runtime.pending then
                 Runtime:Queue("truth-heartbeat", 0.02)
@@ -714,6 +793,7 @@ function Runtime:Start()
 end
 
 function Runtime:Stop()
+    if KWR.CountdownState then KWR.CountdownState:Cancel("RUNTIME_STOP") end
     if self.ticker then
         self.ticker:Cancel()
         self.ticker = nil
@@ -918,6 +998,16 @@ function Runtime:Refresh(reason)
                 snapshot.reassessment = KWR.Util:Copy(self.lastReassessment)
             end
             command = KWR.Commander:Compose(snapshot, prediction, assignments)
+            command = KWR.Commander:ObservePublicExecution(snapshot, command)
+            if command.activePlayDecision and command.activePlayDecision.retained then
+                local previous = KWR.Store:Get()
+                -- Retention is a plan transaction, not just an old headline.
+                -- Do not publish unissued candidate jobs under a retained call.
+                assignments = previous.assignments or assignments
+                snapshot.responsePackage = previous.snapshot and previous.snapshot.responsePackage
+                    or snapshot.responsePackage
+                snapshot.assignmentIntegrity = KWR.Assignments:Integrity(snapshot, assignments)
+            end
             snapshot.executionCommand = KWR.ExecutionCommandBuilder:Build(
                 snapshot, prediction, assignments, command)
             snapshot.commandEmphasis = KWR.CommandEmphasis:Build(
@@ -930,44 +1020,49 @@ function Runtime:Refresh(reason)
         self.diagnostics.lastReason = reason or "refresh"
         incrementCounter(self.diagnostics.strategicRefreshReasons,
             reason or "refresh")
-        if started > 0 and type(debugprofilestop) == "function" then
-            local duration = math.max(0, debugprofilestop() - started)
-            self.diagnostics.lastDurationMs = duration
-            self.diagnostics.maxDurationMs = math.max(self.diagnostics.maxDurationMs or 0, duration)
-            self.durationSamples[#self.durationSamples + 1] = duration
-            if reason == "PLAYER_ENTERING_WORLD" or reason == "ZONE_CHANGED_NEW_AREA"
-                or reason == "login" then
-                self.diagnostics.transitionRefreshes = (self.diagnostics.transitionRefreshes or 0) + 1
-                self.diagnostics.lastTransitionDurationMs = duration
-            end
-            while #self.durationSamples > (self.maxDurationSamples or 120) do
-                table.remove(self.durationSamples, 1)
-            end
-            self.diagnostics.durationSampleCount = #self.durationSamples
-            if self.diagnostics.refreshes % 10 == 0 then
-                local ordered, total = {}, 0
-                for index, sample in ipairs(self.durationSamples) do
-                    ordered[index] = sample
-                    total = total + sample
+        local publicationStarted = profileStages and debugprofilestop() or 0
+        local function finalizeDiagnostics()
+            recordStage(self, "Publish", publicationStarted)
+            if started > 0 and type(debugprofilestop) == "function" then
+                local duration = math.max(0, debugprofilestop() - started)
+                self.diagnostics.lastDurationMs = duration
+                self.diagnostics.maxDurationMs = math.max(self.diagnostics.maxDurationMs or 0, duration)
+                self.durationSamples[#self.durationSamples + 1] = duration
+                if reason == "PLAYER_ENTERING_WORLD" or reason == "ZONE_CHANGED_NEW_AREA"
+                    or reason == "login" then
+                    self.diagnostics.transitionRefreshes = (self.diagnostics.transitionRefreshes or 0) + 1
+                    self.diagnostics.lastTransitionDurationMs = duration
                 end
-                table.sort(ordered)
-                self.diagnostics.averageDurationMs = #ordered > 0 and total / #ordered or 0
-                local p95 = math.max(1, math.ceil(#ordered * 0.95))
-                self.diagnostics.p95DurationMs = ordered[p95] or 0
-                local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.MeasureMB
-                    and KWR.MemoryBudget:MeasureMB() or nil
-                self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
-                    and (memoryMB * 1024) or 0
+                while #self.durationSamples > (self.maxDurationSamples or 120) do
+                    table.remove(self.durationSamples, 1)
+                end
+                self.diagnostics.durationSampleCount = #self.durationSamples
+                if self.diagnostics.refreshes % 10 == 0 then
+                    local metrics = timingMetrics(self.durationSamples)
+                    self.diagnostics.averageDurationMs = metrics.average
+                    self.diagnostics.p50DurationMs = metrics.p50
+                    self.diagnostics.p95DurationMs = metrics.p95
+                    self.diagnostics.p99DurationMs = metrics.p99
+                    self.diagnostics.maxDurationMs = metrics.max
+                    local memoryMB = KWR.MemoryBudget and KWR.MemoryBudget.Sample
+                        and KWR.MemoryBudget:Sample(nil, false) or nil
+                    self.diagnostics.memoryKB = KWR.Util:Number(memoryMB, nil)
+                        and (memoryMB * 1024) or 0
+                    self.diagnostics.memorySampleAt = KWR.MemoryBudget and KWR.MemoryBudget.lastMeasuredAt
+                end
             end
+            return self.diagnostics
         end
         self.lastRefreshAt = KWR.Util:Now()
         self.lastStrategicRefreshAt = self.lastRefreshAt
         self.lastTacticalStrategicSignature = tacticalStrategicSignature(snapshot)
         if KWR.Store and KWR.Store.Publish then
             local published = KWR.Store:Publish(
-                snapshot, prediction, assignments, command, KWR.Util:Copy(self.diagnostics))
+                snapshot, prediction, assignments, command, self.diagnostics, finalizeDiagnostics)
             if KWR.CommandAudio then KWR.CommandAudio:Observe(published) end
             if KWR.CommanderComm then KWR.CommanderComm:Relay(published) end
+        else
+            finalizeDiagnostics()
         end
     end, runtimeErrorHandler)
     if not ok then
@@ -984,6 +1079,16 @@ function Runtime:EffectiveDelay(delay, reason)
     local elapsed = KWR.Util:Now() - (self.lastRefreshAt or 0)
     local interval = CRITICAL_REFRESH_REASONS[reason] == true
         and CRITICAL_REFRESH_INTERVAL or MIN_REFRESH_INTERVAL
+    -- Adaptive backpressure applies only to non-critical refreshes.  The
+    -- current score, objective messages, and match-end truth remain prompt.
+    if CRITICAL_REFRESH_REASONS[reason] ~= true then
+        local p95 = KWR.Util:Number(self.diagnostics.p95DurationMs, 0) or 0
+        if p95 >= 16 then
+            interval = math.max(interval, 2.00)
+        elseif p95 >= 8 then
+            interval = math.max(interval, 1.25)
+        end
+    end
     return math.max(delay or 0.10, math.max(0, interval - elapsed))
 end
 
@@ -1000,7 +1105,9 @@ function Runtime:Schedule(reason, delay, revision)
         if token ~= Runtime.timerToken then return end
         local dueAt = Runtime.pendingDueAt or KWR.Util:Now()
         local completedReason = Runtime.pendingReason or reason or "queued"
-        local completedRevision = Runtime.pendingRevision or revision or 0
+        -- Capture reads the current APIs, so all events received BEFORE it
+        -- starts are consumed by this pass, not by a redundant second pass.
+        local completedRevision = Runtime.queueRevision or revision or 0
         local completedSettle = Runtime.pendingSettle == true
         clearQueueState(Runtime)
         Runtime:UpdateLifecycle()
@@ -1013,7 +1120,7 @@ function Runtime:Schedule(reason, delay, revision)
             and now + 0.001 < Runtime.requiredSettleAt
         local canChainFollowup = completedSettle ~= true
             and (Runtime.followupChainCount or 0) < MAX_CHAINED_FOLLOWUPS
-        if timerMatured and hasNewRevision and canChainFollowup then
+        if timerMatured and hasNewRevision and canChainFollowup and not Runtime.pending then
             Runtime.diagnostics.queueFollowups =
                 (Runtime.diagnostics.queueFollowups or 0) + 1
             Runtime.followupChainCount = (Runtime.followupChainCount or 0) + 1
@@ -1141,14 +1248,27 @@ function Runtime:RescanRoster()
     return ok
 end
 
+function Runtime:QueueBattlefieldStatus()
+    local now = KWR.Util:Now()
+    local elapsed = now - (self.lastBattlefieldStatusQueueAt or 0)
+    if elapsed < BATTLEFIELD_STATUS_REFRESH_INTERVAL then
+        self.diagnostics.battlefieldStatusCoalesced =
+            (self.diagnostics.battlefieldStatusCoalesced or 0) + 1
+        self:Queue("UPDATE_BATTLEFIELD_STATUS",
+            BATTLEFIELD_STATUS_REFRESH_INTERVAL - elapsed)
+        return
+    end
+    self.lastBattlefieldStatusQueueAt = now
+    self:Queue("UPDATE_BATTLEFIELD_STATUS", 0.12)
+end
+
 function Runtime:HandleEvent(event, ...)
     self.diagnostics.events = (self.diagnostics.events or 0) + 1
     incrementCounter(self.diagnostics.eventReasons, event or "unknown")
     appendEventTrace(self, event)
     if event == "PLAYER_ENTERING_WORLD"
         or event == "PLAYER_LEAVING_WORLD"
-        or event == "ZONE_CHANGED_NEW_AREA"
-        or event == "UPDATE_BATTLEFIELD_STATUS" then
+        or event == "ZONE_CHANGED_NEW_AREA" then
         local inPvP = isPvP()
         if not inPvP then
             self:ResetTransientTruth()
@@ -1164,6 +1284,11 @@ function Runtime:HandleEvent(event, ...)
         self:ScheduleTransitionSweep(event, false)
         return
     end
+    if event == "UPDATE_BATTLEFIELD_STATUS" then
+        self:UpdateLifecycle()
+        self:QueueBattlefieldStatus()
+        return
+    end
     if event == "GROUP_ROSTER_UPDATE" then
         if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
         self:Queue(event, 0.05)
@@ -1172,6 +1297,9 @@ function Runtime:HandleEvent(event, ...)
     end
     if event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED"
         or event == "PLAYER_SPECIALIZATION_CHANGED" then
+        if event == "PLAYER_SPECIALIZATION_CHANGED" and KWR.Sensors then
+            KWR.Sensors:InvalidateSpecialization((...))
+        end
         if KWR.Sensors then KWR.Sensors:InvalidateScoreboard() end
         self:Queue(event, 0.05)
         return
@@ -1250,10 +1378,10 @@ function Runtime:HandleEvent(event, ...)
             -- Friendly bars update directly in CombatRoster. A full strategy
             -- rebuild is only needed when the friendly unit carries an
             -- objective whose health or stacks can alter the call.
-            if KWR.CombatRoster then
+            if event ~= "UNIT_AURA" and KWR.CombatRoster then
                 KWR.CombatRoster:UpdateHealthForUnit(unit)
             end
-            if KWR.MainWindow then
+            if event ~= "UNIT_AURA" and KWR.MainWindow then
                 KWR.MainWindow:UpdateHealthForUnit(unit)
             end
             self.diagnostics.lightweightEvents =
@@ -1299,6 +1427,7 @@ function Runtime:HandleEvent(event, ...)
         return
     end
     if event == "PVP_MATCH_COMPLETE" then
+        if KWR.CountdownState then KWR.CountdownState:Cancel("MATCH_COMPLETE") end
         self.matchComplete = true
         if KWR.Sensors and KWR.Sensors.RequestScoreboard then
             KWR.Sensors:RequestScoreboard(true)

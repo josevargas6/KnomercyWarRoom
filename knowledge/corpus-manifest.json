@@ -9,7 +9,7 @@
               },
     "summary":  {
                     "replays":  2003,
-                    "goldenLabels":  2001,
+                    "goldenLabels":  2003,
                     "replayResults":  2000,
                     "outcomeReviews":  2000,
                     "adversarialCases":  201,
@@ -61,7 +61,7 @@
                          "mapKey":  "WSG",
                          "mode":  "STANDARD",
                          "replays":  201,
-                         "goldenLabels":  200,
+                         "goldenLabels":  201,
                          "replayResults":  200,
                          "outcomeReviews":  200,
                          "adversarialCases":  20
@@ -81,7 +81,7 @@
                          "mapKey":  "TEMPLE",
                          "mode":  "STANDARD",
                          "replays":  201,
-                         "goldenLabels":  200,
+                         "goldenLabels":  201,
                          "replayResults":  200,
                          "outcomeReviews":  200,
                          "adversarialCases":  20

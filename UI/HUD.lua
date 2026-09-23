@@ -180,7 +180,10 @@ local function focusFightText(localFight, mapKey)
         local details = { KWR.Util:TextClip(kill.target, "Enemy", 24) }
         local health = KWR.Util:Number(kill.healthPercent, nil)
         if health then details[#details + 1] = tostring(math.floor(health + 0.5)) .. "%" end
-        local location = KWR.Util:TextClip(kill.location, "", 48)
+        local location = KWR.Util:Text(kill.location, "", 48)
+        if KWR.Maps and type(KWR.Maps.CanonicalLocation) == "function" then
+            location = KWR.Maps:CanonicalLocation(mapKey, location)
+        end
         if location ~= "" then
             details[#details + 1] = "@ " .. KWR.Maps:AbbreviateLocation(mapKey, location)
         end
@@ -209,25 +212,65 @@ local function callTone(call)
     return "MOVE"
 end
 
-local function fightCallText(call)
+-- The map registry owns canonical names. This secondary pass only keeps
+-- combined planner phrases readable in the compact card.
+local PVP_LOCATION_SHORTHAND = {
+    { "Lumber Mill", "LM" }, { "Blacksmith", "BS" }, { "Gold Mine", "GM" },
+    { "Waterworks", "WW" }, { "Lighthouse", "LH" }, { "Stables", "ST" },
+    { "Farm", "FARM" }, { "Mine", "M" },
+}
+
+local function compactLocationText(mapKey, value, fallback, limit)
+    local text = KWR.CommandView:CompactMapText(mapKey, value, fallback or "", limit or 96)
+    for _, replacement in ipairs(PVP_LOCATION_SHORTHAND) do
+        text = text:gsub(replacement[1], replacement[2])
+    end
+    return KWR.Util:Text(text, fallback or "", limit or 96)
+end
+
+-- The fight card is read during combat, not used as a compact roster export.
+-- Keep its locations in the map's plain language so a player never has to
+-- decode an abbreviation such as PC (Primary Cart) before acting.
+local function readableLocationText(mapKey, value, fallback, limit)
+    local text = KWR.Util:Text(value, fallback or "", limit or 96)
+    if KWR.Maps and type(KWR.Maps.CanonicalLocation) == "function" then
+        text = KWR.Maps:CanonicalLocation(mapKey, text)
+    end
+    return KWR.Util:Text(text, fallback or "", limit or 96)
+end
+
+local function readableAssignmentText(assignment, mapKey)
+    assignment = type(assignment) == "table" and assignment or nil
+    if not assignment then return nil end
+    local role = KWR.Util:Text(assignment.role or assignment.shortRole, "Assignment", 48)
+    local location = readableLocationText(mapKey,
+        assignment.target or assignment.location or assignment.window, "", 64)
+    if location == "" or location == "Formation" then return role end
+    return role .. " -> " .. location
+end
+
+local function fightCallText(call, mapKey)
     call = call or {}
     local tone = callTone(call)
+    local where = readableLocationText(mapKey, call.where, "FIELD", 48)
     return table.concat({
         KWR.Theme:CombatText(tone, "CALL:") .. " "
             .. KWR.Util:Upper(call.what, "HOLD", 24),
         KWR.Theme:CombatText("TARGET", stackedNames("WHO:", call.who, "TEAM", 56)),
         KWR.Theme:CombatText("MOVE", "WHERE:") .. " "
-            .. KWR.Util:Upper(call.where, "FIELD", 24),
+            .. KWR.Util:Upper(where, "FIELD", 24),
         KWR.Theme:CombatText("CARRY", "WHEN:") .. " "
             .. KWR.Util:Upper(call.when, "NOW", 24),
     }, "\n")
 end
 
-local function fightPostureText(model)
+local function fightPostureText(model, mapKey)
+    local offense = compactLocationText(mapKey,
+        model and model.offense, "TEAM -> FIELD", 96)
     return KWR.Theme:CombatText("TARGET",
             stackedValue("DEF:", model and model.defense, "ASSIGNED DEF", 56))
         .. "\n" .. KWR.Theme:CombatText("MOVE",
-            stackedValue("OFF:", model and model.offense, "TEAM -> FIELD", 56))
+            stackedValue("OFF:", offense, "TEAM -> FIELD", 56))
 end
 
 local function applySetupLayout(frame)
@@ -237,25 +280,31 @@ local function applySetupLayout(frame)
     frame.reassess:Show()
     frame.request:Hide()
     frame.alertBadge:ClearAllPoints()
-    frame.alertBadge:SetPoint("TOPLEFT", 10, -92)
+    -- Setup keeps score/status/timer visible in the header.  Its recruit
+    -- alert needs its own row; sharing the timer row made the RBG setup title
+    -- and call text overlap in the native client.
+    frame.alertBadge:SetPoint("TOPLEFT", 10, -112)
     frame.alertBadge:Show()
     frame.truthBadge:ClearAllPoints()
     frame.truthBadge:SetPoint("LEFT", frame.alertBadge, "RIGHT", 8, 0)
     frame.truthBadge:Show()
     frame.alert:ClearAllPoints()
-    frame.alert:SetPoint("TOPLEFT", 174, -92)
-    frame.alert:SetPoint("TOPRIGHT", -10, -92)
+    frame.alert:SetPoint("TOPLEFT", 174, -112)
+    frame.alert:SetPoint("TOPRIGHT", -10, -112)
     frame.alert:Show()
-    placeSection(frame.win, -114, 52)
-    placeSection(frame.next, -172, 124)
-    placeSection(frame.mine, -302, 52)
-    placeSection(frame.caller, -360, 88)
-    placeSection(frame.kill, -454, 72)
+    placeSection(frame.win, -136, 52)
+    -- Keep a real bottom inset. The old stack ended exactly at -548 (the
+    -- parent height), so a panel border could extend outside the setup card at
+    -- some effective UI scales.
+    placeSection(frame.next, -194, 116)
+    placeSection(frame.mine, -316, 52)
+    placeSection(frame.caller, -374, 78)
+    placeSection(frame.kill, -458, 62)
 end
 
 local function applyFightNowLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -274,7 +323,7 @@ end
 
 local function applyFocusLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -291,7 +340,7 @@ end
 
 local function applyReviewLayout(frame)
     frame.rescan:ClearAllPoints()
-    frame.rescan:SetPoint("TOPRIGHT", -10, -8)
+    frame.rescan:SetPoint("TOPRIGHT", -202, -8)
     frame.refresh:Hide()
     frame.reassess:Hide()
     frame.request:Show()
@@ -503,6 +552,10 @@ function HUD:Create()
     local profile = KWR.db.profile.hud
     local frame = CreateFrame("Frame", "KWR_CommandHUD", UIParent, "BackdropTemplate")
     frame:SetSize(HUD_WIDTH, HUD_HEIGHT)
+    -- A child must never paint outside the bounded field surface. Geometry is
+    -- still laid out with an inset above; clipping is the final safety rail for
+    -- unusual UI scales or an interrupted native reflow.
+    if frame.SetClipsChildren then frame:SetClipsChildren(true) end
     frame:SetPoint(profile.point, UIParent, profile.relativePoint, profile.x, profile.y)
     frame:SetFrameStrata("HIGH")
     frame:SetToplevel(true)
@@ -547,6 +600,12 @@ function HUD:Create()
         KWR.MatchRuntime:Reassess()
     end)
     frame.request:SetPoint("TOPRIGHT", -74, -8)
+    frame.dismiss = KWR.Theme:Button(frame, "HIDE", 48, 18, function()
+        -- This is an explicit player escape hatch.  It disables only the KWR
+        -- field HUD; no gameplay, secure action, or Blizzard menu is touched.
+        HUD:SetEnabled(false)
+    end)
+    frame.dismiss:SetPoint("TOPRIGHT", -10, -8)
     frame.refresh = KWR.Theme:Button(frame, "REFRESH", 58, 18, function()
         KWR.MatchRuntime:ForceRefresh("hud-refresh")
     end)
@@ -571,6 +630,10 @@ function HUD:Create()
         self._timerAccum = (self._timerAccum or 0) + (elapsed or 0)
         if self._timerAccum < 0.20 then return end
         self._timerAccum = 0
+        if self.cardActive and KWR.CommanderCard then
+            KWR.CommanderCard:Tick(self)
+            return
+        end
         if self:IsShown() and KWR.HUD and KWR.HUD.RefreshTruthBadge then
             KWR.HUD:RefreshTruthBadge(self)
         end
@@ -619,7 +682,15 @@ function HUD:Create()
     end
 
     frame:SetScript("OnMouseUp", function(_, button)
-        if button == "RightButton" then KWR.MainWindow:Show("TACTICAL") end
+        -- A fight card must not turn an incidental right click into a full
+        -- command-board overlay during a battleground.  Review remains
+        -- available outside live play through the explicit command surface.
+        local state = HUD.lastState
+        local inPvP = state and state.snapshot and state.snapshot.context
+            and state.snapshot.context.inPvP == true
+        if button == "RightButton" and not inPvP then
+            KWR.MainWindow:Show("TACTICAL")
+        end
     end)
     self.frame = frame
     return frame
@@ -750,6 +821,11 @@ function HUD:UpdateToken(state)
     local command = state and state.command or {}
     local combat = snapshot.combat or {}
     local target = combat.localTarget or combat.killTarget or {}
+    if KWR.db.profile.hud.cardLayout == "COMPLETE" then
+        -- The legacy 160-byte signature drops late actors/CC rows. The complete
+        -- card consumes full published revisions and caches its measured content.
+        return state and state.revision or state
+    end
     return KWR.Util:Signature({
         true,
         self:ObjectiveTimerSignature(snapshot),
@@ -845,6 +921,10 @@ function HUD:Update(state)
     end
     local frame = self:Create()
     local snapshot, command = state.snapshot, state.command
+    -- The complete Commander card is a review surface, never a live-combat
+    -- overlay.  A field HUD must remain bounded and leave the battlefield
+    -- visible even when a call carries a full eight-player assignment list.
+    KWR.CommanderCard:Hide(frame)
     local formationMode = snapshot.context.inPvP ~= true
     local matchComplete = snapshot.context.matchComplete == true
     local combatPreset = KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS"
@@ -885,9 +965,8 @@ function HUD:Update(state)
     elseif teamfight and teamfight.displayEligible == true then
         mine = mine or teamfightAssignment(teamfight)
     end
-    local personalAction = synchronizedMine and synchronizedMine.display
-        or (mine and KWR.Assignments:CompactLabel(
-            mine, snapshot.context.mapKey) or nil)
+    local personalAction = readableAssignmentText(synchronizedMine, snapshot.context.mapKey)
+        or readableAssignmentText(mine, snapshot.context.mapKey)
     local enemy = snapshot.combat and (snapshot.combat.localTarget
         or snapshot.combat.killTarget)
         or (snapshot.enemies and snapshot.enemies[1])
@@ -1008,11 +1087,13 @@ function HUD:Update(state)
     end
     if formationMode then
         applySetupLayout(frame)
+        frame.dismiss:Hide()
         frame.score:SetText("RBG SETUP")
         frame.status:SetText(string.format("FORMING  |  %d OPEN", formation.openSlots or 0))
         frame.status:SetTextColor(KWR.Theme:Color(KWR.CommandView:StatusColor(command.status)))
     elseif matchComplete then
         applyFightNowLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1020,12 +1101,14 @@ function HUD:Update(state)
         frame.status:SetText("")
     elseif focusMode then
         applyFocusLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(fightNow.projectionTone, fightNow.projection))
         frame.status:SetText("")
     elseif reviewMode then
         applyReviewLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1033,6 +1116,7 @@ function HUD:Update(state)
         frame.status:SetText("")
     else
         applyFightNowLayout(frame)
+        frame.dismiss:Show()
         local visibleScore = scoreText(snapshot, fightNow)
         frame.score:SetText(KWR.Theme:CombatText("MOVE", visibleScore)
             .. "  |  " .. KWR.Theme:CombatText(
@@ -1060,7 +1144,8 @@ function HUD:Update(state)
         or (KWR.Theme:CombatText("CARRY", "TO WIN:")
             .. " " .. fightNow.winPath
             .. "\n" .. KWR.Theme:CombatText("MOVE", "NEXT:")
-            .. " " .. fightNow.nextObjective)))
+            .. " " .. compactLocationText(snapshot.context.mapKey,
+                fightNow.nextObjective, "WAIT", 96))))
     local learning = KWR.db.profile.guidanceMode == "LEARNING"
     if formationMode then
         local currentComp = formation.currentComp or formation.archetype or {}
@@ -1115,9 +1200,9 @@ function HUD:Update(state)
         frame.kill.value:SetText(focusFightCall or "")
     else
         frame.mine.heading:SetText("NEXT")
-        frame.mine.value:SetText(fightCallText(fightNow.next))
+        frame.mine.value:SetText(fightCallText(fightNow.next, snapshot.context.mapKey))
         frame.caller.heading:SetText("POSTURE")
-        frame.caller.value:SetText(fightPostureText(fightNow))
+        frame.caller.value:SetText(fightPostureText(fightNow, snapshot.context.mapKey))
     end
 
     frame.kill.heading:SetText(formationMode and "NEXT STEP"
@@ -1131,6 +1216,9 @@ function HUD:Update(state)
     elseif matchComplete then
         frame.kill.value:SetText("Tactical calls closed. Capture the AAR before the next queue.")
     elseif focusMode then
+        -- The command card is intentionally a fixed surface.  Changing its
+        -- height as local-focus/CC truth arrives moves a CENTER-anchored card
+        -- under the caller and looks like a visual glitch.
         frame:SetHeight(focusFightCall and HUD_FOCUS_EXCEPTION_HEIGHT or HUD_FOCUS_HEIGHT)
         frame.win:Hide()
         frame.mine:Show()
@@ -1159,13 +1247,13 @@ function HUD:Update(state)
         frame.caller:Show()
         frame.kill:SetShown(focusFightCall ~= nil)
     elseif reviewMode then
-        frame:SetHeight(HUD_REVIEW_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()
         frame.kill:Show()
     else
-        frame:SetHeight(HUD_EXECUTION_HEIGHT)
+        frame:SetHeight(HUD_HEIGHT)
         frame.win:Show()
         frame.mine:Show()
         frame.caller:Show()

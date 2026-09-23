@@ -3,6 +3,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
+. (Join-Path $PSScriptRoot 'release-manifest.ps1')
 $errors = [System.Collections.Generic.List[string]]::new()
 
 function Add-AuditError {
@@ -41,8 +42,10 @@ $commanderDirectories = @(
     'Core', 'Data', 'Rulesets', 'Compliance', 'Adapters', 'State',
     'Intelligence', 'Runtime', 'Features', 'UI'
 )
-$approvedRuntimeDirectories = @($commanderDirectories + 'KWRSentinel')
-$developmentOnlyLua = @('Core\\Diagnostics.lua')
+$approvedRuntimeDirectories = @($commanderDirectories + 'KWRSentinel' + 'KWR_DevTools')
+# The source audit and the package builder must share one authority for files
+# deliberately retained in source but excluded from player load/archive graphs.
+$developmentOnlyLua = @(Get-ReleaseExcludedEntries)
 $commanderToc = Join-Path $root 'KnomercyWarRoom.toc'
 $sentinelRoot = Join-Path $root 'KWRSentinel'
 $sentinelToc = Join-Path $sentinelRoot 'KWRSentinel.toc'
@@ -120,11 +123,16 @@ foreach ($file in @($runtimeLua + $sentinelLua)) {
     }
 }
 
-$commanderNamespaceOwners = @($allLua | Select-String -Pattern '_G\.KWR\s*=' | ForEach-Object Path | Sort-Object -Unique)
+# Isolated test harnesses create mock namespaces. Ownership is a runtime
+# invariant; inspect every non-test Lua file, including companion/build code.
+$namespaceFiles = @($allLua | Where-Object {
+    $_.FullName.Substring($root.Length + 1) -notmatch '^tests[\\/]'
+})
+$commanderNamespaceOwners = @($namespaceFiles | Select-String -Pattern '_G\.KWR\s*=' | ForEach-Object Path | Sort-Object -Unique)
 if ($commanderNamespaceOwners.Count -ne 1 -or $commanderNamespaceOwners[0] -ne (Join-Path $root 'Core\Addon.lua')) {
     Add-AuditError 'Commander namespace ownership must be unique to Core/Addon.lua.'
 }
-$sentinelNamespaceOwners = @($allLua | Select-String -Pattern '_G\.KWRSentinel\s*=' | ForEach-Object Path | Sort-Object -Unique)
+$sentinelNamespaceOwners = @($namespaceFiles | Select-String -Pattern '_G\.KWRSentinel\s*=' | ForEach-Object Path | Sort-Object -Unique)
 if ($sentinelNamespaceOwners.Count -ne 1 -or $sentinelNamespaceOwners[0] -ne (Join-Path $root 'KWRSentinel\Core.lua')) {
     Add-AuditError 'Sentinel namespace ownership must be unique to KWRSentinel/Core.lua.'
 }

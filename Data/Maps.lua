@@ -289,12 +289,22 @@ function Maps:TravelEstimate(mapKey, fromLocation, toLocation, options)
     local secondsPerMap = options.inCombat and 78 or (options.mounted and 38 or 54)
     secondsPerMap = secondsPerMap * (1 - ((mobility - 2) * 0.055))
     local seconds = math.max(2, math.ceil(normalizedDistance * secondsPerMap))
+    -- Position geometry is an explicitly modeled route estimate, not pathing
+    -- proof.  Retain the interval and its provenance so consumers cannot
+    -- promote a single display ETA into a guaranteed arrival.
+    local earliestSeconds = math.max(0, math.floor(seconds * 0.8))
+    local latestSeconds = math.max(earliestSeconds, math.ceil(seconds * 1.25))
     return {
         seconds = seconds,
+        earliestSeconds = earliestSeconds,
+        latestSeconds = latestSeconds,
         band = seconds <= 6 and "IMMEDIATE"
             or (seconds <= 12 and "NEAR"
             or (seconds <= 20 and "ROTATION" or "LONG")),
         source = "MAP_ROUTE_ESTIMATE",
+        basis = "MODELED_GEOMETRY",
+        revision = "positions-v1",
+        constraints = { "geometry_only", options.inCombat and "in_combat" or "out_of_combat" },
         confidence = options.observed and "MEDIUM" or "LOW",
         distance = normalizedDistance,
     }

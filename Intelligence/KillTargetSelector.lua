@@ -23,29 +23,45 @@ local function controlCoverage(assignments)
     return coverage
 end
 
+local function observedKillEligible(problem)
+    local enemy = problem and problem.enemy or {}
+    local intent = KWR.Util:Text(enemy.targetIntent
+        or (enemy.combat and enemy.combat.targetIntent), "", 32)
+    if enemy.killable ~= true and not (enemy.combat and enemy.combat.killable == true) then
+        return false
+    end
+    return intent == "" or intent == "NONE" or intent == "OBSERVED_KILL_WINDOW"
+end
+
+local function confidenceFromEvidence(problem)
+    local confidence = KWR.Util:Text(problem and problem.confidence, "UNKNOWN", 24)
+    if confidence == "CONFIRMED" then return "HIGH" end
+    if confidence == "HIGH" or confidence == "MEDIUM" or confidence == "LOW" then
+        return confidence
+    end
+    return "LOW"
+end
+
 function Selector:Select(problems, assignments)
     local best
     local coverage = controlCoverage(assignments)
     for _, problem in ipairs(problems or {}) do
-        if problem.verb == "Kill" and (not best or (problem.severity or 0) > (best.severity or 0)) then
+        if problem.verb == "Kill" and observedKillEligible(problem)
+            and (not best or (problem.severity or 0) > (best.severity or 0)) then
             best = problem
         end
     end
     if not best then return nil end
     local score = (best.severity or 0) + (coverage * 8)
-    local confidence = best.confidence == "CONFIRMED" and "HIGH" or "MEDIUM"
-    if coverage == 0 and best.confidence ~= "CONFIRMED" then
-        confidence = "LOW"
-    end
     return {
         actor = "Team",
         verb = "Kill",
         target = label(best.enemy),
         targetGUID = best.enemy and best.enemy.guid,
         score = score,
-        confidence = confidence,
-        window = "Go in 5",
-        objective = "Convert kill pressure after support is subdued.",
+        confidence = confidenceFromEvidence(best),
+        window = "ON LEADER CALL",
+        objective = "Convert the observed kill window after support is subdued.",
         reasons = KWR.Util:Copy(best.reasons or {}),
         supportCoverage = coverage,
     }

@@ -1,5 +1,7 @@
 local _, KWR = ...
 
+local CHECKPOINT_INTERVAL = 30
+
 local AAR = {
     active = nil,
     lastCompleted = nil,
@@ -13,6 +15,26 @@ local AAR = {
     maxReviewQueue = 10,
 }
 KWR.AAR = AAR
+
+local TEAM_LIMITS = {
+    maxCommands = 10, maxEvents = 12, maxObjectiveTimeline = 24,
+    maxDecisionReviews = 6, maxPlayerLocations = 4, maxPlayerNotes = 3,
+    maxReviewQueue = 5,
+}
+
+function AAR:CaptureMode()
+    local optedIn = KWR.db and KWR.db.profile and KWR.db.profile.developmentMode == true
+    return optedIn and KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        and "DEVELOPMENT" or "TEAM"
+end
+
+function AAR:RetentionLimit(entry, field)
+    local maximum = self[field] or 0
+    if entry and (entry.captureMode == "TEAM" or entry.captureMode == "PLAYER") then
+        return math.min(maximum, TEAM_LIMITS[field] or maximum)
+    end
+    return maximum
+end
 
 local function epoch()
     return type(time) == "function" and time() or math.floor(KWR.Util:Now())
@@ -142,7 +164,32 @@ end
 
 local function appendBounded(list, value, maximum)
     list[#list + 1] = value
-    return trimList(list, maximum)
+    -- Callers retain this list; returning a different trimmed table left their
+    -- original working timeline unbounded between persistence checkpoints.
+    while #list > maximum do table.remove(list, 1) end
+    return list
+end
+
+local function trimCommands(commands, maximum)
+    if type(commands) ~= "table" then return {} end
+    if #commands <= maximum then return commands end
+    if maximum < 3 then return trimList(commands, maximum) end
+    local retained = { commands[1], commands[2] }
+    for index = #commands - maximum + 3, #commands do
+        retained[#retained + 1] = commands[index]
+    end
+    return retained
+end
+
+local function compactTeamCommand(command)
+    if type(command) ~= "table" then return end
+    if KWR.CommandReview and KWR.CommandReview.NormalizeCallouts then
+        KWR.CommandReview:NormalizeCallouts(command)
+    end
+    for _, field in ipairs({ "simulations", "executionAssessment", "enemyResponsePlan",
+        "responsePackage", "activePlayTrend", "activePlayDecision" }) do
+        command[field] = nil
+    end
 end
 
 local function compactPlayerEvidence(evidence, maxLocations, maxNotes)
@@ -245,6 +292,29 @@ end
 
 local function classifyDecisionReview(command, result)
     command = type(command) == "table" and command or {}
+    if not KWR.CommandReview:ExecutionEligible(command) then
+        return {
+            decisionQuality = "NOT_SCORED",
+            executionQuality = KWR.CommandReview:DeliveryEligible(command)
+                and "NOT_OBSERVED" or "NOT_ISSUED",
+            truthQuality = "OBSERVED",
+            enemyReadQuality = "OBSERVED",
+            failureMode = "UNATTRIBUTED",
+            outcomeDriver = "NO_EXECUTION_EVIDENCE",
+            recommendedLesson = "Review the public facts; delivery and execution require separate evidence.",
+        }
+    end
+    if not KWR.CommandReview:OutcomeObserved(command) then
+        return {
+            decisionQuality = "NOT_SCORED",
+            executionQuality = "OBSERVED",
+            truthQuality = "OBSERVED",
+            enemyReadQuality = "OBSERVED",
+            failureMode = "UNATTRIBUTED",
+            outcomeDriver = "OBSERVED_ACTIVITY_ONLY",
+            recommendedLesson = "A public objective action was observed; no causal result was established.",
+        }
+    end
     local score = KWR.Util:Number(command.decisionScore
         or command.projectedWinProbability, nil)
     local confidenceScore = KWR.Util:Number(command.confidenceScore, nil)
@@ -377,10 +447,18 @@ end
 function AAR:Start(state)
     local snapshot = state.snapshot
     local identity = canonicalMapIdentity(snapshot.context)
+    local captureMode = self:CaptureMode()
+    self.matchSerial = (self.matchSerial or 0) + 1
     self.active = {
-        id = tostring(epoch()) .. ":" .. tostring(identity and identity.mapKey or snapshot.context.mapKey),
+        id = tostring(epoch()) .. ":" .. tostring(identity and identity.mapKey or snapshot.context.mapKey)
+            .. ":" .. tostring(KWR.Util:Now()) .. ":" .. tostring(self.matchSerial),
         addonVersion = KWR.version,
+        candidateID = KWR.BuildInfo and KWR.BuildInfo.candidateID,
         schemaVersion = KWR.schemaVersion,
+        provenanceVersion = 1,
+        captureModeVersion = 1,
+        captureMode = captureMode,
+        initialRecordPending = true,
         mapKey = identity and identity.mapKey or snapshot.context.mapKey,
         mapName = identity and identity.mapName or snapshot.context.mapName,
         team = KWR.Util:Copy(snapshot.context.team),
@@ -403,6 +481,7 @@ function AAR:Start(state)
         objectiveTimeline = {},
         objectiveStates = {},
         seenObjectiveEvents = {},
+        seenObjectiveOrder = {},
         enemyThreats = {},
         ratingChange = nil,
         lastSignature = nil,
@@ -423,10 +502,12 @@ function AAR:Start(state)
         safetyBaseline = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {},
         safety = { blocked = 0, forbidden = 0, total = 0 },
     }
-    self:PersistActive()
+    if captureMode == "TEAM" then self.active.performance = nil end
+    self:PersistActive(true)
 end
 
 function AAR:CaptureRuntimeEvidence(active, state)
+    if active.captureMode == "TEAM" then return end
     local diagnostics = type(state.diagnostics) == "table" and state.diagnostics or {}
     local performance = active.performance or {}
     performance.samples = (performance.samples or 0) + 1
@@ -455,6 +536,9 @@ function AAR:CaptureRuntimeEvidence(active, state)
 end
 
 function AAR:FinalizeRuntimeEvidence(active)
+    if active.captureMode == "TEAM" then
+        active.performance = nil
+    end
     local performance = active.performance or {}
     local samples = performance.refreshSamples or {}
     if #samples > 0 then
@@ -463,7 +547,7 @@ function AAR:FinalizeRuntimeEvidence(active)
         performance.maxP95Ms = samples[index] or 0
     end
     performance.refreshSamples = nil
-    active.performance = performance
+    active.performance = active.captureMode ~= "TEAM" and performance or nil
     local baseline = active.safetyBaseline or {}
     local current = KWR.SafetyMonitor and KWR.SafetyMonitor:Snapshot() or {}
     active.safety = {
@@ -564,7 +648,7 @@ function AAR:CapturePlayerEvidence(active, state)
                     at = now,
                     location = location,
                     source = clean(player.locationSource, "Observed", 32),
-            }, self.maxPlayerLocations)
+            }, self:RetentionLimit(active, "maxPlayerLocations"))
             evidence.lastLocation = location
         end
         local dead = KWR.Util:Boolean(player.dead, false)
@@ -582,7 +666,8 @@ function AAR:CapturePlayerEvidence(active, state)
                 .. clean(integrityRow.expected, "Unknown", 48) .. " | observed "
                 .. clean(integrityRow.actual, "Unknown", 48)
             if note ~= evidence.lastIntegrityNote then
-                appendBounded(evidence.notes, { at = now, text = note }, self.maxPlayerNotes)
+                appendBounded(evidence.notes, { at = now, text = note },
+                    self:RetentionLimit(active, "maxPlayerNotes"))
                 evidence.lastIntegrityNote = note
             end
         end
@@ -605,7 +690,7 @@ function AAR:CaptureObjectives(active, snapshot)
                 text = label .. ": " .. previous.owner .. "/" .. previous.state
                     .. " -> " .. owner .. "/" .. state,
                 source = clean(row.source, snapshot.objectives.source or "unknown", 24),
-            }, self.maxObjectiveTimeline)
+            }, self:RetentionLimit(active, "maxObjectiveTimeline"))
         end
         active.objectiveStates[label] = { owner = owner, state = state }
     end
@@ -615,6 +700,12 @@ function AAR:CaptureObjectives(active, snapshot)
             .. tostring(KWR.Util:Number(event.at, 0) or 0)
         if not active.seenObjectiveEvents[signature] then
             active.seenObjectiveEvents[signature] = true
+            active.seenObjectiveOrder = active.seenObjectiveOrder or {}
+            local order = active.seenObjectiveOrder
+            order[#order + 1] = signature
+            while #order > math.max(128, self.maxObjectiveTimeline * 2) do
+                active.seenObjectiveEvents[table.remove(order, 1)] = nil
+            end
             appendBounded(active.objectiveTimeline, {
                 at = now,
                 kind = clean(event.kind, "EVENT", 24),
@@ -622,7 +713,7 @@ function AAR:CaptureObjectives(active, snapshot)
                 player = clean(event.player, "Unknown", 64),
                 text = clean(event.text, "Objective event observed.", 160),
                 source = "BG_SYSTEM",
-            }, self.maxObjectiveTimeline)
+            }, self:RetentionLimit(active, "maxObjectiveTimeline"))
         end
     end
 end
@@ -723,10 +814,13 @@ function AAR:Record(state)
     local score = snapshot.score or {}
     local objectives = snapshot.objectives or {}
     local now = epoch()
+    if self.CaptureCallout then self:CaptureCallout(state) end
     -- The AAR is a semantic review ledger, not a second copy of every Store
     -- tick. Sampling unchanged state inflated work, memory, and sightings.
     local recordSignature = KWR.Util:Signature({
         state.command and state.command.signature or "",
+        state.command and state.command.commandId or "",
+        state.command and state.command.delivery and state.command.delivery.deliveredAt or "",
         score.friendly or 0,
         score.enemy or 0,
         snapshot.context and snapshot.context.matchComplete and "DONE" or "LIVE",
@@ -777,7 +871,8 @@ function AAR:Record(state)
         active.planUsage[planID] = (active.planUsage[planID] or 0) + 1
     end
     local signature = state.command and state.command.signature
-    if signature and signature ~= active.lastSignature then
+    if signature and (signature ~= active.lastSignature
+        or (state.command.commandId and state.command.commandId ~= active.lastCommandId)) then
         local review = commandReviewRecord(state)
         local previousCommand = active.commands[#active.commands]
         if previousCommand and previousCommand.outcome == "Unknown" then
@@ -800,6 +895,13 @@ function AAR:Record(state)
             end
         end
         active.commands[#active.commands + 1] = {
+            commandId = review.commandId,
+            planID = review.planID,
+            learningContext = review.learningContext,
+            commandRevision = review.commandRevision,
+            generatedAt = review.generatedAt,
+            delivery = review.delivery,
+            executionObservation = review.executionObservation,
             at = epoch(),
             status = review.status,
             action = review.action,
@@ -846,13 +948,25 @@ function AAR:Record(state)
                 clean(state.snapshot.strategy and state.snapshot.strategy.enemyResponseID, "", 48), 48),
             outcome = "Unknown",
         }
-        active.commands = trimList(active.commands, self.maxCommands)
+        if active.captureMode == "TEAM" then compactTeamCommand(active.commands[#active.commands]) end
+        active.commands = trimCommands(active.commands, self:RetentionLimit(active, "maxCommands"))
         active.lastSignature = signature
+        active.lastCommandId = state.command.commandId
+    elseif signature then
+        local retained = active.commands[#active.commands]
+        local command = state.command
+        if retained and retained.commandId and retained.commandId == command.commandId
+            and retained.commandRevision == command.commandRevision then
+            local review = commandReviewRecord(state)
+            retained.delivery = review.delivery
+            retained.executionObservation = review.executionObservation
+        end
     end
     local message = KWR.Util:Text(state.snapshot.lastMessage, "", 160)
+    if self.CaptureCallout then self:CaptureCallout(state) end
     if message ~= "" and message ~= active.lastMessage then
         active.events[#active.events + 1] = { at = epoch(), text = message }
-        active.events = trimList(active.events, self.maxEvents)
+        active.events = trimList(active.events, self:RetentionLimit(active, "maxEvents"))
         active.lastMessage = message
     end
     local reporterEvents = state.snapshot.reporter and state.snapshot.reporter.events or {}
@@ -862,8 +976,12 @@ function AAR:Record(state)
             at = epoch(),
             text = "Reporter: " .. KWR.Util:Text(reporterEvent.text, "Movement update", 140),
         }
-        active.events = trimList(active.events, self.maxEvents)
+        active.events = trimList(active.events, self:RetentionLimit(active, "maxEvents"))
         active.lastReporterEventID = reporterEvent.id
+    end
+    if active.initialRecordPending then
+        active.initialRecordPending = nil
+        self:PersistActive(true)
     end
 end
 
@@ -883,36 +1001,41 @@ function AAR:DetermineResult(entry)
     return "UNKNOWN"
 end
 
-function AAR:BuildDecisionReviews(commands, result)
+function AAR:BuildDecisionReviews(commands, result, maximum)
     local reviews = {}
-    local startIndex = math.max(1, #(commands or {}) - (self.maxDecisionReviews - 1))
+    maximum = maximum or self.maxDecisionReviews
+    local startIndex = math.max(1, #(commands or {}) - (maximum - 1))
     for index = startIndex, #(commands or {}) do
-        local command = commands[index]
-        local alternative = command.simulations and command.simulations[2]
+        local command = type(commands[index]) == "table" and commands[index] or {}
+        local alternative = type(command.simulations) == "table" and command.simulations[2]
+        alternative = type(alternative) == "table" and alternative or nil
+        local decisionScore = KWR.Util:Number(command.decisionScore
+            or command.projectedDecisionUtility, nil)
         reviews[#reviews + 1] = {
             at = command.at,
             recommendation = command.action,
             recommendationMode = command.recommendationMode,
             expectedOutcome = command.expectedOutcome,
-            projectedWinProbability = command.projectedWinProbability,
+            projectedDecisionUtility = command.projectedDecisionUtility,
             decisionScore = command.decisionScore
-                or command.projectedWinProbability,
+                or command.projectedDecisionUtility,
             confidence = command.confidence,
             risk = command.risk,
             actualResult = result,
             outcomeAligned = (result == "VICTORY" and
-                (command.decisionScore
-                    or command.projectedWinProbability or 0) >= 50)
+                (decisionScore or 0) >= 50)
                 or (result == "DEFEAT" and
-                    (command.decisionScore
-                        or command.projectedWinProbability or 100) < 50),
+                    (decisionScore or 100) < 50),
             competingOption = alternative and alternative.id,
-            competingProbability = alternative and alternative.probability,
+            competingDecisionUtility = alternative and alternative.decisionScore,
             evidenceReview = "DEVELOPER_REVIEW_REQUIRED",
         }
         local classification = classifyDecisionReview(command, result)
         for key, value in pairs(classification) do
             reviews[#reviews][key] = value
+        end
+        if not KWR.CommandReview:OutcomeObserved(command) then
+            reviews[#reviews].outcomeAligned = nil
         end
     end
     return reviews
@@ -937,7 +1060,7 @@ function AAR:BuildReviewQueue(entry)
             add("OUTCOME_MISMATCH", "Plan " .. clean(review.recommendation, "Unknown", 72) .. " contradicted match outcome.", "MEDIUM")
         end
     end
-    return trimList(queue, self.maxReviewQueue)
+    return trimList(queue, self:RetentionLimit(entry, "maxReviewQueue"))
 end
 
 function AAR:BuildCommandStabilitySummary()
@@ -951,6 +1074,10 @@ function AAR:BuildCommandStabilitySummary()
     local latestSuppression = suppressions[#suppressions]
     return {
         evaluations = KWR.Util:Number(metrics.evaluations, 0) or 0,
+        generated = KWR.Util:Number(metrics.generated, 0) or 0,
+        generatorCommandHealth = metrics.generatorCommandHealth,
+        generatorCertificationStatus = metrics.generatorCertificationStatus,
+        deliveryQualified = metrics.deliveryQualified == true,
         issued = KWR.Util:Number(metrics.issued, 0) or 0,
         replacements = KWR.Util:Number(metrics.replacements, 0) or 0,
         stabilized = KWR.Util:Number(metrics.stabilized, 0) or 0,
@@ -1017,24 +1144,64 @@ end
 
 function AAR:CompactEntry(entry)
     if type(entry) ~= "table" then return nil end
-    entry.commands = trimList(entry.commands or {}, self.maxCommands)
-    entry.events = trimList(entry.events or {}, self.maxEvents)
+    -- Preserve an unfamiliar future entry intact for its owning version.
+    if (KWR.Util:Number(entry.provenanceVersion, 0) or 0) > 1 then return entry end
+    if (KWR.Util:Number(entry.captureModeVersion, 0) or 0) > 1 then return entry end
+    if entry.captureMode == "PLAYER" then entry.captureMode = "TEAM" end
+    if entry.captureMode == nil then
+        entry.captureMode = entry.performance and "LEGACY_DEVELOPMENT" or "TEAM"
+    end
+    entry.captureModeVersion = 1
+    entry.commands = trimCommands(entry.commands or {}, self:RetentionLimit(entry, "maxCommands"))
+    entry.events = trimList(entry.events or {}, self:RetentionLimit(entry, "maxEvents"))
     entry.objectiveTimeline = trimList(
-        entry.objectiveTimeline or {}, self.maxObjectiveTimeline)
+        entry.objectiveTimeline or {}, self:RetentionLimit(entry, "maxObjectiveTimeline"))
     entry.decisionReviews = trimList(
-        entry.decisionReviews or {}, self.maxDecisionReviews)
-    entry.reviewQueue = trimList(entry.reviewQueue or {}, self.maxReviewQueue)
+        entry.decisionReviews or {}, self:RetentionLimit(entry, "maxDecisionReviews"))
+    entry.reviewQueue = trimList(entry.reviewQueue or {}, self:RetentionLimit(entry, "maxReviewQueue"))
     entry.playerEvidence = type(entry.playerEvidence) == "table"
         and entry.playerEvidence or {}
     for key, evidence in pairs(entry.playerEvidence) do
         entry.playerEvidence[key] = compactPlayerEvidence(
-            evidence, self.maxPlayerLocations, self.maxPlayerNotes)
+            evidence, self:RetentionLimit(entry, "maxPlayerLocations"),
+            self:RetentionLimit(entry, "maxPlayerNotes"))
     end
     entry.enemyThreats = compactThreats(entry.enemyThreats)
     entry.feedback = type(entry.feedback) == "table" and entry.feedback or {}
     entry.planUsage = type(entry.planUsage) == "table" and entry.planUsage or {}
     entry.friendlyTeam = type(entry.friendlyTeam) == "table" and entry.friendlyTeam or {}
     entry.enemyTeam = type(entry.enemyTeam) == "table" and entry.enemyTeam or {}
+    if entry.provenanceVersion ~= 1 then
+        -- Keep the former interpretation for inspection, but never present it
+        -- as proven execution. This migration runs once per historical entry.
+        entry.legacyReview = entry.legacyReview or {
+            schemaVersion = 1,
+            reason = "UNVERIFIED_DELIVERY_AND_EXECUTION",
+            decisionReviews = KWR.Util:Copy(entry.decisionReviews),
+            outcomeAttribution = KWR.Util:Copy(entry.outcomeAttribution),
+            commandStability = KWR.Util:Copy(entry.commandStability),
+        }
+        entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result,
+            self:RetentionLimit(entry, "maxDecisionReviews"))
+        entry.outcomeAttribution = entry.decisionReviews[#entry.decisionReviews]
+            or classifyDecisionReview({}, entry.result)
+        local stability = type(entry.commandStability) == "table"
+            and entry.commandStability or {}
+        stability.generated = stability.generated or stability.issued
+        stability.deliveryQualified = false
+        stability.commandHealth = "NOT_SCORED"
+        stability.commandHealthReason = "Historical generator metrics do not prove call delivery."
+        stability.certificationStatus = "DELIVERY_UNVERIFIED"
+        stability.certificationReason = "Historical calls lack verified delivery and execution provenance."
+        entry.commandStability = stability
+        entry.provenanceVersion = 1
+    end
+    if entry.captureMode == "TEAM" then
+        entry.performance = nil
+        for _, command in ipairs(entry.commands) do compactTeamCommand(command) end
+    end
+    entry.decisionReviews = trimList(entry.decisionReviews,
+        self:RetentionLimit(entry, "maxDecisionReviews"))
     return entry
 end
 
@@ -1057,14 +1224,18 @@ function AAR:TrimHistory()
     end
 end
 
-function AAR:PersistActive()
+function AAR:PersistActive(force)
     if not KWR.db or not KWR.db.journal then
         return
     end
     if not self.active then
         KWR.db.journal.interrupted = nil
+        self.lastCheckpointAt = nil
         return
     end
+    local now = KWR.Util:Now()
+    if force ~= true and self.lastCheckpointAt and now >= self.lastCheckpointAt
+        and now - self.lastCheckpointAt < CHECKPOINT_INTERVAL then return end
     local checkpoint = self:CompactEntry(copyEntry(self.active))
     if checkpoint then
         checkpoint.result = "INTERRUPTED"
@@ -1074,6 +1245,7 @@ function AAR:PersistActive()
             "Interrupted before battleground completion.",
             160)
         KWR.db.journal.interrupted = checkpoint
+        self.lastCheckpointAt = now
     end
 end
 
@@ -1109,7 +1281,8 @@ function AAR:CommitInterrupted(reason)
     if entry.finalCommand then
         entry.finalCommand.outcome = "Interrupted: " .. entry.interruptionReason
     end
-    entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
+    entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result,
+        self:RetentionLimit(entry, "maxDecisionReviews"))
     entry.commandStability = self:BuildCommandStabilitySummary()
     self:FinalizeRuntimeEvidence(entry)
     entry.reviewQueue = self:BuildReviewQueue(entry)
@@ -1147,7 +1320,8 @@ function AAR:Finish(state)
         end
     end
     entry.primaryPlanID = primaryPlanID
-    entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result)
+    entry.decisionReviews = self:BuildDecisionReviews(entry.commands, entry.result,
+        self:RetentionLimit(entry, "maxDecisionReviews"))
     entry.commandStability = self:BuildCommandStabilitySummary()
     self:FinalizeRuntimeEvidence(entry)
     entry.reviewQueue = self:BuildReviewQueue(entry)
@@ -1219,7 +1393,7 @@ local function sessionInterpretation(value)
         return "Interpretation: diagnostic run; use for system evidence, not team-follow compliance."
     end
     if value == "Commander" then
-        return "Interpretation: live command session; evaluate both call quality and team follow-through."
+        return "Interpretation: Commander context; each call still needs separate delivery and execution evidence."
     end
     return "Interpretation: session context was not explicitly tagged."
 end
@@ -1230,6 +1404,7 @@ function AAR:Export(entry)
     local lines = {
         "========== KWR MATCH EXPORT ==========",
         "Version: " .. clean(entry.addonVersion or KWR.version, "Unknown", 32),
+        "Candidate: " .. clean(entry.candidateID, "UNBOUND", 80),
         "Map: " .. clean(entry.mapName or entry.mapKey, "Unknown", 80),
         "Result: " .. clean(entry.result, "Unknown", 20),
         "Final Score: " .. (entry.scoreEnd
@@ -1241,8 +1416,10 @@ function AAR:Export(entry)
         "Rating Change: " .. unknown(entry.ratingChange),
         "Team Faction: " .. clean(entry.team and entry.team.faction, "Unknown", 16),
         "Review Context: " .. unknown(entrySessionType(entry)),
+        "Capture Mode: " .. clean(entry.captureMode, "LEGACY", 24),
+        "Sharing: local history; manual export only.",
         sessionInterpretation(entrySessionType(entry)),
-        string.format("Runtime: samples %d | refresh max %.3f ms | p95 max %.3f ms | memory %.1f -> %.1f KB / max %.1f KB | transition max %.3f ms | errors %d",
+        entry.performance and string.format("Runtime: samples %d | refresh max %.3f ms | p95 max %.3f ms | memory %.1f -> %.1f KB / max %.1f KB | transition max %.3f ms | errors %d",
             entry.performance and entry.performance.samples or 0,
             entry.performance and entry.performance.maxRefreshMs or 0,
             entry.performance and entry.performance.maxP95Ms or 0,
@@ -1250,7 +1427,8 @@ function AAR:Export(entry)
             entry.performance and entry.performance.lastMemoryKB or 0,
             entry.performance and entry.performance.maxMemoryKB or 0,
             entry.performance and entry.performance.maxTransitionMs or 0,
-            entry.performance and entry.performance.errors or 0),
+            entry.performance and entry.performance.errors or 0)
+            or "Runtime: detailed development telemetry was not retained.",
         string.format("Safety: blocked %d | forbidden %d | total %d",
             entry.safety and entry.safety.blocked or 0,
             entry.safety and entry.safety.forbidden or 0,
@@ -1290,9 +1468,21 @@ function AAR:Export(entry)
             clean(command.action, "Unknown", 160), clean(command.assigned or command.who, "Unknown", 120),
             clean(command.confidence, "Unknown", 16), unknown(command.confidenceScore),
             clean(command.risk, "Unknown", 16))
+        lines[#lines + 1] = "  Delivery: "
+            .. (KWR.CommandReview:DeliveryEligible(command)
+                and "LEADER_ATTESTED (explicit local confirmation)" or "UNVERIFIED")
+            .. " | Execution: "
+            .. (KWR.CommandReview:ExecutionEligible(command)
+                and "PUBLIC_OBSERVATION" or "UNVERIFIED")
         lines[#lines + 1] = "  Evidence: "
             .. (#(command.evidence or {}) > 0
                 and joinClean(command.evidence, "; ") or "Unknown")
+        lines[#lines + 1] = "  Follow-through: " .. KWR.CommandReview:FollowthroughSummary(command)
+        for _, callout in ipairs(command.callouts or {}) do
+            if callout.schemaVersion == 1 and type(callout.speech) == "string" and #callout.speech <= 16384 then
+                lines[#lines + 1] = "  Verbal snapshot " .. tostring(callout.calloutRevision) .. ":\n" .. callout.speech
+            end
+        end
         lines[#lines + 1] = "  Abort/Pivot: "
             .. clean(command.abortCondition, "Unknown", 180)
         local execution = command.executionAssessment or {}
@@ -1358,7 +1548,7 @@ function AAR:Export(entry)
     lines[#lines + 1] = "Command Stability:"
     local stability = entry.commandStability or {}
     lines[#lines + 1] = string.format(
-        "- Evaluations %s | issued %s | replacements %s | stabilized %s | reversals %s | retained records %s | suppressed %s",
+        "- Evaluations %s | generated %s | replacements %s | stabilized %s | reversals %s | retained records %s | suppressed %s",
         unknown(stability.evaluations), unknown(stability.issued), unknown(stability.replacements),
         unknown(stability.stabilized), unknown(stability.reversals),
         unknown(stability.retainedRecords), unknown(stability.suppressedAlternatives))

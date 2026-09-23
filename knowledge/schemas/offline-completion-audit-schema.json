@@ -23,9 +23,9 @@
     "runtimePreflightPresent",
     "packageAuditReady",
     "packageAuditWorkspaceStatus",
-    "validatePassed",
-    "knowledgeAuditPassed",
-    "corpusAuditPassed",
-    "decisionBenchmarkPassed"
+    "cleanEligibilityValidatePassed",
+    "cleanEligibilityKnowledgeAuditPassed",
+    "cleanEligibilityCorpusAuditPassed",
+    "cleanEligibilityDecisionBenchmarkPassed"
   ]
 }

@@ -27,6 +27,16 @@ local function mapKind(localState)
     return KWR.Util:Text(localState and localState.context and localState.context.kind, "WORLD", 32)
 end
 
+local function observedKillEligible(boardEnemy, enemy)
+    if boardEnemy.killable ~= true then return false end
+    local intent = KWR.Util:Text(boardEnemy.targetIntent
+        or (enemy and (enemy.targetIntent or (enemy.combat and enemy.combat.targetIntent))),
+        "", 32)
+    -- Fixtures and integrations that explicitly provide killable=true predate
+    -- target intent. They remain valid only when they do not contradict it.
+    return intent == "" or intent == "NONE" or intent == "OBSERVED_KILL_WINDOW"
+end
+
 function Detector:Detect(localState)
     local problems = {}
     local castingHealerProblems = 0
@@ -44,6 +54,8 @@ function Detector:Detect(localState)
                     or (enemy.currentCast and enemy.currentCast.freeCasting == true)
                     or (enemy.combat and enemy.combat.priorityCast ~= nil),
                 killable = enemy.killable == true,
+                targetIntent = enemy.targetIntent
+                    or (enemy.combat and enemy.combat.targetIntent),
                 overextended = enemy.overextended == true,
                 healthPercent = KWR.Util:Number(enemy.healthPercent, nil),
                 confidence = enemy.visible and "CONFIRMED" or "INFERRED",
@@ -105,23 +117,21 @@ function Detector:Detect(localState)
             })
         end
         if role ~= "HEALER" and currentLocal and alive
-            and (boardEnemy.overextended == true or boardEnemy.killable == true
-            or (health and health <= 45)) then
-            local inferred = boardEnemy.killable ~= true and not (health and health <= 35)
+            and observedKillEligible(boardEnemy, enemy) then
             addProblem(problems, {
                 id = problemID("KILL", enemy),
                 type = "KILL_TARGET_AVAILABLE",
                 enemy = enemy,
                 verb = "Kill",
-                severity = inferred and 82 or 90,
-                confidence = inferred and "INFERRED" or "CONFIRMED",
+                severity = 90,
+                confidence = boardEnemy.confidence or "CONFIRMED",
                 objectiveValue = 65,
                 locality = "LOCAL",
                 requiredJobs = { "Kill", "Pressure" },
                 evidenceIDs = evidenceID and { evidenceID } or {},
                 reasons = {
                     enemyLabel(enemy) .. " is local",
-                    enemyLabel(enemy) .. " is overextended or killable",
+                    enemyLabel(enemy) .. " has a current observed kill window",
                 },
             })
         end

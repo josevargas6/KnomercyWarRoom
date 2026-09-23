@@ -388,6 +388,12 @@ local function friendlyControlled(snapshot, definition, context)
 end
 
 local function assaultTarget(snapshot, definition)
+    -- Use the planner's destination before falling back to map priorities.
+    local strategy = snapshot.strategy or {}
+    local target = strategy.target or (strategy.objectiveDecision or {}).target
+    if target and definition.positions and definition.positions[target] then
+        return target
+    end
     local enemy, available = {}, {}
     for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
         if definition.positions and definition.positions[row.label] then
@@ -1257,6 +1263,7 @@ function Assignments:ResponsePackage(snapshot, assignments)
     end
     local shortTarget = KWR.Maps:AbbreviateLocation(mapKey, target)
     local movers, stayers = {}, {}
+    local moverActors, stayerActors, actorAssignments = {}, {}, {}
     local moverCandidates = {}
     local moverKeys, stayerKeys = {}, {}
     local stayerGroups, stayerOrder = {}, {}
@@ -1272,10 +1279,14 @@ function Assignments:ResponsePackage(snapshot, assignments)
             local name = assignment.shortName or assignment.name
             local role = assignment.role or ""
             local key = KWR.Util:CanonicalPlayerKey(name, assignment.guid) or ""
+            local actor = { name = assignment.name or assignment.shortName, guid = assignment.guid,
+                role = assignment.role, location = assignment.location }
+            actorAssignments[#actorAssignments + 1] = actor
             if role:find("Defender", 1, true)
                 or role == "Tower Sitter" or role == "Cart Anchor" then
                 if key ~= "" and not stayerKeys[key] then
                     stayers[#stayers + 1] = name
+                    stayerActors[#stayerActors + 1] = actor
                     stayerKeys[key] = true
                 end
                 local location = KWR.Maps:AbbreviateLocation(
@@ -1297,6 +1308,7 @@ function Assignments:ResponsePackage(snapshot, assignments)
                 moverCandidates[#moverCandidates + 1] = {
                     key = key,
                     name = name,
+                    actor = actor,
                 }
             end
         end
@@ -1305,6 +1317,7 @@ function Assignments:ResponsePackage(snapshot, assignments)
         if candidate.key ~= "" and not stayerKeys[candidate.key]
             and not moverKeys[candidate.key] then
             movers[#movers + 1] = candidate.name
+            moverActors[#moverActors + 1] = candidate.actor
             moverKeys[candidate.key] = true
         end
     end
@@ -1315,6 +1328,8 @@ function Assignments:ResponsePackage(snapshot, assignments)
                 local key = KWR.Util:CanonicalPlayerKey(name, assignment.guid) or ""
                 if key ~= "" and not stayerKeys[key] and not moverKeys[key] then
                     movers[#movers + 1] = name
+                    moverActors[#moverActors + 1] = { name = assignment.name or assignment.shortName,
+                        guid = assignment.guid, role = assignment.role, location = assignment.location }
                     moverKeys[key] = true
                 end
             end
@@ -1341,6 +1356,15 @@ function Assignments:ResponsePackage(snapshot, assignments)
     local qualified = opportunity.score
         and opportunity.score >= 85
         and (confidence == "MEDIUM" or confidence == "HIGH")
+    local assignmentConflict = false
+    if actionID == "REINFORCE" or actionID == "ROTATE" or actionID == "PREPARE_PRESSURE" then
+        for _, actor in ipairs(moverActors) do
+            if actor.location ~= target then assignmentConflict = true end
+        end
+        if #moverActors == 0 then assignmentConflict = true end
+    end
+    -- An execution assessment is a proposal, not a second assignment engine.
+    qualified = qualified and not assignmentConflict
     local criticalGap
     local releaseTarget
     for _, row in ipairs(integrity.coverageLedger or {}) do
@@ -1366,12 +1390,16 @@ function Assignments:ResponsePackage(snapshot, assignments)
     return {
         active = execution.active == true,
         qualified = qualified == true,
+        assignmentConflict = assignmentConflict,
         actionID = actionID,
         action = actionText[actionID] or "HOLD CURRENT PLAN",
         target = target,
         shortTarget = shortTarget,
         movers = movers,
         stayers = stayers,
+        moverActors = moverActors,
+        stayerActors = stayerActors,
+        actorAssignments = actorAssignments,
         moverText = #movers > 0 and table.concat(movers, ", ") or "Team",
         stayerText = #stayerCalls > 0 and table.concat(stayerCalls, "; ")
             or "Assigned defenders",

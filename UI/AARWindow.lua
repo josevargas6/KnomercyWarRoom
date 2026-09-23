@@ -86,7 +86,7 @@ local function snapshotText(entry)
             and (tostring(entry.scoreEnd.friendly) .. " - " .. tostring(entry.scoreEnd.enemy))
             or "Unknown"),
         "DURATION  " .. KWR.Util:Clock(entry.duration or 0),
-        "ISSUED  " .. tostring(stability.issued or 0),
+        "GENERATED  " .. tostring(stability.generated or stability.issued or 0),
         "RETAINED  " .. tostring(stability.retainedRecords or #(entry.commands or {})),
         "SWAPS  " .. tostring(stability.replacements or 0),
         "STABILITY  " .. text(stability.commandHealth, "UNKNOWN", 16),
@@ -175,7 +175,7 @@ end
 local function sessionInterpretationText(entry)
     local value = sessionTypeText(entry)
     if value == "Commander" then
-        return "Context: live command session. Judge call quality and whether the team followed it."
+        return "Context: Commander. Delivery and team execution require separate evidence for each call."
     end
     if value == "Spectator" then
         return "Context: observer session. Use this as watch evidence, not command-follow proof."
@@ -221,6 +221,10 @@ function AARWindow:Create()
     frame:SetFrameStrata("FULLSCREEN_DIALOG")
     frame:SetToplevel(true)
     frame:SetClampedToScreen(true)
+    -- AAR owns its dialog stratum and saved anchor.  The shared layout
+    -- coordinator deliberately does not touch this review surface: it must
+    -- never be re-layered or repositioned by a periodic combat/UI refresh.
+    frame.kwrOwnsLayout = true
     KWR.Theme:Style(frame, "background", "borderHi")
     frame:SetBackdropColor(0.01, 0.02, 0.04, 0.97)
     KWR.Theme:MakeMovable(frame, profile)
@@ -318,7 +322,7 @@ function AARWindow:Show(entryID)
     frame.reviewBadge:SetTone(entry.feedback and next(entry.feedback) and "green" or "yellow")
     frame.reviewBadge:SetText(entry.feedback and next(entry.feedback) and "REVIEW DONE" or "REVIEW OPEN")
     frame.exportBadge:SetTone("gold")
-    frame.exportBadge:SetText("EXPORT READY")
+    frame.exportBadge:SetText(entry.captureMode == "TEAM" and "TEAM AAR" or "EXPORT READY")
     frame.snapshotCard.value:SetText(snapshotText(entry))
     frame.reviewCard.value:SetText(decisionText(entry))
     frame.evidenceCard.value:SetText(evidenceText(entry))

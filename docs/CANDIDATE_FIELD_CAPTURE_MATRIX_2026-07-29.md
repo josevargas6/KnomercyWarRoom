@@ -1,15 +1,18 @@
 # Candidate Field Capture Matrix
 
-Candidate: `6.1.1-alpha.10` (unbound until exact-head CI publishes its commit
-and archive hashes)
+Current diagnostic candidate: `alpha12-kwr297-source-20260910-1`
+(`6.1.1-alpha.12`), Commander SHA-256
+`249A2FBD2C5AE21A5016B1C8664CE9A7CA26943D8718CE5BBD76452CE04378A4`.
+It is installed and hash-verified by
+`artifacts/release-offline-install-20260912-r4/DEPLOYMENT.json`.
 
-Before beginning any session, copy the Commander and Sentinel SHA-256 values
-from the exact-head CI artifact manifest into the field log. Do not reuse the
-Alpha 4/5 hashes below or treat the currently installed folders as evidence.
+Before beginning any session, record the Commander and Sentinel SHA-256 values
+from the current deployment receipt in the field log. Do not reuse historical
+Alpha hashes or mix evidence from another candidate.
 
-Only evidence captured against the exact installed Alpha 9 archive hashes may
-clear the sessions below. Historical Alpha 4/5/36/43 evidence remains useful
-for diagnosis, but cannot certify this candidate.
+Evidence captured against this installed dirty-source candidate may clear its
+diagnostic live blockers. It cannot certify a clean/tagged release; that later
+candidate requires its own exact package binding and fresh field evidence.
 
 This is the fastest path to useful live evidence.
 

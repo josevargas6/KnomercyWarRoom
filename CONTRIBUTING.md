@@ -6,7 +6,7 @@ Commander.
 
 ## Development flow
 
-1. Branch from `develop`.
+1. Branch from the remote default, currently `main`, preserving existing work.
 2. Keep changes bounded to one decision, truth, UI, or performance concern.
 3. Add a deterministic diagnostic for every behavior change or defect.
 4. Run:
@@ -18,8 +18,9 @@ Commander.
    fengari tests\soak.lua
    ```
 
-5. Open a pull request into `develop`. Promotion from `develop` to `main`
-   requires the applicable live checks in `QA_CHECKLIST.md`.
+5. Open a pull request into `main` under the protected CI workflow. Stable
+   promotion requires the applicable live checks in `QA_CHECKLIST.md` and the
+   evidence and authorization defined in `RELEASE_READINESS.md` / `RELEASE_POLICY.md`.
 
 ## Non-negotiable rules
 

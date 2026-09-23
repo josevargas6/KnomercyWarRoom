@@ -79,8 +79,18 @@ function RosterInspector:InspectReady(guid)
     guid = KWR.Util:Text(guid, "", 80)
     if guid == "" or guid ~= self.pendingGUID then return end
     local unit = self.pendingUnit
+    -- Tokens can be recycled while an asynchronous inspection is pending.
+    if KWR.Util:Text(KWR.Util:Call(UnitGUID, unit), "", 80) ~= guid then
+        self.pendingGUID, self.pendingUnit, self.pendingAt = nil, nil, nil
+        if type(ClearInspectPlayer) == "function" then KWR.Util:Call(ClearInspectPlayer) end
+        return
+    end
     local specID, specName, specRole = KWR.Sensors:ResolveSpecialization(unit)
+    local changed = false
     if specName and specName ~= "" then
+        local previous = KWR.Sensors.specCache[guid]
+        changed = not previous or previous.id ~= specID
+            or previous.name ~= specName or previous.role ~= specRole
         local record = { id = specID, name = specName, role = specRole, observedAt = KWR.Util:Now() }
         KWR.Sensors.specCache[guid] = record
         local name = KWR.Util:UnitName(unit)
@@ -89,7 +99,7 @@ function RosterInspector:InspectReady(guid)
     end
     self.pendingGUID, self.pendingUnit, self.pendingAt = nil, nil, nil
     if type(ClearInspectPlayer) == "function" then KWR.Util:Call(ClearInspectPlayer) end
-    if KWR.MatchRuntime then KWR.MatchRuntime:Queue("inspect-ready", 0.05) end
+    if changed and KWR.MatchRuntime then KWR.MatchRuntime:Queue("inspect-ready", 0.05) end
 end
 
 function RosterInspector:OnInitialize()

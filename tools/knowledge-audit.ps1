@@ -503,6 +503,31 @@ try {
             }
         }
     }
+    $collectionPolicy = $fieldBlocker.fieldTestPolicy
+    if ($collectionPolicy.eligibleMaps -ne 'ANY_RATED_BG' -or
+        $collectionPolicy.maximumGames -ne 2 -or
+        $collectionPolicy.distinctMapsRequired -ne $false -or
+        @($collectionPolicy.requiredMapFamilies).Count -ne 0) {
+        $errors.Add('Field collection must accept any random rated map, including repeats, in at most two games.')
+    }
+    if ($collectionPolicy.absentMechanicResult -ne 'NOT_OBSERVED' -or
+        $collectionPolicy.absentMechanicFailsSession -ne $false -or
+        $collectionPolicy.absentMechanicAwardsPass -ne $false) {
+        $errors.Add('Unobserved mechanics must neither fail the field session nor receive automatic pass credit.')
+    }
+    if (@($fieldBlocker.recommendedSessions).Count -gt 2) {
+        $errors.Add('Field collection exceeds the two-game limit.')
+    }
+    foreach ($row in @($fieldBlocker.recommendedSessions)) {
+        if (@($row.maps).Count -ne 1 -or $row.maps[0] -ne 'ANY_RATED_BG') {
+            $errors.Add("Field session requires a selectable map: $($row.sessionId)")
+        }
+    }
+    foreach ($row in @($fieldBlocker.blockingDefects)) {
+        if ($row.bestMap -ne 'ANY_RATED_BG') {
+            $errors.Add("Field blocker requires a selectable map: $($row.id)")
+        }
+    }
 } catch {
     $errors.Add("Field blocker report JSON is invalid: $($_.Exception.Message)")
 }
@@ -588,6 +613,14 @@ try {
     if ($LASTEXITCODE -ne 0) { $errors.Add("Season 2 simulation corpus audit failed.") }
 } catch {
     $errors.Add("Season 2 simulation corpus audit failed: $($_.Exception.Message)")
+}
+
+try {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (
+        Join-Path $root 'tools\scenario-generation-audit.ps1')
+    if ($LASTEXITCODE -ne 0) { $errors.Add('Scenario runtime generation audit failed.') }
+} catch {
+    $errors.Add("Scenario runtime generation audit failed: $($_.Exception.Message)")
 }
 
 $nexusGeneratedPath = Join-Path $root "Data\StrategistNexusCorpus.lua"

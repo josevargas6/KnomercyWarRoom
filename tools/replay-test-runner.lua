@@ -537,6 +537,20 @@ local function deriveDecisionTags(KWR, state)
     end
 
     add("PLAN:" .. normalizeToken(state.command and state.command.planID or "NONE"))
+    local planTags = state.snapshot and state.snapshot.strategy
+        and state.snapshot.strategy.planTags or {}
+    local orderedPlanTags = {}
+    for tag, enabled in pairs(planTags) do
+        if enabled == true then
+            orderedPlanTags[#orderedPlanTags + 1] = tostring(tag)
+        end
+    end
+    table.sort(orderedPlanTags)
+    for _, tag in ipairs(orderedPlanTags) do
+        -- Retain catalog taxonomy independently from the concrete plan ID. The
+        -- evaluator does not silently treat this as a semantic label match.
+        add("PLAN_TAG:" .. tag)
+    end
     add("CALL:" .. normalizeToken(fightNow.current and fightNow.current.what or "NONE"))
     add("WHERE:" .. normalizeToken(fightNow.current and fightNow.current.where or "FIELD"))
     add("NEXT:" .. normalizeToken(fightNow.next and fightNow.next.where or "FIELD"))

@@ -25,6 +25,12 @@ local function noteTags(enemy)
 end
 
 function Scorer:Score(friendlyState, problem, snapshot)
+    if not friendlyState or friendlyState.available ~= true then
+        return -math.huge, { "- player unavailable" }
+    end
+    if friendlyState.roleKnown == false then
+        return -math.huge, { "- player role unknown" }
+    end
     local profile = friendlyState and friendlyState.profile or {}
     local typeRow = KWR.EnemyProblemTypes[problem and problem.type or ""] or {}
     local counterplay = KWR.CounterplayMatrix and KWR.CounterplayMatrix:Resolve(problem and problem.type)
@@ -33,14 +39,9 @@ function Scorer:Score(friendlyState, problem, snapshot)
         or typeRow.capability, "pressure", 32)
     local score = KWR.Util:Number(problem and problem.severity, 0) or 0
     local reasons = {}
-    if friendlyState and friendlyState.available == true then
-        score = score + 12
-        reasons[#reasons + 1] = "+ " .. KWR.Util:Text(friendlyState.name, "Player", 48)
-            .. " is available"
-    else
-        score = score - 200
-        reasons[#reasons + 1] = "- player unavailable"
-    end
+    score = score + 12
+    reasons[#reasons + 1] = "+ " .. KWR.Util:Text(friendlyState.name, "Player", 48)
+        .. " is available"
     local fit = KWR.Util:Number(profile[capability], 0) or 0
     score = score + fit
     reasons[#reasons + 1] = "+ " .. KWR.Util:Text(friendlyState and friendlyState.name,

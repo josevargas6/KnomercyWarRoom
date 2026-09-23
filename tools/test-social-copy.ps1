@@ -55,7 +55,7 @@ $activeReleaseFiles = @(
 )
 foreach ($path in $activeReleaseFiles) {
     $content = Get-Content -LiteralPath $path -Raw
-    $versions = [regex]::Matches($content, '6\.1\.0(?:-[0-9A-Za-z.-]+)?') |
+    $versions = [regex]::Matches($content, '\b6\.1\.\d+(?:-(?:alpha|beta|rc)\.\d+)?\b') |
         ForEach-Object { $_.Value } |
         Select-Object -Unique
     foreach ($foundVersion in @($versions)) {

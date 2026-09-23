@@ -91,6 +91,9 @@ KWR_DB = {
     Assert-True ($bound.summary.stabilityReadyMatches -eq 1) "Ready stability fixture was not counted."
     Assert-True ($bound.summary.safetyPassingMatches -eq 1) "Safe fixture was not counted."
     Assert-True ($bound.summary.performancePassingMatches -eq 1) "Performance fixture was not counted."
+    Assert-True ($bound.source.serializedBudgetPass -eq $true) "Small fixture exceeded serialized-data budget."
+    Assert-True (@($bound.source.topLevelFootprints | Where-Object key -eq 'journal').Count -eq 1) `
+        "SavedVariables footprint did not report the retained journal structure."
     Assert-True ($bound.provenGates -contains "complete-match lifecycle") `
         "Bound complete-match lifecycle was not proven."
     Assert-True ($bound.source.PSObject.Properties.Name -notcontains "path") `
@@ -107,6 +110,20 @@ KWR_DB = {
         "Pre-certification fixture did not fail closed."
     Assert-True ($unbound.missingGates -contains "candidate-bound complete-match lifecycle") `
         "Unbound lifecycle proof was incorrectly accepted."
+
+    Add-Content -LiteralPath $savedPath -Value ("-- " + ('x' * 1024))
+    [IO.File]::SetLastWriteTimeUtc($savedPath, [DateTime]::UtcNow)
+    & powershell -NoProfile -ExecutionPolicy Bypass -File `
+        (Join-Path $PSScriptRoot "retail-savedvariables-audit.ps1") `
+        -SavedVariablesPath $savedPath `
+        -DeploymentCertificationPath $deploymentPath `
+        -OutFile $outputPath `
+        -MaxSerializedBytes 128 | Out-Null
+    $oversized = Get-Content -LiteralPath $outputPath -Raw | ConvertFrom-Json
+    Assert-True ($oversized.source.serializedBudgetPass -eq $false) `
+        "Oversized SavedVariables fixture passed the byte budget."
+    Assert-True ($oversized.missingGates -contains "serialized SavedVariables budget") `
+        "Oversized SavedVariables fixture did not record its byte-budget blocker."
 
     Write-Output "KWR_RETAIL_SAVEDVARIABLES_AUDIT_TEST_PASS checks=$checks"
 } finally {

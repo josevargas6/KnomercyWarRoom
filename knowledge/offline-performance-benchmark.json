@@ -1,29 +1,36 @@
 {
     "schema":  "kwr-offline-performance-benchmark",
-    "schemaVersion":  1,
-    "generatedAt":  "2026-08-28T19:49:35Z",
+    "schemaVersion":  2,
+    "generatedAt":  "2026-09-12T08:33:04Z",
     "result":  "PASS",
-    "budgets":  {
-                    "averageMs":  1.5,
-                    "p95Ms":  4,
-                    "maxMs":  10,
-                    "durationSamples":  120,
-                    "commanderHistory":  30,
-                    "evidenceLedger":  60
-                },
+    "timingSource":  "os.clock",
+    "scope":  "actual host runtime with mocked WoW APIs and a preview workload",
+    "resultMeaning":  "Measurement completed; not a pass against Retail performance budgets.",
+    "clientBudgetStatus":  "REQUIRES_RETAIL_MEASUREMENT",
+    "provenance":  {
+                       "sourceRevision":  "unavailable",
+                       "sourceRoot":  "C:\\Users\\josev\\source\\repos\\KnomercyWarRoom",
+                       "luaRuntime":  "KWR Lua runtime: cached Node.js/Fengari runtime",
+                       "luaCommand":  "Command: C:\\Users\\josev\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.19.0-win-x64\\node.exe",
+                       "host":  {
+                                    "os":  "Microsoft Windows NT 10.0.26200.0",
+                                    "processor":  "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+                                    "processArchitecture":  "X64",
+                                    "powershell":  "5.1.26100.9444"
+                                }
+                   },
     "observed":  {
-                     "refreshes":  500,
-                     "durationSamples":  120,
-                     "averageMs":  0.22166666667108,
-                     "p95Ms":  0.79999999998836,
-                     "maxMs":  3.2000000000116,
-                     "commanderHistory":  3,
-                     "evidenceLedger":  3
+                     "samples":  30,
+                     "averageMs":  218.428713,
+                     "p50Ms":  216.0506,
+                     "p95Ms":  253.4128,
+                     "p99Ms":  265.7327,
+                     "maxMs":  265.7327
                  },
     "assertions":  [
-                       "bounded refresh samples",
-                       "bounded Commander history",
-                       "bounded verification ledger",
-                       "event-driven refresh soak"
+                       "30 real host samples after five warm-up refreshes",
+                       "nearest-rank P50/P95/P99/max ordering",
+                       "no synthetic elapsed costs",
+                       "refresh calls completed successfully"
                    ]
 }

@@ -11,8 +11,143 @@ local Commander = {
     suppressionLog = {},
     maxSuppressionLog = 20,
     recordedInvalidations = {},
+    terminalPlays = {},
 }
 KWR.Commander = Commander
+
+function Commander:TimingText(command)
+    command = command or {}
+    local play = command.activePlay or {}
+    if play.matchComplete then return "MATCH END" end
+    if play.phase == "FAILED" or play.phase == "EXPIRED" then return "REASSESS" end
+    if play.phase == "SUCCEEDED" then return "COMPLETE" end
+    local deadline = KWR.Util:Number(play.timingDeadlineAt, nil)
+    if deadline and play.timingKind then
+        local remaining = deadline - KWR.Util:Now()
+        if remaining <= 0 then return "REASSESS" end
+        return play.timingKind .. " " .. KWR.Util:Clock(math.ceil(remaining))
+    end
+    return command.when or "NOW"
+end
+
+-- Process-local serials deliberately survive match resets. They identify a call
+-- for explicit confirmation; they are not a durable learning episode key.
+local reviewSerial = 0
+
+function Commander:AttachReviewIdentity(command, previous)
+    if previous and previous.signature == command.signature
+        and previous.mapKey == command.mapKey
+        and previous.sessionKey == command.sessionKey
+        and previous.learningKey == command.learningKey
+        and previous.planID == command.planID
+        and previous.commandId then
+        command.commandId = previous.commandId
+        command.commandRevision = previous.commandRevision
+        command.generatedAt = previous.generatedAt
+        command.delivery = KWR.Util:Copy(previous.delivery)
+        command.executionObservation = KWR.Util:Copy(previous.executionObservation)
+        return
+    end
+    reviewSerial = reviewSerial + 1
+    command.commandRevision = reviewSerial
+    command.generatedAt = KWR.Util:Number(KWR.Util:Call(time), nil)
+    command.commandId = tostring(command.generatedAt or "unknown") .. ":"
+        .. tostring(KWR.Util:Now()) .. ":" .. tostring(reviewSerial)
+    command.delivery = nil
+end
+
+function Commander:ObservePublicExecution(snapshot, command)
+    local context = snapshot and snapshot.context or {}
+    local current = self.lastCommand
+    if context.inPvP ~= true or context.preview == true or context.matchComplete == true
+        or not current or not command or current.commandId ~= command.commandId
+        or current.commandRevision ~= command.commandRevision
+        or current.signature ~= command.signature
+        or current.sessionKey == nil or current.sessionKey == ""
+        or context.sessionKey ~= current.sessionKey
+        or not KWR.CommandReview:DeliveryEligible(current)
+        or KWR.CommandReview:ExecutionEligible(current) then
+        return command
+    end
+    local target = KWR.Util:Text(current.objectiveDecision and current.objectiveDecision.target,
+        "", 64)
+    if target == "" or target == "VERIFY" then return command end
+    local faction = KWR.Util:Text(context.team and context.team.faction, "", 16)
+    local action = KWR.Util:Upper(current.action, "", 160)
+    local expectedFlag = faction == "Alliance" and "Horde Flag"
+        or (faction == "Horde" and "Alliance Flag" or nil)
+    local best
+    for _, event in ipairs(snapshot.objectives and snapshot.objectives.events or {}) do
+        local at = KWR.Util:Number(event.observedAt, nil)
+        local exactAssault = event.kind == "ASSAULT" and event.source == "BG_SYSTEM"
+            and event.objective == target and type(event.id) == "string"
+        local exactFlagCapture = event.kind == "FLAG_CAPTURE" and event.source == "BG_SYSTEM"
+            and expectedFlag ~= nil and event.objective == expectedFlag and type(event.id) == "string"
+            and (target == "Enemy FC" or target == "Enemy Flag Room")
+            and action:find("CAP", 1, true) ~= nil
+        if (exactAssault or exactFlagCapture) and at and at >= current.delivery.deliveredAt then
+            best = event
+        end
+    end
+    if not best then return command end
+    local observed = {
+        schemaVersion = 1, clock = "UNIX_SECONDS",
+        commandId = current.commandId, commandRevision = current.commandRevision,
+        source = "PUBLIC_FACTS", observedAt = best.observedAt,
+        evidenceIds = { best.id }, outcome = best.kind == "FLAG_CAPTURE" and "SUCCESS" or "OBSERVED",
+        factKind = best.kind == "FLAG_CAPTURE" and "BG_SYSTEM_FLAG_CAPTURE" or "BG_SYSTEM_ASSAULT",
+        factTarget = best.kind == "FLAG_CAPTURE" and best.objective or target,
+        sessionKey = current.sessionKey,
+    }
+    local nextCommand = KWR.Util:Copy(current)
+    nextCommand.executionObservation = observed
+    if not KWR.CommandReview:ExecutionEligible(nextCommand) then return command end
+    self.lastCommand = nextCommand
+    command.executionObservation = KWR.Util:Copy(observed)
+    return command
+end
+
+function Commander:AttestDelivery(state, commandId, revision)
+    local context = state and state.snapshot and state.snapshot.context or {}
+    local published = state and state.command
+    local current = self.lastCommand
+    if context.inPvP ~= true or context.preview == true or context.matchComplete == true
+        or not current or current.inPvP ~= true or not published
+        or current.mapKey ~= context.mapKey
+        or current.sessionKey == nil or current.sessionKey == ""
+        or context.sessionKey ~= current.sessionKey
+        or published.sessionKey ~= current.sessionKey
+        or not commandId or commandId ~= current.commandId
+        or commandId ~= published.commandId or revision ~= current.commandRevision
+        or revision ~= published.commandRevision
+        or current.signature ~= published.signature then
+        return false, "Call confirmation expired. Inspect the current call and try again."
+    end
+    if not KWR.db or not KWR.db.profile
+        or KWR.db.profile.fieldReviewContext ~= "Commander" then
+        return false, "Call confirmation requires Commander review context."
+    end
+    if KWR.CommandReview:DeliveryEligible(current) then
+        return false, "This call is already confirmed."
+    end
+    local delivery = {
+        schemaVersion = 1, clock = "UNIX_SECONDS",
+        commandId = commandId, commandRevision = revision,
+        generatedAt = current.generatedAt,
+        deliveredAt = KWR.Util:Number(KWR.Util:Call(time), nil),
+        context = "Commander", state = "LEADER_ATTESTED",
+        source = "EXPLICIT_LEADER_CONFIRMATION",
+    }
+    local nextCommand = KWR.Util:Copy(current)
+    nextCommand.delivery = delivery
+    if not KWR.CommandReview:DeliveryEligible(nextCommand) then
+        return false, "Call confirmation unavailable: invalid observation clock."
+    end
+    -- Store owns the published snapshot. Publish on refresh instead of mutating
+    -- a table already held by UI subscribers or the AAR recorder.
+    self.lastCommand = nextCommand
+    return true, "Call delivery confirmed locally. Team execution remains unverified."
+end
 
 local function median(values)
     if type(values) ~= "table" or #values == 0 then return 0 end
@@ -132,10 +267,15 @@ local function stabilitySummary(metrics)
         reversalRate = reversalRate,
         preMovementInvalidationRate = replacements > 0
             and (preMovementInvalidations / replacements) or 0,
-        commandHealth = commandHealth,
-        commandHealthReason = commandHealthReason,
-        certificationStatus = certificationStatus,
-        certificationReason = certificationReason,
+        generatorCommandHealth = commandHealth,
+        generatorCertificationStatus = certificationStatus,
+        generatorCertificationReason = certificationReason,
+        generated = issued,
+        deliveryQualified = false,
+        commandHealth = "NOT_SCORED",
+        commandHealthReason = "Generator churn is diagnostic; call delivery is unverified.",
+        certificationStatus = issued > 0 and "DELIVERY_UNVERIFIED" or "INSUFFICIENT_SAMPLE",
+        certificationReason = "Generated recommendations do not prove delivery or execution.",
     }
 end
 
@@ -678,6 +818,9 @@ end
 
 local function playStateReason(play, snapshot, phase, invalidation)
     if invalidation then return invalidationReasonText(invalidation) end
+    if phase == "EXPIRED" and play and play.matchComplete then
+        return "The battleground ended; no active play remains."
+    end
     if phase == "FAILED" then
         return "The play deadline passed before the required battlefield result."
     end
@@ -700,12 +843,14 @@ local function activePlayOutcome(play, invalidation, retained, replacementAllowe
         }
     end
     local status = "LIVE"
-    if retained == true then
-        status = "HELD"
+    if play.matchComplete == true then
+        status = "COMPLETE"
     elseif invalidation == "PLAY_SUCCEEDED" or play.phase == "SUCCEEDED" then
         status = "SUCCEEDED"
     elseif invalidation ~= nil or play.phase == "FAILED" or play.phase == "EXPIRED" then
         status = "FAILED"
+    elseif retained == true then
+        status = "HELD"
     elseif replacementAllowed == true then
         status = "REPLACED"
     end
@@ -713,7 +858,9 @@ local function activePlayOutcome(play, invalidation, retained, replacementAllowe
         status = status,
         phase = play.phase or "UNKNOWN",
         bucket = phaseBucket(play.phase),
-        reason = playStateReason(play, nil, play.phase, invalidation),
+        reason = play.matchComplete == true
+            and "The battleground ended; no active play remains."
+            or playStateReason(play, nil, play.phase, invalidation),
         invalidation = invalidation,
         retained = retained == true,
         replacementAllowed = replacementAllowed == true,
@@ -728,7 +875,10 @@ local function activePlayTransition(previousPlay, activePlay, invalidation,
     local fromPhase = previousPlay and previousPlay.phase or "NONE"
     local toPhase = activePlay and activePlay.phase or "EXPIRED"
     local trigger = "STEADY"
-    if invalidation == "PLAY_SUCCEEDED" or toPhase == "SUCCEEDED" then
+    if invalidation == "MATCH_COMPLETE"
+        or (activePlay and activePlay.matchComplete == true) then
+        trigger = "MATCH_COMPLETE"
+    elseif invalidation == "PLAY_SUCCEEDED" or toPhase == "SUCCEEDED" then
         trigger = "SUCCESS"
     elseif invalidation == "HARD_DEADLINE_PASSED"
         or invalidation == "PLAY_EXPIRED" or toPhase == "FAILED"
@@ -886,6 +1036,30 @@ end
 
 local function buildActivePlay(snapshot, prediction, strategy, response, command, previousPlay, now)
     local family = snapshot.context and snapshot.context.kind or "WORLD"
+    if snapshot.context and snapshot.context.matchComplete then
+        return {
+            id = KWR.Util:Signature({ "MATCH_COMPLETE", family, command.status }),
+            family = family,
+            action = command.action,
+            actionCode = "MATCH_COMPLETE",
+            objective = nil,
+            movers = {},
+            stayers = {},
+            issuedAt = now,
+            minimumCommitUntil = now,
+            reviewAt = now,
+            expectedArrivalAt = now,
+            expectedResolutionAt = now,
+            hardDeadlineAt = now,
+            phase = "EXPIRED",
+            remainingValue = 0,
+            milestone = "MATCH_COMPLETE",
+            matchComplete = true,
+            commitmentSeconds = 0,
+            travelSeconds = 0,
+            interactionSeconds = 0,
+        }
+    end
     local responseObjective = response and response.target or nil
     if responseObjective == "VERIFY" then
         -- Keep an uncertain cart/objective widget from manufacturing a new
@@ -893,7 +1067,7 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         -- stability layer retains the last known strategic objective.
         responseObjective = nil
     end
-    local objective = responseObjective or strategy.target
+    local objective = command.objectiveOverride or responseObjective or strategy.target
         or (strategy.objectiveDecision and strategy.objectiveDecision.target)
         or (previousPlay and previousPlay.objective) or nil
     local movers = splitNames(response and response.moverText or command.who)
@@ -964,7 +1138,8 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
     local responseDelay = timing.responseDelay
     local groupDelay = timing.groupDelay
     local arrival = now + responseDelay + groupDelay
-    local resolution = prediction.captureDeadline
+    -- Predictor returns durations; play lifecycle compares absolute uptime.
+    local resolution = prediction.captureDeadline and (now + prediction.captureDeadline)
         or ((prediction.timeToWin and family ~= "WORLD") and (now + prediction.timeToWin) or nil)
         or (arrival + baseCommit)
     local hardDeadline = resolution and (resolution + math.max(4, math.floor(baseCommit * 0.25))) or nil
@@ -986,6 +1161,19 @@ local function buildActivePlay(snapshot, prediction, strategy, response, command
         objective = objective,
         movers = movers,
         stayers = stayers,
+        -- Preserve the issued full identities and duties with the retained play;
+        -- later candidate assignments must not rewrite the current verbal call.
+        moverActors = KWR.Util:Copy(response and response.moverActors),
+        stayerActors = KWR.Util:Copy(response and response.stayerActors),
+        actorAssignments = KWR.Util:Copy(response and response.actorAssignments),
+        timingKind = previousPlay and previousPlay.id == id and previousPlay.timingKind
+            or prediction.captureDeadline ~= nil and "BY"
+            or (prediction.status == "WIN" and prediction.timeToWin ~= nil and "HOLD") or nil,
+        timingDeadlineAt = previousPlay and previousPlay.id == id
+            and previousPlay.timingDeadlineAt
+            or (prediction.captureDeadline ~= nil and now + prediction.captureDeadline)
+            or (prediction.status == "WIN" and prediction.timeToWin ~= nil and now + prediction.timeToWin)
+            or nil,
         issuedAt = previousPlay and previousPlay.id == id and previousPlay.issuedAt or now,
         minimumCommitUntil = previousPlay and previousPlay.id == id
             and previousPlay.minimumCommitUntil or (now + baseCommit),
@@ -1680,6 +1868,79 @@ local function overrideEvidence(snapshot, prediction, command, invalidation, rep
     return evidence
 end
 
+local function terminalPlayKey(play)
+    if not play or not play.id then return nil end
+    return KWR.Util:Signature({
+        KWR.Util:Text(play.family, "WORLD", 24),
+        KWR.Util:Text(play.action, "HOLD", 120),
+        KWR.Util:Text(play.objective, "Unknown", 64),
+        KWR.Util:Text(play.milestone, "NONE", 48),
+    })
+end
+
+local function terminalTruthSignature(snapshot)
+    snapshot = type(snapshot) == "table" and snapshot or {}
+    local context = snapshot.context or {}
+    local score = snapshot.score or {}
+    local parts = {
+        KWR.Util:Text(context.sessionKey, "none", 96),
+        tostring(score.friendly or 0),
+        tostring(score.enemy or 0),
+        tostring(score.max or 0),
+        KWR.Util:Text(score.source, "unknown", 32),
+        tostring(#(snapshot.roster or {})),
+        tostring(#(snapshot.enemies or {})),
+    }
+    for _, row in ipairs(snapshot.objectives and snapshot.objectives.rows or {}) do
+        parts[#parts + 1] = table.concat({
+            KWR.Util:Text(row.label, "Unknown", 64),
+            KWR.Util:Text(row.owner, "UNKNOWN", 16),
+            KWR.Util:Text(row.state, "UNKNOWN", 24),
+        }, ":")
+    end
+    for _, enemy in ipairs(snapshot.enemies or {}) do
+        if enemy.carrier == true then
+            parts[#parts + 1] = table.concat({
+                KWR.Util:Text(enemy.guid or enemy.key or enemy.name, "unknown", 96),
+                KWR.Util:Text(enemy.location, "Unknown", 48),
+                enemy.dead == true and "dead" or "alive",
+            }, ":")
+        end
+    end
+    table.sort(parts)
+    return KWR.Util:Signature(parts)
+end
+
+local function terminalReissueHeld(commander, previousPlay, candidatePlay,
+    snapshot, invalidation, now)
+    local previousTerminal = previousPlay and (previousPlay.phase == "SUCCEEDED"
+        or previousPlay.phase == "FAILED" or previousPlay.phase == "EXPIRED")
+    local terminalTransition = invalidation == "PLAY_SUCCEEDED"
+        or invalidation == "PLAY_EXPIRED" or invalidation == "HARD_DEADLINE_PASSED"
+    if not previousTerminal and not terminalTransition then return false end
+    local previousKey = terminalPlayKey(previousPlay)
+    local candidateKey = terminalPlayKey(candidatePlay)
+    if not previousKey or previousKey ~= candidateKey then return false end
+
+    commander.terminalPlays = commander.terminalPlays or {}
+    for key, remembered in pairs(commander.terminalPlays) do
+        if (remembered.expiresAt or 0) <= now then
+            commander.terminalPlays[key] = nil
+        end
+    end
+    local truthSignature = terminalTruthSignature(snapshot)
+    local remembered = commander.terminalPlays[previousKey]
+    if remembered and (remembered.expiresAt or 0) > now
+        and remembered.truthSignature == truthSignature then
+        return true
+    end
+    commander.terminalPlays[previousKey] = {
+        truthSignature = truthSignature,
+        expiresAt = now + 20,
+    }
+    return true
+end
+
 local function replacementAllowed(snapshot, currentPlay, nextPlay, trend, prediction, command)
     if not nextPlay or not nextPlay.id then
         return false, "NO_CANDIDATE"
@@ -1846,6 +2107,30 @@ local function worldCommand(snapshot, formation)
     }
 end
 
+local function actionableReassignment(integrity, snapshot)
+    for _, row in ipairs(integrity and integrity.reassignments or {}) do
+        if row.status == "UNAVAILABLE_DISCONNECTED" or row.status == "ABANDONED" then
+            return row
+        end
+        if row.status == "UNAVAILABLE_DEAD" then
+            for _, ledger in ipairs(integrity.coverageLedger or {}) do
+                if ledger.location == row.expected
+                    and (ledger.assigned or 0) < (ledger.required or 0) then
+                    return row
+                end
+            end
+            for _, objective in ipairs(snapshot.objectives
+                and snapshot.objectives.rows or {}) do
+                if objective.label == row.expected
+                    and objective.owner == "FRIENDLY"
+                    and objective.state == "CONTROLLED" then
+                    return row
+                end
+            end
+        end
+    end
+end
+
 function Commander:Compose(snapshot, prediction, assignments)
     snapshot = type(snapshot) == "table" and snapshot or {}
     snapshot.context = type(snapshot.context) == "table" and snapshot.context or {}
@@ -1877,10 +2162,18 @@ function Commander:Compose(snapshot, prediction, assignments)
         -- Map resolution during the loading screen is not a tactical failure.
         previousPlay = nil
     end
-    local previousPhase = previousPlay and previousPlay.phase
+    local storedPreviousPhase = previousPlay and previousPlay.phase
+    local previousWasTerminal = storedPreviousPhase == "SUCCEEDED"
+        or storedPreviousPhase == "FAILED" or storedPreviousPhase == "EXPIRED"
+    local evaluatedPreviousPlay = previousPlay and KWR.Util:Copy(previousPlay) or nil
+    if evaluatedPreviousPlay and evaluatedPreviousPlay.id then
+        evaluatedPreviousPlay.phase = currentPlayPhase(
+            evaluatedPreviousPlay, snapshot, KWR.Util:Now())
+    end
+    local previousPhase = evaluatedPreviousPlay and evaluatedPreviousPlay.phase
     local previousTerminal = previousPhase == "SUCCEEDED" or previousPhase == "FAILED"
         or previousPhase == "EXPIRED"
-    local candidatePreviousPlay = previousTerminal and nil or previousPlay
+    local candidatePreviousPlay = previousTerminal and nil or evaluatedPreviousPlay
     local score = type(snapshot.score) == "table" and snapshot.score or {}
     local definition = mapKey and KWR.Maps:Get(mapKey) or nil
     local status = prediction.status or "WAITING"
@@ -1913,8 +2206,30 @@ function Commander:Compose(snapshot, prediction, assignments)
             or (finalStatus == "DEFEAT" and "Match lost. Capture the AAR and review the failed swing.")
             or "Match complete. Capture the AAR and review the final state."
     end
+    local resourceCycle = snapshot.objectives and snapshot.objectives.resourceCycle
+    local resourceTarget = resourceCycle
+        and KWR.Util:Text(resourceCycle.target, "", 64) or ""
+    if not finalStatus and mapKey == "SEETHING" and resourceTarget ~= "" then
+        action = "CONTEST " .. KWR.Maps:AbbreviateLocation(mapKey, resourceTarget)
+            .. ": active Azerite fissure observed."
+    elseif not finalStatus and mapKey == "SEETHING" and resourceCycle
+        and resourceCycle.state == "REVEALING" then
+        action = "SCOUT NEXT FISSURE: spawn signal observed; location not yet verified."
+    end
     local integrity = snapshot.assignmentIntegrity or {}
-    local urgentReassignment = integrity.reassignments and integrity.reassignments[1]
+    local urgentReassignment = actionableReassignment(integrity, snapshot)
+    if urgentReassignment then
+        local assignedReplacement = false
+        for _, assignment in ipairs(assignments) do
+            if (assignment.shortName or assignment.name) == urgentReassignment.replacement
+                and assignment.location == urgentReassignment.expected
+                and assignment.connected ~= false and assignment.dead ~= true then
+                assignedReplacement = true
+            end
+        end
+        -- Integrity proposes relief; it cannot order an actor to two locations.
+        if not assignedReplacement then urgentReassignment = nil end
+    end
     local recovery = response.recovery or {}
     if not finalStatus and snapshot.context.inPvP and urgentReassignment then
         local replacement = urgentReassignment.replacement or "nearest floater"
@@ -2071,6 +2386,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         candidateAction = candidateAction,
         candidateWho = candidateWho,
         bypass = bypass,
+        objectiveOverride = resourceTarget ~= "" and resourceTarget or nil,
         stability = {
             retentionWindow = snapshot.context.inPvP and 2.5 or 0,
             ttlSeconds = snapshot.context.inPvP and 3 or 30,
@@ -2116,16 +2432,32 @@ function Commander:Compose(snapshot, prediction, assignments)
         end
     end
 
-    local updatedPreviousPlay = previousPlay and KWR.Util:Copy(previousPlay) or nil
-    local previousPlayForTransition = updatedPreviousPlay and KWR.Util:Copy(updatedPreviousPlay) or nil
-    if updatedPreviousPlay and updatedPreviousPlay.id then
-        updatedPreviousPlay.phase = currentPlayPhase(updatedPreviousPlay, snapshot, now)
-    end
+    local updatedPreviousPlay = evaluatedPreviousPlay
+        and KWR.Util:Copy(evaluatedPreviousPlay) or nil
+    -- Preserve the last published phase as the transition origin while using
+    -- the freshly evaluated copy for invalidation and replacement decisions.
+    local previousPlayForTransition = previousPlay
+        and KWR.Util:Copy(previousPlay) or nil
     local invalidation = invalidationReason(updatedPreviousPlay, snapshot, now)
-    local priorPhase = previousPlayForTransition and previousPlayForTransition.phase
-    local priorTerminal = priorPhase == "SUCCEEDED" or priorPhase == "FAILED"
-        or priorPhase == "EXPIRED"
-    if priorTerminal then
+    if updatedPreviousPlay and not invalidation then
+        local previousAssignments = previousState.assignments or {}
+        for _, assignment in ipairs(assignments) do
+            for _, previous in ipairs(previousAssignments) do
+                local same = assignment.guid and assignment.guid == previous.guid
+                    or (not assignment.guid and assignment.name == previous.name)
+                if same and (assignment.manualOverride or previous.manualOverride)
+                    and (assignment.manualOverride ~= previous.manualOverride
+                        or assignment.role ~= previous.role
+                        or assignment.location ~= previous.location
+                        or assignment.priority ~= previous.priority) then
+                    invalidation = "ASSIGNMENT_OVERRIDE_CHANGED"
+                end
+            end
+        end
+    end
+    local terminalOutcomeHeld = terminalReissueHeld(
+        self, updatedPreviousPlay, candidatePlay, snapshot, invalidation, now)
+    if previousWasTerminal and not terminalOutcomeHeld then
         -- A terminal play was already reported on its transition refresh.
         -- Retaining it as the previous play causes every later refresh to
         -- re-count the same invalidation and makes the stability metric lie.
@@ -2138,9 +2470,15 @@ function Commander:Compose(snapshot, prediction, assignments)
         canReplace = true
         replacementReason = "INVALIDATED:" .. invalidation
     end
+    if terminalOutcomeHeld then
+        -- A failed or resolved call may be recorded once, but it must not be
+        -- recreated from identical truth on every tactical refresh. A score,
+        -- objective, carrier/location, or roster edge clears this short hold.
+        canReplace = false
+        replacementReason = "TERMINAL_OUTCOME_HOLD"
+    end
     local retainedActivePlay = updatedPreviousPlay and updatedPreviousPlay.id
-        and invalidation == nil
-        and canReplace ~= true
+        and (terminalOutcomeHeld or (invalidation == nil and canReplace ~= true))
     local activePlay = candidatePlay
     if retainedActivePlay then
         activePlay = updatedPreviousPlay
@@ -2148,6 +2486,9 @@ function Commander:Compose(snapshot, prediction, assignments)
         command.who = previousState.command and previousState.command.who or command.who
         command.when = previousState.command and previousState.command.when or command.when
         command.reason = previousState.command and previousState.command.reason or command.reason
+        command.responsePackage = previousState.command and previousState.command.responsePackage or command.responsePackage
+        command.objectiveDecision = previousState.command and previousState.command.objectiveDecision or command.objectiveDecision
+        command.switchIf = previousState.command and previousState.command.switchIf or command.switchIf
         command.signature = previousState.command and previousState.command.signature or command.signature
         command.bypass = "ACTIVE_PLAY_HOLD"
         command.stabilized = true
@@ -2156,12 +2497,14 @@ function Commander:Compose(snapshot, prediction, assignments)
         activePlay.phase = currentPlayPhase(activePlay, snapshot, now)
     end
     command.activePlay = activePlay
+    command.when = self:TimingText(command)
     command.activePlayCandidate = candidatePlay
     command.activePlayTrend = trendSummary(trend)
     local lostCommitmentTime = updatedPreviousPlay and updatedPreviousPlay.minimumCommitUntil
         and math.max(0, (updatedPreviousPlay.minimumCommitUntil or 0) - now) or 0
     command.activePlayDecision = {
         retained = retainedActivePlay == true,
+        terminalOutcomeHeld = terminalOutcomeHeld == true,
         invalidation = invalidation,
         invalidationFamily = invalidationFamily(invalidation, updatedPreviousPlay or activePlay),
         replacementAllowed = canReplace == true,
@@ -2278,13 +2621,15 @@ function Commander:Compose(snapshot, prediction, assignments)
             command.suppressionRecord = record
         end
     end
-    if invalidation then
+    if invalidation and not previousWasTerminal then
         -- Metrics are a transition ledger, not a count of refreshes that
         -- happen to observe the same terminal battlefield fact.  A generated
         -- equivalent play can otherwise recreate its ID after a replacement
         -- and inflate "invalidations" on every refresh.
         local invalidationKey = table.concat({
-            KWR.Util:Text(updatedPreviousPlay and updatedPreviousPlay.id, "none", 160),
+            KWR.Util:Text(terminalOutcomeHeld
+                and terminalPlayKey(updatedPreviousPlay)
+                or (updatedPreviousPlay and updatedPreviousPlay.id), "none", 160),
             KWR.Util:Text(invalidation, "unknown", 48),
         }, ":")
         self.recordedInvalidations = self.recordedInvalidations or {}
@@ -2427,8 +2772,23 @@ function Commander:Compose(snapshot, prediction, assignments)
         and previousCommand.signature == publishedSignature
         and previousCommand.createdAt or command.createdAt
     command.createdAt = publishedCreatedAt
+    command.planID = snapshot.strategy and snapshot.strategy.planID
+    command.sessionKey = KWR.Util:Text(snapshot.context and snapshot.context.sessionKey, "", 160)
+    command.learningContext = KWR.Learning and KWR.Learning:Context(snapshot)
+    command.learningKey = KWR.Learning
+        and KWR.Learning:ContextKey(command.learningContext, command.planID)
+    self:AttachReviewIdentity(command, previousCommand)
     self.lastCommand = {
+        planID = command.planID,
+        learningContext = KWR.Util:Copy(command.learningContext),
+        learningKey = command.learningKey,
+        commandId = command.commandId,
+        commandRevision = command.commandRevision,
+        generatedAt = command.generatedAt,
+        delivery = KWR.Util:Copy(command.delivery),
+        executionObservation = KWR.Util:Copy(command.executionObservation),
         mapKey = snapshot.context.mapKey,
+        sessionKey = command.sessionKey,
         inPvP = snapshot.context.inPvP == true,
         status = status,
         urgency = command.urgency,
@@ -2438,6 +2798,7 @@ function Commander:Compose(snapshot, prediction, assignments)
         createdAt = publishedCreatedAt,
         decisionAt = command.decisionAt,
         stabilizationSignature = stabilizationSignature,
+        objectiveDecision = KWR.Util:Copy(command.objectiveDecision),
     }
     self.lastActivePlay = KWR.Util:Copy(activePlay)
     command.stabilitySummary = stabilitySummary(metrics)
@@ -2464,6 +2825,7 @@ function Commander:ClearActivePlay()
     self.lastActivePlay = nil
     self.candidateTrends = {}
     self.recordedInvalidations = {}
+    self.terminalPlays = {}
 end
 
 function Commander:ResetSession()
@@ -2476,6 +2838,7 @@ function Commander:ResetSession()
     self.suppressionLog = {}
     self.history = {}
     self.recordedInvalidations = {}
+    self.terminalPlays = {}
 end
 
 function Commander:OnInitialize()

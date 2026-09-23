@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$OutFile = "knowledge\offline-completion-audit.json"
+    [string]$OutFile = "knowledge\offline-completion-audit.json",
+    [string]$SourceCertificationReceiptPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,9 +13,36 @@ $readiness = Get-Content -LiteralPath (Join-Path $root "knowledge\field-test-rea
 $blockers = Get-Content -LiteralPath (Join-Path $root "knowledge\field-blocker-report.json") -Raw | ConvertFrom-Json
 $candidatePackage = Get-Content -LiteralPath (Join-Path $root "knowledge\candidate-package-report.json") -Raw | ConvertFrom-Json
 $runtimePreflight = Get-Content -LiteralPath (Join-Path $root "knowledge\runtime-preflight.json") -Raw | ConvertFrom-Json
+$sourceCertification = [ordered]@{
+    result = 'UNAVAILABLE'
+    receipt = $null
+    meaning = 'A source-suite receipt is separate from clean-source/public-release eligibility.'
+}
+if ($SourceCertificationReceiptPath) {
+    $receiptPath = if ([IO.Path]::IsPathRooted($SourceCertificationReceiptPath)) {
+        [IO.Path]::GetFullPath($SourceCertificationReceiptPath)
+    } else {
+        Join-Path $root $SourceCertificationReceiptPath
+    }
+    if (Test-Path -LiteralPath $receiptPath -PathType Leaf) {
+        $receipt = Get-Content -LiteralPath $receiptPath -Raw
+        $sourceCertification.receipt = $receiptPath
+        $sourceCertification.result = if ($receipt -match '(?m)^KWR OFFLINE SOURCE CERTIFICATION PASS\s*$') {
+            'PASS'
+        } else {
+            'FAIL_OR_INCOMPLETE'
+        }
+    }
+}
 $offlinePrepared = $blockers.offlineGate.status -eq 'PASS' -and
     $candidatePackage.candidateVersion -eq $version -and
-    $runtimePreflight.candidateVersion -eq $version
+    $runtimePreflight.candidateVersion -eq $version -and
+    $readiness.offlineStatus.candidateSourceBound -eq $true -and
+    $readiness.offlineStatus.candidateArtifactVerified -eq $true -and
+    $readiness.offlineStatus.validatePassed -eq $true -and
+    $readiness.offlineStatus.knowledgeAuditPassed -eq $true -and
+    $readiness.offlineStatus.corpusAuditPassed -eq $true -and
+    $readiness.offlineStatus.decisionBenchmarkPassed -eq $true
 $fieldTestingPrepared = $offlinePrepared -and $blockers.deploymentGate.status -eq 'PASS'
 $remainingBlockers = @(
     $blockers.blockingDefects | ForEach-Object { $_.id }
@@ -27,7 +55,10 @@ $report = [ordered]@{
     candidateVersion = $version
     offlinePrepared = $offlinePrepared
     fieldTestingPrepared = $fieldTestingPrepared
+    remainingOfflineBlockers = @($readiness.offlineStatus.eligibilityBlockers)
+    statusMeaning = 'Full clean-source release eligibility. A separately authorized diagnostic field install is recorded in its own deployment receipt.'
     offlineEvidence = [ordered]@{
+        sourceCertification = $sourceCertification
         supportedMaps = $readiness.offlineStatus.supportedMaps
         baseScenarios = $readiness.offlineStatus.baseScenarios
         reviewedCorpus = $readiness.offlineStatus.reviewedCorpus
@@ -38,10 +69,13 @@ $report = [ordered]@{
         runtimePreflightPresent = $true
         packageAuditReady = [bool]$runtimePreflight.packageAuditReady
         packageAuditWorkspaceStatus = $candidatePackage.environmentCertification.packageAuditInThisWorkspace
-        validatePassed = $readiness.offlineStatus.validatePassed
-        knowledgeAuditPassed = $readiness.offlineStatus.knowledgeAuditPassed
-        corpusAuditPassed = $readiness.offlineStatus.corpusAuditPassed
-        decisionBenchmarkPassed = $readiness.offlineStatus.decisionBenchmarkPassed
+        # These retain legacy names but are the combined clean-source/package
+        # eligibility gate, not a statement that the individual source suites
+        # were not executed. See sourceCertification above for that receipt.
+        cleanEligibilityValidatePassed = $readiness.offlineStatus.validatePassed
+        cleanEligibilityKnowledgeAuditPassed = $readiness.offlineStatus.knowledgeAuditPassed
+        cleanEligibilityCorpusAuditPassed = $readiness.offlineStatus.corpusAuditPassed
+        cleanEligibilityDecisionBenchmarkPassed = $readiness.offlineStatus.decisionBenchmarkPassed
     }
     remainingLiveOnlyBlockers = @($remainingBlockers | Select-Object -Unique)
     environmentLimits = @(

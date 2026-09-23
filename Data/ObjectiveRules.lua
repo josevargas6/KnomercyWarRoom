@@ -307,4 +307,76 @@ function ObjectiveRules:MinimumDefenders(snapshot, objectiveLabel, pressure)
     return KWR.Util:Clamp(required, 1, resolved.maxDefenders or 4)
 end
 
+-- Apply only an observed, typed transition.  This is intentionally a pure
+-- function: ObjectiveIntel owns ingestion and a widget snapshot remains the
+-- authority for rehydration after missed messages.  Unsupported event/family
+-- pairs therefore stay UNKNOWN instead of borrowing a rule from another map.
+function ObjectiveRules:Transition(previous, event, context)
+    previous = type(previous) == "table" and previous or {}
+    event = type(event) == "table" and event or {}
+    local definition = KWR.Maps:Get(context and context.mapKey)
+    local family = definition and definition.kind or "WORLD"
+    local kind = KWR.Util:Upper(event.kind, "", 32)
+    local objective = KWR.Util:Text(event.objective or previous.label, "", 64)
+    local observedAt = KWR.Util:Number(event.at, nil)
+    local priorObservedAt = KWR.Util:Number(previous.observedAt, nil)
+    local base = {
+        label = objective ~= "" and objective or nil,
+        owner = previous.owner or "UNKNOWN",
+        state = previous.state or "UNKNOWN",
+        family = family,
+        eventKind = kind ~= "" and kind or nil,
+        observedAt = observedAt,
+        accepted = false,
+        reason = "UNSUPPORTED_TRANSITION",
+    }
+    if objective == "" or kind == "" then
+        base.reason = "MISSING_TRANSITION_IDENTITY"
+        return base
+    end
+    if not observedAt or observedAt < 0 or observedAt ~= observedAt or observedAt == math.huge then
+        base.reason = "MISSING_TRANSITION_TIME"
+        return base
+    end
+    if priorObservedAt and observedAt < priorObservedAt then
+        base.reason = "STALE_TRANSITION"
+        return base
+    end
+    if family == "NODE" or family == "HYBRID" then
+        if kind == "ASSAULT" then
+            base.state, base.contested, base.pendingState = "CONTESTED", true, "INCOMING"
+            base.pendingBy = event.player
+            base.accepted, base.reason = true, "OBSERVED_ASSAULT"
+        end
+    elseif family == "FLAG" then
+        if kind == "PICKUP" then
+            base.state, base.carrier = "CARRIED", event.player
+            base.accepted, base.reason = true, "OBSERVED_PICKUP"
+        elseif kind == "FLAG_RETURN" or kind == "FLAG_RESET" then
+            base.state, base.carrier = "BASE", nil
+            base.accepted, base.reason = true, "OBSERVED_RETURN"
+        elseif kind == "FLAG_CAPTURE" then
+            base.state, base.carrier = "CAPTURED", nil
+            base.capturer = event.player
+            base.accepted, base.reason = true, "OBSERVED_CAPTURE"
+        end
+    elseif family == "ORB" then
+        if kind == "PICKUP" then
+            base.state, base.carrier = "CARRIED", event.player
+            base.accepted, base.reason = true, "OBSERVED_ORB_PICKUP"
+        elseif kind == "RETURN" then
+            base.state, base.carrier = "AVAILABLE", nil
+            base.accepted, base.reason = true, "OBSERVED_ORB_RETURN"
+        end
+    elseif family == "RESOURCE" then
+        if kind == "RESOURCE_SPAWN" then
+            base.state, base.accepted, base.reason = "ACTIVE", true, "OBSERVED_RESOURCE_SPAWN"
+        elseif kind == "RESOURCE_COLLECTED" then
+            base.state, base.collector = "EXHAUSTED", event.player
+            base.accepted, base.reason = true, "OBSERVED_RESOURCE_COLLECTION"
+        end
+    end
+    return base
+end
+
 KWR:RegisterModule("ObjectiveRules", ObjectiveRules)

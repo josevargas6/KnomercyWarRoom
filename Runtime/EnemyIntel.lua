@@ -812,20 +812,28 @@ function EnemyIntel:Capture(context, roster, assigned, scoreboardRows)
     end
 
     self:ScanScoreboard(assigned, scoreboardRows, roster)
-    self:ScanUnit("target", mapID, "Target")
-    self:ScanUnit("focus", mapID, "Focus")
-    self:ScanUnit("mouseover", mapID, "Mouseover")
-    self:ScanUnit("softenemy", mapID, "Soft Target")
-    self:ScanUnit("pettarget", mapID, "Pet Target")
-    self:ScanUnit("targettarget", mapID, "Target Target")
-    self:ScanUnit("focustarget", mapID, "Focus Target")
-    self:ScanUnit("mouseovertarget", mapID, "Mouseover Target")
+    -- UNIT_AURA/HEALTH remember tokens already present in the fixed scan set.
+    -- Scan a token once, preserving its strongest explicit observation source.
+    local scanned = {}
+    local function scan(unit, source)
+        if scanned[unit] then return end
+        scanned[unit] = true
+        self:ScanUnit(unit, mapID, source)
+    end
+    scan("target", "Target")
+    scan("focus", "Focus")
+    scan("mouseover", "Mouseover")
+    scan("softenemy", "Soft Target")
+    scan("pettarget", "Pet Target")
+    scan("targettarget", "Target Target")
+    scan("focustarget", "Focus Target")
+    scan("mouseovertarget", "Mouseover Target")
     for index = 1, 5 do
-        self:ScanUnit("arena" .. index, mapID, "Arena Token")
-        self:ScanUnit("boss" .. index, mapID, "Objective Unit")
+        scan("arena" .. index, "Arena Token")
+        scan("boss" .. index, "Objective Unit")
     end
     for unit, source in pairs(self.observedTokens) do
-        self:ScanUnit(unit, mapID, source)
+        scan(unit, source)
     end
     self:PruneFriendlyRoster(roster)
     return self:Rows()

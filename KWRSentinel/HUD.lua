@@ -145,17 +145,21 @@ local function winBadgeText(winState)
     if winState == "WINNING" then return "LIKELY WIN" end
     if winState == "LOSING" then return "LIKELY LOSS" end
     if winState == "EVEN" then return "TIED" end
+    if winState == "UNKNOWN" then return "UNKNOWN" end
     return "SETUP"
 end
 
 local function deriveWinState(view)
     local score = view.score or {}
+    -- Unknown truth takes precedence even if an old view retained a win label.
+    if score.known ~= true then return "UNKNOWN" end
     local status = upper(score.status, "")
     if status == "WINNING" or status == "LOSING" or status == "EVEN" or status == "SETUP" then
         return status
     end
-    local friendly = tonumber(score.friendly or 0) or 0
-    local enemy = tonumber(score.enemy or 0) or 0
+    local friendly = tonumber(score.friendly)
+    local enemy = tonumber(score.enemy)
+    if score.known ~= true or friendly == nil or enemy == nil then return "UNKNOWN" end
     if friendly > enemy then return "WINNING" end
     if enemy > friendly then return "LOSING" end
     if view.mode == "LIVE" then return "EVEN" end
@@ -165,9 +169,12 @@ end
 local function scoreHeadline(view)
     local score = view.score or {}
     local mapShort = clean(score.mapShort, "WORLD")
-    local friendly = tonumber(score.friendly or 0) or 0
-    local enemy = tonumber(score.enemy or 0) or 0
+    local friendly = tonumber(score.friendly)
+    local enemy = tonumber(score.enemy)
     local winState = deriveWinState(view)
+    if score.known ~= true or friendly == nil or enemy == nil then
+        return string.format("%s UNKNOWN | %s", mapShort, winBadgeText(winState))
+    end
     return string.format("%s %d - %d | %s",
         mapShort,
         friendly,
@@ -666,6 +673,15 @@ function HUD:Update()
         for key, value in pairs(remote) do
             view[key] = value
         end
+    end
+    -- A WORLD/queue card contains no live assignment or reviewed target.  It
+    -- should yield to Blizzard utility UI (bags, map, vendor) rather than
+    -- occupy screen space with an inert "WORLD UNKNOWN" surface.
+    if not livePvpContext(view) then
+        if self.frame then self.frame:Hide() end
+        if self.targetCue then self.targetCue:Hide() end
+        if Sentinel.Panels then Sentinel.Panels:Update(nil) end
+        return
     end
     local frame = self:Create()
     local winState = deriveWinState(view)

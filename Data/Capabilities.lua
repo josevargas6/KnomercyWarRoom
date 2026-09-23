@@ -76,6 +76,7 @@ local HERO_MODIFIERS = {
 
 local resolvedCache = {}
 local cacheHits, cacheMisses = 0, 0
+local resolvedPatch
 
 local function deriveRatings(tags, role)
     local ratings = {}
@@ -230,17 +231,30 @@ local function key(classFile, spec)
         .. KWR.Util:Text(spec, "", 32):lower()
 end
 
-function Capabilities:Get(classFile, spec, heroTalent)
+local function resolve(classFile, spec, heroTalent)
+    local patch = KWR.PatchData:Get()
+    if resolvedPatch ~= patch then
+        resolvedCache = {}
+        resolvedPatch = patch
+    end
     local lookup = key(classFile, spec)
+    -- Unknown specs share one sentinel; arbitrary names cannot grow the cache.
+    if not DATA[lookup] then lookup = "UNKNOWN" end
     local heroName = KWR.Util:Text(heroTalent, "", 48):lower()
+    local heroKey = KWR.Util:Upper(classFile, "", 24) .. ":" .. heroName
+    local hero = HERO_MODIFIERS[heroKey]
+    if not hero or lookup == "UNKNOWN" then heroName = "" end
     local cacheKey = lookup .. ":" .. heroName
-    if resolvedCache[cacheKey] then
+    if resolvedCache[cacheKey] ~= nil then
         cacheHits = cacheHits + 1
-        return KWR.Util:Copy(resolvedCache[cacheKey])
+        return resolvedCache[cacheKey] or nil
     end
     cacheMisses = cacheMisses + 1
     local base = DATA[lookup]
-    if not base then return nil end
+    if not base then
+        resolvedCache[cacheKey] = false
+        return nil
+    end
     local result = KWR.Util:Copy(base)
     local overlay = KWR.PatchData:Capability(lookup)
     if overlay then
@@ -254,8 +268,6 @@ function Capabilities:Get(classFile, spec, heroTalent)
             end
         end
     end
-    local heroKey = KWR.Util:Upper(classFile, "", 24) .. ":" .. heroName
-    local hero = HERO_MODIFIERS[heroKey]
     if hero then
         for rating, delta in pairs(hero.ratings or {}) do
             result.ratings[rating] = math.max(1, math.min(5,
@@ -269,20 +281,16 @@ function Capabilities:Get(classFile, spec, heroTalent)
         result.heroConfidence = hero.confidence
     end
     resolvedCache[cacheKey] = result
-    return KWR.Util:Copy(result)
+    return result
+end
+
+function Capabilities:Get(classFile, spec, heroTalent)
+    return KWR.Util:Copy(resolve(classFile, spec, heroTalent))
 end
 
 -- Hot-path accessor. Callers must treat the returned table as read-only.
 function Capabilities:Resolve(classFile, spec, heroTalent)
-    local lookup = key(classFile, spec)
-    local heroName = KWR.Util:Text(heroTalent, "", 48):lower()
-    local cacheKey = lookup .. ":" .. heroName
-    if resolvedCache[cacheKey] then
-        cacheHits = cacheHits + 1
-    else
-        self:Get(classFile, spec, heroTalent)
-    end
-    return resolvedCache[cacheKey]
+    return resolve(classFile, spec, heroTalent)
 end
 
 function Capabilities:CacheStats()
@@ -318,7 +326,32 @@ function Capabilities:Count()
     return count
 end
 
+local summaryCache = {}
+local summaryPatch
+local SUMMARY_FIELDS = { "classFile", "spec", "heroTalent", "role", "specSource" }
+
+local function summaryKey(roster)
+    local parts = {}
+    for _, player in ipairs(roster or {}) do
+        for _, field in ipairs(SUMMARY_FIELDS) do
+            local value = KWR.Util:Text(player[field], "", 96)
+            parts[#parts + 1] = #value .. ":" .. value
+        end
+    end
+    return table.concat(parts)
+end
+
 function Capabilities:Summarize(roster)
+    local patch = KWR.PatchData:Get()
+    if summaryPatch ~= patch then
+        summaryCache, summaryPatch = {}, patch
+    end
+    local signature = summaryKey(roster)
+    for _, cached in ipairs(summaryCache) do
+        if cached.signature == signature then
+            return KWR.Util:Copy(cached.result)
+        end
+    end
     local summary = {
         players = 0, tanks = 0, healers = 0, damage = 0,
         melee = 0, ranged = 0, knownSpecs = 0, provisional = 0,
@@ -366,6 +399,10 @@ function Capabilities:Summarize(roster)
     summary.confidence = summary.knownSpecs == 0 and "UNKNOWN"
         or ((summary.confirmedSpecs or 0) == summary.players and "CONFIRMED"
         or (summary.coverage >= 0.8 and "LIKELY" or "ESTIMATED"))
+    -- Four roster compositions, not a per-player or per-match history. Results
+    -- remain caller-owned so downstream annotations cannot poison the cache.
+    if #summaryCache >= 4 then table.remove(summaryCache, 1) end
+    summaryCache[#summaryCache + 1] = { signature = signature, result = KWR.Util:Copy(summary) }
     return summary
 end
 

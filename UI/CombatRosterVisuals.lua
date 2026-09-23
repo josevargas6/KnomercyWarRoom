@@ -110,12 +110,7 @@ local function callEnemy(enemies, call)
 end
 
 local function countdownText(countdown)
-    local values = {}
-    for _, tick in ipairs(countdown and countdown.ticks or {}) do
-        if tick ~= "GO" then values[#values + 1] = tostring(tick) end
-    end
-    if #values == 0 then values = { "5", "4", "3", "2", "1" } end
-    return "SWITCH IN " .. table.concat(values, " ")
+    return KWR.CountdownState:Text(countdown)
 end
 
 local function knownCallTarget(value)
@@ -281,7 +276,7 @@ local function callCardSignature(localFight, countdown)
         control and control.actor or "",
         control and control.target or "",
         control and control.targetGUID or "",
-        table.concat(countdown and countdown.ticks or {}, ","),
+        countdownText(countdown),
     })
 end
 
@@ -664,7 +659,7 @@ function CombatRosterVisuals:Visual(owner, row, data, team, combat, assignment, 
     })
     local signature = KWR.Util:Signature({
         assignmentSignature,
-        data.key, data.name, data.shortName, data.displayName,
+        data.key, data.guid, data.unit, data.name, data.shortName, data.displayName,
         data.classFile, data.role or data.groupRole,
         data.spec, data.specSource, data.healthPercent, data.lastHealthPercent,
         data.dead, data.connected,
@@ -803,8 +798,9 @@ function CombatRosterVisuals:UpdateRows(owner, rows, data, team, combat, assignm
     local displayed = {}
     for index, row in ipairs(rows) do
         local entry = data[index]
-        local displayKey = entry and team == "TEAM" and KWR.Util:CanonicalName(
-            entry.displayName or entry.shortName or entry.name) or ""
+        local displayKey = entry and team == "TEAM" and KWR.Util:CanonicalPlayerKey(
+            entry.name or entry.displayName or entry.shortName,
+            entry.guid or entry.key) or ""
         if displayKey ~= "" and displayed[displayKey] then
             entry = nil
         elseif displayKey ~= "" then
@@ -830,15 +826,25 @@ end
 function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, assignments)
     local byUnit, byKey, byName = {}, {}, {}
     local shortCounts = {}
+    local function addUnique(bucket, key, entry)
+        if not key or key == "" then return end
+        if bucket[key] == nil then
+            bucket[key] = entry
+        elseif bucket[key] ~= entry then
+            -- Never choose arbitrarily between transient aliases. A blank
+            -- settling row is safer than painting/clicking the wrong player.
+            bucket[key] = false
+        end
+    end
     for index = 1, owner.maxRows do
         local entry = data and data[index]
         if entry then
-            if entry.unit then byUnit[entry.unit] = entry end
+            if entry.unit then addUnique(byUnit, entry.unit, entry) end
             local key = entry.key or entry.name or entry.shortName
-            if key then byKey[key] = entry end
+            if key then addUnique(byKey, key, entry) end
             local name = KWR.Util:CanonicalName(
                 entry.name or entry.shortName)
-            if name ~= "" then byName[name] = entry end
+            if name ~= "" then addUnique(byName, name, entry) end
             local shortName = KWR.Util:CanonicalShortName(
                 entry.shortName or entry.name)
             if shortName ~= "" then
@@ -880,6 +886,10 @@ function CombatRosterVisuals:UpdateBoundRows(owner, rows, data, team, combat, as
                 aliases[#aliases + 1] = "SHORT:" .. shortName
             end
             if team == "TEAM" then
+                local identity = KWR.Util:CanonicalPlayerKey(
+                    entry.name or entry.displayName or entry.shortName,
+                    entry.guid or entry.key)
+                if identity then aliases[#aliases + 1] = "IDENTITY:" .. identity end
                 local displayName = KWR.Util:CanonicalName(
                     entry.displayName or entry.shortName or entry.name)
                 if displayName ~= "" then

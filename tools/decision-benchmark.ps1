@@ -2,7 +2,8 @@
 param(
     [string]$ResultsDir = "tests\\replay-results",
     [string]$GoldenDir = "tests\\golden",
-    [string]$OutFile = ""
+    [string]$OutFile = "",
+    [switch]$RequirePrimaryForEveryResult
 )
 
 $ErrorActionPreference = "Stop"
@@ -37,8 +38,16 @@ function Assert-HasKeys {
     }
 }
 
-$resultsPath = Join-Path $root $ResultsDir
-$goldenPath = Join-Path $root $GoldenDir
+$resultsPath = if ([IO.Path]::IsPathRooted($ResultsDir)) {
+    [IO.Path]::GetFullPath($ResultsDir)
+} else {
+    Join-Path $root $ResultsDir
+}
+$goldenPath = if ([IO.Path]::IsPathRooted($GoldenDir)) {
+    [IO.Path]::GetFullPath($GoldenDir)
+} else {
+    Join-Path $root $GoldenDir
+}
 $resultSchema = Load-JsonFile (Join-Path $root "knowledge\\schemas\\replay-run-result-schema.json")
 $reportSchema = Load-JsonFile (Join-Path $root "knowledge\\schemas\\benchmark-report-schema.json")
 
@@ -65,8 +74,14 @@ foreach ($file in @(Get-ChildItem -LiteralPath $resultsPath -File -Filter "*.run
         Add-BenchmarkError "$($file.Name) has no matching golden label for replayId $($result.replayId)."
         continue
     }
-    $pass = ($result.evaluation.primaryMatch -eq $true -or $result.evaluation.fallbackMatch -eq $true) `
-        -and @($result.evaluation.forbiddenHits).Count -eq 0
+    $hasPrimary = $result.evaluation.primaryMatch -eq $true
+    $hasFallback = $result.evaluation.fallbackMatch -eq $true
+    $matchesExpectation = if ($RequirePrimaryForEveryResult) {
+        $hasPrimary
+    } else {
+        $hasPrimary -or $hasFallback
+    }
+    $pass = $matchesExpectation -and @($result.evaluation.forbiddenHits).Count -eq 0
     $results += [pscustomobject]@{
         replayId = $result.replayId
         labelId = $label.labelId
@@ -81,7 +96,9 @@ $summary = [pscustomobject]@{
     total = @($results).Count
     primaryMatches = @($results | Where-Object { $_.primaryMatch }).Count
     fallbackMatches = @($results | Where-Object { $_.fallbackMatch }).Count
+    fallbackOnlyMatches = @($results | Where-Object { $_.fallbackMatch -and -not $_.primaryMatch }).Count
     forbiddenFailures = @($results | Where-Object { @($_.forbiddenHits).Count -gt 0 }).Count
+    requirePrimaryForEveryResult = $RequirePrimaryForEveryResult.IsPresent
     pass = (@($results).Count -gt 0) -and (@($results | Where-Object { -not $_.pass }).Count -eq 0)
 }
 
@@ -100,7 +117,11 @@ foreach ($row in @($report.results)) {
 }
 
 if ($OutFile -ne "") {
-    $target = Join-Path $root $OutFile
+    $target = if ([IO.Path]::IsPathRooted($OutFile)) {
+        [IO.Path]::GetFullPath($OutFile)
+    } else {
+        Join-Path $root $OutFile
+    }
     $parent = Split-Path -Parent $target
     if ($parent -and -not (Test-Path -LiteralPath $parent)) {
         New-Item -ItemType Directory -Force -Path $parent | Out-Null
@@ -112,6 +133,8 @@ Write-Output "KWR decision benchmark"
 Write-Output "Results: $($summary.total)"
 Write-Output "Primary matches: $($summary.primaryMatches)"
 Write-Output "Fallback matches: $($summary.fallbackMatches)"
+Write-Output "Fallback-only matches: $($summary.fallbackOnlyMatches)"
+Write-Output "Primary required for every result: $($summary.requirePrimaryForEveryResult)"
 Write-Output "Forbidden failures: $($summary.forbiddenFailures)"
 Write-Output "Pass: $($summary.pass)"
 Write-Output "Errors: $($errors.Count)"

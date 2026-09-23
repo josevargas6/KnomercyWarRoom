@@ -122,6 +122,7 @@ function CopyDialog:Create()
     edit:SetAutoFocus(false)
     edit:SetFontObject("ChatFontNormal")
     edit:SetMultiLine(true)
+    if edit.SetWordWrap then edit:SetWordWrap(true) end
     edit:SetPoint("TOPLEFT", 8, -8)
     edit:SetPoint("BOTTOMRIGHT", -8, 8)
     edit:SetJustifyH("LEFT")
@@ -191,6 +192,7 @@ function CopyDialog:ShowCompact(title, value, options)
     frame.note:SetText(options.note or "Manual copy only. Select the full call, then copy it from this window.")
     frame.note:Show()
     frame.edit:SetMultiLine(true)
+    if frame.edit.SetWordWrap then frame.edit:SetWordWrap(true) end
     frame.edit:SetText(value or "")
     frame:Show()
     if KWR.CursorRing and KWR.CursorRing.RefreshReticle then KWR.CursorRing:RefreshReticle() end

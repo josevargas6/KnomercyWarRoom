@@ -10,7 +10,7 @@ Do not use any historical state from this file.
 
 ## Current lane
 
-1. Read `RELEASE_READINESS.md` for the current Alpha 9 lane.
+1. Read `RELEASE_READINESS.md` for the current Alpha 12 clean-candidate lane
 
 ## Ready to work right now
 

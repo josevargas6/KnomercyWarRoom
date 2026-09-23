@@ -743,6 +743,22 @@ function Sensors:ResolveSpecialization(unit)
     return resolveSpecialization(unit)
 end
 
+function Sensors:RefreshSpecialization(unit, record, observedAt, stable)
+    local checkedAt = record and (record.checkedAt or record.observedAt)
+    if stable and (not checkedAt or observedAt < checkedAt
+        or observedAt - checkedAt >= SPEC_REFRESH_INTERVAL) then
+        local id, name, role, source = self:ResolveSpecialization(unit)
+        if name and name ~= "" then
+            return { id = id, name = name, role = role,
+                observedAt = observedAt, checkedAt = observedAt }, source
+        end
+        -- A failed API attempt throttles retries but does not renew evidence.
+        record = record or {}
+        record.checkedAt = observedAt
+    end
+    return record, record and record.name and "cache" or nil
+end
+
 local function raidUnitMatchesRosterName(rosterName, unitName, shortCounts)
     local rosterFull = Util:CanonicalName(rosterName)
     local unitFull = Util:CanonicalName(unitName)
@@ -790,8 +806,8 @@ local function captureRoster(mapID)
                 end
                 classFile = text(classFile, "", 24)
                 if classFile ~= "" then raidClasses[index] = classFile:upper() end
-                if type(online) == "boolean" then raidConnected[index] = online end
-                if type(isDead) == "boolean" then raidDead[index] = isDead end
+                raidConnected[index] = Util:OptionalBoolean(online)
+                raidDead[index] = Util:OptionalBoolean(isDead)
                 rosterRole = text(rosterRole, "", 12)
                 if rosterRole ~= "" and rosterRole ~= "NONE" then
                     raidRoles[index] = rosterRole
@@ -888,26 +904,9 @@ local function captureRoster(mapID)
             local cacheRecord = Sensors.specCache[cacheKey]
                 or Sensors.specCache[name:lower()]
             local specID, specName, specRole, specSource
-            local cacheExpired = not cacheRecord
-                or (observedAt - (cacheRecord.observedAt or 0)) >= SPEC_REFRESH_INTERVAL
-            if unitStable and cacheExpired then
-                specID, specName, specRole, specSource = resolveSpecialization(unit)
-            elseif cacheRecord then
+            cacheRecord, specSource = Sensors:RefreshSpecialization(unit, cacheRecord, observedAt, unitStable)
+            if cacheRecord then
                 specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
-                specSource = "cache"
-            end
-            if (not specName or specName == "") and cacheRecord then
-                specID, specName, specRole = cacheRecord.id, cacheRecord.name, cacheRecord.role
-                specSource = "cache"
-            end
-            if specName and specName ~= "" then
-                cacheRecord = {
-                    id = specID,
-                    name = specName,
-                    role = specRole,
-                    observedAt = observedAt,
-                }
-                Sensors.specCache[cacheKey] = cacheRecord
             end
             if role == "NONE" and specRole and specRole ~= "NONE" then role = specRole end
             if cacheRecord then
@@ -916,14 +915,17 @@ local function captureRoster(mapID)
             end
             local dead = raidDead[unitIndex]
             if dead == nil and unitStable then
-                dead = Util:Boolean(Util:Call(UnitIsDeadOrGhost, unit), false)
+                dead = Util:OptionalBoolean(Util:Call(UnitIsDeadOrGhost, unit))
             end
-            dead = dead == true
             local connected = raidConnected[unitIndex]
             if connected == nil and unitStable then
-                connected = Util:Boolean(Util:Call(UnitIsConnected, unit), true)
+                connected = Util:OptionalBoolean(Util:Call(UnitIsConnected, unit))
             end
-            if connected == nil then connected = true end
+            local visible, inCombat
+            if unitStable then
+                visible = Util:OptionalBoolean(Util:Call(UnitIsVisible, unit))
+                inCombat = Util:OptionalBoolean(Util:Call(UnitAffectingCombat, unit))
+            end
             local health = unitStable
                 and number(Util:Call(UnitHealth, unit), nil) or nil
             local healthMax = unitStable
@@ -970,16 +972,14 @@ local function captureRoster(mapID)
                 role = role,
                 dead = dead,
                 connected = connected,
-                inCombat = unitStable
-                    and Util:Boolean(Util:Call(UnitAffectingCombat, unit), false)
-                    or false,
+                inCombat = inCombat,
                 health = health,
                 healthMax = healthMax,
                 healthPercent = health and healthMax and healthMax > 0
                     and Util:Clamp((health / healthMax) * 100, 0, 100) or nil,
                 x = x,
                 y = y,
-                visible = true,
+                visible = visible,
                 lastSeenAt = observedAt,
                 location = location or (mapID and "Position restricted" or "Formation"),
                 locationSource = location and "Friendly Map Position" or "Group Unit",
@@ -1001,18 +1001,21 @@ end
 
 function Sensors:OnInitialize()
     Util = KWR.Util
-    if EventRegistry and type(EventRegistry.RegisterFrameEventAndCallback) == "function" then
-        for _, event in ipairs({ "INSPECT_READY", "PLAYER_SPECIALIZATION_CHANGED" }) do
-            local eventName = event
-            EventRegistry:RegisterFrameEventAndCallback(eventName, function()
-                -- Keep normal refreshes cheap, but let an explicit inspection
-                -- or specialization event make the next snapshot immediately
-                -- eligible to refresh its cached spec evidence.
-                Sensors.specCache = {}
-                if KWR.MatchRuntime then KWR.MatchRuntime:Queue(eventName, 0.05) end
-            end, self)
-        end
+end
+
+function Sensors:InvalidateSpecialization(unit)
+    if type(unit) ~= "string" or Util:IsSecret(unit) then return end
+    local guid = Util:Text(Util:Call(UnitGUID, unit), "", 80)
+    local name = Util:UnitName(unit)
+    local byGUID = guid ~= "" and self.specCache[guid] or nil
+    local byName = name and name ~= "" and self.specCache[name:lower()] or nil
+    -- Raid rows and unit APIs can expose different realm-qualified aliases.
+    -- Invalidate the identity's shared record, not only one spelling of it.
+    for key, record in pairs(self.specCache) do
+        if record == byGUID or record == byName then self.specCache[key] = nil end
     end
+    if guid ~= "" then self.specCache[guid] = nil end
+    if name and name ~= "" then self.specCache[name:lower()] = nil end
 end
 
 function Sensors:ObserveWidget(widgetInfo)
@@ -1174,9 +1177,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         self.lastScoreRequestAt = -999
     end
 
-    local directBlitz = inPvP and C_PvP
-        and type(C_PvP.IsBrawlSoloRBG) == "function"
-        and Util:Boolean(Util:Call(C_PvP.IsBrawlSoloRBG), false) or false
+    local directBlitz, blitzIndicatorSource = KWR.TeamResolver:BlitzIndicator(inPvP)
     local directBrawl = inPvP and C_PvP
         and type(C_PvP.IsInBrawl) == "function"
         and Util:Boolean(Util:Call(C_PvP.IsInBrawl), false) or false
@@ -1184,6 +1185,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         and C_PvP.IsRatedBattleground or IsRatedBattleground
     local isRated = inPvP and type(ratedProvider) == "function"
         and Util:Boolean(Util:Call(ratedProvider), false) or false
+    if directBlitz == true and blitzIndicatorSource == "C_PvP.IsRatedSoloRBG" then isRated = true end
     local context = {
         inPvP = inPvP,
         instanceType = instanceType,
@@ -1193,7 +1195,7 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         kind = definition and definition.kind or (inPvP and "UNKNOWN" or "WORLD"),
         phase = inPvP and "ACTIVE" or "WORLD",
         instanceID = number(instanceID, nil),
-        isBlitz = directBlitz,
+        isBlitz = directBlitz == true,
         isBrawl = directBrawl,
         brawlSource = directBrawl and "C_PvP.IsInBrawl" or "unconfirmed",
         isRated = isRated,
@@ -1220,14 +1222,13 @@ function Sensors:Capture(lastMessage, allowScoreboardReuse)
         self.scoreboardDirty = false
     end
     local scoreboardBlitz, blitzEvidence =
-        KWR.TeamResolver:DetectBlitz(scoreboardRows)
-    if directBlitz then
-        self.blitzSource = "C_PvP.IsBrawlSoloRBG"
-    elseif scoreboardBlitz then
-        self.blitzSource = blitzEvidence.source
-    end
-    context.isBlitz = self.blitzSource ~= nil
-    context.blitzSource = self.blitzSource or "unconfirmed"
+        KWR.TeamResolver:DetectBlitz(scoreboardRows, directBlitz, blitzIndicatorSource)
+    -- Recompute from explicit evidence. Roster size must never latch a ruleset.
+    self.blitzSource = scoreboardBlitz and blitzEvidence.source or nil
+    context.isBlitz = scoreboardBlitz
+    context.blitzSource = blitzEvidence.source
+    context.blitzKnown = blitzEvidence.known
+    context.blitzHint = blitzEvidence.scoreboardHint
     roster, context.rosterHydration = KWR.TeamResolver:ReconcileFriendlyRoster(
         roster, assigned, scoreboardRows, expectedRosterCount)
     -- Every consumer receives the same validated roster. Do not leave this to

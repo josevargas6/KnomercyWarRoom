@@ -1,4 +1,4 @@
-﻿local _, KWR = ...
+local _, KWR = ...
 
 local ScenarioExpertCorpus = {}
 KWR.ScenarioExpertCorpus = ScenarioExpertCorpus
@@ -24535,7 +24535,7 @@ function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
     return activeTheoryRow(row)
 end
 
-function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
+local function getPhaseRow(mapKey, phase)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     phase = KWR.Util:Upper(phase, nil, 24)
     if not mapKey or not phase then
@@ -24564,36 +24564,16 @@ function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
         end
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
+    return row
+end
+
+function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
+    local row = getPhaseRow(mapKey, phase)
     return activeTheoryRow(row)
 end
 
 function ScenarioExpertCorpus:GetSummaryByMapAndPhase(mapKey, phase)
-    mapKey = KWR.Util:Upper(mapKey, nil, 24)
-    phase = KWR.Util:Upper(phase, nil, 24)
-    if not mapKey or not phase then return nil end
-    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
-    if not phaseIndex or phaseIndexSeasonPrepActive ~= seasonPrepActive then
-        phaseIndex = {}
-        phaseIndexSeasonPrepActive = seasonPrepActive
-        for _, row in pairs(DATA.scenarios or {}) do
-            if row.mapKey and row.phase
-                and (row.reviewConfidence == "HIGH"
-                    or (seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"))
-                and (row.seasonStatus ~= "PENDING_SEASON_REVIEW" or seasonPrepActive) then
-                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
-                local current = phaseIndex[row.mapKey][row.phase]
-                local rowPriority = row.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1
-                local currentPriority = current
-                    and (current.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1) or 0
-                if not current or rowPriority > currentPriority
-                    or (rowPriority == currentPriority
-                        and tostring(row.scenarioId) < tostring(current.scenarioId)) then
-                    phaseIndex[row.mapKey][row.phase] = row
-                end
-            end
-        end
-    end
-    return compactScenario(phaseIndex[mapKey] and phaseIndex[mapKey][phase])
+    return compactScenario(getPhaseRow(mapKey, phase))
 end
 
 function ScenarioExpertCorpus:Shared()

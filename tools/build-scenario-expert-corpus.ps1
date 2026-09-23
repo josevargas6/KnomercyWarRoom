@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$OutputDirectory)
 
 $ErrorActionPreference = "Stop"
 $root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
@@ -8,6 +8,13 @@ $labelsPath = Join-Path $root "tests\golden"
 $outcomesPath = Join-Path $root "tests\outcomes"
 $jsonOutPath = Join-Path $root "knowledge\scenario-expert-corpus.json"
 $luaOutPath = Join-Path $root "Data\ScenarioExpertCorpus.lua"
+if ($OutputDirectory) {
+    $outputRoot = [IO.Path]::GetFullPath($OutputDirectory)
+    [IO.Directory]::CreateDirectory((Join-Path $outputRoot 'Data')) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $outputRoot 'knowledge')) | Out-Null
+    $luaOutPath = Join-Path $outputRoot ('Data/' + [IO.Path]::GetFileName($luaOutPath))
+    $jsonOutPath = Join-Path $outputRoot ('knowledge/' + [IO.Path]::GetFileName($jsonOutPath))
+}
 
 function Load-JsonFile {
     param([Parameter(Mandatory = $true)][string]$Path)
@@ -540,98 +547,12 @@ $luaData = ConvertTo-PlainData -Value ([pscustomobject]@{
     scenarios = $runtimeScenarioIndex
 })
 
-$lua = @"
-local _, KWR = ...
-
-local ScenarioExpertCorpus = {}
-KWR.ScenarioExpertCorpus = ScenarioExpertCorpus
-
-local phaseIndex = nil
-local phaseIndexSeasonPrepActive = nil
-
-local DATA = $(To-LuaLiteral -Value $luaData -Indent 0)
-
-function ScenarioExpertCorpus:Count()
-    local count = 0
-    for _ in pairs(DATA.scenarios or {}) do count = count + 1 end
-    return count
-end
-
-local function activeTheoryRow(row)
-    local copy = row and KWR.Util:Copy(row) or nil
-    if copy and copy.seasonStatus == "PENDING_SEASON_REVIEW"
-        and KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() then
-        copy.seasonStatus = "ACTIVE_THEORY_FIELD"
-        copy.evidenceStatus = "THEORY_AWAITING_FIELD_FEEDBACK"
-    end
-    return copy
-end
-
-function ScenarioExpertCorpus:Get(scenarioID)
-    local row = DATA.scenarios and DATA.scenarios[scenarioID]
-    return activeTheoryRow(row)
-end
-
-function ScenarioExpertCorpus:GetMapSummary(mapKey)
-    mapKey = KWR.Util:Upper(mapKey, nil, 24)
-    local row = mapKey and DATA.maps and DATA.maps[mapKey] or nil
-    return activeTheoryRow(row)
-end
-
-function ScenarioExpertCorpus:GetMapPhaseSummary(mapKey, phase)
-    mapKey = KWR.Util:Upper(mapKey, nil, 24)
-    phase = KWR.Util:Upper(phase, nil, 24)
-    local row = mapKey and phase and DATA.maps and DATA.maps[mapKey]
-    row = row and row.phaseSummaries and row.phaseSummaries[phase] or nil
-    return activeTheoryRow(row)
-end
-
-function ScenarioExpertCorpus:GetByMapAndPhase(mapKey, phase)
-    mapKey = KWR.Util:Upper(mapKey, nil, 24)
-    phase = KWR.Util:Upper(phase, nil, 24)
-    if not mapKey or not phase then
-        return nil
-    end
-    local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
-    if not phaseIndex or phaseIndexSeasonPrepActive ~= seasonPrepActive then
-        phaseIndex = {}
-        phaseIndexSeasonPrepActive = seasonPrepActive
-        for _, row in pairs(DATA.scenarios or {}) do
-            if row.mapKey and row.phase
-                and (row.reviewConfidence == "HIGH"
-                    or (seasonPrepActive and row.seasonStatus == "PENDING_SEASON_REVIEW"))
-                and (row.seasonStatus ~= "PENDING_SEASON_REVIEW" or seasonPrepActive) then
-                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
-                local current = phaseIndex[row.mapKey][row.phase]
-                local rowPriority = row.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1
-                local currentPriority = current
-                    and (current.seasonStatus == "PENDING_SEASON_REVIEW" and 2 or 1) or 0
-                if not current or rowPriority > currentPriority
-                    or (rowPriority == currentPriority
-                        and tostring(row.scenarioId) < tostring(current.scenarioId)) then
-                    phaseIndex[row.mapKey][row.phase] = row
-                end
-            end
-        end
-    end
-    local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
-    return activeTheoryRow(row)
-end
-
-function ScenarioExpertCorpus:Shared()
-    local shared = KWR.Util:Copy(DATA.shared or {})
-    shared.seasonPrepActivation = {
-        active = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true,
-        mode = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusMode() or "DISABLED",
-        safety = "Active theory guides the Commander now; live observations and AAR feedback refine or disprove it without being relabeled as simulated evidence.",
-    }
-    return shared
-end
-
-KWR:RegisterModule("ScenarioExpertCorpus", ScenarioExpertCorpus)
-"@
-
-Set-Content -LiteralPath $luaOutPath -Value $lua -Encoding UTF8
+$template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'templates/ScenarioExpertCorpus.lua.in')).Replace("`r`n", "`n")
+if ([regex]::Matches($template, '@KWR_DATA@').Count -ne 1) {
+    throw 'Scenario runtime template must contain exactly one data token.'
+}
+$lua = $template.Replace('@KWR_DATA@', (To-LuaLiteral -Value $luaData)).TrimEnd() + "`n"
+[IO.File]::WriteAllText($luaOutPath, $lua, [Text.UTF8Encoding]::new($false))
 
 Write-Output "KWR scenario expert corpus build"
 Write-Output "Scenario rows: $($scenarioRows.Count)"

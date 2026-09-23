@@ -164,4 +164,9 @@ A task is complete only when:
 
 Record an Architecture Decision Record for choices that affect multiple modules, persisted schemas, public contracts, compatibility strategy, or long-term maintenance. Pin validation and packaging tools where practical, and produce release ZIPs through automation.
 
-This checkout has no `.git` metadata, so follow the documented repository flow: keep commits bounded to one truth, UI, safety, or performance concern, and open PRs against `develop`. Use the PR template fields `What changed`, `Why`, `Safety`, `Validation`, and `Rollback`; attach screenshots or field-test evidence for UI and battleground behavior changes.
+This checkout has Git metadata. Preserve existing working-tree changes and use
+bounded commits for one truth, UI, safety, or performance concern. The fetched
+remote default is `main`; `develop` is not an active remote branch. Target `main`
+under the protected CI/release workflow unless repository policy explicitly
+changes. Use the existing PR template and include relevant safety, validation and
+rollback evidence; attach field evidence for UI and battleground behavior changes.

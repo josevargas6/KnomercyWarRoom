@@ -1,1111 +1,983 @@
-# KWR 10/10 Product Roadmap
+# KWR Commander overhaul audit and implementation plan
 
-## Roadmap context
+Audit date: **2026-09-04**. Scope: Retail Commander, the embedded Sentinel
+package, installed runtime differences, tactical decision quality, performance,
+player experience, verification, and distribution.
 
-`PROJECT_HANDOFF.md` is historical context only. This roadmap is the sole
-authority for future priorities; release decisions remain in
-`RELEASE_READINESS.md`. The work remains an additive combat-clarity and
-decision-quality program, not an architecture rewrite.
+This is the sole active overhaul backlog. It replaces the earlier Season 2
+execution order, fixed 5,000-case target, and competing delivery phases in this
+document. The product vision is retained. Release decisions remain exclusively
+in [RELEASE_READINESS.md](RELEASE_READINESS.md); engineering rules remain in
+[AGENTS.md](AGENTS.md). This audit is complete as a planning deliverable.
+**The implementation tasks below are open; the addon is not certified by this audit.**
 
-The active execution order is the Season 2 workflow below. Earlier feature
-lists remain design context, but they do not create separate backlogs or task
-authorities.
+## Release-first priority — owner direction 2026-09-04
 
-The seventeen-feature suggestion package is dispositioned in the handoff.
-Concept names do not authorize seventeen new runtime engines or UI surfaces.
+**September 8 execution clarification:** finish all offline implementation,
+migration, benchmark/replay, review and package work before asking the owner for
+field testing. [RELEASE_READINESS.md](RELEASE_READINESS.md) supplies the current
+per-OVR implementation/test/end-state recipes, nine pending source-recovery work
+packages, and the OFFLINE COMPLETE — READY FOR FIELD TESTING gate. These execute
+the requirements below; they do not replace the vision or clear any acceptance
+criterion. Live-only evidence is a later promotion dependency, not a coding
+dependency. KWR-281 does not wait for KWR-280's final WSG session.
 
-## Active Season 2 enhancement workflow
+The owner prioritizes a stable, distributable addon and controlling further
+development cost. The owner's latest instruction requires the full audited
+overhaul, including all tactical enhancements, before the field-test handoff.
+This supersedes minimum-stable-first sequencing. Implement every offline OVR
+requirement; comparative leadership and real-client safety still require field
+evidence afterward. Do not repeat the audit or discard the existing architecture.
 
-```yaml
-id: KWR-S2-001
-title: Season 2 decision quality and tactical marker convergence
-owner: project maintainer
-priority: critical
-risk: high
-dependencies:
-  - Retail 12.1 public API behavior
-  - reviewed Season 2 doctrine
-  - live battleground evidence
-affected_modules:
-  - knowledge
-  - Data
-  - Intelligence
-  - Runtime
-  - Features/CursorRing.lua
-  - UI/Options.lua
-  - tests
-  - tools
-```
+Freeze the candidate's advertised features, maps, brackets and client support in
+OVR-01. Every advertised capability still needs its correctness, compatibility,
+performance and field evidence. This priority does not clear any gate, reduce
+the existing field sample requirements, authorize feature removal, or certify
+the current Alpha 12 package.
 
-### Objective
+The release path is:
 
-Deliver one fast, evidence-bounded Season 2 command system that can select,
-explain, switch, and review specific RBG plans while presenting friendly,
-objective, and target identity through one clean nameplate marker stack.
+1. Recover the reproducible source/package baseline and establish real performance
+   measurements (OVR-01/09). Prepare the packaging checks in OVR-22 early.
+2. Close the reproduced defects and command lifecycle failures with permanent
+   regressions (OVR-02 through OVR-08 and OVR-12).
+3. Close correctness, performance, compatibility, public-roster, learning and
+   usability failures in the features being shipped (relevant parts of OVR-10/11
+   and OVR-13 through OVR-19). Measure before choosing a larger refactor. An
+   enhancement task must satisfy its audited offline acceptance criteria before
+   handoff; unsupported advice cannot remain enabled while its replacement is
+   unfinished.
+4. Run fresh candidate and extracted-package tests, complete the existing live
+   safety/tactical/performance matrix, then verify clean installation, upgrade,
+   package contents and rollback (OVR-20/21/22). Comparative superiority remains
+   necessary for a "leading" claim, rather than a new prerequisite for an honest
+   stable release with verified advertised capabilities.
 
-This section is the only active Season 2 implementation plan. Do not create a
-new roadmap, marker plan, corpus plan, launch checklist, or task-list Markdown
-file. Durable release truth remains in `RELEASE_READINESS.md`; completed user-
-visible work is summarized in `CHANGELOG.md`. Machine evidence belongs in the
-existing `knowledge/`, `artifacts/`, test, or CI outputs rather than new status
-documents.
+Control implementation cost with bounded fixes, focused regression runs and one
+full certification per final candidate unless changes require it again. Record
+closed gates, remaining blockers and evidence after each work package. Do not
+claim a dollar estimate before observing actual implementation usage, or count
+a model's confidence as release evidence. Complete the full audited offline
+scope before field handoff, and field and distribution gates before stable release.
 
-### Current baseline and interpretation
+## Judgment and intended end state
 
-The repository currently declares:
+KWR has a substantial foundation: one MatchRuntime/Store pipeline, public
+objective sensors, assigned-team resolution, an existing Strategist and Commander,
+role assignments, a compact HUD, secure roster rows, native-map coexistence,
+reviewed knowledge gates, bounded history, and optional Sentinel transport.
+Retain these systems and overhaul their contracts and expensive paths in stages.
 
-- ten supported RBG map profiles;
-- 2,003 replay fixtures, 2,001 golden labels, 2,000 replay results, 2,000
-  outcome reviews, and 201 adversarial cases in the corpus manifest;
-- 5,000 Season 2 deterministic simulation cases: 500 per map and 100 per phase
-  for `OPENING`, `STABILIZE`, `PRESSURE`, `RECOVERY`, and `ENDGAME`;
-- those 5,000 Season 2 cases as `SIMULATION_ONLY` and
-  `IMMEDIATE_THEORY_BRANCH_ACTIVATION_AND_REGRESSION`; their compact production
-  index activates covered theory branches, never an empirical outcome model.
+It is not yet defensible to call this the leading rated battleground commander.
+Eight defects reproduce against both the installed addon and the development
+checkout. The current tests miss those cases, the offline timing receipt uses a
+simulated clock, and current-package tactical effectiveness has not been proven.
+Adding more generated scenarios or panels will not close these gaps.
 
-The 5,000 cases are an existing coverage target, not 5,000 independent proofs
-that a tactic wins. Their counts may not reward a tactic; the Nexus activates
-the reviewed theory mapped to covered branches and penalizes any branch the
-audited corpus did not exercise. One normalized
-scenario case is the truth record; the scenario matrix,
-coverage totals, calibration tables, compact Lua data, and audit reports are
-derived views of those records. No mirrored hand-maintained corpus and matrix
-copies are allowed.
+The intended experience is:
 
-### User outcome
+- Before gates: identify the correct bracket, verify the roster, show an opening
+  with named jobs, minimum defense, first contact, and a recovery option.
+- In combat: show the win condition, one current team call, my job and location,
+  a deadline when justified, and one local target/control instruction.
+- When facts change: state why the old call stopped, who changes job, what stays
+  covered, and the fallback. A neutral observation must not masquerade as a kill window.
+- After combat: review what was recommended, what the leader accepted or changed,
+  what execution was actually observed, and the objective result.
+- In poor visibility: give conservative objective guidance, explicit uncertainty,
+  and useful manual assignment control. Never invent hidden opponents or cooldowns.
 
-During a match the leader should receive one legal, map-specific command that
-states `NOW`, `WHO`, `WHERE`, `WHEN`, `WHY`, `SWITCH IF`, and `DO NOT`, plus one
-fallback. The marker under the current-target crosshair should identify the
-player or public objective instantly without competing panels, duplicate icons,
-or unsupported claims.
+Ten-player organized RBG leadership is the primary product. Blitz must have a
+separate verified ruleset and assignment size if advertised. Arena, random BG,
+training, unknown maps, and experimental companions do not silently inherit
+10v10 assumptions.
 
-Outside a match the same knowledge should help form a team, preview openings,
-review alternatives, and turn AAR evidence into bounded future improvements.
+## Audit boundary and evidence
 
-### Non-goals
+Development checkout inspected:
+`C:/Users/josev/source/repos/KnomercyWarRoom`, branch
+`codex/kwr-278-alpha11-field-blockers`, base commit `bcce7f5`.
+It already had uncommitted Alpha 11/12 work, including KWR-280.
+Installed addon inspected:
+`D:/Program Files/World of Warcraft/_retail_/Interface/AddOns/KnomercyWarRoom`.
 
-- No automatic target, focus, chat, movement, spell, macro, or protected action.
-- No arithmetic, comparison, persistence, or inference from secret values.
-- No claim that simulated, meta, or stale doctrine is live observation.
-- No giant list of prose strategies selected by keyword.
-- No second fact store, decision engine, nameplate tracker, or marker state.
-- No bundled copy or unreviewed reuse of third-party addon code or artwork.
-- No dependency on, bridge to, detection of, or private hook into another
-  nameplate addon. KWR owns its complete native marker stack.
+Both declare `6.1.1-alpha.12`. The following was the September 4 raw audit
+snapshot: source had 131 TOC entries, installed Commander had 123, and the raw
+comparison found 25 changed loaded files and three installed-only files. It is
+not the current reconciliation receipt.
 
-### One scenario truth model
+The current September 8 Retail-active receipt is
+`artifacts/source-install-reconciliation-20260908-live-session.json`: source
+has 132 Commander TOC entries, installed Commander has 123, and the Commander
+comparison has 47 changed shared files, 11 source-only entries and two
+installed-only generated projections (`ScenarioRuntimeKnowledge.lua` and
+`StrategistNexusRuntimeIndex.lua`). Sentinel has two changed shared files. All
+62 non-matches remain `review_required`; the hash-bound work packet records zero
+completed dispositions. Raw source/package differences can be intentional, but
+they need an evidence-backed source-of-truth decision and a reproducible build
+path before reproducibility can be claimed. Do not overwrite installed
+improvements with this checkout.
 
-Each canonical scenario record must contain or explicitly mark unknown:
+Installed Sentinel and load-on-demand KWR_DevTools also declare Alpha 12.
+KWR_Maps, KWR_ScoreCard, and KWRBeacon are absent from their supplied installed
+paths. Their absence is not a Commander release blocker. Their implementation
+was not audited as though it were present. The separate Beacon/bot repositories,
+live GitHub protection, CurseForge downloads, Discord, and Render deployment were
+not certified in this pass.
+
+Read: README, PRODUCT_ROADMAP, DESIGN_CONTRACT, ARCHITECTURE, PROJECT_HANDOFF,
+RELEASE_READINESS, QA_CHECKLIST, BATTLEGROUND_VERIFICATION, META_SOURCES,
+DATA_GOVERNANCE, PROTOCOL, release/security notes, current task briefs and
+selected evidence, plus code across every runtime domain. This is a broad static
+audit with targeted executable reproductions, not an in-client gameplay session
+or a claim that every possible defect has been enumerated.
+
+### Checks actually run
+
+| Check | Result on the inspected working tree | What it establishes |
+| --- | --- | --- |
+| tools/validate.ps1 | PASS; zero warnings/errors | Existing static, TOC, document, and control-surface rules |
+| tools/test-lua.ps1 -Suite All | PASS; smoke marker reports 276 checks | Existing mocked regression suite; the number is not a quality score |
+| Sentinel transport test | PASS; accepted=10, rejected=14, hud=10 | Existing mock transport cases, not ten physical clients |
+| Soak | PASS; 500 refreshes, 60 retained duration samples | Bounded state and scheduling under the test driver |
+| Default replay | PASS by fallback; primary=false | One Twin Peaks replay, not full-corpus current-code correctness |
+| tools/knowledge-audit.ps1 | PASS; 100,000 cases, 10 maps, 5 phases, 2,000 exact branches | Generated coverage and internal knowledge consistency |
+| Additional audit probes | Eight defects reproduced in source AND installed modules | Ordinary-value contract failures independent of WoW secrets |
+| Live CPU/FPS/taint, secure combat cycle, complete current-build matches | NOT RUN | Required before promotion |
+| Clean tagged rebuild, extracted install parity, public download receipts | NOT RUN | Required before promotion |
+
+Local reproduction script and output are in
+`artifacts/overhaul-audit-20260904/` (`probes.lua`, `source-probes.txt`,
+`installed-probes.txt`). They are development evidence, excluded from player
+packages. A probe's `AUDIT_REPRODUCED` marker means the defect is still present.
+Preserve these cases as permanent regressions when fixing them.
+
+### Current WoW constraints checked
+
+Blizzard distinguishes display of restricted combat values from addon reasoning
+over those values. Publicly displayable data must not automatically become a
+decision input. Design API fallbacks around that distinction.
+[Blizzard addon philosophy](https://worldofwarcraft.blizzard.com/en-us/news/24246290/combat-philosophy-and-addon-disarmament-in-midnight).
+
+The official hotfix ledger now includes changes through September 3, while the
+local pack's `officialHotfixReviewed` stops at August 27. For example, the ledger
+includes September 2 PvP fixes and September 3 healing fixes; that is a review
+gap, not permission to invent new numeric capability weights.
+[Official hotfix ledger](https://worldofwarcraft.blizzard.com/en-us/news/24296142).
+
+Blizzard's generated API documentation, mirrored in the UI source, places the
+casting spell ID in UnitCastingInfo's ninth return and UnitChannelInfo's eighth.
+Treat the live branch as a moving reference; pin the exact client build when
+implementing adapter tests.
+[Generated Unit API source](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_APIDocumentationGenerated/UnitDocumentation.lua).
+
+The shipped June 27 Murlok snapshot is patch 12.0.7 and correctly excluded from
+12.1 meta influence. No new specialization tier list or external competitor
+ranking is asserted by this audit. Current ranked-map availability and exact API
+availability must be recorded from the target client and reviewed patch sources.
+
+### Current comparison baseline
+
+These are developer-published feature references checked on September 4, not
+an in-client ranking or a claim that KWR should copy their code. Pin versions
+again when running the OVR-21 comparison.
+
+| Reference | Advertised capability / audit-date listing | What KWR must prove |
+| --- | --- | --- |
+| [Capping Battleground Timers](https://www.curseforge.com/wow/addons/capping-bg-timers) | Node/flag timers and score estimates; Retail 12.1.0 listing | At least comparable public-objective timing, then a feasible named response and fallback |
+| [BattleGroundEnemiesFixed](https://www.curseforge.com/wow/addons/battlegroundenemiesfixed) | Battleground roster presentation; 12.1.0 listing, with explicit restricted health/role limitations | Equally trustworthy readable identity/click behavior; no claims of hidden role/health knowledge |
+| [Battleground Win Conditions](https://www.curseforge.com/wow/addons/battleground-win-conditions) | Win-condition banner/text; retrieved listing advertises 12.0.7 | Clear correct winning-clock explanation; verify current build compatibility before comparison |
+
+The intended differentiation is the complete leader workflow: objective truth,
+feasible assignments, stable calls, explicit recovery and reviewed execution.
+This is a product hypothesis until measured. More overlays or a larger corpus
+alone do not establish an advantage over focused tools.
+
+## Findings and implementation ownership
+
+Evidence paths/line numbers below refer to the inspected source before this
+documentation update. Resolve the named function if later edits move a line.
+R = executable reproduction; C = directly observed code/document behavior;
+V = live or release verification gap; E = product enhancement.
+
+| ID | Evidence and shortcoming | Impact | Fix task |
+| --- | --- | --- | --- |
+| F01 C/V | Source/install TOC and runtime differences above; Alpha 12 TOCs coexist with Alpha 10/11 receipts and release checkboxes | Cannot bind a tested source, package, and deployment | OVR-01, OVR-22 |
+| F02 R | State/BoardStateBuilder.lua:53 iterates snapshot.objectives; Sensors.lua:1272 publishes objectives.rows | Local BoardState sees zero objectives despite a populated sensor snapshot | OVR-02 |
+| F03 R | State/FactStore.lua:24,34 stamps Now() on unchanged observations; friendly records are blanket CONFIRMED | Freshness/provenance can be upgraded by rebuilding a view | OVR-02 |
+| F04 R | Runtime/CombatIntel.lua:573,575 sets the highest-scoring candidate killable=true even with unknown health/support; EnemyProblemDetector consumes that flag | Preference becomes claimed vulnerability and a kill recommendation | OVR-03 |
+| F05 R | AssignmentScorer.lua:41 applies -200 for unavailable players; AssignmentOptimizer.lua:123 accepts any remaining positive score | A dead Knomercy receives a control job with score 26 in the probe | OVR-04 |
+| F06 C | Data/PlayerControlProfiles.lua:6 hardcodes knomercy/stan bonuses; LocalTeamfightState includes the full friendly board | Public distribution has name-based bias; remote defenders can enter local job selection | OVR-04, OVR-17 |
+| F07 C | TeamfightCommandPlanner.lua:13 builds a new five-second countdown; AssignmentOptimizer.lua:57 and KillTargetSelector.lua:47 say Go in 5; ExecutionCommandBuilder.lua:609 publishes it | There is no stable start/deadline establishing when GO actually occurs | OVR-05 |
+| F08 R | TeamResolver.lua:379 infers Blitz solely from 8+8 rows; Sensors.lua:1227 latches that evidence | A partly loaded standard roster can activate different scoring rules for the session | OVR-06 |
+| F09 R | CommanderComm.lua:104 dereferences absent seq before validating its presence; Receive decodes before roster authorization | A malformed eight-field payload can throw when transport is enabled | OVR-08 |
+| F10 R | KWRSentinel/Observer.lua:60 reads cast return 8 as spell ID | Ordinary casts fail to produce OBS_CAST; channel layout happens to differ | OVR-07, OVR-08 |
+| F11 R | CursorRing.lua:1247 returns before downstream retry accumulators; line 1279 adds only the final frame's elapsed | At 30/60/144 FPS, ten-second probe produces 37/18/8 orb refreshes; higher FPS makes retry updates slower | OVR-12 |
+| F12 C/V | tests/soak.lua:8 replaces debugprofilestop; lines 90-96 inject 3.2/1.6/0.8/0.1 ms; performance JSON calls the result PASS | Reported 0.8 ms P95 is simulated and cannot establish Retail speed | OVR-09 |
+| F13 C/V | MatchRuntime.lua:990 measures before Store.Publish at 1020; Store.lua:450 recursively reconciles and batches subscribers later | Refresh timing omits publication/render tail; lower frequency can hide latency | OVR-09, OVR-10 |
+| F14 C/E | Maps.lua:279 uses normalized straight-line distance and shared movement constants for all maps | Estimates omit roads, elevation, crossings, spawn routes and actual player availability | OVR-14 |
+| F15 C/E | Learning.lua:7 buckets only map+plan; RecordReviewed credits a whole win/loss to primaryPlanID and any feedback; Adjustment uses five samples | Composition/bracket/team/plan-version effects and actual delivery are conflated | OVR-18 |
+| F16 C/V | KnowledgeManifest.lua:70 compares two bundled patch strings; freshness tolerates missing dates; reviewed hotfix cutoff is old | Static agreement is not client-build compatibility; stale slices can remain apparently reviewed | OVR-07, OVR-16 |
+| F17 C/V | tools/decision-benchmark.ps1 reads existing .run.json evaluation flags; default test-lua replay runs one fixture | A benchmark PASS need not mean current runtime generated all results | OVR-20 |
+| F18 C/V | KWR-278 historical field brief records 35.072 ms strategic P95, 50.295 ms max, 47,974 KB peak; KWR-280 is still in progress | Severe past field cost and churn remain regression targets, not proof Alpha 12 has the same measured values | OVR-05, OVR-09, OVR-21 |
+| F19 C/V | README/QA/map/design notes still cite Alpha 25/28/29 or only live-proof gaps; roadmap said 5,000 cases and 30-match retention | Engineer and player instructions disagree with current code and evidence | OVR-01, OVR-19, OVR-22 |
+| F20 C/E | Byte-based text clipping in Core/Util.lua:51; English command/UI strings throughout UI and Runtime | Distribution needs UTF-8-safe clipping, explicit locale support, and readability verification | OVR-19 |
+| F21 C/E | Runtime/Commander.lua exceeds 2,600 lines; hot paths build multiple fact/board/command views; caches/queues already exist | Refactor measured responsibilities, avoid introducing another engine or a broad blind rewrite | OVR-10, OVR-15 |
+| F22 V/E | No candidate-bound comparative commander benchmark or complete live acceptance matrix established in this audit | “Meta leading” remains an aspiration until usefulness beats the baseline | OVR-20, OVR-21 |
+
+## Architecture to preserve and tighten
 
 ```text
-caseId and deterministic contentHash
-schemaVersion, gamePatch, season, doctrineVersion
-mapKey, mapFamily, phase, scoreBand, clockBand
-public objective state and legal transition
-our composition capability vector
-enemy composition capability vector
-available players, deaths, disconnects, and role ambiguity
-observed pressure, travel, resurrection, and timing evidence
-candidate plan, required capabilities, and rejected alternatives
-NOW / WHO / WHERE / WHEN / WHY
-success condition, switch trigger, stop rule, and fallbackPlanId
-expected assignments and target/CC posture
-uncertainty and contradiction cases
-provenance, reviewer status, review notes, and expiry
-outcome window, observed result, override reason, and AAR label
-activationStatus and invalidatedBy
+Blizzard permitted API/event values
+    -> Adapters + Sensors + TeamResolver
+    -> one snapshot, field provenance, freshness, typed objective IDs
+    -> Predictor + Strategist candidate evaluation
+    -> Assignments feasibility + existing local-fight planner
+    -> Commander-owned play lifecycle + synchronized ExecutionCommand
+    -> Store publication with revision and changed-domain mask
+    -> HUD / tactical board / secure roster / audio / optional Sentinel / AAR
 ```
 
-The minimum deduplication identity is the normalized combination of map,
-phase, public state, our capability vector, enemy capability vector, candidate
-plan version, and evidence boundary. Records that differ only in wording are
-duplicates. Records that intentionally test a different uncertainty,
-counter-response, timing, or outcome branch must name that dimension.
+FactStore and BoardState become read-only projections of the same observed facts.
+They do not create new observations. Local-fight selection must consume one
+adjudicated target intent; it cannot independently upgrade the roster spotlight.
+Keep manual priority and observed vulnerability as separate fields.
 
-### Ideal 5,000-case coverage matrix
+Secure click bindings are prepared out of combat. Display-only restricted health
+may flow directly to a Blizzard-supported visual sink, never into numeric
+scoring, signatures, serialization, saved variables, or addon messages.
+The native Shift-M map remains the battlefield map. Reporter is background
+intelligence with detail on the existing board; do not revive another support map.
 
-Maintain exactly 500 canonical Season 2 cases per supported map and exactly 100
-per phase per map. The generator must balance, report, and fail on missing or
-overrepresented dimensions rather than generating near-identical sentences.
+Use the existing root-level module layout. Extract narrow pure functions from
+large files only where ownership/testability or profiling justifies it. New
+generation tools and replay machinery stay outside the player runtime. No
+network fetching, automatic movement, spell use, targeting, focus, macro
+execution, or visible-chat sending is added. Retain reviewed hardware-click
+quick calls and secure targeting. Sentinel remains an optional recipient,
+not another strategic brain.
 
-Within every map and phase, cover all of the following axes:
+## Ordered work register
 
-- safe default, favorable, unfavorable, tied, and emergency score/clock states;
-- balanced team fight, rot/attrition, melee collapse, ranged control,
-  stealth/cross-cap, high-mobility rotation, bunker, anti-caster, anti-melee,
-  and explicitly enabled off-meta composition archetypes;
-- expected enemy response, unexpected counter, bait, failed opening, wipe,
-  leaver/death, delayed reinforcement, impossible travel, and stale evidence;
-- objective-specific success, partial success, failure, stop, switch, and
-  fallback branches;
-- live-known, observed, derived, meta-only, contradictory, expired, and unknown
-  evidence states;
-- legal assignment availability, healer/tank/carrier loss, reserve depletion,
-  and reassignment pressure.
+P0 blocks promotion because it affects correctness, safety, reproducibility, or
+proof. P1 is required for the requested overhaul outcome. Parallel work may start
+after shared contracts are agreed; completion must respect dependencies.
+OVR-01 is **IN_PROGRESS**, owned by Codex in
+[KWR-281](docs/tasks/KWR-281-release-source-reconciliation.md). OVR-08 and OVR-12
+are **IN_PROGRESS**, owned by Codex for the bounded parser/cast/cadence fixes in
+[KWR-282](docs/tasks/completed/KWR-282-runtime-boundary-regressions.md); their broader field
+and integration gates remain open. OVR-02/03/04 are **IN_PROGRESS** under Codex's
+[KWR-283](docs/tasks/completed/KWR-283-tactical-truth-regressions.md) for the objective,
+target-preference and known-unavailable actor regressions. Their broader typed
+truth and feasibility criteria remain open. The unknown-friendly availability
+and role boundary continues in [KWR-287](docs/tasks/completed/KWR-287-friendly-availability-truth.md).
+OVR-06 is **IN_PROGRESS** under
+[KWR-284](docs/tasks/completed/KWR-284-observation-and-bracket-truth.md), which also preserves
+OVR-02 observation timestamps. The bounded KWR-282/283/284 tasks passed the
+`audited-regressions-20260905-02` extracted-package audit and are completed;
+their broader OVR work packages remain in progress. OVR-09/10 are **IN_PROGRESS**
+under [KWR-285](docs/tasks/completed/KWR-285-memory-sampling-provenance.md), starting with
+accurate, bounded memory sampling; that bounded task passed
+`memory-sampling-20260905-package` extraction. OVR-11 is **IN_PROGRESS** under
+[KWR-286](docs/tasks/completed/KWR-286-scenario-generator-parity.md), first preserving
+scenario generator/runtime parity before projection changes. Other rows remain **OPEN**, with owner
+**unassigned** until claimed.
+These OVR IDs are work packages, not claims that existing KWR task IDs are closed.
 
-Map-family coverage must remain specific:
+OVR-05 is **IN_PROGRESS**, owned by Codex under
+[KWR-288](docs/tasks/completed/KWR-288-explicit-countdown.md) for explicit local start/deadline
+and stale-cue rejection. Canonical lifecycle, relay revision and live gates remain open.
+KWR-287/288 passed the `explicit-countdown-20260906-package` extraction gate.
+OVR-02 continues after [KWR-289](docs/tasks/completed/KWR-289-evidence-freshness.md),
+which closes shared evidence-time validation with an extracted dirty-package
+checkpoint. Full typed field projection remains required.
+OVR-03 continues after [KWR-290](docs/tasks/completed/KWR-290-observed-kill-intent.md),
+which closes observed target intent and kill-commit gating with an extracted
+dirty-package checkpoint. Full target evidence and feasibility requirements
+remain open.
+OVR-03/04 continue after [KWR-291](docs/tasks/completed/KWR-291-local-support-availability.md),
+which closes known local-support proof with an extracted dirty-package checkpoint.
 
-| Family | Required decision coverage |
-| --- | --- |
-| Node | stable shell, defender sufficiency, incoming response, cross-cap, ghosted node, capture/clock feasibility |
-| Flag | carrier route, offense/defense split, return-and-cap, stack/public state, bunker break, reset and final-cap discipline |
-| Hybrid | tower count, useful flag value, mid allocation, tower-versus-flag trade, impossible delivery rejection |
-| Orb | carrier value, replacement pickup, center exposure, loose orb, carrier kill/protection, survival uncertainty |
-| Cart | live/dead route, escort/delay, checkpoint or turn-in risk, secondary objective cost, reachable rotation |
-| Resource | public spawn/channel state, arrival race, split safety, exhausted-node exit, regroup and denial |
+| Order / ID | Priority | Risk | Depends on | Deliverable |
+| --- | --- | --- | --- | --- |
+| OVR-01 | P0 | High | None | Reconciled source and honest baseline |
+| OVR-02 | P0 | High | 01 | Correct typed facts and objective projection |
+| OVR-03 | P0 | High | 02 | Truthful target intent and confidence |
+| OVR-04 | P0 | High | 02,03 | Feasible local control and protected assignments |
+| OVR-05 | P0 | High | 02,03,04 | Stable play and real execution deadlines |
+| OVR-06 | P0 | High | 01,02 | Verified bracket, map and lifecycle context |
+| OVR-07 | P0 | High | 01,02,06 | Build-aware, secret-safe API contracts |
+| OVR-08 | P0 for shipped transport | High | 01,07 | Defensive optional Sentinel transport |
+| OVR-09 | P0 proof | Medium | 01 | Real cost and responsiveness measurements |
+| OVR-10 | P1 | High | 02,05,09 | Reduced computation and publication cost |
+| OVR-11 | P1 | Medium | 01,09,10 | Small player runtime and bounded memory |
+| OVR-12 | P1 | High | 02,05,09 | Correct marker cadence and secure identity |
+| OVR-13 | P1 | High | 02,05,06,07 | Complete map objective engines |
+| OVR-14 | P1 | Medium | 02,06,13 | Honest route and reinforcement feasibility |
+| OVR-15 | P1 | High | 03,04,05,13,14 | Map-specific candidate/counter decisions |
+| OVR-16 | P1 | Medium | 06,07 | Reviewed current-patch knowledge |
+| OVR-17 | P1 | Medium | 04,06,16 | General-purpose roster formation and job presets |
+| OVR-18 | P1 | High | 02,05,15,16 | Decision-level AAR and conservative local learning |
+| OVR-19 | P1 | Medium | 05,12,13,17 | Commander UX, accessibility and supported locales |
+| OVR-20 | P0 proof | High | 02-08,13-18 | Current-code replay and tactical benchmark |
+| OVR-21 | P0 proof | High | 09-20 | Live competitive and performance evidence |
+| OVR-22 | P0 release | High | All required rows | Certified, installable distribution and rollback |
 
-The coverage matrix is generated from canonical records and reports counts and
-gaps. It is not edited as an independent strategy source.
+### OVR-01 — Reconcile source, preserve fixes, freeze a reviewable baseline
 
-### Evidence roles and activation lifecycle
+**Current / outcome:** the installed DevTools split and runtime projections are
+not reproducible from the inspected checkout. The leader needs an identifiable
+build before any overhaul result can be trusted.
 
-Simulation and observed evidence do not share an in-place promotion path:
+**Implementation:** preserve a hash manifest and backup of Commander, Sentinel
+and DevTools plus current dirty source. Inventory available branches/worktrees
+and package receipts; recover installed-only improvements into the canonical
+repository through reviewed, bounded diffs. Preserve KWR-278/279 and finish
+KWR-280's already-written fixes instead of rebuilding them. Document which
+differences are source changes versus deterministic packaging transforms.
+Correct stale main/develop and “no git metadata” instructions using the actual
+repository policy. Do not reset dirty source, move old tags, or install older code.
 
-1. `SIMULATION_ONLY`: deterministic regression coverage; a missing branch can
-   reduce confidence, but generated counts and outcome labels add no score.
-2. `DOCTRINE_REVIEWED`: legal and tactically coherent according to two expert
-   reviews, or one expert review plus supporting reviewed match evidence;
-   eligible as a curated baseline only.
-3. `FIELD_OBSERVED`: exercised with matching public state in live play and
-   linked to a sanitized AAR outcome; still bounded by sample safeguards.
-4. `PROMOTED`: a separate observed/reviewed record passes audit, replay,
-   adversarial, calibration, expiry, and decision-quality gates; may influence
-   live plan scoring within the authority hierarchy.
-5. `QUARANTINED` or `RETIRED`: tuning, API behavior, contradictory outcomes,
-   unsafe evidence, or doctrine replacement prevents live use.
+**Acceptance / verification:**
 
-Simulation records never become observed records by changing a status field.
-Activation is by versioned plan slice, never by bulk count. A promoted record
-may adjust only a legal candidate whose required live facts are satisfied.
-Meta, doctrine, and learned history remain tie breakers and may not override a
-public score, objective state, timer, impossible route, or missing capability.
+- [ ] A clean candidate commit can generate all three intended runtime identities.
+- [ ] Exact TOC/runtime/version/hash receipt explains every installed-file difference.
+- [ ] Source and extracted-package tests run against that candidate.
+- [ ] KWR-280 remains awaiting its WSG live regression until captured.
 
-### Tactical nameplate and crosshair convergence
+**Rollback:** preserved source diffs and the exact pre-overhaul addon/SavedVariables
+snapshot; restore components together when shared contracts change.
 
-`Features/CursorRing.lua` remains the owner of the tactical marker model and
-target reticle. Extend it or a narrow adapter behind it; do not create another
-nameplate engine with separate target or assignment state.
+### OVR-02 — One fact contract with correct objective shape and observation age
 
-The visual stack, back to front, is:
+**Implementation:** repair BoardStateBuilder to read `snapshot.objectives.rows`.
+Give each objective a canonical map/ruleset/objective ID, independent of its
+localized label. Carry original `observedAt`, source, TTL, expiry, observation ID
+and verification level into FactStore/BoardState. Keep `projectedAt` separate.
+Represent known/unknown/conflicting values explicitly; an evidence ID proves
+traceability, not confidence. Reuse the existing truth-contract owner; no new
+mutable fact store.
 
-1. optional native friendly identifier marker: circular class icon;
-2. public objective override: flag/orb carrier icon with a distinct gold ring;
-3. compact role or KWR assignment badge: healer, tank, defend, strike, escort,
-   rotate, or reserve;
-4. current-target reticle: target, focus/kill, swap, carry, must-stop cast, or
-   observed defensive state;
-5. short text only when it changes the action; never duplicate full roster or
-   command-card prose over a nameplate.
+**Acceptance / verification:**
 
-Marker truth priority is public objective, observed role/class identity,
-authoritative KWR assignment, observed tactical state, and presentation-only
-styling. Unknown identity uses a neutral marker. An unobserved enemy role,
-location, cooldown, health state, assignment, or objective state is never
-invented.
+- [ ] Populated sensor rows produce the same IDs/counts in board, predictor and UI.
+- [ ] Rebuilding a t=10 observation at t=100/200 never refreshes its observation time.
+- [ ] Unknown friendly role/connection remains unknown; scoreboard identity is not visibility.
+- [ ] Permuting input order does not change identity, evidence IDs or call selection.
+- [ ] Expiry and contradictory sources suppress only dependent decisions.
 
-Rendering modes:
+**Rollback:** retain the old reader only for versioned fixtures; live code uses
+one schema after migration. Reject malformed rows instead of silently coercing them.
 
-- `KWR_NATIVE` (default): KWR renders the base identifier, badge, and tactical
-  reticle with no third-party dependency.
-- `TACTICAL_ONLY`: KWR preserves its own base identifier setting and renders
-  only the KWR reticle and explicitly enabled tactical accents.
-- `OFF`: no KWR nameplate rendering.
+### OVR-03 — Separate preferred target, observed vulnerability, and kill commit
 
-The default must preserve existing health bars and names. Icon-only friendly
-plates are an explicit setting. KWR must not silently alter another addon's
-settings, hook its private implementation, or assume it is installed. If a
-user wants KWR's standalone marker experience, they disable any other addon
-that is separately replacing the same nameplate visual.
+**Implementation:** in CombatIntel remove the promotion from “best candidate” to
+`killable`. Publish distinct target intents such as manual focus, pressure,
+observed opportunity, and swap/avoid, each with evidence requirements. Let
+EnemyProblemDetector and KillTargetSelector consume that intent through the
+existing planner. Apply the same defensive/carrier/role constraints to every
+surface. Confidence reflects input support and contradictions, not assignment
+count or a high heuristic score.
 
-All marker frames are non-interactive, pooled or reused, bounded to visible
-nameplates, and created/configured without protected combat mutations. Updates
-are event-driven with a capped safety refresh. Plate removal, target loss,
-instance exit, feature disable, UI reload, and addon compatibility changes must
-restore or hide KWR visuals without leaving stale markers. The reticle and base
-marker share one center anchor so the crosshair remains cleanly concentric at
-all supported scales.
+**Acceptance / verification:**
 
-### S-tier enhancement sequence
+- [ ] Unknown-health/no-support candidate can be a pressure target but never a
+  confirmed kill window merely because it ranks first.
+- [ ] No legal candidate yields a calm “no confirmed local target” state.
+- [ ] Immunity/defensive evidence suppresses an incompatible commit across HUD,
+  spotlight, execution packet, audio and Sentinel.
+- [ ] Manual priority remains visibly manual; HIST spec does not become live certainty.
+- [ ] Removing supporting facts cannot increase commitment confidence.
 
-Implement in this order so strategy volume cannot hide correctness defects:
+**Rollback:** feature flag advanced target commits off; retain permitted visual
+target identity and manual priority.
 
-1. **Truth and safety:** consolidate schemas, authority, expiry, secret-value
-   handling, combat safety, and duplicate rejection.
-2. **Marker clarity:** converge KWR's identifier, assignment badge, objective
-   icon, and crosshair on one anchor with native, tactical-only, and off modes.
-3. **Corpus quality:** audit the 5,000 cases for unique decision branches,
-   coverage balance, legal mechanics, provenance, and review state.
-4. **Decision depth:** generate legal candidates, score composition/map/timing
-   fit, apply counters, publish one call plus fallback, and explain rejected
-   alternatives.
-5. **Adaptive switching:** respond to public objective changes, player
-   availability, enemy counterplay, failed success windows, and stop rules
-   without oscillation.
-6. **Performance:** domain invalidation, event-driven refresh, pooled visuals,
-   bounded buffers, hidden-view suspension, and measured CPU/memory budgets.
-7. **Learning and AAR:** record plan outcome and leader override, require review,
-   apply minimum-sample limits, and quarantine patch-stale evidence.
-8. **Release usability:** pre-gate opening brief, Command/Learning density,
-   readable explanations, clean installation, compatibility tests, packaging,
-   and rollback proof.
+### OVR-04 — Hard assignment feasibility before scoring
 
-### Implementation workflow and exit gates
+**Implementation:** filter dead/disconnected actors before candidate scoring.
+For unknown availability, remote location, unknown reach or unsupported control
+capability, use an unassigned/watch state rather than an executable local job.
+Pass the authoritative assignment coverage ledger into the optimizer.
+Exclude carriers, committed sitters, essential healers and last defenders unless
+a legal handoff exists. The existing late `preserveProtectedAssignments` pass
+is a final invariant check, not a substitute for generating feasible candidates.
+Remove shipped short-name bonuses; explicit leader overrides belong to a
+versioned, opt-in local profile keyed by stable identity.
 
-#### Gate 0: Baseline lock
+**Acceptance / verification:**
 
-- Record current validation, knowledge audit, smoke, soak, build, package hash,
-  runtime performance, taint, and visual evidence.
-- Confirm the current release remains recoverable before changing schemas or
-  marker behavior.
+- [ ] The dead-player score-26 reproduction produces no assignment.
+- [ ] Remote rogue, last defender, carrier, ambiguous name and missing healer
+  cases preserve coverage or explicitly expose an unfilled job.
+- [ ] Each actor has one compatible objective job and at most one feasible
+  local control responsibility; conflicting/immune control is rejected.
+- [ ] Search-node budget exhaustion returns a feasible deterministic incumbent
+  and diagnostics, never a partly valid assignment.
+- [ ] Renaming an otherwise identical character does not change default scoring.
 
-Exit: reproducible baseline and rollback package exist; no unknown failing test
-is reclassified as an enhancement.
+**Rollback:** disable local job optimization while keeping objective assignments
+and explicit manual choices.
 
-#### Gate 1: Schema and generator convergence
+### OVR-05 — Stable commands with genuine start, deadline, and retirement
 
-- Establish the canonical scenario schema and lifecycle fields.
-- Generate matrix coverage, compact Lua, calibration, manifest totals, and
-  hashes from canonical cases.
-- Reject duplicate IDs, duplicate normalized hashes, dangling plan links,
-  contradictory activation states, stale patch data, and unreviewed promotion.
-- Preserve schema migration for existing reviewed evidence.
+**Implementation:** extend Commander's existing ActivePlay lifecycle with one
+command ID/revision, issued/start time, optional deadline, success/abort/fallback
+and termination reason. Replace fixed `Go in 5` with a leader-started local
+countdown or a qualified public event deadline. Without either, say “prepare”
+or “on leader call.” Project remaining time; do not restart on refresh.
+Keep existing KWR-280 terminal-reissue suppression and refine it with material
+fact revisions, emergency invalidation and time-bounded retry rules.
 
-Exit: one source produces all derived artifacts deterministically, two clean
-builds have identical content hashes, and no hand-edited mirror remains.
+**Acceptance / verification:**
 
-#### Gate 2: Corpus quality pass
+- [ ] A countdown started at t=100 for five seconds shows 5,4,1,0 at t=100,101,104,105;
+  a repaint/target event cannot reset it.
+- [ ] Terminal play is recorded once and cannot reappear from unchanged failed facts.
+- [ ] Score/capture/carrier invalidation cancels a stale play promptly even during dwell.
+- [ ] Equivalent calls do not churn from ordering, timestamps or text-only changes.
+- [ ] HUD, copy text, local audio, AAR and optional relay identify the same play
+  revision; no GO call survives target loss or match completion.
 
-- Audit exactly 500 cases per map and 100 per phase.
-- Replace wording variants with distinct counter, evidence, outcome, or timing
-  branches.
-- Review map mechanics, composition requirements, stop/switch conditions, and
-  fallbacks.
-- Keep all unreviewed Season 2 forecasts simulation-only.
+**Rollback:** disable scheduled execution cues and keep stable untimed objective calls.
 
-Exit: coverage audit is green, all records explain their unique decision
-dimension, and every promoted slice meets the evidence lifecycle.
+### OVR-06 — Explicit bracket and match state
 
-#### Gate 3: Marker convergence
+**Implementation:** put bracket evidence and uncertainty in Sensors/TeamResolver:
+STANDARD_RBG, BLITZ, UNRATED, TRAINING, UNKNOWN. Prefer a permitted explicit
+client indicator. An observed 8+8 subset may be a hint, never a latched ruleset
+decision without corroboration. Invalidate on contradictory evidence and use a
+unique match/session generation through reload, map hydration and repeat queues.
+Derive roster size, scoring, capture and assignment parameters from that context.
 
-- Implement the shared plate anchor and render modes.
-- Correct frame level, scale, offsets, overlap, stale cleanup, and target
-  transition behavior.
-- Add objective, role, assignment, and neutral-unknown visuals using existing
-  KWR icon/theme assets or Blizzard-provided assets.
-- Verify KWR's marker independently with Blizzard default plates and confirm
-  that it neither detects nor modifies any third-party nameplate addon.
+**Acceptance / verification:**
 
-Exit: the class/objective marker remains readable beneath a concentric KWR
-crosshair, no duplicate KWR marker appears, and disabling the feature restores
-the prior plate presentation.
+- [x] 8+8 then 10+10 standard roster never latches Blitz (KWR-284 source capture
+  regression and interim extracted package, September 5; physical-client proof remains).
+- [ ] Actual Blitz uses eight-player jobs and its own verified mechanics.
+- [ ] Late joins, mercenary/cross-faction sides, reload, back-to-back same-map
+  matches, unsupported map and interrupted match cannot reuse stale team truth.
+- [ ] Unknown bracket does not authorize a bracket-specific winning clock.
+- [ ] Publish a current supported-map/bracket manifest before advertising support.
 
-#### Gate 4: Decision integration
+**Rollback:** unknown/conservative mode if classification cannot be established;
+never force standard or Blitz from roster size alone.
 
-- Feed only eligible reviewed records into existing candidate generation and
-  scoring.
-- Prove that required facts, impossible travel, missing capabilities, expiry,
-  and public objective truth filter candidates before scoring.
-- Publish one primary call, one fallback, one switch trigger, and one stop rule.
-- Record which live facts and reviewed records influenced the choice.
+### OVR-07 — Client-build compatibility and field-level secret boundaries
 
-Exit: every supported map/phase returns a legal specific call or an explicit
-`UNKNOWN`/safe fallback; no generic filler can be selected as a live command.
+**Implementation:** route volatile API calls through existing adapters; fix
+Sentinel cast/channel tuple decoding separately. Validate presence, return shape,
+secret status and permission before any comparison or formatting. Audit unit
+existence/visibility/name, casts, aura instances, scoreboard/widget fields,
+positions and message payloads. Fix Util:Call to preserve sparse multi-returns
+with explicit result count, and return a bounded failure reason for diagnostics.
+Bind active ruleset to sanitized GetBuildInfo/interface capability evidence;
+bundled patch-string agreement alone is insufficient.
 
-#### Gate 5: Deterministic and adversarial verification
+**Acceptance / verification:**
 
-- Replay all canonical cases through the same decision boundary used by live
-  runtime.
-- Test stale, missing, contradictory, secret, malformed, and out-of-order input.
-- Test deaths, disconnects, role ambiguity, target changes, addon-message loss,
-  and incompatible plate ownership.
-- Compare selected plan, assignments, timing, fallback, switch behavior,
-  explanation, and confidence against reviewed golden labels.
+- [ ] Ordinary cast return 9 and channel return 8 resolve the right spell ID;
+  protected fields yield no derived observation.
+- [ ] Nil holes, absent APIs, errors, secret booleans/strings/numbers and partial
+  rows cannot escape the adapter or become zero-score/ready facts.
+- [ ] Unknown/new client build visibly degrades advanced inference.
+- [ ] Existing direct StatusBar display remains legal and unpersisted.
+- [ ] In-client taint/blocked-action checks pass; mock secret proxies alone do
+  not constitute proof of Blizzard's actual restrictions.
 
-Exit: zero fabricated or illegal calls; zero promoted-case schema/audit errors;
-all safety, smoke, soak, and benchmark thresholds pass.
+**Rollback:** safe unknown-only adapter/ruleset fallback for affected fields.
 
-#### Gate 6: Live field verification
+### OVR-08 — Sentinel protocol correctness and optional promotion
 
-- Test clean install and upgrade with fresh and migrated SavedVariables.
-- Exercise native, tactical-only, and off marker modes at 1080p, 1440p, and 4K
-  across common UI scales.
-- Run each supported map with Commander only, Commander plus local Sentinel,
-  Commander plus remote Sentinel, and relevant nameplate-addon combinations.
-- Capture `/kwr verify`, `/kwr bug`, AAR, screenshots, CPU/memory samples, taint
-  logs, and transport receipts where applicable.
-- Label incorrect, late, generic, oscillating, or ignored calls; never convert a
-  smooth run into proof of strategic correctness without the corresponding AAR.
+**Implementation:** validate exact field set and types before `:match`, numeric
+conversion or unescaping. Reject missing/extra/duplicate fields, malformed
+percent sequences, control characters, invalid UTF-8, oversize payloads and
+non-finite numeric values. Bound ingress work before session/roster processing;
+preserve actual sender authorization, leader authority, sequence/epoch rules,
+expiry and aggregate traffic limits. Fix the observer tuple bug from OVR-07.
+Separate availability, observed control, assignment and acknowledged intent.
 
-Exit: no Lua errors, blocked actions, taint, stale markers, overlapping tactical
-surfaces, transport safety defect, or unbounded resource growth; field evidence
-meets the human acceptance and performance budgets below.
+**Acceptance / verification:**
 
-#### Gate 7: Promotion and release
+- [ ] Missing seq/ts in an eight-field packet returns a reject reason without
+  throwing; rejection counters stay bounded under a flood.
+- [ ] Round-trip both encoders/decoders with long cross-realm/localized names.
+- [ ] Packet reordering, stale epoch, duplicate sender names, leader handoff,
+  reload and same-map rematch never revive an old job.
+- [ ] Blocked addon communication gives a visible local-only state and never a
+  visible-chat workaround.
+- [ ] Keep transport off by default. Ten physical-client proof is required only
+  before promoting its remote capability, not for Commander-only value.
 
-- Promote only reviewed plan slices supported by their evidence.
-- Regenerate manifests, compact data, hashes, changelog, release readiness, and
-  certified Commander/Sentinel packages from the same commit.
-- Verify clean package roots, TOC loading, version parity, GitHub artifact,
-  CurseForge artifact, Discord release text, and rollback package.
+**Rollback:** transport disabled; keep a useful local execution card.
 
-Exit: CI and certification are green for the release commit; public artifacts
-match certified hashes; `RELEASE_READINESS.md` records remaining refinement as
-non-blocking or identifies an actual release blocker. No obsolete TODO,
-historical hold, or duplicate roadmap remains active.
+### OVR-09 — Measure real cost and call latency
 
-### Automated verification commands
+**Implementation:** retain simulated-clock tests for accounting/backpressure and
+label them explicitly. Add real host-time benchmarks with a pinned Lua runtime,
+and client profiling from sanitized event arrival through publication and visible
+HUD update. Measure Sensors, truth, combat, strategy, assignments, Store
+reconciliation, subscribers, rendering, audio and transport separately.
+Keep queue dwell distinct from CPU execution cost.
 
-Run the focused generators and audits during development, then the complete
-gate from a clean checkout:
+**Acceptance / verification:**
+
+- [ ] Timing receipts state REAL_CLIENT, REAL_HOST or SIMULATED_CLOCK and never
+  compare simulated values to Retail CPU/FPS gates.
+- [ ] Report P50/P95/P99/max, queue depth/coalescing, deadline misses and sample count
+  with candidate hashes, machine, client build, map/bracket and UI mode.
+- [ ] Reproduce historical high-cost event patterns before optimizing.
+- [ ] Include DevTools on/off overhead and whole-pipeline publication/render tail.
+- [ ] No performance pass is achieved only by delaying needed calls.
+
+**Rollback:** disable detailed profiling; keep low-cost operational error/age counters.
+
+### OVR-10 — Reduce measured runtime work
+
+**Implementation:** use OVR-09 profiles to prioritize hot paths. Build stable
+identity indexes and domain revisions for objective, roster, combat, knowledge
+and assignments. Replace blanket deep reconciliation with changed-domain
+publication and explicit mutation ownership where benchmarks justify it.
+Reuse unchanged formation, ruleset, capability, board and candidate projections.
+Make subscriber delivery deterministic, skip hidden expensive renders, and
+cancel stale scheduled generations. Preserve immediate critical-event handling.
+Keep one lifecycle scheduler and one command decision owner.
+
+**Acceptance / verification:**
+
+- [ ] Burst tests execute at most the intended coalesced jobs; a relevant final
+  event is never dropped.
+- [ ] Tactical refresh preserves immutable strategic branches; UI subscribers
+  cannot mutate prior snapshots.
+- [ ] Idle/hidden/world states perform no full battleground strategy work.
+- [ ] Optimized output matches baseline golden decisions, except approved fixes.
+- [ ] Real measurements meet the budgets below without starving updates.
+
+**Rollback:** bounded per-domain flags restore the previous pipeline; avoid
+unreviewable all-at-once file rewrites.
+
+### OVR-11 — Small runtime, explicit memory and persistence contracts
+
+**Implementation:** preserve the recovered DevTools split in the authoritative
+build. The installed-only hardcoded runtime projections were rejected during
+KWR-281; generate any replacement compact indexes from canonical data with
+consumer/API and semantic parity, rather than importing those files. Package
+only what the player TOC actually uses, plus explicitly allowed assets/docs.
+The installed folder still contains about 1.54 MB of full scenario/calibration/
+Nexus corpus Lua outside the compact path; unused files cost package size, not
+necessarily loaded Lua memory. Measure these separately. Use bounded ring buffers
+for high-churn history; trim derived caches before essential live truth.
+Version saved schemas and quarantine unknown future versions read-only.
+
+**Acceptance / verification:**
+
+- [ ] Commander works without DevTools; enabling it out of combat loads matching
+  tooling; turning it off stops capture, and reload releases its code.
+- [ ] Full corpus is excluded from player archives and compact projection parity
+  is proved against the same source records.
+- [ ] Player memory plateaus; default journal, notes and learned buckets meet
+  documented count/byte caps without deleting the active match.
+- [ ] Fresh install, Alpha 10/12 upgrade, malformed DB and future-schema downgrade
+  preserve settings/history or show an explicit recovery path.
+
+**Rollback:** previous schema reader and saved-variable backup; never repair a DB
+by indiscriminately clearing it.
+
+### OVR-12 — Marker timing, secure roster identity and visual cleanup
+
+**Implementation:** accumulate the full elapsed interval before throttling
+CursorRing work, or use absolute deadlines and retain remainder. Share one center
+anchor for class/objective marker, badge and reticle. Preserve names/native health
+by default; icon-only presentation is explicit. Secure row bindings and displayed
+identity must remain coherent through combat, with changes queued and visibly
+unavailable when binding cannot safely change. Keep plate pools bounded and
+restore owned visual state on disable/removal/exit.
+
+**Acceptance / verification:**
+
+- [x] Retry cadence is within one update across 30/60/144 FPS over ten seconds
+  (KWR-282 source and interim extracted smoke, September 5; live checks remain).
+- [ ] Target acquire/loss/swap and plate-token reuse show the correct person,
+  including friendly carriers, duplicate short names and role changes.
+- [ ] Left/right clicks act on exactly the identity displayed; all attribute or
+  secure layout mutations wait for combat end.
+- [ ] No stale marker, duplicate KWR icon or stranded frame after repeated
+  queues, reload, disable or resolution changes.
+- [ ] Test Blizzard plates plus coexistence with installed UI addons; do not
+  inspect or change third-party private state.
+
+**Rollback:** marker OFF/tactical-only and ordinary secure roster presentation.
+
+### OVR-13 — Finish each objective family as a state machine
+
+**Implementation:** extend ObjectiveIntel/ObjectiveRules/Predictor in the existing
+pipeline. Each objective has legal transitions, observation authority, freshness,
+optional deadline, score contribution and completion state. Reconcile widget,
+POI, permitted system-message and carrier evidence by field; localized text
+is a fallback parser with fixtures, not the canonical key. Unknown/missing input
+stays unknown. Use the map matrix below as the acceptance contract.
+
+**Acceptance / verification:**
+
+- [ ] Each supported map/bracket passes opening, lead, deficit, tie, transition,
+  late-game, stale/conflicting input and match-end fixtures.
+- [ ] Correct score race changes the plan before a capture becomes irreversible.
+- [ ] Cart/resource/orb plans depend on their own mechanics, not generic node prose.
+- [ ] Map sensors, objective UI, call, assignments and AAR agree at every checkpoint.
+- [ ] Current queue membership and supported modes are documented separately
+  from implemented historical map profiles.
+
+**Rollback:** disable only the affected advanced map rule; retain authoritative
+score/objective display and conservative manual assignments.
+
+### OVR-14 — Route, reinforcement and resurrection feasibility
+
+**Implementation:** replace shared straight-line travel constants with reviewed
+per-map route edges, legal crossings, estimated time ranges, mounting/combat
+assumptions and confidence. Consume observed location only when legally
+available; otherwise use explicitly labeled map-route assumptions. Distinguish
+fresh observed speed, estimated route and unknown reach. Couple arrival windows
+to objective capture/cart deadlines and confirmed deaths/respawn observations.
+Unknown resurrection-wave phase is not an exact countdown.
+
+**Acceptance / verification:**
+
+- [ ] River/elevation/long-route cases do not promise impossible arrivals.
+- [ ] A candidate requiring unknown arrival certainty cannot beat a safe hold
+  solely on guessed seconds.
+- [ ] Estimates show a range/source; verified arrival may tighten the range.
+- [ ] Carrier escort, wipe regroup and last-second rotations respect legal travel.
+- [ ] Record actual arrival errors in qualified field reviews without inferring
+  unobserved movement.
+
+**Rollback:** coarse “near/rotation/unknown” estimates; no exact deadline promises.
+
+### OVR-15 — Tactical depth through feasible alternatives
+
+**Implementation:** extend existing Strategist candidate generation, Nexus policy
+and Assignments response package. Filter illegal actions first; compare objective
+value, time-to-score, protected defense, role availability, reserve, rotation cost
+and reversibility. Add map-specific counter branches for mirror, overcommit,
+stealth pressure, bait, wipe recovery and missed deadline. Preserve one primary
+call, one fallback, one switch condition and a brief reason for rejecting the
+next-best alternative. Simulation coverage does not add a win-probability bonus.
+
+**Acceptance / verification:**
+
+- [ ] Winning clock protects minimum control unless public evidence demands a change.
+- [ ] Named movers/stayers, objective, success, abort and fallback exist for every
+  selected tactical play.
+- [ ] Missing facts reduce specificity; generic empty advice cannot pass as a
+  complete map tactic.
+- [ ] Role loss or failed opening yields a feasible recovery rather than reissuing
+  the same failed attack.
+- [ ] Different public states produce meaningfully different actions in held-out
+  fixtures; prose variants are not counted as extra tactical depth.
+
+**Rollback:** reviewed fundamental hold/defend/regroup policy remains available.
+
+### OVR-16 — Current-patch knowledge that can be trusted
+
+**Implementation:** review official changes since August 27; record applicability
+to PvP, affected spell/spec/map and whether any tactical assumption actually
+changes. Update SourceRegistry/PatchData/KnowledgeManifest with client build,
+review date, reviewer, expiry and affected plan slices. Refresh an advisory RBG
+snapshot only through the existing development review process. Version
+capabilities, control profiles and composition shells separately from patch
+compatibility. Missing/invalid freshness is ineligible, not a positive score.
+Never import web text or infer individual talents from a population ranking.
+
+**Acceptance / verification:**
+
+- [ ] Every activated change has a source, reviewer, bounded rationale and regression.
+- [ ] Unreviewed hotfixes flag affected slices; unrelated foundational rules
+  remain usable without claiming new review.
+- [ ] Historical spec, hero talent and meta assumptions remain labeled.
+- [ ] Old patch/season/unknown-build data cannot silently affect advanced commits.
+- [ ] Expert doctrine and observed outcomes remain separate from synthetic cases.
+
+**Rollback:** quarantine affected slice and regenerate compact data; retain evidence.
+
+### OVR-17 — Formation and roster jobs suitable for all leaders
+
+**Implementation:** derive team size and role constraints from bracket. Extend
+FormationAdvisor/Assignments/AssignmentOverrides with roster lock, target caller,
+carrier/backup, healer anchors, defense minimum and reserve choices using existing
+pages. Explain shortages and substitutions by capability, not character name.
+Use existing composition shells as editable advisory templates; no guessed
+talent availability or mandatory named-spec roster.
+
+**Acceptance / verification:**
+
+- [ ] Ten-player and supported eight-player rosters produce valid slot counts.
+- [ ] Leaver, spec change, missing tank/healer and cross-realm duplicates produce
+  clear shortages and reassignment options.
+- [ ] Overrides persist only at their documented scope and cannot bypass dead/
+  disconnected actors or create contradictory jobs.
+- [ ] Pregame opening is usable with partial/unknown enemy compositions.
+
+**Rollback:** generic capability formation and manual jobs remain available.
+
+### OVR-18 — AAR that measures execution and learns conservatively
+
+**Implementation:** append bounded decision episodes to existing AAR: command
+ID/version, phase, bracket, doctrine version, public evidence, alternatives,
+accepted/overridden status, observed execution and outcome window. Separate
+“recommended,” “delivered,” “observed,” and “unknown.” A match win alone is not
+proof a plan caused it. Restrict local adjustment to eligible comparable episodes;
+include team/bracket/plan-version context, sample safeguards, bounded influence,
+expiry and reset. Correct records must not count twice after review/reload.
+Manual exports offer anonymized stable aliases with relationships preserved.
+
+**Acceptance / verification:**
+
+- [ ] Undelivered/unobserved recommendations and interrupted matches do not
+  train execution quality.
+- [ ] Patches, team changes, role composition and plan revisions do not pool
+  incompatible outcomes.
+- [ ] Small or contradictory samples do not override public objective feasibility.
+- [ ] Player AAR remains compact; full diagnostics require DevTools opt-in.
+- [ ] Export preview discloses scope, redacts identifiers by default when sharing,
+  preserves links between facts/actors, and sends nothing automatically.
+
+**Rollback:** learning adjustment zero; retain local review history read-only.
+
+### OVR-19 — Calm command UX, accessibility and localization
+
+**Implementation:** reuse Command Focus, Commander and Review modes. Prioritize
+NOW / MY JOB / WHERE with a compact reason and explicit trust state. Put full
+alternatives, evidence and diagnostics behind the existing explain/review views.
+Provide one short first-run setup for role, UI scale, audio choice and movement/
+lock/reset. Make audio cancellable/deduplicated by play revision and test native
+combat-audio coexistence. Replace raw English protocol identity and byte clipping
+with stable codes, localizable text and UTF-8-safe display truncation.
+
+**Acceptance / verification:**
+
+- [ ] Leaders identify next call and personal responsibility in at most five
+  seconds in timed usability trials.
+- [ ] 1080p, 1440p, 4K and UI scales 0.65/0.8/1.0 have no meaningful clipping,
+  hidden buttons, overlap or unreadable essential text.
+- [ ] High contrast and shape/text cues carry all critical states without color alone.
+- [ ] Supported locales have tested parsers; unsupported ones visibly fall back
+  to public widget/manual guidance instead of silently misreading messages.
+- [ ] Player package instructions contain only working commands; developer-only
+  commands explain the required companion.
+
+**Rollback:** restore prior layout/profile preset; keep schema-compatible settings.
+
+### OVR-20 — Replay and benchmark the code that will ship
+
+**Current checkpoint (2026-09-07):** KWR-294 completed a fresh, hash-bound run
+of all 2,003 fixtures on the dirty current source. The run has no forbidden
+outputs but fails its decision contract (0 primary, 578 allowed fallback and
+1,425 unmatched results). Treat this as an audit result, never as a passing
+benchmark. KWR-295 must classify every discrepancy as an evaluator-normalization
+defect, stale/incorrect fixture contract, or real planner behavior defect before
+the clean-candidate and extracted-package runs are attempted.
+
+**Current adjudication checkpoint (2026-09-08):** the contract queue contains
+2,003 rows with zero named, evidence-backed adjudications. The 69 exact
+navigation clusters identify 15 fallback-only and 54 unmatched contract patterns.
+The observed concrete plans and their catalog tags are retained beside each
+generic label token. This permits reviewer triage but does not authorize a
+taxonomy equivalence, a fallback-only pass, a bulk relabel, or a benchmark score
+change. KWR-295 remains in progress: engineering must trace representative
+failures, repair proven evaluator/planner/label defects, test every affected
+member and persist honest technical reviews. Independent tactical review remains
+required quality evidence; it does not prevent offline diagnosis or coding.
+Final verification requires clean source and extracted player package execution.
+
+**Implementation:** run the actual decision boundary for every release acceptance
+fixture from a clean candidate and the extracted production package. Generate
+results afresh with source/package/input/label/engine hashes. The benchmark
+must reject cached flags or incomplete sets. Use one canonical corpus; report
+unique branches, evidence dimensions and adversarial coverage, not just 100,000
+cases. Separate doctrine training/calibration from held-out labels. Add mutation
+and metamorphic checks for roster order, missing facts, secret fields, stale
+observations and supported bracket changes. Port all eight audit probes into
+appropriate permanent tests.
+
+**Acceptance / verification:**
+
+- [ ] A one-line intentional regression in objective projection, cast index,
+  unavailable-player exclusion or killable semantics fails the release gate.
+- [ ] Fresh result count equals expected fixture set; missing/duplicate/stale
+  hashes fail even if remaining results pass.
+- [ ] Every advertised map/bracket/phase has legal, impossible, unknown,
+  countered-plan and recovery cases with independently reviewed labels.
+- [ ] No fabricated/illegal recommendation; no undocumented fallback-only “pass.”
+- [ ] Source and extracted production decisions agree for all accepted inputs.
+
+**Rollback:** block promotion and retain the prior certified fixture/package pair.
+
+### OVR-21 — Prove field quality and comparative usefulness
+
+**Implementation:** execute QA_CHECKLIST and the map matrix on candidate-bound
+packages. Include commander-only, optional Sentinel, new leader and experienced
+leader sessions. Compare against current KWR baseline and permitted native UI/
+relevant current tools on equivalent scenarios; verify comparison-tool versions
+at test time. Have two RBG reviewers label calls blind where practical.
+Stratify by map/bracket, team composition, lead/deficit and observation coverage.
+
+**Acceptance / verification:**
+
+- [ ] Zero fabricated/impossible calls, Lua errors or KWR-attributable taint/
+  blocked actions in the accepted sample.
+- [ ] At least 90% of sampled calls are legal and tactically reasonable by review;
+  disagreements are adjudicated with the underlying public facts.
+- [ ] Report correct-action rate, harmful overrides, missed objective deadlines,
+  unsupported reversals, useful warning lead time, five-second comprehension and
+  live CPU/FPS/memory, including denominators and uncertainty.
+- [ ] Retain the existing target of at least 20 complete reviewed matches per
+  advertised map before claiming stable strategic certification for that map.
+  Stratify bracket evidence; do not pool Blitz and standard into one certificate.
+- [ ] Comparative tests show meaningful decision/clarity improvement without
+  performance regression. Win rate alone cannot establish causality.
+- [ ] No map family lacks both lead/win and deficit/loss evidence.
+
+**Rollback:** keep uncertified maps/features explicitly prerelease; withhold
+“leading” claims when comparison evidence is inconclusive.
+
+### OVR-22 — Distribution and release end state
+
+**Implementation:** use the canonical build/release tools after OVR-01, from a
+clean reviewed commit. Pin Lua/Fengari and build dependencies (CI currently
+installs an unversioned fengari-node-cli). Generate correct addon roots,
+deterministic TOCs, interface support, versions, MIT/license/asset provenance,
+public install guide, changelog and SHA-256 manifest. Exclude corpus, probes,
+tests, internal reports and developer tooling from player archives. Repair
+relative links to files that are intentionally absent from packages.
+Ship Sentinel from the same source authority; DevTools is an optional matching
+development artifact. Beacon/Maps/ScoreCard/bot remain separately versioned
+and outside this release unless expressly added to the manifest.
+
+**Acceptance / verification:**
+
+- [ ] Two clean builds give identical archive hashes and pass extracted-runtime tests.
+- [ ] Fresh install and upgrades from preserved baselines work with no missing
+  TOC entries, double folder nesting, duplicate development addon or extra files.
+- [ ] Exact install manifest, SavedVariables migration and rollback rehearsal pass.
+- [ ] Version/channel, commit, checksums, supported client build and advertised
+  map capabilities agree across all public assets.
+- [ ] Actual public GitHub/CurseForge downloads resolve to the approved artifacts;
+  announcement follows those receipts under RELEASE_POLICY.
+- [ ] All required rows and field gates have evidence; no checklist is cleared
+  because a previous alpha or generated corpus passed.
+
+**Rollback:** restore the previous certified runtime packages and compatible
+SavedVariables backup; issue a new version for repairs, never replace an old tag.
+
+## Map-specific tactical acceptance matrix
+
+These are the ten maps currently declared by the addon, not a verified current
+rated queue pool. OVR-06 must decide which map/bracket combinations can be
+advertised for the target release.
+
+| Map | Specific command behavior to implement/verify | Required counter and end-state cases |
+| --- | --- | --- |
+| Arathi Basin | Minimum-base winning race, capture deadlines, anchor defenders, reserve and reachable cross-cap | 3-2 hold vs needed extra node; inc-cap tick flip; ghosted node; standard/Blitz rule separation |
+| Battle for Gilneas | Two-base hold, named defense, pressure at the third node only when the clock demands it | Enemy overload, reserve reinforcement, defender death, losing-clock all-in with abort |
+| Deepwind Gorge | Wide-rotation travel cost, split coverage and score-race breakpoints | Impossible long rotation, defend-before-cross-cap, partial widget loss; separate Blitz evidence |
+| Eye of the Storm | Tower count vs actual flag value and delivery feasibility | Mid-fight trap, tower trade, flag turn-in changes; standard/Blitz active-objective differences |
+| Warsong Gulch | Flag possession state, return-and-cap synchronization, offense/defense split | Both flags out, dropped/returned/captured, unknown carrier, final-cap discipline and tie/time rules |
+| Twin Peaks | Same flag contract with map-specific routes and carrier support | River/elevation route choice, wipe regroup, countered carrier path, canonical carrier target text |
+| Temple of Kotmogu | Orb possession/zone value, qualified carrier pressure, replacement pickup | Loose orb, center overcommit, multiple carriers, protected/unknown-health carrier; no invented survival timer |
+| Silvershard Mines | Cart control/progress/route deadlines, named escort and reachable denial | Abandon exhausted route, contest before delivery, cart split, turnover and unknown progress |
+| Deephaul Ravine | Own-cart escort vs enemy-cart conversion and conditional crystal value | Crystal distraction, simultaneous objectives, unreachable interception and cart reset |
+| Seething Shore | Spawn/channel/collection/exhaustion cycle, arrival race and denial | Failed spawn play retires, exhausted node exits, message reorder/locales and ambiguous spawn location |
+
+For each row: test public transition truth first, then prediction, assignment,
+command, display and AAR agreement. All exact timers require a verified source
+and appropriate bracket rule. Unknown position cannot create an enemy map dot.
+
+## Performance and responsiveness release budgets
+
+These are engineering acceptance targets, not measurements from this audit.
+Retain the existing strategic/FPS/memory objectives; add tactical and delivery
+metrics so backpressure cannot create a misleading performance pass.
+
+| Metric / scope | Acceptance target | Measurement rule |
+| --- | --- | --- |
+| Strategic computation | P95 <2 ms; no routine refresh >4 ms | Real client stage timing; record loading/transition outliers separately, never delete them |
+| Tactical computation | P95 <=1.5 ms | Proposed added budget; benchmark actual local-fight workload before tuning |
+| Store + visible subscriber work | P95 <=1.5 ms per scheduled batch | Include reconciliation and frame work; record total end-to-end time as well |
+| Critical public fact to displayed call invalidation | P95 <=250 ms | Event timestamp through publication/render under event storms |
+| Ordinary tactical update | P95 <=750 ms | Include queue wait; no stale target/control after invalidation |
+| Normal full strategy frequency | <=4 per second; idle much lower | Critical correctness cannot be dropped to meet frequency cap |
+| FPS impact | Median loss <1%; 1% low loss <3% | Repeated matched native/KWR runs, same settings/addons/hardware; report variance |
+| Player-addon memory | Current soft/warn/hard 25/28/32 MB; plateau | Report loaded player code and retained data separately from DevTools and disk bytes |
+| Growth | <1 MB over 30 minutes after comparable GC/warm-up | No forced full collection in combat to manufacture a pass |
+| Default SavedVariables | <=1 MB serialized | Current bounded 8-match default, not the obsolete 30-match claim |
+| Lifecycle | No BG strategic ticker outside BG; bounded pools/queues | Ten queue/exit/reload cycles plus 30-minute combat |
+| Safety | Zero KWR-attributable taint/blocked actions/errors | Current client, clean and representative addon profiles |
+
+Do not relax a budget to make old evidence green. If a requirement is infeasible,
+record a measured proposal and product tradeoff before changing this table.
+
+## Tactical quality benchmark
+
+Use the following scorecard for each supported map/bracket, with per-case labels.
+Safety and feasibility are hard gates; aggregate scores cannot compensate for
+a fabricated fact or assigning a dead actor.
+
+| Dimension | Evidence to retain | Pass rule |
+| --- | --- | --- |
+| Truth | Source, observed age, conflict/unknown fields | No authority upgrade from selection, formatting or refresh |
+| Feasibility | Who is available, minimum defense, route/capability requirements | No impossible action or abandoned mandatory objective |
+| Decision value | Primary, rejected alternative, objective payoff and fallback | At least 90% reviewer-acceptable sample; zero fabricated/impossible cases |
+| Timing | Issue, delivery, actual start/deadline, abort | Critical changes meet latency; no artificial five-second restart |
+| Stability | Semantic switches, reasons, reversals, time-to-first-move | Zero switches/reissues on invariant truth fixtures; real emergencies allowed |
+| Communication | Timed comprehension, personal role accuracy, audio usefulness | Call and personal job understood within five seconds |
+| Learning | Delivered/observed outcome and review provenance | Only eligible comparable evidence changes bounded local bias |
+
+Review at least 30 distinct held-out decisions per advertised map/bracket
+across all five phases before the field gate. This is a minimum test design,
+not evidence of statistical superiority. Record confidence intervals and
+reviewer disagreements for comparative claims. Do not use generated outcomes
+as actual wins, simulated case counts as confidence, or self-generated labels
+as independent expert validation.
+
+## Execution, verification and completion rules
+
+Start **OVR-01 and OVR-09**, then fix **OVR-02 through OVR-07** before tactical
+expansion. OVR-08 can proceed independently once adapter contracts settle.
+Prepare packaging checks early; then close the remaining failures in the frozen
+release scope, following the release-first priority above. Complete benchmark,
+live validation and final package certification before the stable milestone.
+All audited tactical depth is implemented before field handoff. One overhaul is delivered as
+bounded, reviewable changes within this single backlog.
+
+For each task, use the existing docs/tasks contract format when implementation
+starts: owner, priority, risk, dependencies, affected modules, objective/user
+outcome, current/required behavior, non-goals, constraints, acceptance,
+verification and rollback. Link the OVR row and relevant findings instead of
+creating another roadmap. Existing KWR-280 work feeds OVR-01/05/09/10/18.
+
+Task status lifecycle: OPEN -> IN_PROGRESS -> IMPLEMENTED_OFFLINE ->
+FIELD_VERIFIED (when applicable) -> RELEASE_VERIFIED. An implementation checkbox
+cannot clear a live or distribution gate. Store evidence in existing
+knowledge/artifacts/CI paths with candidate hashes and exact command results.
+
+Run focused regressions after each change. The final candidate must run the
+existing full certification path from the recovered canonical source:
 
 ```powershell
-./tools/build-season2-rbg-simulation-corpus.ps1 -CasesPerMap 500
-./tools/build-strategist-nexus-corpus.ps1
-./tools/corpus-audit.ps1
-./tools/knowledge-audit.ps1
-./tools/decision-benchmark.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\test-lua.ps1
 ./tools/validate.ps1
-./tools/build.ps1
+./tools/knowledge-audit.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/test-lua.ps1 -Suite All
+./tools/security-audit.ps1
+./tools/test-automation.ps1
+./tools/certify-offline.ps1 -OutputDirectory <fresh-candidate-output>
+./tools/build.ps1 -IncludeSentinel -OutputDirectory <fresh-build-output>
 ```
 
-The final automation must additionally assert:
-
-- 10 maps, 500 canonical cases per map, 100 per phase, and 5,000 total;
-- zero duplicate IDs and zero duplicate normalized content hashes;
-- zero dangling plan, fallback, counter, assignment, or source references;
-- zero synthetic outcome or case-count influence on positive tactic scoring;
-- zero expired, unreviewed, or quarantined observations in reviewed learning;
-- deterministic generation and package hashes from identical inputs;
-- standalone marker mode defaults, cleanup, and target-state transitions;
-- zero secret-value arithmetic/comparison and zero protected-frame mutation;
-- bounded refresh counts, buffers, addon-message packets, and SavedVariables.
-
-### Live proof matrix
-
-Completion requires retained evidence for these observable cases:
-
-| Area | Required proof |
-| --- | --- |
-| Identity marker | friendly class, healer, tank, unknown, and objective carrier render correctly |
-| Crosshair | target acquire/loss/swap, kill/focus, carry, cast-stop, defensive, and neutral states stay centered |
-| Standalone ownership | KWR works with Blizzard plates alone and neither detects nor changes any other nameplate addon |
-| Cleanup | plate removal, death, target loss, instance exit, reload, and disable leave no stale visual |
-| Strategy | opening, stable lead, pressure, recovery, endgame, countered plan, failed plan, and fallback are map-specific |
-| Truth | missing, stale, contradictory, secret, and impossible inputs fail closed without invented advice |
-| Sentinel | authorized assignment/action relay and observation receipt match the Commander session and expire safely |
-| Performance | visible and hidden UI, 10-player combat, marker churn, 30-minute match, and repeated matches remain within budget |
-| Packaging | clean install loads every TOC file; Commander/Sentinel versions and public archive hashes match |
-
-### Completion thresholds
-
-Season 2 enhancement is complete only when all of the following are true:
-
-- automated gates are green from a clean checkout and clean SavedVariables;
-- the 5,000-case matrix is balanced, unique by decision dimension, and generated
-  from one canonical corpus;
-- every live-active plan is reviewed, versioned, sourced, unexpired, linked to a
-  legal fallback, and traceable in explanations/AAR;
-- every supported map has deterministic opening, tied, winning, losing,
-  emergency, counter, stop, and fallback coverage;
-- expert reviewers judge at least 90% of sampled calls legal and reasonable;
-- a leader can identify the call and reason within five seconds;
-- zero impossible, fabricated, or generic filler calls appear in the acceptance
-  sample;
-- marker/crosshair behavior passes the full live proof matrix without overlap,
-  stale state, duplicate ownership, taint, or blocked actions;
-- strategic refresh p95 is below 2 ms with no routine refresh above 4 ms,
-  median FPS loss is below 1%, 1% low FPS loss is below 3%, and post-GC memory
-  growth is below 1 MB over a 30-minute match;
-- a minimum of 20 complete reviewed beta matches per map is accumulated before
-  stable strategic certification for that map; smaller samples remain beta or
-  refinement evidence and cannot be relabeled as complete;
-- the certified package, public distribution artifact, release announcement,
-  changelog, and `RELEASE_READINESS.md` all identify the same commit and hashes.
-
-### Rollback
-
-Marker rendering is reversible through its mode setting and feature flag.
-Knowledge activation is reversible by quarantining the affected plan/doctrine
-version and regenerating compact live data without deleting source evidence.
-Schema changes retain the previous reader until the migration and clean-install
-matrix passes. A release rollback restores the last certified Commander and
-Sentinel archives together; partial component rollback is not allowed when the
-transport or shared command contract changed.
-
-## Command experience doctrine
-
-KWR should present information in three layers:
-
-1. **Always visible:** the current win path, the one action required now, the
-   player's own job/location, and an urgent local kill or peel target.
-2. **Visible when changed:** objective transitions, clock flips, incoming
-   captures, assignment failures, resurrection/flag/capture timers, and the
-   short reason the command changed.
-3. **Available on demand:** complete rosters, raw evidence, alternatives,
-   doctrine, history, meta context, diagnostics, and learning detail.
-
-Primary surfaces must answer:
-
-- **Scout HUD:** What wins, what do we do now, what do I do, and who is the
-  urgent local target? Do not repeat the same call in multiple cards.
-- **Reporter mini map:** Which objective is changing, how long remains, where
-  is the observed pressure, and what is my assigned area? Movement paths are
-  shown only when public, recent, and decision-relevant.
-- **Tactical board:** What changed, what is the projected outcome, which plan
-  is active, who moves, when must they arrive, and what causes the next switch?
-- **Objectives:** Ownership, active transitions, scoring clocks, minimum
-  control required, and mechanic-specific timers. Widget IDs and raw API
-  source names remain in verification exports.
-- **Team:** Player, specialization, effective role, health/state, battlefield
-  job, and assignment location. Raw map coordinates are not commander data.
-- **Enemies:** Healers, tank/carrier, locally actionable target, visible
-  health, last observation, and only proven defensive/trinket use. Meta rank
-  and unobserved readiness must not dominate live decisions.
-- **Assignments:** One player, one battlefield job, one location, readable
-  priority words, and a visible backup/reassignment need when someone is dead
-  or unavailable.
-- **Intel/AAR:** Pregame preparation and postgame learning. It should not
-  compete with live combat attention.
-
-The next high-value mechanic work is public-data timing: node capture windows,
-flag debuff/return state, resurrection waves, cart progress/turn-in pressure,
-orb carrier value, and Seething Shore spawn/channel state. Each must remain
-unknown when Blizzard does not safely expose it.
-
-## Product target
-
-Knomercy War Room should be a lightweight, trustworthy RBG decision assistant
-that helps a new leader answer four questions:
-
-1. What is the current win condition?
-2. What should the team do next?
-3. Who should do it, and when?
-4. What evidence would make us change the call?
-
-The addon must feel intelligent because it evaluates alternatives, explains its
-choice, recognizes counters, and learns from reviewed outcomes. It must never
-pretend to know protected information or imply that an uncertain inference is a
-live fact.
-
-## Non-negotiable boundaries
-
-- No network access from the addon.
-- No automatic chat, targeting, focus, casting, keybinding, or macro execution.
-- Secure target/focus and fixed quick-call actions remain explicit hardware-click
-  actions prepared out of combat.
-- Secret combat values may be displayed only through permitted Blizzard widgets;
-  they never enter arithmetic, comparisons, persistence, or decisions.
-- Every fact carries source, observation time, confidence, and expiry.
-- Live authoritative facts outrank predictions, meta, and learned preferences.
-- Missing evidence produces UNKNOWN or a conservative fallback, never invented truth.
-- External data is acquired during development, reviewed, versioned, and compiled
-  into a small release data pack.
-
-Blizzard's Midnight addon policy explicitly distinguishes information that can
-be displayed from information an addon may computationally know:
-
-https://worldofwarcraft.blizzard.com/news/24246290/combat-philosophy-and-addon-disarmament-in-midnight
-
-## Target architecture
-
-### 1. Fact layer
-
-Maintain one compact fact registry keyed by domain:
-
-- match phase and timer;
-- public score and objective ownership;
-- incoming, contested, carrier, cart, orb, and resource state when public;
-- friendly roster, role, death, connection, and safe position;
-- enemy scoreboard identity;
-- safe visible/last-seen enemy evidence;
-- observed combat-log spell events;
-- manual leader marks and notes.
-
-Each fact uses:
-
-```text
-value
-source
-observedAt
-expiresAt
-confidence
-authority = LIVE | OBSERVED | DERIVED | META | LEARNED
-```
-
-No lower authority may overwrite a higher authority.
-
-### 2. Capability knowledge base
-
-Create a generated repository for every specialization:
-
-- role and battlefield archetypes;
-- mobility, stealth, spin, flag-carry, peel, burst, sustain, and disruption tags;
-- dispel, purge, mortal-wound, immunity, external-defense, knockback, and control tags;
-- important observed cooldown IDs and baseline windows;
-- map-role suitability;
-- known strengths, weaknesses, and counter categories;
-- patch, season, provenance, and review status.
-
-This repository describes specialization capabilities. It must not claim that a
-particular player selected a talent or owns an item unless that fact was safely
-observed.
-
-### 3. Composition repository
-
-Represent a team composition as capabilities rather than a tier-list string:
-
-```text
-roles: tank/healer/damage counts
-specCounts
-melee/ranged balance
-stealth count
-rot pressure
-team-fight pressure
-single-target burst
-anti-heal
-purges/dispels
-peel and crowd-control coverage
-immunity and external-defense coverage
-flag-carry strength
-base-defense strength
-mobility and rotation speed
-```
-
-Store reusable archetypes:
-
-- standard balanced team fight;
-- rot/attrition;
-- melee collapse;
-- ranged control;
-- stealth/cross-cap;
-- high-mobility rotation;
-- flag-carry bunker;
-- anti-caster;
-- anti-melee;
-- off-meta compositions with explicit enabling conditions.
-
-Every archetype includes advantages, liabilities, favorable maps, unfavorable
-maps, required capabilities, counters, and confidence.
-
-### 4. Battle-plan repository
-
-Plans are executable doctrine records, not paragraphs:
-
-```text
-planID
-map and objective family
-our composition requirements
-enemy composition triggers
-score/phase prerequisites
-assignment slots
-opening
-next action
-success condition
-switch trigger
-stop rule
-fallback plan
-counter-plan links
-source and review version
-```
-
-Each map needs:
-
-- two or more meta plans;
-- at least one safe default plan;
-- viable off-meta plans;
-- counter-plans against each major composition archetype;
-- opening, winning, tied, losing, and emergency branches;
-- explicit stop rules that prevent low-value fighting.
-
-### 5. Decision engine
-
-Use a deterministic candidate-and-score engine:
-
-1. Generate legal plans for the current map and phase.
-2. Remove plans whose required facts or team capabilities are absent.
-3. Score remaining plans using win-path impact, travel feasibility, local
-   numbers, resurrection timing, composition fit, counter risk, and confidence.
-4. Apply observed enemy counterplay.
-5. Select one call and one fallback.
-6. Publish NOW / WHO / WHEN / WHY / SWITCH IF / DO NOT.
-
-Suggested score:
-
-```text
-planScore =
-    winPathImpact
-  + objectiveUrgency
-  + ourCompositionFit
-  + enemyWeaknessFit
-  + localNumbers
-  + timingFeasibility
-  + reviewedLocalSuccess
-  - travelRisk
-  - counterRisk
-  - uncertaintyPenalty
-```
-
-Meta and learned history are tie breakers. They never override an authoritative
-score, objective, timer, or impossible travel constraint.
-
-### 6. Counter engine
-
-Produce counterplay at three levels:
-
-- Composition: what our team should emphasize against their archetype.
-- Map: where that advantage should be converted into score.
-- Local fight: which safely observed target or defensive window is actionable.
-
-Examples of valid reasoning:
-
-- "They lack stealth coverage; protect three and float early to the exposed side."
-- "Their composition wins long team fights; avoid the sustain node and create a
-  rotation race."
-- "Their carrier bunker has two externals observed on cooldown; collapse during
-  this window."
-
-Invalid reasoning:
-
-- inferring an unobserved talent from the current meta;
-- comparing secret enemy health;
-- claiming an unseen player is at a location;
-- treating a baseline cooldown expiry as proof that the spell is ready.
-
-## Map-engine completion plan
-
-### Node maps
-
-Arathi Basin, Battle for Gilneas, and Deepwind Gorge:
-
-- exact tick curves and capture durations;
-- owned, incoming, assaulted, and contested states;
-- projected clocks for plausible control transitions;
-- minimum-control requirement;
-- defender coverage and nearest safe rotation;
-- ghosted-node and over-rotation warnings;
-- resurrection-wave and travel-time feasibility.
-
-### Eye of the Storm
-
-- combine tower tick rates and flag value;
-- model flag value at each tower count;
-- compare tower capture versus flag-delivery paths;
-- account for flag possession and plausible delivery timing;
-- never recommend a flag play that cannot alter the projected result.
-
-### Flag maps
-
-Warsong Gulch and Twin Peaks:
-
-- match time, score, final-cap tiebreak, carrier state, and public stack state;
-- offense/defense split recommendations;
-- return-and-cap synchronization;
-- carrier route and resurrection-wave timing when safely observable;
-- bunker-break windows from observed externals, immunities, and trinkets.
-
-### Temple of Kotmogu
-
-- orb ownership and public scoring state;
-- replacement pickup, center-value, and carrier survival plans;
-- target priority among safely observed carriers;
-- avoid fabricated carrier health or hidden position.
-
-### Cart maps
-
-Silvershard Mines and Deephaul Ravine:
-
-- active route, ownership, progress, turn-in risk, and next rotation;
-- distinguish recoverable carts from dead routes;
-- escort, delay, and secondary-objective opportunity costs.
-
-### Seething Shore
-
-- active and upcoming public spawn state;
-- channel protection and denial;
-- arrival feasibility and exhausted-node abandonment;
-- safe split versus required regroup.
-
-## Lightweight runtime plan
-
-### Split the pipeline by cost
-
-Fast lane:
-
-- permitted public event routing;
-- update only the affected public domain and visible row;
-- no blocked combat-log subscription.
-
-Medium lane:
-
-- visible unit evidence and compact health presentation;
-- hard cap of four evaluations per second;
-- skip hidden detailed surfaces.
-
-Slow lane:
-
-- scoreboard, full roster, map state, assignments, prediction, and AAR;
-- event-driven with a one-second safety pulse;
-- recompute only invalidated domains.
-
-### Remove allocation hotspots
-
-- Do not subscribe to Retail 12's blocked combat-log event.
-- Replace deep snapshot copies with small immutable domain revisions.
-- Use fixed ring buffers for movement and events.
-- Store AAR features and transitions, not the complete live snapshot.
-- Do not set secure attributes when the desired value is unchanged.
-- Do not update hidden roster rows or hidden HUD text.
-- Pool tactical-map markers and line segments.
-- Expire inactive enemy tracks and temporary combat records.
-
-### Performance acceptance budget
-
-Release is blocked unless live profiling demonstrates:
-
-- no full strategic refresh above four per second;
-- public event dispatch p99 below 0.03 ms on the test machine;
-- strategic refresh p95 below 2 ms and no routine refresh above 4 ms;
-- median FPS difference below 1% versus addon disabled;
-- 1% low FPS difference below 3%;
-- memory reaches a plateau after warm-up;
-- less than 1 MB growth over a 30-minute match after garbage collection;
-- SavedVariables below 1 MB for the default 30-match history;
-- zero active match ticker outside a battleground;
-- zero taint or blocked-action warnings.
-
-Record results by map, UI visibility mode, raid size, and other installed addons.
-
-## Learning system
-
-### What KWR should learn
-
-- which plan was selected;
-- map, score band, phase, and composition feature vector;
-- enemy composition feature vector;
-- whether the plan achieved its objective within its evaluation window;
-- whether the leader accepted, overrode, or abandoned it;
-- match result;
-- structured AAR labels and notes.
-
-### What KWR should not learn
-
-- hidden talents or gear;
-- opponent identity profiles;
-- secret health or aura values;
-- causal claims from one match;
-- recommendations from unreviewed preview data.
-
-### Small-footprint model
-
-Use bounded aggregate statistics:
-
-- success/failure counts by map + plan + composition archetype;
-- recency-weighted success estimate;
-- Bayesian shrinkage toward the curated baseline;
-- minimum sample size before learned results affect scoring;
-- confidence interval and sample count shown to the user.
-
-Suggested safeguards:
-
-- fewer than 5 reviewed samples: display only, no scoring effect;
-- 5-19 samples: maximum learned adjustment of 3%;
-- 20 or more samples: maximum learned adjustment of 8%;
-- patch change: decay or quarantine old samples;
-- doctrine changes: start a new plan version;
-- user can reset, export, or disable learning.
-
-This creates genuine adaptation without shipping a model runtime or allowing
-small noisy samples to corrupt doctrine.
-
-## Data acquisition and provenance
-
-### Tier A: Blizzard in-game APIs
-
-Purpose:
-
-- live match, score, objective, roster, scoreboard, map, and safely observed
-  combat facts.
-
-Rules:
-
-- respect Midnight secret-value restrictions;
-- field-test every source in active PvP;
-- fail closed when a value becomes secret or unavailable.
-
-### Tier B: Battle.net Game Data and Profile APIs
-
-Official documentation:
-
-- https://community.developer.battle.net/documentation/world-of-warcraft/game-data-apis
-- https://community.developer.battle.net/documentation/world-of-warcraft/profile-apis
-
-Build-time uses:
-
-- specialization, spell, item, media, talent, season, and leaderboard reference;
-- public profile snapshots for aggregate meta research where permitted;
-- never place credentials in the addon.
-
-Create a separate developer ETL tool with OAuth credentials supplied through
-environment variables. Cache responses, respect rate limits, retain provenance,
-and publish only reviewed aggregate facts.
-
-### Tier C: Murlok
-
-Current RBG pages:
-
-- https://murlok.io/meta/healer/rbg
-- https://murlok.io/meta/tank/rbg
-- https://murlok.io/meta/dps/rbg
-
-Murlok states that these pages refresh every eight hours from active top-rated
-players. Use them as a secondary meta cross-check and build-time snapshot only.
-
-Before automating collection:
-
-- obtain permission or confirm applicable terms;
-- do not bypass access controls or scrape aggressively;
-- store aggregate specialization/build frequencies, not copied page content;
-- include capture time, patch, region coverage, sample description, and expiry;
-- disable meta scoring when the snapshot is stale.
-
-### Tier D: Warcraft Logs
-
-Official API documentation:
-
-- https://www.warcraftlogs.com/api/docs
-
-Warcraft Logs provides an OAuth-protected GraphQL API. It should be treated as
-an optional research source only if the API exposes relevant, representative
-PvP reports and its terms permit the intended aggregation. It is not a substitute
-for RBG match-state truth.
-
-### Tier E: KWR opt-in match corpus
-
-This is the most valuable composition and counterplay source:
-
-- capture a sanitized post-match record after restrictions lift;
-- include both compositions, map, score transitions, selected plans, outcomes,
-  and reviewed AAR labels;
-- export manually or through an optional out-of-game developer importer;
-- require contributor consent;
-- remove account identifiers and hash or discard character names;
-- never transmit from the addon during play.
-
-Start local-only. A shared community corpus requires a privacy policy, consent,
-data-retention policy, schema version, moderation, and quality controls.
-
-### Tier F: Expert doctrine panel
-
-Use experienced RBG leaders to label:
-
-- composition archetypes;
-- meta and off-meta plans;
-- counter-plans;
-- switch conditions;
-- stop rules;
-- expected calls for sanitized replay fixtures.
-
-Every doctrine record requires at least two reviews or one review plus supporting
-match evidence before release.
-
-## Data pipeline deliverables
-
-Create a developer-only `knowledge/` workspace:
-
-```text
-knowledge/
-  schemas/
-  raw/
-  normalized/
-  reviewed/
-  fixtures/
-  provenance/
-  generators/
-```
-
-Generated addon files:
-
-```text
-Data/Capabilities.lua
-Data/Compositions.lua
-Data/BattlePlans.lua
-Data/Counters.lua
-Data/MetaSnapshot.lua
-Data/KnowledgeManifest.lua
-```
-
-The generator must:
-
-- validate every ID and reference;
-- reject duplicate or contradictory records;
-- attach source, patch, season, review status, and expiry;
-- create compact numeric lookup tables;
-- generate deterministic hashes;
-- report unreviewed or stale records;
-- produce no runtime JSON parser or external library dependency.
-
-## New-leader experience
-
-Provide two information levels:
-
-### Command mode
-
-Show only:
-
-- NOW;
-- WHO;
-- WHEN;
-- WHY;
-- SWITCH IF;
-- DO NOT.
-
-### Learning mode
-
-Expand into:
-
-- win-path calculation;
-- composition matchup;
-- counterplay explanation;
-- rejected alternatives;
-- evidence confidence;
-- relevant map doctrine;
-- post-match review.
-
-Add:
-
-- first-run guided preview;
-- map-specific opening card before gates open;
-- plain-language glossary;
-- confidence and UNKNOWN explanations;
-- color plus icon/text accessibility;
-- scalable typography and density presets;
-- one-click "why this call?" explanation;
-- leader override that becomes an AAR learning signal.
-
-## Validation program
-
-### Deterministic tests
-
-- every map phase and score edge;
-- every composition archetype;
-- every plan/counter/fallback link;
-- stale, unknown, and contradictory evidence;
-- secret-value safety;
-- cross-faction teams;
-- player death, leaver, reconnect, and role ambiguity;
-- patch-data expiry;
-- learning minimum-sample safeguards.
-
-### Sanitized replay harness
-
-Record fact transitions, not protected raw values. Replay them offline through
-the decision engine and compare:
-
-- selected plan;
-- call timing;
-- assignments;
-- switch behavior;
-- explanation;
-- confidence.
-
-Build a reviewed golden corpus for all supported maps.
-
-### Human acceptance
-
-For each map:
-
-- at least 20 complete beta matches;
-- novice leader can state the call and reason within five seconds;
-- expert reviewers agree the call is legal and reasonable at least 90% of the time;
-- zero impossible or fabricated calls;
-- every override can be explained and categorized;
-- visual review at 1080p, 1440p, 4K, and common UI scales.
-
-## Delivery phases
-
-### Phase 0: Measurement and safety lock
-
-- add performance telemetry and a repeatable baseline protocol;
-- record refresh frequency, p50/p95/max time, allocation proxy, and memory;
-- add secret/taint regression fixtures;
-- freeze new surface features until budgets pass.
-
-Exit: measured Beta 4 baseline and zero unresolved safety defects.
-
-### Phase 1: Runtime efficiency
-
-- split fast/medium/slow lanes;
-- eliminate event-dispatch allocation and snapshot deep copies;
-- implement domain invalidation and hidden-view suspension;
-- compact AAR storage and ring buffers.
-
-Exit: all performance acceptance budgets pass in live matches.
-
-### Phase 2: Knowledge foundation
-
-- define schemas and provenance manifest;
-- build capability, composition, plan, and counter repositories;
-- create the generator and stale-data gates;
-- establish expert review workflow.
-
-Exit: every shipped knowledge record is validated, sourced, and versioned.
-
-### Phase 3: Complete map engines
-
-- implement map-specific state machines and win-path models;
-- add timer, transition, travel, and resurrection feasibility where public;
-- build golden replay fixtures.
-
-Exit: all ten maps pass deterministic and expert-reviewed scenarios.
-
-### Phase 4: Composition and counter assistant
-
-- detect our and enemy composition features;
-- choose meta/off-meta plan families;
-- generate counterplay and fallback calls;
-- expose rejected alternatives and switch conditions.
-
-Exit: no plan is selected without requirements, evidence, and a fallback.
-
-### Phase 5: Learning loop
-
-- record compact plan outcomes and leader overrides;
-- add reviewed AAR labels;
-- implement bounded Bayesian/recency adjustments;
-- add reset/export/disable controls.
-
-Exit: learning improves tie breaks without overriding authoritative live truth.
-
-### Phase 6: 10/10 UX
-
-- progressive Command/Learning modes;
-- typography scaling and density presets;
-- onboarding and pre-gate opening brief;
-- accessibility and clutter testing;
-- final visual comparison against approved mockups.
-
-Exit: novice and expert acceptance targets pass.
-
-### Phase 7: Release validation
-
-- multi-machine, multi-resolution, multi-addon field matrix;
-- 20-match-per-map corpus target;
-- performance, taint, correctness, and usability sign-off;
-- refresh meta snapshot and knowledge manifest;
-- produce release candidate, developer package, hashes, and evidence report.
-
-Exit: stable promotion, not merely another beta ZIP.
-
-## Recommended next execution order
-
-1. Implement Phase 0 telemetry.
-2. Complete the Phase 1 performance pass.
-3. Create the knowledge schemas and generator.
-4. Build one vertical slice: Arathi Basin plus three composition archetypes,
-   their counters, replay fixtures, and new-leader explanations.
-5. Field-test that slice before expanding to the remaining maps.
-
-This order proves performance, truth handling, strategy depth, learning inputs,
-and usability without multiplying an unverified design across ten maps.
+Use actual unique output paths in place of placeholders. Pin runtimes before
+certification. OVR-20 adds fresh complete-replay and extracted-runtime result
+binding to these existing tools; the current commands alone do not cover the
+new audit defects or prove live speed. Avoid duplicate builds when certification
+already produced the exact artifacts needed.
+
+The overhaul is complete only when all P0 and required P1 outcomes are evidenced,
+every advertised feature/map has the stated proof, documentation and packages
+agree, and rollback works. Publication follows the existing release policy.
+Writing this plan, passing mocks, or distributing another alpha is not that end state.

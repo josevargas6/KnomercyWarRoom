@@ -185,7 +185,7 @@ function StrategistNexus:Rank(snapshot, prediction, result)
         result.stop = KWR.Util:Text(selected.abort, result.stop, 180)
         result.expectedOutcome = selected.outcome
         result.recommendationMode = selected.id
-        result.projectedWinProbability = selected.probability
+        result.projectedDecisionUtility = selected.decisionScore
         result.decisionScore = selected.decisionScore
         result.projection = selected.projection
         result.enemyResponsePlan = KWR.Util:Copy(selected.enemyResponsePlan)

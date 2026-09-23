@@ -1,466 +1,947 @@
-# Release Readiness - 6.1.1-alpha.10
+# Release Readiness - 6.1.1-alpha.29
 
-This is the sole current-version, blocker, and promotion-status authority.
-GitHub committed content is the canonical development source; the live AddOns
-folder is deployment evidence only after package-manifest verification.
+## Alpha29 local diagnostic candidate — 2026-09-23
 
-## Current decision
+The September 22 official PvP ledger is reflected as an advisory watch, not
+an inferred ladder ranking. Automatic premade selection now requires map fit
+for known battlegrounds, and a theory-only Augmentation flag-escort shell is
+available. A fresh, non-dirty scoreboard may be reused for unrelated public
+objective/status pulses; actual scoreboard changes still invalidate it. The
+source checks are necessary but do not certify Retail CPU/memory, live UI,
+taint, tactical quality, or the remaining field blockers. This is not an
+approved stable public release. KWR-309 records verification and rollback.
 
-**6.1.1-alpha.10 is the authorized Season 2 developer field-test candidate;
-6.1.0 remains the immutable public stable baseline and 6.1.1-alpha.9 is the
-immediate field-test rollback baseline.** Alpha 10 adds the KWR-277 Combat
-Focus presentation, truthful score/trust states, semantic objective timers,
-and migration-safe Commander preset behavior. Its offline certification,
-binary reproducibility, extracted-package audit, and exact Retail installation
-verification must complete against the Alpha 10 archive before publication.
-The archive hashes are intentionally not embedded here: modifying a shipped
-document changes its archive. The versioned `SHA256` manifest and deployment
-certificate are the sole exact-hash authorities generated after the immutable
-archive is built.
 
-It is a field-test candidate, not yet a stable Retail-ready release. The owner
-authorized Alpha 10 developer-prerelease publication on 2026-08-31 after the
-weekly audit identified Alpha 9/10 publication drift. This authorization does
-not waive source review, green CI, exact tagging, protected `production`
-approval, package provenance, or public artifact verification. Candidate-bound
-live RBG evidence remains mandatory for any later stable promotion;
-source-only, historical, unbound, or simulated proof cannot substitute for
-that stable-release gate.
+## Alpha28 live-evidence repair — 2026-09-20
 
-Alpha 9 remains bound to clean source commit
-`4a6bfd5f78afd4110a281080e2a50416599a9389` and certified Commander hash
-`88B09C8CE037DB816CF28B84FE8122379312ADA7B2A367C856D37CE73C3AAAB1`.
-Alpha 10 must produce its own clean commit, hashes, package audit, deployment
-certificate, and public file IDs. Neither Alpha 9 nor historical Alpha 5
-evidence can certify Alpha 10, and no prerelease evidence substitutes for
-stable Retail field proof.
+The verified alpha27 Twin Peaks field export established a live failure: 436
+`UPDATE_BATTLEFIELD_STATUS` pulses resulted in 612 strategic refreshes,
+strategic P95 29.133 ms, tactical P95 5.810 ms, and a 40.47 MB sampled peak.
+Alpha28 separates these status pulses from actual world/zone transitions and
+prevents tactical movement/visibility churn from escalating strategic work.
+It is an engineering repair only until a replacement field candidate is built,
+installed after WoW closes, and tested. Alpha28 was built reproducibly and is
+installed with matching Sentinel and Developer Tools. Receipt:
+`artifacts/alpha28-install-20260920/DEPLOYMENT.json` (zero differences; restore
+rehearsal PASS). Backup: `artifacts/alpha28-backup-20260920`, including four
+saved-variable files. It remains a diagnostic field candidate, not public-release
+certification. Use `docs/ALPHA28_FIELD_CHECKLIST.md` for the bounded follow-up.
 
-The 2026-08-15 owner direction explicitly accepted 6.1.0 promotion with the previously
-recorded live-evidence gaps carried as refinement telemetry. It does not assert
-new 6.1.1-alpha.9-bound battleground sessions or ten-client Sentinel transport
-proof. The official 12.1 compatibility/hotfix review is now active, while the
-stale 12.0.7 ladder snapshot, inferred numerical tuning weights, and provisional
-Season 2 formations remain excluded from live meta influence. The candidate
-must still pass validation, deterministic Lua tests, package extraction/audit,
-Commander/Sentinel version parity, checksums, protected production approval,
-and rollback-artifact creation.
 
-## Current distribution gate board
+## Previous candidate evidence
 
-- [x] Source validation, source-drift, document-authority, control-surface,
-  knowledge, security, automation, SavedVariables, full Lua, and 100,000-case
-  RBG-corpus gates pass.
-- [x] Build the current Alpha 10 source candidate under the authorized release
-  workflow and prove Commander/Sentinel version parity, binary reproducibility,
-  extracted-runtime integrity, and package audits. Exact installed-folder
-  parity, hashes, and rollback remain part of the live deployment gate.
-- [x] Install the exact clean Alpha 10 candidate with a rollback snapshot and
-  certify zero missing, changed, or extra Commander/Sentinel files.
-- [x] Merge the reviewed Alpha 10 source to protected `main` after exact-head
-  `certify` passes.
-- [ ] Tag and publish the exact Alpha 10 developer-prerelease artifacts after
-  package and live-install certification. Stable promotion remains blocked on
-  candidate-bound field evidence.
-- [ ] Capture candidate-bound Retail proof for Team identity/health/HIST,
-  flag-map stability and AAR, canonical carrier targets, combat-safe native-map
-  behavior, taint/blocked actions, supported-resolution readability, and field
-  CPU/memory budgets. The capture must use the hashes recorded in the
-  versioned checksum manifest and deployment certificate.
-- [ ] Capture live win and loss evidence across every map family, then rerun
-  the read-only SavedVariables certification with only completed candidate rows.
-- [x] Keep Sentinel cross-client transport disabled by default and outside the
-  competitive-readiness release dependency. Any future opt-in promotion still
-  requires its own ten-client, taint, expiry, teardown, and product-value proof.
-- [ ] From the green tagged commit, publish the explicit Alpha 10 field-test
-  runtime ZIPs, checksums, manifest, and install guide; verify the public
-  downloads and CurseForge file IDs before any announcement.
+## Alpha27 engineering repair — 2026-09-20
 
-Until every unchecked live item is evidenced, this candidate may be distributed
-only as an explicit **field-test prerelease, not a stable Retail release**.
+Candidate `alpha27-bounded-runtime-projections-20260920-1` removes redundant
+publication copies and repeated derived work. Instrumented host NODE/CART traces
+show 43.5%/42.2% less elapsed CPU and 58.3%/58.0% fewer copied tables than alpha26;
+all 20 decision records per workload match. This is not Retail timing or measured
+memory certification. Publication projection is now included in runtime duration;
+notification/UI, communications and audio remain outside that measurement.
+See `docs/adr/ADR-035-bounded-runtime-projections.md`. Existing random-map,
+two-game collection policy is unchanged. No stable release approval is implied.
 
-Alpha 9 is the immediate public prerelease rollback baseline and Alpha 10 must
-generate new receipts without reusing its file IDs or hashes. The stable
-cutover must likewise generate new evidence. Render remains separately
-evidenced at Sentinel-bot commit
-`5ffdb7d2f60be3e673d284b62adf49a8f8d1727b`; this addon release does not alter
-bot deployment, Discord settings, GitHub issue integration, or AI integration.
+Alpha27 is installed with matching Sentinel and separate Developer Tools from
+clean runtime commit `8348682`. Full source tests, validation, knowledge audit,
+extracted-package smoke/soak and reproducibility checks passed. Deployment receipt
+`artifacts/alpha27-install-20260920/DEPLOYMENT.json` confirms zero file differences
+for all three addons. Backup: `artifacts/alpha27-backup-20260920` (including four
+saved-variable files and a verified restore rehearsal). The strict generated
+public-release eligibility report remains false; this installation is explicitly
+an owner-authorized diagnostic candidate, not CurseForge release certification.
+The current owner checklist is `docs/ALPHA27_FIELD_CHECKLIST.md`.
 
-## Public artifact contract
+## Previous candidate evidence
 
-The release page is player-facing and contains exactly the Commander runtime
-ZIP, Sentinel runtime ZIP, `SHA256` checksums, `PUBLIC_MANIFEST.json`, and
-`INSTALL.md`. It never contains a developer ZIP, source manifest, generated
-certification/reproducibility report, screenshot, or field evidence.
+## Current operational truth — 2026-09-19
 
-Developer packages and generated diagnostic evidence are CI artifacts only,
-with a 30-day retention policy. The five most recent successful release runs
-are the operational rebuild/diagnosis window; durable source history is held
-by immutable Git tags and GitHub releases, not by player or developer ZIP
-bundles. The release workflow uses an explicit public-asset allowlist and the
-CI workflow uploads public and developer artifacts separately, so a wildcard
-upload cannot reintroduce internal evidence to player downloads.
+**ALPHA26 OFFLINE REPAIR; LIVE PERFORMANCE CERTIFICATION STILL REQUIRED.**
+Alpha25 was built, audited, installed with matching Sentinel and separate
+Developer Tools on September 18, and field-tested. Its completed Arathi Basin
+capture reported zero runtime errors but strategic P95 34.561 ms, tactical P95
+8.222 ms, and sampled memory as high as 44.26 MB before falling to 13.64 MB after
+the match. These are failures, not release approval or proof of a retained leak.
 
-Historical reports of complete Retail battlegrounds and the prior
-field-verification attestation are diagnostic provenance only. They do not bind
-to the current package hashes and therefore cannot clear
-`LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, or
-`LIVE-READABILITY`. Cross-PC Sentinel transport likewise requires its separate
-ten-client safety and product-value proof.
+`alpha26-runtime-clock-ownership-20260919-1` (`6.1.1-alpha.26`) repairs clock
+units, retained plan consistency, inspection invalidation, redundant captures,
+bounded capability lookup and stale-memory recovery thrashing. Current combat
+evidence and bounded caches survive pressure pruning. The source runtime suite
+passes including deterministic long-uptime and 1,001-event burst regressions.
+Packaging and deployment receipts, not this prose, establish the installed bytes.
+The final clean build at `2a8c260` passed source validation, full Lua tests,
+knowledge audit and extracted-package/reproducibility checks. It is installed
+with matching Sentinel and separate LoadOnDemand Developer Tools; all three
+installed trees match their archives with zero differences. Receipt:
+`artifacts/alpha26-install-20260919/DEPLOYMENT.json`. Previous files and KWR
+SavedVariables are recoverable from `artifacts/alpha26-backup-20260919`.
+The 2 ms P95, 4 ms routine maximum and 32 MB hard memory goals are unchanged;
+alpha26 now has live performance failures: strategic P95 22.415/33.962 ms,
+tactical P95 6.087/7.095 ms and sampled memory peaks 35.83/38.12 MB. The supplied
+Silvershard verification binds to the installed alpha26 candidate; the standalone
+NODE telemetry has no embedded build ID. Both reports record zero runtime errors.
+See `docs/evidence/ALPHA26_RANDOM_RATED_2026-09-19.md` and
+[the bounded field checklist](docs/ALPHA26_FIELD_CHECKLIST.md).
 
-The read-only SavedVariables audit in
-`knowledge/retail-field-certification.json` found four completed matches and
-four interrupted records across Deephaul, Deepwind, Gilneas, and Silvershard.
-All four completed matches report `FAIL_REVIEW` command stability, with 36-75
-replacements and 6-28 reversals. The records predate the exact deployment
-certification receipt and are therefore useful defect evidence but remain
-`UNBOUND` for promotion. KWR-250 owns deterministic candidate binding.
+The owner's alpha26 collection uses at most two randomly offered rated
+battlegrounds; any map or repeated map counts. No flag/base-defense map or specific
+mechanic is a prerequisite. Missing mechanics are NOT_OBSERVED/NOT_APPLICABLE,
+not a failed session and not a fabricated pass. After two games, engineering owns
+remaining replay/targeted reproduction or scope decisions. This completes the
+bounded field collection without claiming every map family has live certification.
+The supplied NODE/CART captures already establish repeat CPU/memory failures;
+do not request further random games to establish them or to obtain a flag map.
+The next step is engineering profiling/reproduction, not release promotion.
 
-The first preserved Twin Peaks screenshot pass is recorded at
-`docs/field-evidence/2026-07-28-twin-peaks/README.md`. It confirms working
-Horde-relative score direction, native-map coexistence, roster/assignment
-population, conservative unknown handling, enemy observation aging, and a live
-lose-state command transition. It also confirms two P1 trust blockers:
+Existing compact lower-right field safeguards, contained setup/options layouts,
+complete manual copying and plain-language roles remain. Retired cursor/player
+markers and persistent opponent/doctrine histories remain retired. Roster/AAR
+auto-opening defaults are off; existing explicit saved preferences are preserved.
+Developer Tools remains a separate optional addon, installed here for diagnostics.
 
-- expanded Team health is empty/dim while compact legal health is visible;
-- expanded Team specialization labels drop historical `(HIST)` provenance.
+Alpha.15 was packaged, installed, and field-tested. It captured a complete WSG
+match without runtime errors, but failed release acceptance: the complete Commander
+card obstructed combat, strategic refresh P95 reached 35.02 ms (target <2 ms),
+and addon memory peaked at 38.22 MB (32 MB hard limit). Assignment integrity was
+WARN because every live assignment location was unknown; command delivery remained
+unverified. This is defect evidence, not release approval. P00's 62 recovery rows
+and alpha.13's 2,003 paired replay-parity records remain valid offline evidence,
+but do not certify alpha.17.
 
-Twin Peaks remains partial because that screenshot predates the repaired
-candidate and cannot certify it.
+Current diagnostic blockers are `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`,
+`LIVE-CARRIER-TARGET`, `LIVE-READABILITY`, memory/refresh budgets, command-delivery
+evidence, AAR-anchor stability, and native-map/combat-safety proof. Field evidence must include
+`/kwr field`, `/kwr verify`, `/kwr perf`, `/kwr aar copy`, and a `/kwr bug` export
+for every failure.
 
-Supplemental match-end evidence confirms the final Horde-relative `0-3`
-defeat agrees with the AAR and captures flag pickup/drop/return/capture events.
-It also adds two P1 command blockers:
+Stable release remains blocked by a clean source-bound/tagged package, remaining
+offline completion, the 2,003-item replay adjudication/independent tactical
+review gate, all required field evidence, and publication approval. Earlier candidate sections below are
+historical records and cannot override this status.
 
-- `KWR-033`: the prior candidate recorded 58 replacements and misleading
-  `0:00` lifetime semantics;
-- `KWR-034`: the prior candidate allowed raw flag-event prose into a tactical
-  target.
+This is the sole authority for current blockers and promotion status.
+[PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) retains the OVR-01 through OVR-22
+requirements and tactical vision. This file explains how to execute and close
+them. [AGENTS.md](AGENTS.md) owns engineering rules;
+[RELEASE_POLICY.md](RELEASE_POLICY.md) owns release authorization.
 
-The Team and carrier-target implementation repairs remain closed offline. The
-command-stability repair is reopened by real AAR evidence: after the minimum
-commitment window, a non-superior alternative could replace an active play
-despite a negative replacement decision. The closure branch now retains the
-active play until superiority or an explicit invalidation is proven; fresh
-candidate-bound Retail evidence is required to verify the repair.
+## September 9 local field-repair authorization
 
-Current repo state:
+The owner now requests the independent-review defects be fixed and a local
+candidate installed so field testing can begin. KWR-296 prepares diagnostic
+candidate `alpha12-fieldfix-20260909-1` from the preserved dirty tree. Its external
+deployment receipt records exact archives, installed parity, backup and isolated
+restoration. This supersedes the earlier requirement to wait for every overhaul
+item before this local test session. Unfinished REC/OVR work and clean/public
+release gates remain open.
 
-- the offline winning-state execution pass is closed by repo evidence;
-- the expert scenario corpus and bounded enemy-response planner are integrated
-  into the strategist and verified offline;
-- the current offline candidate passes validation, knowledge audit, smoke,
-  soak, and replay as of 2026-07-30;
-- the interrupted local-fight HUD slice is closed by deterministic evidence;
-- synchronized personal routing now preserves protected objective assignments;
-- package certification requires explicit smoke and soak pass markers;
-- the recovered distribution and developer package audits pass, with exact
-  evidence recorded in `artifacts/recovery-candidate/BUILD_RECEIPT.md`;
-- the default release package now excludes the optional Sentinel bundle unless
-  `tools/build.ps1 -IncludeSentinel` is used intentionally;
-- all offline distribution gates pass for the exact current artifacts, while
-  live stability, taint/safety, field-performance proof, screenshot matrix,
-  supported-map certification, official 12.1 tuning review, and release
-  presentation remain hard promotion gates;
-- `LIVE-TEAM-TRUTH`, `LIVE-STABILITY`, `LIVE-CARRIER-TARGET`, and
-  `LIVE-READABILITY` are the field-gate identifiers in
-  `knowledge/field-blocker-report.json`; implementation task IDs are not reused
-  as live evidence IDs.
+### September 10 detailed completion packages and card feedback scope
 
-## Alpha engineering gate
+The owner requested additional implementation packages for Terra Medium/High,
+with Astra-level evidence review. [KWR-297](docs/tasks/KWR-297-s-tier-completion-packages.md)
+now decomposes the existing OVR-01..22 and REC work into P00-P14, including code
+ownership, algorithms/contracts, failure cases, verification, rollback and
+copyable execution/review prompts. It supplements this authority; it does not
+replace requirements or award completion for writing specifications.
 
-The implementation is above the 8.5 pre-field gate in architecture, safety,
-performance design, map knowledge, deterministic decision behavior, UI
-consistency, packaging, and diagnostics. Team/enemy tracking, score
-convergence, transition repainting, and complete-match trust remain
-provisional at 8.5 until repeated Retail matches confirm the public APIs behave
-as modeled. A field failure lowers that category and blocks promotion; it does
-not get hidden by the aggregate score.
+The owner's field feedback adds [KWR-298 / P13](docs/tasks/KWR-298-commander-callout-card-rebuild.md):
+an **Astra-led full visual/information rebuild** of the fight/mini-command card.
+It must clearly distinguish NOW and observed/ordered position, NEXT movement,
+all movers/stayers, local target and CC jobs, with complete unclipped verbal calls.
+This is not merely a cosmetic Terra restyle. Existing installed bytes remain
+unchanged while these source work packages are prepared.
 
-## Proven offline
+[KWR-299 / P14](docs/tasks/KWR-299-command-followthrough-feedback.md) specifies
+left-click NOT_FOLLOWED and right-click FOLLOWED on the card, bound to the exact
+issued call/revision with drag/race protection, visible status and Undo. These
+are manual adherence attestations, not automatic proof of verbal delivery,
+objective success or causal improvement. AAR/learning must retain separate
+delivery, adherence, observed-outcome and manual-review fields.
 
-- One authoritative Store and one MatchRuntime ticker.
-- Four finite zone-transition confirmations and three finite roster
-  confirmations repair loading-screen truth without adding another ticker.
-- Full spoken command calls list every named mover and defender; numeric
-  shorthand is not used on the Scout HUD.
-- Complete TOC and version consistency.
-- No legacy patch markers.
-- No automatic chat, addon messages, targeting/focus, macro execution, spell
-  casting, or keybinding writes; fixed quick calls execute only from an
-  explicit player click.
-- Secure compact-row target/focus bindings are centralized and changed only
-  out of combat.
-- Secure fixed Instance Chat quick calls are centralized, immutable in combat,
-  and retain a compact right-click copy fallback.
-- Lua 5.1 syntax for all runtime and test files.
-- World, Arathi prediction, assignment, commander, preview, journal, and AAR pipeline smoke coverage.
-- Internal Reporter objective state and bounded permitted movement evidence.
-- Local kill-target selection, roster-validated assigned-team normalization,
-  and explicit unknown handling for Midnight-blocked combat evidence.
-- Dated Murlok RBG specialization snapshot with an explicit advisory boundary.
-- Two hundred seventy-five deterministic diagnostics plus a 500-refresh bounded-state soak
-  and knowledge audit.
-- Reviewed expert scenario labels now inform preferred line, fallback line,
-  safest counter, expected enemy answer, and review confidence on live
-  strategist output.
-- A bounded enemy-response planner now classifies likely punish patterns and
-  adjusts candidate consequence scoring before the final recommendation is
-  selected.
-- Reviewed doctrine depth now includes comp-threat models, enemy-defense models,
-  per-map opener branches, per-map recovery branches, per-map endgame branches,
-  deterministic doctrine fixtures, and verification-surface doctrine reporting.
-- All ten supported battlegrounds exercise lead, deficit, tie, assignment
-  family, valid-location, and map-specific node-priority fixtures.
-- Forty deterministic scenario combinations per map cover opening,
-  stabilization, pressure, recovery, and endgame response shapes.
-- GUID-based role validation prevents incompatible healer assignments.
-- Bounded current-season encounter history remains explicitly distinct from
-  live and last-observed evidence.
-- Five-second freshness gates prevent stale score or objective evidence from
-  driving live recommendations.
-- `/kwr verify` includes map and team identity, source ages, complete command,
-  assignment audit and rows, Reporter coverage, and transition performance.
-- Versioned capabilities, composition archetypes, battle plans, counters,
-  patch overlays, source authority, and bounded reviewed learning.
-- Fourteen bounded specialization ratings, nine battlefield-job preferences,
-  advisory Hero talent modifiers, and observed tactical ability windows all
-  feed existing engines without duplicate polling or state ownership.
-- Every weighted category has three or more evidence signals, three documented
-  battlefield effects, and objective-plan influence.
-- Objective commands publish success and abort criteria; all seven generic
-  enemy archetypes have reviewed three-step counter sequences.
-- Capability caching, summary reuse, render-signature skipping, and
-  lightweight friendly health/aura handling reduce repeat work.
-- Multi-source confidence, objective ETA, enemy intent, opportunity, momentum,
-  resource economy, assignment-integrity, and five-candidate heuristic
-  simulation all feed the existing Strategist and Commander path.
-- Low-confidence calls become conservative; unknown information remains
-  unknown and cannot inflate the confidence budget.
-- Knowledge freshness gating now scores patch alignment, reviewed-data age,
-  live enemy specialization certainty, and historical-spec dependence before
-  composition-specific or meta-assisted calls are allowed to influence the
-  command path.
-- Stale or unaligned meta data can no longer silently bias kill-target scoring
-  or composition-driven strategic commits.
-- Counterfactual decision reviews are bounded developer logs and never
-  self-modify battlefield doctrine.
-- Manual AAR export reuses the existing AAR subscriber and copy dialog, records
-  bounded evidence only, has no automatic chat behavior, and can be disabled.
-- The existing Strategist now derives bounded commitment, reinforcement,
-  pressure, rotation-economy, collapse, recovery, organization, and
-  single-action assessments from already-sanitized state.
-- Execution assessments are review evidence only in this candidate; they do
-  not add HUD lines, automatic actions, or a second decision owner.
-- The optional target spotlight and priority-cast accents are precreated with
-  the compact roster and update from fixed target/event evidence.
-- Observed swap-class protection suppresses automatic kill-candidate ranking;
-  KWR never changes the player's target or claims interruptibility.
-- Tactical telemetry remains on the expanded command board, the compact HUD
-  reserves one persistent local-fight card, the combat roster spotlight uses a
-  dedicated readability lane, and native `Shift-M` owns battlefield-map display.
-- Qualified execution evidence produces one shared response package containing
-  movers, stayers, success, and abort; all command and review surfaces consume
-  that same package.
-- Assignment audits reject non-roster identities, invalid priorities, and
-  incompatible flag carriers.
-- Repeated execution assessments and carrier aura reads use bounded caches.
-- Export sections explicitly separate recommendations, evidence, execution,
-  known outcomes, enemy observations, and unavailable facts.
-- Live performance telemetry and enforced strategic refresh budgeting.
-- Field distribution packaging now excludes developer preview and deterministic diagnostics paths.
+P13/P14 source implementation is IN_PROGRESS; P01-P12 remain IN_PROGRESS and
+P00 is offline-complete. The first
+slice now includes the actual measured HUD, complete verbal projection,
+reversible AAR-owned feedback, and a Tactical-page summary derived from the same
+structured card rather than a competing local-teamfight call. See
+[ADR-011](docs/architecture/ADR-011-complete-callout-and-followthrough.md) for
+implemented behavior, test scope and remaining CODE obligations. Source candidate
+`alpha12-kwr297-source-20260910-1` is distinct from the unchanged installed field
+candidate. The full Lua suite passed after the latest secondary-surface semantic
+and queued-audio lifecycle changes, plus current P01/P03/P08 source hardening,
+in `artifacts/kwr297-all-20260911-b.json`; the focused Card suite and development
+validation also pass. The current full receipt is
+`artifacts/kwr297-all-20260911-f.json`: Developer Tools, smoke, Sentinel,
+soak, and replay passed after the full release-tooling SHA-256 portability
+change. The matching automation receipt is
+`artifacts/kwr297-automation-after-portability-20260911d.log` (238 checks).
+This is not a final program receipt.
 
-## Requires Retail proof
+On September 11, the subsequent source-only package at
+`artifacts/kwr297-build-20260911-local-fixed` passed binary reproducibility and
+extracted-package audit after correcting a minimal-host SHA-256 portability
+defect. Its package audit includes extracted validation, documentation/control
+checks, knowledge generation/audit, the 100,000-case simulation, 276-check
+developer smoke, soak and DevTools lifecycle. The exact receipts are
+`KWR_6_1_1_ALPHA_12_REPRODUCIBILITY.json` and
+`KWR_6_1_1_ALPHA_12_PACKAGE_AUDIT.json` in that artifact directory. This is a
+dirty, local source build and has no clean commit/tag, installed-folder parity,
+full replay-adjudication closure, field proof or public publication claim.
 
-- Native `Shift-M` coexistence across battleground transitions and combat.
-- PvP scoreboard fields under Retail 12.0.7 secret-value behavior.
-- Event-fed teammate-target/nameplate last-seen behavior.
-- Live objective-marker changes; instanced player coordinates are unavailable
-  through the public map-position API.
-- Reporter pressure/hotspot quality across objective families.
-- Compact local-fight card readability with zero, one, two, and three healers.
-- UI clipping and scaling at common resolutions.
-- Match-complete and instance-exit journal behavior.
-- Taint, blocked-action, CPU, and memory checks.
-- Assigned-team resolution across native, mercenary, and cross-faction matches.
-- Enemy/friendly secure row click behavior through a complete combat cycle.
-- Fixed Quick Call behavior and taint through a complete battleground cycle.
-- Kill-target quality across melee and ranged local-fight conditions.
-- Knowledge-status thresholds across real inspected, partially observed, and
-  fully unknown enemy lobbies.
+P05 has a separate source-only lifecycle hardening slice: execution packets carry
+the command ID/revision, and queued audio rejects a superseded command or packet
+before speaking. Its fake-clock regression is in the smoke suite. The broader
+P05 transition, secure-binding and client-taint requirements remain open.
 
-## Intentionally incomplete
+Card layout fixtures and feedback contracts start before the entire tactical overhaul is complete;
+final integration must use the shared truth/lifecycle contracts. Current local
+diagnostic field authorization remains separate from full completion/promotion.
 
-- Enemy buffs not explicitly observed remain unknown.
-- Defensive and trinket readiness is never assumed. Retail 12 blocks the combat
-  log subscription formerly used for observations, so live state remains unknown.
-- An enemy's health may be displayed directly by a protected StatusBar when the
-  client permits it, but secret health cannot be used in target scoring.
-- External meta data is release-dated and cannot reveal an individual enemy's
-  actual talents, gear, enchants, or PvP build.
-- KWR can identify when composition certainty is too weak for an advanced
-  commit, but it still cannot discover hidden enemy builds that Blizzard does
-  not safely expose.
-- Reporter cannot plot an enemy whose map position Blizzard does not safely expose; roster knowledge alone never becomes a fabricated dot.
-- Predictions for public widgets not exposed by Blizzard remain low-confidence or unknown.
+Sentinel uses the production score source/freshness gate. New verification/AAR
+exports include the candidate ID; older AARs stay UNBOUND. `/kwr field` starts
+Diagnostic context; leadership tests use `/kwr commander` and confirm only
+actually communicated calls via `/kwr delivered <token>`. Real host timings are
+measurements of a mocked preview workload, not Retail CPU/FPS certification.
+Consult the final deployment receipt for actual test and installation results.
 
-Promotion requires the live sections of `QA_CHECKLIST.md` to pass with captured evidence.
-This document is the current gate board; prior gate plans are retained only under
-`docs/audits/historical-plans/` for provenance.
+### September 11 Fight Now stability hotfix — installed diagnostic candidate
 
-## Season 2 cutover and autonomous-maintenance authority
+The current Retail diagnostic install is the `6.1.1-alpha.12` stability hotfix
+from `artifacts/fight-card-stability-build-20260911`. It fixes two observed
+presentation defects: the legacy Fight Now card no longer changes height when
+local-focus or CC state changes, and the complete Commander card retains its
+largest live geometry so shorter follow-up calls do not shrink, jump, or distort
+the card. This is a bounded P13/P09 presentation repair, not closure of either
+package.
 
-### Goal
+- Commander archive SHA-256:
+  `09DD52E8D9C94109CA04F673DC6D74D481BBA420EE0E288897DBEE801F3F62E3`.
+- Focused Commander-card suite, full 276-check smoke, binary reproducibility,
+  and extracted distribution/developer smoke and soak passed. The package audit
+  and reproducibility receipts are in `artifacts/fight-card-stability-build-20260911`.
+- Deployment receipt:
+  `artifacts/fight-card-stability-install2-20260911/DEPLOYMENT.json` reports
+  `INSTALLED_VERIFIED`; Commander (399 files), Sentinel (12), and DevTools (7)
+  compare exactly to their staged archives.
+- The installer additionally passed an isolated first-install/restore rehearsal
+  where optional Sentinel and DevTools were absent initially; rollback preserves
+  that absence. Retail rollback snapshot:
+  `D:\Program Files\World of Warcraft\_retail_\Interface\AddOns\KWR-Rollbacks\fight-card-stability-alpha12-install2-20260911`.
+- Source/install TOC reconciliation has 142 matches and zero changed or
+  installed-only entries. Four source-only files are intentional development
+  modules excluded from the player package: `Core/Diagnostics.lua`,
+  `Runtime/Preview.lua`, `Runtime/Season2Readiness.lua`, and
+  `Runtime/Verification.lua`.
 
-Before the next Season 2 reset, deliver one evidence-bound, Retail 12.1
-Commander/Sentinel release that helps an RBG leader make a clearer next call
-without fabricating game state, automating gameplay, or turning community input
-into unreviewed doctrine. The product target is one dependable loop:
+This proves local diagnostic deployment and the layout repair only. P00-P12
+remain planned/in progress as stated above; client field evidence, independent
+review, clean release provenance, and publication approval remain open.
 
-```text
-public game truth -> one explained team call -> player-confirmed execution
-                         ^
-official patch data + reviewed field evidence + bounded community reports
+### Installed diagnostic candidate — September 9, 2026, 22:00 CDT
+
+**READY FOR OWNER DIAGNOSTIC FIELD TESTING.** The repaired candidate is installed
+in Retail AddOns. This is not full-overhaul completion or stable promotion.
+
+- Candidate: `alpha12-fieldfix-20260909-1` (`6.1.1-alpha.12`).
+- Build: `C:\Users\josev\Desktop\KWR\Builds\6.1.1-alpha.12-fieldfix-20260909-1`.
+- Deployment receipt: `C:\Users\josev\Desktop\KWR\Builds\fieldfix-deployment-20260909-1\DEPLOYMENT.json`.
+- Commander 396, Sentinel 12 and DevTools 7 files: zero missing, changed or extra
+  relative to the exact extracted archives. Source TOC reconciliation has 139
+  matches, zero changed and four intentional source-only development modules;
+  those four ship in optional DevTools, not the Commander production TOC.
+- Complete verified prior-trio backup and four KWR SavedVariables files:
+  `D:\Program Files\World of Warcraft\_retail_\Interface\AddOns\KWR-Rollbacks\fieldfix-baseline-20260909-1`.
+  Both the staged restoration rehearsal and the standalone restore script
+  passed against isolated test folders. Live SavedVariables were not modified.
+- Final Lua suite passed all five stages (`artifacts/fieldfix-final-all-20260909.json`).
+  Validation, knowledge/scenario audit, security, automation, host measurement,
+  four-archive binary reproducibility and extracted-package audit passed.
+- R04 follow-up covers real numeric no-widget defaults, unresolved team,
+  missing/expired/future timestamps, observed 0-0 and Sentinel HUD unknown state.
+  R09/R10 local backup, isolated restore and exact installation work is complete.
+  R11 capture identity is implemented and regression-tested; actual client
+  captures tied to this candidate are still required.
+- External report paths now resolve and the candidate archive hash verifies.
+  Full-clean eligibility remains false because the source is dirty. These
+  booleans no longer claim to be individual test execution results. Broader
+  REC/OVR work, full replay/tactical review and live/public gates remain open.
+
+Use [the field guide](docs/FIELD_TEST_20260909.md): restart WoW, run `/kwr field`
+and `/kwr verify` outside combat, confirm the candidate ID, then use
+`/kwr commander` only when leading. Capture `/kwr perf`, `/kwr bug` on failure,
+and `/kwr aar copy` after the match; retain the deployment receipt with exports.
+
+This completion record and task-status update were written after artifact
+freeze; they do not change the installed archive bytes or claim that the
+subsequently edited documentation is identical to the frozen developer ZIP.
+
+## Earlier full-overhaul execution order — 2026-09-08
+
+**Full overhaul and stable distribution remain NOT READY.** The local diagnostic
+field session is separately authorized above.
+
+**Finish all offline work before requesting field testing.** The next milestone
+is **OFFLINE COMPLETE — READY FOR FIELD TESTING**, not another interim alpha.
+Complete source recovery, shipped-behavior fixes, persistence migrations,
+and every audited offline enhancement in OVR-01 through OVR-22, including
+tactical depth, before the field-test handoff. The owner's latest full-overhaul
+instruction supersedes earlier minimum-stable-first sequencing. Complete
+deterministic correctness tests, real host benchmarks, client instrumentation,
+fresh replay contracts and exact package verification first. Implementation is
+now authorized and in progress. Installation and field sessions follow the
+offline gate; the current installation remains diagnostic evidence.
+
+An actual WoW session is still needed afterward to prove current-client API
+permissions, combat/taint safety, real FPS/CPU/memory, and tactical usability.
+Missing field evidence blocks stable promotion; it must not stop independently
+executable code, test, migration, packaging or technical review work.
+
+The source repository is `C:\Users\josev\source\repos\KnomercyWarRoom`.
+The inspected branch is `codex/kwr-278-alpha11-field-blockers`, base `bcce7f5`,
+with existing uncommitted work. AddOns folders are deployment targets. Preserve
+existing changes; a dirty checkout is normal during implementation and does not
+justify stopping. Prepare reviewed changes for the repository's normal commit/CI
+process before the final clean-candidate gate; never reset unrelated work merely
+to obtain a clean result.
+
+## Evidence correction and current baseline
+
+The preceding handoff incorrectly read three source-to-installed diffs in the
+opposite direction. These are missing recovery work, not completed protections:
+
+| Module | What current source actually has | What still needs implementation |
+| --- | --- | --- |
+| `Runtime/Commander.lua` | Terminal suppression, generator/delivery boundary, per-call identity/revision, explicit local attestation, and a narrow local BG-system assault observation producer. | Complete reviewed outcome contracts, qualified aggregation and usability verification, REC-07. |
+| `Runtime/AAR.lua` | Source map/evidence fixes, delivery capture, checkpoint/migration, compact TEAM versus opt-in DEVELOPMENT capture, corrected active timeline bounds and non-causal public execution display pass smoke. | Complete broader malformed-data/size verification and reviewed outcome-contract integration, REC-08. |
+| `Runtime/Learning.lua` | Schema-2 legacy preservation, context-partitioned decision episodes, bounded durable deduplication and malformed/future-data guards pass the full Lua suite. | Complete public execution producers and final source/package end-state verification, REC-09. |
+
+Installed Commander mode labels also are **not proof that a particular call was
+delivered**. Recover useful code selectively and finish that evidence boundary.
+The earlier passing suite did not test these missing requirements. Corrected
+JSON reviews retain their superseded explanations for traceability.
+
+| Current evidence | Meaning and limitation |
+| --- | --- |
+| [Source/install ledger](artifacts/source-install-review-ledger-20260908-live-session.json): 62 entries, **38 closing decisions, 9 pending implementation records (`DEFER`), 15 missing reviews, 0 invalid records** | Review accounting only. A valid record is not proof of implementation or release readiness. The nine items below are active offline work. |
+| [Full Lua receipt](artifacts/lua-all-current-20260908-run2.json), September 8 | Existing dirty-source suite passed. Its test-tool hash does not establish final candidate source identity or full-corpus tactical correctness. |
+| September 8 automation run: 230 checks; document-authority audit and diff check passed | Historical checks for the prior tree; rerun relevant checks after implementation. |
+| [Full replay baseline](artifacts/fresh-replay-full-current-20260907-plan-tags-merged/) | 2,003 results: 0 primary, 578 fallback-only, 1,425 unmatched, 0 forbidden. Technical diagnosis and independent tactical validation remain open. |
+| [Interim package](artifacts/replay-adjudication-20260908-package/) | Four reproducible archives with extracted tests; provenance is dirty `bcce7f5`. It predates this clarification and is not the final candidate. |
+| [SavedVariables diagnostic receipt](artifacts/retail-savedvariables-current-session-20260908.json) | Unbound observer/diagnostic history, no qualifying real performance or scored command-stability proof. |
+
+The eight initial reproduced defects have bounded fixes under KWR-282/283/284;
+KWR-285 through KWR-291 address additional sampling, generator, availability,
+countdown and evidence defects. Preserve their tests. Their completion does not
+close an entire OVR row or make the latest source field-certified.
+Historical progress paragraphs and earlier claims are preserved in
+[the prior handoff snapshot](docs/evidence/readiness-handoff-before-clarification-20260908.md);
+they cannot override this gate board.
+
+## Execute without repeated deferrals
+
+Implementation checkpoint: the first REC-07/08/09 change adds the shared
+CommandReview delivery/execution qualification boundary. Mode selection and
+clipboard activity do not qualify; records require matching command identity/
+revision and finite wall-clock timestamps. Generator churn remains available in
+separate fields. New AAR reviews and learning intake cannot use generated-only
+match outcomes. [ADR-008](docs/architecture/ADR-008-delivery-and-execution-provenance.md)
+defines the boundary and remaining producer/migration work. This is an active
+partial implementation, not closure of the three REC packages.
+The [checkpoint receipt](artifacts/delivery-boundary-checkpoint.json) binds its
+changed source/test hashes and passing All-suite receipt. Development validation,
+document-authority and diff checks pass. The suite's default replay is still
+fallback-only and its soak clock simulated; neither clears the final benchmark.
+
+1. Start with REC-07/08/09 as one coherent delivery/retention/learning contract,
+   implemented in bounded changes. Add the missing regression before the fix.
+   In the same offline phase, finish the 15 straightforward source/UI reviews.
+2. Add real host-time profiling and truthful measurement provenance (OVR-09).
+   Resolve REC-01 through REC-06 with measured, tested decisions. Reject a
+   demonstrated unsafe installed optimization and retain safe source when
+   appropriate; importing every installed change is not a requirement.
+3. Finish remaining shipped-behavior gaps in OVR-02 through OVR-19 using the
+   per-item recipes below. Dependencies mean a required interface or invariant,
+   not that every upstream field certificate must already exist.
+4. Repair replay evaluator/planner/label defects under KWR-295. Work on bounded
+   representative cases and all members of an affected pattern before a full run.
+   Technical investigation proceeds now; do not wait for 2,003 user reviews.
+5. Freeze the reviewed source, run final offline certification once per candidate,
+   and verify the extracted player package. Deliver one exact field-test package
+   and its residual client-only checklist only after the offline gate passes.
+
+`DEFER` is a legacy review-ledger disposition, **not a scheduling instruction**.
+For every pending item, record the failing behavior, next edit, focused test,
+result and final decision. Missing tests mean write the tests. Missing host
+measurements mean build/run the measurement harness. An unsafe optimization
+means repair or reject that optimization, not suspend the entire addon.
+
+Use the existing task contracts. KWR-281 owns source recovery; KWR-295 owns
+replay remediation. KWR-280's final WSG check is a downstream field requirement,
+not a prerequisite for KWR-281 coding or packaging. Do not create another audit,
+parallel roadmap, or repeated interim package for documentation-only updates.
+
+The executing engineer owns all CODE items below. Independent tactical reviewers
+own REVIEW evidence; the owner operates the WoW client only in the final FIELD
+stage. Keep task frontmatter statuses within the existing schema and record
+`offlineStatus`, `fieldStatus` and `releaseStatus` separately in task prose.
+A field-only blocker does not turn an unfinished code task into a blocked task.
+
+## Close the nine pending source recovery items
+
+September 9 latest source-bound evidence:
+`artifacts/aar-learning-checkpoint-20260909.json` binds scoped learning persistence,
+compact AAR capture and the integrated All suite. Validation has zero errors and
+one expected channel/version warning. Public execution producers, broader malformed
+AAR/serialized-size verification and final source/package gates remain open.
+
+`artifacts/recovery-checkpoint-20260909-store-encounter-observation.json` binds
+the later Store, encounter, formation and narrow public-observation changes to a
+passing All-suite receipt. It records the limits of that evidence: injected-clock
+soak, fallback replay and no client/package certification. Do not interpret it as
+an outcome contract, field certification, or closure of the remaining REC rows.
+
+September 9 OVR-17 checkpoint: FormationAdvisor now selects an explicit
+`RBG_10` (1 tank / 3 healer / 6 damage) or `BLITZ_8` (1 / 2 / 5) ruleset from
+the rated-Blitz context. The chosen ruleset controls open slots, shortages,
+overages, completion, target build requirements and cache identity, so a
+ten-player composition cannot be presented as an eight-player Blitz target.
+Smoke covers a complete eight-player roster and requirement cap. The remaining
+OVR-17 work is the separate assignment/override proof: leaver, spec-change,
+cross-realm duplicate, mandatory-defense and unavailable-player cases must be
+run against both rulesets before the row can close. The current-source full
+suite receipt is `artifacts/formation-ruleset-all-20260909.json`; it includes
+Developer Tools, smoke, Sentinel transport, soak and replay stages. It remains
+development evidence only and does not substitute for the final replay or
+package gates.
+
+September 9 OVR-17 override checkpoint: role and location overrides now reject
+dead or disconnected players using current roster identity, rather than saving
+an impossible command. Smoke covers the rejection. Mandatory-defense movement,
+leaver replacement selection, spec changes and cross-realm duplicate cases are
+still separate required regressions. The integrated source receipt
+`artifacts/override-safety-all-20260909.json` passes Developer Tools, smoke,
+Sentinel transport, soak and replay; it remains dirty development evidence, not
+final package or client certification.
+
+Latest implementation evidence: `artifacts/delivery-capture-checkpoint.json`
+binds the per-call confirmation, AAR capture/checkpoint/migration source and test
+receipts. The All suite passed; final export/help changes passed smoke (276
+checks plus the delivery fixture) and development validation (zero errors, one
+expected channel/version warning). Soak timing is injected and the default replay
+matched its fallback; neither proves real performance or full tactical coverage.
+All REC closures and final source/package certification remain separate gates.
+
+REC numbers below are work packages inside KWR-281, not new backlog IDs.
+All are executable offline. Proposed tests should extend the existing fixtures
+or smoke harness; create a focused fixture only where it makes isolation clearer.
+
+| Work package / files | Exact implementation decision | Required regression and closing end state |
+| --- | --- | --- |
+| **REC-01 — Core/Util.lua** | Preserve `OptionalBoolean`, sparse `Call` returns, and finite/secret/future-time evidence guards. Add a shallow-copy helper only with an actual measured consumer from REC-02/03; copy each branch that consumer mutates. | Nil holes, false, zero returns, throwing APIs and bad evidence remain safe. Mutating the new top-level table cannot alter its input; explicitly test ownership of nested branches. Close as selective merge, or preserve source with evidence that the helper has no necessary safe consumer. |
+| **REC-02 — Core/Store.lua** | Implemented owned copies for every published branch before reconciliation and deterministic listener registration order. Existing deep-equal reconciliation reuses only Store-owned prior branches. | Focused fixture passes producer-mutation, previous-state, removed-field, order and filtered latest-generation paths. Real host Store/subscriber timing and final candidate verification remain required. |
+| **REC-03 — Runtime/MatchRuntime.lua** | Recover event coalescing/filtered work selectively. Define which objective, score, roster, spec, target, match-end and countdown events dirty each domain. Bypass cached work on relevant critical evidence; cancel obsolete scheduled generations. Keep source stage timers and CountdownState reset/cancel integration. | Burst mixed events ending in a capture, disconnect or match end; final truth must reach the next eligible refresh. Test reload/rematch, target loss, spec inspection and t=100/105 countdown expiry. Compare complete semantic decisions before/after and real host stage cost; no savings obtained by leaving stale calls visible. |
+| **REC-04 — Runtime/MemoryBudget.lua** | Preserve measurement age/reason and processed-match ledgers. Bound records at insertion/update and on load. Throttle expensive scans only after every producer's write bound is covered; retain active-match truth and trim derived caches first. | Insert limit+1 and burst entries through AAR, Learning, OpponentModels, EncounterHistory and live caches; verify documented limits even while in PvP. Test failed memory API samples, repeated loads and active-match retention. Mock bounds can close code; real client plateau remains a separate field metric. |
+| **REC-05 — Runtime/EncounterHistory.lua** | Implemented stable GUID identity with legacy-name read/migration, one season lookup per capture, in-place last-seen updates, meaningful field replacement, load-time malformed quarantine, expiry and newest-first caps. | Focused fixture passes first/repeat/session/spec/role/legacy/expiry/cap paths. Real host allocation comparison and final source/package verification remain required. |
+| **REC-06 — Runtime/FormationAdvisor.lua** | Formation signature now includes kind/rated/blitz context as well as map/profile/roster state; cached results continue to be copied for callers. | Smoke proves caller nested mutation cannot corrupt cache and connection/death/bracket transitions invalidate it. Add explicit profile-selection change and real-host reuse measurement before final closure. |
+| **REC-07 — Runtime/Commander.lua** | Preserve `terminalPlays` and material-truth suppression. Add one proposed per-play delivery record: command ID/revision, generated time, context, delivery state/time/source. Generated or unknown-delivery recommendations cannot certify execution. A context setting or copy-to-clipboard alone cannot prove team receipt; explicit leader attestation must be labeled as such. Require public emergency/coverage evidence before bypassing commitment. | Generated-only, Diagnostic, Spectator, Commander-without-delivery and explicit-attested cases stay distinct. Context changes cannot relabel prior calls. Identical terminal truth does not reissue; real score/carrier/emergency changes invalidate promptly. No false delivery certification and no suppression regression. |
+| **REC-08 — Runtime/AAR.lua** | Consume REC-07 records. Recover TEAM/DEVELOPMENT capture separation, bounded command/event/player timelines and checkpoint cadence; force initial/final persistence. Keep source canonical map identity and derived evidence. Normalize legacy PLAYER/missing modes without erasing history or active working indexes before finalization. | Clean DB, Alpha 10/12 fixture upgrades, malformed entries, reload interruption, repeated finalization and mode changes preserve data. Generated-only episodes have no execution/outcome credit. TEAM remains useful and compact; DevTools opt-in alone retains full diagnostics. Verify write count, default serialized size and no loss of final AAR. |
+| **REC-09 — Runtime/Learning.lua** | Consume REC-07/08 eligibility. Validate bucket shape before mutation; preserve unproven aggregates in a versioned quarantine once. Partition eligible adjustments by team/bracket/patch/plan revision; use bounded stable episode-ID deduplication rather than relying on `entry.learned` on one table. Keep OpponentModels' persistent processed-match protection. | Diagnostic/observer/unknown-delivery/interrupted episodes add no training. Reconstructed copies of the same entry cannot count twice after reload. Double migration is idempotent; malformed/future schema is preserved or quarantined. Incompatible contexts do not pool; existing minimum sample/clamp safeguards hold and learning cannot override hard feasibility. |
+
+A row closes only after its implementation/rejection decision, relevant tests and
+resulting source hash are recorded. Preserve the baseline diff and superseded
+review; bind resulting candidate contents to the final manifest. Do not turn a
+plan to merge into an already completed `MERGE_INSTALLED` receipt.
+
+### Finish the remaining 15 review rows
+
+These are prescribed dispositions to validate, not already accepted records.
+Check source as the first diff path and installed as the second. Preserve
+source-only developer inputs without assuming they belong in the player ZIP.
+
+| Files (15 total) | What to finish and how to verify |
+| --- | --- |
+| `Adapters/SafeBattlegroundAdapter.lua` | Preserve original context observation time and unknown confidence for missing/future capture. Exercise t=10 observation reprojected at t=100; never stamp it fresh. |
+| `Data/PatchData.lua` | Preserve the newer recorded review window; independently perform OVR-16's pre-candidate official delta review. Metadata agreement alone is not API proof. |
+| `Data/PlayerControlProfiles.lua` | Preserve removal of named-player bonuses and unknown-role damage defaults. Rename otherwise identical actors and require identical eligibility/scores. |
+| `Features/CursorRing.lua` | Preserve source pressure/kill distinction, full elapsed retry accounting, remainder and plain nameplate holders. Run target/plate recycling and 30/60/144 FPS mock cases. |
+| `UI/LayoutCoordinator.lua` | Shared behavior already guards combat layout; differences inspected are comments. Preserve source and cite combat setter rejection plus deferred apply regression. |
+| `UI/CombatRosterVisuals.lua`, `UI/CountdownFrame.lua`, `UI/TeamfightCommandCard.lua` | Preserve shared CountdownState projection/text. Test all three against one deadline, cancellation and missing start; no generated five-second or stale GO text. |
+| `UI/MainWindowCommands.lua` | Preserve countdown start/cancel commands and loader failure messages. Keep truthful DevTools-off wording: capture stops, loaded code remains until reload. Execute each help-listed command with/without the companion. |
+| `UI/Options.lua` | Preserve dynamically available preview controls and the space they require. Open options before companion load, load/disable/re-enable it, and verify availability, explanation and layout. |
+| `UI/MainWindow.lua` | Keep loader failure handling. Explicit field/review mode selection feeds REC-07 without upgrading prior or undelivered calls. Verify mode switching, reset, and ordinary local-only operation; do not enable transport merely to collect local evidence. |
+| `UI/AARWindow.lua` | Selectively recover TEAM/DEV and generated/delivered labels from REC-07/08. UI must read the same episode eligibility as AAR export, including old and interrupted entries. |
+| `UI/MainWindowReports.lua` | Add recovered delivery/quarantine and filtered-work counters only when their owners supply them. Preserve source memory sample age/status; unavailable memory cannot become zero. Test missing and populated reports. |
+| `UI/DebugReasonPanel.lua`, `UI/ReporterMap.lua` | Resolve their role through `release-manifest.ps1` and actual callers. Verify source/companion/player load graphs, absent-companion fallback and display behavior; do not delete a source module merely because the installed TOC omits it. |
+
+## Completion recipe for every overhaul item
+
+For each OVR item, retain completed bounded fixes and implement the remaining
+acceptance criteria in the roadmap. The tests below describe observable behavior;
+a fixture file name alone does not prove coverage.
+
+### OVR-01 — Reconciled source and reproducible baseline
+
+**Edit:** KWR-281 and REC-01..09; finish all 15 reviews above. Reconcile TOC,
+`tools/release-manifest.ps1` and companion loading. Reject the installed-only
+hardcoded ScenarioRuntimeKnowledge/StrategistNexusRuntimeIndex projections;
+preserve canonical generated inputs and implement any needed compact projection
+from them in OVR-11.
+**Verify/end state:** every one of 62 baseline differences has a tested final
+disposition, final file hashes map to the clean candidate manifest, and extracted
+Commander/Sentinel/DevTools load with their intended features. No WSG prerequisite
+for this offline work. Clean source approval/CI is downstream of coding.
+
+### OVR-02 — Facts retain identity, age and uncertainty
+
+**Edit:** `State/FactStore.lua`, `State/BoardStateBuilder.lua`,
+`Runtime/TruthContract.lua`, `Adapters/SafeBattlegroundAdapter.lua`.
+Complete canonical objective IDs independent of labels, source/observation IDs,
+TTL/expiry and conflict handling; retain separate projection time.
+**Verify/end state:** actual Sensors-to-board-to-Predictor/UI path preserves row
+IDs/counts; t=10 stays t=10 at t=100/200; input permutations are equivalent;
+expiry or contradiction withdraws only dependent actions. Extend
+`tests/fixtures/tactical_truth.lua` and `observation_bracket.lua`.
+
+### OVR-03 — Target preference cannot manufacture a kill
+
+**Edit:** `Runtime/CombatIntel.lua`, `Intelligence/EnemyProblemDetector.lua`,
+`KillTargetSelector.lua`, execution projection and CursorRing. Preserve
+KWR-290/291; finish defensive immunity, manual priority provenance and uniform
+target-intent consumption.
+**Verify/end state:** unknown-health pressure stays pressure; no legal target
+gives a calm empty state; immunity/expiry removes incompatible commits from HUD,
+reticle, copy, audio and optional packet. Removing evidence never raises confidence.
+
+### OVR-04 — Feasible assignments before scoring
+
+**Edit:** `Intelligence/AssignmentScorer.lua`, `AssignmentOptimizer.lua`,
+`Runtime/Assignments.lua`, `AssignmentOverrides.lua` and control profiles.
+Pass availability, observed reach/capability and mandatory defense coverage into
+candidate generation before scoring; preserve a feasible deterministic incumbent
+when search budget expires.
+**Verify/end state:** dead/offline/unknown actor, remote rogue, carrier, last
+defender, missing healer and ambiguous names never receive an impossible job.
+No contradictory responsibilities; renaming characters does not change defaults.
+Use public unknown state when reach cannot be established.
+
+### OVR-05 — One command lifecycle and actual deadline
+
+**Edit:** Commander ActivePlay, CountdownState, execution builder, audio and
+all countdown consumers. Complete common command ID/revision and issue/start/
+deadline/abort/terminal projections. Integrate REC-07 while retaining KWR-280.
+**Verify/end state:** start t=100/deadline 105 shows 5,4,1,0 at 100,101,104,105;
+repaint does not restart. Target loss/match end cancels every stale cue; invariant
+truth never reissues a terminal call. Extend `explicit_countdown.lua` and smoke.
+WSG proves the final client behavior only after the offline gate.
+
+### OVR-06 — Bracket and match generations
+
+**Edit:** Sensors, TeamResolver, MatchRuntime and RulesetLoader.
+Complete explicit STANDARD_RBG/BLITZ/UNRATED/TRAINING/UNKNOWN context with
+evidence and session generation. Derive roster and objective rules from it.
+**Verify/end state:** partial 8+8 never latches Blitz; a verified Blitz indicator
+selects eight-player rules. Late hydration, cross-faction/mercenary teams, reload,
+same-map rematch and interrupted matches cannot leak prior truth. Create the
+candidate's supported map/bracket/client scope in its task evidence; do not
+silently remove currently advertised support.
+
+### OVR-07 — Current-build, secret-safe adapters
+
+**Edit:** existing Adapters, Util, RulesetLoader and Sentinel Observer.
+Complete a call-site/return-field matrix for units, casts, auras, widgets,
+scoreboard, positions and messages, including permitted display-only fields.
+**Verify/end state:** absent/throwing APIs, sparse returns, secret proxies and
+non-finite fields yield bounded unknowns without arithmetic/formatting leaks;
+cast 9/channel 8 remains correct. Unknown builds degrade visibly. Compare
+current official API documentation before candidate freeze. Actual Blizzard
+permissions and taint remain FIELD evidence, never a reason to skip these mocks.
+
+### OVR-08 — Optional Sentinel transport
+
+**Edit:** `Runtime/CommanderComm.lua`, `KWRSentinel/Comm.lua` and Observer.
+Retain strict decoding; complete bounded ingress, sender/leader authority,
+session/sequence expiry, handoff and teardown.
+**Verify/end state:** both actual codecs pass `tests/sentinel-transport.lua`
+with malformed/flood/localized/reordered/expired/duplicate/reload cases.
+Blocked communication stays visibly local-only; transport remains off by default.
+Ten physical clients are required to promote remote capability, not to finish
+local Commander code or request its eventual field test.
+
+### OVR-09 — Honest performance measurement
+
+**Edit:** MatchRuntime stage timers, Store publication/subscribers, relevant UI
+render hooks, `tools/performance-benchmark.ps1` and the test harness.
+The existing benchmark invokes an injected-clock soak; its PASS is not speed.
+Add explicit REAL_HOST/REAL_CLIENT/SIMULATED_CLOCK provenance. Use a pinned
+runtime and monotonic host clock for repeatable offline profiling without
+replacing real elapsed time with mock durations.
+**Verify/end state:** offline reports contain warm-up, workload, runtime/hardware,
+source hashes, sample count, P50/P95/P99/max, allocation/retention, queue wait and
+event-to-publication latency. Report render tail separately. Exercise client
+instrumentation with controlled clocks, including missing sample and DevTools
+on/off. Real host results establish optimization evidence; live budgets await FIELD.
+
+### OVR-10 — Measured reductions in work
+
+**Edit:** REC-01/02/03/05/06, Strategist caches and expensive subscribers.
+Prioritize stages measured in OVR-09. Use explicit revisions and mutation
+ownership, bounded coalescing and hidden-view render suppression.
+**Verify/end state:** equivalent public input yields equivalent feasible decisions;
+A cannot change after publishing B; final burst events are delivered; world/idle
+states avoid BG strategy work. Repeat the same real host workload before/after.
+Reject regressions in latency or truth, even if average CPU improves.
+
+### OVR-11 — Player package, retained memory and schema
+
+**Edit:** release manifest/generators, DevTools split, REC-04/08/09 and Core's
+existing SavedVariables initialization boundary. Inventory runtime consumers
+before generating compact data; retain all fields/lookup APIs they require.
+**Verify/end state:** generated compact/full decisions agree on every accepted
+input; full diagnostic corpora are excluded from the player archive. Scenario
+generator parity alone does not prove this packaging result. Fresh/Alpha10/
+Alpha12/malformed/future-schema loads preserve data; double migration is harmless.
+Retained collections and serialized default DB meet the budgets below. Real
+client loaded-memory plateau remains separately unverified.
+
+### OVR-12 — Markers, secure identity and cleanup
+
+**Edit:** CursorRing, CombatRoster and LayoutCoordinator. Preserve KWR-282
+elapsed accounting, plain holders and combat mutation guards.
+**Verify/end state:** 30/60/144 FPS mock retry count differs by at most one;
+plate reuse/duplicate names/carrier changes cannot display or bind the wrong
+actor. During combat, secure binding changes queue and unusable rows are clear;
+post-combat changes apply once. Ten mocked lifecycle cycles leave bounded pools
+and no stale KWR-owned visuals. Real secure-click/coexistence proof is FIELD.
+
+### OVR-13 — Every advertised objective family
+
+**Edit:** ObjectiveIntel, `Data/ObjectiveRules.lua`, Predictor and map profiles.
+Implement explicit legal transitions with per-field authority, freshness,
+score contribution, deadline and terminal state.
+**Verify/end state:** for all advertised map/bracket pairs, opening/lead/deficit/
+tie/transition/endgame/unknown/conflicting/end fixtures agree across sensors,
+prediction, assignment, command, UI and AAR. Use the roadmap's ten-map matrix:
+node races; flag return/cap; EotS tower/flag value; Kotmogu orb/zone value;
+Silvershard/Deephaul carts; Seething spawn/channel/exhaustion. Do not replace
+unimplemented mechanics with generic node prose.
+
+### OVR-14 — Reachable rotations
+
+**Edit:** Reporter ETA/route calculations, map profiles and assignment feasibility
+consumers. Replace unsupported exact seconds with sourced route ranges,
+crossing/elevation assumptions and confidence; distinguish observed from estimated
+arrival and unknown resurrection phase.
+**Verify/end state:** river/long-route/carrier/regroup/last-second cases reject
+impossible arrival. Unknown reach cannot beat a safe hold through invented timing.
+Coarse fallback is labeled and remains a fallback; the full route enhancement
+stays open until the roadmap's route requirements pass.
+
+### OVR-15 — Feasible tactical alternatives
+
+**Edit:** Strategist, Nexus policy and assignment response packages. Enforce
+OVR-04/13/14 constraints before comparing value, deadline, defense, reserve,
+rotation cost and reversibility. Complete required counter/recovery branches.
+**Verify/end state:** each selected play has movers/stayers, objective, success,
+abort, fallback and switch condition. Publicly different held-out states produce
+meaningfully different feasible calls; failed openings do not repeat unchanged.
+Generated coverage supplies no empirical win bonus. Implement all audited
+competitive-depth requirements before the field-test handoff; comparative field
+proof remains a later evidence gate.
+
+### OVR-16 — Reviewed patch knowledge
+
+**Edit:** PatchData, SourceRegistry, KnowledgeManifest and affected capabilities/
+doctrine inputs after reviewing official deltas since the last recorded review
+(September 4 in source), through candidate freeze.
+**Verify/end state:** each active change has a cited source, reviewer, affected
+slice, expiry and regression; unsupported population/spec assumptions remain
+advisory. Expired/unknown-build facts cannot authorize advanced commits.
+Regenerate and run the knowledge audit; source date strings alone do not pass.
+This review is development work and needs no WoW session.
+
+### OVR-17 — General-purpose formation
+
+**Edit:** FormationAdvisor, Assignments, AssignmentOverrides and existing setup UI.
+Complete bracket-sized slots, capability shortages and scoped leader choices for
+caller/carrier/backup/healer anchors/defense/reserve.
+**Verify/end state:** ten/eight-player, missing role, leaver, spec change and
+cross-realm duplicates yield valid slots and explicit shortages. Manual overrides
+cannot bypass physical availability or mandatory defense; no character-name
+bonus. Partial enemy information still permits a safe pregame opening.
+
+### OVR-18 — Truthful AAR and conservative learning
+
+**Edit:** REC-07/08/09, AARWindow and MainWindowReports.
+Complete bounded decision episodes tied to command/version, bracket, doctrine,
+public facts, actual/attested/unknown delivery and observed outcome.
+**Verify/end state:** undelivered/interrupted episodes do not train execution;
+incompatible team/patch/plan contexts do not pool; reload cannot count twice.
+Match victory alone gives no causal credit. Export preview offers stable
+anonymized aliases with relationships preserved and sends nothing automatically.
+Keep useful local history and opt-in full diagnostics.
+
+### OVR-19 — Usable, accessible commander surfaces
+
+**Edit:** existing MainWindow/HUD/roster/cards/Options, command help and audio.
+Finish UI recovery rows; show next call, personal job, place and trust state.
+Use stable protocol IDs, localizable text and UTF-8-safe truncation.
+**Verify/end state:** automated layout/command/Unicode/audio-cancellation cases
+pass at supported scales; no essential element clips in reviewable offline
+layouts. Companion unavailable/load failure states explain recovery. Final actual
+1080p/1440p/4K and 0.65/0.8/1.0 UI checks plus five-second comprehension are FIELD.
+New UX expansion does not excuse bugs in existing screens.
+
+### OVR-20 — Correct replay contracts and source/package parity
+
+**Edit:** KWR-295, `tools/replay-test-runner.lua`, fresh runner, benchmark and
+the demonstrated faulty planner/label boundary.
+**Verify/end state:** use the procedure below. All 2,003 current acceptance IDs
+have current results and justified contracts; no stale/missing/duplicate result,
+forbidden action or unexplained fallback passes. Mutation of each original audit
+defect fails its relevant test. Source and extracted player package have identical
+semantic decisions/contract scores on identical inputs; raw report hashes may
+differ because timestamps and source/package paths are provenance.
+Independent tactical label review is recorded honestly and never manufactured.
+
+### OVR-21 — Field proof, prepared only after offline closure
+
+**Offline edit/verify:** finalize the capture matrix, build/hash-bound logging,
+instrumentation, export and review forms. Include all failure and missing-evidence
+paths. **Offline end state:** an engineer can hand the owner one exact tested
+package, installation/rollback instructions and executable capture steps.
+**FIELD end state:** the matrix below and existing roadmap quality/sample budgets
+pass. Two independent RBG reviewers and comparison evidence are required for the
+comparative leading claim. Do not request matches while CODE work remains.
+
+### OVR-22 — Distribution and rollback
+
+**Edit:** canonical build/certification/package audit and CI/release workflow.
+Pin Node/Lua/Fengari/build dependencies; enforce clean provenance and candidate
+scope. Audit roots, TOCs, versions, interface, licenses/assets, links and public
+allowlist. Prepare and test install/upgrade/rollback in isolated directories.
+**Verify/end state:** two builds of the same clean source produce identical
+archive hashes; extracted tests and replay parity pass; simulated clean install,
+upgrade and rollback restore exactly the expected files and compatible saved
+data. Actual WoW loading/rollback and public download verification follow at the
+appropriate FIELD/RELEASE stage. A bot deployment or unrelated optional addon is
+not a prerequisite for this Commander release.
+
+## Replay remediation that can proceed offline
+
+1. Open the 69 existing clusters; choose one representative and inspect its
+   fixture facts, selected concrete plan, checkpoint outputs and label predicate.
+   Trace the real code path. State whether the defect is evaluator, fixture/
+   label, planner, or justified conservative fallback, citing evidence.
+2. For a pure identifier-contract mismatch, document a narrow semantic mapping
+   in the existing evaluator, with positive and negative counterexamples.
+   Similar words or matching catalog tags alone are insufficient. For a planner
+   defect, fix the responsible decision owner; for a label defect, preserve the
+   old label and record why reviewed facts require the replacement.
+3. Run every member of that pattern and mutation cases, including missing/stale/
+   secret evidence and roster order. Split the cluster when predicates differ.
+   Persist per-replay evidence; a shared reviewed explanation may be referenced
+   by many records only after each input/result satisfies its stated predicate.
+4. Engineering reviews can be authored by the actual coding reviewer and labeled
+   as technical reviews. Do not invent human reviewers or call self-review
+   independent expert validation. Prepare the required held-out tactical review
+   packet while continuing other offline implementation.
+5. Preserve the strict primary gate. If an unknown-input fixture correctly needs
+   a conservative action, review and explicitly encode that expected primary
+   behavior for that fixture; do not silently promote all fallback outcomes.
+6. After bounded changes pass, run the complete source and extracted-package
+   corpora once for the frozen candidate. Report all IDs, provenance hashes,
+   primary/fallback/forbidden outcomes and semantic equality. The existing
+   fresh runner is source-root based; add/test extracted-root execution and a
+   semantic comparator before claiming this final step exists.
+
+[KWR-295](docs/tasks/KWR-295-replay-contract-adjudication.md) owns these changes.
+It does not require the owner to manually diagnose 2,003 coding contracts before
+engineering work can begin. Independent tactical review remains necessary for
+the advertised map/bracket/phase quality claim.
+
+## Offline completion gate and verified commands
+
+Run focused tests during changes. Run one final certification sequence after
+recovery, required behavior and replay repairs are ready. Preserve exact command,
+exit code, output, candidate/source/input hashes, environment and timestamp.
+A tool PASS proves only the assertions it actually ran.
+
+Existing commands below use current parameters. New harnesses/fields mentioned
+above are required implementation, not already available commands.
+
+```powershell
+Set-Location 'C:\Users\josev\source\repos\KnomercyWarRoom'
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\validate.ps1 -Channel development
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\test-lua.ps1 -Suite All -ReceiptFile artifacts\offline-final-lua.json
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\security-audit.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\test-automation.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\knowledge-audit.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\fresh-replay-benchmark.ps1 -OutputDirectory artifacts\offline-final-replays
 ```
 
-`KnomercyWarRoom` is the sole source and release authority. Its embedded
-`KWRSentinel` is the only Sentinel package that may ship with a Commander
-release; both TOCs, runtime constants, package manifests, hashes, tag, GitHub
-release, CurseForge files, and Discord copy must name the same version and
-commit. The installed AddOns folders are runtime evidence, never source control.
-`KWRBeacon`, `KWR_Maps`, and `KWR_ScoreCard` are optional, independently
-versioned experiments. Their intentional absence from an AddOns installation
-does not block a Commander/Sentinel cutover unless a future release explicitly
-adds one of them to its signed package manifest.
+Use fresh run directories instead of overwriting prior receipts. After the
+reviewed work is committed through the normal repository process, build the
+clean candidate with auditing and reproducibility enabled:
 
-### Historical 6.1.0 cutover provenance — not the current gate board
-
-- `main` contains the merged Alpha 43 line plus subsequent maintenance; the
-  stable cutover branch reconciles the reviewed field-test commits without
-  moving any prior tag.
-- `v6.1.0-alpha.43` is immutable prerelease evidence. The new stable tag is
-  `v6.1.0` and may be created only at the green merged cutover commit.
-- The separate `KWRSentinel` repository still contains Alpha 33-oriented
-  release automation. It is not release-authoritative for 6.1.0 and is a
-  drift risk until it is explicitly archived as a standalone historical lane or
-  regenerated from the embedded package.
-- The Sentinel Discord bot local checkout was behind its remote `main` by two
-  commits at audit time. Render has a worker manifest and health endpoint, but
-  automatic Render deploys are intentionally disabled; a release receipt must
-  prove the deployed commit and ready Discord session.
-- The scheduled maintenance workflow performs certification and dry-run
-  reporting by design. It does not publish to CurseForge, Discord, Render, or
-  GitHub from a timer. That is correct: scheduled unattended work may discover
-  and prepare a change, but may not publish unreviewed player input or modify
-  production.
-
-### Required control plane
-
-| Lane | Required operating rule | Completion evidence |
-| --- | --- | --- |
-| GitHub | `main` is protected by the `certify` check, linear history, resolved conversations, and no force-push/delete. Merge only a green, reviewed candidate; tag only that merge commit. | PR merge receipt, exact annotated tag, clean `git status --branch`, and `HEAD == origin/main`. |
-| Source hygiene | Fetch/prune every working clone before a release. Keep historical branches until their ancestry is reconciled; then remove only branches/worktrees proven merged or intentionally archived. Never use the installed WoW folder as a Git checkout. | Branch/worktree inventory with no active branch tracking a deleted remote and no uncommitted release files. |
-| Commander + Sentinel | Build both packages from the same tagged canonical checkout. The standalone Sentinel repository is release-frozen until its versioned source-parity check is regenerated for the current package. | TOC/runtime parity, extracted manifest parity, SHA-256 manifests, and package install comparison for both addons. |
-| CurseForge | Upload only the certified tagged ZIPs with explicit Retail game-version IDs. Verify the returned file IDs, file type, version, hash, and public download resolution before announcing. | GitHub workflow receipt plus captured public file IDs and hashes. |
-| Discord | Announce only a verified immutable GitHub release and matching CurseForge file IDs. Webhooks are notifications, not feedback intake or a deployment control plane. | Dry-run copy equals posted copy; announcement receipt links to the exact tag and files. |
-| Bot + Render | Keep Render as a least-privilege Discord intake worker. Deploy only the reviewed bot `main` commit, run a post-deploy `/readyz` check, and record the commit, deployment ID, ready time, and command-registration result. | Render deployment receipt and a private health result proving `discordReady: true`; no secret or user identifier in the receipt. |
-
-### Historical P0 cutover register — retained for provenance
-
-| ID | Gap to close | Required action | Done only when |
-| --- | --- | --- | --- |
-| GIT-01 | Stable metadata and the reconciled field-test source require one reviewed merge commit. | Merge the 6.1.0 cutover only after the required `certify` check is green; create a new annotated `v6.1.0` tag at that merge without altering Alpha 43. | `main`, stable tag, GitHub release assets, and canonical checkout resolve to one commit with no ahead/behind or uncommitted state. |
-| GIT-02 | Historical local branches track deleted remotes. | Inventory ancestry, preserve any unmerged work under a named archive/ref, then remove only merged or explicitly retired worktrees and stale tracking refs. | No active worktree follows `[gone]`; a retained archive explains every unmerged historical branch. |
-| REL-01 | A standalone Alpha 33 Sentinel release lane conflicts with the embedded 6.1.0 package. | Keep the standalone lane release-frozen; ship only the embedded Sentinel package built from the Commander tag. | One documented Sentinel release owner; parity test accepts 6.1.0; no standalone workflow publishes a competing package. |
-| REL-02 | Publication must be proven end-to-end, not inferred from a green build. | Run the protected tagged-release workflow once, then verify GitHub assets, Commander and Sentinel CurseForge file IDs/version/channel, Discord announcement URLs, and installed-folder manifests. | One signed evidence bundle binds tag, commit, two ZIP hashes, two CurseForge files, Discord receipts, and installation manifests. |
-| BOT-01 | Render configuration exists, but current deployment and command freshness are not a release invariant. | Fast-forward bot source, run its locked dependency/smoke/test/audit gate, deploy the reviewed commit, register guild commands, and capture private readiness. Keep Render auto-deploy off for unreviewed commits. | Bot commit equals approved remote `main`; `/readyz` returns 200 after Discord is ready; issue creation and AI stay disabled unless separately approved. |
-| RBG-01 | Stable command quality and cross-client Sentinel value retain unverified field claims. | Capture bounded 6.1.0 evidence for each map family and both win/loss states: command replacement/expiry, team identity, carrier grammar, secure clicks, taint/blocked-action, CPU/memory, and ten-client relay leadership/reload/packet-loss. | Evidence is version- and package-hash-bound; any failure opens a labeled issue and drives a new patch release rather than rewriting 6.1.0. |
-| META-01 | Static meta data can become stale between official tuning and player evidence. | Use a development-only intake pipeline: official Blizzard notes first, at least two independent trend sources second, human review third, versioned data/fixtures fourth, PR + deterministic test last. The addon never fetches data in-game. | Every changed recommendation records patch, sources, reviewer, confidence, expiry, affected maps/specs, and a passing fixture; unreviewed trends remain `PENDING` and cannot influence live calls. |
-| SOCIAL-01 | Feedback exists, but needs a measurable closed loop. | Make `/bug`, `/diag`, `/aar`, `/strat`, and `/suggest` create structured, deduplicated GitHub intake only when the least-privilege issue integration is enabled. Add `status:needs-review`, `needs-repro`, `needs-field-test`, `accepted`, `declined`, and `shipped` response paths. | A test submission reaches the correct private Discord channel and labeled issue, receives an acknowledgement, contains no secret/identifier by default, and cannot trigger merge, release, deploy, or doctrine changes. |
-
-### Product refinements that earn “go-to RBG addon” status
-
-Prioritize decision quality and trust over more panels or simulated omniscience:
-
-1. **Command stability and explanation.** One call must persist until a
-   superior, materially changed, or invalidated fact is proven. Show the
-   replacing evidence, confidence, success condition, abort condition, and
-   personal assignment delta.
-2. **Role-aware, map-aware routing.** Maintain reviewed capability and
-   composition data, but only permit it to refine a public-objective plan when
-   roster certainty and patch freshness meet the gate. Otherwise fall back to
-   map fundamentals.
-3. **Sentinel must be smaller and more reliable than Commander.** It should
-   show the recipient's job, target/watch, expiry, transport trust state, and
-   local safe facts. It must fail visibly to local guidance, never become a
-   second commander, and never require cross-client transport to be useful.
-4. **AAR-to-fixture learning.** Convert reproducible reports into anonymized,
-   bounded fixtures. Do not train or self-modify live doctrine from outcomes;
-   a reviewed PR must promote every change.
-5. **Performance and accessibility.** Maintain combat-safe layout behavior,
-   zero unbounded allocations in hot paths, scalable contrast-safe surfaces,
-   and a per-release taint/CPU/memory receipt on common UI scales.
-
-### Discord follower and outside-input system
-
-Use Discord as a community front door, not the truth engine. Create visible
-`#announcements`, `#known-issues`, `#field-testing`, `#strategy-lab`,
-`#install-help`, and `#release-notes` channels plus private moderation and
-ops channels. Pin a short evidence standard: version, map/bracket, team side,
-time, exact KWR call, observed result, `/kwr verify`/error text, and optional
-redacted screenshot. Ask every field tester for one high-signal question:
-“What call was unclear, late, or wrong, and what public fact would have made
-it better?”
-
-The bot should acknowledge submissions immediately, provide the issue link or
-receipt, publish a weekly anonymized “heard / investigating / shipped” digest,
-and offer a monthly opt-in playtest/strategy review. Rate-limit intake, retain
-only the minimum report data, redact character/account identifiers by default,
-and never let votes determine tactical truth. Popularity can prioritize a test;
-only evidence can change doctrine.
-
-### Codex scheduler: permitted autonomous operation
-
-Codex automation is the operational auditor and maintainer, not an unattended
-production publisher. Run it in an isolated worktree whenever it may propose a
-change. Its durable jobs are:
-
-| Cadence | Autonomous job | Required output / stop rule |
-| --- | --- | --- |
-| Daily through Season 2 launch | Fetch/prune source state; inspect the active stable release, tag parity, package manifests, bot remote drift, Render-ready receipt availability, open issue intake, and official patch/news deltas. | A concise `READY`/`NOT READY` report with exact blockers. Stop before external writes, merge, deploy, publication, or secret access. |
-| Patch day | Run preflight before maintenance, then repeated read-only patch watch and a post-maintenance regression report. | A versioned patch-impact issue/PR proposal only; no doctrine change without reviewed sources and passing fixtures. |
-| Weekly | Run the existing readiness/security audit across source, installed addons, workflows, public distribution evidence, bot, and Beacon. | Evidence-backed risk register; escalate missing credentials, failed health, version drift, or failed CI immediately. |
-| Biweekly | Compare reviewed meta sources and closed AAR/field reports; cluster duplicate reports and propose fixture/data changes. | A human-reviewable PR or issue, never a direct data/release mutation. |
-| Monthly | Verify action pinning, dependency advisories, branch/worktree hygiene, secrets inventory by presence only, retention policy, and rollback rehearsal. | Signed-off maintenance receipt and rollback readiness result. |
-
-Every autonomous run must be idempotent, preserve uncommitted user work,
-produce a receipt, and report “no change” quietly. It may create a draft
-finding or a reviewed PR only if the task explicitly grants that authority. It
-must never merge, tag, upload, deploy, post an announcement, change a
-CurseForge channel, alter Discord permissions, or enable bot AI/GitHub-write
-credentials on its own.
-
-### Completion test
-
-The Season 2 system is implemented and complete only when all P0 rows above
-have their evidence bundle, the latest release branch is merged and tagged,
-all required CI/release checks are green, and the following command-level
-checks pass without exceptions:
-
-```text
-git status --short --branch                    -> clean and synchronized
-tools/validate.ps1                             -> VALIDATION PASSED
-tools/security-audit.ps1                       -> pass
-tools/knowledge-audit.ps1                      -> pass
-tools/test-automation.ps1                      -> pass
-tools/certify-offline.ps1                      -> pass
-tools/build.ps1 -IncludeSentinel               -> two certified archives
-installed-folder manifest comparison           -> zero missing/changed/extra
-bot npm ci && smoke && test && high audit      -> pass
-Render ready receipt + Discord command check   -> current approved commit
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\build.ps1 -Channel production -RequireCleanGit -IncludeSentinel -OutputDirectory artifacts\offline-final-package
 ```
 
-Any missing receipt, stale version, failed check, unbound field evidence,
-unreviewed external trend, or open release-critical issue is `NOT READY`.
-This gate is intentionally stricter than “the addon loads”: reliable RBG
-leadership requires accurate facts, calm calls, clear personal execution, and
-a release chain that can be audited and rolled back.
+The build invokes package verification; avoid rebuilding merely to collect a
+second status paragraph. `certify-offline.ps1` remains the intended integrated
+entrypoint, but currently it does not request `-RequireCleanGit`, delegates
+performance to the simulated soak, and does not run the full fresh corpus or
+extracted semantic comparator. Wire these missing gates into it under OVR-09/
+20/22 before using its PASS as the final offline completion claim. Resolve
+candidate-generated report ordering in that entrypoint; do not waive final
+knowledge or provenance checks to break a report-generation dependency.
+
+**OFFLINE COMPLETE — READY FOR FIELD TESTING requires all of the following:**
+
+- [ ] All CODE acceptance items for shipped behavior in OVR-01..20 are complete;
+      no pending recovery decision or missing technical review hides code work.
+- [ ] Original regressions, remaining invariant tests, migrations, real host
+      benchmarks and instrumentation tests pass with source-bound evidence.
+- [ ] Fresh full-corpus contracts pass and source/extracted player semantic
+      parity passes; technical review and required independent label review are
+      explicit, with no fake approvals or unexplained fallback-only success.
+- [ ] Player/DevTools/Sentinel load graphs, compact runtime parity, collection/
+      serialized-data bounds and clean/upgrade/future-schema paths pass offline.
+- [ ] Clean reviewed candidate, pinned runtimes, deterministic build, exact
+      package audit, isolated install/upgrade/rollback and usable public docs pass.
+- [ ] Every remaining unchecked item is expressly FIELD or RELEASE, with no
+      unimplemented code concealed as “needs live testing.”
+- [ ] One candidate evidence index names the commit, package hashes, scope,
+      all test receipts and the owner-only capture checklist.
+
+A failing live-only metric cannot be marked passed offline. Conversely, the
+absence of live observations cannot block a deterministic repair, migration,
+replay investigation, packaging improvement or profiling implementation.
+
+## Performance and field gates reserved for after offline completion
+
+These are the roadmap's unchanged client targets, not results of the mock soak.
+
+| Client metric | Required value |
+| --- | --- |
+| Strategic compute | P95 <2 ms; no routine refresh >4 ms; retain and label transition outliers |
+| Tactical compute / Store plus visible subscribers | Each P95 <=1.5 ms |
+| Critical fact to displayed invalidation / ordinary update | P95 <=250 ms / <=750 ms, including queue wait |
+| Routine full strategy | <=4 per second without dropping critical corrections |
+| FPS impact | Median loss <1%; 1% low loss <3%, repeated matched runs with variance |
+| Player memory / growth | Soft/warn/hard 25/28/32 MB; <1 MB growth over 30 minutes after comparable warm-up/GC |
+| Default serialized SavedVariables | <=1 MB; bounded eight-match default; also test offline |
+| Lifecycle and safety | Ten queue/exit/reload cycles, 30-minute combat; zero KWR-attributable errors/taint/blocked actions |
+
+After the offline gate, use
+[the candidate capture matrix](docs/CANDIDATE_FIELD_CAPTURE_MATRIX_2026-07-29.md)
+and [QA_CHECKLIST.md](QA_CHECKLIST.md):
+
+| Owner/client activity | Capture and pass condition |
+| --- | --- |
+| Exact candidate load and rollback rehearsal | Record commit, version, Commander/Sentinel hashes, manifest, client build and UI/addon profile. Compare installed files, load clean/upgraded data and rehearse the documented restore. |
+| Controlled WSG, KWR-280 / TP-STABILITY / TP-CARRIER-TARGET | Complete a match; verify single Reporter identity during GUID enrichment, no identical terminal-call reissue, actual shared countdown cancellation, flag state/target and final AAR agreement. Retain verify/perf/AAR evidence tied to the candidate. |
+| TP-TEAM-TRUTH / TP-READABILITY | Compact/expanded team and assignments agree, including HIST provenance; next call and personal job understood within five seconds; essential UI passes the supported scale/resolution matrix. |
+| TP-SAFETY-MAP and combat safety | Shift-M, secure roster/Quick Call, target swaps and nameplate recycling before/during/after combat; retain bug/taint evidence. No KWR-attributable blocked action or wrong secure identity. |
+| Real performance | Collect actual event-to-display, stage CPU, FPS, memory and queue/GC evidence with DevTools on/off; satisfy the above budgets without delaying calls. |
+| Advertised map/bracket strategy | Existing requirement: at least 20 complete reviewed matches per advertised map, stratified by bracket; each family has lead/win and deficit/loss coverage. At least 90% reviewer-acceptable calls, zero fabricated/impossible actions; retain denominators/disagreements. Held-out offline label review covers at least 30 distinct decisions per advertised map/bracket across five phases. |
+| Optional Sentinel remote promotion | Ten physical-client authority/expiry/reload/teardown and usefulness proof only if promoting remote capability. Commander-only value does not depend on this promotion. |
+
+The five named blocker sessions are first verification steps, not substitutes
+for the full map/sample requirement. Preserve the existing advertised scope;
+any proposed scope change needs an explicit product decision, not silent feature
+removal to make tests pass. Comparative “leading” status follows demonstrated
+improvement over a verified baseline; it is separate from stable distribution.
+
+## Public artifact and final release contract
+
+The player-facing release contains exactly the Commander runtime ZIP, Sentinel
+runtime ZIP, SHA256 checksums, PUBLIC_MANIFEST.json and INSTALL.md. DevTools,
+developer ZIPs, source manifests, generated certification reports and private
+field evidence remain separate CI artifacts (30-day retention; the five most
+recent successful runs are the operational diagnosis window). Preserve immutable
+tags and published archives.
+
+Commander and embedded Sentinel use the same approved version/source authority.
+DevTools is an optional matching artifact. Beacon, Maps, ScoreCard and bot work
+are separately versioned and outside this release unless explicitly added.
+Unknown buffs, cooldowns, hidden talents or unavailable positions remain unknown;
+the addon must not fabricate them to satisfy a tactical feature.
+
+**Stable distribution** requires the offline gate, required FIELD results,
+reviewed clean/tagged provenance, protected production approval, verified
+GitHub/CurseForge downloads matching the approved artifacts, and rollback evidence.
+Release and any announcement follow RELEASE_POLICY and existing authorization.
+Passing this document review, a suite marker, a generated corpus count or an
+old alpha is not that end state.
+
+September 9 replay parity checkpoint: source and an extracted player ZIP match
+on the Twin Peaks recovery probe under the release-only replay harness. The
+new `replay-semantic-parity.ps1` fails missing IDs and differences in final
+decisions, checkpoints or contract results. Evidence is
+`artifacts/replay-semantic-parity-probe.json`; full-corpus strict replay and
+independent tactical review remain required before field readiness.
+
+## 2026-09-11 installed diagnostic field candidate
+
+With WoW closed, the current source was built into
+`artifacts/field-candidate-20260911-p03p04` and installed as a diagnostic field
+candidate. Package audit passed, including extracted player/developer runtime
+and DevTools lifecycle checks; reproducibility passed for all four archives.
+The installed archive hashes are Commander
+`D37A9429F69B59510E700A5387ABA50ED41DC42EAAF41614CEE87A577794C2C0`, Sentinel
+`1BBE3EEC1A14F6F00E1EF8D06A0504AB225547CBFB5647E227114B6D91A27B35`, and
+DevTools `F637408EFB5648C148B48151529D10E0E99F51F20661353ECD5D666CF91C3016`.
+`artifacts/field-candidate-install-20260911-p03p04/DEPLOYMENT.json` records
+zero missing/changed/extra files for all three addons and a passed isolated
+restore rehearsal. Source/install TOC reconciliation records 142 matching
+entries, zero changed and zero installed-only entries; the four source-only
+modules are intentional development exclusions.
+
+This candidate includes the Fight Now stability repair, canonical fact identity,
+initial objective-transition and assignment-feasibility contracts, and the
+decision-utility terminology correction. It is still a dirty-source alpha
+candidate, not an offline-complete, field-certified or public-release claim.
+Its rollback snapshot is
+`D:\Program Files\World of Warcraft\_retail_\Interface\AddOns\KWR-Rollbacks\field-candidate-20260911-p03p04`.
+Field captures must bind to the Commander hash above and retain `/kwr field`,
+`/kwr verify`, `/kwr perf`, and `/kwr aar copy` output.
+
+## Earlier 2026-09-09 verification-audit execution record (superseded above)
+
+Canonical source is `C:\Users\josev\source\repos\KnomercyWarRoom`, branch
+`codex/kwr-278-alpha11-field-blockers`, base/HEAD
+`bcce7f585a2609ad60e0c84e872e959380b3375b`, with pre-existing uncommitted
+work preserved. The installed folders were compared before installation via
+`artifacts/source-install-reconciliation-20260909-preinstall.json` (79 MATCH,
+53 CHANGED, 11 SOURCE_ONLY, 2 INSTALLED_ONLY); no installed difference was
+adopted without source review.
+
+R01-R06 have current deterministic coverage in
+`artifacts/r01-r06-final-lua-tests-20260909.json`: override command-token
+dispatch preserves raw player names; malformed Commander envelopes reject
+without throwing; outbound Commander transport is gated while OFF; unavailable
+Sentinel scores remain UNKNOWN while observed 0-0 remains valid; Diagnostics is
+now an optional DevTools module; and an already-loaded DevTools companion no
+longer bypasses the combat arming guard. `ArmFieldTest` now uses the same
+evidence-context reset path as an explicit context switch.
+
+`tools/certify-offline.ps1` completed current source validation, control-surface
+audit, knowledge/scenario generation, 100,000-case ten-map simulation, Lua
+developer-tools/smoke/Sentinel/soak/replay tests, performance benchmark,
+reproducibility, and extracted-package audit. Exact archives and receipts are
+in `C:\Users\josev\Desktop\KWR\Builds\6.1.1-alpha.12-fieldtest-20260909`.
+Reproducibility and extracted-package audits pass. However,
+`knowledge/offline-completion-audit.json` still records several completion
+booleans false despite the successful invoked stages. Treat that contradictory
+generated receipt as an unresolved reporting defect; it prevents an honest
+R08/OVR offline-complete assertion.
+
+Installation from those exact archives began. Sentinel and Developer Tools were
+replaced from staging. Retail held the Commander folder open, so Windows refused
+to move it; it remains the prior installed Commander. The pre-install trio is
+preserved at
+`D:\Program Files\World of Warcraft\_retail_\Interface\AddOns\KWR-Rollbacks\6.1.1-alpha.12-pre-field-install-20260909`.
+Consequently R09-R11 remain open: no matched rollback rehearsal, zero-drift
+Commander installation comparison, or field-export-to-package binding has been
+claimed. Close Retail completely before completing the final install and parity
+audit. No live field, external publication, merge, tag, service deployment, or
+announcement is evidenced by this record.

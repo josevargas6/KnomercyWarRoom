@@ -120,7 +120,10 @@ end
 
 function MainWindowShell:ShowMinimizedSurface(owner, surface, mode, state)
     owner.minimizingTo = surface
-    owner:Hide()
+    -- Minimize is the explicit alternative to Close: restore exactly the
+    -- selected compact surface instead of leaving all KWR combat surfaces
+    -- dismissed.
+    owner:Hide(true)
     if surface == "COMMAND" then
         if KWR.HUD then
             KWR.HUD:Invalidate()

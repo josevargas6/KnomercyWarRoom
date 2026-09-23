@@ -308,7 +308,7 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             .. (nextRecruit and ("\nNEXT: " .. nextRecruit.label) or ""))
     else
         if teamfight and teamfight.displayEligible == true then
-            local card = KWR.TeamfightCommandCard:Build(teamfight)
+            local card = KWR.TeamfightCommandCard:Build(teamfight, state)
             page.nextCard.value:SetText(table.concat(card.lines or KWR.CommandView:CompactPrimaryLines(
                 state, "Play objective"), "\n"))
         else
@@ -961,13 +961,18 @@ function MainWindowPages:RenderTeam(page, state, helpers)
     page.summaryCard.value:SetText(string.format(
         "%d / %d PLAYERS   |   %d TANK   |   %d HEALERS   |   %d DAMAGE",
         #roster, displayCapacity, tanks, healers, damage))
-    page.summaryCard.readyBadge:SetTone(helpers.readinessTone(dead, formation.openSlots))
-    page.summaryCard.readyBadge:SetText(dead == 0 and "READY" or (tostring(dead) .. " UNAVAILABLE"))
-    page.summaryCard.openBadge:SetTone((formation.openSlots or 0) > 0 and "yellow" or "green")
-    page.summaryCard.openBadge:SetText((formation.openSlots or 0) > 0
-        and (tostring(formation.openSlots or 0) .. " OPEN") or "FULL")
-    page.summaryCard.detail:SetText((dead == 0 and "Command unit ready."
-        or (tostring(dead) .. " players down."))
+    local openSlots = formation.openSlots or math.max(0, displayCapacity - #roster)
+    local rosterComplete = dead == 0 and openSlots == 0
+    page.summaryCard.readyBadge:SetTone(rosterComplete and "green"
+        or helpers.readinessTone(dead, openSlots))
+    page.summaryCard.readyBadge:SetText(dead > 0 and (tostring(dead) .. " UNAVAILABLE")
+        or (rosterComplete and "READY" or "FORMING"))
+    page.summaryCard.openBadge:SetTone(openSlots > 0 and "yellow" or "green")
+    page.summaryCard.openBadge:SetText(openSlots > 0
+        and (tostring(openSlots) .. " OPEN") or "FULL")
+    page.summaryCard.detail:SetText((dead > 0 and (tostring(dead) .. " players down.")
+        or (rosterComplete and "Command unit ready."
+            or ("Roster forming: " .. tostring(openSlots) .. " open.")))
         .. " Assignments use role, specialization capabilities, and map doctrine.")
     for index, row in ipairs(page.rosterCard.rows) do
         local player = roster[index]
@@ -1474,7 +1479,8 @@ function MainWindowPages:RenderIntel(page, state, helpers)
     end
     page.historyCard.note:SetText(string.format("Showing latest %d of %d matches",
         math.min(#page.historyCard.rows, #history), #history))
-    local season2Lines = KWR.Season2Readiness and KWR.Season2Readiness:SummaryLines(state) or {}
+    local season2Lines = KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        and KWR.Season2Readiness and KWR.Season2Readiness:SummaryLines(state) or {}
     page.insightCard.value:SetText(table.concat({
         season2Lines[1] or "SEASON 2 HOTFIX WATCH  UNAVAILABLE",
         season2Lines[2] or "Advisory status unavailable.",

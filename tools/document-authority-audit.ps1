@@ -122,6 +122,10 @@ $claimPattern = '(?i)\b(master plan|project handoff|execution map|current baseli
 $authorityPaths = @($authorities.path)
 $markdownFiles = @(Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.md')
 foreach ($file in $markdownFiles) {
+    # Build copies and diagnostic receipts are outputs; audit their canonical
+    # source documents instead of treating extracted copies as new authorities.
+    if ($file.FullName.StartsWith((Join-Path $root 'artifacts') + '\',
+        [StringComparison]::OrdinalIgnoreCase)) { continue }
     $relative = $file.FullName.Substring($root.Length + 1).Replace('/', '\\')
     if ($relative -match '^docs\\(evidence|audits)\\') {
         $historical = Get-Content -LiteralPath $file.FullName -Raw

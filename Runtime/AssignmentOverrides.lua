@@ -107,6 +107,35 @@ local function resolveAssignment(assignments, query)
     if #shortMatches > 1 then return false, "AMBIGUOUS_SHORT_NAME" end
 end
 
+local function assignmentAvailable(snapshot, assignment)
+    local wanted = canonicalID(assignment and assignment.name, assignment and assignment.guid)
+    for _, player in ipairs(snapshot and snapshot.roster or {}) do
+        if canonicalID(player.name, player.guid) == wanted then
+            return player.dead ~= true and player.connected ~= false
+        end
+    end
+    return assignment and assignment.dead ~= true and assignment.connected ~= false
+end
+
+local function leavesMandatoryDefense(snapshot, assignments, assignment, location)
+    if not assignment or assignment.location == location then return false end
+    local friendly = false
+    for _, objective in ipairs(snapshot and snapshot.objectives and snapshot.objectives.rows or {}) do
+        if objective.label == assignment.location and objective.owner == "FRIENDLY" then
+            friendly = true
+            break
+        end
+    end
+    if not friendly then return false end
+    local available = 0
+    for _, row in ipairs(assignments or {}) do
+        if row.location == assignment.location and assignmentAvailable(snapshot, row) then
+            available = available + 1
+        end
+    end
+    return available <= 1
+end
+
 local function knownLocations(snapshot, assignments)
     local result, seen = {}, {}
     local definition = KWR.Maps:Get(snapshot and snapshot.context and snapshot.context.mapKey)
@@ -238,9 +267,37 @@ function AssignmentOverrides:SetLocation(snapshot, assignments, query, wantedLoc
     if not assignment then
         return false, "Override location failed: player assignment not found in the current plan."
     end
+    if not assignmentAvailable(snapshot, assignment) then
+        return false, "Override location failed: player is unavailable. Reassign an available teammate."
+    end
     local location = resolveLocation(snapshot, assignments, wantedLocation)
     if not location then
         return false, "Override location failed: location did not match a known battleground objective."
+    end
+    if leavesMandatoryDefense(snapshot, assignments, assignment, location) then
+        return false, "Override location failed: this would leave a friendly objective uncovered."
+    end
+    local player
+    local wantedIdentity = canonicalID(assignment.name, assignment.guid)
+    for _, row in ipairs(snapshot and snapshot.roster or {}) do
+        if canonicalID(row.name, row.guid) == wantedIdentity then
+            player = row
+            break
+        end
+    end
+    -- A commander lock is still an executable assignment.  It shares the
+    -- automatic proposal's hard prohibitions; unknown route data is surfaced
+    -- on the resulting assignment rather than rewritten as a fake ETA.
+    local feasibility = KWR.AssignmentFeasibility:Evaluate(player or assignment, {
+        targetLocation = location,
+        minimumRemainingCoverage = 1,
+    }, {
+        context = snapshot and snapshot.context,
+        objectives = snapshot and snapshot.objectives,
+        assignments = assignments,
+    })
+    if feasibility.outcome == "FORBIDDEN" then
+        return false, "Override location failed: " .. feasibility.reason .. "."
     end
     local record = ensureRecord(assignment.name or query, assignment.guid)
     record.name = clean(assignment.name, record.name, 64)
@@ -255,6 +312,8 @@ function AssignmentOverrides:SetLocation(snapshot, assignments, query, wantedLoc
         KWR.Util:Number(record.lock.priority, 0) or 0,
         KWR.Util:Number(assignment.priority, 90) or 90)
     record.lock.source = "LOCATION"
+    record.lock.feasibility = feasibility.outcome
+    record.lock.feasibilityReason = feasibility.reason
     record.lock.updatedAt = now()
     record.updatedAt = record.lock.updatedAt
     return true, "Location override: " .. formatLock(record, record.lock)
@@ -271,6 +330,9 @@ function AssignmentOverrides:SetRole(snapshot, assignments, query, wantedRole)
     end
     if not assignment then
         return false, "Override role failed: player assignment not found in the current plan."
+    end
+    if not assignmentAvailable(snapshot, assignment) then
+        return false, "Override role failed: player is unavailable. Reassign an available teammate."
     end
     local record = ensureRecord(assignment.name or query, assignment.guid)
     record.name = clean(assignment.name, record.name, 64)
@@ -324,8 +386,11 @@ function AssignmentOverrides:Apply(snapshot, assignments)
         migrateLegacyForAssignment(assignment)
         local record, lock = activeLock(snapshot, assignment)
         if lock then
-            if lock.role then assignment.role = lock.role end
-            if lock.location then assignment.location = lock.location end
+            if not assignmentAvailable(snapshot, assignment) then
+                assignment.overrideBlocked = "PLAYER_UNAVAILABLE"
+            else
+                if lock.role then assignment.role = lock.role end
+                if lock.location then assignment.location = lock.location end
             assignment.priority = math.max(
                 KWR.Util:Number(assignment.priority, 0) or 0,
                 KWR.Util:Number(lock.priority, 90) or 90)
@@ -335,6 +400,7 @@ function AssignmentOverrides:Apply(snapshot, assignments)
             assignment.overrideUpdatedAt = lock.updatedAt
             assignment.reason = (assignment.reason and (assignment.reason .. " ") or "")
                 .. "Commander override is active for this assignment."
+            end
         end
     end
     return assignments

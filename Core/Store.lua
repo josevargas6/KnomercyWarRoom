@@ -11,31 +11,48 @@ local Store = {
     notifyGeneration = 0,
     notifyPassGeneration = 0,
     notifyFlushing = false,
+    listenerSequence = 0,
 }
 KWR.Store = Store
 
 local NOTIFY_BATCH_SIZE = 8
 local NOTIFY_BUDGET_MS = 1.5
 
+local function shallowCopy(source)
+    local result = {}
+    for key, value in pairs(source) do result[key] = value end
+    return result
+end
+
 local function reconcileBranch(previousValue, nextValue)
-    if previousValue ~= nil and KWR.Util:DeepEqual(previousValue, nextValue) then
-        return previousValue
+    if previousValue == nextValue then return previousValue end
+    if type(nextValue) ~= "table" then return nextValue end
+    if type(previousValue) ~= "table" then return KWR.Util:Copy(nextValue) end
+    -- Reconcile before allocating, not after copying the entire snapshot.
+    -- Only changed paths acquire owned tables; equal immutable branches retain
+    -- identity. Never retain a producer's mutable input table on a changed path.
+    local target
+    for key, value in pairs(nextValue) do
+        local owned = reconcileBranch(previousValue[key], value)
+        if owned ~= previousValue[key] then
+            target = target or shallowCopy(previousValue)
+            target[key] = owned
+        end
     end
-    return nextValue
+    for key in pairs(previousValue) do
+        if nextValue[key] == nil then
+            target = target or shallowCopy(previousValue)
+            target[key] = nil
+        end
+    end
+    return target or previousValue
 end
 
 local function reconcileSnapshot(previousSnapshot, nextSnapshot)
     if type(nextSnapshot) ~= "table" then
         return nextSnapshot
     end
-    previousSnapshot = type(previousSnapshot) == "table" and previousSnapshot or {}
-    local keys = {}
-    for key in pairs(previousSnapshot) do keys[key] = true end
-    for key in pairs(nextSnapshot) do keys[key] = true end
-    for key in pairs(keys) do
-        nextSnapshot[key] = reconcileBranch(previousSnapshot[key], nextSnapshot[key])
-    end
-    return nextSnapshot
+    return reconcileBranch(previousSnapshot, nextSnapshot)
 end
 
 local function defaults()
@@ -290,11 +307,13 @@ function Store:Subscribe(owner, callback)
     if type(owner) ~= "table" or type(callback) ~= "function" then
         return
     end
+    self.listenerSequence = self.listenerSequence + 1
     self.listeners[owner] = {
         callback = callback,
         selector = nil,
         lastToken = nil,
         lastGeneration = 0,
+        order = self.listenerSequence,
     }
 end
 
@@ -302,12 +321,25 @@ function Store:SubscribeFiltered(owner, callback, selector)
     if type(owner) ~= "table" or type(callback) ~= "function" then
         return
     end
+    self.listenerSequence = self.listenerSequence + 1
     self.listeners[owner] = {
         callback = callback,
         selector = type(selector) == "function" and selector or nil,
         lastToken = nil,
         lastGeneration = 0,
+        order = self.listenerSequence,
     }
+end
+
+local function notificationQueue(listeners)
+    local queue = {}
+    for owner, listener in pairs(listeners or {}) do
+        queue[#queue + 1] = { owner = owner, listener = listener }
+    end
+    table.sort(queue, function(a, b)
+        return (a.listener.order or 0) < (b.listener.order or 0)
+    end)
+    return queue
 end
 
 function Store:Unsubscribe(owner)
@@ -328,14 +360,7 @@ end
 function Store:QueueNotifications(previous, nextState)
     self.notifyGeneration = (self.notifyGeneration or 0) + 1
     if type(self.notifyQueue) ~= "table" then
-        local queue = {}
-        for owner, listener in pairs(self.listeners) do
-            queue[#queue + 1] = {
-                owner = owner,
-                listener = listener,
-            }
-        end
-        self.notifyQueue = queue
+        self.notifyQueue = notificationQueue(self.listeners)
         self.notifyIndex = 1
         self.notifyPassGeneration = self.notifyGeneration
     end
@@ -422,14 +447,7 @@ function Store:FlushNotifications()
             self:FlushNotifications()
         end)
     elseif (self.notifyGeneration or 0) > passGeneration then
-        local nextQueue = {}
-        for owner, listener in pairs(self.listeners) do
-            nextQueue[#nextQueue + 1] = {
-                owner = owner,
-                listener = listener,
-            }
-        end
-        self.notifyQueue = nextQueue
+        self.notifyQueue = notificationQueue(self.listeners)
         self.notifyIndex = 1
         self.notifyPassGeneration = self.notifyGeneration
         self.notifyScheduled = true
@@ -447,19 +465,28 @@ function Store:FlushNotifications()
     end
 end
 
-function Store:Publish(snapshot, prediction, assignments, command, diagnostics)
+function Store:Publish(snapshot, prediction, assignments, command, diagnostics, finalizeDiagnostics)
     local previous = self:Get()
-    snapshot = reconcileSnapshot(previous.snapshot, snapshot)
+    -- Producers can mutate their working tables later; reconciliation owns
+    -- changed paths and reuses only branches from the previous published state.
+    snapshot = reconcileSnapshot(previous.snapshot, snapshot or {})
+    prediction = reconcileBranch(previous.prediction, prediction or {})
+    assignments = reconcileBranch(previous.assignments, assignments or {})
+    command = reconcileBranch(previous.command, command or {})
+    -- Runtime timing includes snapshot ownership/reconciliation. Finalize before
+    -- notification so subscribers receive complete diagnostics with the state.
+    if finalizeDiagnostics then diagnostics = finalizeDiagnostics() or diagnostics end
+    diagnostics = reconcileBranch(previous.diagnostics, diagnostics or previous.diagnostics or {})
     local activePlay = type(command) == "table" and command.activePlay or nil
     local nextState = {
         revision = (previous.revision or 0) + 1,
         capturedAt = KWR.Util:Now(),
         snapshot = snapshot,
-        prediction = reconcileBranch(previous.prediction, prediction),
-        assignments = reconcileBranch(previous.assignments, assignments),
-        command = reconcileBranch(previous.command, command),
+        prediction = prediction,
+        assignments = assignments,
+        command = command,
         activePlay = reconcileBranch(previous.activePlay, activePlay),
-        diagnostics = reconcileBranch(previous.diagnostics, diagnostics or previous.diagnostics),
+        diagnostics = diagnostics,
         mode = snapshot and snapshot.context and snapshot.context.preview and "PREVIEW" or "LIVE",
     }
     self.state = nextState

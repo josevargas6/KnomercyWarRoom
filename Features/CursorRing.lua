@@ -27,6 +27,7 @@ local MODE_COLORS = {
 local RETICLE_COLORS = {
     TARGET = COMBAT_COLORS.TARGET,
     KILL = COMBAT_COLORS.KILL,
+    PRESSURE = COMBAT_COLORS.STOP,
     STOP = COMBAT_COLORS.STOP,
     SWAP = COMBAT_COLORS.SWAP,
     IMMUNE = COMBAT_COLORS.IMMUNE,
@@ -328,9 +329,9 @@ function CursorRing:CreateReticleFrame()
     frame.pulse:SetPoint("CENTER")
     applyEnemyRingTexture(frame.pulse)
 
-    frame.labelPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    KWR.Theme:Style(frame.labelPlate, "panel", "borderHi")
-    frame.labelPlate:SetBackdropColor(0, 0, 0, 0)
+    -- Native nameplate dimensions can become secret in combat. Plain holders
+    -- avoid BackdropTemplate processing those dimensions during size changes.
+    frame.labelPlate = CreateFrame("Frame", nil, frame)
     -- Action text is deliberately absent for a neutral target. The native
     -- nameplate already establishes identity; this compact tab appears only
     -- when KWR has a specific action such as KILL, CAST, or SWAP.
@@ -338,9 +339,7 @@ function CursorRing:CreateReticleFrame()
     frame.labelPlate:SetSize(54, 14)
     frame.label = KWR.Theme:Title(frame.labelPlate, 9, "CENTER")
     frame.label:SetAllPoints()
-    frame.detailPlate = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    KWR.Theme:Style(frame.detailPlate, "panel", "border")
-    frame.detailPlate:SetBackdropColor(0, 0, 0, 0)
+    frame.detailPlate = CreateFrame("Frame", nil, frame)
     frame.detailPlate:SetPoint("BOTTOM", frame.labelPlate, "TOP", 0, 2)
     frame.detailPlate:SetSize(112, 14)
     frame.detail = KWR.Theme:Font(frame.detailPlate, 8, "soft", "CENTER", "OUTLINE")
@@ -432,13 +431,13 @@ function CursorRing:CreateTacticalBadgeFrame(unit)
     local frame = self.tacticalBadgeFrames[unit]
     if frame then return frame end
 
-    frame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    -- This holder follows a native nameplate; keep protected dimensions out
+    -- of backdrop calculations while retaining the tactical text.
+    frame = CreateFrame("Frame", nil, UIParent)
     frame:SetFrameStrata("TOOLTIP")
     frame:SetFrameLevel(9041)
     frame:EnableMouse(false)
     frame:SetSize(64, 14)
-    KWR.Theme:Style(frame, "panel", "borderHi")
-    frame:SetBackdropColor(0, 0, 0, 0.64)
     frame.text = KWR.Theme:Title(frame, 8, "CENTER")
     frame.text:SetAllPoints()
     frame:Hide()
@@ -477,14 +476,15 @@ local function nameplateReadoutWidgets(plate)
 end
 
 -- Blizzard's nameplate container can include large invisible bounds that vary
--- by unit and client layout. Anchor KWR tokens to the visible health bar
--- instead, so every player marker shares the same screen-space alignment.
+-- by unit and client layout. Prefer the visible identity text: some friendly
+-- plate skins offset the internal health bar from the displayed player center,
+-- which made role markers look horizontally misplaced in a stacked group.
 local IDENTITY_GAP = 8
 local function identityAnchor(plate)
     local unitFrame = plate and plate.UnitFrame
     local kind = type(unitFrame)
     if kind ~= "table" and kind ~= "userdata" then return plate end
-    return unitFrame and (unitFrame.healthBar or unitFrame.name or unitFrame.nameText)
+    return unitFrame and (unitFrame.name or unitFrame.nameText or unitFrame.healthBar)
         or plate
 end
 
@@ -647,9 +647,10 @@ function CursorRing:BuildIdentifierModel(record, isFriend, state, currentTarget)
         if not model.texCoords and not isFriend then model.badge = "?" end
     end
     local combat = state and state.snapshot and state.snapshot.combat or {}
-    if not isFriend and (sameEntity(record, combat.localTarget)
-        or sameEntity(record, combat.killTarget)) then
+    if not isFriend and sameEntity(record, combat.killTarget) then
         model.ringColor = ORB_COLORS.KILL.outer
+    elseif not isFriend and sameEntity(record, combat.localTarget) then
+        model.ringColor = ORB_COLORS.STOP.outer
     elseif priorityCast then
         model.ringColor = ORB_COLORS.STOP.outer
     end
@@ -692,14 +693,10 @@ function CursorRing:ApplyIdentifierVisual(frame, model, percent)
 end
 
 function CursorRing:RefreshOrbForUnit(unit, state)
-    local profile = KWR.db.profile.cursor or {}
-    local frame = self:CreateOrbFrame(unit)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
-    if profile.battlefieldOrbs == false or not inPvP then
-        frame:Hide()
-        return false
-    end
+    -- Retired field surface: keep this compatibility method inert so an old
+    -- caller or SavedVariables value can never restore player markers.
+    return false
+--[[
     if type(UnitExists) ~= "function" then
         frame:Hide()
         return false
@@ -763,40 +760,24 @@ function CursorRing:RefreshOrbForUnit(unit, state)
 
     frame:Show()
     return true
+]]
 end
 
 function CursorRing:RefreshOrbs()
-    local state = currentState(self.lastState)
-    local inPvP = state and state.snapshot and state.snapshot.context
-        and state.snapshot.context.inPvP == true
-    if not inPvP or KWR.db.profile.cursor.battlefieldOrbs == false then
-        self:HideAllOrbs()
-        return
-    end
-    local focusMode = KWR.db.profile.cursor.focusNameplates ~= false
-    local hasEnemyTarget = type(UnitExists) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
-        and type(UnitCanAttack) == "function"
-        and KWR.Util:Boolean(KWR.Util:Call(UnitCanAttack, "player", "target"), false)
-    self.orbVisibleCount = 0
+    -- Always-on identity markers, assignment badges, and native-nameplate
+    -- suppression were retired: they add repeated plate scans without changing
+    -- the local command. Restore and hide any legacy frames once.
+    self:HideAllOrbs()
     for unit in pairs(self.activePlates or {}) do
         local plate = C_NamePlate and C_NamePlate.GetNamePlateForUnit
             and KWR.Util:Call(C_NamePlate.GetNamePlateForUnit, unit) or nil
-        local isFriend = type(UnitIsFriend) == "function"
-            and KWR.Util:Boolean(KWR.Util:Call(UnitIsFriend, "player", unit), false)
-        local isCurrentTarget = unit == "target"
-            or (type(UnitIsUnit) == "function"
-                and KWR.Util:Boolean(KWR.Util:Call(UnitIsUnit, unit, "target"), false))
-        self:ApplyFocusReadout(plate, focusMode and hasEnemyTarget and not isFriend and not isCurrentTarget)
-        if self:RefreshOrbForUnit(unit, state) then
-            self.orbVisibleCount = self.orbVisibleCount + 1
-        end
+        self:RestoreFocusReadout(plate)
+        self:HideTacticalBadge(unit)
     end
 end
 
 function CursorRing:Create()
     if self.driver then return self.driver end
-    self:CreateCursorFrame()
     self:CreateReticleFrame()
     self.activePlates = self.activePlates or {}
     local driver = CreateFrame("Frame", "KWR_CursorRingDriver", UIParent)
@@ -823,34 +804,24 @@ end
 
 function CursorRing:RefreshDriver()
     if not self.driver then return end
-    local cursorEnabled = KWR.db.profile.cursor.enabled == true
     local reticleEnabled = KWR.db.profile.cursor.reticleEnabled ~= false
     local state = currentState(self.lastState)
-    local context = state and state.snapshot and state.snapshot.context or {}
     local isArena = KWR.Util:IsArenaContext(state)
-    local isWorld = KWR.Util:Text(context.instanceType, "none", 16) == "none"
-    local cursorAllowed = cursorEnabled and not isArena and not isWorld
     local reticleAllowed = self:AllowsReticleContext(state)
         and (not isArena or self:AllowsLightweightArena(state))
     local hasTarget = reticleAllowed and reticleEnabled and type(UnitExists) == "function"
         and KWR.Util:Boolean(KWR.Util:Call(UnitExists, "target"), false)
-    self.driver:SetShown(cursorAllowed
-        or self.reticlePending == true
+    self.driver:SetShown(self.reticlePending == true
         or (self.reticle and self.reticle:IsShown())
         or hasTarget
         or (self.orbVisibleCount or 0) > 0)
 end
 
 function CursorRing:Apply()
-    local profile = KWR.db.profile.cursor
-    local frame = self:CreateCursorFrame()
-    local size = KWR.Util:Clamp(profile.size or 104, 56, 180)
-    profile.size = size
-    frame:SetSize(size, size)
-    frame.inner:SetSize(math.floor(size * 0.18), math.floor(size * 0.18))
-    frame:SetAlpha(KWR.Util:Clamp(profile.alpha or 0.95, 0.2, 1))
-    self:ApplyMode(self.mode or "NEUTRAL")
-    frame:SetShown(profile.enabled == true)
+    -- The player-following cursor ring was retired. Keep this method as a
+    -- harmless compatibility entrypoint for old SavedVariables/callers.
+    KWR.db.profile.cursor.enabled = false
+    if self.frame then self.frame:Hide() end
     self:RefreshDriver()
 end
 
@@ -943,8 +914,6 @@ function CursorRing:ApplyReticleState(state)
     end
     local label = KWR.Util:Text(state.label, "TARGET", 24)
     local showAction = label ~= "TARGET"
-    frame.labelPlate:SetBackdropBorderColor(colors.outer[1], colors.outer[2], colors.outer[3], showAction and 0.62 or 0)
-    frame.detailPlate:SetBackdropBorderColor(colors.inner[1], colors.inner[2], colors.inner[3], showAction and 0.48 or 0)
     frame.label:SetText(showAction and label or "")
     local detail = KWR.Util:Text(state.detail, "", 64)
     frame.detail:SetText(showAction and detail or "")
@@ -966,7 +935,7 @@ function CursorRing:ResolveReticleState(state)
     end
     local localTarget = combat.localTarget
     local commandTarget = combat.killTarget
-    local localKill = targetRecord and localTarget and localTarget.key == targetRecord.key
+    local localPressure = targetRecord and localTarget and localTarget.key == targetRecord.key
     local commandKill = targetRecord and commandTarget and commandTarget.key == targetRecord.key
     local wrongLocal = targetRecord and localTarget and localTarget.key ~= targetRecord.key
     local wrongCommand = targetRecord and commandTarget and commandTarget.key ~= targetRecord.key
@@ -1014,22 +983,22 @@ function CursorRing:ResolveReticleState(state)
             classFile = targetClass,
         }
     end
-    if localKill then
+    if commandKill then
         return {
             mode = "KILL",
             label = "KILL",
-            detail = KWR.Util:Text(combat.localTargetReason or combat.killReason,
-                "Local kill target", 32),
+            detail = KWR.Util:Text(combat.killReason,
+                "Observed kill window", 32),
             pulse = true,
             classFile = targetClass,
         }
     end
-    if commandKill then
+    if localPressure then
         return {
-            mode = "KILL",
-            label = "FOCUS",
-            detail = KWR.Util:Text(combat.killReason or combat.localTargetReason,
-                "Priority target", 32),
+            mode = "PRESSURE",
+            label = "PRESSURE",
+            detail = KWR.Util:Text(combat.localTargetReason,
+                "Preferred local target", 32),
             pulse = true,
             classFile = targetClass,
         }
@@ -1160,41 +1129,6 @@ function CursorRing:Update(state)
         self:RefreshDriver()
         return
     end
-    self.assignmentIndex = {}
-    if self.frame and KWR.db.profile.cursor.enabled == true then
-        self.frame:Show()
-    end
-    for _, assignment in ipairs(state.assignments or {}) do
-        local full = KWR.Util:Text(assignment.name, "", 64):lower()
-        local short = KWR.Util:Text(assignment.shortName, "", 64):lower()
-        if full ~= "" then self.assignmentIndex[full] = assignment end
-        if short ~= "" then self.assignmentIndex[short] = assignment end
-    end
-    if KWR.db.profile.cursor.enabled == true then
-        local snapshot = state.snapshot or {}
-        local combat = snapshot.combat or {}
-        local execution = snapshot.strategy
-            and snapshot.strategy.executionAssessment or {}
-        local collapse = execution.collapse or {}
-        local pressure = execution.pressureForecast or {}
-        local recovery = execution.recovery or {}
-        local action = execution.actionOpportunity or {}
-        local mode = "NEUTRAL"
-        if combat.priorityCast and combat.priorityCast.priority == "MUST_STOP" then
-            mode = "DANGER"
-        elseif collapse.state == "CRITICAL" then
-            mode = "DANGER"
-        elseif combat.priorityCast or pressure.state == "RISING" then
-            mode = "CAUTION"
-        elseif action.action == "ROTATE" or action.action == "REALLOCATE" then
-            mode = "ROTATE"
-        elseif recovery.open then
-            mode = "RECOVERY"
-        elseif execution.active and execution.confidence == "NONE" then
-            mode = "UNKNOWN"
-        end
-        if mode ~= self.mode then self:ApplyMode(mode) end
-    end
     self:RefreshReticle()
     self:RefreshOrbs()
     self:RefreshDriver()
@@ -1202,18 +1136,6 @@ end
 
 local function updateToken(_, state)
     local arena = KWR.Util:IsArenaContext(state)
-    if KWR.db.profile.cursor.enabled ~= true then
-        return KWR.Util:Signature({
-            arena,
-            false,
-            KWR.db.profile.cursor.reticleEnabled,
-            KWR.db.profile.cursor.battlefieldOrbs,
-            KWR.db.profile.cursor.markerMode,
-            KWR.db.profile.cursor.assignmentBadges,
-            KWR.db.profile.cursor.arenaLightweight,
-            KWR.db.profile.cursor.worldPvPReticle,
-        })
-    end
     local snapshot = state and state.snapshot or {}
     local combat = snapshot.combat or {}
     local execution = snapshot.strategy and snapshot.strategy.executionAssessment or {}
@@ -1221,7 +1143,7 @@ local function updateToken(_, state)
     local target = combat.localTarget or combat.killTarget or {}
     return KWR.Util:Signature({
         arena,
-        true,
+        "CURSOR_RING_RETIRED",
         state and state.revision or 0,
         snapshot.context and snapshot.context.sessionKey,
         snapshot.context and snapshot.context.mapKey,
@@ -1234,31 +1156,19 @@ local function updateToken(_, state)
         execution.actionOpportunity and execution.actionOpportunity.action,
         execution.recovery and execution.recovery.open,
         target.key or target.name,
-        KWR.db.profile.cursor.markerMode,
-        KWR.db.profile.cursor.assignmentBadges,
         KWR.db.profile.cursor.arenaLightweight,
         KWR.db.profile.cursor.worldPvPReticle,
     })
 end
 
 function CursorRing:OnUpdate(elapsed)
-    self.elapsed = (self.elapsed or 0) + (KWR.Util:Number(elapsed, 0) or 0)
+    elapsed = KWR.Util:Number(elapsed, 0) or 0
+    if elapsed ~= elapsed or elapsed < 0 or elapsed == math.huge then return end
+    self.elapsed = (self.elapsed or 0) + elapsed
     if self.elapsed < (1 / 30) then return end
+    -- Timers need every frame's time, including frames skipped by this throttle.
+    elapsed = self.elapsed
     self.elapsed = 0
-    if self.frame and self.frame:IsShown() then
-        local x, y = KWR.Util:Call(GetCursorPosition)
-        x, y = KWR.Util:Number(x, nil), KWR.Util:Number(y, nil)
-        if x and y then
-            local scale = UIParent:GetEffectiveScale()
-            if not scale or scale == 0 then scale = 1 end
-            x, y = x / scale, y / scale
-            if x ~= self.lastX or y ~= self.lastY then
-                self.frame:ClearAllPoints()
-                self.frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
-                self.lastX, self.lastY = x, y
-            end
-        end
-    end
     if self.reticle and self.reticle:IsShown() and self.reticle.pulseActive then
         self.reticlePulse = (self.reticlePulse or 0) + elapsed
         local pulse = 0.18 + (math.sin(self.reticlePulse * 6.2) + 1) * 0.16
@@ -1269,26 +1179,17 @@ function CursorRing:OnUpdate(elapsed)
     end
     self.reticleRetry = (self.reticleRetry or 0) + elapsed
     if self.reticleRetry >= 0.20 then
-        self.reticleRetry = 0
+        self.reticleRetry = self.reticleRetry % 0.20
         if (self.reticlePending or (self.reticle and self.reticle:IsShown()))
             and (KWR.db.profile.cursor.reticleEnabled ~= false) then
             self:RefreshReticle()
         end
     end
-    self.orbRetry = (self.orbRetry or 0) + elapsed
-    if self.orbRetry >= 0.25 then
-        self.orbRetry = 0
-        if KWR.db.profile.cursor.battlefieldOrbs ~= false then
-            self:RefreshOrbs()
-            self:RefreshDriver()
-        end
-    end
 end
 
 function CursorRing:SetEnabled(enabled)
-    KWR.db.profile.cursor.enabled = enabled == true
+    KWR.db.profile.cursor.enabled = false
     self:Apply()
-    if enabled then self:Update(currentState()) end
 end
 
 function CursorRing:SetReticleEnabled(enabled)
@@ -1304,13 +1205,13 @@ function CursorRing:SetReticleGuides(enabled)
 end
 
 function CursorRing:SetBattlefieldOrbs(enabled)
-    KWR.db.profile.cursor.battlefieldOrbs = enabled == true
+    KWR.db.profile.cursor.battlefieldOrbs = false
     self:RefreshOrbs()
     self:RefreshDriver()
 end
 
 function CursorRing:SetAssignmentBadges(enabled)
-    KWR.db.profile.cursor.assignmentBadges = enabled == true
+    KWR.db.profile.cursor.assignmentBadges = false
     self:RefreshOrbs()
     self:RefreshDriver()
 end

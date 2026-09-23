@@ -58,7 +58,7 @@ jobs:
         # developer archive for runtime proof. A bounded step produces a
         # visible failure instead of indefinitely holding the merge policy.
         timeout-minutes: 25
-        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel
+        run: ./tools/build.ps1 -OutputDirectory "${{ github.workspace }}/artifacts" -IncludeSentinel -RequireCleanGit
 
       - name: Upload public release evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -78,6 +78,7 @@ jobs:
           name: kwr-developer-${{ github.run_id }}-${{ github.sha }}
           path: |
             artifacts/KWR_*_DEVELOPER.zip
+            artifacts/KWR_DevTools-*.zip
             artifacts/KWR_*_DEVELOPER_CHECKSUM.txt
             artifacts/KWR_*_SOURCE_MANIFEST.json
             artifacts/KWR_*_BUILD_PROVENANCE.json

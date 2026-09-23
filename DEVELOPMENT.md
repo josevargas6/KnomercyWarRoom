@@ -3,15 +3,17 @@
 The implementation and validation sequence for the complete product is defined
 in `PRODUCT_ROADMAP.md`.
 
-Start every continuation by reading `PROJECT_HANDOFF.md`. It records the
-certified Alpha 9 baseline, agreed Alpha 10 slices, visual rules, evidence
-contract, live test factors, and promotion gates. Suggestions must be folded
-into existing owners rather than implemented as parallel engines.
+Start every continuation with `RELEASE_READINESS.md` and the active governed
+task records under `docs/tasks/`. `PROJECT_HANDOFF.md` is superseded historical
+implementation context; it must not direct the current candidate, evidence, or
+promotion state. Suggestions must be folded into existing owners rather than
+implemented as parallel engines.
 
 ## Requirements
 
 - PowerShell 5.1 or newer for validation and packaging.
-- World of Warcraft Retail 12.0.7 for field testing.
+- A currently supported World of Warcraft Retail client (interfaces `120007`
+  and `120100`) for field testing.
 - A Lua 5.1+ runtime or Node.js/Fengari for offline tests. The repository test
   runner also discovers the standard Codex and local Fengari caches.
 - BugSack/BugGrabber or equivalent Lua error capture is strongly recommended.
@@ -57,6 +59,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build.ps1
 ```
 
 The build validates first, creates a CurseForge-compatible distribution ZIP with one root addon folder, creates a separate developer ZIP, and writes SHA-256 hashes.
+It also generates `KWR_DevTools-<version>.zip` for local developer/support sessions.
+The companion is version-matched to Commander and retained with developer CI
+artifacts. Install it beside Commander and use `/kwr dev on` outside combat before
+collecting verification reports. `/kwr dev off` stops capture; reload releases the
+loaded tooling. `tools/test-lua.ps1 -Suite DevTools` tests the generated lifecycle.
 It then runs `tools/package-audit.ps1`, which verifies archive roots, required
 files, legacy exclusion, hashes, and the extracted developer validation gates.
 

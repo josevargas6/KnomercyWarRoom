@@ -36,6 +36,10 @@ local function createOptionCard(parent, title, summary, x, y, width, height)
     if type(parent.kwrCards) == "table" then
         parent.kwrCards[#parent.kwrCards + 1] = card.kwrGeometry
     end
+    if type(parent.kwrCardFrames) == "table" then
+        parent.kwrCardFrames[#parent.kwrCardFrames + 1] = card
+    end
+    card.kwrChecks = {}
     card.summary = KWR.Theme:Font(card, 8, "muted", "LEFT")
     card.summary:SetPoint("TOPLEFT", 10, -34)
     card.summary:SetPoint("TOPRIGHT", -10, -34)
@@ -44,6 +48,23 @@ local function createOptionCard(parent, title, summary, x, y, width, height)
     if card.summary.SetNonSpaceWrap then card.summary:SetNonSpaceWrap(true) end
     card.summary:SetText(summary)
     return card
+end
+
+local function setCardGeometry(card, x, y, width, height)
+    if not card or not card.kwrGeometry then return end
+    card:ClearAllPoints()
+    card:SetPoint("TOPLEFT", x, y)
+    card:SetSize(width, height)
+    local geometry = card.kwrGeometry
+    geometry.x, geometry.y, geometry.width, geometry.height = x, y, width, height
+    if card.kwrChildBottomLocal then
+        geometry.childBottom = y + card.kwrChildBottomLocal
+    end
+    for _, check in ipairs(card.kwrChecks or {}) do
+        if check.label and check.label.SetWidth then
+            check.label:SetWidth(math.max(120, width - 52))
+        end
+    end
 end
 
 local function registerCheck(self, key, check, getter, setter, options)
@@ -95,9 +116,10 @@ local function createCheck(self, parent, key, label, summary, y, getter, setter,
     end
     check.summary:SetText(summary)
     if parent and parent.kwrGeometry then
-        parent.kwrGeometry.childBottom = math.min(
-            parent.kwrGeometry.childBottom or (parent.kwrGeometry.y - parent.kwrGeometry.height),
-            parent.kwrGeometry.y + y - 48)
+        parent.kwrChildBottomLocal = math.min(parent.kwrChildBottomLocal
+            or -parent.kwrGeometry.height, y - 48)
+        parent.kwrGeometry.childBottom = parent.kwrGeometry.y + parent.kwrChildBottomLocal
+        parent.kwrChecks[#parent.kwrChecks + 1] = check
     end
     registerCheck(self, key, check, getter, setter, {
         label = label,
@@ -136,7 +158,9 @@ function Options:Refresh()
         button:SetSelected((KWR.db.profile.layoutMode or "AUTO") == mode)
     end
     for preset, button in pairs(self.combatPresetButtons or {}) do
-        button:SetSelected((KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS") == preset)
+        local selected = KWR.db.profile.hud.cardLayout == "COMPLETE" and "COMMANDER"
+            or (KWR.db.profile.hud.combatPreset or "COMBAT_FOCUS")
+        button:SetSelected(selected == preset)
     end
 end
 
@@ -145,7 +169,14 @@ function Options:SetCombatPreset(preset)
         and preset ~= "REVIEW_OBSERVER" then
         return false
     end
+    local state = KWR.Store and KWR.Store:Get() or nil
+    if preset == "COMMANDER" and state and state.snapshot and state.snapshot.context
+        and state.snapshot.context.inPvP == true then
+        KWR:Print("Commander review layout is unavailable during live combat. Focus stays active.", true)
+        return false
+    end
     KWR.db.profile.hud.combatPreset = preset
+    KWR.db.profile.hud.cardLayout = preset == "COMMANDER" and "COMPLETE" or "LEGACY"
     KWR.db.profile.hud.focusMode = preset == "COMBAT_FOCUS"
     if KWR.HUD then
         KWR.HUD:Invalidate()
@@ -160,7 +191,20 @@ function Options:SetLayoutMode(mode)
         return false
     end
     KWR.db.profile.layoutMode = mode
+    -- A scale preset is an explicit presentation choice, not a drag.  Keep
+    -- the active modal centered while its effective scale changes; otherwise
+    -- a saved edge/old-scale anchor makes it look as though the cards resized
+    -- away from the operator.  Do not disturb the independently movable HUD,
+    -- roster, Sentinel, or main command board.
+    local profile = KWR.db.profile.options
+    profile.point, profile.relativePoint, profile.x, profile.y = "CENTER", "CENTER", 0, 0
+    local frame = self.frame
+    if frame and frame:IsShown() then
+        frame:ClearAllPoints()
+        frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end
     if KWR.LayoutCoordinator then KWR.LayoutCoordinator:Apply() end
+    self:ApplyResponsiveLayout()
     self:Refresh()
     return true
 end
@@ -224,6 +268,7 @@ function Options:Create()
     frame.content = CreateFrame("Frame", nil, frame.scroll)
     frame.content:SetSize(724, 1366)
     frame.content.kwrCards = {}
+    frame.content.kwrCardFrames = {}
     if frame.scroll.SetScrollChild then
         frame.scroll:SetScrollChild(frame.content)
     end
@@ -240,7 +285,14 @@ function Options:Create()
         "Shows the compact KWR command-center view in battlegrounds and world/group-build setup, but not arena or PvE instances.",
         -72,
         function() return KWR.db.profile.hud.enabled end,
-        function(value) KWR.HUD:SetEnabled(value) end)
+        function(value)
+            if KWR.HUD and KWR.HUD.SetEnabled then
+                KWR.HUD:SetEnabled(value)
+                return true
+            end
+            KWR:Print("Command center is unavailable; reload the UI after resolving addon errors.", true)
+            return false
+        end)
     createCheck(self, commandCard,
         "hudLocked",
         "Lock compact center position",
@@ -303,81 +355,39 @@ function Options:Create()
         button:SetPoint("TOPLEFT", 10 + ((index - 1) * 106), -394)
         self.combatPresetButtons[preset] = button
     end
-    commandCard.kwrGeometry.childBottom = math.min(
-        commandCard.kwrGeometry.childBottom, -430)
+    commandCard.kwrChildBottomLocal = math.min(
+        commandCard.kwrChildBottomLocal, -430)
+    commandCard.kwrGeometry.childBottom = commandCard.kwrGeometry.y
+        + commandCard.kwrChildBottomLocal
 
     local targetCard = createOptionCard(content,
         "Targeting And Overlays",
-        "Cursor ring, reticle, guide lines, and live nameplate overlays.",
+        "Target reticle, guide lines, and live nameplate overlays.",
         366, 0, 342, 556)
-    createCheck(self, targetCard,
-        "cursorEnabled",
-        "Enable cursor ring",
-        "Shows the battlefield cursor ring while KWR is active.",
-        -72,
-        function() return KWR.db.profile.cursor.enabled end,
-        function(value) KWR.CursorRing:SetEnabled(value) end)
     createCheck(self, targetCard,
         "reticleEnabled",
         "Enable target command reticle",
         "Shows the target reticle on your current enemy target.",
-        -126,
+        -72,
         function() return KWR.db.profile.cursor.reticleEnabled ~= false end,
-        function(value) KWR.CursorRing:SetReticleEnabled(value) end,
-        {
-            available = function() return KWR.db.profile.cursor.enabled == true end,
-            unavailableText = "Requires cursor ring.",
-            allowToggleWhenUnavailable = true,
-        })
+        function(value) KWR.CursorRing:SetReticleEnabled(value) end)
     createCheck(self, targetCard,
         "reticleGuides",
         "Show target-axis guides",
         "Shows one subtle horizontal and vertical axis through the selected target lock.",
-        -180,
+        -126,
         function() return KWR.db.profile.cursor.reticleGuides ~= false end,
         function(value) KWR.CursorRing:SetReticleGuides(value) end,
         {
-            available = function()
-                return KWR.db.profile.cursor.enabled == true
-                    and KWR.db.profile.cursor.reticleEnabled ~= false
-            end,
-            unavailableText = "Requires cursor ring and reticle.",
+            available = function() return KWR.db.profile.cursor.reticleEnabled ~= false end,
+            unavailableText = "Requires target reticle.",
             allowToggleWhenUnavailable = true,
         })
-    createCheck(self, targetCard,
-        "focusNameplates",
-        "Focus target health bar only",
-        "Hides non-target hostile health/name readouts and keeps class shields visible.",
-        -234,
-        function() return KWR.db.profile.cursor.focusNameplates ~= false end,
-        function(value)
-            KWR.db.profile.cursor.focusNameplates = value == true
-            KWR.CursorRing:RefreshOrbs()
-        end,
-        {
-            available = function() return KWR.db.profile.cursor.enabled == true end,
-            unavailableText = "Requires cursor ring.",
-            allowToggleWhenUnavailable = true,
-        })
-    createCheck(self, targetCard,
-        "battlefieldOrbs",
-        "Show always-on player identity markers",
-        "Shows circular class icons above every visible player. Friendly healers use a role icon; orb and flag carriers replace the normal identity icon. Blizzard nameplates remain visible.",
-        -288,
-        function() return KWR.db.profile.cursor.battlefieldOrbs ~= false end,
-        function(value) KWR.CursorRing:SetBattlefieldOrbs(value) end)
-    createCheck(self, targetCard,
-        "assignmentBadges",
-        "Show tactical assignment badges",
-        "Shows a compact DEFEND, STRIKE, ESCORT, ROTATE, RESERVE, HEAL, or CARRY badge on assigned friendly nameplates.",
-        -342,
-        function() return KWR.db.profile.cursor.assignmentBadges ~= false end,
-        function(value) KWR.CursorRing:SetAssignmentBadges(value) end)
     createCheck(self, targetCard,
         "combatVisuals",
         "Show target spotlight and cast accents",
         "Enables kill-target glow and must-stop cast accents on the roster.",
-        -396,
+        -180,
         function() return KWR.db.profile.combatRoster.combatVisuals ~= false end,
         function(value)
             KWR.db.profile.combatRoster.combatVisuals = value
@@ -389,21 +399,21 @@ function Options:Create()
         "arenaLightweight",
         "Keep lightweight target layer in arenas",
         "Hides Commander boards and rosters while retaining only legal player nameplate markers and the target reticle.",
-        -450,
+        -234,
         function() return KWR.db.profile.cursor.arenaLightweight ~= false end,
         function(value) KWR.CursorRing:SetArenaLightweight(value) end)
     createCheck(self, targetCard,
         "worldPvPReticle",
         "Keep target reticle in world PvP",
         "Shows the KWR target reticle only for attackable player targets outside instances. It never changes TAB bindings or targets mobs/pets.",
-        -504,
+        -288,
         function() return KWR.db.profile.cursor.worldPvPReticle ~= false end,
         function(value) KWR.CursorRing:SetWorldPvPReticle(value) end)
 
     local reviewCard = createOptionCard(content,
         "Review And AAR",
-        "Controls onboarding messages, manual evidence capture, and safe preview behavior.",
-        0, -458, 342, 316)
+        "Keeps private team coaching separate from opt-in product diagnostics.",
+        0, -458, 342, 350)
     createCheck(self, reviewCard,
         "showLoadMessage",
         "Show login message",
@@ -424,8 +434,8 @@ function Options:Create()
         })
     createCheck(self, reviewCard,
         "aarEnabled",
-        "Record manual AAR evidence exports",
-        "Keeps the manual evidence export path available for reviewed match capture.",
+        "Record local team AAR",
+        "Stores a compact private review for you and your recurring team. It is never sent automatically.",
         -172,
         function() return KWR.db.profile.aar.enabled end,
         function(value)
@@ -435,12 +445,29 @@ function Options:Create()
                     "AAR capture was disabled before battleground completion.")
             end
         end)
-    if KWR.BuildInfo and KWR.BuildInfo:HasPreview() then
+    createCheck(self, reviewCard,
+        "developmentMode",
+        "Enable development diagnostics",
+        "Opt in to product/meta evidence, performance, verification, and forensic AAR capture. Sharing remains manual.",
+        -222,
+        function()
+            return KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        end,
+        function(value)
+            if KWR.BuildInfo then
+                local enabled, message = KWR.BuildInfo:SetDevelopmentMode(value)
+                if not enabled then
+                    KWR:Print(message or "Developer Tools could not be enabled.", true)
+                    return false
+                end
+            end
+        end)
+    do
         createCheck(self, reviewCard,
             "previewEnabled",
             "Enable design preview outside battlegrounds",
             "Allows preview mode only outside live battleground data.",
-            -222,
+            -272,
             function() return KWR.db.profile.preview end,
             function(value)
                 local context = KWR.Store:Get().snapshot.context
@@ -452,13 +479,16 @@ function Options:Create()
                 KWR.db.profile.preview = value
                 KWR.MatchRuntime:ForceRefresh("options-preview")
                 KWR.MainWindow:Show("TACTICAL")
-            end)
+            end, {
+                available = function() return KWR.BuildInfo:HasPreview() end,
+                unavailableText = "Enable matching Developer Tools outside combat to use preview.",
+            })
     end
 
     local presentationCard = createOptionCard(content,
         "Battleground Auto-Show",
         "Auto-manages KWR command surfaces. Use Shift-M for the native battlefield map.",
-        0, -792, 342, 196)
+        0, -826, 342, 196)
     createCheck(self, presentationCard,
         "presentationEnabled",
         "Auto-manage compact battleground surfaces",
@@ -550,11 +580,15 @@ function Options:Create()
             end
         end)
     local diagnostics = KWR.Theme:Button(utilityCard, "Copy Field Diagnostic", 168, 28, function()
-        if KWR.Verification and KWR.Verification.FieldReport then
+        if not (KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()) then
+            KWR:Print("Development diagnostics are off. Enable them before reproducing the issue.", true)
+        elseif KWR.Verification and KWR.Verification.FieldReport then
             KWR.CopyDialog:ShowText("KWR Field Diagnostic",
                 KWR.Verification:FieldReport(), {
                     note = "Local diagnostic only. It records data coverage, refresh health, and safe observation state for field testing.",
                 })
+        else
+            KWR:Print("KWR_DevTools is not loaded. Enable development mode out of combat first.", true)
         end
     end)
     diagnostics:SetPoint("TOPLEFT", 10, -174)
@@ -608,7 +642,44 @@ function Options:Create()
     end
 
     self.frame = frame
+    self:ApplyResponsiveLayout()
     return frame
+end
+
+function Options:ApplyResponsiveLayout(outerWidth)
+    local frame = self.frame
+    local content = frame and frame.content
+    if not content then return end
+    outerWidth = outerWidth or (frame.GetWidth and frame:GetWidth()) or 780
+    local contentWidth = math.max(320, math.floor(outerWidth - 44))
+    local mode = KWR.db and KWR.db.profile and KWR.db.profile.layoutMode or "AUTO"
+    local singleColumn = mode == "COMPACT" or contentWidth < 676
+    local cards = content.kwrCardFrames or {}
+    if #cards < 7 then return end
+
+    if singleColumn then
+        local width = contentWidth
+        setCardGeometry(cards[1], 0, 0, width, 440)
+        setCardGeometry(cards[2], 0, -452, width, 556)
+        setCardGeometry(cards[3], 0, -1020, width, 350)
+        setCardGeometry(cards[4], 0, -1382, width, 196)
+        setCardGeometry(cards[5], 0, -1590, width, 216)
+        setCardGeometry(cards[6], 0, -1818, width, 350)
+        setCardGeometry(cards[7], 0, -2180, width, 112)
+        content:SetSize(width, 2304)
+    else
+        local columnWidth = math.floor((contentWidth - 24) / 2)
+        local right = columnWidth + 24
+        setCardGeometry(cards[1], 0, 0, columnWidth, 440)
+        setCardGeometry(cards[2], right, 0, columnWidth, 556)
+        setCardGeometry(cards[3], 0, -458, columnWidth, 350)
+        setCardGeometry(cards[4], 0, -826, columnWidth, 196)
+        setCardGeometry(cards[5], right, -574, columnWidth, 216)
+        setCardGeometry(cards[6], right, -868, columnWidth, 350)
+        setCardGeometry(cards[7], 0, -1240, contentWidth, 112)
+        content:SetSize(contentWidth, 1366)
+    end
+    frame.kwrSingleColumn = singleColumn
 end
 
 function Options:Inventory()

@@ -1,0 +1,73 @@
+{
+  "schema": "kwr-client-build-preflight",
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-07T19:26:19.9099068Z",
+  "status": "PASS_METADATA_ONLY",
+  "scope": "Installed-client and source-metadata comparison only; this does not prove addon load, API behavior, package identity, taint safety, or release readiness.",
+  "client": {
+    "buildInfoPath": "D:\\Program Files\\World of Warcraft\\.build.info",
+    "version": "12.1.0.69587",
+    "patchVersion": "12.1.0",
+    "interface": 120100
+  },
+  "patchData": {
+    "path": "C:\\Users\\josev\\source\\repos\\KnomercyWarRoom\\Data\\PatchData.lua",
+    "activePatch": "12.1.0",
+    "interface": 120100
+  },
+  "commander": {
+    "path": "C:\\Users\\josev\\source\\repos\\KnomercyWarRoom\\KnomercyWarRoom.toc",
+    "version": "6.1.1-alpha.12",
+    "interfaces": [
+      "120007",
+      "120100"
+    ]
+  },
+  "sentinel": {
+    "path": "C:\\Users\\josev\\source\\repos\\KnomercyWarRoom\\KWRSentinel\\KWRSentinel.toc",
+    "version": "6.1.1-alpha.12",
+    "interfaces": [
+      "120007",
+      "120100"
+    ]
+  },
+  "checks": [
+    {
+      "name": "active-patch-matches-client",
+      "pass": true,
+      "expected": "12.1.0",
+      "actual": "12.1.0"
+    },
+    {
+      "name": "active-patch-interface-matches-client",
+      "pass": true,
+      "expected": 120100,
+      "actual": 120100
+    },
+    {
+      "name": "commander-declares-client-interface",
+      "pass": true,
+      "expected": 120100,
+      "actual": [
+        "120007",
+        "120100"
+      ]
+    },
+    {
+      "name": "sentinel-declares-client-interface",
+      "pass": true,
+      "expected": 120100,
+      "actual": [
+        "120007",
+        "120100"
+      ]
+    },
+    {
+      "name": "companion-versions-match",
+      "pass": true,
+      "expected": "6.1.1-alpha.12",
+      "actual": "6.1.1-alpha.12"
+    }
+  ],
+  "nextStep": "Run this check against the clean tagged package before live verification, then capture actual addon load and API behavior in Retail."
+}

@@ -4,7 +4,7 @@ KWR = KWR or {}
 _G.KWR = KWR
 
 KWR.name = addonName or "KnomercyWarRoom"
-KWR.version = "6.1.1-alpha.10"
+KWR.version = "6.1.1-alpha.29"
 KWR.schemaVersion = 60130
 KWR.modules = {}
 KWR.moduleOrder = {}
@@ -20,14 +20,19 @@ local DEFAULTS = {
         hud = {
             enabled = true,
             locked = false,
+            -- Live combat is a compact lower-right surface.  The complete
+            -- Commander reading card is never an automatic field overlay.
+            cardLayout = "LEGACY",
+            cardWide = false,
+            fieldSurfaceVersion = 3,
             -- Combat Focus is the safe, low-density default. Commander and
             -- Review/Observer remain explicit higher-context presets.
             focusMode = true,
             combatPreset = "COMBAT_FOCUS",
-            point = "CENTER",
-            relativePoint = "CENTER",
-            x = -440,
-            y = 0,
+            point = "BOTTOMRIGHT",
+            relativePoint = "BOTTOMRIGHT",
+            x = -18,
+            y = 168,
             audio = {
                 enabled = true,
                 voiceID = nil,
@@ -90,11 +95,11 @@ local DEFAULTS = {
             -- In a target call, preserve one native health bar: the current
             -- enemy. Other hostile plates keep only KWR's compact class/color
             -- shield so the battlefield remains readable.
-            focusNameplates = true,
-            battlefieldOrbs = true,
+            focusNameplates = false,
+            battlefieldOrbs = false,
             markerMode = "NATIVE",
             markerPresentationVersion = 2,
-            assignmentBadges = true,
+            assignmentBadges = false,
             arenaLightweight = true,
             worldPvPReticle = true,
         },
@@ -128,7 +133,7 @@ local DEFAULTS = {
             mode = "BOTH",
             teamShown = false,
             enemyShown = false,
-            autoShowInPvP = true,
+            autoShowInPvP = false,
             combatVisuals = true,
             teamMini = {
                 point = "CENTER",
@@ -156,10 +161,13 @@ local DEFAULTS = {
             autoRoster = true,
         },
         showLoadMessage = true,
+        developmentMode = false,
+        persistentOpponentHistory = false,
+        persistentLearning = false,
         preview = false,
         aar = {
             enabled = true,
-            autoOpen = true,
+            autoOpen = false,
         },
         -- Cross-client relay is opt-in with the Sentinel companion. Field
         -- mode enables the complete reviewed bridge explicitly.
@@ -186,7 +194,7 @@ local DEFAULTS = {
     },
 }
 
-local FIELD_ACTIVATION_VERSION = 1
+local FIELD_ACTIVATION_VERSION = 3
 
 local function activateFieldProfile(profile, force)
     profile = type(profile) == "table" and profile or {}
@@ -197,18 +205,27 @@ local function activateFieldProfile(profile, force)
     profile.preview = false
     profile.guidanceMode = "COMMAND"
     profile.hud.enabled = true
-    profile.cursor.enabled = true
+    profile.hud.cardLayout = "LEGACY"
+    profile.hud.cardWide = false
+    profile.hud.combatPreset = "COMBAT_FOCUS"
+    profile.hud.focusMode = true
+    profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
+    profile.hud.x, profile.hud.y = -18, 168
+    profile.hud.fieldSurfaceVersion = 3
+    -- The player-following cursor ring is retired. Target reticles and
+    -- nameplate identifiers remain independent presentation features.
+    profile.cursor.enabled = false
     profile.combatRoster.shown = true
     profile.combatRoster.mode = "BOTH"
     profile.combatRoster.teamShown = true
     profile.combatRoster.enemyShown = true
-    profile.combatRoster.autoShowInPvP = true
+    profile.combatRoster.autoShowInPvP = false
     profile.combatRoster.combatVisuals = true
     profile.presentation.enabled = true
     profile.presentation.autoReporter = true
     profile.presentation.autoRoster = true
     profile.aar.enabled = true
-    profile.aar.autoOpen = true
+    profile.aar.autoOpen = false
     profile.sentinelTransportEnabled = true
     profile.fieldActivationVersion = FIELD_ACTIVATION_VERSION
     return true
@@ -265,15 +282,39 @@ local function normalizeAgainstDefaults(current, defaults)
     return normalized
 end
 
-local function boundedList(source)
+local function boundedList(source, maximum)
     if type(source) ~= "table" then
         return {}
     end
     local list = {}
-    for index = 1, #source do
+    local first = 1
+    if type(maximum) == "number" and maximum >= 0 then
+        first = math.max(1, #source - math.floor(maximum) + 1)
+    end
+    for index = first, #source do
         list[#list + 1] = source[index]
     end
     return list
+end
+
+-- Some historical builds wrote private, unbounded branches that no current
+-- runtime owner reads. Retire those payloads to a tiny receipt at load time;
+-- retaining their raw tables would silently carry them into every future save.
+local function legacyReceipt(value, reason)
+    local entries = 0
+    if type(value) == "table" then
+        for _ in pairs(value) do
+            entries = entries + 1
+            if entries >= 10000 then break end
+        end
+    end
+    return {
+        schemaVersion = 1,
+        reason = reason,
+        valueType = type(value),
+        topLevelEntries = entries,
+        retainedRawPayload = false,
+    }
 end
 
 local function normalizePointBucket(bucket, defaults)
@@ -294,6 +335,8 @@ local function normalizeProfile(profile)
         and type(profile.hud) == "table"
         and profile.hud or nil
     local rawCombatPreset = rawHud and rawHud.combatPreset or nil
+    local savedFieldSurfaceVersion = rawHud
+        and (KWR.Util:Number(rawHud.fieldSurfaceVersion, 0) or 0) or 0
     local legacyFocusMode
     if rawHud then
         legacyFocusMode = rawHud.focusMode
@@ -329,7 +372,9 @@ local function normalizeProfile(profile)
     local savedReticleSize = type(profile.cursor) == "table"
         and KWR.Util:Number(profile.cursor.reticleSize, nil) or nil
     profile.cursor = normalizeAgainstDefaults(profile.cursor, defaults.cursor)
-    profile.cursor.enabled = KWR.Util:Boolean(profile.cursor.enabled, defaults.cursor.enabled)
+    -- Never resurrect the retired cursor-following ring from an older
+    -- SavedVariables profile.
+    profile.cursor.enabled = false
     profile.cursor.size = KWR.Util:Number(profile.cursor.size, defaults.cursor.size)
     profile.cursor.alpha = KWR.Util:Number(profile.cursor.alpha, defaults.cursor.alpha)
     profile.cursor.reticleEnabled = KWR.Util:Boolean(
@@ -355,8 +400,8 @@ local function normalizeProfile(profile)
         guideStyle = defaults.cursor.reticleGuideStyle
     end
     profile.cursor.reticleGuideStyle = guideStyle
-    profile.cursor.battlefieldOrbs = KWR.Util:Boolean(
-        profile.cursor.battlefieldOrbs, defaults.cursor.battlefieldOrbs)
+    profile.cursor.focusNameplates = false
+    profile.cursor.battlefieldOrbs = false
     local markerMode = KWR.Util:Upper(profile.cursor.markerMode, defaults.cursor.markerMode, 20)
     if markerMode ~= "NATIVE" and markerMode ~= "TACTICAL_ONLY" and markerMode ~= "OFF" then
         markerMode = defaults.cursor.markerMode
@@ -366,8 +411,7 @@ local function normalizeProfile(profile)
     -- Preserve explicit OFF/TACTICAL_ONLY and battlefield-orb opt-outs when
     -- stamping the presentation version onto an older profile.
     profile.cursor.markerPresentationVersion = defaults.cursor.markerPresentationVersion
-    profile.cursor.assignmentBadges = KWR.Util:Boolean(
-        profile.cursor.assignmentBadges, defaults.cursor.assignmentBadges)
+    profile.cursor.assignmentBadges = false
     profile.cursor.arenaLightweight = KWR.Util:Boolean(
         profile.cursor.arenaLightweight, defaults.cursor.arenaLightweight)
     profile.cursor.worldPvPReticle = KWR.Util:Boolean(
@@ -454,6 +498,8 @@ local function normalizeProfile(profile)
     end
     profile.showLoadMessage = KWR.Util:Boolean(
         profile.showLoadMessage, defaults.showLoadMessage)
+    profile.developmentMode = KWR.Util:Boolean(
+        profile.developmentMode, defaults.developmentMode)
     profile.preview = KWR.Util:Boolean(profile.preview, defaults.preview)
     profile.aar = normalizeAgainstDefaults(profile.aar, defaults.aar)
     profile.aar.enabled = KWR.Util:Boolean(profile.aar.enabled, defaults.aar.enabled)
@@ -491,21 +537,61 @@ local function normalizeProfile(profile)
         profile.hud.combatPreset = defaults.hud.combatPreset
     end
     profile.hud.focusMode = profile.hud.combatPreset == "COMBAT_FOCUS"
+    if profile.hud.cardLayout ~= "COMPLETE" and profile.hud.cardLayout ~= "LEGACY" then
+        profile.hud.cardLayout = defaults.hud.cardLayout
+    end
+    -- Alpha.15 demonstrated that preserving the old complete-card preference
+    -- can put a viewport-sized review board over live combat.  This is a
+    -- safety migration, not a cosmetic default: all older field profiles
+    -- become the bounded lower-right focus surface exactly once.
+    if savedFieldSurfaceVersion < 3 then
+        profile.hud.cardLayout = "LEGACY"
+        profile.hud.cardWide = false
+        profile.hud.combatPreset = "COMBAT_FOCUS"
+        profile.hud.focusMode = true
+        profile.hud.point, profile.hud.relativePoint = "BOTTOMRIGHT", "BOTTOMRIGHT"
+        profile.hud.x, profile.hud.y = -18, 168
+    end
+    profile.hud.fieldSurfaceVersion = 3
     return profile
 end
 
 local function normalizeRootBranches(database)
+    database.retiredLegacy = type(database.retiredLegacy) == "table"
+        and database.retiredLegacy or {}
+    local function retire(key, value, reason)
+        if value ~= nil then
+            database.retiredLegacy[key] = legacyReceipt(value, reason)
+        end
+    end
+    -- These were historical standalone persistence roots. Current AAR uses
+    -- journal and current tactical intel uses owner modules; neither root has
+    -- a consumer or a valid migration contract.
+    if database.aar ~= nil then
+        retire("aar", database.aar, "UNOWNED_LEGACY_AAR_ROOT")
+        database.aar = nil
+    end
+    if database.fieldIntel ~= nil then
+        retire("fieldIntel", database.fieldIntel, "UNOWNED_LEGACY_FIELD_INTEL_ROOT")
+        database.fieldIntel = nil
+    end
     database.journal = type(database.journal) == "table" and database.journal or {}
-    database.journal.history = boundedList(database.journal.history)
+    -- Bound during deserialization, before AAR's later owner-level compaction.
+    -- Retain newest chronological records so a malformed or legacy oversized
+    -- table cannot briefly load an unbounded history into the live runtime.
+    database.journal.history = boundedList(database.journal.history, 8)
     database.journal.interrupted = type(database.journal.interrupted) == "table"
         and database.journal.interrupted or nil
     database.enemyNotes = type(database.enemyNotes) == "table" and database.enemyNotes or {}
-    database.encounters = type(database.encounters) == "table" and database.encounters or {}
-    database.encounters.players = type(database.encounters.players) == "table"
-        and database.encounters.players or {}
-    database.learning = type(database.learning) == "table" and database.learning or {}
-    database.learning.plans = type(database.learning.plans) == "table"
-        and database.learning.plans or {}
+    if type(database.encounters) ~= "table" then
+        database.encounters = { legacyPayload = database.encounters, players = {} }
+    elseif type(database.encounters.players) ~= "table" then
+        database.encounters.legacyPlayers = database.encounters.players
+        database.encounters.players = {}
+    end
+    -- Persistent doctrine learning was retired; current commands use the
+    -- reviewed map doctrine and live public truth only.
+    database.learning = nil
     database.assignmentOverrides = type(database.assignmentOverrides) == "table"
         and database.assignmentOverrides or {}
     database.assignmentOverrides.players =
@@ -517,13 +603,8 @@ local function normalizeRootBranches(database)
     database.assignmentOverrides.ambiguousLegacy =
         type(database.assignmentOverrides.ambiguousLegacy) == "table"
         and database.assignmentOverrides.ambiguousLegacy or {}
-    database.opponentModels = type(database.opponentModels) == "table"
-        and database.opponentModels or {}
-    database.opponentModels.players = type(database.opponentModels.players) == "table"
-        and database.opponentModels.players or {}
-    database.opponentModels.processedMatches =
-        type(database.opponentModels.processedMatches) == "table"
-        and database.opponentModels.processedMatches or {}
+    -- Do not retain per-opponent tendency profiles between sessions.
+    database.opponentModels = nil
     return database
 end
 
@@ -613,7 +694,8 @@ function KWR:InitializeModules()
     local totalStarted = type(debugprofilestop) == "function" and debugprofilestop() or 0
     for _, name in ipairs(self.moduleOrder) do
         local started = type(debugprofilestop) == "function" and debugprofilestop() or 0
-        self:CallModule(self.modules[name], "OnInitialize")
+        local module = self.modules[name]
+        module.__kwrInitialized = self:CallModule(module, "OnInitialize") == true
         if started > 0 and type(debugprofilestop) == "function" then
             self.bootDiagnostics.moduleMs[name] = math.max(0, debugprofilestop() - started)
         end
@@ -635,7 +717,8 @@ end
 
 function KWR:EnableModules()
     for _, name in ipairs(self.moduleOrder) do
-        self:CallModule(self.modules[name], "OnEnable")
+        local module = self.modules[name]
+        module.__kwrEnabled = self:CallModule(module, "OnEnable") == true
     end
 end
 
@@ -660,6 +743,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
         KWR.ready = true
     elseif event == "PLAYER_LOGIN" then
         KWR:EnableModules()
+        if KWR.db.profile.developmentMode and KWR.BuildInfo then
+            local restored, message = KWR.BuildInfo:RestoreDeveloperTools()
+            if not restored then KWR:Print(message, true) end
+        end
         if KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentBuild() then
             KWR:Print("KWR DEVELOPMENT BUILD - NOT FOR PRODUCTION USE", true)
         end

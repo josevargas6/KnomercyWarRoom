@@ -1,6 +1,9 @@
 local _, Sentinel = ...
 
-local Observer = { lastState = "", lastVisible = "", lastCast = "" }
+local Observer = {
+    lastState = "", lastVisible = "", lastCast = "",
+    castReadErrors = 0, protectedCastSamples = 0,
+}
 Sentinel.Observer = Observer
 
 local function safeText(value, fallback, maximum)
@@ -55,16 +58,40 @@ local function targetObservation()
     return "enemy=" .. name .. ";visible=" .. visible .. ";range=UNKNOWN;engaged=0"
 end
 
-local function castObservation()
-    if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
-    local _, _, _, _, _, _, _, spellID = UnitCastingInfo("target")
+local function readCastSpellID()
+    local spellID
+    if type(UnitCastingInfo) == "function" then
+        -- Casting returns interruptibility at eight and spell ID at nine.
+        local _, _, _, _, _, _, _, _, castingSpellID = UnitCastingInfo("target")
+        spellID = castingSpellID
+    end
     -- A protected cast can be returned as a secret value. Do not branch on
     -- or serialize it; skip only this sample and keep later public samples.
-    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil end
-    if not spellID then _, _, _, _, _, _, _, spellID = UnitChannelInfo("target") end
-    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil end
-    if not tonumber(spellID) then return nil end
-    return "enemy=" .. encode(unitIdentity("target"), 64) .. ";spell=" .. tostring(spellID) .. ";state=START"
+    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil, "protected" end
+    if spellID == nil and type(UnitChannelInfo) == "function" then
+        local _, _, _, _, _, _, _, channelSpellID = UnitChannelInfo("target")
+        spellID = channelSpellID
+    end
+    if type(issecretvalue) == "function" and issecretvalue(spellID) then return nil, "protected" end
+    if type(spellID) ~= "number" or spellID ~= spellID or spellID <= 0
+        or spellID == math.huge or spellID % 1 ~= 0 then return nil end
+    return spellID
+end
+
+local function castObservation()
+    if not UnitExists("target") or not UnitCanAttack("player", "target") then return nil end
+    local ok, spellID, reason = pcall(readCastSpellID)
+    if not ok then
+        Observer.castReadErrors = Observer.castReadErrors + 1
+        return nil
+    end
+    if reason == "protected" then
+        Observer.protectedCastSamples = Observer.protectedCastSamples + 1
+    end
+    if not spellID then return nil end
+    local enemy = encode(unitIdentity("target"), 64)
+    if enemy == "" then return nil end
+    return "enemy=" .. enemy .. ";spell=" .. tostring(spellID) .. ";state=START"
 end
 
 function Observer:SendHello()

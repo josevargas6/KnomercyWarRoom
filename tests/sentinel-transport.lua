@@ -65,7 +65,25 @@ assert(loadfile(sentinelRoot .. "/Relay.lua"))("KWRSentinel", Sentinel)
 
 local Comm = assert(Sentinel.Comm)
 local Relay = assert(Sentinel.Relay)
+local driverRoot = tostring(rawget(_G, "KWR_TEST_DRIVER_ROOT") or "tests"):gsub("\\", "/")
+local checkEnvelope = assert(loadfile(driverRoot .. "/fixtures/sync_envelope.lua"))()
+assert(checkEnvelope(Comm) >= 300, "Sentinel parser vectors did not run")
 Comm:OnInitialize()
+-- Exercise the actual HUD formatter without creating any WoW frames. Its
+-- local formatter is an upvalue, so no test-only runtime API is needed.
+assert(loadfile(sentinelRoot .. "/HUD.lua"))("KWRSentinel", Sentinel)
+local scoreHeadline
+for index = 1, 40 do
+    local name, fn = debug.getupvalue(Sentinel.HUD.Update, index)
+    if not name then break end
+    if name == "scoreHeadline" then scoreHeadline = fn end
+end
+assert(scoreHeadline, "Sentinel score formatter was not exercised.")
+assert(scoreHeadline({mode="LIVE",score={known=false,friendly=0,enemy=0,status="WINNING"}}):find("UNKNOWN | UNKNOWN",1,true),
+    "Unknown score retained a stale win/tie badge.")
+assert(scoreHeadline({mode="LIVE",score={known=true,friendly=0,enemy=0,status="WAITING"}}):find("0 - 0 | TIED",1,true),
+    "Observed zero-zero score lost its valid tie presentation.")
+Sentinel.HUD = { Update = function() Sentinel.hudUpdates = Sentinel.hudUpdates + 1 end }
 assert(registered.KWRSync1, "Sentinel transport did not register its KWRSync1 prefix")
 
 local function setLeader(index)
@@ -209,6 +227,92 @@ do
     _G.Sentinel = oldSentinel
     InCombatLockdown = oldLockdown
     SlashCmdList = oldSlashCmdList
+end
+
+do
+    assert(loadfile(sentinelRoot .. "/Observer.lua"))("KWRSentinel", Sentinel)
+    local observer = assert(Sentinel.Observer)
+    local saved, names = {}, { "UnitExists", "UnitCanAttack", "UnitFullName", "UnitIsVisible",
+        "UnitClass", "UnitCastingInfo", "UnitChannelInfo", "issecretvalue" }
+    for _, name in ipairs(names) do saved[name] = rawget(_G, name) end
+    local send = Comm.Send
+    local castBody, castSends, channelCalls = nil, 0, 0
+    Comm.Send = function(_, kind, body)
+        if kind == "OBS_CAST" then castBody, castSends = body, castSends + 1 end
+        return true
+    end
+    UnitExists = function() return true end
+    UnitCanAttack = function() return true end
+    UnitFullName = function(unit) return unit == "target" and "Enemy" or "Sentinel", "Realm" end
+    UnitIsVisible = function() return true end
+    UnitClass = function() return "Mage", "MAGE" end
+    local opaque = setmetatable({}, { __tostring = function() error("secret serialized") end })
+    issecretvalue = function(value) return rawequal(value, opaque) end
+    UnitChannelInfo = function() channelCalls = channelCalls + 1 end
+    for _, interruptible in ipairs({ false, true, opaque }) do
+        UnitCastingInfo = function()
+            return "Cast", nil, nil, nil, nil, nil, "cast-guid", interruptible, 118
+        end
+        castBody = nil
+        observer:Tick()
+        assert(castBody == "enemy=Enemy%2DRealm;spell=118;state=START"
+            or castBody == "enemy=Enemy-Realm;spell=118;state=START",
+            "Casting observation did not use return nine independently of interruptibility")
+    end
+    assert(channelCalls == 0, "Valid casting spell unexpectedly read channel data")
+    UnitCastingInfo = function() return nil end
+    UnitChannelInfo = function()
+        channelCalls = channelCalls + 1
+        return "Channel", nil, nil, nil, nil, nil, false, 15407
+    end
+    castBody = nil
+    observer:Tick()
+    assert(castBody and castBody:find("spell=15407", 1, true), "Channel spell did not use return eight")
+    UnitCastingInfo = nil
+    castBody = nil
+    observer:Tick()
+    assert(castBody and castBody:find("spell=15407", 1, true), "Missing casting API blocked public channel fallback")
+
+    local function noCast(message)
+        local before = castSends
+        observer:Tick()
+        assert(castSends == before and observer.lastCast == "", message)
+    end
+    UnitChannelInfo = nil
+    noCast("Missing cast APIs emitted an observation")
+    UnitCastingInfo = function() error("cast API unavailable in this context") end
+    local errors = observer.castReadErrors
+    noCast("Throwing casting API emitted an observation")
+    assert(observer.castReadErrors == errors + 1, "Cast API failure was not diagnosed")
+    UnitCastingInfo = function() return nil end
+    UnitChannelInfo = function() error("channel unavailable") end
+    noCast("Throwing channel API emitted an observation")
+    UnitChannelInfo = function() return nil end
+    for _, spellID in ipairs({ false, 0, -1, 1.5, math.huge, 0 / 0, "118" }) do
+        UnitCastingInfo = function() return nil, nil, nil, nil, nil, nil, nil, false, spellID end
+        noCast("Invalid casting spell ID emitted an observation")
+    end
+    local protected = observer.protectedCastSamples
+    UnitCastingInfo = function() return nil, nil, nil, nil, nil, nil, nil, false, opaque end
+    UnitChannelInfo = function() error("must not fall back from a secret cast") end
+    errors = observer.castReadErrors
+    noCast("Secret casting spell was serialized")
+    assert(observer.castReadErrors == errors, "Secret cast fell back to another API")
+    UnitCastingInfo = function() return nil end
+    UnitChannelInfo = function() return nil, nil, nil, nil, nil, nil, false, opaque end
+    noCast("Secret channel spell was serialized")
+    assert(observer.protectedCastSamples == protected + 2, "Protected samples were not diagnosed")
+    UnitCastingInfo = function() return nil, nil, nil, nil, nil, nil, nil, false, 118 end
+    castBody = nil
+    observer:Tick()
+    assert(castBody and castBody:find("spell=118", 1, true), "Public casts did not recover after rejected samples")
+    Sentinel.transport = false
+    local before = castSends
+    observer:Tick()
+    assert(castSends == before, "Disabled transport still emitted a cast observation")
+    Sentinel.transport = true
+    Comm.Send = send
+    for _, name in ipairs(names) do _G[name] = saved[name] end
 end
 
 print("KWR_SENTINEL_TRANSPORT_PASS accepted=" .. tostring(Comm.diagnostics.received)

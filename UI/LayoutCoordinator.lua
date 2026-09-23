@@ -27,19 +27,25 @@ local BLIZZARD_WINDOWS = {
 }
 
 local MAX_CONTAINER_FRAMES = 13
+local lastScreenWidth, lastScreenHeight = 1920, 1080
 
 local KWR_STRATA = {
     { "MainWindow", "HIGH" },
     { "HUD", "HIGH" },
     { "Options", "HIGH" },
-    { "AARWindow", "HIGH" },
     { "CopyDialog", "HIGH" },
 }
 
 local function screenSize()
     local width = UIParent and UIParent.GetWidth and UIParent:GetWidth() or 1920
     local height = UIParent and UIParent.GetHeight and UIParent:GetHeight() or 1080
-    return math.max(1, width), math.max(1, height)
+    -- Retail can expose a 1px transitional UIParent geometry while changing
+    -- displays/instances.  Treat it as unavailable rather than scaling or
+    -- clamping every managed surface against that value.
+    if type(width) == "number" and type(height) == "number" and width >= 640 and height >= 480 then
+        lastScreenWidth, lastScreenHeight = width, height
+    end
+    return lastScreenWidth, lastScreenHeight
 end
 
 function LayoutCoordinator:AutoProfile()
@@ -95,6 +101,12 @@ function LayoutCoordinator:Clamp(frame, margin)
     if not frame or not frame.IsShown or not frame:IsShown() then return end
     if frame.KWRDragging then return end
     local width, height = screenSize()
+    -- A failed/incomplete render can leave a frame with impossible geometry.
+    -- Let the owning surface repair that state rather than asking Blizzard's
+    -- backdrop logic to clamp invalid dimensions.
+    local frameWidth, frameHeight = frame:GetWidth(), frame:GetHeight()
+    if not frameWidth or not frameHeight or frameWidth <= 0 or frameHeight <= 0
+        or frameWidth > width * 2 or frameHeight > height * 2 then return end
     local left, right = frame:GetLeft(), frame:GetRight()
     local bottom, top = frame:GetBottom(), frame:GetTop()
     if not left or not right or not bottom or not top then return end
@@ -160,6 +172,10 @@ function LayoutCoordinator:BlizzardWindowOpen()
 end
 
 function LayoutCoordinator:ApplyStrata()
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingApply = true
+        return false
+    end
     local lowered = self:BlizzardWindowOpen()
     local strata = lowered and "MEDIUM" or nil
     for _, entry in ipairs(KWR_STRATA) do
@@ -185,6 +201,7 @@ function LayoutCoordinator:ApplyStrata()
     if menu and menu.SetFrameStrata then
         menu:SetFrameStrata(lowered and "MEDIUM" or "HIGH")
     end
+    return true
 end
 
 function LayoutCoordinator:ApplyMainWindow()
@@ -220,11 +237,17 @@ end
 function LayoutCoordinator:ApplyHUD()
     local hud = KWR.HUD and KWR.HUD.frame
     if not hud then return end
+    -- CommanderCard owns the host's measured size, viewport fallback and
+    -- clamping while its complete live surface is active.  Calling GetWidth
+    -- here can force Blizzard's nine-slice layout on an incomplete render;
+    -- that is the Texture:SetTextCoord out-of-range path reported in field.
+    if hud.cardActive then return end
     local profile = self:Profile()
     applyScale(hud, visibleScale(hud, profile.scale, profile.margin))
-    -- HUD.lua owns the deliberate 548px setup / 500px fight-mode sizes.
-    -- The coordinator only keeps the active mode's frame inside the viewport.
-    self:Clamp(hud, profile.margin)
+    -- HUD.lua owns its geometry.  In particular, polling Clamp here compares
+    -- effective-scale coordinates to UIParent coordinates and can walk the
+    -- Setup Center from one side of the screen to the other.  A saved anchor
+    -- must remain stable until the operator drags it or explicitly resets it.
 end
 
 function LayoutCoordinator:ApplyOptions()
@@ -238,6 +261,9 @@ function LayoutCoordinator:ApplyOptions()
     if options:GetWidth() ~= targetWidth or options:GetHeight() ~= targetHeight then
         options:SetSize(targetWidth, targetHeight)
     end
+    if KWR.Options and KWR.Options.ApplyResponsiveLayout then
+        KWR.Options:ApplyResponsiveLayout(targetWidth)
+    end
     applyScale(options, visibleScale(options, profile.scale, profile.margin))
     self:Clamp(options, profile.margin)
 end
@@ -245,110 +271,28 @@ end
 function LayoutCoordinator:ApplySentinel()
     local sentinel = _G.KWRSentinel
     local sentinelProfile = sentinel and sentinel.db and sentinel.db.profile
-    if not sentinelProfile or not sentinel.HUD or not sentinel.Panels then return end
+    if not sentinelProfile or not sentinel.HUD then return end
     local hud = sentinel.HUD.frame
-    local status = sentinel.Panels.statusFrame
+    local status = sentinel.Panels and sentinel.Panels.statusFrame
     if not hud then return end
-
-    local hudProfile = sentinelProfile.hud
-    local panelsProfile = sentinelProfile.panels
-    local hudMoving = hud.KWRDragging == true
-    local statusMoving = status and status.KWRDragging == true
-    -- Do not replace anchors or clamp a Sentinel panel during a live drag.
-    -- The drop handler owns persistence for that movement.
-    local manageHud = hudProfile.layoutManaged ~= false and not hudMoving
-    local manageStatus = status and panelsProfile.layoutManaged ~= false and not statusMoving
-    if not manageHud and not manageStatus then
-        self:Clamp(hud, self:Profile().margin)
-        self:Clamp(status, self:Profile().margin)
-        return
-    end
-
-    local width, height = screenSize()
     local margin = self:Profile().margin
+    -- Sentinel's old candidate search re-anchored the panel whenever a KWR
+    -- surface appeared or disappeared.  That makes it sweep between screen
+    -- sides and still cannot account for Blizzard bags/minimap.  Retain the
+    -- user/default anchor; positioning is now explicit drag/reset behavior.
     applyScale(hud, visibleScale(hud, self:Profile().scale, margin))
     applyScale(status, visibleScale(status, self:Profile().scale, margin))
-    local hudWidth, hudHeight = hud:GetWidth(), hud:GetHeight()
-    local statusWidth = status and status:GetWidth() or 320
-    local statusHeight = status and status:GetHeight() or 168
-    local gap = 12
-    local occupied = {}
-    for _, frame in ipairs({
-        KWR.MainWindow and KWR.MainWindow.frame,
-        KWR.MainWindow and KWR.MainWindow.launcherMenu,
-        KWR.HUD and KWR.HUD.frame,
-        KWR.CombatRoster and KWR.CombatRoster.teamFrame,
-        KWR.CombatRoster and KWR.CombatRoster.enemyFrame,
-    }) do
-        local rect = frameRect(frame)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-    if not manageHud then
-        local rect = frameRect(hud)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-    if status and not manageStatus then
-        local rect = frameRect(status)
-        if rect then occupied[#occupied + 1] = rect end
-    end
-
-    local candidates = {
-        { side = "RIGHT", top = height - margin },
-        { side = "LEFT", top = height - margin },
-        { side = "RIGHT", top = hudHeight + statusHeight + gap + margin },
-        { side = "LEFT", top = hudHeight + statusHeight + gap + margin },
-    }
-    local best
-    for _, candidate in ipairs(candidates) do
-        local hudLeft = candidate.side == "RIGHT" and width - margin - hudWidth or margin
-        local statusLeft = candidate.side == "RIGHT" and width - margin - statusWidth or margin
-        local statusTop = candidate.top - hudHeight - gap
-        local hudRect = { left = hudLeft, right = hudLeft + hudWidth,
-            bottom = candidate.top - hudHeight, top = candidate.top }
-        local statusRect = { left = statusLeft, right = statusLeft + statusWidth,
-            bottom = statusTop - statusHeight, top = statusTop }
-        local overlap = manageHud and manageStatus
-            and intersectionArea(hudRect, statusRect) or 0
-        for _, rect in ipairs(occupied) do
-            if manageHud then overlap = overlap + intersectionArea(hudRect, rect) end
-            if manageStatus then overlap = overlap + intersectionArea(statusRect, rect) end
-        end
-        if not best or overlap < best.overlap then
-            best = { overlap = overlap, hud = hudRect, status = statusRect }
-        end
-    end
-    if not best then return end
-    if manageHud then
-        if setSentinelAnchor(hudProfile, "TOPLEFT", best.hud.left, best.hud.top - height) then
-            hud:ClearAllPoints()
-            hud:SetPoint(hudProfile.point, UIParent, hudProfile.relativePoint,
-                hudProfile.x, hudProfile.y)
-        end
-    end
-    if manageStatus then
-        local statusProfile = panelsProfile.status
-        if setSentinelAnchor(statusProfile, "TOPLEFT", best.status.left, best.status.top - height) then
-            status:ClearAllPoints()
-            status:SetPoint(statusProfile.point, UIParent, statusProfile.relativePoint,
-                statusProfile.x, statusProfile.y)
-        end
-    end
-    self:Clamp(hud, margin)
-    self:Clamp(status, margin)
 end
 
 function LayoutCoordinator:Apply()
-    -- Strata changes touch only KWR-owned, unprotected shell frames. Keep
-    -- Blizzard bags and panels above KWR even when combat blocks re-anchoring.
-    self:ApplyStrata()
     if InCombatLockdown and InCombatLockdown() then
         self.pendingApply = true
         return false
     end
-    -- Layout changes re-anchor frames and scroll containers. Retail can mark
-    -- those operations protected while combat is active, so no periodic or
-    -- display-change layout work may run until PLAYER_REGEN_ENABLED.
+    -- Native frame relationships can protect strata as well as anchors.
+    -- Apply deferred layout work after PLAYER_REGEN_ENABLED.
     self.pendingApply = nil
+    self:ApplyStrata()
     self:ApplyMainWindow()
     self:ApplyHUD()
     self:ApplyOptions()
@@ -366,7 +310,12 @@ function LayoutCoordinator:Reset()
     if KWR.db and KWR.db.profile then
         local profile = KWR.db.profile
         profile.main.point, profile.main.relativePoint, profile.main.x, profile.main.y = "CENTER", "CENTER", 0, 0
-        profile.hud.point, profile.hud.relativePoint, profile.hud.x, profile.hud.y = "CENTER", "CENTER", -440, 0
+        -- Reset must recover the field-safe surface, not restore the old
+        -- centered board that obscured live combat in alpha.15.
+        profile.hud.point, profile.hud.relativePoint, profile.hud.x, profile.hud.y = "BOTTOMRIGHT", "BOTTOMRIGHT", -18, 168
+        profile.hud.cardLayout, profile.hud.cardWide = "LEGACY", false
+        profile.hud.combatPreset, profile.hud.focusMode = "COMBAT_FOCUS", true
+        profile.hud.fieldSurfaceVersion = 3
         profile.options.point, profile.options.relativePoint, profile.options.x, profile.options.y = "CENTER", "CENTER", 0, 0
         profile.launcher.angle = 225
         local roster = profile.combatRoster
@@ -385,7 +334,7 @@ function LayoutCoordinator:Reset()
         if frame then frame:ClearAllPoints() end
     end
     if KWR.MainWindow and KWR.MainWindow.frame then KWR.MainWindow.frame:SetPoint("CENTER") end
-    if KWR.HUD and KWR.HUD.frame then KWR.HUD.frame:SetPoint("CENTER", UIParent, "CENTER", -440, 0) end
+    if KWR.HUD and KWR.HUD.frame then KWR.HUD.frame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -18, 168) end
     if KWR.Options and KWR.Options.frame then KWR.Options.frame:SetPoint("CENTER") end
     if KWR.MainWindow and KWR.MainWindow.launcher then
         KWR.MainWindow:PositionLauncher()

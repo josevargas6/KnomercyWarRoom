@@ -205,18 +205,23 @@ function MainWindowLauncher:CreateMenu(owner)
     menu.rule:SetHeight(1)
     local items = {
         { "WAR ROOM", "commander", function() owner:Show("TACTICAL") end },
-        { "FIGHT NOW", "hold", function() KWR.HUD:Toggle() end },
+        { "FIGHT NOW", "hold", function()
+            if KWR.HUD and KWR.HUD.Toggle then KWR.HUD:Toggle() end
+        end },
         { "TEAM BOARD", "friendly", function() owner:Show("TEAM") end },
         { "OPEN BATTLEFIELD MAP", "observed", openBattlefieldMap },
         { "ENEMY BOARD", "enemy", function() owner:Show("ENEMIES") end },
         { "REVIEW / AAR", "priority", function() owner:Show("INTEL") end },
         { "AAR EXPORT", "assignment", function() owner:ShowAARExport() end },
-        { "VERIFY", "ready", function()
+    }
+    if KWR.BuildInfo and KWR.BuildInfo:IsDevelopmentMode()
+        and KWR.Verification and KWR.Verification.CurrentReport then
+        items[#items + 1] = { "VERIFY", "ready", function()
             KWR.CopyDialog:ShowText("KWR Live Verification", KWR.Verification:CurrentReport(), {
                 note = "Summary first, raw details below. Scroll to inspect the full verification report.",
             })
-        end },
-    }
+        end }
+    end
     menu.buttons = {}
     for index, item in ipairs(items) do
         local action = item[3]

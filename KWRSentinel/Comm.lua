@@ -18,6 +18,11 @@ local ALLOWED = {
     RELAY_CONTROL = true, RELAY_ACTION = true,
 }
 local LIMITS = { HELLO = 20, STATE = 2, OBS_VISIBLE = 1, OBS_CAST = 0.2, OBS_CARRIER = 1, OBS_PRESSURE = 2 }
+local ENVELOPE_FIELDS = {
+    v = true, sid = true, seq = true, kind = true,
+    ts = true, ep = true, src = true, body = true,
+}
+local MAX_EXACT_INTEGER = 9007199254740991
 
 local function isSecret(value)
     if type(issecretvalue) ~= "function" then return false end
@@ -72,9 +77,43 @@ local function escape(value)
     end))
 end
 
+-- Both standalone transports use the same bounded UTF-8 protocol vectors.
+local function validText(value)
+    if value:find("[%z\1-\31\127]") then return false end
+    local index = 1
+    while index <= #value do
+        local first = value:byte(index)
+        local trailing, minimum, maximum = 0, 128, 191
+        if first < 128 then
+            trailing = 0
+        elseif first >= 194 and first <= 223 then
+            trailing = 1
+        elseif first >= 224 and first <= 239 then
+            trailing = 2
+            if first == 224 then minimum = 160 end
+            if first == 237 then maximum = 159 end
+        elseif first >= 240 and first <= 244 then
+            trailing = 3
+            if first == 240 then minimum = 144 end
+            if first == 244 then maximum = 143 end
+        else
+            return false
+        end
+        for offset = 1, trailing do
+            local byte = value:byte(index + offset)
+            local lower = offset == 1 and minimum or 128
+            local upper = offset == 1 and maximum or 191
+            if not byte or byte < lower or byte > upper then return false end
+        end
+        index = index + trailing + 1
+    end
+    return true
+end
+
 local function unescape(value)
-    if type(value) ~= "string" or value:find("%%[^%x]", 1) or value:find("%%$", 1) then return nil end
-    return value:gsub("%%(%x%x)", function(hex) return string.char(tonumber(hex, 16)) end)
+    if type(value) ~= "string" or value:gsub("%%(%x%x)", ""):find("%%") then return nil end
+    local decoded = value:gsub("%%(%x%x)", function(hex) return string.char(tonumber(hex, 16)) end)
+    return validText(decoded) and decoded or nil
 end
 
 local function now()
@@ -147,22 +186,29 @@ function Comm:Encode(kind, body)
 end
 
 function Comm:Decode(payload)
-    if type(payload) ~= "string" or #payload == 0 or #payload > self.MAX_BYTES then return nil end
+    if isSecret(payload) or type(payload) ~= "string"
+        or #payload == 0 or #payload > self.MAX_BYTES then return nil end
+    if payload:sub(1, 1) == "|" or payload:sub(-1) == "|"
+        or payload:find("||", 1, true) then return nil end
     local fields, count = {}, 0
     for field in payload:gmatch("[^|]+") do
         local key, value = field:match("^([a-z]+)=(.*)$")
-        if not key or fields[key] ~= nil then return nil end
+        if not ENVELOPE_FIELDS[key] or fields[key] ~= nil then return nil end
         fields[key], count = value, count + 1
     end
     if count ~= 8 or fields.v ~= self.VERSION or not ALLOWED[fields.kind]
         or not fields.sid or not fields.seq or not fields.ts or not fields.ep or not fields.src
         or fields.body == nil or not fields.seq:match("^%d+$")
         or not fields.ts:match("^%d+$") then return nil end
+    local sequence, timestamp = tonumber(fields.seq), tonumber(fields.ts)
+    if not sequence or sequence < 1 or sequence > MAX_EXACT_INTEGER
+        or not timestamp or timestamp < 0 or timestamp > MAX_EXACT_INTEGER then return nil end
     local packet = { kind = fields.kind, session = unescape(fields.sid),
-        sequence = tonumber(fields.seq), timestamp = tonumber(fields.ts),
+        sequence = sequence, timestamp = timestamp,
         epoch = unescape(fields.ep),
         source = unescape(fields.src), body = unescape(fields.body) }
-    return packet.session and packet.epoch and packet.source and packet.body and packet or nil
+    return packet.session and packet.session ~= "" and packet.epoch and packet.epoch ~= ""
+        and packet.source and packet.source ~= "" and packet.body and packet or nil
 end
 
 function Comm:Send(kind, body)

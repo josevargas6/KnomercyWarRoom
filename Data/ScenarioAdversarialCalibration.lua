@@ -3179,7 +3179,7 @@ function ScenarioAdversarialCalibration:GetMapPhaseSummary(mapKey, phase)
     return row and KWR.Util:Copy(row) or nil
 end
 
-function ScenarioAdversarialCalibration:GetByMapAndPhase(mapKey, phase)
+local function getPhaseRow(mapKey, phase)
     mapKey = KWR.Util:Upper(mapKey, nil, 24)
     phase = KWR.Util:Upper(phase, nil, 24)
     if not mapKey or not phase then
@@ -3190,28 +3190,25 @@ function ScenarioAdversarialCalibration:GetByMapAndPhase(mapKey, phase)
         for _, row in pairs(DATA.scenarios or {}) do
             if row.mapKey and row.phase then
                 phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
-                phaseIndex[row.mapKey][row.phase] = row
+                local current = phaseIndex[row.mapKey][row.phase]
+                -- Stable fallback identity; this is not a tactical score.
+                if not current or tostring(row.scenarioId) < tostring(current.scenarioId) then
+                    phaseIndex[row.mapKey][row.phase] = row
+                end
             end
         end
     end
     local row = phaseIndex[mapKey] and phaseIndex[mapKey][phase] or nil
+    return row
+end
+
+function ScenarioAdversarialCalibration:GetByMapAndPhase(mapKey, phase)
+    local row = getPhaseRow(mapKey, phase)
     return row and KWR.Util:Copy(row) or nil
 end
 
 function ScenarioAdversarialCalibration:GetSummaryByMapAndPhase(mapKey, phase)
-    mapKey = KWR.Util:Upper(mapKey, nil, 24)
-    phase = KWR.Util:Upper(phase, nil, 24)
-    if not mapKey or not phase then return nil end
-    if not phaseIndex then
-        phaseIndex = {}
-        for _, row in pairs(DATA.scenarios or {}) do
-            if row.mapKey and row.phase then
-                phaseIndex[row.mapKey] = phaseIndex[row.mapKey] or {}
-                phaseIndex[row.mapKey][row.phase] = row
-            end
-        end
-    end
-    return compactScenario(phaseIndex[mapKey] and phaseIndex[mapKey][phase])
+    return compactScenario(getPhaseRow(mapKey, phase))
 end
 
 function ScenarioAdversarialCalibration:Shared()

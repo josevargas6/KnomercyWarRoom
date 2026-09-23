@@ -70,8 +70,10 @@ do
         >= 250,
         "Tactical queue telemetry did not attribute the combat-event storm.")
     assert((KWR.MatchRuntime.diagnostics.tacticalDurationSampleCount or 0) >= 20
-        and type(KWR.MatchRuntime.diagnostics.p95TacticalDurationMs) == "number",
-        "Tactical lane did not retain an independently measurable P95 sample.")
+        and type(KWR.MatchRuntime.diagnostics.p50TacticalDurationMs) == "number"
+        and type(KWR.MatchRuntime.diagnostics.p95TacticalDurationMs) == "number"
+        and type(KWR.MatchRuntime.diagnostics.p99TacticalDurationMs) == "number",
+        "Tactical lane did not retain independently measurable P50/P95/P99 samples.")
 
     KWR.MatchRuntime.tacticalTimerToken =
         (KWR.MatchRuntime.tacticalTimerToken or 0) + 1
@@ -104,13 +106,23 @@ assert(#KWR.MatchRuntime.durationSamples <= 120, "Runtime duration sample buffer
 assert(#KWR.MatchRuntime.tacticalDurationSamples <= 120,
     "Tactical duration sample buffer grew without bound.")
 assert(#KWR.Commander:GetHistory() <= 30, "Commander history grew without bound.")
-assert(#KWR.Verification.ledger <= 60, "Verification ledger grew without bound.")
+local ledger = KWR.Verification.ledger
+if KWR.BuildInfo:IsDevelopmentBuild() then
+    assert(type(ledger) == "table" and #ledger <= 60,
+        "Developer verification ledger is missing or grew without bound.")
+else
+    assert(ledger == nil and KWR.Verification.CurrentReport == nil,
+        "Player runtime unexpectedly loaded developer verification capture.")
+end
 assert(#KWR.AAR:GetHistory() <= 30, "AAR history grew without bound.")
 assert(#KWR.Reporter.events <= KWR.Reporter.maxEvents, "Reporter event buffer grew without bound.")
 assert((diagnostics.averageDurationMs or 0) <= 1.5,
     "Average refresh duration exceeded the offline budget.")
 assert((diagnostics.p95DurationMs or 0) <= 4.0,
     "p95 refresh duration exceeded the offline budget.")
+assert((diagnostics.p50DurationMs or 0) >= 0.10
+    and (diagnostics.p99DurationMs or 0) >= (diagnostics.p95DurationMs or 0),
+    "Strategic timing percentile instrumentation is incomplete or unordered.")
 assert((diagnostics.maxDurationMs or 0) <= 10.0,
     "Worst-case refresh duration exceeded the offline budget.")
 assert((diagnostics.averageDurationMs or 0) >= 0.10,
@@ -134,4 +146,5 @@ print("KWR_SOAK_PASS refreshes=500 durationSamples="
     .. " p95Ms=" .. tostring(diagnostics.p95DurationMs or 0)
     .. " maxMs=" .. tostring(diagnostics.maxDurationMs or 0)
     .. " commanderHistory=" .. tostring(#KWR.Commander:GetHistory())
-    .. " evidence=" .. tostring(#KWR.Verification.ledger))
+    .. " evidence=" .. tostring(ledger and #ledger or 0)
+    .. " timingSource=injected-test-clock")

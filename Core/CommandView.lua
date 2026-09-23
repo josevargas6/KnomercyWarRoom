@@ -113,7 +113,7 @@ end
 
 local function callWhen(play, command, current)
     if current then
-        return KWR.Util:Upper(command and command.when, "NOW", 20)
+        return KWR.Util:Upper(KWR.Commander:TimingText(command), "NOW", 20)
     end
     local arrival = KWR.Util:Number(play and play.expectedArrivalAt, nil)
     if arrival then
@@ -205,7 +205,7 @@ local function localFightCall(snapshot, current)
     result.what = kill.mode == "PRESSURE" and "PRESS" or "KILL"
     result.where = safeLocation(snapshot.context and snapshot.context.mapKey,
         kill.location, result.what)
-    result.when = "NOW"
+    result.when = kill.mode == "PRESSURE" and "NOW" or KWR.CountdownState:Text(execution.countdown)
     result.localTarget = KWR.Util:ShortName(kill.target)
     result.source = "LOCAL_FIGHT"
     return result
@@ -225,7 +225,7 @@ function CommandView:FightNow(state)
     local context = snapshot.context or {}
     local command = state.command or {}
     local prediction = state.prediction or {}
-    local response = snapshot.responsePackage or command.responsePackage or {}
+    local response = command.responsePackage or snapshot.responsePackage or {}
     local activePlay = command.activePlay or state.activePlay or {}
     local candidate = command.activePlayCandidate or {}
     local strategicCurrent = callModel(
@@ -248,6 +248,11 @@ function CommandView:FightNow(state)
     local definition = KWR.Maps and KWR.Maps:Get(context.mapKey)
     local shortMap = definition and definition.short or "BG"
     local score = snapshot.score or {}
+    local scoreKnown = score.source == "ui_widget" or score.source == "preview_synthetic"
+        or score.authoritative == true
+        or ((KWR.Util:Number(score.max, 0) or 0) > 0
+            and ((KWR.Util:Number(score.friendly, 0) or 0) > 0
+                or (KWR.Util:Number(score.enemy, 0) or 0) > 0))
     local projection, projectionTone = projectionText(prediction.status or command.status)
     local defense = KWR.Util:Text(response.stayerText, "", 160)
     if defense == "" or defense == "Assigned defenders" then
@@ -261,13 +266,25 @@ function CommandView:FightNow(state)
             KWR.Util:Number(score.enemy, 0) or 0),
         projection = projection,
         projectionTone = projectionTone,
-        winPath = winPath(context.kind, prediction.status or command.status, prediction),
-        nextObjective = nextCall.where ~= "FIELD" and nextCall.where or current.where,
+        winPath = scoreKnown and winPath(context.kind,
+            prediction.status or command.status, prediction) or "VERIFY SCORE",
+        -- A strategic call may name more than one objective. Keep that whole
+        -- instruction readable on compact surfaces instead of abbreviating
+        -- only exact single-node names.
+        nextObjective = self:CompactMapText(context.mapKey,
+            nextCall.where ~= "FIELD" and nextCall.where
+                or (scoreKnown and current.where or "WAIT"), "WAIT", 120),
         current = current,
         next = nextCall,
         defense = KWR.Util:Upper(defense, "ASSIGNED DEF", 72),
         offense = current.who .. " -> " .. current.where,
     }
+end
+
+function CommandView:StrategicWinPath(state, scoreKnown)
+    if not scoreKnown then return "VERIFY SCORE" end
+    local snapshot, command, prediction = state.snapshot or {}, state.command or {}, state.prediction or {}
+    return winPath((snapshot.context or {}).kind, prediction.status or command.status, prediction)
 end
 
 function CommandView:DisplayCallVerb(verb, context)
@@ -479,6 +496,42 @@ function CommandView:CompactCommandText(state)
         and state.snapshot.context.mapKey
     local lines = self:PrimaryLines(state, "PLAY OBJECTIVE")
     return self:CompactMapText(mapKey, table.concat(lines, " | "))
+end
+
+-- This is deliberately separate from CompactCommandText.  The latter is a
+-- display-sized summary; using it as a manual export silently dropped the end
+-- of a real call.  A player who opens a copy window must receive the complete
+-- safe text, arranged in lines that can be reviewed before they copy it.
+function CommandView:ManualCommandText(state, fallback)
+    state = state or {}
+    local command = state.command or {}
+    local decision = command.objectiveDecision or {}
+    local action = KWR.Util:Text(command.action, fallback or "PLAY OBJECTIVE")
+    local who = KWR.Util:Text(command.who, "Team")
+    local trigger = command.switchIf
+    local triggerLabel = "TRIGGER"
+    if trigger == nil or trigger == "" then
+        trigger = decision.success
+    end
+    if trigger == nil or trigger == "" then
+        trigger = decision.abort
+        triggerLabel = "ABORT"
+    end
+    if trigger == nil or trigger == "" then
+        trigger = command.when or "NOW"
+        triggerLabel = "WHEN"
+    end
+
+    local lines = {
+        "ACTION: " .. action,
+        "WHO: " .. who,
+        triggerLabel .. ": " .. KWR.Util:Text(trigger, "NOW"),
+    }
+    local stayers = self:CallStayers(command)
+    if stayers and stayers ~= "" then
+        lines[#lines + 1] = "STAY: " .. stayers
+    end
+    return table.concat(lines, "\n")
 end
 
 local function tightNextText(mapKey, value)

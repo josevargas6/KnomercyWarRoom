@@ -178,6 +178,10 @@ local function compactCommandText(state)
     return KWR.CommandView:CompactCommandText(state)
 end
 
+local function manualCommandText(state)
+    return KWR.CommandView:ManualCommandText(state)
+end
+
 local function updateToken(owner, state)
     local allowed = KWR.Util:AllowsCommandSurfaces(state)
     local arena = KWR.Util:IsArenaContext(state)
@@ -608,6 +612,7 @@ function MainWindow:Create(initialPage)
     frame:SetClampedToScreen(true)
     KWR.Theme:Style(frame, "commandCenter", "borderHi")
     KWR.Theme:MakeMovable(frame, profile)
+    frame:SetAttribute("kwr-dismiss-on-hide", false)
     frame:Hide()
 
     frame.logo = KWR.Theme:Title(frame, 24)
@@ -670,10 +675,22 @@ function MainWindow:Create(initialPage)
     frame.headerRule:SetPoint("TOPRIGHT", -18, -86)
     frame.headerRule:SetHeight(1)
 
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    -- The Objectives page owns secure quick-call buttons, which means the
+    -- expanded board can become protected while a match is running.  A normal
+    -- Lua OnClick may only queue Hide() until combat ends, trapping the player
+    -- behind this large review surface.  Give the close affordance a small
+    -- secure click handler so its hardware click can dismiss the protected
+    -- parent immediately.
+    local close = CreateFrame("Button", nil, frame,
+        "SecureHandlerClickTemplate,UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -4, -4)
+    close:SetAttribute("_onclick", [[
+        local board = self:GetParent()
+        board:SetAttribute("kwr-dismiss-on-hide", true)
+        board:Hide()
+    ]])
     close:SetScript("OnClick", function() MainWindow:Hide() end)
-    frame:SetScript("OnHide", function() MainWindow:RestoreCompactSurfaces() end)
+    frame:SetScript("OnHide", function() MainWindow:OnFrameHidden() end)
 
     local tabBar = CreateFrame("Frame", nil, frame)
     tabBar:SetPoint("TOPLEFT", 18, -94)
@@ -862,8 +879,11 @@ function MainWindow:BuildTacticalPage(page)
     end)
     rescan:SetPoint("LEFT", refresh, "RIGHT", 4, 0)
     local copy = KWR.Theme:Button(controls, "COPY", 40, 23, function()
-        local command = KWR.Store:Get().command
-        KWR.CopyDialog:ShowCompact("KWR Compact Call", compactCommandText(KWR.Store:Get()))
+        KWR.CopyDialog:ShowText("KWR Command Call", manualCommandText(KWR.Store:Get()), {
+            width = 660,
+            height = 350,
+            note = "Full manual call. Review every line, then select and copy it yourself.",
+        })
     end)
     copy:SetPoint("LEFT", rescan, "RIGHT", 4, 0)
     local mini = KWR.Theme:Button(controls, "MINI", 40, 23, function()
@@ -1111,6 +1131,8 @@ function MainWindow:BuildTeamPage(page)
         local state = KWR.Store:Get()
         KWR.CopyDialog:ShowText("KWR Setup Assignments",
             KWR.Assignments:LineExport(state.assignments, state.snapshot.context.mapKey), {
+                width = 600,
+                height = 390,
                 note = "One player per line. Copy this setup list manually if you want to share it.",
             })
     end)
@@ -1717,6 +1739,13 @@ function MainWindow:Show(page)
         KWR:Print("War Room will open when combat ends; secure controls cannot change visibility in combat.", true)
         return
     end
+    -- A later automatic lifecycle hide should restore the compact surfaces;
+    -- only an explicit close marks this board as a full combat-surface
+    -- dismissal.
+    self.dismissOnHide = false
+    if not (InCombatLockdown and InCombatLockdown()) then
+        self.frame:SetAttribute("kwr-dismiss-on-hide", false)
+    end
     self:SuppressCompactSurfaces()
     if page and not createdFrame then
         if InCombatLockdown and InCombatLockdown() then
@@ -1792,13 +1821,42 @@ function MainWindow:RestoreCompactSurfaces()
     KWR.MainWindowShell:RestoreCompactSurfaces(self, self.lastState or KWR.Store:Get())
 end
 
-function MainWindow:Hide()
+function MainWindow:OnFrameHidden()
+    -- A close means "get KWR out of my way", not "replace this board with a
+    -- different KWR surface".  The secure close button records this intent
+    -- before hiding the protected board, including during combat.
+    local dismissed = self.dismissOnHide == true
+        or (self.frame and self.frame:GetAttribute("kwr-dismiss-on-hide") == true)
+    self.dismissOnHide = nil
+    if dismissed then
+        self.compactRestore = nil
+        return
+    end
+    -- Lifecycle hides still restore the prior compact presentation.  Hiding
+    -- the protected board is legal in combat; restoring optional roster
+    -- frames may not be, so defer only that restoration.
+    if InCombatLockdown and InCombatLockdown() then
+        self.pendingCompactRestore = true
+        return
+    end
+    self:RestoreCompactSurfaces()
+end
+
+function MainWindow:Hide(restoreCompact)
     if self.frame and InCombatLockdown and InCombatLockdown() then
-        self.pendingVisibility = { shown = false }
+        self.pendingVisibility = { shown = false, restoreCompact = restoreCompact == true }
         KWR:Print("War Room will close when combat ends; secure controls cannot change visibility in combat.", true)
         return
     end
-    if self.frame then self.frame:Hide() else self:RestoreCompactSurfaces() end
+    if self.frame then
+        self.dismissOnHide = restoreCompact ~= true
+        self.frame:SetAttribute("kwr-dismiss-on-hide", self.dismissOnHide)
+        self.frame:Hide()
+    elseif restoreCompact == true then
+        self:RestoreCompactSurfaces()
+    elseif KWR.HUD and KWR.HUD.SetSuppressed then
+        KWR.HUD:SetSuppressed(true)
+    end
 end
 
 function MainWindow:FlushCombatVisibility()
@@ -1811,12 +1869,16 @@ function MainWindow:FlushCombatVisibility()
     local pending = self.pendingVisibility
     self.pendingVisibility = nil
     if pending then
-        if pending.shown then self:Show(pending.page) else self:Hide() end
+        if pending.shown then self:Show(pending.page) else self:Hide(pending.restoreCompact) end
     elseif pendingPage and self.frame and self.frame:IsShown() then
         self:SetPage(pendingPage)
     elseif self.frame and self.frame:IsShown() and self.compactRestore
         and KWR.CombatRoster and KWR.CombatRoster:AnyShown() then
         KWR.CombatRoster:Request(false, nil, false)
+    end
+    if self.pendingCompactRestore then
+        self.pendingCompactRestore = nil
+        self:RestoreCompactSurfaces()
     end
 end
 
@@ -1875,11 +1937,15 @@ function MainWindow:TogglePreview()
 end
 
 function MainWindow:ArmFieldTest()
+    local enabled, message = KWR.BuildInfo:SetDevelopmentMode(true)
+    if not enabled then
+        KWR:Print(message, true)
+        return false
+    end
     KWR:ActivateFieldProfile(true)
-    KWR.db.profile.fieldReviewContext = "Diagnostic"
+    self:SetFieldReviewContext("Diagnostic")
     KWR.HUD:SetEnabled(true)
     KWR.CombatRoster:Show("BOTH")
-    KWR.CursorRing:SetEnabled(true)
     local sentinel = _G.KWRSentinel
     if sentinel and sentinel.ActivateFieldProfile then
         sentinel:ActivateFieldProfile(true)
@@ -1887,16 +1953,34 @@ function MainWindow:ArmFieldTest()
     end
     if KWR.Presentation then KWR.Presentation:RefreshNow() end
     KWR.MatchRuntime:ForceRefresh("field-test-arm")
-    KWR:Print("Season 2 field mode armed: live HUD, roster, reticle, Sentinel transport, automatic AAR, and command mode are active.", true)
-    KWR:Print("Next: run /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
+    KWR:Print("Field capture armed in Diagnostic context: HUD, roster, Sentinel transport, and AAR are active.", true)
+    KWR:Print("Field HUD is compact and lower-right. After communicating a call, use /kwr delivered for its confirmation token.", true)
+    KWR:Print("Capture /kwr verify now, /kwr perf during combat, and /kwr aar copy after the match.", true)
 end
 
 function MainWindow:ShowSeason2EvidenceRun()
+    if not (KWR.Season2Readiness and KWR.Season2Readiness.Report) then
+        KWR:Print("Season 2 evidence tools require KWR_DevTools. Use /kwr dev on outside combat.", true)
+        return false
+    end
     self:Show("INTEL")
     KWR.CopyDialog:ShowText("KWR Season 2 Watch + Evidence Run",
         KWR.Season2Readiness:Report(KWR.Store:Get()), {
             note = "Official hotfixes are advisory until reviewed with real Retail evidence. This checklist and every export remain local until you manually copy them.",
         })
+end
+
+function MainWindow:SetFieldReviewContext(context)
+    if context ~= "Commander" and context ~= "Spectator" and context ~= "Diagnostic" then
+        return false
+    end
+    if KWR.db.profile.fieldReviewContext ~= context then
+        KWR.db.profile.fieldReviewContext = context
+        if KWR.Commander then KWR.Commander:ResetSession() end
+        KWR.MatchRuntime:ForceRefresh("field-context-" .. context:lower())
+    end
+    KWR:Print("Field review context: " .. context .. ".", true)
+    return true
 end
 
 function MainWindow:ShowAARExport()
@@ -1916,6 +2000,7 @@ function MainWindow:RegisterCommands()
         previewAvailable = previewAvailable,
         diagnosticsAvailable = diagnosticsAvailable,
         compactCommandText = compactCommandText,
+        manualCommandText = manualCommandText,
     })
 end
 
