@@ -1,11 +1,13 @@
 # Changelog
 
-- Diagnostic candidate `alpha30-incremental-runtime-20260927-2`: separates
+- Diagnostic candidate `alpha30-incremental-runtime-20260927-3`: separates
   public score/objective, unchanged status, and cosmetic widget pulses;
   reuses unchanged inspection, battlefield, assignment, enemy, and tactical
   stages; and publishes only owned changed branches. Queue coalescing preserves
   roster/lifecycle invalidations. Unchanged public facts renew verified
-  freshness without rebuilding commands. Offline checks pass; Retail P95 and UI safety
+  freshness without rebuilding commands, while material freshness transitions
+  invalidate strategy. A full truth heartbeat remains due during frequent cheap
+  status pulses. Offline checks pass; Retail P95 and UI safety
   require a new exact-package field run before release consideration.
 
 - Diagnostic candidate `alpha29-season2-mapfit-20260923-1`: reviews official

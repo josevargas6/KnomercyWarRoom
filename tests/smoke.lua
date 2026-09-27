@@ -2178,6 +2178,7 @@ do
     KWR.MatchRuntime.requiredSettleAt = nil
     assert(KWR.MatchRuntime:ForceRefresh("smoke-incremental-seed"),
         "Active incremental fixture failed to seed.")
+    local fullSweepAt = KWR.MatchRuntime.lastStrategicRefreshAt
     local savedCapture = KWR.Sensors.Capture
     local savedCombat = KWR.CombatIntel.Analyze
     local savedStrategy = KWR.Strategist.Evaluate
@@ -2243,8 +2244,26 @@ do
     assert(fullCaptures == 0 and combatBuilds == 0
         and KWR.Store:Get().revision > revision
         and KWR.Store:Get().command.signature == commandSignature
-        and KWR.Store:Get().snapshot.objectives.observedAt == currentTime,
+        and KWR.Store:Get().snapshot.objectives.observedAt == currentTime
+        and KWR.MatchRuntime.lastStrategicRefreshAt == fullSweepAt,
         "Freshness publication rebuilt the command or left objectives stale.")
+    local savedContract = KWR.Verification.Contract
+    local strategyBeforeFreshnessTransition = strategyBuilds
+    local priorCoreFresh = KWR.Store:Get().snapshot.truth.coreFresh
+    KWR.Verification.Contract = function(verification, snapshot)
+        local truth = savedContract(verification, snapshot)
+        truth.coreFresh = not priorCoreFresh
+        return truth
+    end
+    currentTime = currentTime + 4
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_BATTLEFIELD_STATUS"),
+        "A material public-freshness transition failed.")
+    KWR.Verification.Contract = savedContract
+    assert(fullCaptures == 0 and combatBuilds == 0
+        and strategyBuilds > strategyBeforeFreshnessTransition
+        and KWR.Store:Get().snapshot.truth.coreFresh ~= priorCoreFresh
+        and KWR.MatchRuntime.lastStrategicRefreshAt == fullSweepAt,
+        "A material freshness transition did not invalidate strategy only.")
     KWR.Store.state = beforeFreshness
     KWR.Sensors.scoreSession = beforeFreshnessSession
     currentTime = beforeFreshnessTime

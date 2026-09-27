@@ -55,7 +55,7 @@ across publications. Preserve command state and delivery boundaries.
 - [x] Unchanged status pulses avoid the full pipeline in deterministic tests.
 - [x] Tactical pulses with unchanged observed inputs reuse combat output in deterministic tests.
 - [x] Manual, transition, and match-end refreshes remain complete; scoreboard captures stay full while downstream stages can skip unchanged input.
-- [x] Validation, deterministic smoke/soak, and extracted package audit pass for the final `-2` candidate.
+- [ ] Validation, deterministic smoke/soak, and extracted package audit pass for the final `-3` candidate.
 - [ ] Retail P95 and UI safety are measured on the installed candidate.
 
 # Verification
@@ -64,13 +64,12 @@ across publications. Preserve command state and delivery boundaries.
 2. Run validation, Lua smoke/soak, and package audit.
 3. Bind live telemetry to the exact installed package.
 
-The final `-2` candidate came from clean-source commit `35eb5ee` and passed
-source validation, complete Lua suite, deterministic reproducibility, and
-extracted package audit. Its matching Commander, Sentinel, and Developer Tools
-trio is installed with zero file differences and a verified restore rehearsal
-(`artifacts/alpha30-install-20260927-2/DEPLOYMENT.json`). The first alpha30
-install remains an earlier rollback point in `artifacts/alpha30-backup-20260927-2`.
-Retail P95 and UI safety remain open.
+The `-2` candidate passed source and package checks but was superseded when
+review found that cheap status publications could defer the full truth heartbeat.
+The `-3` candidate keeps the heartbeat independent of partial publications and
+recomputes strategy if refreshed public evidence changes the verification
+contract. It must pass the final package audit and exact-package deployment
+check before field testing. Retail P95 and UI safety remain open.
 
 # Rollback
 

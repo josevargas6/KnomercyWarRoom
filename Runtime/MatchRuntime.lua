@@ -1035,7 +1035,11 @@ local function publishStrategic(runtime, reason, started, profileStages,
         return runtime.diagnostics
     end
     runtime.lastRefreshAt = KWR.Util:Now()
-    runtime.lastStrategicRefreshAt = runtime.lastRefreshAt
+    if fields == nil then
+        -- Cheap public publications cannot defer the authoritative roster,
+        -- enemy, and phase sweep indefinitely during a status-event storm.
+        runtime.lastStrategicRefreshAt = runtime.lastRefreshAt
+    end
     if not KWR.Store then
         finalizeDiagnostics()
         return
@@ -1096,15 +1100,26 @@ function Runtime:RefreshPublic(reason, previous, started, profileStages)
                 >= PUBLIC_FRESHNESS_INTERVAL - 1 then
             fields[#fields + 1] = "objectives"
         end
+        local truthChanged = false
         if #fields > 0 then
             snapshot.truth = KWR.Verification:Contract(snapshot)
             fields[#fields + 1] = "truth"
             self.diagnostics.publicFreshnessPatches =
                 (self.diagnostics.publicFreshnessPatches or 0) + 1
+            local priorTruth = previousSnapshot.truth or {}
+            truthChanged = snapshot.truth.coreFresh ~= priorTruth.coreFresh
+                or snapshot.truth.aggressiveCommitAllowed
+                    ~= priorTruth.aggressiveCommitAllowed
+                or snapshot.truth.mode ~= priorTruth.mode
         end
-        publishStrategic(self, reason, started, profileStages, snapshot,
-            previous.prediction, previous.assignments, previous.command, fields)
-        return true
+        if not truthChanged then
+            publishStrategic(self, reason, started, profileStages, snapshot,
+                previous.prediction, previous.assignments, previous.command, fields)
+            return true
+        end
+        self.diagnostics.freshnessPlanRecomputes =
+            (self.diagnostics.freshnessPlanRecomputes or 0) + 1
+        changedKind = "SCORE"
     end
     local objectiveChanged = changedKind == "OBJECTIVE"
     stageStarted = profileStages and debugprofilestop() or 0
@@ -1167,8 +1182,10 @@ function Runtime:RefreshPublic(reason, previous, started, profileStages)
     local fields = { "score", "truth", "strategy", "carrierTargetEvidence",
         "assignmentIntegrity", "responsePackage", "executionCommand",
         "commandEmphasis", "capturedAt", "lastMessage" }
-    if objectiveChanged then
+    if snapshot.objectives ~= previousSnapshot.objectives then
         fields[#fields + 1] = "objectives"
+    end
+    if objectiveChanged then
         fields[#fields + 1] = "roster"
         fields[#fields + 1] = "enemies"
         fields[#fields + 1] = "combat"
