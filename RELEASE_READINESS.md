@@ -10,10 +10,15 @@ for field measurement only; it is not approved for a stable public release.
 Clean-source commit `00739a0` produced the first matching Commander, Sentinel,
 and Developer Tools alpha30 archives; build and extracted-package audits passed.
 The first trio was installed with zero file differences and a verified restore
-rehearsal (`artifacts/alpha30-install-20260927-1/DEPLOYMENT.json`). It is
-superseded by the `-2` candidate's public-freshness fix and must be replaced
-before testing. The original backup is in `artifacts/alpha30-backup-20260927-1`.
-The next test uses `docs/ALPHA30_FIELD_CHECKLIST.md` on any assigned map.
+rehearsal (`artifacts/alpha30-install-20260927-1/DEPLOYMENT.json`). It was
+superseded by clean-source commit `35eb5ee`, candidate
+`alpha30-incremental-runtime-20260927-2`, which adds a lightweight
+public-freshness lane. The replacement trio passed full source tests,
+reproducibility, and extracted-package audit and is now installed with zero
+file differences (`artifacts/alpha30-install-20260927-2/DEPLOYMENT.json`).
+The original backup is in `artifacts/alpha30-backup-20260927-1`; the immediately
+preceding install is in `artifacts/alpha30-backup-20260927-2`. The next test
+uses `docs/ALPHA30_FIELD_CHECKLIST.md` on any assigned map.
 
 ## Alpha29 local diagnostic candidate — 2026-09-23
 

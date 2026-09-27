@@ -1,6 +1,7 @@
 # Alpha30 incremental-runtime field check
 
-Use the installed `6.1.1-alpha.30` trio (Commander, Sentinel, Developer Tools).
+Use the installed `6.1.1-alpha.30` trio (Commander, Sentinel, Developer Tools),
+candidate `alpha30-incremental-runtime-20260927-2`.
 Any randomly selected rated battleground qualifies. Do not wait for a flag or
 base-defense map.
 
