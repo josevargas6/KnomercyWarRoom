@@ -307,11 +307,21 @@ local function autoBuildTarget(availableComps, roster, mapKey)
         end
     end
     local best
+    local currentAvailable = false
+    for _, comp in ipairs(availableComps or {}) do
+        if comp.metaStatus ~= "HISTORICAL_REVALIDATE"
+            and (not hasMapFit or comp.mapFit == true) then
+            currentAvailable = true
+            break
+        end
+    end
     for _, comp in ipairs(availableComps or {}) do
         -- Never recommend a shell for a different known map merely because
         -- it matches one more existing spec. Explicit user selection still
         -- remains possible through resolveBuildTarget above.
-        if not hasMapFit or comp.mapFit == true then
+        if (not hasMapFit or comp.mapFit == true)
+            and (not currentAvailable
+                or comp.metaStatus ~= "HISTORICAL_REVALIDATE") then
             local remaining = existingSpecs(roster)
             local matched = 0
             for _, token in ipairs(comp.specs or {}) do
@@ -321,7 +331,10 @@ local function autoBuildTarget(availableComps, roster, mapKey)
                     remaining[key] = remaining[key] - 1
                 end
             end
-            local score = (matched * 100) + ((comp.mapCount or 0) * 0.1)
+            -- Observed roster fit wins first; reviewed current-season order
+            -- breaks ties. Broad shells lead before the random map is known.
+            local score = (matched * 1000) + (comp.seasonPriority or 0)
+                + ((not mapKnown and (comp.mapCount or 0) * 20) or 0)
             if not best or score > best.score
                 or (score == best.score and tostring(comp.id) < tostring(best.id)) then
                 best = {

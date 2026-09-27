@@ -1,5 +1,11 @@
 # Changelog
 
+- Diagnostic candidate `alpha31-season2-comp-review-20260927-1`: orders
+  ladder-informed ten-player Season 2 recruiting shells by map fit and roster
+  match, adds balanced, node, flag, and objective-fight options, and moves old
+  S/S+ shells to a clearly labeled manual legacy archive. The spec ladders
+  support a theory-first menu, not a measured team-composition win rate.
+
 - Diagnostic candidate `alpha30-incremental-runtime-20260927-3`: separates
   public score/objective, unchanged status, and cosmetic widget pulses;
   reuses unchanged inspection, battlefield, assignment, enemy, and tactical

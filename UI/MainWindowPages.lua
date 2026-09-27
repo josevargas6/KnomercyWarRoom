@@ -153,9 +153,6 @@ local function formationCompLabel(comp, fallback)
     end
     local tier = KWR.Util:Text(comp.tier, "", 16)
     local name = KWR.Util:Text(comp.name, fallback or "Balanced Team Fight", 96)
-    -- Advisory status belongs beside the selected build once; repeating WATCH
-    -- in every list and card hides the actual composition name.
-    if comp.metaStatus == "ADVISORY_PRE_LIVE" then return name end
     return tier ~= "" and (tier .. " " .. name) or name
 end
 
@@ -406,8 +403,10 @@ function MainWindowPages:RenderTactical(page, state, helpers)
             .. "NEED: " .. formationNeedSummary(formation) .. "\n"
             .. "CURRENT ROSTER: " .. currentLabel .. "\n"
             .. "TARGET BUILD: " .. targetLabel
-            .. ((buildTarget and buildTarget.metaStatus == "ADVISORY_PRE_LIVE")
-                and "\n|cff8ea3bbSeason 2 theory - field validation pending.|r" or ""))
+            .. ((buildTarget and buildTarget.metaStatus == "ADVISORY_LADDER")
+                and "\n|cff8ea3bbLadder-informed theory; team results unverified.|r"
+                or ((buildTarget and buildTarget.metaStatus == "ADVISORY_PRE_LIVE")
+                    and "\n|cff8ea3bbSeason 2 theory - field validation pending.|r" or "")))
         page.battlefieldCard.formation.autoButton:SetSelected(formation.selectedCompID == nil)
         page.battlefieldCard.formation.recruits:SetText(table.concat(recruitLines, "\n"))
         page.battlefieldCard.formation.positioning:SetText(table.concat(positionLines, "\n"))
@@ -1500,8 +1499,9 @@ function MainWindowPages:RenderIntel(page, state, helpers)
         "match result, score, command transitions,",
         "battleground events, and your review.",
         "",
-        "RBG meta snapshot: " .. KWR.MetaSnapshot.captured,
-        "Patch " .. KWR.MetaSnapshot.patch .. " | " .. tostring(KWR.MetaSnapshot:Count()) .. " specs",
+        "Season 2 comp review: " .. KWR.Compositions.reviewedAt .. " | advisory",
+        "Legacy spec snapshot: " .. KWR.MetaSnapshot.captured
+            .. " | patch " .. KWR.MetaSnapshot.patch .. " | excluded",
         "",
         insights.matches == 0 and "Complete a battleground to begin."
             or "Keep reviewing matches to build reliable trends.",

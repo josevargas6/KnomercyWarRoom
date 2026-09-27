@@ -1,4 +1,18 @@
-# Release Readiness - 6.1.1-alpha.30
+# Release Readiness - 6.1.1-alpha.31
+
+## Alpha31 Season 2 composition review — 2026-09-27
+
+Candidate `alpha31-season2-comp-review-20260927-1` updates the ten-player
+recruiting menu using September 24/25 US/EU Rated Battleground spec-ladder
+snapshots and Blizzard's hotfix ledger through September 24. It adds a broad
+balanced shell and map-specific node, flag, and objective-fight alternatives;
+older S/S+ shells are now labeled LEGACY. Automatic selection respects current
+season, map fit, and observed roster fit. The ordered S2 A/B labels are
+ladder-informed **composition hypotheses**, not measured ten-player team tiers.
+See `docs/SEASON2_COMPOSITION_REVIEW_2026-09-27.md` for sources and limits.
+Offline tests cannot certify their match outcomes or the still-open Retail
+performance/UI gates. This is a diagnostic field candidate, not an approved
+stable release.
 
 ## Alpha30 incremental-runtime diagnostic candidate — 2026-09-27
 

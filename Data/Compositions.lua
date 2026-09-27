@@ -1,6 +1,9 @@
 local _, KWR = ...
 
-local Compositions = {}
+local Compositions = {
+    reviewedAt = "2026-09-27",
+    reviewStatus = "ADVISORY_LADDER",
+}
 KWR.Compositions = Compositions
 
 local ARCHETYPES = {
@@ -52,7 +55,8 @@ local function tierComp(id, tier, name, specs, win, assignments, counter, maps, 
     options = options or {}
     return {
         id = id,
-        tier = tier,
+        tier = options.metaStatus and tier or "LEGACY",
+        historicalTier = options.metaStatus and nil or tier,
         name = name,
         specs = specs,
         win = win,
@@ -227,59 +231,111 @@ local TIER_COMPS = {
         "Guardian anchors; Disc fights; MW floats; Pres saves; Rogue floats; Balance/Hunters defend; DK/Mage kill.",
         "Pressure the weakest sitter and force communication-heavy rotations.",
         { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING" }),
-    tierComp("S2_HUNTER_DK_PRESSURE", "S2 WATCH S", "Season 2 Hunter / DK Pressure",
-        { "DRUID:Guardian", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
+    tierComp("S2_BALANCED_CONTROL", "S2 A", "Balanced Control Core",
+        { "DRUID:Guardian", "PRIEST:Discipline", "PRIEST:Holy", "MONK:Mistweaver",
+          "DRUID:Balance", "ROGUE:Assassination", "WARRIOR:Arms",
+          "EVOKER:Devastation", "HUNTER:Marksmanship", "DEATHKNIGHT:Unholy" },
+        "Cover objectives with a stable three-healer core, then convert control and coordinated damage into a clean scoring fight.",
+        "Guardian anchors or carries; Disc and Holy hold the fight; MW rotates; Assassination scouts; Balance controls; Arms/Dev/MM/Unholy finish the call.",
+        "Split the healer core, deny Balance sightlines, and force the kill group to rotate away from its objective.",
+        { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS", "WSG", "TWINPEAKS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING" }, {
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 100,
+            seasonNote = "Cross-region RBG spec evidence plus objective-role design; no observed ten-player comp win-rate claim.",
+        }),
+    tierComp("S2_NODE_SPLIT", "S2 A", "Node Control / Rogue Split",
+        { "DRUID:Guardian", "PRIEST:Discipline", "PRIEST:Holy", "EVOKER:Preservation",
+          "DRUID:Balance", "ROGUE:Assassination", "ROGUE:Subtlety",
+          "PALADIN:Retribution", "HUNTER:Marksmanship", "DEATHKNIGHT:Unholy" },
+        "Hold the strong node and create one timed weak-side attack without stripping defender coverage.",
+        "Guardian anchors; Assassination scouts and creates the kill; Subtlety pressures a weak node; Balance/MM defend lanes; Ret/Unholy join the timed hit.",
+        "Pair sitters, deny stealth isolation, and punish an unsupported split while preserving the scoring path.",
+        { "ARATHI", "GILNEAS", "DEEPWIND" }, {
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 110,
+            seasonNote = "Node-map theory using cross-region RBG spec evidence; requires coordinated sitters and live validation.",
+        }),
+    tierComp("S2_FLAG_RETURN", "S2 A", "Carrier Escort / Return",
+        { "DRUID:Guardian", "PRIEST:Discipline", "PRIEST:Holy", "EVOKER:Preservation",
+          "DRUID:Balance", "ROGUE:Assassination", "WARRIOR:Arms",
+          "EVOKER:Devastation", "HUNTER:Marksmanship", "DEATHKNIGHT:Unholy" },
+        "Keep the friendly carrier covered while the separate return group creates a timed enemy-carrier kill.",
+        "Guardian carries; Holy/Pres escort; Disc supports the return group; Assassination scouts; Arms/Dev/MM/Unholy pressure the enemy carrier; Balance controls routes.",
+        "Split escort from carrier, deny the return window, and make the offense overcommit before the next capture.",
+        { "WSG", "TWINPEAKS" }, {
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 110,
+            seasonNote = "Flag-map theory built from RBG spec representation and explicit carrier/return roles; team performance unverified.",
+        }),
+    tierComp("S2_OBJECTIVE_FIGHT", "S2 A", "Objective Fight / Cleave",
+        { "DRUID:Guardian", "PRIEST:Discipline", "PRIEST:Holy", "MONK:Mistweaver",
+          "DRUID:Balance", "ROGUE:Assassination", "WARRIOR:Arms",
+          "EVOKER:Devastation", "WARLOCK:Affliction", "PALADIN:Retribution" },
+        "Win one decisive objective fight through layered pressure, then hold the scoring requirement.",
+        "Guardian fronts; Disc/Holy/MW stabilize; Balance/Affliction control space; Assassination isolates; Arms/Dev/Ret finish the timed call.",
+        "Refuse the stacked fight, force the casters to move, and take the uncontested objective before re-engaging.",
+        { "EOTS", "TEMPLE", "SILVERSHARD", "DEEPHAUL", "SEETHING" }, {
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 110,
+            seasonNote = "Objective-fight theory using cross-region RBG spec evidence; no direct team-composition ranking.",
+        }),
+    tierComp("S2_HUNTER_DK_PRESSURE", "S2 B", "Season 2 Hunter / DK Pressure",
+        { "DRUID:Guardian", "PRIEST:Holy", "MONK:Mistweaver", "PRIEST:Discipline",
           "HUNTER:Beast Mastery", "HUNTER:Marksmanship", "DEATHKNIGHT:Unholy",
           "ROGUE:Subtlety", "WARLOCK:Affliction", "DRUID:Balance" },
         "Use Hunter pressure and DK grips to create repeated cross-map kill windows while Affliction/Balance tax long fights.",
-        "Guardian anchors or carries; Resto/Holy stabilize; Disc attacks; Rogue floats; Hunters hold sightlines; DK grips the call.",
+        "Guardian anchors or carries; Holy/MW stabilize; Disc attacks; Rogue floats; Hunters hold sightlines; DK grips the call.",
         "Break Hunter sightlines, spread before grips, and make the ranged core move before committing a full team fight.",
         { "ARATHI", "GILNEAS", "DEEPWIND", "WSG", "TWINPEAKS", "SEETHING" }, {
-            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
-            metaStatus = "ADVISORY_PRE_LIVE",
-            seasonPriority = 30,
-            seasonNote = "Early Season 2 watch: validate from live outcomes before treating as a preferred roster.",
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 70,
+            seasonNote = "Hunter/DK alternative; Beast Mastery has weaker cross-region RBG support than the A-tier core picks.",
         }),
-    tierComp("S2_ARMS_AFFLICTION_CONTROL", "S2 WATCH S", "Season 2 Arms / Affliction Control",
-        { "WARRIOR:Protection", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
-          "WARRIOR:Arms", "WARLOCK:Affliction", "ROGUE:Subtlety", "HUNTER:Beast Mastery",
+    tierComp("S2_ARMS_AFFLICTION_CONTROL", "S2 B", "Season 2 Arms / Affliction Control",
+        { "DRUID:Guardian", "PRIEST:Holy", "MONK:Mistweaver", "PRIEST:Discipline",
+          "WARRIOR:Arms", "WARLOCK:Affliction", "ROGUE:Subtlety", "EVOKER:Devastation",
           "PALADIN:Retribution", "DRUID:Balance" },
         "Pressure through sustained Arms/Affliction damage, then convert one coordinated control sequence into the objective break.",
-        "Tank fronts the objective; Resto/Holy rotate externals; Disc joins offense; Rogue controls the reset; Arms calls the train.",
+        "Guardian fronts the objective; Holy/MW rotate externals; Disc joins offense; Rogue controls the reset; Arms calls the train.",
         "Force movement and short rotations; deny free Affliction casts and punish the melee core when it leaves healer range.",
         { "GILNEAS", "TEMPLE", "EOTS", "SILVERSHARD", "DEEPHAUL" }, {
-            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
-            metaStatus = "ADVISORY_PRE_LIVE",
-            seasonPriority = 29,
-            seasonNote = "Early Season 2 watch: sustained-pressure shell, not a confirmed ladder ranking.",
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 69,
+            seasonNote = "Sustained-pressure alternative; directional hotfixes and spec ladders do not establish a team win rate.",
         }),
-    tierComp("S2_HUNTER_RET_TEMPO", "S2 WATCH A", "Season 2 Hunter / Ret Tempo",
-        { "DEMONHUNTER:Vengeance", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
-          "HUNTER:Beast Mastery", "HUNTER:Marksmanship", "PALADIN:Retribution", "ROGUE:Subtlety",
-          "DEATHKNIGHT:Unholy", "MAGE:Frost" },
+    tierComp("S2_HUNTER_RET_TEMPO", "S2 B", "Season 2 Hunter / Ret Tempo",
+        { "DRUID:Guardian", "PRIEST:Holy", "MONK:Mistweaver", "PRIEST:Discipline",
+          "DRUID:Balance", "HUNTER:Marksmanship", "PALADIN:Retribution", "ROGUE:Subtlety",
+          "DEATHKNIGHT:Unholy", "EVOKER:Devastation" },
         "Win first arrivals and weak-side swaps, then use Hunter/Ret pressure to finish before the enemy rotation stabilizes.",
-        "Vengeance starts rotations; Rogue scouts; Hunters defend lanes; Ret protects the exposed objective player; DK/Mage lock the kill.",
+        "Guardian anchors; Rogue scouts; Hunter defends a lane; Ret protects the exposed objective player; DK/Dev lock the kill.",
         "Slow the map, pair vulnerable sitters, and punish the first unsupported dive rather than chasing every feint.",
         { "ARATHI", "DEEPWIND", "WSG", "TWINPEAKS", "SEETHING" }, {
-            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
-            metaStatus = "ADVISORY_PRE_LIVE",
-            seasonPriority = 20,
-            seasonNote = "Early Season 2 watch: mobility and immunity value require live map proof.",
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 60,
+            seasonNote = "Hunter/Ret alternative; map mobility and immunity value require live team proof.",
         }),
-    tierComp("S2_ROGUE_AFFLICTION_SPLIT", "S2 WATCH A", "Season 2 Rogue / Affliction Split",
-        { "DRUID:Guardian", "DRUID:Restoration", "PALADIN:Holy", "PRIEST:Discipline",
-          "ROGUE:Subtlety", "ROGUE:Assassination", "WARLOCK:Affliction", "HUNTER:Beast Mastery",
+    tierComp("S2_ROGUE_AFFLICTION_SPLIT", "S2 B", "Season 2 Rogue / Affliction Split",
+        { "DRUID:Guardian", "PRIEST:Holy", "MONK:Mistweaver", "PRIEST:Discipline",
+          "ROGUE:Subtlety", "ROGUE:Assassination", "WARLOCK:Affliction", "HUNTER:Marksmanship",
           "DRUID:Balance", "DEATHKNIGHT:Unholy" },
         "Create uneven node fights through Rogue pressure while the Affliction core wins the main fight through sustained control and rot.",
         "Guardian anchors; one Rogue scouts/pressures; one Rogue creates the kill; Affliction/Balance own the main-fight clock; DK confirms swaps.",
         "Use paired sitters and anti-stealth coverage; refuse panic rotations and force the ranged core to abandon its established position.",
         { "ARATHI", "GILNEAS", "DEEPWIND", "EOTS" }, {
-            source = "SEASON_2_EARLY_META_WATCH_2026_08_11",
-            metaStatus = "ADVISORY_PRE_LIVE",
-            seasonPriority = 19,
-            seasonNote = "Early Season 2 watch: only select with real stealth coordination and disciplined defenders.",
+            source = "S2_RBG_LADDER_REVIEW_2026_09_27",
+            metaStatus = "ADVISORY_LADDER",
+            seasonPriority = 59,
+            seasonNote = "Stealth-pressure alternative; only select with real coordination and disciplined defenders.",
         }),
-    tierComp("S2_FLAG_ESCORT_AUG", "S2 WATCH", "Flag Escort / Aug Support",
+    tierComp("S2_FLAG_ESCORT_AUG", "S2 THEORY", "Flag Escort / Aug Support",
         { "DRUID:Guardian", "EVOKER:Preservation", "MONK:Mistweaver", "PRIEST:Discipline",
           "EVOKER:Augmentation", "DEATHKNIGHT:Unholy", "ROGUE:Subtlety",
           "HUNTER:Marksmanship", "DRUID:Balance", "WARLOCK:Affliction" },
@@ -295,14 +351,10 @@ local TIER_COMPS = {
 }
 
 local TIER_ORDER = {
-    ["S2 WATCH"] = 6,
-    ["S2 WATCH S"] = 7,
-    ["S2 WATCH A"] = 6,
-    ["S+"] = 5,
-    ["S"] = 4,
-    ["S-"] = 3,
-    ["A+ / S-"] = 2,
-    ["A+"] = 1,
+    ["S2 A"] = 3,
+    ["S2 B"] = 2,
+    ["S2 THEORY"] = 1,
+    LEGACY = 0,
 }
 
 local function amount(summary, tag)
@@ -380,6 +432,7 @@ end
 
 local function worldContext(mapKey)
     return mapKey == nil or mapKey == "" or mapKey == "WORLD"
+        or mapKey == "UNKNOWN"
 end
 
 function Compositions:MatchTier(roster, mapKey)
@@ -398,7 +451,11 @@ function Compositions:MatchTier(roster, mapKey)
         local mapFit = not mapKey or mapKey == "WORLD" or containsMap(comp, mapKey)
         if not best or matched > bestMatched
             or (matched == bestMatched and mapFit and not bestMapFit)
-            or (matched == bestMatched and mapFit == bestMapFit and comp.id < best.id) then
+            or (matched == bestMatched and mapFit == bestMapFit
+                and (comp.seasonPriority or 0) > (best.seasonPriority or 0))
+            or (matched == bestMatched and mapFit == bestMapFit
+                and (comp.seasonPriority or 0) == (best.seasonPriority or 0)
+                and comp.id < best.id) then
             best, bestMatched, bestMapFit = comp, matched, mapFit
         end
     end
@@ -458,6 +515,14 @@ function Compositions:BuildTargets(mapKey)
     end
     table.sort(targets, function(a, b)
         if a.mapFit ~= b.mapFit then return a.mapFit end
+        if useWorldContext
+            and ((a.seasonPriority or 0) > 0)
+                ~= ((b.seasonPriority or 0) > 0) then
+            return (a.seasonPriority or 0) > 0
+        end
+        if useWorldContext and a.mapCount ~= b.mapCount then
+            return a.mapCount > b.mapCount
+        end
         local seasonPrepActive = KWR.PatchData and KWR.PatchData:SeasonPrepCorpusActive() == true
         local aPriority = seasonPrepActive and (a.seasonPriority or 0) or 0
         local bPriority = seasonPrepActive and (b.seasonPriority or 0) or 0

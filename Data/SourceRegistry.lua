@@ -39,6 +39,12 @@ local SOURCES = {
         url = "https://murlok.io/meta",
         use = "Expiring aggregate meta cross-check; never individual-player truth.",
     },
+    WOWMMR_RBG = {
+        authority = "META",
+        name = "WoW MMR Rated Battleground spec ladder",
+        url = "https://wowmmr.com/tier-list/rbg?region=us",
+        use = "Expiring US/EU spec-level ladder cross-check for composition theory; never a ten-player team win-rate or live battlefield fact.",
+    },
     PVP_BASICS = {
         authority = "EDITORIAL",
         name = "PvP Basics",

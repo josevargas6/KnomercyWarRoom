@@ -2650,7 +2650,7 @@ assert(KWR.PatchData:SeasonPrepCorpusActive() == true
 do
     local watchlist = KWR.PatchData:HotfixWatchlist()
     assert(watchlist and watchlist.status == "OFFICIAL_UNMODELED"
-        and watchlist.effectiveDate == "2026-09-22"
+        and watchlist.effectiveDate == "2026-09-24"
         and string.find(watchlist.sourceURL or "", "24296142", 1, true)
         and #(watchlist.affected or {}) >= 12,
         "Season 2 official-hotfix watchlist did not retain advisory provenance.")
@@ -2668,13 +2668,63 @@ end
 do
     local seasonTwoTargets = KWR.Compositions:BuildTargets("ARATHI")
     assert(seasonTwoTargets[1]
-        and seasonTwoTargets[1].id == "S2_HUNTER_DK_PRESSURE"
-        and seasonTwoTargets[1].metaStatus == "ADVISORY_PRE_LIVE",
-        "Season 2 formation targets did not prioritize the provisional live-watch shell.")
+        and seasonTwoTargets[1].id == "S2_NODE_SPLIT"
+        and seasonTwoTargets[1].tier == "S2 A"
+        and seasonTwoTargets[1].metaStatus == "ADVISORY_LADDER",
+        "Season 2 node targets did not prioritize the current map-fit shell.")
+    assert(KWR.Compositions:BuildTargets("WSG")[1].id == "S2_FLAG_RETURN"
+        and KWR.Compositions:BuildTargets("TEMPLE")[1].id == "S2_OBJECTIVE_FIGHT"
+        and KWR.Compositions:BuildTargets("WORLD")[1].id == "S2_BALANCED_CONTROL",
+        "Formation target order did not adapt to flag, fight, and unknown maps.")
+    local sawLegacy = false
+    for _, comp in ipairs(KWR.Compositions:BuildTargets("WORLD")) do
+        if comp.tier == "LEGACY" then sawLegacy = true end
+        assert(not sawLegacy or comp.tier == "LEGACY",
+            "Historical shell preceded a current-season world option.")
+    end
+    for _, choice in ipairs({
+        { map = "WORLD", id = "S2_BALANCED_CONTROL" },
+        { map = "ARATHI", id = "S2_NODE_SPLIT" },
+        { map = "WSG", id = "S2_FLAG_RETURN" },
+        { map = "TEMPLE", id = "S2_OBJECTIVE_FIGHT" },
+    }) do
+        local formation = KWR.FormationAdvisor:Evaluate({
+            context = { mapKey = choice.map, inPvP = false },
+            roster = {},
+        })
+        assert(formation.buildTarget and formation.buildTarget.id == choice.id,
+            "Automatic recruiting ignored the current map-fit ordering: "
+                .. choice.map)
+    end
     local seasonTwoComp = KWR.Compositions:FindTier("S2_ARMS_AFFLICTION_CONTROL")
     assert(seasonTwoComp and seasonTwoComp.seasonPriority > 0
-        and seasonTwoComp.source == "SEASON_2_EARLY_META_WATCH_2026_08_11",
+        and seasonTwoComp.source == "S2_RBG_LADDER_REVIEW_2026_09_27",
         "Season 2 formation comp did not retain advisory source provenance.")
+    local legacy = KWR.Compositions:FindTier("CONTROL_CLEAVE")
+    assert(legacy and legacy.tier == "LEGACY"
+        and legacy.historicalTier == "S+"
+        and legacy.metaStatus == "HISTORICAL_REVALIDATE",
+        "A historical S+ label was presented as current Season 2 meta.")
+    for _, comp in ipairs(KWR.Compositions:TierAll()) do
+        if comp.metaStatus == "ADVISORY_LADDER" then
+            local tank, healer, damage = 0, 0, 0
+            for _, spec in ipairs(comp.specs) do
+                if spec == "DRUID:Guardian" then
+                    tank = tank + 1
+                elseif spec == "PRIEST:Discipline" or spec == "PRIEST:Holy"
+                    or spec == "MONK:Mistweaver"
+                    or spec == "EVOKER:Preservation" then
+                    healer = healer + 1
+                else
+                    damage = damage + 1
+                end
+            end
+            assert(#comp.specs == 10 and tank == 1 and healer == 3
+                and damage == 6 and comp.seasonPriority > 0,
+                "Current-season shell violates the ten-player role contract: "
+                    .. comp.id)
+        end
+    end
     local escort = KWR.Compositions:FindTier("S2_FLAG_ESCORT_AUG")
     assert(escort and #escort.specs == 10
         and escort.metaStatus == "ADVISORY_PRE_LIVE"

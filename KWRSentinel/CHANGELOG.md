@@ -1,5 +1,10 @@
 # KWR Sentinel Changelog
 
+## 6.1.1-alpha.31 - 2026-09-27
+
+- Version-synchronized diagnostic companion for the Season 2 composition
+  review. No transport protocol change.
+
 ## 6.1.1-alpha.30 - 2026-09-27
 
 - Version-synchronized diagnostic companion for the Commander incremental
