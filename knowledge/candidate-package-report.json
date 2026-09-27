@@ -1,54 +1,54 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-09-27T09:43:08Z",
-    "candidateVersion":  "6.1.1-alpha.30",
-    "candidateID":  "alpha30-incremental-runtime-20260927-3",
-    "buildOutputDirectory":  "artifacts/alpha30-incremental-20260927-3",
+    "generatedAt":  "2026-09-27T23:34:11Z",
+    "candidateVersion":  "6.1.1-alpha.31",
+    "candidateID":  "alpha31-season2-comp-review-20260927-1",
+    "buildOutputDirectory":  "artifacts/alpha31-season2-comp-20260927-1",
     "distributionArtifact":  {
-                                 "name":  "KnomercyWarRoom-6.1.1-alpha.30.zip",
-                                 "path":  "artifacts/alpha30-incremental-20260927-3/KnomercyWarRoom-6.1.1-alpha.30.zip",
-                                 "size":  907649,
-                                 "sha256":  "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD"
+                                 "name":  "KnomercyWarRoom-6.1.1-alpha.31.zip",
+                                 "path":  "artifacts/alpha31-season2-comp-20260927-1/KnomercyWarRoom-6.1.1-alpha.31.zip",
+                                 "size":  909433,
+                                 "sha256":  "43537C25578E9F1BCDE6E3466F54BF55310B98FD5F405BA957D5E9F1C221F50E"
                              },
     "developerArtifact":  {
-                              "name":  "KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
-                              "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
-                              "size":  15934242,
-                              "sha256":  "ECF3B1A26F89C59A1D87DCCE5F18D9335EDE901BBF7EC02183CFDD48EDE1D15E"
+                              "name":  "KWR_6_1_1_ALPHA_31_DEVELOPER.zip",
+                              "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_DEVELOPER.zip",
+                              "size":  15939584,
+                              "sha256":  "64B0F593307325EADDA217CFDF81829C157EEC76AF2B926D834B79DC024B71F7"
                           },
     "sentinelArtifact":  {
-                             "name":  "KWR-Sentinel-6.1.1-alpha.30.zip",
-                             "path":  "artifacts/alpha30-incremental-20260927-3/KWR-Sentinel-6.1.1-alpha.30.zip",
+                             "name":  "KWR-Sentinel-6.1.1-alpha.31.zip",
+                             "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR-Sentinel-6.1.1-alpha.31.zip",
                              "size":  30172,
-                             "sha256":  "9A849520A6F285A463A52365E7B00C7BD95D4D4F2D44AFA9741AD43C1EF9BA6A"
+                             "sha256":  "E86A65242EA91A0BFE230A7116658D6CC9DA6C75E583DACF152BC677F7EA9C15"
                          },
     "hashManifest":  {
-                         "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_SHA256.txt",
+                         "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_SHA256.txt",
                          "lines":  [
-                                       "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD  KnomercyWarRoom-6.1.1-alpha.30.zip",
-                                       "9A849520A6F285A463A52365E7B00C7BD95D4D4F2D44AFA9741AD43C1EF9BA6A  KWR-Sentinel-6.1.1-alpha.30.zip"
+                                       "43537C25578E9F1BCDE6E3466F54BF55310B98FD5F405BA957D5E9F1C221F50E  KnomercyWarRoom-6.1.1-alpha.31.zip",
+                                       "E86A65242EA91A0BFE230A7116658D6CC9DA6C75E583DACF152BC677F7EA9C15  KWR-Sentinel-6.1.1-alpha.31.zip"
                                    ]
                      },
     "developerHashManifest":  {
-                                  "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_DEVELOPER_CHECKSUM.txt",
+                                  "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_DEVELOPER_CHECKSUM.txt",
                                   "lines":  [
-                                                "ECF3B1A26F89C59A1D87DCCE5F18D9335EDE901BBF7EC02183CFDD48EDE1D15E  KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
-                                                "57778407AEEB65CF52976D2A4DFB2EF5821D1A7A829F4E8BA063353048BE9222  KWR_DevTools-6.1.1-alpha.30.zip"
+                                                "64B0F593307325EADDA217CFDF81829C157EEC76AF2B926D834B79DC024B71F7  KWR_6_1_1_ALPHA_31_DEVELOPER.zip",
+                                                "7DA5750948CF609453BA40415CB69931FBE93371A96A4E848B87045771F07521  KWR_DevTools-6.1.1-alpha.31.zip"
                                             ]
                               },
     "sourceManifest":  {
-                           "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "FD5E7365D7F2D25EB7E511C3812D5F47B30DE50B49A1BB6748A98F53C18AFB51",
+                           "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "110029689D6CA27A910A26A37993ACAC719E2AF595DDD3F6F47E7E67374B7978",
                            "distributionEntryCount":  399,
-                           "developerDigest":  "49BA74FC39ED161950C020520C81AA51E1BB9DC0549A280FB6856D1B05387756",
-                           "developerEntryCount":  9118,
-                           "sentinelDigest":  "6D62E69F20DB4242A3B8DC4FC0A8211355CD54371BF97B17265AA4D491F6EE76",
+                           "developerDigest":  "FF93C28B01BEECD78DD9B61B24E410CDC563B41DADAD3BEA661647179D7D3CD3",
+                           "developerEntryCount":  9120,
+                           "sentinelDigest":  "0319E99E5DA1E99699F927C4A26C2A5492CBDAD6AE5A1E39E8D5E982C2AD48AD",
                            "sentinelEntryCount":  12
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-09-27T09:37:34.1412300Z",
+                            "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-09-27T23:27:41.1217843Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.9444",
@@ -58,7 +58,7 @@
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_REPRODUCIBILITY.json",
+                            "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_REPRODUCIBILITY.json",
                             "result":  "PASS",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -68,12 +68,12 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-09-27T09:41:33.2420187Z",
+                         "path":  "artifacts/alpha31-season2-comp-20260927-1/KWR_6_1_1_ALPHA_31_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-09-27T23:31:49.9946046Z",
                          "result":  "PASS",
                          "hashesVerified":  4,
                          "distributionEntries":  399,
-                         "developerEntries":  9118,
+                         "developerEntries":  9120,
                          "extractedDistributionRuntime":  "PASS",
                          "extractedDeveloperRuntime":  "PASS",
                          "reproducibilityCheck":  "PASS_COMPATIBLE"
@@ -95,14 +95,14 @@
                           "kwrInstallFolder":  "World of Warcraft\\\\_retail_\\\\Interface\\\\AddOns\\\\KnomercyWarRoom",
                           "savedVariablesFolder":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables",
                           "savedVariablesFilePattern":  "KnomercyWarRoom.lua and KnomercyWarRoom.lua.bak",
-                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.30"
+                          "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.31"
                       },
     "fieldEvidenceBinding":  {
-                                 "candidateID":  "alpha30-incremental-runtime-20260927-3",
-                                 "candidateVersion":  "6.1.1-alpha.30",
-                                 "distributionSha256":  "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD",
+                                 "candidateID":  "alpha31-season2-comp-review-20260927-1",
+                                 "candidateVersion":  "6.1.1-alpha.31",
+                                 "distributionSha256":  "43537C25578E9F1BCDE6E3466F54BF55310B98FD5F405BA957D5E9F1C221F50E",
                                  "evidenceScope":  "candidate",
-                                 "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.30.zip",
+                                 "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.31.zip",
                                  "requiredProof":  [
                                                        "Screenshot or text capture of installed TOC version.",
                                                        "Recorded distribution ZIP SHA256 used for install.",

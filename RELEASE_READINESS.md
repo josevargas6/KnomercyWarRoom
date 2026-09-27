@@ -14,6 +14,14 @@ Offline tests cannot certify their match outcomes or the still-open Retail
 performance/UI gates. This is a diagnostic field candidate, not an approved
 stable release.
 
+Clean-source commit `f387944` passed full Lua tests, validation,
+reproducibility, and extracted-package audit. The matching Commander,
+Sentinel, and Developer Tools trio is installed with zero file differences and
+a restore rehearsal (`artifacts/alpha31-install-20260927-1/DEPLOYMENT.json`).
+The preceding alpha30 install is backed up at
+`artifacts/alpha31-backup-20260927-1`. Use
+`docs/ALPHA31_FIELD_CHECKLIST.md` for the next random-map field run.
+
 ## Alpha30 incremental-runtime diagnostic candidate — 2026-09-27
 
 Public widget/status pulses now use stage-specific invalidation and selective
