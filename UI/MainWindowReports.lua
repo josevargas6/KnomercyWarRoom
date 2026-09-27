@@ -435,9 +435,10 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Strategic refreshes: " .. tostring(diagnostics.strategicRefreshes
             or diagnostics.refreshes or 0),
         "Tactical refreshes: " .. tostring(diagnostics.tacticalRefreshes or 0),
-        string.format("Incremental paths: public %d / unchanged %d / inspection skips %d / battlefield reuse %d / assignment reuse %d / tactical reuse %d",
+        string.format("Incremental paths: public %d / unchanged %d / freshness %d / inspection skips %d / battlefield reuse %d / assignment reuse %d / tactical reuse %d",
             diagnostics.publicCaptures or 0,
             diagnostics.unchangedPublicSkips or 0,
+            diagnostics.publicFreshnessPatches or 0,
             diagnostics.unchangedInspectionSkips or 0,
             diagnostics.battlefieldStageReuses or 0,
             diagnostics.assignmentStageReuses or 0,

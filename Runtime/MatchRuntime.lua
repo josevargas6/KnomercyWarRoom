@@ -56,6 +56,7 @@ local MIN_REFRESH_INTERVAL = 0.75
 local CRITICAL_REFRESH_INTERVAL = 0.15
 local TACTICAL_REFRESH_INTERVAL = 0.50
 local STRATEGIC_HEARTBEAT_INTERVAL = 15
+local PUBLIC_FRESHNESS_INTERVAL = 4
 local QUIET_TACTICAL_REFRESH_INTERVAL = 0.75
 local EMERGENCY_TACTICAL_REFRESH_INTERVAL = 0.05
 local MAX_CHAINED_FOLLOWUPS = 1
@@ -86,6 +87,7 @@ local PUBLIC_REFRESH_REASONS = {
     UPDATE_UI_WIDGET = "BOTH",
     BATTLEGROUND_POINTS_UPDATE = "SCORE",
     UPDATE_BATTLEFIELD_STATUS = "STATUS",
+    ["public-freshness"] = "STATUS",
 }
 
 local TACTICAL_EVENTS = {
@@ -919,6 +921,19 @@ function Runtime:Start()
             if now - (Runtime.lastStrategicRefreshAt or 0)
                 >= STRATEGIC_HEARTBEAT_INTERVAL and not Runtime.pending then
                 Runtime:Queue("truth-heartbeat", 0.02)
+            elseif not Runtime.pending and not Runtime.matchComplete then
+                local state = KWR.Store and KWR.Store:Get()
+                local snapshot = state and state.snapshot or {}
+                if snapshot.context and snapshot.context.matchComplete then return end
+                local score = snapshot.score or {}
+                local objectives = snapshot.objectives or {}
+                local scoreDue = score.source == "ui_widget"
+                    and now - (score.observedAt or 0) >= PUBLIC_FRESHNESS_INTERVAL
+                local objectiveDue = objectives.source == "ui_widget"
+                    and now - (objectives.observedAt or 0) >= PUBLIC_FRESHNESS_INTERVAL
+                if scoreDue or objectiveDue then
+                    Runtime:Queue("public-freshness", 0.02)
+                end
             end
         end)
     end
@@ -1065,8 +1080,30 @@ function Runtime:RefreshPublic(reason, previous, started, profileStages)
     if changedKind == "UNCHANGED" then
         self.diagnostics.unchangedPublicSkips =
             (self.diagnostics.unchangedPublicSkips or 0) + 1
-        publishStrategic(self, reason, started, profileStages, previousSnapshot,
-            previous.prediction, previous.assignments, previous.command, {})
+        local now = KWR.Util:Now()
+        local fields = {}
+        if snapshot.score ~= previousSnapshot.score
+            and snapshot.score.observedAt
+            and snapshot.score.observedAt > (previousSnapshot.score.observedAt or 0)
+            and now - (previousSnapshot.score.observedAt or 0)
+                >= PUBLIC_FRESHNESS_INTERVAL - 1 then
+            fields[#fields + 1] = "score"
+        end
+        if snapshot.objectives ~= previousSnapshot.objectives
+            and snapshot.objectives.observedAt
+            and snapshot.objectives.observedAt > (previousSnapshot.objectives.observedAt or 0)
+            and now - (previousSnapshot.objectives.observedAt or 0)
+                >= PUBLIC_FRESHNESS_INTERVAL - 1 then
+            fields[#fields + 1] = "objectives"
+        end
+        if #fields > 0 then
+            snapshot.truth = KWR.Verification:Contract(snapshot)
+            fields[#fields + 1] = "truth"
+            self.diagnostics.publicFreshnessPatches =
+                (self.diagnostics.publicFreshnessPatches or 0) + 1
+        end
+        publishStrategic(self, reason, started, profileStages, snapshot,
+            previous.prediction, previous.assignments, previous.command, fields)
         return true
     end
     local objectiveChanged = changedKind == "OBJECTIVE"

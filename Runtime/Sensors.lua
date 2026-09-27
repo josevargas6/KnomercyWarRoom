@@ -1170,7 +1170,13 @@ function Sensors:CapturePublic(previous, kind, lastMessage)
         end
         if kind == "STATUS" and sameObjectives(previous.objectives,
             objectives, false) then
-            snapshot.objectives = previous.objectives
+            snapshot.objectives = {}
+            for key, value in pairs(previous.objectives) do
+                snapshot.objectives[key] = value
+            end
+            if objectives.source == "ui_widget" then
+                snapshot.objectives.observedAt = objectives.observedAt
+            end
         else
             appendPublicPOIs(objectives, definition.poiMapID or context.mapID, definition)
             appendVignettes(objectives, context.mapID, definition)

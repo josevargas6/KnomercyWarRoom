@@ -2232,6 +2232,23 @@ do
     assert(fullCaptures == 0 and combatBuilds == 0
         and KWR.Store:Get().revision == revision,
         "Unchanged battlefield-status pulse rebuilt strategic truth.")
+    local beforeFreshness = KWR.Store.state
+    local beforeFreshnessSession = KWR.Util:Copy(KWR.Sensors.scoreSession)
+    local beforeFreshnessTime = currentTime
+    local commandSignature = KWR.Store:Get().command.signature
+    mockLeftScore, mockRightScore = 900, 1000
+    currentTime = currentTime + 4
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_BATTLEFIELD_STATUS"),
+        "Public freshness refresh failed.")
+    assert(fullCaptures == 0 and combatBuilds == 0
+        and KWR.Store:Get().revision > revision
+        and KWR.Store:Get().command.signature == commandSignature
+        and KWR.Store:Get().snapshot.objectives.observedAt == currentTime,
+        "Freshness publication rebuilt the command or left objectives stale.")
+    KWR.Store.state = beforeFreshness
+    KWR.Sensors.scoreSession = beforeFreshnessSession
+    currentTime = beforeFreshnessTime
+    mockLeftScore, mockRightScore = 250, 34
     local savedIcons = C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo
     C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo = function(widgetID)
         local info = savedIcons(widgetID)

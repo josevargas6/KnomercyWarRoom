@@ -55,7 +55,7 @@ across publications. Preserve command state and delivery boundaries.
 - [x] Unchanged status pulses avoid the full pipeline in deterministic tests.
 - [x] Tactical pulses with unchanged observed inputs reuse combat output in deterministic tests.
 - [x] Manual, transition, and match-end refreshes remain complete; scoreboard captures stay full while downstream stages can skip unchanged input.
-- [ ] Validation, deterministic smoke/soak, and extracted package audit pass.
+- [ ] Validation, deterministic smoke/soak, and extracted package audit pass for the final `-2` candidate (source checks passed; package pending).
 - [ ] Retail P95 and UI safety are measured on the installed candidate.
 
 # Verification
@@ -63,6 +63,13 @@ across publications. Preserve command state and delivery boundaries.
 1. Exercise score, objective, duplicate, status, and tactical event fixtures.
 2. Run validation, Lua smoke/soak, and package audit.
 3. Bind live telemetry to the exact installed package.
+
+Initial offline verification passed on commit `00739a0`: source validation,
+complete Lua suite, knowledge audit, deterministic reproducibility, and
+extracted package audit. Its installation is preserved as a rollback point in
+`artifacts/alpha30-install-20260927-1/DEPLOYMENT.json`. The `-2` candidate
+adds a lightweight freshness lane; repackage and redeploy it before testing.
+Retail P95 and UI safety remain open.
 
 # Rollback
 

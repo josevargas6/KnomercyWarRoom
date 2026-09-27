@@ -15,7 +15,8 @@ The strategic pipeline reuses battlefield and assignment stages when their
 declared inputs are unchanged. Store owns branch-specific publication and
 skips equal state. Tactical capture uses enemy and combat-evidence fingerprints
 before rebuilding combat presentation; a short expiry prevents stale casts
-from being retained. Public pulses cannot swallow queued roster/lifecycle
+from being retained. A four-second lightweight freshness lane keeps verified
+public evidence valid without rebuilding the command. Public pulses cannot swallow queued roster/lifecycle
 invalidations or pending tactical work. Time-based observations retain
 explicit expiry, so reuse cannot silently extend stale facts.
 
