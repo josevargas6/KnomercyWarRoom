@@ -13,12 +13,16 @@ The first trio was installed with zero file differences and a verified restore
 rehearsal (`artifacts/alpha30-install-20260927-1/DEPLOYMENT.json`). It was
 superseded by clean-source commit `35eb5ee`, candidate
 `alpha30-incremental-runtime-20260927-2`, which adds a lightweight
-public-freshness lane. The replacement trio passed full source tests,
-reproducibility, and extracted-package audit and is now installed with zero
-file differences (`artifacts/alpha30-install-20260927-2/DEPLOYMENT.json`).
-The original backup is in `artifacts/alpha30-backup-20260927-1`; the immediately
-preceding install is in `artifacts/alpha30-backup-20260927-2`. The next test
-uses `docs/ALPHA30_FIELD_CHECKLIST.md` on any assigned map.
+public-freshness lane. The `-2` trio passed source and package checks, but
+review found that frequent cheap status publications could defer the full truth
+heartbeat. Clean-source commit `64b1860` is now candidate
+`alpha30-incremental-runtime-20260927-3`: the full heartbeat remains due, and a
+material public-freshness transition recomputes strategy. This trio passed the
+same source and package checks and is installed with zero file differences and
+a restore rehearsal (`artifacts/alpha30-install-20260927-3/DEPLOYMENT.json`).
+The immediately preceding install is backed up at
+`artifacts/alpha30-backup-20260927-3`. The next test uses
+`docs/ALPHA30_FIELD_CHECKLIST.md` on any assigned map.
 
 ## Alpha29 local diagnostic candidate — 2026-09-23
 

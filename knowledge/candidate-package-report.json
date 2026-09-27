@@ -1,54 +1,54 @@
 {
     "schema":  "kwr-candidate-package-report",
     "schemaVersion":  1,
-    "generatedAt":  "2026-09-27T09:20:39Z",
+    "generatedAt":  "2026-09-27T09:43:08Z",
     "candidateVersion":  "6.1.1-alpha.30",
-    "candidateID":  "alpha30-incremental-runtime-20260927-2",
-    "buildOutputDirectory":  "artifacts/alpha30-incremental-20260927-2",
+    "candidateID":  "alpha30-incremental-runtime-20260927-3",
+    "buildOutputDirectory":  "artifacts/alpha30-incremental-20260927-3",
     "distributionArtifact":  {
                                  "name":  "KnomercyWarRoom-6.1.1-alpha.30.zip",
-                                 "path":  "artifacts/alpha30-incremental-20260927-2/KnomercyWarRoom-6.1.1-alpha.30.zip",
-                                 "size":  907340,
-                                 "sha256":  "E28F27F827D0B22883F296E2E730D4C905105720A9F116FF14A5F370521646FE"
+                                 "path":  "artifacts/alpha30-incremental-20260927-3/KnomercyWarRoom-6.1.1-alpha.30.zip",
+                                 "size":  907649,
+                                 "sha256":  "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD"
                              },
     "developerArtifact":  {
                               "name":  "KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
-                              "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
-                              "size":  15933753,
-                              "sha256":  "8FAD9426806D3C0E0C4BD7F17546675B1DB75E1273F8EF7957C19D7936615EFE"
+                              "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
+                              "size":  15934242,
+                              "sha256":  "ECF3B1A26F89C59A1D87DCCE5F18D9335EDE901BBF7EC02183CFDD48EDE1D15E"
                           },
     "sentinelArtifact":  {
                              "name":  "KWR-Sentinel-6.1.1-alpha.30.zip",
-                             "path":  "artifacts/alpha30-incremental-20260927-2/KWR-Sentinel-6.1.1-alpha.30.zip",
+                             "path":  "artifacts/alpha30-incremental-20260927-3/KWR-Sentinel-6.1.1-alpha.30.zip",
                              "size":  30172,
                              "sha256":  "9A849520A6F285A463A52365E7B00C7BD95D4D4F2D44AFA9741AD43C1EF9BA6A"
                          },
     "hashManifest":  {
-                         "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_SHA256.txt",
+                         "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_SHA256.txt",
                          "lines":  [
-                                       "E28F27F827D0B22883F296E2E730D4C905105720A9F116FF14A5F370521646FE  KnomercyWarRoom-6.1.1-alpha.30.zip",
+                                       "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD  KnomercyWarRoom-6.1.1-alpha.30.zip",
                                        "9A849520A6F285A463A52365E7B00C7BD95D4D4F2D44AFA9741AD43C1EF9BA6A  KWR-Sentinel-6.1.1-alpha.30.zip"
                                    ]
                      },
     "developerHashManifest":  {
-                                  "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_DEVELOPER_CHECKSUM.txt",
+                                  "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_DEVELOPER_CHECKSUM.txt",
                                   "lines":  [
-                                                "8FAD9426806D3C0E0C4BD7F17546675B1DB75E1273F8EF7957C19D7936615EFE  KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
+                                                "ECF3B1A26F89C59A1D87DCCE5F18D9335EDE901BBF7EC02183CFDD48EDE1D15E  KWR_6_1_1_ALPHA_30_DEVELOPER.zip",
                                                 "57778407AEEB65CF52976D2A4DFB2EF5821D1A7A829F4E8BA063353048BE9222  KWR_DevTools-6.1.1-alpha.30.zip"
                                             ]
                               },
     "sourceManifest":  {
-                           "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_SOURCE_MANIFEST.json",
-                           "distributionDigest":  "0635EC99ABA62F6A4BBF7F45655588A4BEC52C25D8D0D3E9AAAB797922D8F840",
+                           "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_SOURCE_MANIFEST.json",
+                           "distributionDigest":  "FD5E7365D7F2D25EB7E511C3812D5F47B30DE50B49A1BB6748A98F53C18AFB51",
                            "distributionEntryCount":  399,
-                           "developerDigest":  "04CBD189CB14BC5C8D90BA6DB6A2A3E838D9B8454A828CE1FBA75515BA7D71AD",
+                           "developerDigest":  "49BA74FC39ED161950C020520C81AA51E1BB9DC0549A280FB6856D1B05387756",
                            "developerEntryCount":  9118,
                            "sentinelDigest":  "6D62E69F20DB4242A3B8DC4FC0A8211355CD54371BF97B17265AA4D491F6EE76",
                            "sentinelEntryCount":  12
                        },
     "buildProvenance":  {
-                            "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_BUILD_PROVENANCE.json",
-                            "builtAtUtc":  "2026-09-27T09:14:19.9206163Z",
+                            "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_BUILD_PROVENANCE.json",
+                            "builtAtUtc":  "2026-09-27T09:37:34.1412300Z",
                             "sentinelIncluded":  true,
                             "powershellEdition":  "Desktop",
                             "powershellVersion":  "5.1.26100.9444",
@@ -58,7 +58,7 @@
                             "gitAvailable":  true
                         },
     "reproducibility":  {
-                            "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_REPRODUCIBILITY.json",
+                            "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_REPRODUCIBILITY.json",
                             "result":  "PASS",
                             "distributionDigestMatch":  true,
                             "developerDigestMatch":  true,
@@ -68,8 +68,8 @@
                                       ]
                         },
     "packageAudit":  {
-                         "path":  "artifacts/alpha30-incremental-20260927-2/KWR_6_1_1_ALPHA_30_PACKAGE_AUDIT.json",
-                         "auditedAtUtc":  "2026-09-27T09:18:19.2026902Z",
+                         "path":  "artifacts/alpha30-incremental-20260927-3/KWR_6_1_1_ALPHA_30_PACKAGE_AUDIT.json",
+                         "auditedAtUtc":  "2026-09-27T09:41:33.2420187Z",
                          "result":  "PASS",
                          "hashesVerified":  4,
                          "distributionEntries":  399,
@@ -98,9 +98,9 @@
                           "backupFolderSuggestion":  "World of Warcraft\\\\_retail_\\\\WTF\\\\Account\\\\\u003cACCOUNT\u003e\\\\SavedVariables\\\\KWR_Backups\\\\6.1.1-alpha.30"
                       },
     "fieldEvidenceBinding":  {
-                                 "candidateID":  "alpha30-incremental-runtime-20260927-2",
+                                 "candidateID":  "alpha30-incremental-runtime-20260927-3",
                                  "candidateVersion":  "6.1.1-alpha.30",
-                                 "distributionSha256":  "E28F27F827D0B22883F296E2E730D4C905105720A9F116FF14A5F370521646FE",
+                                 "distributionSha256":  "FCE66DFA0AD5D89C143F9B59908E429D8812CA46E478633BC5A004C9CD84E8BD",
                                  "evidenceScope":  "candidate",
                                  "canonicalArtifact":  "KnomercyWarRoom-6.1.1-alpha.30.zip",
                                  "requiredProof":  [
