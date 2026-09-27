@@ -64,6 +64,8 @@ do
         "Equivalent combat-event storm executed the strategic pipeline.")
     assert((KWR.MatchRuntime.diagnostics.tacticalRefreshes or 0) == tacticalBefore + 20,
         "Coalesced combat-event storm did not execute one refresh per bounded batch.")
+    assert((KWR.MatchRuntime.diagnostics.tacticalStageReuses or 0) > 0,
+        "Equivalent tactical evidence did not reuse the combat stage.")
     assert(KWR.Store:Get().command.signature == commandSignature,
         "Tactical refresh recomposed the current strategic command.")
     assert((KWR.MatchRuntime.diagnostics.tacticalQueueReasons.UNIT_SPELLCAST_SUCCEEDED or 0)

@@ -1,5 +1,12 @@
 # Changelog
 
+- Diagnostic candidate `alpha30-incremental-runtime-20260927-1`: separates
+  public score/objective, unchanged status, and cosmetic widget pulses;
+  reuses unchanged inspection, battlefield, assignment, enemy, and tactical
+  stages; and publishes only owned changed branches. Queue coalescing preserves
+  roster/lifecycle invalidations. Offline checks pass; Retail P95 and UI safety
+  require a new exact-package field run before release consideration.
+
 - Diagnostic candidate `alpha29-season2-mapfit-20260923-1`: reviews official
   Season 2 PvP hotfixes through September 22 without inventing spec ratings;
   makes automatic premade targets honor a known battleground's map fit; adds an

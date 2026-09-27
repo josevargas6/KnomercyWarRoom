@@ -1,4 +1,11 @@
-# Release Readiness - 6.1.1-alpha.29
+# Release Readiness - 6.1.1-alpha.30
+
+## Alpha30 incremental-runtime diagnostic candidate — 2026-09-27
+
+Public widget/status pulses now use stage-specific invalidation and selective
+publication. Repeated tactical evidence reuses combat outputs. Offline tests
+cannot certify the Retail P95 target or safe in-combat UI, so this candidate is
+for field measurement only; it is not approved for a stable public release.
 
 ## Alpha29 local diagnostic candidate — 2026-09-23
 

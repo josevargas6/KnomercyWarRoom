@@ -1019,9 +1019,9 @@ function Sensors:InvalidateSpecialization(unit)
 end
 
 function Sensors:ObserveWidget(widgetInfo)
-    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return false end
+    if type(widgetInfo) ~= "table" or Util:IsSecret(widgetInfo) then return false, "UNRELATED" end
     local widgetID = number(widgetInfo.widgetID, nil)
-    if not widgetID then return false end
+    if not widgetID then return false, "UNRELATED" end
     local state = KWR.Store and KWR.Store:Get()
     local mapKey = state and state.snapshot and state.snapshot.context
         and state.snapshot.context.mapKey
@@ -1056,14 +1056,145 @@ function Sensors:ObserveWidget(widgetInfo)
         end
         if relevant and fingerprint then
             local cacheKey = tostring(mapKey) .. ":" .. tostring(widgetID)
+            self.widgetLastObservedAt = self.widgetLastObservedAt or {}
+            self.widgetLastObservedAt[cacheKey] = Util:Now()
             if self.widgetFingerprints[cacheKey] == fingerprint then
-                return false
+                return false, "UNCHANGED"
             end
             self.widgetFingerprints[cacheKey] = fingerprint
         end
-        return relevant
+        if not relevant then return false, "UNRELATED" end
+        if scoreFingerprint and objectiveFingerprint then return true, "BOTH" end
+        return true, scoreFingerprint and "SCORE" or "OBJECTIVE"
     end
-    return false
+    return false, "UNRELATED"
+end
+
+local function sameScore(left, right)
+    return left and right
+        and left.friendly == right.friendly
+        and left.enemy == right.enemy
+        and left.max == right.max
+        and left.source == right.source
+        and left.widgetID == right.widgetID
+end
+
+local function sameObjectives(left, right, includePosition)
+    if not left or not right then return false end
+    for _, field in ipairs({ "friendly", "enemy", "friendlyIncoming",
+        "enemyIncoming", "source", "widgetID" }) do
+        if left[field] ~= right[field] then return false end
+    end
+    local oldRows, newRows = left.rows or {}, right.rows or {}
+    if #oldRows ~= #newRows then return false end
+    for index, row in ipairs(newRows) do
+        local old = oldRows[index]
+        if not old then return false end
+        local fields = { "label", "owner", "state", "kind", "source",
+            "carrier" }
+        if includePosition then
+            fields[#fields + 1] = "x"
+            fields[#fields + 1] = "y"
+        end
+        for _, field in ipairs(fields) do
+            -- ObjectiveIntel may overlay an accepted carrier observation on
+            -- the published row. Compare the native widget provenance on a
+            -- public refresh, not that later strategic decoration.
+            local oldValue = old[field]
+            if old.publicFields then oldValue = old.publicFields[field] end
+            if row[field] ~= oldValue then return false end
+        end
+    end
+    return true
+end
+
+-- Read only the public widgets on a widget/status pulse. The previous
+-- published roster and enemy branches remain owned by Store until an event
+-- that can change those branches requests a full capture.
+function Sensors:CapturePublic(previous, kind, lastMessage)
+    local context = previous and previous.context
+    if not context or context.inPvP ~= true or context.preview == true then
+        return nil, "FULL"
+    end
+    local definition = KWR.Maps:Get(context.mapKey)
+    if not definition then return nil, "FULL" end
+    local snapshot = {}
+    for key, value in pairs(previous) do snapshot[key] = value end
+    local changedScore, changedObjectives = false, false
+    if kind == "SCORE" or kind == "BOTH" or kind == "STATUS" then
+        local widgetID = definition.scoreWidget
+        local widget = readDoubleStatus(widgetID)
+        if not validScoreWidget(widget, definition) then
+            widgetID = self.scoreWidgetByMap[context.mapKey]
+            widget = readDoubleStatus(widgetID)
+        end
+        if not validScoreWidget(widget, definition) then
+            if previous.score and previous.score.source == "ui_widget" then
+                return nil, "FULL"
+            end
+            widget = nil
+        end
+        if widget then
+            local assigned = context.team
+            local score = {
+                friendly = KWR.TeamResolver:Value(widget.left, widget.right,
+                    "friendly", assigned) or 0,
+                enemy = KWR.TeamResolver:Value(widget.left, widget.right,
+                    "enemy", assigned) or 0,
+                rawLeft = widget.left,
+                rawRight = widget.right,
+                widgetID = widgetID,
+                max = widget.max > 0 and widget.max or definition.maxScore,
+                source = assigned and assigned.side and "ui_widget" or "team_unresolved",
+                observedAt = Util:Now(),
+                widgetAuthority = widgetID == definition.scoreWidget
+                    and "verified_map_widget" or "validated_fallback_widget",
+            }
+            self:TrackScore(context, score)
+            score.friendlyNeeded = math.max((score.max or 0) - score.friendly, 0)
+            score.enemyNeeded = math.max((score.max or 0) - score.enemy, 0)
+            changedScore = not sameScore(previous.score, score)
+            snapshot.score = score
+        end
+    end
+    if kind == "OBJECTIVE" or kind == "BOTH" or kind == "STATUS" then
+        local widgetID = self.objectiveWidgetByMap[context.mapKey]
+            or definition.objectiveWidget
+        local objectives = readIconObjectives(definition, context.team, widgetID)
+        if objectives.source ~= "ui_widget"
+            and previous.objectives and previous.objectives.source == "ui_widget" then
+            return nil, "FULL"
+        end
+        if objectives.source == "ui_widget" then
+            objectives.observedAt = Util:Now()
+        end
+        if kind == "STATUS" and sameObjectives(previous.objectives,
+            objectives, false) then
+            snapshot.objectives = previous.objectives
+        else
+            appendPublicPOIs(objectives, definition.poiMapID or context.mapID, definition)
+            appendVignettes(objectives, context.mapID, definition)
+            appendFlags(objectives, context.mapID)
+            appendVehicles(objectives, context.mapID)
+            applyFallbackPositions(objectives, definition)
+            changedObjectives = not sameObjectives(previous.objectives,
+                objectives, true)
+            for _, row in ipairs(objectives.rows or {}) do
+                row.publicFields = {
+                    label = row.label, owner = row.owner, state = row.state,
+                    kind = row.kind, source = row.source, x = row.x, y = row.y,
+                    carrier = row.carrier,
+                }
+            end
+            snapshot.objectives = objectives
+        end
+    end
+    snapshot.lastMessage = text(lastMessage, "", 160)
+    snapshot.capturedAt = Util:Now()
+    if changedScore or changedObjectives then
+        return snapshot, changedObjectives and "OBJECTIVE" or "SCORE"
+    end
+    return snapshot, "UNCHANGED"
 end
 
 function Sensors:TrackScore(context, score)

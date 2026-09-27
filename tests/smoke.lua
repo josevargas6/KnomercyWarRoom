@@ -2169,6 +2169,104 @@ assert(KWR.Store:Get().snapshot.score.rawLeft == 250
     and KWR.Store:Get().snapshot.score.rawRight == 34
     and KWR.Store:Get().snapshot.score.widgetID == KWR.Maps:Get("ARATHI").scoreWidget,
     "A dynamic widget displaced the map's verified score source.")
+do
+    local savedMatchComplete = KWR.MatchRuntime.matchComplete
+    local savedRequiredSettleAt = KWR.MatchRuntime.requiredSettleAt
+    local savedStoreState = KWR.Store.state
+    local savedScoreSession = KWR.Util:Copy(KWR.Sensors.scoreSession)
+    KWR.MatchRuntime.matchComplete = false
+    KWR.MatchRuntime.requiredSettleAt = nil
+    assert(KWR.MatchRuntime:ForceRefresh("smoke-incremental-seed"),
+        "Active incremental fixture failed to seed.")
+    local savedCapture = KWR.Sensors.Capture
+    local savedCombat = KWR.CombatIntel.Analyze
+    local savedStrategy = KWR.Strategist.Evaluate
+    local fullCaptures, combatBuilds, strategyBuilds = 0, 0, 0
+    KWR.Sensors.Capture = function(sensor, ...)
+        fullCaptures = fullCaptures + 1
+        return savedCapture(sensor, ...)
+    end
+    KWR.CombatIntel.Analyze = function(intel, ...)
+        combatBuilds = combatBuilds + 1
+        return savedCombat(intel, ...)
+    end
+    KWR.Strategist.Evaluate = function(strategist, ...)
+        strategyBuilds = strategyBuilds + 1
+        return savedStrategy(strategist, ...)
+    end
+    assert(KWR.MatchRuntime:ForceRefresh("inspect-ready"),
+        "Unchanged inspection refresh failed.")
+    assert(strategyBuilds == 0,
+        "Unchanged inspection rebuilt the strategic plan.")
+    fullCaptures, combatBuilds = 0, 0
+    local revision = KWR.Store:Get().revision
+    local oldScore = KWR.Store:Get().snapshot.score
+    local publicSnapshot, publicKind = KWR.Sensors:CapturePublic(
+        KWR.Store:Get().snapshot, "SCORE", "")
+    assert(publicSnapshot, "Public score capture fell back: "
+        .. tostring(publicKind) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.context.inPvP) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.context.preview) .. "/"
+        .. tostring(KWR.Store:Get().snapshot.context.mapKey))
+    assert(KWR.MatchRuntime:RefreshPublic("BATTLEGROUND_POINTS_UPDATE",
+        KWR.Store:Get(), 0, false), "Public runtime branch was not available.")
+    assert(KWR.MatchRuntime:ForceRefresh("BATTLEGROUND_POINTS_UPDATE"),
+        "Unchanged public score refresh failed.")
+    assert(fullCaptures == 0 and combatBuilds == 0
+        and KWR.Store:Get().revision == revision,
+        "Unchanged score pulse rebuilt or republished command truth: "
+            .. fullCaptures .. "/" .. combatBuilds .. "/"
+            .. KWR.Store:Get().revision .. "/" .. revision
+            .. "/" .. tostring(publicKind)
+            .. "/" .. tostring(publicSnapshot.score.source)
+            .. "/" .. tostring(KWR.Store:Get().snapshot.score.source)
+            .. "/" .. tostring(oldScore.friendly) .. ":" .. tostring(oldScore.enemy)
+            .. "/" .. tostring(publicSnapshot.score.friendly) .. ":"
+            .. tostring(publicSnapshot.score.enemy) .. "/"
+            .. tostring(KWR.Store:Get().snapshot.context.matchComplete) .. "/"
+            .. tostring(KWR.MatchRuntime.matchComplete) .. "/"
+            .. tostring(KWR.Store:Get().snapshot.context.preview) .. "/"
+            .. tostring(KWR.Store:Get().snapshot.context.inPvP))
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_BATTLEFIELD_STATUS"),
+        "Unchanged battlefield-status refresh failed.")
+    assert(fullCaptures == 0 and combatBuilds == 0
+        and KWR.Store:Get().revision == revision,
+        "Unchanged battlefield-status pulse rebuilt strategic truth.")
+    local savedIcons = C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo
+    C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo = function(widgetID)
+        local info = savedIcons(widgetID)
+        if info and info.leftIcons and info.leftIcons[1] then
+            info.leftIcons[1].iconState = 1
+        end
+        return info
+    end
+    assert(KWR.MatchRuntime:ForceRefresh("UPDATE_UI_WIDGET"),
+        "Changed objective-widget refresh failed.")
+    assert(fullCaptures == 0 and combatBuilds > 0
+        and KWR.Store:Get().revision > revision,
+        "Objective delta did not invalidate its dependent stages.")
+    C_UIWidgetManager.GetDoubleStateIconRowVisualizationInfo = savedIcons
+    combatBuilds = 0
+    revision = KWR.Store:Get().revision
+    mockLeftScore, mockRightScore = 900, 1001
+    assert(KWR.MatchRuntime:ForceRefresh("BATTLEGROUND_POINTS_UPDATE"),
+        "Changed public score refresh failed.")
+    assert(fullCaptures == 0 and combatBuilds == 0
+        and KWR.Store:Get().snapshot.score.rawRight == 1001
+        and KWR.Store:Get().revision > revision,
+        "Score delta did not use the bounded public path: "
+            .. fullCaptures .. "/" .. combatBuilds .. "/"
+            .. tostring(KWR.Store:Get().snapshot.score.rawRight) .. "/"
+            .. KWR.Store:Get().revision .. "/" .. revision)
+    KWR.Sensors.Capture = savedCapture
+    KWR.CombatIntel.Analyze = savedCombat
+    KWR.Strategist.Evaluate = savedStrategy
+    KWR.Store.state = savedStoreState
+    KWR.Sensors.scoreSession = savedScoreSession
+    KWR.MatchRuntime.matchComplete = savedMatchComplete
+    KWR.MatchRuntime.requiredSettleAt = savedRequiredSettleAt
+    mockLeftScore, mockRightScore = 250, 34
+end
 assert(KWR.RBGMapProfiles:Count() == 10,
     "All-RBG foundation did not expose ten supported profiles.")
 assert(KWR.RBGMapProfiles:Get("TWINPEAKS").family == "FLAG",

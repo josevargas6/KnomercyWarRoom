@@ -494,4 +494,46 @@ function Store:Publish(snapshot, prediction, assignments, command, diagnostics, 
     return nextState
 end
 
+-- Incremental producers name the branches they own. Reconcile only those
+-- branches; all other published branches retain Store ownership and identity.
+function Store:PublishPatch(snapshot, fields, prediction, assignments, command,
+    diagnostics, finalizeDiagnostics)
+    local previous = self:Get()
+    local previousSnapshot = previous.snapshot or {}
+    local nextSnapshot = shallowCopy(previousSnapshot)
+    local changed = false
+    for _, field in ipairs(fields or {}) do
+        local owned = reconcileBranch(previousSnapshot[field], snapshot[field])
+        if owned ~= previousSnapshot[field] then
+            nextSnapshot[field] = owned
+            changed = true
+        end
+    end
+    prediction = reconcileBranch(previous.prediction, prediction or previous.prediction)
+    assignments = reconcileBranch(previous.assignments, assignments or previous.assignments)
+    command = reconcileBranch(previous.command, command or previous.command)
+    if finalizeDiagnostics then diagnostics = finalizeDiagnostics() or diagnostics end
+    if not changed and prediction == previous.prediction
+        and assignments == previous.assignments and command == previous.command then
+        return previous, false
+    end
+    local nextState = {
+        revision = (previous.revision or 0) + 1,
+        capturedAt = KWR.Util:Now(),
+        snapshot = nextSnapshot,
+        prediction = prediction,
+        assignments = assignments,
+        command = command,
+        activePlay = reconcileBranch(previous.activePlay,
+            type(command) == "table" and command.activePlay or nil),
+        diagnostics = reconcileBranch(previous.diagnostics,
+            diagnostics or previous.diagnostics or {}),
+        mode = nextSnapshot.context and nextSnapshot.context.preview
+            and "PREVIEW" or "LIVE",
+    }
+    self.state = nextState
+    self:QueueNotifications(previous, nextState)
+    return nextState, true
+end
+
 KWR:RegisterModule("Store", Store)

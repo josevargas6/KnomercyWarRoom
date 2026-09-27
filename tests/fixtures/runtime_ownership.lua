@@ -35,6 +35,13 @@ return function(KWR)
     now = timers[3].at
     timers[3].callback()
     assert(passes == 3 and not runtime.pending, "In-capture newest truth was lost")
+    runtime:Queue("UPDATE_UI_WIDGET", 0.2)
+    runtime:Queue("GROUP_ROSTER_UPDATE", 0.2)
+    assert(runtime.pendingReason == "GROUP_ROSTER_UPDATE",
+        "A coalesced public pulse hid the roster invalidation")
+    runtime.timerToken = runtime.timerToken + 1
+    runtime.pending = false
+    runtime.pendingReason = nil
 
     load("Data/Capabilities.lua")
     local cap = namespace.Capabilities

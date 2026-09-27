@@ -369,17 +369,25 @@ function EnemyIntel:Reset(sessionKey)
     self.sessionKey = sessionKey
     self.friendlyScoreFaction = nil
     self.observedTokens = {}
+    self.tokenRevision = 0
 end
 
 function EnemyIntel:ObserveToken(unit, source)
     unit = KWR.Util:Text(unit, "", 32)
     if unit == "" then return end
-    self.observedTokens[unit] = KWR.Util:Text(source, "Observed Unit", 32)
+    source = KWR.Util:Text(source, "Observed Unit", 32)
+    if self.observedTokens[unit] ~= source then
+        self.observedTokens[unit] = source
+        self.tokenRevision = (self.tokenRevision or 0) + 1
+    end
 end
 
 function EnemyIntel:ForgetToken(unit)
     unit = KWR.Util:Text(unit, "", 32)
-    if unit ~= "" then self.observedTokens[unit] = nil end
+    if unit ~= "" and self.observedTokens[unit] then
+        self.observedTokens[unit] = nil
+        self.tokenRevision = (self.tokenRevision or 0) + 1
+    end
 end
 
 function EnemyIntel:ObserveRemote(body, kind, sender, observedAt)

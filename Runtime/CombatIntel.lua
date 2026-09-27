@@ -277,6 +277,7 @@ function CombatIntel:ObserveUnitSpell(unit, spellID)
     if record and record.currentCast
         and record.currentCast.spellID == KWR.Util:Number(spellID, nil) then
         record.currentCast = nil
+        self.observed = self.observed + 1
     end
     return self:ObserveSpell(guid, name, spellID, "SPELL_CAST_SUCCESS")
 end
@@ -296,6 +297,7 @@ function CombatIntel:ObserveUnitCast(unit, spellID, active, eventType)
         if record.currentCast and (not numericSpellID
             or record.currentCast.spellID == numericSpellID) then
             record.currentCast = nil
+            self.observed = self.observed + 1
             return true
         end
         return false

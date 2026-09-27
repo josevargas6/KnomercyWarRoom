@@ -376,7 +376,10 @@ function MainWindowReports:BuildAlternativesPayload(state)
 end
 
 function MainWindowReports:BuildPerformancePayload(state)
-    local diagnostics = state.diagnostics or {}
+    -- Unchanged pulses deliberately do not publish a new Store revision. Read
+    -- live runtime counters so the field report can still account for them.
+    local diagnostics = KWR.MatchRuntime and KWR.MatchRuntime.diagnostics
+        or state.diagnostics or {}
     local memorySummary = KWR.MemoryBudget and KWR.MemoryBudget:Summary(true) or {}
     local memoryKB = memorySummary.memoryKB
     local strategicMemoryAge = diagnostics.memorySampleAt
@@ -432,6 +435,17 @@ function MainWindowReports:BuildPerformancePayload(state)
         "Strategic refreshes: " .. tostring(diagnostics.strategicRefreshes
             or diagnostics.refreshes or 0),
         "Tactical refreshes: " .. tostring(diagnostics.tacticalRefreshes or 0),
+        string.format("Incremental paths: public %d / unchanged %d / inspection skips %d / battlefield reuse %d / assignment reuse %d / tactical reuse %d",
+            diagnostics.publicCaptures or 0,
+            diagnostics.unchangedPublicSkips or 0,
+            diagnostics.unchangedInspectionSkips or 0,
+            diagnostics.battlefieldStageReuses or 0,
+            diagnostics.assignmentStageReuses or 0,
+            diagnostics.tacticalStageReuses or 0),
+        string.format("Widget triage: unchanged %d / cosmetic %d / objective recomputes %d",
+            diagnostics.unchangedWidgetPulses or 0,
+            diagnostics.cosmeticWidgetPulses or 0,
+            diagnostics.objectiveStageRecomputes or 0),
         "Events: " .. tostring(diagnostics.events or 0),
         "Coalesced events: " .. tostring(diagnostics.coalesced or 0),
         "Newest-truth followups: " .. tostring(diagnostics.queueFollowups or 0),

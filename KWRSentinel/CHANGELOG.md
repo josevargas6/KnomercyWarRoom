@@ -1,5 +1,10 @@
 # KWR Sentinel Changelog
 
+## 6.1.1-alpha.30 - 2026-09-27
+
+- Version-synchronized diagnostic companion for the Commander incremental
+  runtime candidate. No transport protocol change.
+
 ## 6.1.1-alpha.10 - 2026-08-31
 
 - Synchronize Sentinel version and package provenance with Commander Alpha 10.
